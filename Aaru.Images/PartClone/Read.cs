@@ -53,8 +53,7 @@ public sealed partial class PartClone
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
@@ -118,15 +117,15 @@ public sealed partial class PartClone
                 }
             }
 
-            if(next && current)
-                blockOff++;
+            if(next && current) blockOff++;
 
             current = next;
         }
 
         extentFillStopwatch.Stop();
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_seconds_to_fill_extents,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_seconds_to_fill_extents,
                                    extentFillStopwatch.Elapsed.TotalSeconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
@@ -149,8 +148,7 @@ public sealed partial class PartClone
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         if(_byteMap[sectorAddress] == 0)
         {
@@ -159,8 +157,7 @@ public sealed partial class PartClone
             return ErrorNumber.NoError;
         }
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         long imageOff = _dataOff + (long)(BlockOffset(sectorAddress) * (_pHdr.blockSize + CRC_SIZE));
 
@@ -168,8 +165,7 @@ public sealed partial class PartClone
         _imageStream.Seek(imageOff, SeekOrigin.Begin);
         _imageStream.EnsureRead(buffer, 0, (int)_pHdr.blockSize);
 
-        if(_sectorCache.Count > MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -181,11 +177,9 @@ public sealed partial class PartClone
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -193,8 +187,7 @@ public sealed partial class PartClone
 
         for(uint i = 0; i < length; i++)
         {
-            if(_byteMap[sectorAddress + i] == 0)
-                continue;
+            if(_byteMap[sectorAddress + i] == 0) continue;
 
             allEmpty = false;
 
@@ -212,8 +205,7 @@ public sealed partial class PartClone
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

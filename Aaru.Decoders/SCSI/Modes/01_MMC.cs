@@ -47,8 +47,7 @@ public static partial class Modes
         pg[0] = 0x01;
         pg[1] = 10;
 
-        if(page.PS)
-            pg[0] += 0x80;
+        if(page.PS) pg[0] += 0x80;
 
         pg[2] = page.Parameter;
         pg[3] = page.ReadRetryCount;
@@ -84,17 +83,13 @@ public static partial class Modes
 
     public static ModePage_01_MMC? DecodeModePage_01_MMC(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x01)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x01) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_01_MMC();
 
@@ -102,8 +97,7 @@ public static partial class Modes
         decoded.Parameter      =  pageResponse[2];
         decoded.ReadRetryCount =  pageResponse[3];
 
-        if(pageResponse.Length < 12)
-            return decoded;
+        if(pageResponse.Length < 12) return decoded;
 
         decoded.WriteRetryCount   = pageResponse[8];
         decoded.RecoveryTimeLimit = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
@@ -116,21 +110,19 @@ public static partial class Modes
 
     public static string PrettifyModePage_01_MMC(ModePage_01_MMC? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_01_MMC page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Read_error_recovery_page_for_MultiMedia_Devices);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.ReadRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount)
+              .AppendLine();
         }
 
         string AllUsed              = "\t" + Localization.All_available_recovery_procedures_will_be_used + "\n";
@@ -235,15 +227,15 @@ public static partial class Modes
 
         if(page.WriteRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount)
+              .AppendLine();
         }
 
         if(page.RecoveryTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
-                            page.RecoveryTimeLimit).
-               AppendLine();
+                            page.RecoveryTimeLimit)
+              .AppendLine();
         }
 
         return sb.ToString();

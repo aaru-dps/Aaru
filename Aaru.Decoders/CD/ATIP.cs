@@ -61,16 +61,15 @@ public static class ATIP
 
     public static CDATIP Decode(byte[] CDATIPResponse)
     {
-        if(CDATIPResponse is not { Length: > 4 })
-            return null;
+        if(CDATIPResponse is not { Length: > 4 }) return null;
 
         var decoded = new CDATIP();
 
         if(CDATIPResponse.Length != 32 && CDATIPResponse.Length != 28)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           Expected_CD_ATIP_size_32_bytes_is_not_received_size_0_bytes_not_decoding,
+                                       Localization
+                                          .Expected_CD_ATIP_size_32_bytes_is_not_received_size_0_bytes_not_decoding,
                                        CDATIPResponse.Length);
 
             return null;
@@ -115,8 +114,7 @@ public static class ATIP
         decoded.Reserved8 = CDATIPResponse[23];
         decoded.Reserved9 = CDATIPResponse[27];
 
-        if(CDATIPResponse.Length < 32)
-            return decoded.AlwaysOne ? decoded : null;
+        if(CDATIPResponse.Length < 32) return decoded.AlwaysOne ? decoded : null;
 
         decoded.S4Values = new byte[3];
         Array.Copy(CDATIPResponse, 28, decoded.S4Values, 0, 3);
@@ -127,8 +125,7 @@ public static class ATIP
 
     public static string Prettify(CDATIP response)
     {
-        if(response == null)
-            return null;
+        if(response == null) return null;
 
         var sb = new StringBuilder();
 
@@ -148,8 +145,8 @@ public static class ATIP
 
                     break;
                 default:
-                    sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed)
+                      .AppendLine();
 
                     break;
             }
@@ -157,18 +154,18 @@ public static class ATIP
             sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0,
                             (response.LeadInStartMin << 16) +
                             (response.LeadInStartSec << 8)  +
-                            response.LeadInStartFrame).
-               AppendLine();
+                            response.LeadInStartFrame)
+              .AppendLine();
 
             sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0,
                             (response.LeadOutStartMin << 16) +
                             (response.LeadOutStartSec << 8)  +
-                            response.LeadOutStartFrame).
-               AppendLine();
+                            response.LeadOutStartFrame)
+              .AppendLine();
 
             sb.AppendFormat(Localization.S4_value_0,
-                            (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).
-               AppendLine();
+                            (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2])
+              .AppendLine();
         }
         else
         {
@@ -223,8 +220,8 @@ public static class ATIP
 
                         break;
                     default:
-                        sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed).
-                           AppendLine();
+                        sb.AppendFormat(Localization.Reference_speed_set_is_unknown_0, response.ReferenceSpeed)
+                          .AppendLine();
 
                         break;
                 }
@@ -276,45 +273,48 @@ public static class ATIP
 
             sb.AppendLine(response.URU ? Localization.Disc_use_is_unrestricted : Localization.Disc_use_is_restricted);
 
-            sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0_1_2, response.LeadInStartMin,
-                            response.LeadInStartSec, response.LeadInStartFrame).
-               AppendLine();
+            sb.AppendFormat(Localization.ATIP_Start_time_of_Lead_in_0_1_2,
+                            response.LeadInStartMin,
+                            response.LeadInStartSec,
+                            response.LeadInStartFrame)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0_1_2, response.LeadOutStartMin,
-                            response.LeadOutStartSec, response.LeadOutStartFrame).
-               AppendLine();
+            sb.AppendFormat(Localization.ATIP_Last_possible_start_time_of_Lead_out_0_1_2,
+                            response.LeadOutStartMin,
+                            response.LeadOutStartSec,
+                            response.LeadOutStartFrame)
+              .AppendLine();
 
             if(response.A1Valid)
             {
                 sb.AppendFormat(Localization.A1_value_0,
-                                (response.A1Values[0] << 16) + (response.A1Values[1] << 8) + response.A1Values[2]).
-                   AppendLine();
+                                (response.A1Values[0] << 16) + (response.A1Values[1] << 8) + response.A1Values[2])
+                  .AppendLine();
             }
 
             if(response.A2Valid)
             {
                 sb.AppendFormat(Localization.A2_value_0,
-                                (response.A2Values[0] << 16) + (response.A2Values[1] << 8) + response.A2Values[2]).
-                   AppendLine();
+                                (response.A2Values[0] << 16) + (response.A2Values[1] << 8) + response.A2Values[2])
+                  .AppendLine();
             }
 
             if(response.A3Valid)
             {
                 sb.AppendFormat(Localization.A3_value_0,
-                                (response.A3Values[0] << 16) + (response.A3Values[1] << 8) + response.A3Values[2]).
-                   AppendLine();
+                                (response.A3Values[0] << 16) + (response.A3Values[1] << 8) + response.A3Values[2])
+                  .AppendLine();
             }
 
             if(response.S4Values != null)
             {
                 sb.AppendFormat(Localization.S4_value_0,
-                                (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2]).
-                   AppendLine();
+                                (response.S4Values[0] << 16) + (response.S4Values[1] << 8) + response.S4Values[2])
+                  .AppendLine();
             }
         }
 
-        if(response.LeadInStartMin != 97)
-            return sb.ToString();
+        if(response.LeadInStartMin != 97) return sb.ToString();
 
         int type = response.LeadInStartFrame % 10;
         int frm  = response.LeadInStartFrame - type;
@@ -330,8 +330,7 @@ public static class ATIP
 
         string manufacturer = ManufacturerFromATIP(response.LeadInStartSec, frm);
 
-        if(manufacturer != "")
-            sb.AppendFormat(Localization.Disc_manufactured_by_0, manufacturer).AppendLine();
+        if(manufacturer != "") sb.AppendFormat(Localization.Disc_manufactured_by_0, manufacturer).AppendLine();
 
         return sb.ToString();
     }
@@ -381,8 +380,7 @@ public static class ATIP
 
                 break;
             case 17:
-                if(frm == 00)
-                    return "Moser Baer India Ltd.";
+                if(frm == 00) return "Moser Baer India Ltd.";
 
                 break;
             case 18:
@@ -396,8 +394,7 @@ public static class ATIP
 
                 break;
             case 20:
-                if(frm == 10)
-                    return "CDA Datenträger Albrechts GmbH";
+                if(frm == 10) return "CDA Datenträger Albrechts GmbH";
 
                 break;
             case 21:
@@ -573,8 +570,7 @@ public static class ATIP
 
                 break;
             case 30:
-                if(frm == 10)
-                    return "CDA Datenträger Albrechts GmbH";
+                if(frm == 10) return "CDA Datenträger Albrechts GmbH";
 
                 break;
             case 31:
@@ -615,8 +611,7 @@ public static class ATIP
 
                 break;
             case 42:
-                if(frm == 20)
-                    return "Advanced Digital Media";
+                if(frm == 20) return "Advanced Digital Media";
 
                 break;
             case 45:

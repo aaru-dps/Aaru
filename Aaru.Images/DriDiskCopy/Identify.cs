@@ -47,8 +47,7 @@ public sealed partial class DriDiskCopy
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
-            return false;
+        if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0) return false;
 
         var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
@@ -74,7 +73,8 @@ public sealed partial class DriDiskCopy
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.fats_no = {0}",  tmpFooter.bpb.fats_no);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sectors = {0}",  tmpFooter.bpb.sectors);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.media_descriptor = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "tmp_footer.bpb.media_descriptor = {0}",
                                    tmpFooter.bpb.media_descriptor);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.spfat = {0}",    tmpFooter.bpb.spfat);
@@ -86,7 +86,8 @@ public sealed partial class DriDiskCopy
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.unknown4 = {0}", tmpFooter.bpb.unknown4);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_footer.bpb.sptrack2 = {0}", tmpFooter.bpb.sptrack2);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ArrayHelpers.ArrayIsNullOrEmpty(tmp_footer.bpb.unknown5) = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(tmpFooter.bpb.unknown5));
 
         var   regexSignature = new Regex(REGEX_DRI);
@@ -94,11 +95,9 @@ public sealed partial class DriDiskCopy
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "MatchSignature.Success? = {0}", matchSignature.Success);
 
-        if(!matchSignature.Success)
-            return false;
+        if(!matchSignature.Success) return false;
 
-        if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
-            return false;
+        if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors) return false;
 
         return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf<Footer>() == stream.Length;
     }

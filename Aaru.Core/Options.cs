@@ -52,8 +52,7 @@ public static class Options
         string                     value;
         var                        sb = new StringBuilder();
 
-        if(options == null)
-            return parsed;
+        if(options == null) return parsed;
 
         for(var index = 0; index < options.Length; index++)
         {
@@ -88,11 +87,9 @@ public static class Options
                     sb      = new StringBuilder();
                     inValue = false;
 
-                    if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
-                        continue;
+                    if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) continue;
 
-                    if(parsed.ContainsKey(name))
-                        parsed.Remove(name);
+                    if(parsed.ContainsKey(name)) parsed.Remove(name);
 
                     parsed.Add(name, value);
 
@@ -185,16 +182,13 @@ public static class Options
             }
         }
 
-        if(!inValue)
-            return parsed;
+        if(!inValue) return parsed;
 
         value = sb.ToString();
 
-        if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
-            return parsed;
+        if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) return parsed;
 
-        if(parsed.ContainsKey(name))
-            parsed.Remove(name);
+        if(parsed.ContainsKey(name)) parsed.Remove(name);
 
         parsed.Add(name, value);
 

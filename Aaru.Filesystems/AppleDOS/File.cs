@@ -47,27 +47,24 @@ public sealed partial class AppleDOS
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(!_fileCache.ContainsKey(filename))
-            return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(filename)) return ErrorNumber.NoSuchFile;
 
         attributes =  FileAttributes.Extents;
         attributes |= FileAttributes.File;
 
-        if(_lockedFiles.Contains(filename))
-            attributes |= FileAttributes.ReadOnly;
+        if(_lockedFiles.Contains(filename)) attributes |= FileAttributes.ReadOnly;
 
         if(_debug &&
            (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
@@ -82,22 +79,20 @@ public sealed partial class AppleDOS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         byte[] file;
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(filename.Length > 30)
-            return ErrorNumber.NameTooLong;
+        if(filename.Length > 30) return ErrorNumber.NameTooLong;
 
         if(_debug &&
            (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
@@ -117,11 +112,9 @@ public sealed partial class AppleDOS
             {
                 ErrorNumber error = CacheFile(filename);
 
-                if(error != ErrorNumber.NoError)
-                    return error;
+                if(error != ErrorNumber.NoError) return error;
 
-                if(!_fileCache.TryGetValue(filename, out file))
-                    return ErrorNumber.InvalidArgument;
+                if(!_fileCache.TryGetValue(filename, out file)) return ErrorNumber.InvalidArgument;
             }
         }
 
@@ -139,11 +132,9 @@ public sealed partial class AppleDOS
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not AppleDosFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleDosFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Cache = null;
 
@@ -155,19 +146,15 @@ public sealed partial class AppleDOS
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not AppleDosFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleDosFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
 
@@ -181,24 +168,21 @@ public sealed partial class AppleDOS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(filename.Length > 30)
-            return ErrorNumber.NameTooLong;
+        if(filename.Length > 30) return ErrorNumber.NameTooLong;
 
-        if(!_fileCache.ContainsKey(filename))
-            return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(filename)) return ErrorNumber.NoSuchFile;
 
         stat = new FileEntryInfo();
 
@@ -237,20 +221,18 @@ public sealed partial class AppleDOS
     ErrorNumber CacheFile(string path)
     {
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(filename.Length > 30)
-            return ErrorNumber.NameTooLong;
+        if(filename.Length > 30) return ErrorNumber.NameTooLong;
 
-        if(!_catalogCache.TryGetValue(filename, out ushort ts))
-            return ErrorNumber.NoSuchFile;
+        if(!_catalogCache.TryGetValue(filename, out ushort ts)) return ErrorNumber.NoSuchFile;
 
         var    lba           = (ulong)(((ts & 0xFF00) >> 8) * _sectorsPerTrack + (ts & 0xFF));
         var    fileMs        = new MemoryStream();
@@ -262,11 +244,9 @@ public sealed partial class AppleDOS
             _usedSectors++;
             ErrorNumber errno = _device.ReadSector(lba, out byte[] tsSectorB);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
-            if(_debug)
-                tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
+            if(_debug) tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
 
             // Read the track/sector list sector
             TrackSectorList tsSector = Marshal.ByteArrayToStructureLittleEndian<TrackSectorList>(tsSectorB);
@@ -286,13 +266,11 @@ public sealed partial class AppleDOS
 
                 var blockLba = (ulong)(entry.track * _sectorsPerTrack + entry.sector);
 
-                if(blockLba == 0)
-                    break;
+                if(blockLba == 0) break;
 
                 errno = _device.ReadSector(blockLba, out byte[] fileBlock);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 fileMs.Write(fileBlock, 0, fileBlock.Length);
                 expectedBlock++;
@@ -301,14 +279,11 @@ public sealed partial class AppleDOS
             lba = (ulong)(tsSector.nextListTrack * _sectorsPerTrack + tsSector.nextListSector);
         }
 
-        if(_fileCache.ContainsKey(filename))
-            _fileCache.Remove(filename);
+        if(_fileCache.ContainsKey(filename)) _fileCache.Remove(filename);
 
-        if(_extentCache.ContainsKey(filename))
-            _extentCache.Remove(filename);
+        if(_extentCache.ContainsKey(filename)) _extentCache.Remove(filename);
 
-        if(_fileSizeCache.ContainsKey(filename))
-            _fileSizeCache.Remove(filename);
+        if(_fileSizeCache.ContainsKey(filename)) _fileSizeCache.Remove(filename);
 
         _fileCache.Add(filename, fileMs.ToArray());
         _extentCache.Add(filename, tsListMs.ToArray());
@@ -327,16 +302,13 @@ public sealed partial class AppleDOS
 
         uint tracksOnBoot = 1;
 
-        if(!_track1UsedByFiles)
-            tracksOnBoot++;
+        if(!_track1UsedByFiles) tracksOnBoot++;
 
-        if(!_track2UsedByFiles)
-            tracksOnBoot++;
+        if(!_track2UsedByFiles) tracksOnBoot++;
 
         ErrorNumber errno = _device.ReadSectors(0, (uint)(tracksOnBoot * _sectorsPerTrack), out _bootBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _usedSectors += (uint)(_bootBlocks.Length / _vtoc.bytesPerSector);
 

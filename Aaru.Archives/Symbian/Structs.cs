@@ -542,6 +542,7 @@ public sealed partial class Symbian
         ///     Pointer to component name record
         /// </summary>
         public uint comp_ptr;
+
         // From EPOC Release 6
         /// <summary>
         ///     Pointer to signature record

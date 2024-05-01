@@ -41,9 +41,9 @@ public sealed class PluginsDialog : Window
     public PluginsDialog()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

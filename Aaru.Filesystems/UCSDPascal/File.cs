@@ -45,21 +45,19 @@ public sealed partial class PascalPlugin
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         ErrorNumber error = GetFileEntry(path, out _);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         attributes = FileAttributes.File;
 
@@ -71,16 +69,15 @@ public sealed partial class PascalPlugin
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         byte[] file;
 
@@ -92,14 +89,13 @@ public sealed partial class PascalPlugin
         {
             ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
-                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
+                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier,
+                                        out byte[] tmp);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier +
                             entry.LastBytes];
@@ -121,11 +117,9 @@ public sealed partial class PascalPlugin
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not PascalFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not PascalFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Cache = null;
 
@@ -137,19 +131,15 @@ public sealed partial class PascalPlugin
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not PascalFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not PascalFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
         mynode.Offset += read;
@@ -163,12 +153,12 @@ public sealed partial class PascalPlugin
         stat = null;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         if(_debug)
         {
@@ -200,8 +190,7 @@ public sealed partial class PascalPlugin
 
         ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         stat = new FileEntryInfo
         {
@@ -222,13 +211,13 @@ public sealed partial class PascalPlugin
     {
         entry = new PascalFileEntry();
 
-        foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
-                                                              string.Compare(path,
-                                                                             StringHandlers.PascalToString(ent.Filename,
-                                                                                 _encoding),
-                                                                             StringComparison.
-                                                                                 InvariantCultureIgnoreCase) ==
-                                                              0))
+        foreach(PascalFileEntry ent in _fileEntries.Where(ent => string.Compare(path,
+                                                                                    StringHandlers
+                                                                                       .PascalToString(ent.Filename,
+                                                                                            _encoding),
+                                                                                    StringComparison
+                                                                                       .InvariantCultureIgnoreCase) ==
+                                                                 0))
         {
             entry = ent;
 

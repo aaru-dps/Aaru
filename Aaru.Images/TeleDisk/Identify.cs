@@ -54,8 +54,7 @@ public sealed partial class TeleDisk
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
 
-        if(_header.Signature != TD_MAGIC && _header.Signature != TD_ADV_COMP_MAGIC)
-            return false;
+        if(_header.Signature != TD_MAGIC && _header.Signature != TD_ADV_COMP_MAGIC) return false;
 
         _header.Sequence      = headerBytes[2];
         _header.DiskSet       = headerBytes[3];
@@ -88,19 +87,22 @@ public sealed partial class TeleDisk
         // This may deny legal images
 
         // That would be much of a coincidence
-        if(_header.Crc == calculatedHeaderCrc)
-            return true;
+        if(_header.Crc == calculatedHeaderCrc) return true;
 
-        if(_header.Sequence != 0x00)
-            return false;
+        if(_header.Sequence != 0x00) return false;
 
         if(_header.DataRate != DATA_RATE_250_KBPS &&
            _header.DataRate != DATA_RATE_300_KBPS &&
            _header.DataRate != DATA_RATE_500_KBPS)
             return false;
 
-        return _header.DriveType is DRIVE_TYPE_35_DD or DRIVE_TYPE_35_ED or DRIVE_TYPE_35_HD or DRIVE_TYPE_525_DD
-                                 or DRIVE_TYPE_525_HD or DRIVE_TYPE_525_HD_DD_DISK or DRIVE_TYPE_8_INCH;
+        return _header.DriveType is DRIVE_TYPE_35_DD
+                                 or DRIVE_TYPE_35_ED
+                                 or DRIVE_TYPE_35_HD
+                                 or DRIVE_TYPE_525_DD
+                                 or DRIVE_TYPE_525_HD
+                                 or DRIVE_TYPE_525_HD_DD_DISK
+                                 or DRIVE_TYPE_8_INCH;
     }
 
 #endregion

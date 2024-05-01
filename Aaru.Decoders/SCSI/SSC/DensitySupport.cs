@@ -46,13 +46,11 @@ public static class DensitySupport
 {
     public static DensitySupportHeader? DecodeDensity(byte[] response)
     {
-        if(response is not { Length: > 56 })
-            return null;
+        if(response is not { Length: > 56 }) return null;
 
         var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
-        if(response.Length != responseLen)
-            return null;
+        if(response.Length != responseLen) return null;
 
         List<DensitySupportDescriptor> descriptors = new();
         var                            offset      = 4;
@@ -108,8 +106,7 @@ public static class DensitySupport
 
     public static string PrettifyDensity(DensitySupportHeader? density)
     {
-        if(density == null)
-            return null;
+        if(density == null) return null;
 
         DensitySupportHeader decoded = density.Value;
         var                  sb      = new StringBuilder();
@@ -123,21 +120,20 @@ public static class DensitySupport
             if(descriptor.primaryCode != descriptor.secondaryCode)
                 sb.AppendFormat("\t" + Localization.Secondary_code_0, descriptor.secondaryCode).AppendLine();
 
-            if(descriptor.writable)
-                sb.AppendLine("\t" + Localization.Drive_can_write_this_density);
+            if(descriptor.writable) sb.AppendLine("\t" + Localization.Drive_can_write_this_density);
 
-            if(descriptor.duplicate)
-                sb.AppendLine("\t" + Localization.This_descriptor_is_duplicated);
+            if(descriptor.duplicate) sb.AppendLine("\t" + Localization.This_descriptor_is_duplicated);
 
-            if(descriptor.defaultDensity)
-                sb.AppendLine("\t" + Localization.This_is_the_default_density_on_the_drive);
+            if(descriptor.defaultDensity) sb.AppendLine("\t" + Localization.This_is_the_default_density_on_the_drive);
 
             sb.AppendFormat("\t" + Localization.Density_has_0_bits_per_mm__with_1_tracks_in_a_2_mm_width_tape,
-                            descriptor.bpmm, descriptor.tracks, descriptor.width / (double)10).
-               AppendLine();
+                            descriptor.bpmm,
+                            descriptor.tracks,
+                            descriptor.width / (double)10)
+              .AppendLine();
 
-            sb.AppendFormat("\t" + Localization.Density_maximum_capacity_is_0_megabytes, descriptor.capacity).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Density_maximum_capacity_is_0_megabytes, descriptor.capacity)
+              .AppendLine();
 
             sb.AppendFormat("\t" + Localization.Density_description_0, descriptor.description).AppendLine();
             sb.AppendLine();
@@ -150,13 +146,11 @@ public static class DensitySupport
 
     public static MediaTypeSupportHeader? DecodeMediumType(byte[] response)
     {
-        if(response is not { Length: > 60 })
-            return null;
+        if(response is not { Length: > 60 }) return null;
 
         var responseLen = (ushort)((response[0] << 8) + response[1] + 2);
 
-        if(response.Length != responseLen)
-            return null;
+        if(response.Length != responseLen) return null;
 
         List<MediaTypeSupportDescriptor> descriptors = new();
         var                              offset      = 4;
@@ -170,8 +164,7 @@ public static class DensitySupport
                 len        = (ushort)((response[offset + 2] << 8) + response[offset + 3])
             };
 
-            if(descriptor.len != 52)
-                return null;
+            if(descriptor.len != 52) return null;
 
             descriptor.numberOfCodes = response[offset + 4];
             descriptor.densityCodes  = new byte[9];
@@ -207,16 +200,15 @@ public static class DensitySupport
 
     public static string PrettifyMediumType(MediaTypeSupportHeader? mediumType)
     {
-        if(mediumType == null)
-            return null;
+        if(mediumType == null) return null;
 
         MediaTypeSupportHeader decoded = mediumType.Value;
         var                    sb      = new StringBuilder();
 
         foreach(MediaTypeSupportDescriptor descriptor in decoded.descriptors)
         {
-            sb.AppendFormat(Localization.Medium_type_0_defined_by_1, descriptor.name, descriptor.organization).
-               AppendLine();
+            sb.AppendFormat(Localization.Medium_type_0_defined_by_1, descriptor.name, descriptor.organization)
+              .AppendLine();
 
             sb.AppendFormat("\t" + Localization.Medium_type_code_0, descriptor.mediumType).AppendLine();
 
@@ -224,15 +216,15 @@ public static class DensitySupport
             {
                 sb.AppendFormat("\t" + Localization.Medium_supports_following_density_codes);
 
-                for(var i = 0; i < descriptor.numberOfCodes; i++)
-                    sb.Append($" {descriptor.densityCodes[i]:X2}h");
+                for(var i = 0; i < descriptor.numberOfCodes; i++) sb.Append($" {descriptor.densityCodes[i]:X2}h");
 
                 sb.AppendLine();
             }
 
             sb.AppendFormat("\t" + Localization.Medium_has_a_nominal_length_of_0_m_in_a_1_mm_width_tape,
-                            descriptor.length, descriptor.width / (double)10).
-               AppendLine();
+                            descriptor.length,
+                            descriptor.width / (double)10)
+              .AppendLine();
 
             sb.AppendFormat("\t" + Localization.Medium_description_0, descriptor.description).AppendLine();
             sb.AppendLine();

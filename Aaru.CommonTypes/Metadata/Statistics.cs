@@ -95,9 +95,11 @@ public class Stats
     public VerifyStats Verify { get; set; }
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+[JsonSourceGenerationOptions(WriteIndented = true,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(StatsDto))]
+
 // ReSharper disable once PartialTypeWithSinglePart
 public partial class StatsDtoContext : JsonSerializerContext;
 

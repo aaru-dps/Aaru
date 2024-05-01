@@ -51,24 +51,31 @@ sealed class PrintHexCommand : Command
     public PrintHexCommand() : base("print", UI.Image_Print_Command_Description)
     {
         Add(new Option<ulong>(new[]
-        {
-            "--length", "-l"
-        }, () => 1, UI.How_many_sectors_to_print));
+                              {
+                                  "--length", "-l"
+                              },
+                              () => 1,
+                              UI.How_many_sectors_to_print));
 
         Add(new Option<bool>(new[]
-        {
-            "--long-sectors", "-r"
-        }, () => false, UI.Print_sectors_with_tags_included));
+                             {
+                                 "--long-sectors", "-r"
+                             },
+                             () => false,
+                             UI.Print_sectors_with_tags_included));
 
         Add(new Option<ulong>(new[]
-        {
-            "--start", "-s"
-        }, UI.Starting_sector));
+                              {
+                                  "--start", "-s"
+                              },
+                              UI.Starting_sector));
 
         Add(new Option<ushort>(new[]
-        {
-            "--width", "-w"
-        }, () => 32, UI.How_many_bytes_to_print_per_line));
+                               {
+                                   "--width", "-w"
+                               },
+                               () => 32,
+                               UI.How_many_bytes_to_print_per_line));
 
         AddArgument(new Argument<string>
         {

@@ -102,11 +102,9 @@ public partial class Device
 
         if(aaruRemote is null)
         {
-            if(OperatingSystem.IsWindows())
-                return Windows.ListDevices.GetList();
+            if(OperatingSystem.IsWindows()) return Windows.ListDevices.GetList();
 
-            if(OperatingSystem.IsLinux())
-                return Linux.ListDevices.GetList();
+            if(OperatingSystem.IsLinux()) return Linux.ListDevices.GetList();
 
             throw new InvalidOperationException(string.Format(Localization.Platform_0_not_yet_supported,
                                                               DetectOS.GetRealPlatformID()));

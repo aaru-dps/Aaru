@@ -53,12 +53,12 @@ public sealed partial class DiskDupe
         TrackInfo[] trackMap     = null;
         long[]      trackOffsets = null;
 
-        if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
-            return ErrorNumber.InvalidArgument;
+        if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets)) return ErrorNumber.InvalidArgument;
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.Detected_DiskDupe_DDI_image_with_0_tracks_and_1_sectors_per_track,
-                                   _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
+                                   _diskTypes[fHeader.diskType].cyl,
+                                   _diskTypes[fHeader.diskType].spt);
 
         _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;
         _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
@@ -92,11 +92,9 @@ public sealed partial class DiskDupe
         var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
         var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(trackNum > 2 * _imageInfo.Cylinders)
-            return ErrorNumber.SectorNotFound;
+        if(trackNum > 2 * _imageInfo.Cylinders) return ErrorNumber.SectorNotFound;
 
         buffer = new byte[_imageInfo.SectorSize];
 
@@ -118,11 +116,9 @@ public sealed partial class DiskDupe
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -130,8 +126,7 @@ public sealed partial class DiskDupe
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

@@ -42,7 +42,7 @@ public static class VendorCode
     {
         switch(id)
         {
-        #region JEDEC
+#region JEDEC
 
             case 0x01:
                 return "AMD";
@@ -545,7 +545,7 @@ public static class VendorCode
             case 0x7FFE:
                 return "3COM";
 
-        #endregion JEDEC
+#endregion JEDEC
 
             case 0x0100:
                 return "Digital Equipment Corporation";

@@ -83,12 +83,12 @@ public static class BCA
 
     public static BurstCuttingArea? Decode(byte[] BCAResponse)
     {
-        if(BCAResponse == null)
-            return null;
+        if(BCAResponse == null) return null;
 
         if(BCAResponse.Length != 68)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_Blu_ray_BCA_size_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Found_incorrect_Blu_ray_BCA_size_0_bytes,
                                        BCAResponse.Length);
 
             return null;
@@ -109,20 +109,19 @@ public static class BCA
 
     public static string Prettify(BurstCuttingArea? BCAResponse)
     {
-        if(BCAResponse == null)
-            return null;
+        if(BCAResponse == null) return null;
 
         BurstCuttingArea response = BCAResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
 
         sb.AppendFormat(Localization.Blu_ray_Burst_Cutting_Area_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.BCA, 80));

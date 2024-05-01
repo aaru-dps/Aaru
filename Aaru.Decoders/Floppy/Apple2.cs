@@ -156,8 +156,7 @@ public static class Apple2
     /// <param name="data">5and3 encoded data.</param>
     public static byte[] Decode5and3(byte[] data)
     {
-        if(data is not { Length: 410 })
-            return null;
+        if(data is not { Length: 410 }) return null;
 
         var  buffer = new byte[data.Length];
         byte carry  = 0;
@@ -193,8 +192,7 @@ public static class Apple2
     /// <param name="data">6and2 encoded data.</param>
     public static byte[] Decode6and2(byte[] data)
     {
-        if(data is not { Length: 342 })
-            return null;
+        if(data is not { Length: 342 }) return null;
 
         var  buffer = new byte[data.Length];
         byte carry  = 0;
@@ -236,12 +234,10 @@ public static class Apple2
 
     public static byte[] DecodeSector(RawSector sector)
     {
-        if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA)
-            return null;
+        if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA) return null;
 
         // Pre DOS 3.3
-        if(sector.addressField.prologue[2] == 0xB5)
-            return Decode5and3(sector.dataField.data);
+        if(sector.addressField.prologue[2] == 0xB5) return Decode5and3(sector.dataField.data);
 
         // DOS 3.3
         return sector.addressField.prologue[2] == 0x96 ? Decode6and2(sector.dataField.data) : null;
@@ -258,8 +254,7 @@ public static class Apple2
         endOffset = offset;
 
         // Not an Apple ][ GCR sector
-        if(data == null || data.Length < 363)
-            return null;
+        if(data == null || data.Length < 363) return null;
 
         int position = offset;
 
@@ -273,8 +268,7 @@ public static class Apple2
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Prologue_found_at_0, position);
 
                     // Epilogue not in correct position
-                    if(data[position + 11] != 0xDE || data[position + 12] != 0xAA)
-                        return null;
+                    if(data[position + 11] != 0xDE || data[position + 12] != 0xAA) return null;
 
                     var sector = new RawSector
                     {
@@ -307,28 +301,34 @@ public static class Apple2
                         }
                     };
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Volume_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Volume_0,
                                                ((sector.addressField.volume[0] & 0x55) << 1 |
                                                 sector.addressField.volume[1] & 0x55) &
                                                0xFF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Core.Track_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Core.Track_0,
                                                ((sector.addressField.track[0] & 0x55) << 1 |
                                                 sector.addressField.track[1] & 0x55) &
                                                0xFF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Sector_0,
                                                ((sector.addressField.sector[0] & 0x55) << 1 |
                                                 sector.addressField.sector[1] & 0x55) &
                                                0xFF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Checksum_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Checksum_0,
                                                ((sector.addressField.checksum[0] & 0x55) << 1 |
                                                 sector.addressField.checksum[1] & 0x55) &
                                                0xFF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Epilogue_0_1_2,
-                                               sector.addressField.epilogue[0], sector.addressField.epilogue[1],
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Epilogue_0_1_2,
+                                               sector.addressField.epilogue[0],
+                                               sector.addressField.epilogue[1],
                                                sector.addressField.epilogue[2]);
 
                     position += 14;
@@ -345,12 +345,10 @@ public static class Apple2
                     }
 
                     // Lost sync
-                    if(!onSync)
-                        return null;
+                    if(!onSync) return null;
 
                     // Prologue not found
-                    if(data[position] != 0xD5 || data[position + 1] != 0xAA)
-                        return null;
+                    if(data[position] != 0xD5 || data[position + 1] != 0xAA) return null;
 
                     sector.innerGap  = gaps.ToArray();
                     sector.dataField = new RawDataField();
@@ -373,13 +371,13 @@ public static class Apple2
                         position++;
 
                         // No space left for epilogue
-                        if(position + 4 > data.Length)
-                            return null;
+                        if(position + 4 > data.Length) return null;
                     }
 
                     sector.dataField.data = gaps.ToArray();
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Data_has_0_bytes,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Data_has_0_bytes,
                                                sector.dataField.data.Length);
 
                     sector.dataField.checksum    = data[position];
@@ -435,8 +433,7 @@ public static class Apple2
 
     public static byte[] MarshalAddressField(RawAddressField addressField)
     {
-        if(addressField == null)
-            return null;
+        if(addressField == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(addressField.prologue, 0, addressField.prologue.Length);
@@ -451,8 +448,7 @@ public static class Apple2
 
     public static byte[] MarshalSector(RawSector sector)
     {
-        if(sector == null)
-            return null;
+        if(sector == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(sector.addressField.prologue, 0, sector.addressField.prologue.Length);
@@ -492,19 +488,16 @@ public static class Apple2
             onSync = count >= 5;
         }
 
-        if(position >= data.Length)
-            return null;
+        if(position >= data.Length) return null;
 
-        if(!onSync)
-            return null;
+        if(!onSync) return null;
 
         while(position < data.Length)
         {
             int       oldPosition = position;
             RawSector sector      = MarshalSector(data, out position, position);
 
-            if(sector == null)
-                break;
+            if(sector == null) break;
 
             if(firstSector)
             {
@@ -520,7 +513,8 @@ public static class Apple2
                 break;
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Adding_sector_0_of_track_1,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Adding_sector_0_of_track_1,
                                        ((sector.addressField.sector[0] & 0x55) << 1 |
                                         sector.addressField.sector[1] & 0x55) &
                                        0xFF,
@@ -531,8 +525,7 @@ public static class Apple2
             sectors.Add(sector);
         }
 
-        if(sectors.Count == 0)
-            return null;
+        if(sectors.Count == 0) return null;
 
         var track = new RawTrack
         {
@@ -547,14 +540,12 @@ public static class Apple2
 
     public static byte[] MarshalTrack(RawTrack track)
     {
-        if(track == null)
-            return null;
+        if(track == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(track.gap, 0, track.gap.Length);
 
-        foreach(byte[] rawSector in track.sectors.Select(MarshalSector))
-            raw.Write(rawSector, 0, rawSector.Length);
+        foreach(byte[] rawSector in track.sectors.Select(MarshalSector)) raw.Write(rawSector, 0, rawSector.Length);
 
         return raw.ToArray();
     }
@@ -576,8 +567,7 @@ public static class Apple2
             track = MarshalTrack(data, out position, position);
         }
 
-        if(tracks.Count == 0)
-            return null;
+        if(tracks.Count == 0) return null;
 
         endOffset = position;
 
@@ -588,13 +578,11 @@ public static class Apple2
 
     public static byte[] MarshalDisk(RawTrack[] disk)
     {
-        if(disk == null)
-            return null;
+        if(disk == null) return null;
 
         var raw = new MemoryStream();
 
-        foreach(byte[] rawTrack in disk.Select(MarshalTrack))
-            raw.Write(rawTrack, 0, rawTrack.Length);
+        foreach(byte[] rawTrack in disk.Select(MarshalTrack)) raw.Write(rawTrack, 0, rawTrack.Length);
 
         return raw.ToArray();
     }

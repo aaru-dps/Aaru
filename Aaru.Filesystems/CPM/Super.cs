@@ -94,7 +94,8 @@ public sealed partial class CPM
             }
 
             // Head changes after whole side
-            else if(string.Compare(_workingDefinition.order, "CYLINDERS",
+            else if(string.Compare(_workingDefinition.order,
+                                   "CYLINDERS",
                                    StringComparison.InvariantCultureIgnoreCase) ==
                     0)
             {
@@ -122,8 +123,8 @@ public sealed partial class CPM
                     0)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
+                                           Localization
+                                              .Dont_know_how_to_handle_COLUMBIA_ordering_not_proceeding_with_this_definition);
 
                 return ErrorNumber.NotImplemented;
             }
@@ -132,8 +133,8 @@ public sealed partial class CPM
             else if(string.Compare(_workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
+                                           Localization
+                                              .Don_know_how_to_handle_EAGLE_ordering_not_proceeding_with_this_definition);
 
                 return ErrorNumber.NotImplemented;
             }
@@ -158,16 +159,16 @@ public sealed partial class CPM
             for(var p = 0; p <= (int)(partition.End - partition.Start); p++)
             {
                 ErrorNumber errno =
-                    _device.ReadSector((ulong)((int)partition.Start + p / _sectorMask.Length * _sectorMask.Length + _sectorMask[p % _sectorMask.Length]),
+                    _device.ReadSector((ulong)((int)partition.Start                        +
+                                               p / _sectorMask.Length * _sectorMask.Length +
+                                               _sectorMask[p % _sectorMask.Length]),
                                        out byte[] readSector);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 if(_workingDefinition.complement)
                 {
-                    for(var b = 0; b < readSector.Length; b++)
-                        readSector[b] = (byte)(~readSector[b] & 0xFF);
+                    for(var b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
                 }
 
                 deinterleavedSectors.Add((ulong)p, readSector);
@@ -204,8 +205,7 @@ public sealed partial class CPM
                 blockMs.Write(sector, 0, sector.Length);
                 sectorsPerBlock++;
 
-                if(sectorsPerBlock != blockSize / sector.Length)
-                    continue;
+                if(sectorsPerBlock != blockSize / sector.Length) continue;
 
                 allocationBlocks.Add(blockNo++, blockMs.ToArray());
                 sectorsPerBlock = 0;
@@ -238,8 +238,7 @@ public sealed partial class CPM
 
         byte[] directory = dirMs.ToArray();
 
-        if(directory == null)
-            return ErrorNumber.InvalidArgument;
+        if(directory == null) return ErrorNumber.InvalidArgument;
 
         var    dirCnt = 0;
         string file1  = null;
@@ -291,18 +290,15 @@ public sealed partial class CPM
                         validEntry         &= entry.extension[i] >= 0x20;
                     }
 
-                    if(!validEntry)
-                        continue;
+                    if(!validEntry) continue;
 
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0)
-                        filename = $"{user:X1}:{filename}";
+                    if(user > 0) filename = $"{user:X1}:{filename}";
 
-                    if(!string.IsNullOrEmpty(extension))
-                        filename = filename + "." + extension;
+                    if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                     filename = filename.Replace('/', '\u2215');
 
@@ -332,14 +328,11 @@ public sealed partial class CPM
                         blocks = new List<ushort>();
 
                     // Attributes
-                    if(hidden)
-                        fInfo.Attributes |= FileAttributes.Hidden;
+                    if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
 
-                    if(rdOnly)
-                        fInfo.Attributes |= FileAttributes.ReadOnly;
+                    if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
 
-                    if(system)
-                        fInfo.Attributes |= FileAttributes.System;
+                    if(system) fInfo.Attributes |= FileAttributes.System;
 
                     // Supposedly there is a value in the directory entry telling how many blocks are designated in
                     // this entry. However some implementations tend to do whatever they wish, but none will ever
@@ -356,8 +349,7 @@ public sealed partial class CPM
                     _statCache.Add(filename, fInfo);
 
                     // Add the file to the directory listing
-                    if(!_dirList.Contains(filename))
-                        _dirList.Add(filename);
+                    if(!_dirList.Contains(filename)) _dirList.Add(filename);
 
                     // Count entries 3 by 3 for timestamps
                     switch(dirCnt % 3)
@@ -406,18 +398,15 @@ public sealed partial class CPM
                         validEntry         &= entry.extension[i] >= 0x20;
                     }
 
-                    if(!validEntry)
-                        continue;
+                    if(!validEntry) continue;
 
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0)
-                        filename = $"{user:X1}:{filename}";
+                    if(user > 0) filename = $"{user:X1}:{filename}";
 
-                    if(!string.IsNullOrEmpty(extension))
-                        filename = filename + "." + extension;
+                    if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                     filename = filename.Replace('/', '\u2215');
 
@@ -447,14 +436,11 @@ public sealed partial class CPM
                         blocks = new List<ushort>();
 
                     // Attributes
-                    if(hidden)
-                        fInfo.Attributes |= FileAttributes.Hidden;
+                    if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
 
-                    if(rdOnly)
-                        fInfo.Attributes |= FileAttributes.ReadOnly;
+                    if(rdOnly) fInfo.Attributes |= FileAttributes.ReadOnly;
 
-                    if(system)
-                        fInfo.Attributes |= FileAttributes.System;
+                    if(system) fInfo.Attributes |= FileAttributes.System;
 
                     // Supposedly there is a value in the directory entry telling how many blocks are designated in
                     // this entry. However some implementations tend to do whatever they wish, but none will ever
@@ -471,8 +457,7 @@ public sealed partial class CPM
                     _statCache.Add(filename, fInfo);
 
                     // Add the file to the directory listing
-                    if(!_dirList.Contains(filename))
-                        _dirList.Add(filename);
+                    if(!_dirList.Contains(filename)) _dirList.Add(filename);
 
                     // Count entries 3 by 3 for timestamps
                     switch(dirCnt % 3)
@@ -503,27 +488,22 @@ public sealed partial class CPM
 
                     int user = entry.userNumber & 0x0F;
 
-                    for(var i = 0; i < 8; i++)
-                        entry.filename[i] &= 0x7F;
+                    for(var i = 0; i < 8; i++) entry.filename[i] &= 0x7F;
 
-                    for(var i = 0; i < 3; i++)
-                        entry.extension[i] &= 0x7F;
+                    for(var i = 0; i < 3; i++) entry.extension[i] &= 0x7F;
 
                     string filename  = Encoding.ASCII.GetString(entry.filename).Trim();
                     string extension = Encoding.ASCII.GetString(entry.extension).Trim();
 
                     // If user is != 0, append user to name to have identical filenames
-                    if(user > 0)
-                        filename = $"{user:X1}:{filename}";
+                    if(user > 0) filename = $"{user:X1}:{filename}";
 
-                    if(!string.IsNullOrEmpty(extension))
-                        filename = filename + "." + extension;
+                    if(!string.IsNullOrEmpty(extension)) filename = filename + "." + extension;
 
                     filename = filename.Replace('/', '\u2215');
 
                     // Do not repeat passwords
-                    if(_passwordCache.ContainsKey(filename))
-                        _passwordCache.Remove(filename);
+                    if(_passwordCache.ContainsKey(filename)) _passwordCache.Remove(filename);
 
                     // Copy whole password entry
                     var tmp = new byte[32];
@@ -745,8 +725,7 @@ public sealed partial class CPM
         {
             var fileMs = new MemoryStream();
 
-            if(_statCache.TryGetValue(filename, out FileEntryInfo fInfo))
-                _statCache.Remove(filename);
+            if(_statCache.TryGetValue(filename, out FileEntryInfo fInfo)) _statCache.Remove(filename);
 
             fInfo.Blocks = 0;
 
@@ -754,8 +733,7 @@ public sealed partial class CPM
             {
                 for(var ex = 0; ex < extents.Count; ex++)
                 {
-                    if(!extents.TryGetValue(ex, out List<ushort> alBlks))
-                        continue;
+                    if(!extents.TryGetValue(ex, out List<ushort> alBlks)) continue;
 
                     foreach(ushort alBlk in alBlks)
                     {
@@ -787,8 +765,7 @@ public sealed partial class CPM
                 var tmp = new byte[8];
                 Array.Copy(kvp.Value, 16, tmp, 0, 8);
 
-                for(var t = 0; t < 8; t++)
-                    tmp[t] ^= kvp.Value[13];
+                for(var t = 0; t < 8; t++) tmp[t] ^= kvp.Value[13];
 
                 _decodedPasswordCache.Add(kvp.Key, tmp);
             }
@@ -812,14 +789,11 @@ public sealed partial class CPM
             Type         = FS_TYPE
         };
 
-        if(_labelCreationDate != null)
-            Metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
+        if(_labelCreationDate != null) Metadata.CreationDate = DateHandlers.CpmToDateTime(_labelCreationDate);
 
-        if(_labelUpdateDate != null)
-            Metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
+        if(_labelUpdateDate != null) Metadata.ModificationDate = DateHandlers.CpmToDateTime(_labelUpdateDate);
 
-        if(!string.IsNullOrEmpty(_label))
-            Metadata.VolumeName = _label;
+        if(!string.IsNullOrEmpty(_label)) Metadata.VolumeName = _label;
 
         _mounted = true;
 
@@ -831,8 +805,7 @@ public sealed partial class CPM
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _cpmStat;
 

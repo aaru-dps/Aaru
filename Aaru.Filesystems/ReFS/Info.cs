@@ -49,19 +49,15 @@ public sealed partial class ReFS : IFilesystem
     {
         var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<VolumeHeader>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<VolumeHeader>()) return false;
 
         VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
@@ -79,32 +75,32 @@ public sealed partial class ReFS : IFilesystem
 
         var sbSize = (uint)(Marshal.SizeOf<VolumeHeader>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<VolumeHeader>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbSize >= partition.End)
-            return;
+        if(partition.Start + sbSize >= partition.End) return;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<VolumeHeader>())
-            return;
+        if(sector.Length < Marshal.SizeOf<VolumeHeader>()) return;
 
         VolumeHeader vhdr = Marshal.ByteArrayToStructureLittleEndian<VolumeHeader>(sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.jump empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "VolumeHeader.jump empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.jump));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.signature = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "VolumeHeader.signature = {0}",
                                    StringHandlers.CToString(vhdr.signature));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.mustBeZero empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "VolumeHeader.mustBeZero empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.mustBeZero));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.identifier = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "VolumeHeader.identifier = {0}",
                                    StringHandlers.CToString(BitConverter.GetBytes(vhdr.identifier)));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.length = {0}",         vhdr.length);
@@ -119,7 +115,8 @@ public sealed partial class ReFS : IFilesystem
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown3 zero? = {0}", vhdr.unknown3 == 0);
         AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown4 zero? = {0}", vhdr.unknown4 == 0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "VolumeHeader.unknown5 empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "VolumeHeader.unknown5 empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vhdr.unknown5));
 
         if(vhdr.identifier != FSRS                           ||
@@ -132,12 +129,13 @@ public sealed partial class ReFS : IFilesystem
         sb.AppendLine(Localization.Microsoft_Resilient_File_System);
         sb.AppendFormat(Localization.Volume_uses_0_bytes_per_sector, vhdr.bytesPerSector).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_uses_0_sectors_per_cluster_1_bytes, vhdr.sectorsPerCluster,
-                        vhdr.sectorsPerCluster * vhdr.bytesPerSector).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_uses_0_sectors_per_cluster_1_bytes,
+                        vhdr.sectorsPerCluster,
+                        vhdr.sectorsPerCluster * vhdr.bytesPerSector)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_has_0_sectors_1_bytes, vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_sectors_1_bytes, vhdr.sectors, vhdr.sectors * vhdr.bytesPerSector)
+          .AppendLine();
 
         information = sb.ToString();
 

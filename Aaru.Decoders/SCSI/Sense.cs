@@ -189,14 +189,11 @@ public static class Sense
     /// <param name="sense">Sense bytes.</param>
     public static SenseType GetType(byte[] sense)
     {
-        if(sense == null)
-            return SenseType.Invalid;
+        if(sense == null) return SenseType.Invalid;
 
-        if(sense.Length < 4)
-            return SenseType.Invalid;
+        if(sense.Length < 4) return SenseType.Invalid;
 
-        if((sense[0] & 0x70) != 0x70)
-            return sense.Length != 4 ? SenseType.Invalid : SenseType.StandardSense;
+        if((sense[0] & 0x70) != 0x70) return sense.Length != 4 ? SenseType.Invalid : SenseType.StandardSense;
 
         return (sense[0] & 0x0F) switch
                {
@@ -210,8 +207,7 @@ public static class Sense
 
     public static StandardSense? DecodeStandard(byte[] sense)
     {
-        if(GetType(sense) != SenseType.StandardSense)
-            return null;
+        if(GetType(sense) != SenseType.StandardSense) return null;
 
         var decoded = new StandardSense();
         decoded.AddressValid |= (sense[0] & 0x80) == 0x80;
@@ -250,14 +246,11 @@ public static class Sense
     {
         senseDescription = null;
 
-        if(sense is null || sense.Length == 0)
-            return null;
+        if(sense is null || sense.Length == 0) return null;
 
-        if((sense[0] & 0x7F) != 0x70 && (sense[0] & 0x7F) != 0x71)
-            return null;
+        if((sense[0] & 0x7F) != 0x70 && (sense[0] & 0x7F) != 0x71) return null;
 
-        if(sense.Length < 8)
-            return null;
+        if(sense.Length < 8) return null;
 
         var decoded = new FixedSense
         {
@@ -281,14 +274,11 @@ public static class Sense
             senseDescription = GetSenseDescription(decoded.ASC, decoded.ASCQ);
         }
 
-        if(sense.Length >= 15)
-            decoded.FieldReplaceable = sense[14];
+        if(sense.Length >= 15) decoded.FieldReplaceable = sense[14];
 
-        if(sense.Length >= 18)
-            decoded.SenseKeySpecific = (uint)((sense[15] << 16) + (sense[16] << 8) + sense[17]);
+        if(sense.Length >= 18) decoded.SenseKeySpecific = (uint)((sense[15] << 16) + (sense[16] << 8) + sense[17]);
 
-        if(sense.Length <= 18)
-            return decoded;
+        if(sense.Length <= 18) return decoded;
 
         decoded.AdditionalSense = new byte[sense.Length - 18];
         Array.Copy(sense, 18, decoded.AdditionalSense, 0, decoded.AdditionalSense.Length);
@@ -302,15 +292,12 @@ public static class Sense
     {
         senseDescription = null;
 
-        if(sense == null)
-            return null;
+        if(sense == null) return null;
 
-        if(sense.Length < 8)
-            return null;
+        if(sense.Length < 8) return null;
 
         // Fixed sense
-        if((sense[0] & 0x7F) == 0x70 || (sense[0] & 0x7F) == 0x71)
-            return null;
+        if((sense[0] & 0x7F) == 0x70 || (sense[0] & 0x7F) == 0x71) return null;
 
         var decoded = new DescriptorSense
         {
@@ -334,8 +321,7 @@ public static class Sense
 
                 var desc = new byte[descLen];
 
-                if(offset + descLen >= sense.Length)
-                    descLen = sense.Length - offset;
+                if(offset + descLen >= sense.Length) descLen = sense.Length - offset;
 
                 Array.Copy(sense, offset, desc, 0, descLen);
 
@@ -371,20 +357,21 @@ public static class Sense
 
     public static string PrettifySense(StandardSense? sense)
     {
-        if(!sense.HasValue)
-            return null;
+        if(!sense.HasValue) return null;
 
         return sense.Value.AddressValid
-                   ? string.Format(Localization.Error_class_0_type_1_happened_on_block_2 + "\n", sense.Value.ErrorClass,
-                                   sense.Value.ErrorType, sense.Value.LBA)
-                   : string.Format(Localization.Error_class_0_type_1 + "\n", sense.Value.ErrorClass,
+                   ? string.Format(Localization.Error_class_0_type_1_happened_on_block_2 + "\n",
+                                   sense.Value.ErrorClass,
+                                   sense.Value.ErrorType,
+                                   sense.Value.LBA)
+                   : string.Format(Localization.Error_class_0_type_1 + "\n",
+                                   sense.Value.ErrorClass,
                                    sense.Value.ErrorType);
     }
 
     public static string PrettifySense(FixedSense? sense)
     {
-        if(!sense.HasValue)
-            return null;
+        if(!sense.HasValue) return null;
 
         FixedSense decoded = sense.Value;
 
@@ -392,31 +379,23 @@ public static class Sense
 
         sb.AppendFormat(Localization.SCSI_SENSE_0, GetSenseKey(decoded.SenseKey)).AppendLine();
 
-        if(decoded.SegmentNumber > 0)
-            sb.AppendFormat(Localization.On_segment_0, decoded.SegmentNumber).AppendLine();
+        if(decoded.SegmentNumber > 0) sb.AppendFormat(Localization.On_segment_0, decoded.SegmentNumber).AppendLine();
 
-        if(decoded.Filemark)
-            sb.AppendLine(Localization.Filemark_or_setmark_found);
+        if(decoded.Filemark) sb.AppendLine(Localization.Filemark_or_setmark_found);
 
-        if(decoded.EOM)
-            sb.AppendLine(Localization.End_of_medium_partition_found);
+        if(decoded.EOM) sb.AppendLine(Localization.End_of_medium_partition_found);
 
-        if(decoded.ILI)
-            sb.AppendLine(Localization.Incorrect_length_indicator);
+        if(decoded.ILI) sb.AppendLine(Localization.Incorrect_length_indicator);
 
-        if(decoded.InformationValid)
-            sb.AppendFormat(Localization.On_logical_block_0, decoded.Information).AppendLine();
+        if(decoded.InformationValid) sb.AppendFormat(Localization.On_logical_block_0, decoded.Information).AppendLine();
 
-        if(decoded.AdditionalLength < 6)
-            return sb.ToString();
+        if(decoded.AdditionalLength < 6) return sb.ToString();
 
         sb.AppendLine(GetSenseDescription(decoded.ASC, decoded.ASCQ));
 
-        if(decoded.AdditionalLength < 10)
-            return sb.ToString();
+        if(decoded.AdditionalLength < 10) return sb.ToString();
 
-        if(!decoded.SKSV)
-            return sb.ToString();
+        if(!decoded.SKSV) return sb.ToString();
 
         switch(decoded.SenseKey)
         {
@@ -429,20 +408,21 @@ public static class Sense
                 if((decoded.SenseKeySpecific & 0x200000) == 0x200000)
                 {
                     sb.AppendFormat(Localization.Invalid_value_in_bit_0_in_field_1_of_CDB,
-                                    (decoded.SenseKeySpecific & 0x70000) >> 16, decoded.SenseKeySpecific & 0xFFFF).
-                       AppendLine();
+                                    (decoded.SenseKeySpecific & 0x70000) >> 16,
+                                    decoded.SenseKeySpecific & 0xFFFF)
+                      .AppendLine();
                 }
                 else
                 {
-                    sb.AppendFormat(Localization.Invalid_value_in_field_0_of_CDB, decoded.SenseKeySpecific & 0xFFFF).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Invalid_value_in_field_0_of_CDB, decoded.SenseKeySpecific & 0xFFFF)
+                      .AppendLine();
                 }
             }
 
                 break;
             case SenseKeys.NotReady:
-                sb.AppendFormat(Localization.Format_progress_0, (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536).
-                   AppendLine();
+                sb.AppendFormat(Localization.Format_progress_0, (double)(decoded.SenseKeySpecific & 0xFFFF) / 65536)
+                  .AppendLine();
 
                 break;
             case SenseKeys.RecoveredError:
@@ -458,8 +438,7 @@ public static class Sense
 
     public static string PrettifySense(DescriptorSense? sense)
     {
-        if(!sense.HasValue)
-            return null;
+        if(!sense.HasValue) return null;
 
         DescriptorSense decoded = sense.Value;
 
@@ -468,8 +447,7 @@ public static class Sense
         sb.AppendFormat(Localization.SCSI_SENSE_0, GetSenseKey(decoded.SenseKey)).AppendLine();
         sb.AppendLine(GetSenseDescription(decoded.ASC, decoded.ASCQ));
 
-        if(decoded.Descriptors == null || decoded.Descriptors.Count == 0)
-            return sb.ToString();
+        if(decoded.Descriptors == null || decoded.Descriptors.Count == 0) return sb.ToString();
 
         foreach(KeyValuePair<byte, byte[]> kvp in decoded.Descriptors)
         {
@@ -490,8 +468,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static ulong DecodeDescriptor00(byte[] descriptor)
     {
-        if(descriptor.Length != 12 || descriptor[0] != 0x00)
-            return 0;
+        if(descriptor.Length != 12 || descriptor[0] != 0x00) return 0;
 
         var temp = new byte[8];
 
@@ -512,8 +489,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static ulong DecodeDescriptor01(byte[] descriptor)
     {
-        if(descriptor.Length != 12 || descriptor[0] != 0x01)
-            return 0;
+        if(descriptor.Length != 12 || descriptor[0] != 0x01) return 0;
 
         var temp = new byte[8];
 
@@ -534,8 +510,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static byte[] DecodeDescriptor02(byte[] descriptor)
     {
-        if(descriptor.Length != 8 || descriptor[0] != 0x02)
-            return null;
+        if(descriptor.Length != 8 || descriptor[0] != 0x02) return null;
 
         var temp = new byte[3];
         Array.Copy(descriptor, 4, temp, 0, 3);
@@ -548,8 +523,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static byte DecodeDescriptor03(byte[] descriptor)
     {
-        if(descriptor.Length != 4 || descriptor[0] != 0x03)
-            return 0;
+        if(descriptor.Length != 4 || descriptor[0] != 0x03) return 0;
 
         return descriptor[3];
     }
@@ -559,8 +533,7 @@ public static class Sense
     /// <param name="descriptor">Descriptor.</param>
     public static AnotherProgressIndicationSenseDescriptor? DecodeDescriptor0A(byte[] descriptor)
     {
-        if(descriptor.Length != 8 || descriptor[0] != 0x0A)
-            return null;
+        if(descriptor.Length != 8 || descriptor[0] != 0x0A) return null;
 
         return new AnotherProgressIndicationSenseDescriptor
         {
@@ -2729,10 +2702,9 @@ public static class Sense
         }
 
         return ASC >= 0x80
-                   ?
-                   ASCQ >= 0x80
-                       ? string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
-                       : string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_ASCQ_1,                 ASC, ASCQ)
+                   ? ASCQ >= 0x80
+                         ? string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
+                         : string.Format(Localization.VENDOR_SPECIFIC_ASC_0_WITH_ASCQ_1,                 ASC, ASCQ)
                    : ASCQ >= 0x80
                        ? string.Format(Localization.ASC_0_WITH_VENDOR_SPECIFIC_ASCQ_1, ASC, ASCQ)
                        : string.Format(Localization.ASC_0_WITH_ASCQ_1,                 ASC, ASCQ);

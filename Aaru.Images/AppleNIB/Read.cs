@@ -52,8 +52,7 @@ public sealed partial class AppleNib
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[stream.Length];
         stream.EnsureRead(buffer, 0, buffer.Length);
@@ -70,8 +69,7 @@ public sealed partial class AppleNib
         for(var i = 1; i < tracks.Count; i++)
             allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
-        if(allTracksEqual)
-            spt = tracks[0].sectors.Length;
+        if(allTracksEqual) spt = tracks[0].sectors.Length;
 
         bool    skewed  = spt == 16;
         ulong[] skewing = _proDosSkewing;
@@ -95,8 +93,7 @@ public sealed partial class AppleNib
                                          sector0[0x36] == 0   &&
                                          sector0[0x37] == 1)
             {
-                if(isDos)
-                    skewing = _dosSkewing;
+                if(isDos) skewing = _dosSkewing;
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            skewing.SequenceEqual(_dosSkewing)
@@ -117,7 +114,9 @@ public sealed partial class AppleNib
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,
-                                               sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
+                                               sectorNo,
+                                               i,
+                                               skewing[sectorNo] + (ulong)(i * spt));
 
                     rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
                     _imageInfo.Sectors++;
@@ -188,8 +187,7 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
@@ -199,11 +197,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -211,8 +207,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -227,11 +222,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
         return _addressFields.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.NoData;
     }
@@ -241,14 +234,11 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
         var ms = new MemoryStream();
 
@@ -256,8 +246,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -272,8 +261,7 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
@@ -283,11 +271,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -295,8 +281,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

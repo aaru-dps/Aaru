@@ -50,6 +50,7 @@ public sealed partial class Nhdr0
     public Guid Id => new("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

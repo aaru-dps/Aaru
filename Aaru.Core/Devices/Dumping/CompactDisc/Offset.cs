@@ -55,8 +55,7 @@ partial class Dump
                               ref uint blocksToRead, uint subSize, ref byte[] cmdBuf, uint blockSize,
                               bool failedCrossingLeadOut)
     {
-        if(cmdBuf.Length == 0)
-            return;
+        if(cmdBuf.Length == 0) return;
 
         int offsetFix = offsetBytes < 0 ? (int)(sectorSize * sectorsForOffset + offsetBytes) : offsetBytes;
 

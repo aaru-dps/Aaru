@@ -54,17 +54,13 @@ public static partial class Modes
 
     public static IBM_ModePage_24? DecodeIBMModePage_24(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x24)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x24) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 8)
-            return null;
+        if(pageResponse.Length != 8) return null;
 
         var decoded = new IBM_ModePage_24();
 
@@ -82,27 +78,23 @@ public static partial class Modes
 
     public static string PrettifyIBMModePage_24(IBM_ModePage_24? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         IBM_ModePage_24 page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.IBM_Vendor_Specific_Control_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization.Vendor_specific_mode_control_0,     page.ModeControl);
         sb.AppendFormat("\t" + Localization.Vendor_specific_velocity_setting_0, page.VelocitySetting);
 
-        if(!page.EncryptionCapable)
-            return sb.ToString();
+        if(!page.EncryptionCapable) return sb.ToString();
 
         sb.AppendLine("\t" + Localization.Drive_supports_encryption);
 
-        if(page.EncryptionEnabled)
-            sb.AppendLine("\t" + Localization.Drive_has_encryption_enabled);
+        if(page.EncryptionEnabled) sb.AppendLine("\t" + Localization.Drive_has_encryption_enabled);
 
         return sb.ToString();
     }

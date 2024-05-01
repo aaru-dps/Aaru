@@ -82,13 +82,17 @@ public partial class Device
             (byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0
         };
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var pagesLength = (byte)(buffer[4] + 5);
 
@@ -100,7 +104,12 @@ public partial class Device
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
@@ -159,17 +168,20 @@ public partial class Device
             (byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0
         };
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         // This is because INQ was returned instead of EVPD
-        if(buffer[1] != page)
-            return true;
+        if(buffer[1] != page) return true;
 
         var pagesLength = (byte)(buffer[3] + 4);
 
@@ -181,7 +193,12 @@ public partial class Device
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
@@ -207,7 +224,12 @@ public partial class Device
 
         byte[] buffer = Array.Empty<byte>();
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -258,8 +280,7 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ModeSense;
 
-        if(dbd)
-            cdb[1] = 0x08;
+        if(dbd) cdb[1] = 0x08;
 
         cdb[2] |= (byte)pageControl;
         cdb[2] |= (byte)(pageCode & 0x3F);
@@ -267,23 +288,31 @@ public partial class Device
         cdb[4] =  (byte)buffer.Length;
         cdb[5] =  0;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var modeLength = (byte)(buffer[0] + 1);
-        if(modeLength % 2 != 0)
-            modeLength++;
+        if(modeLength % 2 != 0) modeLength++;
 
         buffer      = new byte[modeLength];
         cdb[4]      = (byte)buffer.Length;
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
@@ -341,11 +370,9 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ModeSense10;
 
-        if(llbaa)
-            cdb[1] |= 0x10;
+        if(llbaa) cdb[1] |= 0x10;
 
-        if(dbd)
-            cdb[1] |= 0x08;
+        if(dbd) cdb[1] |= 0x08;
 
         cdb[2] |= (byte)pageControl;
         cdb[2] |= (byte)(pageCode & 0x3F);
@@ -354,24 +381,32 @@ public partial class Device
         cdb[8] =  (byte)(buffer.Length & 0xFF);
         cdb[9] =  0;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var modeLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
-        if(modeLength % 2 != 0)
-            modeLength++;
+        if(modeLength % 2 != 0) modeLength++;
 
         buffer      = new byte[modeLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
@@ -424,7 +459,12 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
         cdb[4] = (byte)((byte)preventMode & 0x03);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -465,8 +505,7 @@ public partial class Device
         {
             cdb[8] = 0x01;
 
-            if(relAddr)
-                cdb[1] = 0x01;
+            if(relAddr) cdb[1] = 0x01;
 
             cdb[2] = (byte)((address & 0xFF000000) >> 24);
             cdb[3] = (byte)((address & 0xFF0000)   >> 16);
@@ -474,7 +513,12 @@ public partial class Device
             cdb[5] = (byte)(address & 0xFF);
         }
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -530,7 +574,12 @@ public partial class Device
         cdb[12] = (byte)((buffer.Length & 0xFF00)     >> 8);
         cdb[13] = (byte)(buffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -559,13 +608,17 @@ public partial class Device
         cdb[8] = (byte)((buffer.Length & 0xFF00)     >> 8);
         cdb[9] = (byte)(buffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var strctLength = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3] + 4);
         buffer      = new byte[strctLength];
@@ -575,7 +628,12 @@ public partial class Device
         cdb[9]      = (byte)(buffer.Length & 0xFF);
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
@@ -596,7 +654,16 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte partition,
                               ushort     firstAttribute, bool cache, uint timeout, out double duration) =>
-        ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, cache, timeout,
+        ReadAttribute(out buffer,
+                      out senseBuffer,
+                      action,
+                      0,
+                      0,
+                      0,
+                      partition,
+                      firstAttribute,
+                      cache,
+                      timeout,
                       out duration);
 
     /// <summary>Reads an attribute from the medium auxiliary memory</summary>
@@ -621,7 +688,16 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte partition,
                               ushort     firstAttribute, uint timeout, out double duration) =>
-        ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, false, timeout,
+        ReadAttribute(out buffer,
+                      out senseBuffer,
+                      action,
+                      0,
+                      0,
+                      0,
+                      partition,
+                      firstAttribute,
+                      false,
+                      timeout,
                       out duration);
 
     /// <summary>Reads an attribute from the medium auxiliary memory</summary>
@@ -646,7 +722,16 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool ReadAttribute(out byte[] buffer,    out byte[] senseBuffer,    ScsiAttributeAction action, byte volume,
                               byte       partition, ushort     firstAttribute, uint timeout, out double duration) =>
-        ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, false, timeout,
+        ReadAttribute(out buffer,
+                      out senseBuffer,
+                      action,
+                      0,
+                      0,
+                      volume,
+                      partition,
+                      firstAttribute,
+                      false,
+                      timeout,
                       out duration);
 
     /// <summary>Reads an attribute from the medium auxiliary memory</summary>
@@ -661,7 +746,16 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action, byte volume,
                               byte partition, ushort firstAttribute, bool cache, uint timeout, out double duration) =>
-        ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, cache, timeout,
+        ReadAttribute(out buffer,
+                      out senseBuffer,
+                      action,
+                      0,
+                      0,
+                      volume,
+                      partition,
+                      firstAttribute,
+                      cache,
+                      timeout,
                       out duration);
 
     /// <summary>Sends the SPC MODE SELECT(6) command</summary>
@@ -700,15 +794,18 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ModeSelect;
 
-        if(pageFormat)
-            cdb[1] += 0x10;
+        if(pageFormat) cdb[1] += 0x10;
 
-        if(savePages)
-            cdb[1] += 0x01;
+        if(savePages) cdb[1] += 0x01;
 
         cdb[4] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -754,16 +851,19 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ModeSelect10;
 
-        if(pageFormat)
-            cdb[1] += 0x10;
+        if(pageFormat) cdb[1] += 0x10;
 
-        if(savePages)
-            cdb[1] += 0x01;
+        if(savePages) cdb[1] += 0x01;
 
         cdb[7] = (byte)((buffer.Length & 0xFF00) << 8);
         cdb[8] = (byte)(buffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -794,8 +894,7 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.RequestSense;
 
-        if(descriptor)
-            cdb[1] = 0x01;
+        if(descriptor) cdb[1] = 0x01;
 
         cdb[2] = 0;
         cdb[3] = 0;

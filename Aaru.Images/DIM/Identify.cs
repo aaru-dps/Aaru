@@ -49,8 +49,7 @@ public sealed partial class Dim
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < DATA_OFFSET)
-            return false;
+        if(stream.Length < DATA_OFFSET) return false;
 
         _comment = new byte[60];
         _hdrId   = new byte[13];

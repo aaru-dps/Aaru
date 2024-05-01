@@ -93,8 +93,7 @@ sealed class ListNamespacesCommand : Command
 
         foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(fs?.Namespaces is null)
-                continue;
+            if(fs?.Namespaces is null) continue;
 
             Table table = new()
             {

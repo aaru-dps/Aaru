@@ -42,6 +42,7 @@ public sealed partial class Vhdx
 #region IMediaImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

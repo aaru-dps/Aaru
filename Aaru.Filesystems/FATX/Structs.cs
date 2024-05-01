@@ -61,12 +61,12 @@ public sealed partial class XboxFatPlugin
         internal DirectoryEntry[] Entries;
         internal int              Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -77,7 +77,7 @@ public sealed partial class XboxFatPlugin
     {
         internal uint[] Clusters;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -88,7 +88,7 @@ public sealed partial class XboxFatPlugin
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

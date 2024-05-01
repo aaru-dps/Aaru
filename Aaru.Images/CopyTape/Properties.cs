@@ -46,6 +46,7 @@ public sealed partial class CopyTape
 #region IWritableTapeImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

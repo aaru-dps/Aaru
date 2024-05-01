@@ -59,8 +59,7 @@ public static partial class Decoders
 {
     public static CID DecodeCID(uint[] response)
     {
-        if(response?.Length != 4)
-            return null;
+        if(response?.Length != 4) return null;
 
         var data = new byte[16];
 
@@ -78,8 +77,7 @@ public static partial class Decoders
 
     public static CID DecodeCID(byte[] response)
     {
-        if(response?.Length != 16)
-            return null;
+        if(response?.Length != 16) return null;
 
         var cid = new CID
         {
@@ -102,8 +100,7 @@ public static partial class Decoders
 
     public static string PrettifyCID(CID cid)
     {
-        if(cid == null)
-            return null;
+        if(cid == null) return null;
 
         var sb = new StringBuilder();
 
@@ -112,15 +109,17 @@ public static partial class Decoders
         sb.AppendFormat(Localization.Application_ID_0, cid.ApplicationID).AppendLine();
         sb.AppendFormat(Localization.Product_name_0,   cid.ProductName).AppendLine();
 
-        sb.AppendFormat(Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
-                        cid.ProductRevision & 0x0F).
-           AppendLine();
+        sb.AppendFormat(Localization.Product_revision_0_1,
+                        (cid.ProductRevision & 0xF0) >> 4,
+                        cid.ProductRevision & 0x0F)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Product_serial_number_0, cid.ProductSerialNumber).AppendLine();
 
-        sb.AppendFormat(Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF00) >> 8,
-                        (cid.ManufacturingDate                                                & 0xFF) + 2000).
-           AppendLine();
+        sb.AppendFormat(Localization.Device_manufactured_month_0_of_1,
+                        (cid.ManufacturingDate & 0xF00) >> 8,
+                        (cid.ManufacturingDate & 0xFF) + 2000)
+          .AppendLine();
 
         sb.AppendFormat(Localization.CID_CRC_0, cid.CRC).AppendLine();
 

@@ -45,8 +45,7 @@ public sealed partial class Udif
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
         var footerB = new byte[Marshal.SizeOf<Footer>()];
@@ -54,8 +53,7 @@ public sealed partial class Udif
         stream.EnsureRead(footerB, 0, Marshal.SizeOf<Footer>());
         _footer = Marshal.ByteArrayToStructureBigEndian<Footer>(footerB);
 
-        if(_footer.signature == UDIF_SIGNATURE)
-            return true;
+        if(_footer.signature == UDIF_SIGNATURE) return true;
 
         // Old UDIF as created by DiskCopy 6.5 using "OBSOLETE" format. (DiskCopy 5 rumored format?)
         stream.Seek(0, SeekOrigin.Begin);

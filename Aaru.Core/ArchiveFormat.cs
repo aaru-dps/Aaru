@@ -55,21 +55,19 @@ public static class ArchiveFormat
             // Check all but RAW plugin
             foreach(IArchive plugin in plugins.Archives.Values)
             {
-                if(plugin is null)
-                    continue;
+                if(plugin is null) continue;
 
                 try
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_plugin_0, plugin.Name);
 
-                    if(!plugin.Identify(archiveFilter))
-                        continue;
+                    if(!plugin.Identify(archiveFilter)) continue;
 
                     format = plugin;
 
                     break;
                 }
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored

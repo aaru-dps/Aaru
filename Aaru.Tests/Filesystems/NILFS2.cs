@@ -37,7 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Nilfs2() : FilesystemTest("nilfs2")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot,
+                                                      "Filesystems",
                                                       "New Implementation of a Log-structured File System 2");
 
     public override IFilesystem Plugin     => new NILFS2();

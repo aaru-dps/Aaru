@@ -329,8 +329,7 @@ public sealed class Crc32Context : IChecksum
         _table     = ISOCrc32Table;
         _useIso    = true;
 
-        if(!Native.IsSupported)
-            return;
+        if(!Native.IsSupported) return;
 
         _nativeContext = crc32_init();
         _useNative     = _nativeContext != IntPtr.Zero;
@@ -381,8 +380,7 @@ public sealed class Crc32Context : IChecksum
     {
         uint crc = _hashInt ^ _finalSeed;
 
-        if(!_useNative || !_useIso)
-            return BigEndianBitConverter.GetBytes(crc);
+        if(!_useNative || !_useIso) return BigEndianBitConverter.GetBytes(crc);
 
         crc32_final(_nativeContext, ref crc);
         crc32_free(_nativeContext);
@@ -428,8 +426,7 @@ public sealed class Crc32Context : IChecksum
     {
         var table = new uint[8][];
 
-        for(var i = 0; i < 8; i++)
-            table[i] = new uint[256];
+        for(var i = 0; i < 8; i++) table[i] = new uint[256];
 
         for(var i = 0; i < 256; i++)
         {
@@ -447,8 +444,10 @@ public sealed class Crc32Context : IChecksum
         }
 
         for(var slice = 1; slice < 8; slice++)
-        for(var i = 0; i < 256; i++)
-            table[slice][i] = table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF];
+        {
+            for(var i = 0; i < 256; i++)
+                table[slice][i] = table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF];
+        }
 
         return table;
     }
@@ -480,8 +479,7 @@ public sealed class Crc32Context : IChecksum
                     len        -= blocks * 64;
                 }
 
-                if(len == 0)
-                    return;
+                if(len == 0) return;
             }
 
             if(Crc32.Arm64.IsSupported)
@@ -530,14 +528,14 @@ public sealed class Crc32Context : IChecksum
             len -= bytesAtOnce;
         }
 
-        while(len-- != 0)
-            crc = crc >> 8 ^ table[0][crc & 0xFF ^ data[currentPos++]];
+        while(len-- != 0) crc = crc >> 8 ^ table[0][crc & 0xFF ^ data[currentPos++]];
 
         previousCrc = crc;
     }
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
@@ -597,8 +595,7 @@ public sealed class Crc32Context : IChecksum
 
         var crc32Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc32Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc32Output.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -648,8 +645,7 @@ public sealed class Crc32Context : IChecksum
 
         var crc32Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc32Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc32Output.Append(h.ToString("x2"));
 
         return crc32Output.ToString();
     }

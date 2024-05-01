@@ -59,8 +59,7 @@ public sealed partial class RsIde
 
         var retBuf = new byte[length];
 
-        for(var i = 0; i < length; i++)
-            retBuf[i] = 0x20;
+        for(var i = 0; i < length; i++) retBuf[i] = 0x20;
 
         Array.Copy(outbuf, 0, retBuf, 0, outbuf.Length >= length ? length : outbuf.Length);
 

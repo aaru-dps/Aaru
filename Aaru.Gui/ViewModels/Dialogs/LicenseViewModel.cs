@@ -53,8 +53,7 @@ public sealed class LicenseViewModel : ViewModelBase
         // TODO: Localize
         using Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Gui.LICENSE");
 
-        if(stream == null)
-            return;
+        if(stream == null) return;
 
         using var reader = new StreamReader(stream);
 

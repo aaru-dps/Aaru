@@ -147,7 +147,10 @@ static class Kreon
     start:
         System.Console.Clear();
 
-        bool sense = dev.KreonExtractSs(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration,
+        bool sense = dev.KreonExtractSs(out byte[] buffer,
+                                        out byte[] senseBuffer,
+                                        dev.Timeout,
+                                        out double duration,
                                         requestNumber);
 
     menu:
@@ -196,8 +199,7 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.EXTRACT_SS_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -210,8 +212,7 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.EXTRACT_SS_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -248,7 +249,9 @@ static class Kreon
     start:
         System.Console.Clear();
 
-        bool sense = dev.KreonGetFeatureList(out byte[] senseBuffer, out KreonFeatures features, dev.Timeout,
+        bool sense = dev.KreonGetFeatureList(out byte[] senseBuffer,
+                                             out KreonFeatures features,
+                                             dev.Timeout,
                                              out double duration);
 
     menu:
@@ -295,8 +298,7 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.GET_FEATURE_LIST_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -354,8 +356,10 @@ static class Kreon
                 case 1:
                     AaruConsole.WriteLine(Localization.Lock_state);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2, KreonLockStates.Locked,
-                                          KreonLockStates.Wxripper, KreonLockStates.Xtreme);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          KreonLockStates.Locked,
+                                          KreonLockStates.Wxripper,
+                                          KreonLockStates.Xtreme);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -470,8 +474,7 @@ static class Kreon
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.UNLOCK_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

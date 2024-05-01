@@ -56,8 +56,7 @@ public sealed partial class CopyTape
         var        filemarkRx     = new Regex(FILEMARK_REGEX);
         var        eotRx          = new Regex(END_OF_TAPE_REGEX);
 
-        if(imageFilter.DataForkLength <= 16)
-            return ErrorNumber.InvalidArgument;
+        if(imageFilter.DataForkLength <= 16) return ErrorNumber.InvalidArgument;
 
         _imageStream          = imageFilter.GetDataForkStream();
         _imageStream.Position = 0;
@@ -80,8 +79,7 @@ public sealed partial class CopyTape
             Match filemarkMt     = filemarkRx.Match(mark);
             Match eotMt          = eotRx.Match(mark);
 
-            if(eotMt.Success)
-                break;
+            if(eotMt.Success) break;
 
             if(filemarkMt.Success)
             {
@@ -163,8 +161,7 @@ public sealed partial class CopyTape
             currentBlock++;
             _imageInfo.ImageSize += blockSize;
 
-            if(_imageInfo.SectorSize < blockSize)
-                _imageInfo.SectorSize = blockSize;
+            if(_imageInfo.SectorSize < blockSize) _imageInfo.SectorSize = blockSize;
         }
 
         _blockPositionCache = blockPositions.ToArray();
@@ -195,8 +192,7 @@ public sealed partial class CopyTape
     {
         buffer = null;
 
-        if(sectorAddress >= (ulong)_blockPositionCache.LongLength)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress >= (ulong)_blockPositionCache.LongLength) return ErrorNumber.OutOfRange;
 
         _imageStream.Position = _blockPositionCache[sectorAddress];
 
@@ -207,19 +203,15 @@ public sealed partial class CopyTape
         string mark    = Encoding.ASCII.GetString(blockHeader);
         Match  blockMt = blockRx.Match(mark);
 
-        if(!blockMt.Success)
-            return ErrorNumber.InvalidArgument;
+        if(!blockMt.Success) return ErrorNumber.InvalidArgument;
 
         string blkSize = blockMt.Groups["blockSize"].Value;
 
-        if(string.IsNullOrWhiteSpace(blkSize))
-            return ErrorNumber.InvalidArgument;
+        if(string.IsNullOrWhiteSpace(blkSize)) return ErrorNumber.InvalidArgument;
 
-        if(!uint.TryParse(blkSize, out uint blockSize))
-            return ErrorNumber.InvalidArgument;
+        if(!uint.TryParse(blkSize, out uint blockSize)) return ErrorNumber.InvalidArgument;
 
-        if(blockSize == 0 || blockSize + 17 > _imageStream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(blockSize == 0 || blockSize + 17 > _imageStream.Length) return ErrorNumber.InvalidArgument;
 
         buffer = new byte[blockSize];
 
@@ -239,8 +231,7 @@ public sealed partial class CopyTape
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

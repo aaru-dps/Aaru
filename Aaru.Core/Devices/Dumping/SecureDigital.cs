@@ -67,8 +67,8 @@ public partial class Dump
                 ErrorMessage?.Invoke(Localization.Core.Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Continuing);
             else
             {
-                StoppingErrorMessage?.Invoke(Localization.Core.
-                                                          Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Aborting);
+                StoppingErrorMessage?.Invoke(Localization.Core
+                                                         .Raw_dumping_is_not_supported_in_MMC_or_SD_devices_Aborting);
 
                 return;
             }
@@ -133,8 +133,7 @@ public partial class Dump
 
                             blocksToRead = (ushort)(ecsdDecoded.OptimalReadSize * 4096 / blockSize);
 
-                            if(blocksToRead == 0)
-                                blocksToRead = 128;
+                            if(blocksToRead == 0) blocksToRead = 128;
 
                             // Supposing it's high-capacity MMC if it has Extended CSD...
                             byteAddressed = false;
@@ -226,8 +225,8 @@ public partial class Dump
                 }
                 else
                 {
-                    supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(scr)?.
-                                             CommandSupport.HasFlag(CommandSupport.SetBlockCount) ??
+                    supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(scr)
+                                           ?.CommandSupport.HasFlag(CommandSupport.SetBlockCount) ??
                                     false;
 
                     mediaTags.Add(MediaTagType.SD_SCR, null);
@@ -268,15 +267,13 @@ public partial class Dump
         byte[] cmdBuf;
         bool   error;
 
-        if(blocksToRead > _maximumReadable)
-            blocksToRead = (ushort)_maximumReadable;
+        if(blocksToRead > _maximumReadable) blocksToRead = (ushort)_maximumReadable;
 
         if(supportsCmd23 && blocksToRead > 1)
         {
             sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, 1, byteAddressed, timeout, out duration);
 
-            if(sense || _dev.Error)
-                supportsCmd23 = false;
+            if(sense || _dev.Error) supportsCmd23 = false;
 
             // Need to restart device, otherwise is it just busy streaming data with no one listening
             sense = _dev.ReOpen();
@@ -293,23 +290,27 @@ public partial class Dump
         {
             while(true)
             {
-                error = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                error = _dev.ReadWithBlockCount(out cmdBuf,
+                                                out _,
+                                                0,
+                                                blockSize,
+                                                blocksToRead,
+                                                byteAddressed,
+                                                timeout,
                                                 out duration);
 
-                if(error)
-                    blocksToRead /= 2;
+                if(error) blocksToRead /= 2;
 
-                if(!error || blocksToRead == 1)
-                    break;
+                if(!error || blocksToRead == 1) break;
             }
 
             if(error)
             {
                 _dumpLog.WriteLine(Localization.Core.ERROR_Cannot_get_blocks_to_read_device_error_0, _dev.LastError);
 
-                StoppingErrorMessage?.
-                    Invoke(string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
-                                         _dev.LastError));
+                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                       .Device_error_0_trying_to_guess_ideal_transfer_length,
+                                                           _dev.LastError));
 
                 return;
             }
@@ -321,15 +322,12 @@ public partial class Dump
             {
                 error = _dev.BufferedOsRead(out cmdBuf, 0, blockSize * blocksToRead, out duration);
 
-                if(error)
-                    blocksToRead /= 2;
+                if(error) blocksToRead /= 2;
 
-                if(!error || blocksToRead == 1)
-                    break;
+                if(!error || blocksToRead == 1) break;
 
                 // Device is in timeout, reopen to reset
-                if(_dev.LastError == 110)
-                    _dev.ReOpen();
+                if(_dev.LastError == 110) _dev.ReOpen();
             }
 
             if(error)
@@ -345,27 +343,30 @@ public partial class Dump
         {
             while(true)
             {
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed,
-                                                     timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf,
+                                                     out _,
+                                                     0,
+                                                     blockSize,
+                                                     blocksToRead,
+                                                     byteAddressed,
+                                                     timeout,
+                                                     out duration);
 
-                if(error)
-                    blocksToRead /= 2;
+                if(error) blocksToRead /= 2;
 
                 // Device is in timeout, reopen to reset
-                if(_dev.LastError == 110)
-                    _dev.ReOpen();
+                if(_dev.LastError == 110) _dev.ReOpen();
 
-                if(!error || blocksToRead == 1)
-                    break;
+                if(!error || blocksToRead == 1) break;
             }
 
             if(error)
             {
                 _dumpLog.WriteLine(Localization.Core.ERROR_Cannot_get_blocks_to_read_device_error_0, _dev.LastError);
 
-                StoppingErrorMessage?.
-                    Invoke(string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
-                                         _dev.LastError));
+                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                       .Device_error_0_trying_to_guess_ideal_transfer_length,
+                                                           _dev.LastError));
 
                 return;
             }
@@ -393,9 +394,9 @@ public partial class Dump
         }
         else if(_useBufferedReads)
         {
-            UpdateStatus?.
-                Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads,
-                                     blocksToRead));
+            UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                           .Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads,
+                                               blocksToRead));
 
             _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time_using_OS_buffered_reads,
                                blocksToRead);
@@ -408,14 +409,24 @@ public partial class Dump
             _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_using_sequential_commands, blocksToRead);
         }
 
-        if(_skip < blocksToRead)
-            _skip = blocksToRead;
+        if(_skip < blocksToRead) _skip = blocksToRead;
 
         DumpHardware currentTry = null;
         ExtentsULong extents    = null;
 
-        ResumeSupport.Process(true, false, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                              ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, _private, _force);
+        ResumeSupport.Process(true,
+                              false,
+                              blocks,
+                              _dev.Manufacturer,
+                              _dev.Model,
+                              _dev.Serial,
+                              _dev.PlatformId,
+                              ref _resume,
+                              ref currentTry,
+                              ref extents,
+                              _dev.FirmwareRevision,
+                              _private,
+                              _force);
 
         if(currentTry == null || extents == null)
         {
@@ -449,14 +460,21 @@ public partial class Dump
             }
         }
 
-        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead, _private,
+        var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin",
+                                  _dev,
+                                  blocks,
+                                  blockSize,
+                                  blocksToRead,
+                                  _private,
                                   _dimensions);
 
         var ibgLog = new IbgLog(_outputPrefix + ".ibg", sdProfile);
 
         ret = outputFormat.Create(_outputPath,
                                   _dev.Type == DeviceType.SecureDigital ? MediaType.SecureDigital : MediaType.MMC,
-                                  _formatOptions, blocks, blockSize);
+                                  _formatOptions,
+                                  blocks,
+                                  blockSize);
 
         // Cannot create image
         if(!ret)
@@ -496,11 +514,10 @@ public partial class Dump
                     break;
             }
 
-            ret =
-                outputFormat.WriteMediaTag(cid,
-                                           _dev.Type == DeviceType.SecureDigital
-                                               ? MediaTagType.SD_CID
-                                               : MediaTagType.MMC_CID);
+            ret = outputFormat.WriteMediaTag(cid,
+                                             _dev.Type == DeviceType.SecureDigital
+                                                 ? MediaTagType.SD_CID
+                                                 : MediaTagType.MMC_CID);
 
             // Cannot write CID to image
             if(!ret && !_force)
@@ -517,11 +534,10 @@ public partial class Dump
 
         if(csd != null)
         {
-            ret =
-                outputFormat.WriteMediaTag(csd,
-                                           _dev.Type == DeviceType.SecureDigital
-                                               ? MediaTagType.SD_CSD
-                                               : MediaTagType.MMC_CSD);
+            ret = outputFormat.WriteMediaTag(csd,
+                                             _dev.Type == DeviceType.SecureDigital
+                                                 ? MediaTagType.SD_CSD
+                                                 : MediaTagType.MMC_CSD);
 
             // Cannot write CSD to image
             if(!ret && !_force)
@@ -555,11 +571,10 @@ public partial class Dump
 
         if(ocr != null)
         {
-            ret =
-                outputFormat.WriteMediaTag(ocr,
-                                           _dev.Type == DeviceType.SecureDigital
-                                               ? MediaTagType.SD_OCR
-                                               : MediaTagType.MMC_OCR);
+            ret = outputFormat.WriteMediaTag(ocr,
+                                             _dev.Type == DeviceType.SecureDigital
+                                                 ? MediaTagType.SD_OCR
+                                                 : MediaTagType.MMC_OCR);
 
             // Cannot write OCR to image
             if(!ret && !_force)
@@ -637,36 +652,54 @@ public partial class Dump
                 break;
             }
 
-            if(blocks - i < blocksToRead)
-                blocksToRead = (byte)(blocks - i);
+            if(blocks - i < blocksToRead) blocksToRead = (byte)(blocks - i);
 
-            if(currentSpeed > maxSpeed && currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed && currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)blocks);
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                 i,
+                                                 blocks,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i,
+                                   (long)blocks);
 
             _speedStopwatch.Start();
+
             if(blocksToRead == 1)
             {
-                error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
+                error = _dev.ReadSingleBlock(out cmdBuf,
+                                             out _,
+                                             (uint)i,
+                                             blockSize,
+                                             byteAddressed,
+                                             timeout,
                                              out duration);
             }
             else if(supportsCmd23)
             {
-                error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                                timeout, out duration);
+                error = _dev.ReadWithBlockCount(out cmdBuf,
+                                                out _,
+                                                (uint)i,
+                                                blockSize,
+                                                blocksToRead,
+                                                byteAddressed,
+                                                timeout,
+                                                out duration);
             }
             else if(_useBufferedReads)
                 error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead, out duration);
             else
             {
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                                     timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf,
+                                                     out _,
+                                                     (uint)i,
+                                                     blockSize,
+                                                     blocksToRead,
+                                                     byteAddressed,
+                                                     timeout,
+                                                     out duration);
             }
 
             _speedStopwatch.Stop();
@@ -685,11 +718,9 @@ public partial class Dump
             {
                 _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, byteAddressed, response);
 
-                if(i + _skip > blocks)
-                    _skip = (uint)(blocks - i);
+                if(i + _skip > blocks) _skip = (uint)(blocks - i);
 
-                for(ulong b = i; b < i + _skip; b++)
-                    _resume.BadBlocks.Add(b);
+                for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
                 mhddLog.Write(i, duration < 500 ? 65535 : duration, _skip);
 
@@ -708,8 +739,7 @@ public partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
-                continue;
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
@@ -723,36 +753,41 @@ public partial class Dump
         EndProgress?.Invoke();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
-                     blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
+        ibgLog.Close(_dev,
+                     blocks,
+                     blockSize,
+                     _dumpStopwatch.Elapsed.TotalSeconds,
+                     currentSpeed                     * 1024,
+                     blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                     _devicePath);
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds()).
-                                                    Humanize()));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(imageWriteDuration.Seconds()).
-                                                    Humanize()));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(imageWriteDuration.Seconds())
+                                                   .Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                          _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
-                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(totalDuration.Milliseconds()).
-                                                  Humanize()));
+                                         ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                 .Per(totalDuration.Milliseconds())
+                                                 .Humanize()));
 
         _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
-                                         ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                  Per(imageWriteDuration.Seconds()).
-                                                  Humanize()));
+                                         ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                 .Per(imageWriteDuration.Seconds())
+                                                 .Humanize()));
 
-    #region Trimming
+#region Trimming
 
         if(_resume.BadBlocks.Count > 0 && !_aborted && _trim && newTrim)
         {
@@ -776,8 +811,13 @@ public partial class Dump
 
                 PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
-                error = _dev.ReadSingleBlock(out cmdBuf, out response, (uint)badSector, blockSize, byteAddressed,
-                                             timeout, out duration);
+                error = _dev.ReadSingleBlock(out cmdBuf,
+                                             out response,
+                                             (uint)badSector,
+                                             blockSize,
+                                             byteAddressed,
+                                             timeout,
+                                             out duration);
 
                 totalDuration += duration;
 
@@ -804,9 +844,9 @@ public partial class Dump
                                              _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
         }
 
-    #endregion Trimming
+#endregion Trimming
 
-    #region Error handling
+#region Error handling
 
         if(_resume.BadBlocks.Count > 0 && !_aborted && _retryPasses > 0)
         {
@@ -829,13 +869,20 @@ public partial class Dump
                 }
 
                 PulseProgress?.Invoke(forward
-                                          ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward, badSector,
+                                          ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                          badSector,
                                                           pass)
-                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse, badSector,
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                          badSector,
                                                           pass));
 
-                error = _dev.ReadSingleBlock(out cmdBuf, out response, (uint)badSector, blockSize, byteAddressed,
-                                             timeout, out duration);
+                error = _dev.ReadSingleBlock(out cmdBuf,
+                                             out response,
+                                             (uint)badSector,
+                                             blockSize,
+                                             byteAddressed,
+                                             timeout,
+                                             out duration);
 
                 totalDuration += duration;
 
@@ -851,7 +898,8 @@ public partial class Dump
                 outputFormat.WriteSector(cmdBuf, badSector);
                 _mediaGraph?.PaintSectorGood(badSector);
 
-                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1,
+                                                   badSector,
                                                    pass));
 
                 _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector, pass);
@@ -863,8 +911,7 @@ public partial class Dump
                 forward = !forward;
                 _resume.BadBlocks.Sort();
 
-                if(!forward)
-                    _resume.BadBlocks.Reverse();
+                if(!forward) _resume.BadBlocks.Reverse();
 
                 goto repeatRetryLba;
             }
@@ -872,7 +919,7 @@ public partial class Dump
             EndProgress?.Invoke();
         }
 
-    #endregion Error handling
+#endregion Error handling
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
@@ -892,8 +939,7 @@ public partial class Dump
                                  outputFormat.ErrorMessage);
         }
 
-        if(_preSidecar != null)
-            outputFormat.SetMetadata(_preSidecar);
+        if(_preSidecar != null) outputFormat.SetMetadata(_preSidecar);
 
         _dumpLog.WriteLine(Localization.Core.Closing_output_file);
         UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -954,17 +1000,17 @@ public partial class Dump
                                                    _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
-                                                   ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                            Per(totalChkDuration.Milliseconds()).
-                                                            Humanize()));
+                                                   ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                           .Per(totalChkDuration.Milliseconds())
+                                                           .Humanize()));
 
                 _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
                                    _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
                 _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                                   ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                            Per(totalChkDuration.Milliseconds()).
-                                            Humanize());
+                                   ByteSize.FromBytes(blockSize * (blocks + 1))
+                                           .Per(totalChkDuration.Milliseconds())
+                                           .Humanize());
 
                 (string type, string subType) xmlType = (null, null);
 
@@ -994,8 +1040,7 @@ public partial class Dump
                 sidecar.BlockMedias[0].Manufacturer      = _dev.Manufacturer;
                 sidecar.BlockMedias[0].Model             = _dev.Model;
 
-                if(!_private)
-                    sidecar.BlockMedias[0].Serial = _dev.Serial;
+                if(!_private) sidecar.BlockMedias[0].Serial = _dev.Serial;
 
                 sidecar.BlockMedias[0].Size = blocks * blockSize;
 
@@ -1003,10 +1048,13 @@ public partial class Dump
 
                 var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                JsonSerializer.Serialize(jsonFs, new MetadataJson
-                {
-                    AaruMetadata = sidecar
-                }, typeof(MetadataJson), MetadataJsonContext.Default);
+                JsonSerializer.Serialize(jsonFs,
+                                         new MetadataJson
+                                         {
+                                             AaruMetadata = sidecar
+                                         },
+                                         typeof(MetadataJson),
+                                         MetadataJsonContext.Default);
 
                 jsonFs.Close();
             }
@@ -1014,18 +1062,18 @@ public partial class Dump
 
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                 _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                 totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                 imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                 _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+        UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                           totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalDuration.Milliseconds()).
-                                                    Humanize()));
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
         if(maxSpeed > 0)
         {
@@ -1042,8 +1090,7 @@ public partial class Dump
         UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read, _resume.BadBlocks.Count));
         UpdateStatus?.Invoke("");
 
-        if(_resume.BadBlocks.Count > 0)
-            _resume.BadBlocks.Sort();
+        if(_resume.BadBlocks.Count > 0) _resume.BadBlocks.Sort();
 
         switch(_dev.Type)
         {

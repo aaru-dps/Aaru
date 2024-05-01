@@ -49,19 +49,15 @@ public sealed partial class ECMA67
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start > 0)
-            return false;
+        if(partition.Start > 0) return false;
 
-        if(partition.End < 8)
-            return false;
+        if(partition.End < 8) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length != 128)
-            return false;
+        if(sector.Length != 128) return false;
 
         VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
@@ -76,8 +72,7 @@ public sealed partial class ECMA67
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(6, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var sbInformation = new StringBuilder();
 
@@ -85,8 +80,8 @@ public sealed partial class ECMA67
 
         sbInformation.AppendLine(Localization.ECMA_67);
 
-        sbInformation.AppendFormat(Localization.Volume_name_0, Encoding.ASCII.GetString(vol.volumeIdentifier)).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, Encoding.ASCII.GetString(vol.volumeIdentifier))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_owner_0, Encoding.ASCII.GetString(vol.owner)).AppendLine();
 

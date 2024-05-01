@@ -136,16 +136,20 @@ public sealed partial class TeleDisk
                     outs += decodedPiece.Length;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Input_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Block_pattern_decoder_Input_data_size_0_bytes,
                                            encodedData.Length);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Processed_input_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Block_pattern_decoder_Processed_input_0_bytes,
                                            ins);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Output_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Block_pattern_decoder_Output_data_size_0_bytes,
                                            decodedData.Length);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_pattern_decoder_Processed_Output_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Block_pattern_decoder_Processed_Output_0_bytes,
                                            outs);
 
                 break;
@@ -182,12 +186,14 @@ public sealed partial class TeleDisk
                     }
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.RLE_decoder_Input_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.RLE_decoder_Input_data_size_0_bytes,
                                            encodedData.Length);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.RLE_decoder_Processed_input_0_bytes, ins);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.RLE_decoder_Output_data_size_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.RLE_decoder_Output_data_size_0_bytes,
                                            decodedData.Length);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.RLE_decoder_Processed_Output_0_bytes, outs);
@@ -377,7 +383,9 @@ public sealed partial class TeleDisk
             }
             default:
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "Unknown drive type {1} with {0} bytes", _totalDiskSize,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "Unknown drive type {1} with {0} bytes",
+                                           _totalDiskSize,
                                            _header.DriveType);
 
                 return MediaType.Unknown;

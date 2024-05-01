@@ -87,8 +87,7 @@ public class BZip2 : IFilter
         if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(buffer.Length <= 512)
-            return true;
+        if(buffer.Length <= 512) return true;
 
         return buffer[^512] != 0x6B || buffer[^511] != 0x6F || buffer[^510] != 0x6C || buffer[^509] != 0x79;
     }
@@ -105,8 +104,7 @@ public class BZip2 : IFilter
         if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(stream.Length <= 512)
-            return true;
+        if(stream.Length <= 512) return true;
 
         stream.Seek(-512, SeekOrigin.End);
         stream.EnsureRead(buffer, 0, 4);
@@ -119,8 +117,7 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[4];
@@ -132,8 +129,7 @@ public class BZip2 : IFilter
         if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(stream.Length <= 512)
-            return true;
+        if(stream.Length <= 512) return true;
 
         stream.Seek(-512, SeekOrigin.End);
         stream.EnsureRead(buffer, 0, 4);
@@ -204,8 +200,7 @@ public class BZip2 : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath[..^4];
+            if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^4];
 
             return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
                        ? BasePath[..^6]

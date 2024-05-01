@@ -186,19 +186,19 @@ partial class Dump
 
             if((sense || !oldToc.HasValue) && !force)
             {
-                dumpLog?.WriteLine(Localization.Core.
-                                                Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
+                dumpLog?.WriteLine(Localization.Core
+                                               .Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
 
-                stoppingErrorMessage?.Invoke(Localization.Core.
-                                                          Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
+                stoppingErrorMessage?.Invoke(Localization.Core
+                                                         .Could_not_read_TOC_if_you_want_to_continue_use_force_and_will_try_from_LBA_0_to_360000);
 
                 return null;
             }
 
             if(oldToc.HasValue)
             {
-                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
-                                                                   Where(trk => trk.ADR is 1 or 4))
+                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.Value.TrackDescriptors.OrderBy(t => t.TrackNumber)
+                                                                  .Where(trk => trk.ADR is 1 or 4))
                 {
                     switch(trk.TrackNumber)
                     {
@@ -252,8 +252,7 @@ partial class Dump
             trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
         }
 
-        if(lastSector != 0)
-            return trackList.ToArray();
+        if(lastSector != 0) return trackList.ToArray();
 
         sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
 
@@ -269,17 +268,15 @@ partial class Dump
         {
             sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
-            if(!sense)
-                lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3] & 0xFFFFFFFF;
+            if(!sense) lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3] & 0xFFFFFFFF;
         }
 
-        if(lastSector > 0)
-            return trackList.ToArray();
+        if(lastSector > 0) return trackList.ToArray();
 
         if(!force)
         {
-            stoppingErrorMessage?.Invoke(Localization.Core.
-                                                      Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option);
+            stoppingErrorMessage?.Invoke(Localization.Core
+                                                     .Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option);
 
             dumpLog?.WriteLine(Localization.Core.Could_not_find_Lead_Out_if_you_want_to_continue_use_force_option);
 

@@ -55,11 +55,9 @@ public static class EVPD
     /// <param name="page">Page 0x00.</param>
     public static byte[] DecodePage00(byte[] page)
     {
-        if(page?[1] != 0)
-            return null;
+        if(page?[1] != 0) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var decoded = new byte[page.Length - 4];
 
@@ -73,14 +71,11 @@ public static class EVPD
     /// <param name="page">Page 0x01-0x7F.</param>
     public static string DecodeASCIIPage(byte[] page)
     {
-        if(page == null)
-            return null;
+        if(page == null) return null;
 
-        if(page[1] == 0 || page[1] > 0x7F)
-            return null;
+        if(page[1] == 0 || page[1] > 0x7F) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var ascii = new byte[page[4]];
 
@@ -94,11 +89,9 @@ public static class EVPD
     /// <param name="page">Page 0x80.</param>
     public static string DecodePage80(byte[] page)
     {
-        if(page?[1] != 0x80)
-            return null;
+        if(page?[1] != 0x80) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var ascii = new byte[page.Length - 4];
 
@@ -106,8 +99,7 @@ public static class EVPD
 
         for(var i = 0; i < ascii.Length - 1; i++)
         {
-            if(ascii[i] < 0x20)
-                return null;
+            if(ascii[i] < 0x20) return null;
         }
 
         return StringHandlers.CToString(ascii);
@@ -118,11 +110,9 @@ public static class EVPD
     /// <param name="page">Page 0x82.</param>
     public static string DecodePage82(byte[] page)
     {
-        if(page?[1] != 0x82)
-            return null;
+        if(page?[1] != 0x82) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var ascii = new byte[page.Length - 4];
 
@@ -135,11 +125,9 @@ public static class EVPD
 
     public static string DecodePageB1(byte[] page)
     {
-        if(page?[1] != 0xB1)
-            return null;
+        if(page?[1] != 0xB1) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var ascii = new byte[page.Length - 4];
 
@@ -154,11 +142,9 @@ public static class EVPD
 
     public static ulong DecodePageB2(byte[] page)
     {
-        if(page?[1] != 0xB2)
-            return 0;
+        if(page?[1] != 0xB2) return 0;
 
-        if(page.Length != 12)
-            return 0;
+        if(page.Length != 12) return 0;
 
         var bitmap = new byte[8];
 
@@ -173,11 +159,9 @@ public static class EVPD
 
     public static string DecodePageB3(byte[] page)
     {
-        if(page?[1] != 0xB3)
-            return null;
+        if(page?[1] != 0xB3) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var ascii = new byte[page.Length - 4];
 
@@ -192,17 +176,14 @@ public static class EVPD
 
     public static string DecodePageB4(byte[] page)
     {
-        if(page?[1] != 0xB3)
-            return null;
+        if(page?[1] != 0xB3) return null;
 
-        if(page.Length != page[3] + 4)
-            return null;
+        if(page.Length != page[3] + 4) return null;
 
         var element = new byte[page.Length - 4];
         var sb      = new StringBuilder();
 
-        foreach(byte b in element)
-            sb.Append($"{b:X2}");
+        foreach(byte b in element) sb.Append($"{b:X2}");
 
         return sb.ToString();
     }
@@ -232,14 +213,11 @@ public static class EVPD
 
     public static Page_81? DecodePage_81(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x81)
-            return null;
+        if(pageResponse?[1] != 0x81) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 6)
-            return null;
+        if(pageResponse.Length < 6) return null;
 
         var decoded = new Page_81
         {
@@ -280,19 +258,18 @@ public static class EVPD
 
     public static string PrettifyPage_81(Page_81? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_81 page = modePage.Value;
         var     sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Implemented_operating_definitions);
 
-        sb.AppendFormat("\t" + Localization.Default_operating_definition_0, DefinitionToString(page.Current)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Default_operating_definition_0, DefinitionToString(page.Current))
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Current_operating_definition_0, DefinitionToString(page.Current)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Current_operating_definition_0, DefinitionToString(page.Current))
+          .AppendLine();
 
         if(page.Supported.Length == 0)
         {
@@ -394,14 +371,11 @@ public static class EVPD
 
     public static Page_83? DecodePage_83(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x83)
-            return null;
+        if(pageResponse?[1] != 0x83) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 6)
-            return null;
+        if(pageResponse.Length < 6) return null;
 
         var decoded = new Page_83
         {
@@ -452,8 +426,7 @@ public static class EVPD
 
     public static string PrettifyPage_83(Page_83? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_83 page = modePage.Value;
         var     sb   = new StringBuilder();
@@ -481,14 +454,14 @@ public static class EVPD
                     break;
                 case IdentificationAssociation.TargetDevice:
                     sb.AppendLine("\t" +
-                                  Localization.
-                                      Identifier_belongs_to_target_device_that_contains_the_addressed_logical_unit);
+                                  Localization
+                                     .Identifier_belongs_to_target_device_that_contains_the_addressed_logical_unit);
 
                     break;
                 default:
                     sb.AppendFormat("\t" + Localization.Identifier_has_unknown_association_with_code_0,
-                                    (byte)descriptor.Association).
-                       AppendLine();
+                                    (byte)descriptor.Association)
+                      .AppendLine();
 
                     break;
             }
@@ -524,21 +497,21 @@ public static class EVPD
                     {
                         case IdentificationCodeSet.ASCII:
                         case IdentificationCodeSet.UTF8:
-                            sb.AppendFormat("\t" + Localization.Vendor_descriptor_contains_0, descriptor.ASCII).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization.Vendor_descriptor_contains_0, descriptor.ASCII)
+                              .AppendLine();
 
                             break;
                         case IdentificationCodeSet.Binary:
                             sb.AppendFormat("\t" + Localization.Vendor_descriptor_contains_binary_data_hex_0,
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                               AppendLine();
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                              .AppendLine();
 
                             break;
                         default:
                             sb.AppendFormat("\t" + Localization.Vendor_descriptor_contains_unknown_kind_1_of_data_hex_0,
                                             PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.CodeSet).
-                               AppendLine();
+                                            (byte)descriptor.CodeSet)
+                              .AppendLine();
 
                             break;
                     }
@@ -549,22 +522,22 @@ public static class EVPD
                     {
                         case IdentificationCodeSet.ASCII:
                         case IdentificationCodeSet.UTF8:
-                            sb.AppendFormat("\t" + Localization.Inquiry_descriptor_contains_0, descriptor.ASCII).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization.Inquiry_descriptor_contains_0, descriptor.ASCII)
+                              .AppendLine();
 
                             break;
                         case IdentificationCodeSet.Binary:
                             sb.AppendFormat("\t" + Localization.Inquiry_descriptor_contains_binary_data_hex_0,
-                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                               AppendLine();
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                              .AppendLine();
 
                             break;
                         default:
-                            sb.
-                                AppendFormat("\t" + Localization.Inquiry_descriptor_contains_unknown_kind_1_of_data_hex_0,
-                                             PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                             (byte)descriptor.CodeSet).
-                                AppendLine();
+                            sb.AppendFormat("\t" +
+                                            Localization.Inquiry_descriptor_contains_unknown_kind_1_of_data_hex_0,
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.CodeSet)
+                              .AppendLine();
 
                             break;
                     }
@@ -577,8 +550,7 @@ public static class EVPD
                     {
                         sb.AppendFormat("\t" + Localization.IEEE_EUI_64_0_X2, descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.Append($":{descriptor.Binary[i]:X2}");
+                        for(var i = 1; i < descriptor.Binary.Length; i++) sb.Append($":{descriptor.Binary[i]:X2}");
 
                         sb.AppendLine();
                     }
@@ -591,8 +563,7 @@ public static class EVPD
                     {
                         sb.AppendFormat("\t" + Localization.NAA_0_X2, descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.Append($":{descriptor.Binary[i]:X2}");
+                        for(var i = 1; i < descriptor.Binary.Length; i++) sb.Append($":{descriptor.Binary[i]:X2}");
 
                         sb.AppendLine();
                     }
@@ -601,14 +572,14 @@ public static class EVPD
                 case IdentificationTypes.Relative:
                     if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                     {
-                        sb.AppendFormat("\t" + Localization.Relative_target_port_identifier_0, descriptor.ASCII).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.Relative_target_port_identifier_0, descriptor.ASCII)
+                          .AppendLine();
                     }
                     else
                     {
                         sb.AppendFormat("\t"                        + Localization.Relative_target_port_identifier_0,
-                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3]).
-                           AppendLine();
+                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3])
+                          .AppendLine();
                     }
 
                     break;
@@ -618,37 +589,36 @@ public static class EVPD
                     else
                     {
                         sb.AppendFormat("\t"                        + Localization.Target_group_identifier_0,
-                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3]).
-                           AppendLine();
+                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3])
+                          .AppendLine();
                     }
 
                     break;
                 case IdentificationTypes.LogicalUnitGroup:
                     if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                     {
-                        sb.AppendFormat("\t" + Localization.Logical_unit_group_identifier_0, descriptor.ASCII).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.Logical_unit_group_identifier_0, descriptor.ASCII)
+                          .AppendLine();
                     }
                     else
                     {
                         sb.AppendFormat("\t"                        + Localization.Logical_unit_group_identifier_0,
-                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3]).
-                           AppendLine();
+                                        (descriptor.Binary[2] << 8) + descriptor.Binary[3])
+                          .AppendLine();
                     }
 
                     break;
                 case IdentificationTypes.MD5:
                     if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                     {
-                        sb.AppendFormat("\t" + Localization.MD5_logical_unit_identifier_0, descriptor.ASCII).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.MD5_logical_unit_identifier_0, descriptor.ASCII)
+                          .AppendLine();
                     }
                     else
                     {
                         sb.AppendFormat("\t" + Localization.MD5_logical_unit_identifier_0_x2, descriptor.Binary[0]);
 
-                        for(var i = 1; i < descriptor.Binary.Length; i++)
-                            sb.Append($"{descriptor.Binary[i]:x2}");
+                        for(var i = 1; i < descriptor.Binary.Length; i++) sb.Append($"{descriptor.Binary[i]:x2}");
 
                         sb.AppendLine();
                     }
@@ -657,14 +627,14 @@ public static class EVPD
                 case IdentificationTypes.SCSI:
                     if(descriptor.CodeSet is IdentificationCodeSet.ASCII or IdentificationCodeSet.UTF8)
                     {
-                        sb.AppendFormat("\t" + Localization.SCSI_name_string_identifier_0, descriptor.ASCII).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.SCSI_name_string_identifier_0, descriptor.ASCII)
+                          .AppendLine();
                     }
                     else
                     {
                         sb.AppendFormat("\t" + Localization.SCSI_name_string_identifier_hex_0,
-                                        PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                           AppendLine();
+                                        PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                          .AppendLine();
                     }
 
                     break;
@@ -675,101 +645,113 @@ public static class EVPD
                         switch(descriptor.ProtocolIdentifier)
                         {
                             case ProtocolIdentifiers.ADT:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_Automation_Drive_Interface_Transport_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_Automation_Drive_Interface_Transport_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.ATA:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_ATA_ATAPI_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_ATA_ATAPI_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.FibreChannel:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_Fibre_Channel_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_Fibre_Channel_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.Firewire:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_IEEE_1394_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_IEEE_1394_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.iSCSI:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_Internet_SCSI_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_Internet_SCSI_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.NoProtocol:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_unknown_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_unknown_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.PCIe:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_PCI_Express_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_PCI_Express_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.RDMAP:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_SCSI_Remote_Direct_Memory_Access_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_SCSI_Remote_Direct_Memory_Access_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.SAS:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_Serial_Attachment_SCSI_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_Serial_Attachment_SCSI_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.SCSI:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_Parallel_SCSI_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_Parallel_SCSI_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.SSA:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_SSA_specific_descriptor_with_unknown_format_hex_0,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization.Protocol_SSA_specific_descriptor_with_unknown_format_hex_0,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.SCSIe:
                                 sb.AppendFormat("\t" + Localization.Protocol_SCSIe_specific_descriptor_Routing_ID_is_0,
-                                                (descriptor.Binary[0] << 8) + descriptor.Binary[1]).
-                                   AppendLine();
+                                                (descriptor.Binary[0] << 8) + descriptor.Binary[1])
+                                  .AppendLine();
 
                                 break;
                             case ProtocolIdentifiers.UAS:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_UAS_specific_descriptor_USB_address_0_interface_1,
-                                                 descriptor.Binary[0] & 0x7F, descriptor.Binary[2]).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization.Protocol_UAS_specific_descriptor_USB_address_0_interface_1,
+                                                descriptor.Binary[0] & 0x7F,
+                                                descriptor.Binary[2])
+                                  .AppendLine();
 
                                 break;
                             default:
-                                sb.
-                                    AppendFormat("\t" + Localization.Protocol_unknown_code_0_specific_descriptor_with_unknown_format_hex_1,
-                                                 (byte)descriptor.ProtocolIdentifier,
-                                                 PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40)).
-                                    AppendLine();
+                                sb.AppendFormat("\t" +
+                                                Localization
+                                                   .Protocol_unknown_code_0_specific_descriptor_with_unknown_format_hex_1,
+                                                (byte)descriptor.ProtocolIdentifier,
+                                                PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40))
+                                  .AppendLine();
 
                                 break;
                         }
@@ -782,24 +764,26 @@ public static class EVPD
                     {
                         case IdentificationCodeSet.ASCII:
                         case IdentificationCodeSet.UTF8:
-                            sb.AppendFormat("\t" + Localization.Unknown_descriptor_type_1_contains_0, descriptor.ASCII,
-                                            (byte)descriptor.Type).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization.Unknown_descriptor_type_1_contains_0,
+                                            descriptor.ASCII,
+                                            (byte)descriptor.Type)
+                              .AppendLine();
 
                             break;
                         case IdentificationCodeSet.Binary:
                             sb.AppendFormat("\t" + Localization.Unknown_descriptor_type_1_contains_binary_data_hex_0,
                                             PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                            (byte)descriptor.Type).
-                               AppendLine();
+                                            (byte)descriptor.Type)
+                              .AppendLine();
 
                             break;
                         default:
-                            sb.
-                                AppendFormat(Localization.Inquiry_descriptor_type_2_contains_unknown_kind_1_of_data_hex_0,
-                                             PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
-                                             (byte)descriptor.CodeSet, (byte)descriptor.Type).
-                                AppendLine();
+                            sb.AppendFormat(Localization
+                                               .Inquiry_descriptor_type_2_contains_unknown_kind_1_of_data_hex_0,
+                                            PrintHex.ByteArrayToHexArrayString(descriptor.Binary, 40),
+                                            (byte)descriptor.CodeSet,
+                                            (byte)descriptor.Type)
+                              .AppendLine();
 
                             break;
                     }
@@ -838,14 +822,11 @@ public static class EVPD
 
     public static Page_84? DecodePage_84(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x84)
-            return null;
+        if(pageResponse?[1] != 0x84) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 10)
-            return null;
+        if(pageResponse.Length < 10) return null;
 
         var decoded = new Page_84
         {
@@ -878,8 +859,7 @@ public static class EVPD
 
     public static string PrettifyPage_84(Page_84? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_84 page = modePage.Value;
         var     sb   = new StringBuilder();
@@ -897,8 +877,7 @@ public static class EVPD
         {
             sb.AppendFormat("\t" + "{0:X2}", identifier.Identifier[0]);
 
-            for(var i = 1; i < identifier.Identifier.Length; i++)
-                sb.Append($":{identifier.Identifier[i]:X2}");
+            for(var i = 1; i < identifier.Identifier.Length; i++) sb.Append($":{identifier.Identifier[i]:X2}");
 
             sb.AppendLine();
         }
@@ -951,14 +930,11 @@ public static class EVPD
 
     public static Page_85? DecodePage_85(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x85)
-            return null;
+        if(pageResponse?[1] != 0x85) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 4)
-            return null;
+        if(pageResponse.Length < 4) return null;
 
         var decoded = new Page_85
         {
@@ -995,8 +971,7 @@ public static class EVPD
 
     public static string PrettifyPage_85(Page_85? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_85 page = modePage.Value;
         var     sb   = new StringBuilder();
@@ -1024,14 +999,14 @@ public static class EVPD
                     break;
                 case IdentificationAssociation.TargetDevice:
                     sb.AppendLine("\t" +
-                                  Localization.
-                                      Identifier_belongs_to_target_device_that_contains_the_addressed_logical_unit);
+                                  Localization
+                                     .Identifier_belongs_to_target_device_that_contains_the_addressed_logical_unit);
 
                     break;
                 default:
                     sb.AppendFormat("\t" + Localization.Identifier_has_unknown_association_with_code_0,
-                                    (byte)descriptor.Association).
-                       AppendLine();
+                                    (byte)descriptor.Association)
+                      .AppendLine();
 
                     break;
             }
@@ -1040,53 +1015,54 @@ public static class EVPD
             {
                 case NetworkServiceTypes.CodeDownload:
                     sb.AppendFormat(Localization.Address_for_code_download_0,
-                                    StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.Diagnostics:
                     sb.AppendFormat(Localization.Address_for_diagnostics_0,
-                                    StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.Logging:
-                    sb.AppendFormat(Localization.Address_for_logging_0, StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Address_for_logging_0, StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.Status:
-                    sb.AppendFormat(Localization.Address_for_status_0, StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Address_for_status_0, StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.StorageConf:
                     sb.AppendFormat(Localization.Address_for_storage_configuration_service_0,
-                                    StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.Unspecified:
-                    sb.AppendFormat(Localization.Unspecified_address_0, StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Unspecified_address_0, StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.CopyService:
                     sb.AppendFormat(Localization.Address_for_copy_service_0,
-                                    StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 case NetworkServiceTypes.Administrative:
                     sb.AppendFormat(Localization.Address_for_administrative_configuration_service_0,
-                                    StringHandlers.CToString(descriptor.Address)).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address))
+                      .AppendLine();
 
                     break;
                 default:
                     sb.AppendFormat(Localization.Address_of_unknown_type_1_0,
-                                    StringHandlers.CToString(descriptor.Address), (byte)descriptor.Type).
-                       AppendLine();
+                                    StringHandlers.CToString(descriptor.Address),
+                                    (byte)descriptor.Type)
+                      .AppendLine();
 
                     break;
             }
@@ -1168,14 +1144,11 @@ public static class EVPD
 
     public static Page_86? DecodePage_86(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x86)
-            return null;
+        if(pageResponse?[1] != 0x86) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 64)
-            return null;
+        if(pageResponse.Length < 64) return null;
 
         return new Page_86
         {
@@ -1216,8 +1189,7 @@ public static class EVPD
 
     public static string PrettifyPage_86(Page_86? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_86 page = modePage.Value;
         var     sb   = new StringBuilder();
@@ -1260,8 +1232,8 @@ public static class EVPD
                         break;
                     default:
                         sb.AppendFormat(Localization.Logical_unit_supports_unknown_protection_defined_by_code_0,
-                                        page.SPT).
-                           AppendLine();
+                                        page.SPT)
+                          .AppendLine();
 
                         break;
                 }
@@ -1273,86 +1245,65 @@ public static class EVPD
                 break;
         }
 
-        if(page.GRD_CHK)
-            sb.AppendLine(Localization.Device_checks_the_logical_block_guard);
+        if(page.GRD_CHK) sb.AppendLine(Localization.Device_checks_the_logical_block_guard);
 
-        if(page.APP_CHK)
-            sb.AppendLine(Localization.Device_checks_the_logical_block_application_tag);
+        if(page.APP_CHK) sb.AppendLine(Localization.Device_checks_the_logical_block_application_tag);
 
-        if(page.REF_CHK)
-            sb.AppendLine(Localization.Device_checks_the_logical_block_reference_tag);
+        if(page.REF_CHK) sb.AppendLine(Localization.Device_checks_the_logical_block_reference_tag);
 
-        if(page.UASK_SUP)
-            sb.AppendLine(Localization.Device_supports_unit_attention_condition_sense_key_specific_data);
+        if(page.UASK_SUP) sb.AppendLine(Localization.Device_supports_unit_attention_condition_sense_key_specific_data);
 
-        if(page.GROUP_SUP)
-            sb.AppendLine(Localization.Device_supports_grouping);
+        if(page.GROUP_SUP) sb.AppendLine(Localization.Device_supports_grouping);
 
-        if(page.PRIOR_SUP)
-            sb.AppendLine(Localization.Device_supports_priority);
+        if(page.PRIOR_SUP) sb.AppendLine(Localization.Device_supports_priority);
 
-        if(page.HEADSUP)
-            sb.AppendLine(Localization.Device_supports_head_of_queue);
+        if(page.HEADSUP) sb.AppendLine(Localization.Device_supports_head_of_queue);
 
-        if(page.ORDSUP)
-            sb.AppendLine(Localization.Device_supports_the_ORDERED_task_attribute);
+        if(page.ORDSUP) sb.AppendLine(Localization.Device_supports_the_ORDERED_task_attribute);
 
-        if(page.SIMPSUP)
-            sb.AppendLine(Localization.Device_supports_the_SIMPLE_task_attribute);
+        if(page.SIMPSUP) sb.AppendLine(Localization.Device_supports_the_SIMPLE_task_attribute);
 
-        if(page.WU_SUP)
-            sb.AppendLine(Localization.Device_supports_marking_a_block_as_uncorrectable_with_WRITE_LONG);
+        if(page.WU_SUP) sb.AppendLine(Localization.Device_supports_marking_a_block_as_uncorrectable_with_WRITE_LONG);
 
-        if(page.CRD_SUP)
-            sb.AppendLine(Localization.Device_supports_disabling_correction_with_WRITE_LONG);
+        if(page.CRD_SUP) sb.AppendLine(Localization.Device_supports_disabling_correction_with_WRITE_LONG);
 
-        if(page.NV_SUP)
-            sb.AppendLine(Localization.Device_has_a_non_volatile_cache);
+        if(page.NV_SUP) sb.AppendLine(Localization.Device_has_a_non_volatile_cache);
 
-        if(page.V_SUP)
-            sb.AppendLine(Localization.Device_has_a_volatile_cache);
+        if(page.V_SUP) sb.AppendLine(Localization.Device_has_a_volatile_cache);
 
-        if(page.NO_PI_CHK)
-            sb.AppendLine(Localization.Device_has_disabled_protection_information_checks);
+        if(page.NO_PI_CHK) sb.AppendLine(Localization.Device_has_disabled_protection_information_checks);
 
-        if(page.P_I_I_SUP)
-            sb.AppendLine(Localization.Device_supports_protection_information_intervals);
+        if(page.P_I_I_SUP) sb.AppendLine(Localization.Device_supports_protection_information_intervals);
 
         if(page.LUICLR)
         {
-            sb.AppendLine(Localization.
-                              Device_clears_any_unit_attention_condition_in_all_LUNs_after_reporting_for_any_LUN);
+            sb.AppendLine(Localization
+                             .Device_clears_any_unit_attention_condition_in_all_LUNs_after_reporting_for_any_LUN);
         }
 
-        if(page.R_SUP)
-            sb.AppendLine(Localization.Device_supports_referrals);
+        if(page.R_SUP) sb.AppendLine(Localization.Device_supports_referrals);
 
-        if(page.HSSRELEF)
-            sb.AppendLine(Localization.Device_implements_alternate_reset_handling);
+        if(page.HSSRELEF) sb.AppendLine(Localization.Device_implements_alternate_reset_handling);
 
-        if(page.CBCS)
-            sb.AppendLine(Localization.Device_supports_capability_based_command_security);
+        if(page.CBCS) sb.AppendLine(Localization.Device_supports_capability_based_command_security);
 
-        if(page.POA_SUP)
-            sb.AppendLine(Localization.Device_supports_power_on_activation_for_new_microcode);
+        if(page.POA_SUP) sb.AppendLine(Localization.Device_supports_power_on_activation_for_new_microcode);
 
-        if(page.HRA_SUP)
-            sb.AppendLine(Localization.Device_supports_hard_reset_activation_for_new_microcode);
+        if(page.HRA_SUP) sb.AppendLine(Localization.Device_supports_hard_reset_activation_for_new_microcode);
 
-        if(page.VSA_SUP)
-            sb.AppendLine(Localization.Device_supports_vendor_specific_activation_for_new_microcode);
+        if(page.VSA_SUP) sb.AppendLine(Localization.Device_supports_vendor_specific_activation_for_new_microcode);
 
         if(page.ExtendedTestMinutes > 0)
         {
             sb.AppendFormat(Localization.Extended_self_test_takes_0_to_complete,
-                            TimeSpan.FromMinutes(page.ExtendedTestMinutes)).
-               AppendLine();
+                            TimeSpan.FromMinutes(page.ExtendedTestMinutes))
+              .AppendLine();
         }
 
         if(page.MaximumSenseLength > 0)
         {
-            sb.AppendFormat(Localization.Device_supports_a_maximum_of_0_bytes_for_sense_data, page.MaximumSenseLength).
-               AppendLine();
+            sb.AppendFormat(Localization.Device_supports_a_maximum_of_0_bytes_for_sense_data, page.MaximumSenseLength)
+              .AppendLine();
         }
 
         return sb.ToString();
@@ -1389,14 +1340,11 @@ public static class EVPD
 
     public static Page_89? DecodePage_89(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x89)
-            return null;
+        if(pageResponse?[1] != 0x89) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 572)
-            return null;
+        if(pageResponse.Length < 572) return null;
 
         var decoded = new Page_89
         {
@@ -1425,8 +1373,7 @@ public static class EVPD
     // TODO: Decode ATA signature?
     public static string PrettifyPage_89(Page_89? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_89 page = modePage.Value;
         var     sb   = new StringBuilder();
@@ -1434,16 +1381,16 @@ public static class EVPD
         sb.AppendLine(Localization.SCSI_to_ATA_Translation_Layer_Data);
 
         sb.AppendFormat("\t" + Localization.Translation_layer_vendor_0,
-                        VendorString.Prettify(StringHandlers.CToString(page.VendorIdentification).Trim())).
-           AppendLine();
+                        VendorString.Prettify(StringHandlers.CToString(page.VendorIdentification).Trim()))
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Translation_layer_name_0,
-                        StringHandlers.CToString(page.ProductIdentification).Trim()).
-           AppendLine();
+                        StringHandlers.CToString(page.ProductIdentification).Trim())
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Translation_layer_release_level_0,
-                        StringHandlers.CToString(page.ProductRevisionLevel).Trim()).
-           AppendLine();
+                        StringHandlers.CToString(page.ProductRevisionLevel).Trim())
+          .AppendLine();
 
         switch(page.CommandCode)
         {
@@ -1472,8 +1419,8 @@ public static class EVPD
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Device_uses_unknown_transport_with_code_0, page.Signature[0]).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Device_uses_unknown_transport_with_code_0, page.Signature[0])
+                  .AppendLine();
 
                 break;
         }
@@ -1518,14 +1465,11 @@ public static class EVPD
 
     public static Page_C0_Quantum? DecodePage_C0_Quantum(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xC0)
-            return null;
+        if(pageResponse?[1] != 0xC0) return null;
 
-        if(pageResponse[3] != 20)
-            return null;
+        if(pageResponse[3] != 20) return null;
 
-        if(pageResponse.Length != 36)
-            return null;
+        if(pageResponse.Length != 36) return null;
 
         var decoded = new Page_C0_Quantum
         {
@@ -1551,8 +1495,7 @@ public static class EVPD
 
     public static string PrettifyPage_C0_Quantum(Page_C0_Quantum? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C0_Quantum page = modePage.Value;
         var             sb   = new StringBuilder();
@@ -1562,12 +1505,12 @@ public static class EVPD
         sb.AppendFormat("\t" + Localization.Quantum_Servo_firmware_checksum_0, page.ServoFirmwareChecksum).AppendLine();
         sb.AppendFormat("\t" + Localization.Quantum_EEPROM_firmware_checksum_0, page.ServoEEPROMChecksum).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Quantum_Read_write_firmware_checksum_0, page.ReadWriteFirmwareChecksum).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Quantum_Read_write_firmware_checksum_0, page.ReadWriteFirmwareChecksum)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Quantum_Read_write_firmware_build_date_0,
-                        StringHandlers.CToString(page.ReadWriteFirmwareBuildData)).
-           AppendLine();
+                        StringHandlers.CToString(page.ReadWriteFirmwareBuildData))
+          .AppendLine();
 
         return sb.ToString();
     }
@@ -1595,17 +1538,13 @@ public static class EVPD
 
     public static Page_C0_C1_Certance? DecodePage_C0_C1_Certance(byte[] pageResponse)
     {
-        if(pageResponse == null)
-            return null;
+        if(pageResponse == null) return null;
 
-        if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1)
-            return null;
+        if(pageResponse[1] != 0xC0 && pageResponse[1] != 0xC1) return null;
 
-        if(pageResponse[3] != 92)
-            return null;
+        if(pageResponse[3] != 92) return null;
 
-        if(pageResponse.Length != 96)
-            return null;
+        if(pageResponse.Length != 96) return null;
 
         var decoded = new Page_C0_C1_Certance
         {
@@ -1631,16 +1570,15 @@ public static class EVPD
 
     public static string PrettifyPage_C0_C1_Certance(Page_C0_C1_Certance? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C0_C1_Certance page = modePage.Value;
         var                 sb   = new StringBuilder();
 
         sb.AppendLine(Localization.Certance_Certance_Drive_Component_Revision_Levels_page);
 
-        sb.AppendFormat("\t" + Localization.Certance_Component_0, StringHandlers.CToString(page.Component)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Certance_Component_0, StringHandlers.CToString(page.Component))
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Certance_Version_0, StringHandlers.CToString(page.Version)).AppendLine();
         sb.AppendFormat("\t" + Localization.Certance_Date_0,    StringHandlers.CToString(page.Date)).AppendLine();
@@ -1669,8 +1607,7 @@ public static class EVPD
 
     public static Page_C2_C3_C4_C5_C6_Certance? DecodePage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse)
     {
-        if(pageResponse == null)
-            return null;
+        if(pageResponse == null) return null;
 
         if(pageResponse[1] != 0xC2 &&
            pageResponse[1] != 0xC3 &&
@@ -1679,11 +1616,9 @@ public static class EVPD
            pageResponse[1] != 0xC6)
             return null;
 
-        if(pageResponse[3] != 12)
-            return null;
+        if(pageResponse[3] != 12) return null;
 
-        if(pageResponse.Length != 16)
-            return null;
+        if(pageResponse.Length != 16) return null;
 
         var decoded = new Page_C2_C3_C4_C5_C6_Certance
         {
@@ -1703,8 +1638,7 @@ public static class EVPD
 
     public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(Page_C2_C3_C4_C5_C6_Certance? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C2_C3_C4_C5_C6_Certance page = modePage.Value;
         var                          sb   = new StringBuilder();
@@ -1715,32 +1649,32 @@ public static class EVPD
         {
             case 0xC2:
                 sb.AppendFormat("\t" + Localization.Certance_Head_Assembly_Serial_Number_0,
-                                StringHandlers.CToString(page.SerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(page.SerialNumber))
+                  .AppendLine();
 
                 break;
             case 0xC3:
                 sb.AppendFormat("\t" + Localization.Certance_Reel_Motor_1_Serial_Number_0,
-                                StringHandlers.CToString(page.SerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(page.SerialNumber))
+                  .AppendLine();
 
                 break;
             case 0xC4:
                 sb.AppendFormat("\t" + Localization.Certance_Reel_Motor_2_Serial_Number_0,
-                                StringHandlers.CToString(page.SerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(page.SerialNumber))
+                  .AppendLine();
 
                 break;
             case 0xC5:
                 sb.AppendFormat("\t" + Localization.Certance_Board_Serial_Number_0,
-                                StringHandlers.CToString(page.SerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(page.SerialNumber))
+                  .AppendLine();
 
                 break;
             case 0xC6:
                 sb.AppendFormat("\t" + Localization.Certance_Base_Mechanical_Serial_Number_0,
-                                StringHandlers.CToString(page.SerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(page.SerialNumber))
+                  .AppendLine();
 
                 break;
         }
@@ -1799,14 +1733,11 @@ public static class EVPD
 
     public static Page_DF_Certance? DecodePage_DF_Certance(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xDF)
-            return null;
+        if(pageResponse?[1] != 0xDF) return null;
 
-        if(pageResponse[3] != 60)
-            return null;
+        if(pageResponse[3] != 60) return null;
 
-        if(pageResponse.Length != 64)
-            return null;
+        if(pageResponse.Length != 64) return null;
 
         var decoded = new Page_DF_Certance
         {
@@ -1846,8 +1777,7 @@ public static class EVPD
 
     public static string PrettifyPage_DF_Certance(Page_DF_Certance? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_DF_Certance page = modePage.Value;
         var              sb   = new StringBuilder();
@@ -1870,23 +1800,18 @@ public static class EVPD
                 break;
         }
 
-        if(page.Alerts)
-            sb.AppendLine("\t" + Localization.Alerts_are_enabled);
+        if(page.Alerts) sb.AppendLine("\t" + Localization.Alerts_are_enabled);
 
-        if(page.NoRemov)
-            sb.AppendLine("\t" + Localization.Cartridge_removable_is_prevented);
+        if(page.NoRemov) sb.AppendLine("\t" + Localization.Cartridge_removable_is_prevented);
 
         if(page.UnitRsvd)
             sb.AppendFormat("\t" + Localization.Unit_is_reserved_by_initiator_ID_0, page.InitiatorID).AppendLine();
 
-        if(page.Clean)
-            sb.AppendLine("\t" + Localization.Device_needs_cleaning_cartridge);
+        if(page.Clean) sb.AppendLine("\t" + Localization.Device_needs_cleaning_cartridge);
 
-        if(page.Threaded)
-            sb.AppendLine("\t" + Localization.Cartridge_tape_is_threaded);
+        if(page.Threaded) sb.AppendLine("\t" + Localization.Cartridge_tape_is_threaded);
 
-        if(page.Lun1Cmd)
-            sb.AppendLine("\t" + Localization.There_are_commands_pending_to_be_forwarded);
+        if(page.Lun1Cmd) sb.AppendLine("\t" + Localization.There_are_commands_pending_to_be_forwarded);
 
         switch(page.AutoloadMode)
         {
@@ -1919,8 +1844,8 @@ public static class EVPD
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_port_A_transport_type_code_0, page.PortATransportType).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_port_A_transport_type_code_0, page.PortATransportType)
+                  .AppendLine();
 
                 break;
         }
@@ -1928,8 +1853,8 @@ public static class EVPD
         if(page.PortATransportType > 0)
             sb.AppendFormat("\t" + Localization.Drive_responds_to_SCSI_ID_0, page.PortASelectionID).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Drive_has_been_operating_0, TimeSpan.FromHours(page.OperatingHours)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_has_been_operating_0, TimeSpan.FromHours(page.OperatingHours))
+          .AppendLine();
 
         if(page.CartridgeType > 0)
         {
@@ -1940,8 +1865,8 @@ public static class EVPD
 
                     break;
                 default:
-                    sb.AppendFormat("\t" + Localization.Unknown_cartridge_format_code_0, page.CartridgeType).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Unknown_cartridge_format_code_0, page.CartridgeType)
+                      .AppendLine();
 
                     break;
             }
@@ -1991,12 +1916,12 @@ public static class EVPD
             }
 
             sb.AppendFormat("\t" + Localization.Cartridge_has_an_uncompressed_capability_of_0_gigabytes,
-                            page.CartridgeCapacity).
-               AppendLine();
+                            page.CartridgeCapacity)
+              .AppendLine();
 
             sb.AppendFormat("\t" + Localization.Cartridge_serial_number_0,
-                            StringHandlers.SpacePaddedToString(page.CartridgeSerialNumber)).
-               AppendLine();
+                            StringHandlers.SpacePaddedToString(page.CartridgeSerialNumber))
+              .AppendLine();
         }
         else
             sb.AppendLine("\t" + Localization.There_is_no_cartridge_inserted);
@@ -2025,14 +1950,11 @@ public static class EVPD
 
     public static Page_C0_IBM? DecodePage_C0_IBM(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xC0)
-            return null;
+        if(pageResponse?[1] != 0xC0) return null;
 
-        if(pageResponse[3] != 39)
-            return null;
+        if(pageResponse[3] != 39) return null;
 
-        if(pageResponse.Length != 43)
-            return null;
+        if(pageResponse.Length != 43) return null;
 
         var decoded = new Page_C0_IBM
         {
@@ -2054,8 +1976,7 @@ public static class EVPD
 
     public static string PrettifyPage_C0_IBM(Page_C0_IBM? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C0_IBM page = modePage.Value;
         var         sb   = new StringBuilder();
@@ -2089,14 +2010,11 @@ public static class EVPD
 
     public static Page_C1_IBM? DecodePage_C1_IBM(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xC1)
-            return null;
+        if(pageResponse?[1] != 0xC1) return null;
 
-        if(pageResponse[3] != 24)
-            return null;
+        if(pageResponse[3] != 24) return null;
 
-        if(pageResponse.Length != 28)
-            return null;
+        if(pageResponse.Length != 28) return null;
 
         var decoded = new Page_C1_IBM
         {
@@ -2118,8 +2036,7 @@ public static class EVPD
 
     public static string PrettifyPage_C1_IBM(Page_C1_IBM? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C1_IBM page = modePage.Value;
         var         sb   = new StringBuilder();
@@ -2127,11 +2044,11 @@ public static class EVPD
         sb.AppendLine(Localization.IBM_Drive_Serial_Numbers_page);
 
         sb.AppendFormat("\t" + Localization.Manufacturing_serial_number_0,
-                        StringHandlers.CToString(page.ManufacturingSerial)).
-           AppendLine();
+                        StringHandlers.CToString(page.ManufacturingSerial))
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Reported_serial_number_0, StringHandlers.CToString(page.ReportedSerial)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Reported_serial_number_0, StringHandlers.CToString(page.ReportedSerial))
+          .AppendLine();
 
         return sb.ToString();
     }
@@ -2157,14 +2074,11 @@ public static class EVPD
 
     public static Page_B0? DecodePage_B0(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xB0)
-            return null;
+        if(pageResponse?[1] != 0xB0) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 5)
-            return null;
+        if(pageResponse.Length < 5) return null;
 
         var decoded = new Page_B0
         {
@@ -2182,19 +2096,16 @@ public static class EVPD
 
     public static string PrettifyPage_B0(Page_B0? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_B0 page = modePage.Value;
         var     sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Sequential_access_Device_Capabilities);
 
-        if(page.WORM)
-            sb.AppendLine("\t" + Localization.Device_supports_WORM_media);
+        if(page.WORM) sb.AppendLine("\t" + Localization.Device_supports_WORM_media);
 
-        if(page.TSMC)
-            sb.AppendLine("\t" + Localization.Device_supports_Tape_Stream_Mirroring);
+        if(page.TSMC) sb.AppendLine("\t" + Localization.Device_supports_Tape_Stream_Mirroring);
 
         return sb.ToString();
     }
@@ -2223,8 +2134,7 @@ public static class EVPD
 
     public static Page_C0_to_C5_HP? DecodePage_C0_to_C5_HP(byte[] pageResponse)
     {
-        if(pageResponse == null)
-            return null;
+        if(pageResponse == null) return null;
 
         if(pageResponse[1] != 0xC0 &&
            pageResponse[1] != 0xC1 &&
@@ -2234,8 +2144,7 @@ public static class EVPD
            pageResponse[1] != 0xC5)
             return null;
 
-        if(pageResponse.Length < 4)
-            return null;
+        if(pageResponse.Length < 4) return null;
 
         var decoded = new Page_C0_to_C5_HP
         {
@@ -2260,8 +2169,7 @@ public static class EVPD
             return decoded;
         }
 
-        if(pageResponse[4] != pageResponse[3] - 1)
-            return null;
+        if(pageResponse[4] != pageResponse[3] - 1) return null;
 
         List<byte> array = new();
 
@@ -2312,8 +2220,7 @@ public static class EVPD
 
     public static string PrettifyPage_C0_to_C5_HP(Page_C0_to_C5_HP? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C0_to_C5_HP page = modePage.Value;
         var              sb   = new StringBuilder();
@@ -2348,14 +2255,14 @@ public static class EVPD
 
         if(page.Component is { Length: > 0 })
         {
-            sb.AppendFormat("\t" + Localization.Certance_Component_0, StringHandlers.CToString(page.Component)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Certance_Component_0, StringHandlers.CToString(page.Component))
+              .AppendLine();
         }
 
         if(page.Version is { Length: > 0 })
         {
-            sb.AppendFormat("\t" + Localization.Certance_Version_0, StringHandlers.CToString(page.Version)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Certance_Version_0, StringHandlers.CToString(page.Version))
+              .AppendLine();
         }
 
         if(page.Date is { Length: > 0 })
@@ -2363,8 +2270,8 @@ public static class EVPD
 
         if(page.Variant is { Length: > 0 })
         {
-            sb.AppendFormat("\t" + Localization.Certance_Variant_0, StringHandlers.CToString(page.Variant)).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Certance_Variant_0, StringHandlers.CToString(page.Variant))
+              .AppendLine();
         }
 
         if(page.Copyright is { Length: > 0 })
@@ -2395,14 +2302,11 @@ public static class EVPD
 
     public static Page_C0_Seagate? DecodePage_C0_Seagate(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0xC0)
-            return null;
+        if(pageResponse?[1] != 0xC0) return null;
 
-        if(pageResponse[3] != 12)
-            return null;
+        if(pageResponse[3] != 12) return null;
 
-        if(pageResponse.Length != 16)
-            return null;
+        if(pageResponse.Length != 16) return null;
 
         var decoded = new Page_C0_Seagate
         {
@@ -2427,8 +2331,7 @@ public static class EVPD
 
     public static string PrettifyPage_C0_Seagate(Page_C0_Seagate? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Page_C0_Seagate page = modePage.Value;
         var             sb   = new StringBuilder();
@@ -2436,14 +2339,14 @@ public static class EVPD
         sb.AppendLine(Localization.Seagate_Firmware_Numbers_page);
 
         sb.AppendFormat("\t" + Localization.Controller_firmware_version_0,
-                        StringHandlers.CToString(page.ControllerFirmware)).
-           AppendLine();
+                        StringHandlers.CToString(page.ControllerFirmware))
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Boot_firmware_version_0, StringHandlers.CToString(page.BootFirmware)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Boot_firmware_version_0, StringHandlers.CToString(page.BootFirmware))
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Servo_firmware_version_0, StringHandlers.CToString(page.ServoFirmware)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Servo_firmware_version_0, StringHandlers.CToString(page.ServoFirmware))
+          .AppendLine();
 
         return sb.ToString();
     }

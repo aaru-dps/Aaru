@@ -39,6 +39,13 @@ namespace Aaru.Filesystems;
 public sealed partial class UDF
 {
     static DateTime EcmaToDateTime(Timestamp timestamp) => DateHandlers.EcmaToDateTime(timestamp.typeAndZone,
-        timestamp.year, timestamp.month, timestamp.day, timestamp.hour, timestamp.minute, timestamp.second,
-        timestamp.centiseconds, timestamp.hundredsMicroseconds, timestamp.microseconds);
+        timestamp.year,
+        timestamp.month,
+        timestamp.day,
+        timestamp.hour,
+        timestamp.minute,
+        timestamp.second,
+        timestamp.centiseconds,
+        timestamp.hundredsMicroseconds,
+        timestamp.microseconds);
 }

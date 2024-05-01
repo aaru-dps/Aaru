@@ -80,8 +80,7 @@ public class Crc16Context : IChecksum
         else
             _useNative = false;
 
-        if(!_useNative)
-            _table = table ?? GenerateTable(polynomial, inverse);
+        if(!_useNative) _table = table ?? GenerateTable(polynomial, inverse);
     }
 
 #region IChecksum Members
@@ -192,8 +191,7 @@ public class Crc16Context : IChecksum
 
         byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
 
-        foreach(byte t in finalBytes)
-            crc16Output.Append(t.ToString("x2"));
+        foreach(byte t in finalBytes) crc16Output.Append(t.ToString("x2"));
 
         return crc16Output.ToString();
     }
@@ -261,8 +259,7 @@ public class Crc16Context : IChecksum
             len -= bytesAtOnce;
         }
 
-        while(len-- != 0)
-            crc = (ushort)(crc >> 8 ^ table[0][crc & 0xFF ^ data[currentPos++]]);
+        while(len-- != 0) crc = (ushort)(crc >> 8 ^ table[0][crc & 0xFF ^ data[currentPos++]]);
 
         previousCrc = crc;
     }
@@ -300,8 +297,7 @@ public class Crc16Context : IChecksum
             len -= bytesAtOnce;
         }
 
-        while(len-- != 0)
-            crc = (ushort)(crc << 8 ^ table[0][crc >> 8 ^ data[currentPos++]]);
+        while(len-- != 0) crc = (ushort)(crc << 8 ^ table[0][crc >> 8 ^ data[currentPos++]]);
 
         previousCrc = crc;
     }
@@ -310,8 +306,7 @@ public class Crc16Context : IChecksum
     {
         var table = new ushort[8][];
 
-        for(var i = 0; i < 8; i++)
-            table[i] = new ushort[256];
+        for(var i = 0; i < 8; i++) table[i] = new ushort[256];
 
         if(!inverseTable)
         {
@@ -349,12 +344,14 @@ public class Crc16Context : IChecksum
         }
 
         for(var slice = 1; slice < 8; slice++)
-        for(var i = 0; i < 256; i++)
         {
-            if(inverseTable)
-                table[slice][i] = (ushort)(table[slice - 1][i] << 8 ^ table[0][table[slice - 1][i] >> 8]);
-            else
-                table[slice][i] = (ushort)(table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF]);
+            for(var i = 0; i < 256; i++)
+            {
+                if(inverseTable)
+                    table[slice][i] = (ushort)(table[slice - 1][i] << 8 ^ table[0][table[slice - 1][i] >> 8]);
+                else
+                    table[slice][i] = (ushort)(table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF]);
+            }
         }
 
         return table;
@@ -447,8 +444,7 @@ public class Crc16Context : IChecksum
                 break;
             default:
             {
-                if(inverse)
-                    localHashInt = (ushort)~localHashInt;
+                if(inverse) localHashInt = (ushort)~localHashInt;
 
                 break;
             }
@@ -458,8 +454,7 @@ public class Crc16Context : IChecksum
 
         var crc16Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc16Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc16Output.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -544,8 +539,7 @@ public class Crc16Context : IChecksum
                 break;
             default:
             {
-                if(inverse)
-                    localHashInt = (ushort)~localHashInt;
+                if(inverse) localHashInt = (ushort)~localHashInt;
 
                 break;
             }
@@ -555,8 +549,7 @@ public class Crc16Context : IChecksum
 
         var crc16Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc16Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc16Output.Append(h.ToString("x2"));
 
         return crc16Output.ToString();
     }
@@ -637,8 +630,7 @@ public class Crc16Context : IChecksum
                 break;
             default:
             {
-                if(inverse)
-                    localHashInt = (ushort)~localHashInt;
+                if(inverse) localHashInt = (ushort)~localHashInt;
 
                 break;
             }

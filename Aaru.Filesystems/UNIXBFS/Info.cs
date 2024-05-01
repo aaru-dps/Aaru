@@ -47,13 +47,11 @@ public sealed partial class BFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] tmp);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BitConverter.ToUInt32(tmp, 0);
 
@@ -71,8 +69,7 @@ public sealed partial class BFS
         var         sb    = new StringBuilder();
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bfsSbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var sbStrings = new byte[6];
 
@@ -104,9 +101,11 @@ public sealed partial class BFS
 
         sb.AppendLine(Localization.UNIX_Boot_Filesystem);
 
-        sb.AppendFormat(Localization.Volume_goes_from_byte_0_to_byte_1_for_2_bytes, bfsSb.s_start, bfsSb.s_end,
-                        bfsSb.s_end - bfsSb.s_start).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_goes_from_byte_0_to_byte_1_for_2_bytes,
+                        bfsSb.s_start,
+                        bfsSb.s_end,
+                        bfsSb.s_end - bfsSb.s_start)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Filesystem_name_0, bfsSb.s_fsname).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0,     bfsSb.s_volume).AppendLine();

@@ -44,6 +44,7 @@ public sealed partial class Qcow2
 #region IWritableImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

@@ -45,14 +45,12 @@ public static partial class Modes
 {
     public static ModeHeader? DecodeModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
     {
-        if(modeResponse == null || modeResponse.Length < 8)
-            return null;
+        if(modeResponse == null || modeResponse.Length < 8) return null;
 
         var modeLength      = (ushort)((modeResponse[0] << 8) + modeResponse[1]);
         var blockDescLength = (ushort)((modeResponse[6] << 8) + modeResponse[7]);
 
-        if(modeResponse.Length < modeLength)
-            return null;
+        if(modeResponse.Length < modeLength) return null;
 
         var header = new ModeHeader
         {
@@ -69,8 +67,7 @@ public static partial class Modes
 
                 for(var i = 0; i < header.BlockDescriptors.Length; i++)
                 {
-                    if(12 + i * 16 + 8 >= modeResponse.Length)
-                        break;
+                    if(12 + i * 16 + 8 >= modeResponse.Length) break;
 
                     header.BlockDescriptors[i] = new BlockDescriptor
                     {
@@ -99,8 +96,7 @@ public static partial class Modes
 
                 for(var i = 0; i < header.BlockDescriptors.Length; i++)
                 {
-                    if(7 + i * 8 + 8 >= modeResponse.Length)
-                        break;
+                    if(7 + i * 8 + 8 >= modeResponse.Length) break;
 
                     header.BlockDescriptors[i] = new BlockDescriptor();
 
@@ -158,8 +154,7 @@ public static partial class Modes
     {
         ModeHeader? hdr = DecodeModeHeader10(modeResponse, deviceType);
 
-        if(!hdr.HasValue)
-            return null;
+        if(!hdr.HasValue) return null;
 
         var decoded = new DecodedMode
         {
@@ -170,8 +165,7 @@ public static partial class Modes
         int  offset;
         var  blkDrLength = 0;
 
-        if(decoded.Header.BlockDescriptors != null)
-            blkDrLength = decoded.Header.BlockDescriptors.Length;
+        if(decoded.Header.BlockDescriptors != null) blkDrLength = decoded.Header.BlockDescriptors.Length;
 
         if(longlba)
             offset = 8 + blkDrLength * 16;
@@ -182,8 +176,7 @@ public static partial class Modes
         length += modeResponse[1];
         length += 2;
 
-        if(length != modeResponse.Length)
-            return decoded;
+        if(length != modeResponse.Length) return decoded;
 
         List<ModePage> listpages = new();
 
@@ -269,16 +262,13 @@ public static partial class Modes
         {
             case PeripheralDeviceTypes.DirectAccess:
             case PeripheralDeviceTypes.MultiMediaDevice:
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
+                if(header.WriteProtected) hdr[3] += 0x80;
 
-                if(header.DPOFUA)
-                    hdr[3] += 0x10;
+                if(header.DPOFUA) hdr[3] += 0x10;
 
                 break;
             case PeripheralDeviceTypes.SequentialAccess:
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
+                if(header.WriteProtected) hdr[3] += 0x80;
 
                 hdr[3] += (byte)(header.Speed             & 0x0F);
                 hdr[3] += (byte)(header.BufferedMode << 4 & 0x70);
@@ -289,23 +279,18 @@ public static partial class Modes
 
                 break;
             case PeripheralDeviceTypes.OpticalDevice:
-                if(header.WriteProtected)
-                    hdr[3] += 0x80;
+                if(header.WriteProtected) hdr[3] += 0x80;
 
-                if(header.EBC)
-                    hdr[3] += 0x01;
+                if(header.EBC) hdr[3] += 0x01;
 
-                if(header.DPOFUA)
-                    hdr[3] += 0x10;
+                if(header.DPOFUA) hdr[3] += 0x10;
 
                 break;
         }
 
-        if(longLBA)
-            hdr[4] += 0x01;
+        if(longLBA) hdr[4] += 0x01;
 
-        if(header.BlockDescriptors == null)
-            return hdr;
+        if(header.BlockDescriptors == null) return hdr;
 
         if(longLBA)
         {
@@ -351,8 +336,7 @@ public static partial class Modes
     {
         var modeSize = 0;
 
-        if(mode.Pages != null)
-            modeSize += mode.Pages.Sum(page => page.PageResponse.Length);
+        if(mode.Pages != null) modeSize += mode.Pages.Sum(page => page.PageResponse.Length);
 
         byte[] hdr = EncodeModeHeader10(mode.Header, deviceType);
         modeSize += hdr.Length;
@@ -360,8 +344,7 @@ public static partial class Modes
 
         Array.Copy(hdr, 0, md, 0, hdr.Length);
 
-        if(mode.Pages == null)
-            return md;
+        if(mode.Pages == null) return md;
 
         {
             int offset = hdr.Length;

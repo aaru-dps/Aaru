@@ -55,8 +55,7 @@ public sealed partial class Cpcdsk
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var headerB = new byte[256];
         stream.EnsureRead(headerB, 0, 256);
@@ -65,12 +64,10 @@ public sealed partial class Cpcdsk
 
         for(pos = 0; pos < 254; pos++)
         {
-            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A)
-                break;
+            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A) break;
         }
 
-        if(pos >= 254)
-            return ErrorNumber.InvalidArgument;
+        if(pos >= 254) return ErrorNumber.InvalidArgument;
 
         string magic = Encoding.ASCII.GetString(headerB, 0, pos);
 
@@ -104,7 +101,10 @@ public sealed partial class Cpcdsk
             {
                 for(var j = 0; j < header.sides; j++)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_0_Side_1_size_equals_2, i, j,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Track_0_Side_1_size_equals_2,
+                                               i,
+                                               j,
                                                header.tracksizeTable[i * header.sides + j] * 256);
                 }
             }
@@ -125,8 +125,7 @@ public sealed partial class Cpcdsk
             for(var j = 0; j < header.sides; j++)
             {
                 // Track not stored in image
-                if(_extended && header.tracksizeTable[i * header.sides + j] == 0)
-                    continue;
+                if(_extended && header.tracksizeTable[i * header.sides + j] == 0) continue;
 
                 long trackPos = stream.Position;
 
@@ -134,7 +133,8 @@ public sealed partial class Cpcdsk
                 stream.EnsureRead(trackB, 0, 256);
                 TrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(trackB);
 
-                if(string.Compare(TRACK_ID, Encoding.ASCII.GetString(trackInfo.magic),
+                if(string.Compare(TRACK_ID,
+                                  Encoding.ASCII.GetString(trackInfo.magic),
                                   StringComparison.InvariantCultureIgnoreCase) !=
                    0)
                 {
@@ -143,11 +143,17 @@ public sealed partial class Cpcdsk
                     return ErrorNumber.InvalidArgument;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].magic = \"{0}\"",
-                                           StringHandlers.CToString(trackInfo.magic), i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "trackInfo[{1}:{2}].magic = \"{0}\"",
+                                           StringHandlers.CToString(trackInfo.magic),
+                                           i,
+                                           j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].bps = {0}", SizeCodeToBytes(trackInfo.bps),
-                                           i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "trackInfo[{1}:{2}].bps = {0}",
+                                           SizeCodeToBytes(trackInfo.bps),
+                                           i,
+                                           j);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate, i, j);
 
@@ -157,8 +163,11 @@ public sealed partial class Cpcdsk
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i, j);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].recordingMode = {0}",
-                                           trackInfo.recordingMode, i, j);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "trackInfo[{1}:{2}].recordingMode = {0}",
+                                           trackInfo.recordingMode,
+                                           i,
+                                           j);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i, j);
 
@@ -179,26 +188,54 @@ public sealed partial class Cpcdsk
 
                 for(var k = 1; k <= trackInfo.sectors; k++)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
-                                               trackInfo.sectorsInfo[k - 1].id, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
+                                               trackInfo.sectorsInfo[k - 1].id,
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].len = {0}",
-                                               trackInfo.sectorsInfo[k - 1].len, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].len = {0}",
+                                               trackInfo.sectorsInfo[k - 1].len,
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].side = {0}",
-                                               trackInfo.sectorsInfo[k - 1].side, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].side = {0}",
+                                               trackInfo.sectorsInfo[k - 1].side,
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].size = {0}",
-                                               SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size), i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].size = {0}",
+                                               SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size),
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
-                                               trackInfo.sectorsInfo[k - 1].st1, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
+                                               trackInfo.sectorsInfo[k - 1].st1,
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
-                                               trackInfo.sectorsInfo[k - 1].st2, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
+                                               trackInfo.sectorsInfo[k - 1].st2,
+                                               i,
+                                               j,
+                                               k);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "trackInfo[{1}:{2}].sector[{3}].track = {0}",
-                                               trackInfo.sectorsInfo[k - 1].track, i, j, k);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "trackInfo[{1}:{2}].sector[{3}].track = {0}",
+                                               trackInfo.sectorsInfo[k - 1].track,
+                                               i,
+                                               j,
+                                               k);
 
                     int sectLen = _extended
                                       ? trackInfo.sectorsInfo[k - 1].len
@@ -247,8 +284,7 @@ public sealed partial class Cpcdsk
                     _addressMarks.Add(currentSector, s.Value);
                     currentSector++;
 
-                    if(s.Value.Length > _imageInfo.SectorSize)
-                        _imageInfo.SectorSize = (uint)s.Value.Length;
+                    if(s.Value.Length > _imageInfo.SectorSize) _imageInfo.SectorSize = (uint)s.Value.Length;
                 }
 
                 stream.Seek(trackPos, SeekOrigin.Begin);
@@ -297,11 +333,9 @@ public sealed partial class Cpcdsk
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -309,8 +343,7 @@ public sealed partial class Cpcdsk
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -325,8 +358,7 @@ public sealed partial class Cpcdsk
     {
         buffer = null;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
         return _addressMarks.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
@@ -336,14 +368,11 @@ public sealed partial class Cpcdsk
     {
         buffer = null;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -351,8 +380,7 @@ public sealed partial class Cpcdsk
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] addressMark);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(addressMark, 0, addressMark.Length);
         }

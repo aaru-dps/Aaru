@@ -202,9 +202,15 @@ public sealed partial class Anex86
             return false;
         }
 
-        if(_imageInfo.MediaType is MediaType.Unknown or MediaType.GENERIC_HDD or MediaType.FlashDrive
-                                or MediaType.CompactFlash or MediaType.CompactFlashType2 or MediaType.PCCardTypeI
-                                or MediaType.PCCardTypeII or MediaType.PCCardTypeIII or MediaType.PCCardTypeIV &&
+        if(_imageInfo.MediaType is MediaType.Unknown
+                                or MediaType.GENERIC_HDD
+                                or MediaType.FlashDrive
+                                or MediaType.CompactFlash
+                                or MediaType.CompactFlashType2
+                                or MediaType.PCCardTypeI
+                                or MediaType.PCCardTypeII
+                                or MediaType.PCCardTypeIII
+                                or MediaType.PCCardTypeIV &&
            _header.cylinders == 0)
         {
             _header.cylinders = (int)(_imageInfo.Sectors / 8 / 33);
@@ -223,8 +229,7 @@ public sealed partial class Anex86
 
                 _header.cylinders = (int)_imageInfo.Sectors / _header.heads / _header.spt;
 
-                if(_header.cylinders == 0 && _header is { heads: 0, spt: 0 })
-                    break;
+                if(_header.cylinders == 0 && _header is { heads: 0, spt: 0 }) break;
             }
         }
 

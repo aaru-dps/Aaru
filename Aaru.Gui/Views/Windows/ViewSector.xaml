@@ -31,12 +31,20 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Windows.ViewSector"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="480"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Windows.ViewSector"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <windows:ViewSectorViewModel />
     </Design.DataContext>
@@ -45,9 +53,11 @@
             <TextBlock Text="{Binding SectorLabel}" /> <NumericUpDown Value="{Binding SectorNumber}" />
             <TextBlock Text="{Binding TotalSectorsText}" />
         </StackPanel>
-        <CheckBox IsChecked="{Binding LongSectorChecked}" IsVisible="{Binding LongSectorVisible}">
+        <CheckBox IsChecked="{Binding LongSectorChecked}"
+                  IsVisible="{Binding LongSectorVisible}">
             <TextBlock Text="{Binding LongSectorLabel}" />
         </CheckBox>
-        <TextBox IsReadOnly="True" Text="{Binding PrintHexText}" />
+        <TextBox IsReadOnly="True"
+                 Text="{Binding PrintHexText}" />
     </StackPanel>
 </Window>

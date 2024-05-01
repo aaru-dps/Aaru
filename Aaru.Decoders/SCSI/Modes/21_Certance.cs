@@ -58,17 +58,13 @@ public static partial class Modes
 
     public static Certance_ModePage_21? DecodeCertanceModePage_21(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x21)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x21) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 9)
-            return null;
+        if(pageResponse.Length != 9) return null;
 
         var decoded = new Certance_ModePage_21();
 
@@ -90,16 +86,14 @@ public static partial class Modes
 
     public static string PrettifyCertanceModePage_21(Certance_ModePage_21? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Certance_ModePage_21 page = modePage.Value;
         var                  sb   = new StringBuilder();
 
         sb.AppendLine(Localization.Certance_Drive_Capabilities_Control_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.OperatingSystemsSupport)
         {
@@ -109,8 +103,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Operating_systems_support_is_unknown_code_0,
-                                page.OperatingSystemsSupport).
-                   AppendLine();
+                                page.OperatingSystemsSupport)
+                  .AppendLine();
 
                 break;
         }
@@ -132,8 +126,8 @@ public static partial class Modes
 
                     break;
                 default:
-                    sb.AppendFormat("\t" + Localization.Unknown_factory_test_code_0, page.FirmwareTestControl).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Unknown_factory_test_code_0, page.FirmwareTestControl)
+                      .AppendLine();
 
                     break;
             }
@@ -150,8 +144,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_Power_On_Self_Test_code_0, page.ExtendedPOSTMode).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_Power_On_Self_Test_code_0, page.ExtendedPOSTMode)
+                  .AppendLine();
 
                 break;
         }
@@ -171,18 +165,17 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_compression_control_code_0, page.DataCompressionControl).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_compression_control_code_0, page.DataCompressionControl)
+                  .AppendLine();
 
                 break;
         }
 
-        if(page.HostUnloadOverride)
-            sb.AppendLine("\t" + Localization.SCSI_UNLOAD_command_will_not_eject_the_cartridge);
+        if(page.HostUnloadOverride) sb.AppendLine("\t" + Localization.SCSI_UNLOAD_command_will_not_eject_the_cartridge);
 
         sb.Append("\t" +
-                  Localization.
-                      How_should_tapes_be_unloaded_in_a_power_cycle_tape_incompatibility_firmware_download_or_cleaning_end);
+                  Localization
+                     .How_should_tapes_be_unloaded_in_a_power_cycle_tape_incompatibility_firmware_download_or_cleaning_end);
 
         switch(page.AutoUnloadMode)
         {

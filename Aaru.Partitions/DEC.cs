@@ -63,18 +63,15 @@ public sealed class DEC : IPartition
     {
         partitions = new List<CommonTypes.Partition>();
 
-        if(31 + sectorOffset >= imagePlugin.Info.Sectors)
-            return false;
+        if(31 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(31 + sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Label table = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
-        if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID)
-            return false;
+        if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;
 
         ulong counter = 0;
 
@@ -86,8 +83,8 @@ public sealed class DEC : IPartition
                                                         Length   = (ulong)(entry.pi_nblocks * sector.Length),
                                                         Sequence = counter,
                                                         Scheme   = Name
-                                                    }).
-                                                    Where(part => part.Size > 0))
+                                                    })
+                                                   .Where(part => part.Size > 0))
         {
             partitions.Add(part);
             counter++;

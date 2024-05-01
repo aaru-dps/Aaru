@@ -57,24 +57,32 @@ sealed class VerifyCommand : Command
     public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
         Add(new Option<bool>(new[]
-        {
-            "--verify-disc", "-w"
-        }, () => true, UI.Verify_media_image_if_supported));
+                             {
+                                 "--verify-disc", "-w"
+                             },
+                             () => true,
+                             UI.Verify_media_image_if_supported));
 
         Add(new Option<bool>(new[]
-        {
-            "--verify-sectors", "-s"
-        }, () => true, UI.Verify_all_sectors_if_supported));
+                             {
+                                 "--verify-sectors", "-s"
+                             },
+                             () => true,
+                             UI.Verify_all_sectors_if_supported));
 
         Add(new Option<bool>(new[]
-        {
-            "--create-graph", "-g"
-        }, () => true, UI.Create_graph_of_verified_disc));
+                             {
+                                 "--create-graph", "-g"
+                             },
+                             () => true,
+                             UI.Create_graph_of_verified_disc));
 
         Add(new Option<uint>(new[]
-        {
-            "--dimensions"
-        }, () => 1080, UI.Verify_dimensions_paramater_help));
+                             {
+                                 "--dimensions"
+                             },
+                             () => 1080,
+                             UI.Verify_dimensions_paramater_help));
 
         AddArgument(new Argument<string>
         {
@@ -249,12 +257,13 @@ sealed class VerifyCommand : Command
         {
             Spiral.DiscParameters spiralParameters = null;
 
-            if(createGraph)
-                spiralParameters = Spiral.DiscParametersFromMediaType(opticalMediaImage.Info.MediaType);
+            if(createGraph) spiralParameters = Spiral.DiscParametersFromMediaType(opticalMediaImage.Info.MediaType);
 
             if(spiralParameters is not null)
             {
-                mediaGraph = new Spiral((int)dimensions, (int)dimensions, spiralParameters,
+                mediaGraph = new Spiral((int)dimensions,
+                                        (int)dimensions,
+                                        spiralParameters,
                                         opticalMediaImage.Info.Sectors);
             }
             else if(createGraph)
@@ -265,11 +274,11 @@ sealed class VerifyCommand : Command
 
             stopwatch.Start();
 
-            AnsiConsole.Progress().
-                        AutoClear(true).
-                        HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
                             ProgressTask discTask = ctx.AddTask(UI.Checking_tracks);
                             discTask.MaxValue = inputTracks.Count;
@@ -298,14 +307,19 @@ sealed class VerifyCommand : Command
 
                                     if(remainingSectors < 512)
                                     {
-                                        opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                        currentTrack.Sequence, out tempFailingLbas,
+                                        opticalMediaImage.VerifySectors(currentSector,
+                                                                        (uint)remainingSectors,
+                                                                        currentTrack.Sequence,
+                                                                        out tempFailingLbas,
                                                                         out tempUnknownLbas);
                                     }
                                     else
                                     {
-                                        opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.Sequence,
-                                                                        out tempFailingLbas, out tempUnknownLbas);
+                                        opticalMediaImage.VerifySectors(currentSector,
+                                                                        512,
+                                                                        currentTrack.Sequence,
+                                                                        out tempFailingLbas,
+                                                                        out tempUnknownLbas);
                                     }
 
                                     if(mediaGraph != null)
@@ -315,8 +329,7 @@ sealed class VerifyCommand : Command
                                         for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
                                             tempCorrectLbas.Add(currentSector + l);
 
-                                        foreach(ulong f in tempFailingLbas)
-                                            tempCorrectLbas.Remove(f);
+                                        foreach(ulong f in tempFailingLbas) tempCorrectLbas.Remove(f);
 
                                         foreach(ulong u in tempUnknownLbas)
                                         {
@@ -363,11 +376,11 @@ sealed class VerifyCommand : Command
             ulong remainingSectors = inputFormat.Info.Sectors;
             ulong currentSector    = 0;
 
-            AnsiConsole.Progress().
-                        AutoClear(true).
-                        HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
                             ProgressTask diskTask = ctx.AddTask(UI.Checking_sectors);
                             diskTask.MaxValue = inputFormat.Info.Sectors;
@@ -384,13 +397,16 @@ sealed class VerifyCommand : Command
 
                                 if(remainingSectors < 512)
                                 {
-                                    verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                    verifiableSectorsImage.VerifySectors(currentSector,
+                                                                         (uint)remainingSectors,
                                                                          out tempFailingLbas,
                                                                          out tempUnknownLbas);
                                 }
                                 else
                                 {
-                                    verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                                    verifiableSectorsImage.VerifySectors(currentSector,
+                                                                         512,
+                                                                         out tempFailingLbas,
                                                                          out tempUnknownLbas);
                                 }
 
@@ -405,11 +421,9 @@ sealed class VerifyCommand : Command
                                     for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
                                         tempCorrectLbas.Add(currentSector + l);
 
-                                    foreach(ulong f in tempFailingLbas)
-                                        tempCorrectLbas.Remove(f);
+                                    foreach(ulong f in tempFailingLbas) tempCorrectLbas.Remove(f);
 
-                                    foreach(ulong u in tempUnknownLbas)
-                                        tempCorrectLbas.Remove(u);
+                                    foreach(ulong u in tempUnknownLbas) tempCorrectLbas.Remove(u);
 
                                     mediaGraph.PaintSectorsUnknown(tempUnknownLbas);
                                     mediaGraph.PaintSectorsGood(tempCorrectLbas);
@@ -440,8 +454,7 @@ sealed class VerifyCommand : Command
         if(failingLbas.Count > 0)
             AaruConsole.WriteLine(UI.There_is_at_least_one_sector_with_incorrect_checksum_or_errors);
 
-        if(unknownLbas.Count == 0 && failingLbas.Count == 0)
-            AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
+        if(unknownLbas.Count == 0 && failingLbas.Count == 0) AaruConsole.WriteLine(UI.All_sector_checksums_are_correct);
 
         AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,
                                      stopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
@@ -453,20 +466,16 @@ sealed class VerifyCommand : Command
             if(failingLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[red]{UI.all_sectors}[/]");
             else
-            {
                 foreach(ulong t in failingLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
-            }
 
             AaruConsole.WriteLine($"[yellow3_1]{UI.LBAs_without_checksum}[/]");
 
             if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[yellow3_1]{UI.all_sectors}[/]");
             else
-            {
                 foreach(ulong t in unknownLbas)
                     AaruConsole.VerboseWriteLine("\t{0}", t);
-            }
         }
 
         // TODO: Convert to table
@@ -478,9 +487,8 @@ sealed class VerifyCommand : Command
         mediaGraph?.WriteTo($"{Path.GetFileNameWithoutExtension(inputFilter.Filename)}.verify.png");
 
         if(failingLbas.Count > 0)
-            correctSectors = false;
-        else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors)
-            correctSectors = true;
+            correctSectors                                                          = false;
+        else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors) correctSectors = true;
 
         return correctImage switch
                {

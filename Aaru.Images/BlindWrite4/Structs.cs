@@ -60,7 +60,7 @@ public sealed partial class BlindWrite4
         public byte[] Unknown4;
 
         // On memory only
-    #pragma warning disable 649
+#pragma warning disable 649
         public string  VolumeIdentifier;
         public string  SystemIdentifier;
         public string  Comments;
@@ -68,7 +68,7 @@ public sealed partial class BlindWrite4
         public IFilter SubchannelFilter;
         public string  DataFile;
         public string  SubchannelFile;
-    #pragma warning restore 649
+#pragma warning restore 649
     }
 
 #endregion

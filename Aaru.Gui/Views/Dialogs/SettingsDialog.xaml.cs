@@ -41,9 +41,9 @@ public sealed class SettingsDialog : Window
     public SettingsDialog()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

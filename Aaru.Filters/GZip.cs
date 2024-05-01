@@ -100,8 +100,7 @@ public sealed class GZip : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[3];
@@ -214,8 +213,7 @@ public sealed class GZip : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath[..^3];
+            if(BasePath?.EndsWith(".gz", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^3];
 
             return BasePath?.EndsWith(".gzip", StringComparison.InvariantCultureIgnoreCase) == true
                        ? BasePath[..^5]

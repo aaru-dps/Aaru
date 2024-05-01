@@ -42,16 +42,14 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of the filesystem used in 8-bit Commodore microcomputers</summary>
 public sealed partial class CBM
 {
-#region IFilesystem Members
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start > 0)
-            return false;
+        if(partition.Start > 0) return false;
 
-        if(imagePlugin.Info.SectorSize != 256)
-            return false;
+        if(imagePlugin.Info.SectorSize != 256) return false;
 
         if(imagePlugin.Info.Sectors != 683  &&
            imagePlugin.Info.Sectors != 768  &&
@@ -65,20 +63,17 @@ public sealed partial class CBM
         {
             ErrorNumber errno = imagePlugin.ReadSector(1560, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
-            if(cbmHdr.diskDosVersion == 0x44 && cbmHdr is { dosVersion: 0x33, diskVersion: 0x44 })
-                return true;
+            if(cbmHdr.diskDosVersion == 0x44 && cbmHdr is { dosVersion: 0x33, diskVersion: 0x44 }) return true;
         }
         else
         {
             ErrorNumber errno = imagePlugin.ReadSector(357, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
@@ -112,37 +107,40 @@ public sealed partial class CBM
         {
             ErrorNumber errno = imagePlugin.ReadSector(1560, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             Header cbmHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
-            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1, cbmHdr.directoryTrack,
-                                       cbmHdr.directorySector).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1,
+                                       cbmHdr.directoryTrack,
+                                       cbmHdr.directorySector)
+                         .AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_DOS_Version_0, Encoding.ASCII.GetString(new[]
-                          {
-                              cbmHdr.diskDosVersion
-                          })).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_DOS_Version_0,
+                                       Encoding.ASCII.GetString(new[]
+                                       {
+                                           cbmHdr.diskDosVersion
+                                       }))
+                         .AppendLine();
 
-            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
-                          {
-                              cbmHdr.dosVersion
-                          })).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.DOS_Version_0,
+                                       Encoding.ASCII.GetString(new[]
+                                       {
+                                           cbmHdr.dosVersion
+                                       }))
+                         .AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_Version_0, Encoding.ASCII.GetString(new[]
-                          {
-                              cbmHdr.diskVersion
-                          })).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_Version_0,
+                                       Encoding.ASCII.GetString(new[]
+                                       {
+                                           cbmHdr.diskVersion
+                                       }))
+                         .AppendLine();
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmHdr.diskId).AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, encoding)).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmHdr.name, encoding))
+                         .AppendLine();
 
             metadata.VolumeName   = StringHandlers.CToString(cbmHdr.name, encoding);
             metadata.VolumeSerial = $"{cbmHdr.diskId}";
@@ -151,29 +149,30 @@ public sealed partial class CBM
         {
             ErrorNumber errno = imagePlugin.ReadSector(357, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             BAM cbmBam = Marshal.ByteArrayToStructureLittleEndian<BAM>(sector);
 
-            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1, cbmBam.directoryTrack,
-                                       cbmBam.directorySector).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Directory_starts_at_track_0_sector_1,
+                                       cbmBam.directoryTrack,
+                                       cbmBam.directorySector)
+                         .AppendLine();
 
             sbInformation.AppendFormat(Localization.Disk_DOS_type_0,
-                                       Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType))).
-                          AppendLine();
+                                       Encoding.ASCII.GetString(BitConverter.GetBytes(cbmBam.dosType)))
+                         .AppendLine();
 
-            sbInformation.AppendFormat(Localization.DOS_Version_0, Encoding.ASCII.GetString(new[]
-                          {
-                              cbmBam.dosVersion
-                          })).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.DOS_Version_0,
+                                       Encoding.ASCII.GetString(new[]
+                                       {
+                                           cbmBam.dosVersion
+                                       }))
+                         .AppendLine();
 
             sbInformation.AppendFormat(Localization.Disk_ID_0, cbmBam.diskId).AppendLine();
 
-            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, encoding)).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(cbmBam.name, encoding))
+                         .AppendLine();
 
             metadata.VolumeName   = StringHandlers.CToString(cbmBam.name, encoding);
             metadata.VolumeSerial = $"{cbmBam.diskId}";

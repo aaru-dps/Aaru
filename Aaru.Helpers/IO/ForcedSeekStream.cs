@@ -59,8 +59,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         _backFile     = Path.GetTempFileName();
         _backStream   = new FileStream(_backFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
 
-        if(length == 0)
-            CalculateLength();
+        if(length == 0) CalculateLength();
     }
 
     /// <summary>Initializes a new instance of the <see cref="T:Aaru.Helpers.IO.ForcedSeekStream`1" /> class.</summary>
@@ -116,8 +115,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
 
     void SetPosition(long position)
     {
-        if(position == _backStream.Position)
-            return;
+        if(position == _backStream.Position) return;
 
         if(position < _backStream.Length)
         {
@@ -126,8 +124,7 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
             return;
         }
 
-        if(position > _streamLength)
-            position = _streamLength;
+        if(position > _streamLength) position = _streamLength;
 
         _backStream.Position = _backStream.Length;
         long   toPosition      = position - _backStream.Position;
@@ -177,11 +174,9 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        if(_backStream.Position + count > _streamLength)
-            count = (int)(_streamLength - _backStream.Position);
+        if(_backStream.Position + count > _streamLength) count = (int)(_streamLength - _backStream.Position);
 
-        if(_backStream.Position + count <= _backStream.Length)
-            return _backStream.EnsureRead(buffer, offset, count);
+        if(_backStream.Position + count <= _backStream.Length) return _backStream.EnsureRead(buffer, offset, count);
 
         long oldPosition = _backStream.Position;
         SetPosition(_backStream.Position + count);
@@ -193,11 +188,9 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
     /// <inheritdoc />
     public override int ReadByte()
     {
-        if(_backStream.Position + 1 > _streamLength)
-            return -1;
+        if(_backStream.Position + 1 > _streamLength) return -1;
 
-        if(_backStream.Position + 1 <= _backStream.Length)
-            return _backStream.ReadByte();
+        if(_backStream.Position + 1 <= _backStream.Length) return _backStream.ReadByte();
 
         SetPosition(_backStream.Position + 1);
         SetPosition(_backStream.Position - 1);
@@ -211,18 +204,15 @@ public sealed class ForcedSeekStream<T> : Stream where T : Stream
         switch(origin)
         {
             case SeekOrigin.Begin:
-                if(offset < 0)
-                    throw new IOException(Localization.Cannot_seek_before_stream_start);
+                if(offset < 0) throw new IOException(Localization.Cannot_seek_before_stream_start);
 
                 SetPosition(offset);
 
                 break;
             case SeekOrigin.End:
-                if(offset > 0)
-                    throw new IOException(Localization.Cannot_seek_after_stream_end);
+                if(offset > 0) throw new IOException(Localization.Cannot_seek_after_stream_end);
 
-                if(_streamLength == 0)
-                    CalculateLength();
+                if(_streamLength == 0) CalculateLength();
 
                 SetPosition(_streamLength + offset);
 

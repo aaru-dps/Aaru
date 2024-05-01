@@ -75,8 +75,7 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 
-        if(relAddr)
-            cdb[1] += 0x01;
+        if(relAddr) cdb[1] += 0x01;
 
         cdb[2] = (byte)((address & 0xFF000000) >> 24);
         cdb[3] = (byte)((address & 0xFF0000)   >> 16);
@@ -85,15 +84,18 @@ public partial class Device
         cdb[7] = (byte)((transferLen & 0xFF00) >> 8);
         cdb[8] = (byte)(transferLen & 0xFF);
 
-        if(pba)
-            cdb[9] += 0x80;
+        if(pba) cdb[9] += 0x80;
 
-        if(sectorCount)
-            cdb[9] += 0x40;
+        if(sectorCount) cdb[9] += 0x40;
 
         buffer = sectorCount ? new byte[blockBytes * transferLen] : new byte[transferLen];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

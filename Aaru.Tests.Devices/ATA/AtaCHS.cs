@@ -165,8 +165,7 @@ static class AtaChs
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.IDENTIFY_DEVICE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -179,8 +178,7 @@ static class AtaChs
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.IDENTIFY_DEVICE_decoded_response);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.ATA.Identify.Prettify(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -318,8 +316,15 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
-                                 sector, count, dev.Timeout, out double duration);
+        bool sense = dev.ReadDma(out byte[] buffer,
+                                 out AtaErrorRegistersChs errorRegisters,
+                                 retries,
+                                 cylinder,
+                                 head,
+                                 sector,
+                                 count,
+                                 dev.Timeout,
+                                 out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -366,8 +371,7 @@ static class AtaChs
                                           ? Localization.READ_DMA_WITH_RETRIES_response
                                           : Localization.READ_DMA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -511,8 +515,15 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
-                                  sector, blockSize, dev.Timeout, out double duration);
+        bool sense = dev.ReadLong(out byte[] buffer,
+                                  out AtaErrorRegistersChs errorRegisters,
+                                  retries,
+                                  cylinder,
+                                  head,
+                                  sector,
+                                  blockSize,
+                                  dev.Timeout,
+                                  out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -559,8 +570,7 @@ static class AtaChs
                                           ? Localization.READ_LONG_WITH_RETRIES_response
                                           : Localization.READ_LONG_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -700,8 +710,14 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
-                                      sector, count, dev.Timeout, out double duration);
+        bool sense = dev.ReadMultiple(out byte[] buffer,
+                                      out AtaErrorRegistersChs errorRegisters,
+                                      cylinder,
+                                      head,
+                                      sector,
+                                      count,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -741,8 +757,7 @@ static class AtaChs
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_MULTIPLE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -882,8 +897,15 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, retries, cylinder, head,
-                              sector, count, dev.Timeout, out double duration);
+        bool sense = dev.Read(out byte[] buffer,
+                              out AtaErrorRegistersChs errorRegisters,
+                              retries,
+                              cylinder,
+                              head,
+                              sector,
+                              count,
+                              dev.Timeout,
+                              out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -930,8 +952,7 @@ static class AtaChs
                                           ? Localization.READ_SECTORS_WITH_RETRIES_response
                                           : Localization.READ_SECTORS_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1057,7 +1078,11 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
+        bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters,
+                              cylinder,
+                              head,
+                              sector,
+                              dev.Timeout,
                               out double duration);
 
     menu:
@@ -1228,7 +1253,11 @@ static class AtaChs
     start:
         System.Console.Clear();
 
-        bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters, cylinder, head, sector, dev.Timeout,
+        bool sense = dev.Seek(out AtaErrorRegistersChs errorRegisters,
+                              cylinder,
+                              head,
+                              sector,
+                              dev.Timeout,
                               out double duration);
 
     menu:

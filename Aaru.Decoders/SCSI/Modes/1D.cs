@@ -53,17 +53,13 @@ public static partial class Modes
 
     public static ModePage_1D? DecodeModePage_1D(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x1D)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x1D) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 32)
-            return null;
+        if(pageResponse.Length < 32) return null;
 
         var decoded = new ModePage_1D();
 
@@ -80,19 +76,16 @@ public static partial class Modes
 
     public static string PrettifyModePage_1D(ModePage_1D? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1D page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Medium_Configuration_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.WORMM)
-            sb.AppendLine("\t" + Localization.Drive_is_operating_in_WORM_mode);
+        if(page.WORMM) sb.AppendLine("\t" + Localization.Drive_is_operating_in_WORM_mode);
 
         switch(page.WormModeLabelRestrictions)
         {
@@ -110,8 +103,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_WORM_mode_label_restrictions_code_0,
-                                page.WormModeLabelRestrictions).
-                   AppendLine();
+                                page.WormModeLabelRestrictions)
+                  .AppendLine();
 
                 break;
         }
@@ -130,8 +123,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + "Unknown WORM mode filemark restrictions code {0}",
-                                page.WormModeLabelRestrictions).
-                   AppendLine();
+                                page.WormModeLabelRestrictions)
+                  .AppendLine();
 
                 break;
         }

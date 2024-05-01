@@ -48,8 +48,7 @@ public sealed partial class ISO9660
 
         uint sectorCount = (uint)_blockSize / 2048;
 
-        if(_blockSize % 2048 > 0)
-            sectorCount++;
+        if(_blockSize % 2048 > 0) sectorCount++;
 
         ulong realSector = sector * _blockSize / 2048;
 
@@ -61,11 +60,9 @@ public sealed partial class ISO9660
         {
             errno = _image.ReadSectorLong(realSector, out data);
 
-            if(errno != ErrorNumber.NoError)
-                errno = _image.ReadSector(realSector, out data);
+            if(errno != ErrorNumber.NoError) errno = _image.ReadSector(realSector, out data);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             if(_debug)
             {
@@ -78,17 +75,21 @@ public sealed partial class ISO9660
 
                         break;
                     case 2324:
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
                                                    realSector);
 
                         break;
                     case 2336:
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
+                                                   Localization
+                                                      .tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                    realSector,
-                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1, data[0],
-                                                   data[1], (Mode2Submode)data[2], data[3]);
+                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
+                                                   data[0],
+                                                   data[1],
+                                                   (Mode2Submode)data[2],
+                                                   data[3]);
 
                         break;
                     case 2352 when data[0]  != 0x00 ||
@@ -107,17 +108,28 @@ public sealed partial class ISO9660
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4, realSector,
-                                                   data[12], data[13], data[14], data[15]);
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                                                   realSector,
+                                                   data[12],
+                                                   data[13],
+                                                   data[14],
+                                                   data[15]);
 
                         break;
                     case 2352:
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
-                                                   realSector, data[12], data[13], data[14],
+                                                   Localization
+                                                      .tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
+                                                   realSector,
+                                                   data[12],
+                                                   data[13],
+                                                   data[14],
                                                    ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                   data[16], data[17], (Mode2Submode)data[18], data[19]);
+                                                   data[16],
+                                                   data[17],
+                                                   (Mode2Submode)data[18],
+                                                   data[19]);
 
                         break;
                 }
@@ -147,11 +159,9 @@ public sealed partial class ISO9660
 
                 errno = _image.ReadSectorLong(dstSector, out data);
 
-                if(errno != ErrorNumber.NoError)
-                    errno = _image.ReadSector(dstSector, out data);
+                if(errno != ErrorNumber.NoError) errno = _image.ReadSector(dstSector, out data);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 if(_debug)
                 {
@@ -164,17 +174,21 @@ public sealed partial class ISO9660
 
                             break;
                         case 2324:
-                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
                                                        dstSector);
 
                             break;
                         case 2336:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
+                                                       Localization
+                                                          .tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                        dstSector,
                                                        ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                       data[0], data[1], (Mode2Submode)data[2], data[3]);
+                                                       data[0],
+                                                       data[1],
+                                                       (Mode2Submode)data[2],
+                                                       data[3]);
 
                             break;
                         case 2352 when data[0]  != 0x00 ||
@@ -193,17 +207,28 @@ public sealed partial class ISO9660
 
                             break;
                         case 2352 when data[15] != 2:
-                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
-                                                       dstSector, data[12], data[13], data[14], data[15]);
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                                                       dstSector,
+                                                       data[12],
+                                                       data[13],
+                                                       data[14],
+                                                       data[15]);
 
                             break;
                         case 2352:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
-                                                       dstSector, data[12], data[13], data[14],
+                                                       Localization
+                                                          .tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
+                                                       dstSector,
+                                                       data[12],
+                                                       data[13],
+                                                       data[14],
                                                        ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                       data[16], data[17], (Mode2Submode)data[18], data[19]);
+                                                       data[16],
+                                                       data[17],
+                                                       (Mode2Submode)data[18],
+                                                       data[19]);
 
                             break;
                     }

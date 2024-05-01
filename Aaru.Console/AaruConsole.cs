@@ -257,6 +257,5 @@ public static class AaruConsole
     ///     Writes the exception to the debug output console.
     /// </summary>
     /// <param name="ex">Exception.</param>
-    public static void WriteException(Exception ex) =>
-        WriteExceptionEvent?.Invoke(ex);
+    public static void WriteException(Exception ex) => WriteExceptionEvent?.Invoke(ex);
 }

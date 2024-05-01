@@ -88,16 +88,16 @@ sealed class ListEncodingsCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        var encodings = Encoding.GetEncodings().
-                                 Select(info => new CommonEncodingInfo
+        var encodings = Encoding.GetEncodings()
+                                .Select(info => new CommonEncodingInfo
                                  {
                                      Name        = info.Name,
                                      DisplayName = info.GetEncoding().EncodingName
-                                 }).
-                                 ToList();
+                                 })
+                                .ToList();
 
-        encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().
-                                   Select(info => new CommonEncodingInfo
+        encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
+                                  .Select(info => new CommonEncodingInfo
                                    {
                                        Name        = info.Name,
                                        DisplayName = info.DisplayName

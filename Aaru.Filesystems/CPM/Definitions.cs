@@ -49,12 +49,13 @@ public sealed partial class CPM
         try
         {
             _definitions =
-                JsonSerializer.
-                    Deserialize(Assembly.GetExecutingAssembly().GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.json") ?? new MemoryStream(),
-                                typeof(CpmDefinitions), CpmDefinitionsContext.Default) as CpmDefinitions;
+                JsonSerializer.Deserialize(Assembly.GetExecutingAssembly()
+                                                   .GetManifestResourceStream("Aaru.Filesystems.CPM.cpmdefs.json") ??
+                                           new MemoryStream(),
+                                           typeof(CpmDefinitions),
+                                           CpmDefinitionsContext.Default) as CpmDefinitions;
 
-            if(_definitions is null)
-                return false;
+            if(_definitions is null) return false;
 
             // Patch definitions
             foreach(CpmDefinition def in _definitions.definitions)
@@ -67,12 +68,10 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(var i = 0; i < def.sectorsPerTrack; i++)
-                        def.side1.sectorIds[i] = i + 1;
+                    for(var i = 0; i < def.sectorsPerTrack; i++) def.side1.sectorIds[i] = i + 1;
                 }
 
-                if(def.sides != 2 || def.side2 != null)
-                    continue;
+                if(def.sides != 2 || def.side2 != null) continue;
 
                 {
                     def.side2 = new Side
@@ -81,8 +80,7 @@ public sealed partial class CPM
                         sectorIds = new int[def.sectorsPerTrack]
                     };
 
-                    for(var i = 0; i < def.sectorsPerTrack; i++)
-                        def.side2.sectorIds[i] = i + 1;
+                    for(var i = 0; i < def.sectorsPerTrack; i++) def.side2.sectorIds[i] = i + 1;
                 }
             }
 
@@ -95,9 +93,11 @@ public sealed partial class CPM
     }
 }
 
-[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+[JsonSourceGenerationOptions(WriteIndented = true,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(CpmDefinitions))]
+
 // ReSharper disable once PartialTypeWithSinglePart
 public partial class CpmDefinitionsContext : JsonSerializerContext;
 

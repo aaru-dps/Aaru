@@ -44,8 +44,7 @@ public sealed partial class XboxFatPlugin
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
@@ -74,18 +73,17 @@ public sealed partial class XboxFatPlugin
         }
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntry> entry =
             _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-        if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-            return ErrorNumber.NotDirectory;
+        if(!entry.Value.attributes.HasFlag(Attributes.Directory)) return ErrorNumber.NotDirectory;
 
         string currentPath = pieces[0];
 
@@ -95,22 +93,18 @@ public sealed partial class XboxFatPlugin
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-            if(!entry.Value.attributes.HasFlag(Attributes.Directory))
-                return ErrorNumber.NotDirectory;
+            if(!entry.Value.attributes.HasFlag(Attributes.Directory)) return ErrorNumber.NotDirectory;
 
             currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
             uint currentCluster = entry.Value.firstCluster;
 
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
             uint[] clusters = GetClusters(currentCluster);
 
-            if(clusters is null)
-                return ErrorNumber.InvalidArgument;
+            if(clusters is null) return ErrorNumber.InvalidArgument;
 
             var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
@@ -118,10 +112,10 @@ public sealed partial class XboxFatPlugin
             {
                 ErrorNumber errno =
                     _imagePlugin.ReadSectors(_firstClusterSector + (clusters[i] - 1) * _sectorsPerCluster,
-                                             _sectorsPerCluster, out byte[] buffer);
+                                             _sectorsPerCluster,
+                                             out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
             }
@@ -134,17 +128,17 @@ public sealed partial class XboxFatPlugin
             {
                 DirectoryEntry dirent = _littleEndian
                                             ? Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer,
-                                                pos, Marshal.SizeOf<DirectoryEntry>())
+                                                pos,
+                                                Marshal.SizeOf<DirectoryEntry>())
                                             : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(directoryBuffer,
-                                                pos, Marshal.SizeOf<DirectoryEntry>());
+                                                pos,
+                                                Marshal.SizeOf<DirectoryEntry>());
 
                 pos += Marshal.SizeOf<DirectoryEntry>();
 
-                if(dirent.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY)
-                    break;
+                if(dirent.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY) break;
 
-                if(dirent.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
-                    continue;
+                if(dirent.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME) continue;
 
                 string filename = _encoding.GetString(dirent.filename, 0, dirent.filenameSize);
 
@@ -154,8 +148,7 @@ public sealed partial class XboxFatPlugin
             _directoryCache.Add(currentPath, currentDirectory);
         }
 
-        if(currentDirectory is null)
-            return ErrorNumber.NoSuchFile;
+        if(currentDirectory is null) return ErrorNumber.NoSuchFile;
 
         node = new FatxDirNode
         {
@@ -172,19 +165,16 @@ public sealed partial class XboxFatPlugin
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not FatxDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatxDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Entries.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Entries.Length) return ErrorNumber.NoError;
 
-        filename = _encoding.GetString(mynode.Entries[mynode.Position].filename, 0,
+        filename = _encoding.GetString(mynode.Entries[mynode.Position].filename,
+                                       0,
                                        mynode.Entries[mynode.Position].filenameSize);
 
         mynode.Position++;
@@ -195,8 +185,7 @@ public sealed partial class XboxFatPlugin
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not FatxDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatxDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Entries  = null;

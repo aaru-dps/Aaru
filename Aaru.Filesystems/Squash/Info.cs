@@ -45,13 +45,11 @@ public sealed partial class Squash
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -66,8 +64,7 @@ public sealed partial class Squash
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -95,9 +92,9 @@ public sealed partial class Squash
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes,           sqSb.bytes_used).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_per_block, sqSb.block_size).AppendLine();
 
-        sbInformation.
-            AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time)).
-            AppendLine();
+        sbInformation
+           .AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time))
+           .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_inodes, sqSb.inodes).AppendLine();
 
@@ -128,9 +125,9 @@ public sealed partial class Squash
 
                 break;
             default:
-                sbInformation.
-                    AppendFormat(Localization.Volume_is_compressed_using_unknown_algorithm_0, sqSb.compression).
-                    AppendLine();
+                sbInformation
+                   .AppendFormat(Localization.Volume_is_compressed_using_unknown_algorithm_0, sqSb.compression)
+                   .AppendLine();
 
                 break;
         }

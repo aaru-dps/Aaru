@@ -61,8 +61,15 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             false,             out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -94,8 +101,15 @@ public partial class Device
             DeviceHead   = (byte)(head & 0x0F)
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             false,             out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -120,8 +134,15 @@ public partial class Device
             Command = (byte)AtaCommands.RequestSense
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             false,             out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 

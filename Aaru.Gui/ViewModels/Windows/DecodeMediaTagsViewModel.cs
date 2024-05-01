@@ -97,8 +97,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _selectedTag, value);
 
-            if(value is null)
-                return;
+            if(value is null) return;
 
             // TODO: Decoders should be able to handle tags with/without length header
             HexViewText    = PrintHex.ByteArrayToHexArrayString(value.Data, HEX_COLUMNS);
@@ -230,8 +229,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
                     break;
             }
 
-            if(DecodedText != null)
-                value.Decoded = DecodedText;
+            if(DecodedText != null) value.Decoded = DecodedText;
         }
     }
 

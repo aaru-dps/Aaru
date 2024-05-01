@@ -44,8 +44,7 @@ public sealed partial class CBM
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
@@ -56,7 +55,9 @@ public sealed partial class CBM
 
         node = new CbmDirNode
         {
-            Path = path, Position = 0, Contents = contents.ToArray()
+            Path     = path,
+            Position = 0,
+            Contents = contents.ToArray()
         };
 
         return ErrorNumber.NoError;
@@ -65,8 +66,7 @@ public sealed partial class CBM
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not CbmDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CbmDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Contents = null;
@@ -79,17 +79,13 @@ public sealed partial class CBM
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not CbmDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CbmDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
 
         filename = mynode.Contents[mynode.Position++];
 

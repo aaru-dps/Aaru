@@ -52,15 +52,13 @@ public sealed partial class Vhdx
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
         stream.EnsureRead(vhdxIdB, 0, Marshal.SizeOf<Identifier>());
         _id = Marshal.ByteArrayToStructureLittleEndian<Identifier>(vhdxIdB);
 
-        if(_id.signature != VHDX_SIGNATURE)
-            return ErrorNumber.InvalidArgument;
+        if(_id.signature != VHDX_SIGNATURE) return ErrorNumber.InvalidArgument;
 
         _imageInfo.Application = Encoding.Unicode.GetString(_id.creator);
 
@@ -118,9 +116,9 @@ public sealed partial class Vhdx
                 _metadataOffset = (long)_vRegs[i].offset;
             else if((_vRegs[i].flags & REGION_FLAGS_REQUIRED) == REGION_FLAGS_REQUIRED)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image,
-                                                 _vRegs[i].guid));
+                AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                            .Found_unsupported_and_required_region_Guid_0_not_proceeding_with_image,
+                                                         _vRegs[i].guid));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -169,9 +167,9 @@ public sealed partial class Vhdx
                 parentOff = _vMets[i].offset;
             else if((_vMets[i].flags & METADATA_FLAGS_REQUIRED) == METADATA_FLAGS_REQUIRED)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image,
-                                                 _vMets[i].itemId));
+                AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                            .Found_unsupported_and_required_metadata_Guid_0_not_proceeding_with_image,
+                                                         _vMets[i].itemId));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -257,9 +255,9 @@ public sealed partial class Vhdx
 
             if(_vParHdr.locatorType != _parentTypeVhdxGuid)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image,
-                                                 _vParHdr.locatorType));
+                AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                            .Found_unsupported_and_required_parent_locator_type_0_not_proceeding_with_image,
+                                                         _vParHdr.locatorType));
 
                 return ErrorNumber.NotSupported;
             }
@@ -326,8 +324,7 @@ public sealed partial class Vhdx
                         parentFilter =
                             PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, relEntry));
 
-                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
-                            continue;
+                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError) continue;
 
                         parentWorks = true;
 
@@ -351,8 +348,7 @@ public sealed partial class Vhdx
                         parentFilter =
                             PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
 
-                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError)
-                            continue;
+                        if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError) continue;
 
                         parentWorks = true;
 
@@ -378,8 +374,7 @@ public sealed partial class Vhdx
         _chunkRatio = (long)(Math.Pow(2, 23) * _logicalSectorSize / _vFileParms.blockSize);
         _dataBlocks = _virtualDiskSize / _vFileParms.blockSize;
 
-        if(_virtualDiskSize % _vFileParms.blockSize > 0)
-            _dataBlocks++;
+        if(_virtualDiskSize % _vFileParms.blockSize > 0) _dataBlocks++;
 
         long batEntries;
 
@@ -387,8 +382,7 @@ public sealed partial class Vhdx
         {
             long sectorBitmapBlocks = (long)_dataBlocks / _chunkRatio;
 
-            if(_dataBlocks % (ulong)_chunkRatio > 0)
-                sectorBitmapBlocks++;
+            if(_dataBlocks % (ulong)_chunkRatio > 0) sectorBitmapBlocks++;
 
             _sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
@@ -448,10 +442,9 @@ public sealed partial class Vhdx
                     default:
                         if((pt & BAT_FLAGS_MASK) != 0)
                         {
-                            AaruConsole.
-                                ErrorWriteLine(string.
-                                                   Format(Localization.Unsupported_sector_bitmap_block_flags_0_found_not_proceeding,
-                                                          pt & BAT_FLAGS_MASK));
+                            AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                                        .Unsupported_sector_bitmap_block_flags_0_found_not_proceeding,
+                                                                     pt & BAT_FLAGS_MASK));
 
                             return ErrorNumber.InvalidArgument;
                         }
@@ -496,11 +489,9 @@ public sealed partial class Vhdx
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong index  = sectorAddress * _logicalSectorSize / _vFileParms.blockSize;
         ulong secOff = sectorAddress * _logicalSectorSize % _vFileParms.blockSize;
@@ -518,8 +509,7 @@ public sealed partial class Vhdx
         switch(blkFlags & BAT_FLAGS_MASK)
         {
             case PAYLOAD_BLOCK_NOT_PRESENT:
-                if(_hasParent)
-                    return _parentImage.ReadSector(sectorAddress, out buffer);
+                if(_hasParent) return _parentImage.ReadSector(sectorAddress, out buffer);
 
                 buffer = new byte[_logicalSectorSize];
 
@@ -543,8 +533,7 @@ public sealed partial class Vhdx
             _imageStream.Seek((long)(blkPtr & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);
             _imageStream.EnsureRead(block, 0, block.Length);
 
-            if(_blockCache.Count >= _maxBlockCache)
-                _blockCache.Clear();
+            if(_blockCache.Count >= _maxBlockCache) _blockCache.Clear();
 
             _blockCache.Add(blkPtr & BAT_FILE_OFFSET_MASK, block);
         }
@@ -552,8 +541,7 @@ public sealed partial class Vhdx
         buffer = new byte[_logicalSectorSize];
         Array.Copy(block, (int)secOff, buffer, 0, buffer.Length);
 
-        if(_sectorCache.Count >= _maxSectorCache)
-            _sectorCache.Clear();
+        if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -565,11 +553,9 @@ public sealed partial class Vhdx
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -577,8 +563,7 @@ public sealed partial class Vhdx
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

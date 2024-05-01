@@ -79,8 +79,7 @@ public partial class Device
         else
             errno = ErrorNumber.NotSupported;
 
-        if(dev is null)
-            return null;
+        if(dev is null) return null;
 
         if(dev.Type is DeviceType.SCSI or DeviceType.ATAPI)
         {
@@ -91,25 +90,21 @@ public partial class Device
             dev.Type = DeviceType.SCSI;
             bool serialSense = dev.ScsiInquiry(out inqBuf, out _, 0x80);
 
-            if(!serialSense)
-                dev.Serial = EVPD.DecodePage80(inqBuf);
+            if(!serialSense) dev.Serial = EVPD.DecodePage80(inqBuf);
 
             if(inquiry.HasValue)
             {
                 string tmp = StringHandlers.CToString(inquiry.Value.ProductRevisionLevel);
 
-                if(tmp != null)
-                    dev.FirmwareRevision = tmp.Trim();
+                if(tmp != null) dev.FirmwareRevision = tmp.Trim();
 
                 tmp = StringHandlers.CToString(inquiry.Value.ProductIdentification);
 
-                if(tmp != null)
-                    dev.Model = tmp.Trim();
+                if(tmp != null) dev.Model = tmp.Trim();
 
                 tmp = StringHandlers.CToString(inquiry.Value.VendorIdentification);
 
-                if(tmp != null)
-                    dev.Manufacturer = tmp.Trim();
+                if(tmp != null) dev.Manufacturer = tmp.Trim();
 
                 dev.IsRemovable = inquiry.Value.RMB;
 
@@ -123,8 +118,7 @@ public partial class Device
                 dev.Type = DeviceType.ATAPI;
                 Identify.IdentifyDevice? ataId = Identify.Decode(ataBuf);
 
-                if(ataId.HasValue)
-                    dev.Serial = ataId.Value.SerialNumber;
+                if(ataId.HasValue) dev.Serial = ataId.Value.SerialNumber;
             }
 
             dev.LastError = 0;
@@ -180,58 +174,52 @@ public partial class Device
 
         if(dev.IsUsb)
         {
-            if(string.IsNullOrEmpty(dev.Manufacturer))
-                dev.Manufacturer = dev.UsbManufacturerString;
+            if(string.IsNullOrEmpty(dev.Manufacturer)) dev.Manufacturer = dev.UsbManufacturerString;
 
-            if(string.IsNullOrEmpty(dev.Model))
-                dev.Model = dev.UsbProductString;
+            if(string.IsNullOrEmpty(dev.Model)) dev.Model = dev.UsbProductString;
 
             if(string.IsNullOrEmpty(dev.Serial))
                 dev.Serial = dev.UsbSerialString;
             else
             {
-                foreach(char c in dev.Serial.Where(c => !char.IsControl(c)))
-                    dev.Serial = $"{dev.Serial}{c:X2}";
+                foreach(char c in dev.Serial.Where(c => !char.IsControl(c))) dev.Serial = $"{dev.Serial}{c:X2}";
             }
         }
 
         if(dev.IsFireWire)
         {
-            if(string.IsNullOrEmpty(dev.Manufacturer))
-                dev.Manufacturer = dev.FireWireVendorName;
+            if(string.IsNullOrEmpty(dev.Manufacturer)) dev.Manufacturer = dev.FireWireVendorName;
 
-            if(string.IsNullOrEmpty(dev.Model))
-                dev.Model = dev.FireWireModelName;
+            if(string.IsNullOrEmpty(dev.Model)) dev.Model = dev.FireWireModelName;
 
             if(string.IsNullOrEmpty(dev.Serial))
                 dev.Serial = $"{dev.FirewireGuid:X16}";
             else
             {
-                foreach(char c in dev.Serial.Where(c => !char.IsControl(c)))
-                    dev.Serial = $"{dev.Serial}{c:X2}";
+                foreach(char c in dev.Serial.Where(c => !char.IsControl(c))) dev.Serial = $"{dev.Serial}{c:X2}";
             }
         }
 
         // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without
         // administrator privileges
-        if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
-            return dev;
+        if(dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return dev;
 
-        bool featureSense = dev.GetConfiguration(out byte[] featureBuffer, out _, 0x0108, MmcGetConfigurationRt.Single,
-                                                 dev.Timeout, out _);
+        bool featureSense = dev.GetConfiguration(out byte[] featureBuffer,
+                                                 out _,
+                                                 0x0108,
+                                                 MmcGetConfigurationRt.Single,
+                                                 dev.Timeout,
+                                                 out _);
 
-        if(featureSense)
-            return dev;
+        if(featureSense) return dev;
 
         Features.SeparatedFeatures features = Features.Separate(featureBuffer);
 
-        if(features.Descriptors?.Length != 1 || features.Descriptors[0].Code != 0x0108)
-            return dev;
+        if(features.Descriptors?.Length != 1 || features.Descriptors[0].Code != 0x0108) return dev;
 
         Feature_0108? serialFeature = Features.Decode_0108(features.Descriptors[0].Data);
 
-        if(serialFeature is null)
-            return dev;
+        if(serialFeature is null) return dev;
 
         dev.Serial = serialFeature.Value.Serial;
 

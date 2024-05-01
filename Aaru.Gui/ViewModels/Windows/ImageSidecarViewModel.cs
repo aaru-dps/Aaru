@@ -256,10 +256,13 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
         var jsonFs = new FileStream(DestinationText, FileMode.Create);
 
-        await JsonSerializer.SerializeAsync(jsonFs, new MetadataJson
-        {
-            AaruMetadata = sidecar
-        }, typeof(MetadataJson), MetadataJsonContext.Default);
+        await JsonSerializer.SerializeAsync(jsonFs,
+                                            new MetadataJson
+                                            {
+                                                AaruMetadata = sidecar
+                                            },
+                                            typeof(MetadataJson),
+                                            MetadataJsonContext.Default);
 
         jsonFs.Close();
 
@@ -343,8 +346,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
             return;
         }
 
-        if(string.IsNullOrEmpty(Path.GetExtension(result)))
-            result += ".json";
+        if(string.IsNullOrEmpty(Path.GetExtension(result))) result += ".json";
 
         DestinationText = result;
     }

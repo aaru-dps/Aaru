@@ -97,18 +97,18 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public Stream GetDataForkStream()
     {
-        if(_dataFork.length == 0)
-            return null;
+        if(_dataFork.length == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
+        if(_isStream) return new OffsetStream(_stream, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
         if(_isPath)
         {
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _dataFork.offset,
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _dataFork.offset,
                                     _dataFork.offset + _dataFork.length - 1);
         }
 
@@ -136,18 +136,18 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public Stream GetResourceForkStream()
     {
-        if(_rsrcFork.length == 0)
-            return null;
+        if(_rsrcFork.length == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
+        if(_isStream) return new OffsetStream(_stream, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
         if(_isPath)
         {
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _rsrcFork.offset,
                                     _rsrcFork.offset + _rsrcFork.length - 1);
         }
 
@@ -160,8 +160,7 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer == null || buffer.Length < 26)
-            return false;
+        if(buffer == null || buffer.Length < 26) return false;
 
         var hdrB = new byte[26];
         Array.Copy(buffer, 0, hdrB, 0, 26);
@@ -173,8 +172,7 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        if(stream == null || stream.Length < 26)
-            return false;
+        if(stream == null || stream.Length < 26) return false;
 
         var hdrB = new byte[26];
         stream.Seek(0, SeekOrigin.Begin);
@@ -187,13 +185,11 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-        if(fstream.Length < 26)
-            return false;
+        if(fstream.Length < 26) return false;
 
         var hdrB = new byte[26];
         fstream.EnsureRead(hdrB, 0, 26);

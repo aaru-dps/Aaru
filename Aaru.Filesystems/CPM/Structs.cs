@@ -89,12 +89,12 @@ public sealed partial class CPM
         internal string[] Contents;
         internal int      Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -105,7 +105,7 @@ public sealed partial class CPM
     {
         internal byte[] Cache;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -116,7 +116,7 @@ public sealed partial class CPM
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

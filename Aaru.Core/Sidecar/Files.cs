@@ -49,8 +49,7 @@ public sealed partial class Sidecar
 
         ErrorNumber ret = filesystem.OpenDir("/", out IDirNode node);
 
-        if(ret != ErrorNumber.NoError)
-            return null;
+        if(ret != ErrorNumber.NoError) return null;
 
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
@@ -78,11 +77,9 @@ public sealed partial class Sidecar
 
         filesystem.CloseDir(node);
 
-        if(files.Count > 0)
-            contents.Files = files.OrderBy(f => f.Name).ToList();
+        if(files.Count > 0) contents.Files = files.OrderBy(f => f.Name).ToList();
 
-        if(directories.Count > 0)
-            contents.Directories = directories.OrderBy(d => d.Name).ToList();
+        if(directories.Count > 0) contents.Directories = directories.OrderBy(d => d.Name).ToList();
 
         return contents;
     }
@@ -108,8 +105,7 @@ public sealed partial class Sidecar
 
         ErrorNumber ret = filesystem.OpenDir(path + "/" + filename, out IDirNode node);
 
-        if(ret != ErrorNumber.NoError)
-            return null;
+        if(ret != ErrorNumber.NoError) return null;
 
         List<Directory>    directories = new();
         List<ContentsFile> files       = new();
@@ -135,11 +131,9 @@ public sealed partial class Sidecar
             files.Add(SidecarFile(filesystem, path + "/" + filename, dirent, entryStat));
         }
 
-        if(files.Count > 0)
-            directory.Files = files.OrderBy(f => f.Name).ToList();
+        if(files.Count > 0) directory.Files = files.OrderBy(f => f.Name).ToList();
 
-        if(directories.Count > 0)
-            directory.Directories = directories.OrderBy(d => d.Name).ToList();
+        if(directories.Count > 0) directory.Directories = directories.OrderBy(d => d.Name).ToList();
 
         return directory;
     }
@@ -182,8 +176,7 @@ public sealed partial class Sidecar
 
                 while(position < stat.Length - 1048576)
                 {
-                    if(_aborted)
-                        return file;
+                    if(_aborted) return file;
 
                     // TODO: Better error handling
                     filesystem.ReadFile(fileNode, 1048576, data, out _);
@@ -213,8 +206,7 @@ public sealed partial class Sidecar
 
         ErrorNumber ret = filesystem.ListXAttr(path + "/" + filename, out List<string> xattrs);
 
-        if(ret != ErrorNumber.NoError)
-            return file;
+        if(ret != ErrorNumber.NoError) return file;
 
         List<ExtendedAttribute> xattrTypes = new();
 
@@ -222,8 +214,7 @@ public sealed partial class Sidecar
         {
             ret = filesystem.GetXattr(path + "/" + filename, xattr, ref data);
 
-            if(ret != ErrorNumber.NoError)
-                continue;
+            if(ret != ErrorNumber.NoError) continue;
 
             var xattrChkWorker = new Checksum();
             xattrChkWorker.Update(data);
@@ -236,8 +227,7 @@ public sealed partial class Sidecar
             });
         }
 
-        if(xattrTypes.Count > 0)
-            file.ExtendedAttributes = xattrTypes.OrderBy(x => x.Name).ToList();
+        if(xattrTypes.Count > 0) file.ExtendedAttributes = xattrTypes.OrderBy(x => x.Name).ToList();
 
         return file;
     }

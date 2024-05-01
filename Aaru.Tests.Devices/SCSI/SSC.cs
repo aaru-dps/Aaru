@@ -254,7 +254,13 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.LoadUnload(out byte[] senseBuffer, immediate, load, retense, eot, hold, dev.Timeout,
+        bool sense = dev.LoadUnload(out byte[] senseBuffer,
+                                    immediate,
+                                    load,
+                                    retense,
+                                    eot,
+                                    hold,
+                                    dev.Timeout,
                                     out double duration);
 
     menu:
@@ -301,8 +307,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.LOAD_UNLOAD_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -435,8 +440,14 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Locate(out byte[] senseBuffer, immediate, blockType, changePartition, partition, objectId,
-                                dev.Timeout, out double duration);
+        bool sense = dev.Locate(out byte[] senseBuffer,
+                                immediate,
+                                blockType,
+                                changePartition,
+                                partition,
+                                objectId,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -482,8 +493,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.LOCATE_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -553,8 +563,10 @@ static class Ssc
                 case 1:
                     AaruConsole.WriteLine(Localization.Object_type);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, SscLogicalIdTypes.FileId,
-                                          SscLogicalIdTypes.ObjectId, SscLogicalIdTypes.Reserved,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          SscLogicalIdTypes.FileId,
+                                          SscLogicalIdTypes.ObjectId,
+                                          SscLogicalIdTypes.Reserved,
                                           SscLogicalIdTypes.SetId);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -636,8 +648,15 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Locate16(out byte[] senseBuffer, immediate, changePartition, destType, bam, partition,
-                                  objectId, dev.Timeout, out double duration);
+        bool sense = dev.Locate16(out byte[] senseBuffer,
+                                  immediate,
+                                  changePartition,
+                                  destType,
+                                  bam,
+                                  partition,
+                                  objectId,
+                                  dev.Timeout,
+                                  out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -683,8 +702,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.LOCATE_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -724,8 +742,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Fixed_block_size_0, fixedLen);
             AaruConsole.WriteLine(fixedLen ? Localization.Will_read_0_blocks : Localization.Will_read_0_bytes, length);
 
-            if(fixedLen)
-                AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
+            if(fixedLen) AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
 
             AaruConsole.WriteLine(Localization.Suppress_length_indicator_0, sili);
             AaruConsole.WriteLine();
@@ -780,9 +797,10 @@ static class Ssc
 
                     if(length > 0xFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                        AaruConsole.WriteLine(fixedLen
+                                                  ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                                  : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                              0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -821,8 +839,14 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read6(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, length, blockSize,
-                               dev.Timeout, out double duration);
+        bool sense = dev.Read6(out byte[] buffer,
+                               out byte[] senseBuffer,
+                               sili,
+                               fixedLen,
+                               length,
+                               blockSize,
+                               dev.Timeout,
+                               out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -870,8 +894,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_6_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -884,8 +907,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -938,8 +960,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Fixed_block_size_0, fixedLen);
             AaruConsole.WriteLine(fixedLen ? Localization.Will_read_0_objects : Localization.Will_read_0_bytes, length);
 
-            if(fixedLen)
-                AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
+            if(fixedLen) AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
 
             AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Read_object_0_from_partition_1, objectId, partition);
@@ -995,9 +1016,10 @@ static class Ssc
 
                     if(length > 0xFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                        AaruConsole.WriteLine(fixedLen
+                                                  ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                                  : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                              0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1060,8 +1082,16 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read16(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, partition, objectId, length,
-                                objectSize, dev.Timeout, out double duration);
+        bool sense = dev.Read16(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                sili,
+                                fixedLen,
+                                partition,
+                                objectId,
+                                length,
+                                objectSize,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1109,8 +1139,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_16_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1123,8 +1152,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1209,8 +1237,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_BLOCK_LIMITS_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1223,8 +1250,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_BLOCK_LIMITS_decoded_response);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", BlockLimits.Prettify(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", BlockLimits.Prettify(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1237,8 +1263,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_BLOCK_LIMITS_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1307,11 +1332,16 @@ static class Ssc
                 case 1:
                     AaruConsole.WriteLine(Localization.Response_form);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5_6_7_8, SscPositionForms.Short,
-                                          SscPositionForms.VendorShort, SscPositionForms.OldLong,
-                                          SscPositionForms.OldLongVendor, SscPositionForms.OldTclp,
-                                          SscPositionForms.OldTclpVendor, SscPositionForms.Long,
-                                          SscPositionForms.OldLongTclpVendor, SscPositionForms.Extended);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5_6_7_8,
+                                          SscPositionForms.Short,
+                                          SscPositionForms.VendorShort,
+                                          SscPositionForms.OldLong,
+                                          SscPositionForms.OldLongVendor,
+                                          SscPositionForms.OldTclp,
+                                          SscPositionForms.OldTclpVendor,
+                                          SscPositionForms.Long,
+                                          SscPositionForms.OldLongTclpVendor,
+                                          SscPositionForms.Extended);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -1378,8 +1408,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_POSITION_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1420,8 +1449,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Fixed_block_size_0, fixedLen);
             AaruConsole.WriteLine(fixedLen ? Localization.Will_read_0_blocks : Localization.Will_read_0_bytes, length);
 
-            if(fixedLen)
-                AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
+            if(fixedLen) AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
 
             AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Drive_should_unreverse_bytes_0, byteOrder);
@@ -1477,9 +1505,10 @@ static class Ssc
 
                     if(length > 0xFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                        AaruConsole.WriteLine(fixedLen
+                                                  ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                                  : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                              0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1530,8 +1559,15 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadReverse6(out byte[] buffer, out byte[] senseBuffer, byteOrder, sili, fixedLen, length,
-                                      blockSize, dev.Timeout, out double duration);
+        bool sense = dev.ReadReverse6(out byte[] buffer,
+                                      out byte[] senseBuffer,
+                                      byteOrder,
+                                      sili,
+                                      fixedLen,
+                                      length,
+                                      blockSize,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1579,8 +1615,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_REVERSE_6_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1593,8 +1628,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_REVERSE_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1648,8 +1682,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Fixed_block_size_0, fixedLen);
             AaruConsole.WriteLine(fixedLen ? Localization.Will_read_0_objects : Localization.Will_read_0_bytes, length);
 
-            if(fixedLen)
-                AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
+            if(fixedLen) AaruConsole.WriteLine(Localization._0_bytes_expected_per_object, objectSize);
 
             AaruConsole.WriteLine(Localization.Suppress_length_indicator_0,    sili);
             AaruConsole.WriteLine(Localization.Read_object_0_from_partition_1, objectId, partition);
@@ -1706,9 +1739,10 @@ static class Ssc
 
                     if(length > 0xFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                        AaruConsole.WriteLine(fixedLen
+                                                  ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                                  : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                              0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1783,8 +1817,17 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byteOrder, sili, fixedLen, partition,
-                                       objectId, length, objectSize, dev.Timeout, out double duration);
+        bool sense = dev.ReadReverse16(out byte[] buffer,
+                                       out byte[] senseBuffer,
+                                       byteOrder,
+                                       sili,
+                                       fixedLen,
+                                       partition,
+                                       objectId,
+                                       length,
+                                       objectSize,
+                                       dev.Timeout,
+                                       out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1832,8 +1875,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_REVERSE_16_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1846,8 +1888,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_REVERSE_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1898,8 +1939,7 @@ static class Ssc
             AaruConsole.WriteLine(Localization.Fixed_block_size_0, fixedLen);
             AaruConsole.WriteLine(fixedLen ? Localization.Will_read_0_blocks : Localization.Will_read_0_bytes, length);
 
-            if(fixedLen)
-                AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
+            if(fixedLen) AaruConsole.WriteLine(Localization._0_bytes_expected_per_block, blockSize);
 
             AaruConsole.WriteLine(Localization.Suppress_length_indicator_0, sili);
             AaruConsole.WriteLine();
@@ -1954,9 +1994,10 @@ static class Ssc
 
                     if(length > 0xFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(fixedLen ? Localization.Max_number_of_blocks_is_0_setting_to_0 : Localization.Max_number_of_bytes_is_0_setting_to_0,
-                                      0xFFFFFF);
+                        AaruConsole.WriteLine(fixedLen
+                                                  ? Localization.Max_number_of_blocks_is_0_setting_to_0
+                                                  : Localization.Max_number_of_bytes_is_0_setting_to_0,
+                                              0xFFFFFF);
 
                         length = 0xFFFFFF;
                     }
@@ -1995,8 +2036,14 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.RecoverBufferedData(out byte[] buffer, out byte[] senseBuffer, sili, fixedLen, length,
-                                             blockSize, dev.Timeout, out double duration);
+        bool sense = dev.RecoverBufferedData(out byte[] buffer,
+                                             out byte[] senseBuffer,
+                                             sili,
+                                             fixedLen,
+                                             length,
+                                             blockSize,
+                                             dev.Timeout,
+                                             out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -2044,8 +2091,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.RECOVER_BUFFERED_DATA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2058,8 +2104,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.RECOVER_BUFFERED_DATA_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2161,7 +2206,11 @@ static class Ssc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, medium, current, dev.Timeout,
+        bool sense = dev.ReportDensitySupport(out byte[] buffer,
+                                              out byte[] senseBuffer,
+                                              medium,
+                                              current,
+                                              dev.Timeout,
                                               out double duration);
 
     menu:
@@ -2211,8 +2260,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.REPORT_DENSITY_SUPPORT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2241,8 +2289,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.REPORT_DENSITY_SUPPORT_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2375,8 +2422,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.REWIND_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2438,9 +2484,13 @@ static class Ssc
                 case 1:
                     AaruConsole.WriteLine(Localization.What_to_space);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5, SscSpaceCodes.LogicalBlock,
-                                          SscSpaceCodes.Filemark, SscSpaceCodes.SequentialFilemark,
-                                          SscSpaceCodes.EndOfData, SscSpaceCodes.Obsolete1, SscSpaceCodes.Obsolete2);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5,
+                                          SscSpaceCodes.LogicalBlock,
+                                          SscSpaceCodes.Filemark,
+                                          SscSpaceCodes.SequentialFilemark,
+                                          SscSpaceCodes.EndOfData,
+                                          SscSpaceCodes.Obsolete1,
+                                          SscSpaceCodes.Obsolete2);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -2518,8 +2568,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SPACE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2641,8 +2690,7 @@ static class Ssc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.TRACK_SELECT_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

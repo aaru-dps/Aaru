@@ -52,19 +52,25 @@ sealed class EntropyCommand : Command
     public EntropyCommand() : base("entropy", UI.Image_Entropy_Command_Description)
     {
         Add(new Option<bool>(new[]
-        {
-            "--duplicated-sectors", "-p"
-        }, () => true, UI.Calculates_how_many_sectors_are_duplicated));
+                             {
+                                 "--duplicated-sectors", "-p"
+                             },
+                             () => true,
+                             UI.Calculates_how_many_sectors_are_duplicated));
 
         Add(new Option<bool>(new[]
-        {
-            "--separated-tracks", "-t"
-        }, () => true, UI.Calculates_entropy_for_each_track_separately));
+                             {
+                                 "--separated-tracks", "-t"
+                             },
+                             () => true,
+                             UI.Calculates_entropy_for_each_track_separately));
 
         Add(new Option<bool>(new[]
-        {
-            "--whole-disc", "-w"
-        }, () => true, UI.Calculates_entropy_for_the_whole_disc));
+                             {
+                                 "--whole-disc", "-w"
+                             },
+                             () => true,
+                             UI.Calculates_entropy_for_the_whole_disc));
 
         AddArgument(new Argument<string>
         {
@@ -171,11 +177,11 @@ sealed class EntropyCommand : Command
 
         var entropyCalculator = new Entropy(debug, inputFormat);
 
-        AnsiConsole.Progress().
-                    AutoClear(true).
-                    HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                    Start(ctx =>
+        AnsiConsole.Progress()
+                   .AutoClear(true)
+                   .HideCompleted(true)
+                   .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                   .Start(ctx =>
                     {
                         entropyCalculator.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
@@ -213,14 +219,14 @@ sealed class EntropyCommand : Command
                         {
                             if(opticalFormat.Sessions?.Count > 1)
                             {
-                                AaruConsole.ErrorWriteLine(UI.
-                                                               Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented);
+                                AaruConsole
+                                   .ErrorWriteLine(UI
+                                                      .Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented);
 
                                 wholeDisc = false;
                             }
 
-                            if(opticalFormat.Tracks?.Count == 1)
-                                separatedTracks = false;
+                            if(opticalFormat.Tracks?.Count == 1) separatedTracks = false;
                         }
 
                         if(separatedTracks)
@@ -230,20 +236,21 @@ sealed class EntropyCommand : Command
 
                             foreach(EntropyResults trackEntropy in tracksEntropy)
                             {
-                                AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track,
+                                AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1,
+                                                      trackEntropy.Track,
                                                       trackEntropy.Entropy);
 
                                 if(trackEntropy.UniqueSectors != null)
                                 {
-                                    AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2, trackEntropy.Track,
+                                    AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2,
+                                                          trackEntropy.Track,
                                                           trackEntropy.UniqueSectors,
                                                           (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                                 }
                             }
                         }
 
-                        if(!wholeDisc)
-                            return;
+                        if(!wholeDisc) return;
 
                         EntropyResults entropy = inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia
                                                      ? entropyCalculator.CalculateLinearMediaEntropy()
@@ -253,7 +260,8 @@ sealed class EntropyCommand : Command
 
                         if(entropy.UniqueSectors != null)
                         {
-                            AaruConsole.WriteLine(UI.Disk_has_0_unique_sectors_1, entropy.UniqueSectors,
+                            AaruConsole.WriteLine(UI.Disk_has_0_unique_sectors_1,
+                                                  entropy.UniqueSectors,
                                                   (double)entropy.UniqueSectors / entropy.Sectors);
                         }
                     });

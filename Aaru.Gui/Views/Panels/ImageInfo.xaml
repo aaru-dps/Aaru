@@ -31,18 +31,26 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.ImageInfo">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.ImageInfo">
     <Design.DataContext>
         <panels:ImageInfoViewModel />
     </Design.DataContext>
     <StackPanel>
-        <Image Width="128" Height="128" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Image Width="128"
+               Height="128"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
                Source="{Binding MediaLogo}" />
-        <TextBlock Text="{Binding ImageInformationLabel}" FontWeight="Bold" />
+        <TextBlock Text="{Binding ImageInformationLabel}"
+                   FontWeight="Bold" />
         <TextBlock Text="{Binding ImagePathText}" /> <TextBlock Text="{Binding FilterText}" />
         <TextBlock Text="{Binding ImageIdentifiedText}" />
         <TabControl>
@@ -51,52 +59,86 @@
                     <TextBlock Text="{Binding GeneralLabel}" />
                 </TabItem.Header>
                 <StackPanel>
-                    <TextBlock Text="{Binding ImageFormatText}" IsVisible="{Binding !!ImageFormatText}" />
-                    <TextBlock Text="{Binding ApplicationText}" IsVisible="{Binding !!ApplicationText}" />
-                    <TextBlock Text="{Binding ImageSizeText}" IsVisible="{Binding !!ImageSizeText}" />
-                    <TextBlock Text="{Binding SectorsText}" IsVisible="{Binding !!SectorsText}" />
-                    <TextBlock Text="{Binding CreatorText}" IsVisible="{Binding !!CreatorText}" />
-                    <TextBlock Text="{Binding CreationTimeText}" IsVisible="{Binding !!CreationTimeText}" />
+                    <TextBlock Text="{Binding ImageFormatText}"
+                               IsVisible="{Binding !!ImageFormatText}" />
+                    <TextBlock Text="{Binding ApplicationText}"
+                               IsVisible="{Binding !!ApplicationText}" />
+                    <TextBlock Text="{Binding ImageSizeText}"
+                               IsVisible="{Binding !!ImageSizeText}" />
+                    <TextBlock Text="{Binding SectorsText}"
+                               IsVisible="{Binding !!SectorsText}" />
+                    <TextBlock Text="{Binding CreatorText}"
+                               IsVisible="{Binding !!CreatorText}" />
+                    <TextBlock Text="{Binding CreationTimeText}"
+                               IsVisible="{Binding !!CreationTimeText}" />
                     <TextBlock Text="{Binding LastModificationTimeText}"
                                IsVisible="{Binding !!LastModificationTimeText}" />
-                    <TextBlock Text="{Binding MediaTypeText}" IsVisible="{Binding !!MediaTypeText}" />
-                    <TextBlock Text="{Binding HasPartitionsText}" IsVisible="{Binding !!HasPartitionsText}" />
-                    <TextBlock Text="{Binding HasSessionsText}" IsVisible="{Binding !!HasSessionsText}" />
-                    <TextBlock Text="{Binding CommentsLabel}" IsVisible="{Binding !!CommentsText}" FontWeight="Bold" />
-                    <TextBox IsReadOnly="True" TextWrapping="Wrap" Text="{Binding CommentsText}"
+                    <TextBlock Text="{Binding MediaTypeText}"
+                               IsVisible="{Binding !!MediaTypeText}" />
+                    <TextBlock Text="{Binding HasPartitionsText}"
+                               IsVisible="{Binding !!HasPartitionsText}" />
+                    <TextBlock Text="{Binding HasSessionsText}"
+                               IsVisible="{Binding !!HasSessionsText}" />
+                    <TextBlock Text="{Binding CommentsLabel}"
+                               IsVisible="{Binding !!CommentsText}"
+                               FontWeight="Bold" />
+                    <TextBox IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             Text="{Binding CommentsText}"
                              IsVisible="{Binding !!CommentsText}" />
-                    <TextBlock Text="{Binding MediaInformationLabel}" FontWeight="Bold"
+                    <TextBlock Text="{Binding MediaInformationLabel}"
+                               FontWeight="Bold"
                                IsVisible="{Binding MediaInformationVisible}" />
-                    <TextBlock Text="{Binding MediaSequenceText}" IsVisible="{Binding !!MediaSequenceText}" />
-                    <TextBlock Text="{Binding MediaTitleText}" IsVisible="{Binding !!MediaTitleText}" />
-                    <TextBlock Text="{Binding MediaManufacturerText}" IsVisible="{Binding !!MediaManufacturerText}" />
-                    <TextBlock Text="{Binding MediaModelText}" IsVisible="{Binding !!MediaModelText}" />
-                    <TextBlock Text="{Binding MediaSerialNumberText}" IsVisible="{Binding !!MediaSerialNumberText}" />
-                    <TextBlock Text="{Binding MediaBarcodeText}" IsVisible="{Binding !!MediaBarcodeText}" />
-                    <TextBlock Text="{Binding MediaPartNumberText}" IsVisible="{Binding !!MediaPartNumberText}" />
-                    <TextBlock Text="{Binding DriveInformationLabel}" FontWeight="Bold"
+                    <TextBlock Text="{Binding MediaSequenceText}"
+                               IsVisible="{Binding !!MediaSequenceText}" />
+                    <TextBlock Text="{Binding MediaTitleText}"
+                               IsVisible="{Binding !!MediaTitleText}" />
+                    <TextBlock Text="{Binding MediaManufacturerText}"
+                               IsVisible="{Binding !!MediaManufacturerText}" />
+                    <TextBlock Text="{Binding MediaModelText}"
+                               IsVisible="{Binding !!MediaModelText}" />
+                    <TextBlock Text="{Binding MediaSerialNumberText}"
+                               IsVisible="{Binding !!MediaSerialNumberText}" />
+                    <TextBlock Text="{Binding MediaBarcodeText}"
+                               IsVisible="{Binding !!MediaBarcodeText}" />
+                    <TextBlock Text="{Binding MediaPartNumberText}"
+                               IsVisible="{Binding !!MediaPartNumberText}" />
+                    <TextBlock Text="{Binding DriveInformationLabel}"
+                               FontWeight="Bold"
                                IsVisible="{Binding DriveInformationVisible}" />
-                    <TextBlock Text="{Binding DriveManufacturerText}" IsVisible="{Binding !!DriveManufacturerText}" />
-                    <TextBlock Text="{Binding DriveModelText}" IsVisible="{Binding !!DriveModelText}" />
-                    <TextBlock Text="{Binding DriveSerialNumberText}" IsVisible="{Binding !!DriveSerialNumberText}" />
+                    <TextBlock Text="{Binding DriveManufacturerText}"
+                               IsVisible="{Binding !!DriveManufacturerText}" />
+                    <TextBlock Text="{Binding DriveModelText}"
+                               IsVisible="{Binding !!DriveModelText}" />
+                    <TextBlock Text="{Binding DriveSerialNumberText}"
+                               IsVisible="{Binding !!DriveSerialNumberText}" />
                     <TextBlock Text="{Binding DriveFirmwareRevisionText}"
                                IsVisible="{Binding !!DriveFirmwareRevisionText}" />
-                    <TextBlock Text="{Binding MediaGeometryText}" IsVisible="{Binding !!MediaGeometryText}" />
-                    <TextBlock Text="{Binding ReadableMediaTagsLabel}" FontWeight="Bold"
+                    <TextBlock Text="{Binding MediaGeometryText}"
+                               IsVisible="{Binding !!MediaGeometryText}" />
+                    <TextBlock Text="{Binding ReadableMediaTagsLabel}"
+                               FontWeight="Bold"
                                IsVisible="{Binding !!MediaTagsList.Count}" />
-                    <DataGrid ItemsSource="{Binding MediaTagsList}" IsVisible="{Binding !!MediaTagsList.Count}"
+                    <DataGrid ItemsSource="{Binding MediaTagsList}"
+                              IsVisible="{Binding !!MediaTagsList.Count}"
                               IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{Binding TagLabel}" Binding="{Binding .}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding TagLabel}"
+                                                Binding="{Binding .}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBlock Text="{Binding ReadableSectorTagsLabel}" FontWeight="Bold"
+                    <TextBlock Text="{Binding ReadableSectorTagsLabel}"
+                               FontWeight="Bold"
                                IsVisible="{Binding !!SectorTagsList.Count}" />
-                    <DataGrid ItemsSource="{Binding SectorTagsList}" IsVisible="{Binding !!SectorTagsList.Count}"
+                    <DataGrid ItemsSource="{Binding SectorTagsList}"
+                              IsVisible="{Binding !!SectorTagsList.Count}"
                               IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{Binding TagLabel}" Binding="{Binding .}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding TagLabel}"
+                                                Binding="{Binding .}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -106,15 +148,25 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding SessionsLabel}" />
                 </TabItem.Header>
-                <DataGrid ItemsSource="{Binding Sessions}" IsVisible="{Binding !!Sessions.Count}" IsReadOnly="True">
+                <DataGrid ItemsSource="{Binding Sessions}"
+                          IsVisible="{Binding !!Sessions.Count}"
+                          IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{Binding SessionLabel}" Binding="{Binding SessionSequence}"
+                        <DataGridTextColumn Header="{Binding SessionLabel}"
+                                            Binding="{Binding SessionSequence}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding FirstTrackLabel}" Binding="{Binding StartTrack}"
+                        <DataGridTextColumn Header="{Binding FirstTrackLabel}"
+                                            Binding="{Binding StartTrack}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding LastTrackLabel}" Binding="{Binding EndTrack}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding StartLabel}" Binding="{Binding StartSector}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding EndLabel}" Binding="{Binding EndSector}" Width="Auto" />
+                        <DataGridTextColumn Header="{Binding LastTrackLabel}"
+                                            Binding="{Binding EndTrack}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding StartLabel}"
+                                            Binding="{Binding StartSector}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding EndLabel}"
+                                            Binding="{Binding EndSector}"
+                                            Width="Auto" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -122,18 +174,34 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding TracksLabel}" />
                 </TabItem.Header>
-                <DataGrid ItemsSource="{Binding Tracks}" IsVisible="{Binding !!Tracks.Count}" IsReadOnly="True">
+                <DataGrid ItemsSource="{Binding Tracks}"
+                          IsVisible="{Binding !!Tracks.Count}"
+                          IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Sequence}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding TypeLabel}" Binding="{Binding Type}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding BpsLabel}" Binding="{Binding BytesPerSector}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding RawBpsLabel}" Binding="{Binding RawBytesPerSector}"
+                        <DataGridTextColumn Header="{Binding TrackLabel}"
+                                            Binding="{Binding Sequence}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding SubchannelLabel}" Binding="{Binding SubchannelType}"
+                        <DataGridTextColumn Header="{Binding TypeLabel}"
+                                            Binding="{Binding Type}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding PregapLabel}" Binding="{Binding Pregap}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding StartLabel}" Binding="{Binding StartSector}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding EndLabel}" Binding="{Binding EndSector}" Width="Auto" />
+                        <DataGridTextColumn Header="{Binding BpsLabel}"
+                                            Binding="{Binding BytesPerSector}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding RawBpsLabel}"
+                                            Binding="{Binding RawBytesPerSector}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding SubchannelLabel}"
+                                            Binding="{Binding SubchannelType}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding PregapLabel}"
+                                            Binding="{Binding Pregap}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding StartLabel}"
+                                            Binding="{Binding StartSector}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding EndLabel}"
+                                            Binding="{Binding EndSector}"
+                                            Width="Auto" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -141,23 +209,37 @@
                 <TabItem.Header>
                     <TextBlock Text="{Binding DumpHardwareLabel}" />
                 </TabItem.Header>
-                <DataGrid ItemsSource="{Binding DumpHardwareList}" IsVisible="{Binding !!DumpHardwareList.Count}"
+                <DataGrid ItemsSource="{Binding DumpHardwareList}"
+                          IsVisible="{Binding !!DumpHardwareList.Count}"
                           IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{Binding ManufacturerLabel}" Binding="{Binding Manufacturer}"
+                        <DataGridTextColumn Header="{Binding ManufacturerLabel}"
+                                            Binding="{Binding Manufacturer}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding ModelLabel}" Binding="{Binding Model}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding RevisionLabel}" Binding="{Binding Revision}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding SerialLabel}" Binding="{Binding Serial}" Width="Auto" />
-                        <DataGridTextColumn Header="{Binding SoftwareLabel}" Binding="{Binding SoftwareName}"
+                        <DataGridTextColumn Header="{Binding ModelLabel}"
+                                            Binding="{Binding Model}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding VersionLabel}" Binding="{Binding SoftwareVersion}"
+                        <DataGridTextColumn Header="{Binding RevisionLabel}"
+                                            Binding="{Binding Revision}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding OperatingSystemLabel}" Binding="{Binding OperatingSystem}"
+                        <DataGridTextColumn Header="{Binding SerialLabel}"
+                                            Binding="{Binding Serial}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding StartLabel}" Binding="{Binding TrackStartSector}"
+                        <DataGridTextColumn Header="{Binding SoftwareLabel}"
+                                            Binding="{Binding SoftwareName}"
                                             Width="Auto" />
-                        <DataGridTextColumn Header="{Binding EndLabel}" Binding="{Binding TrackEndSector}" Width="Auto" />
+                        <DataGridTextColumn Header="{Binding VersionLabel}"
+                                            Binding="{Binding SoftwareVersion}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding OperatingSystemLabel}"
+                                            Binding="{Binding OperatingSystem}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding StartLabel}"
+                                            Binding="{Binding TrackStartSector}"
+                                            Width="Auto" />
+                        <DataGridTextColumn Header="{Binding EndLabel}"
+                                            Binding="{Binding TrackEndSector}"
+                                            Width="Auto" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -216,7 +298,8 @@
                 <ContentControl Content="{Binding XboxInfo}" />
             </TabItem>
         </TabControl>
-        <StackPanel Orientation="Horizontal" Spacing="5">
+        <StackPanel Orientation="Horizontal"
+                    Spacing="5">
             <Button Command="{Binding EntropyCommand}">
                 <TextBlock Text="{Binding EntropyLabel}" />
             </Button>

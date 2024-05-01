@@ -143,38 +143,38 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
                 ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.EnsureCreated();
 
-                ctx.Database.
-                    ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                ctx.Database
+                   .ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
                 {
-                    ctx.Database.
-                        ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
-                            migration}', '0.0.0')");
+                    ctx.Database
+                       .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                           migration}', '0.0.0')");
                 }
 
                 ctx.SaveChanges();
             }
 
             // Remove duplicates
-            foreach(var duplicate in ctx.SeenDevices.AsEnumerable().
-                                         GroupBy(a => new
+            foreach(var duplicate in ctx.SeenDevices.AsEnumerable()
+                                        .GroupBy(a => new
                                          {
                                              a.Manufacturer,
                                              a.Model,
                                              a.Revision,
                                              a.Bus
-                                         }).
-                                         Where(a => a.Count() > 1).
-                                         Distinct().
-                                         Select(a => a.Key))
+                                         })
+                                        .Where(a => a.Count() > 1)
+                                        .Distinct()
+                                        .Select(a => a.Key))
             {
-                ctx.RemoveRange(ctx.SeenDevices.
-                                    Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                ctx.RemoveRange(ctx.SeenDevices
+                                   .Where(d => d.Manufacturer == duplicate.Manufacturer &&
                                                d.Model        == duplicate.Model        &&
                                                d.Revision     == duplicate.Revision     &&
-                                               d.Bus          == duplicate.Bus).
-                                    Skip(1));
+                                               d.Bus          == duplicate.Bus)
+                                   .Skip(1));
             }
 
             // Remove nulls

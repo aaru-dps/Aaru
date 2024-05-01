@@ -104,8 +104,7 @@ public sealed class LZip : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[5];
@@ -187,8 +186,7 @@ public sealed class LZip : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath[..^3];
+            if(BasePath?.EndsWith(".lz", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^3];
 
             return BasePath?.EndsWith(".lzip", StringComparison.InvariantCultureIgnoreCase) == true
                        ? BasePath[..^5]

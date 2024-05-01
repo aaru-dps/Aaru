@@ -51,18 +51,15 @@ public sealed partial class VMfs
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ulong vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
 
-        if(partition.Start + vmfsSuperOff > partition.End)
-            return false;
+        if(partition.Start + vmfsSuperOff > partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -79,8 +76,7 @@ public sealed partial class VMfs
         ulong       vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
         ErrorNumber errno        = imagePlugin.ReadSector(partition.Start + vmfsSuperOff, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         VolumeInfo volInfo = Marshal.ByteArrayToStructureLittleEndian<VolumeInfo>(sector);
 
@@ -95,19 +91,19 @@ public sealed partial class VMfs
 
         sbInformation.AppendFormat(Localization.Volume_version_0, volInfo.version).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(volInfo.name, encoding)).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(volInfo.name, encoding))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_size_0_bytes, volInfo.size * 256).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_UUID_0,       volInfo.uuid).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs)).
-                      AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(ctimeSecs, ctimeNanoSecs))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs)).
-                      AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs))
+                     .AppendLine();
 
         information = sbInformation.ToString();
 

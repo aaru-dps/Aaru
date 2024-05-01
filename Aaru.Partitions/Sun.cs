@@ -99,18 +99,15 @@ public sealed class SunDisklabel : IPartition
     {
         partitions = new List<Partition>();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         bool useDkl = false, useDkl8 = false, useDkl16 = false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sunSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         dk_label   dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
         dk_label8  dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
@@ -152,21 +149,20 @@ public sealed class SunDisklabel : IPartition
             }
         }
 
-        if(!useDkl && !useDkl8 && !useDkl16)
-            return false;
+        if(!useDkl && !useDkl8 && !useDkl16) return false;
 
         if(useDkl16 && dkl16.dkl_magic == DKL_CIGAM)
             dkl16 = SwapDiskLabel(dkl16);
         else if(useDkl8 && dkl8.dkl_magic == DKL_CIGAM)
-            dkl8 = SwapDiskLabel(dkl8);
-        else if(useDkl && dkl.dkl_magic == DKL_CIGAM)
-            dkl = SwapDiskLabel(dkl);
+            dkl8                                          = SwapDiskLabel(dkl8);
+        else if(useDkl && dkl.dkl_magic == DKL_CIGAM) dkl = SwapDiskLabel(dkl);
 
         if(useDkl)
         {
             var sectorsPerCylinder = (ulong)(dkl.dkl_nsect * dkl.dkl_nhead);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dkl.dkl_asciilabel = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dkl.dkl_asciilabel = \"{0}\"",
                                        StringHandlers.CToString(dkl.dkl_asciilabel));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl.dkl_rpm = {0}",    dkl.dkl_rpm);
@@ -184,7 +180,9 @@ public sealed class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl.dkl_map[{0}].dkl_cylno = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl.dkl_map[{0}].dkl_cylno = {1}",
+                                           i,
                                            dkl.dkl_map[i].dkl_cylno);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "dkl.dkl_map[{0}].dkl_nblk = {1}", i, dkl.dkl_map[i].dkl_nblk);
@@ -196,8 +194,7 @@ public sealed class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP; i++)
             {
-                if(dkl.dkl_map[i].dkl_cylno <= 0 || dkl.dkl_map[i].dkl_nblk <= 0)
-                    continue;
+                if(dkl.dkl_map[i].dkl_cylno <= 0 || dkl.dkl_map[i].dkl_nblk <= 0) continue;
 
                 var part = new Partition
                 {
@@ -212,20 +209,21 @@ public sealed class SunDisklabel : IPartition
                     Scheme = Name
                 };
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
-                    partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
         else if(useDkl8)
         {
             var sectorsPerCylinder = (ulong)(dkl8.dkl_nsect * dkl8.dkl_nhead);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_asciilabel = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dkl8.dkl_asciilabel = \"{0}\"",
                                        StringHandlers.CToString(dkl8.dkl_asciilabel));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_version = {0}", dkl8.dkl_vtoc.v_version);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_volume = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dkl8.dkl_vtoc.v_volume = \"{0}\"",
                                        StringHandlers.CToString(dkl8.dkl_vtoc.v_volume));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_nparts = {0}",      dkl8.dkl_vtoc.v_nparts);
@@ -247,19 +245,31 @@ public sealed class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_map[{0}].dkl_cylno = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl8.dkl_map[{0}].dkl_cylno = {1}",
+                                           i,
                                            dkl8.dkl_map[i].dkl_cylno);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_map[{0}].dkl_nblk = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl8.dkl_map[{0}].dkl_nblk = {1}",
+                                           i,
                                            dkl8.dkl_map[i].dkl_nblk);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})", i,
-                                           dkl8.dkl_vtoc.v_part[i].p_tag, (ushort)dkl8.dkl_vtoc.v_part[i].p_tag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl8.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})",
+                                           i,
+                                           dkl8.dkl_vtoc.v_part[i].p_tag,
+                                           (ushort)dkl8.dkl_vtoc.v_part[i].p_tag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
-                                           dkl8.dkl_vtoc.v_part[i].p_flag, (ushort)dkl8.dkl_vtoc.v_part[i].p_flag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl8.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})",
+                                           i,
+                                           dkl8.dkl_vtoc.v_part[i].p_flag,
+                                           (ushort)dkl8.dkl_vtoc.v_part[i].p_flag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_vtoc.v_timestamp[{0}] = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl8.dkl_vtoc.v_timestamp[{0}] = {1}",
+                                           i,
                                            DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
             }
 
@@ -267,8 +277,7 @@ public sealed class SunDisklabel : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl8.dkl_cksum = 0x{0:X4}", dkl8.dkl_cksum);
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerCylinder = {0}",  sectorsPerCylinder);
 
-            if(dkl8.dkl_vtoc.v_nparts > NDKMAP)
-                return false;
+            if(dkl8.dkl_vtoc.v_nparts > NDKMAP) return false;
 
             for(var i = 0; i < dkl8.dkl_vtoc.v_nparts; i++)
             {
@@ -299,8 +308,7 @@ public sealed class SunDisklabel : IPartition
                                       DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
-                    partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
         else
@@ -308,13 +316,15 @@ public sealed class SunDisklabel : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_sanity = 0x{0:X8}", dkl16.dkl_vtoc.v_sanity);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_version = {0}",     dkl16.dkl_vtoc.v_version);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_volume = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dkl16.dkl_vtoc.v_volume = \"{0}\"",
                                        StringHandlers.CToString(dkl16.dkl_vtoc.v_volume));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_sectorsz = {0}", dkl16.dkl_vtoc.v_sectorsz);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_nparts = {0}",   dkl16.dkl_vtoc.v_nparts);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_asciilabel = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dkl16.dkl_vtoc.v_asciilabel = \"{0}\"",
                                        StringHandlers.CToString(dkl16.dkl_vtoc.v_asciilabel));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_pcyl = {0}",   dkl16.dkl_pcyl);
@@ -334,27 +344,38 @@ public sealed class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP16; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_part[{0}].p_start = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl16.dkl_vtoc.v_part[{0}].p_start = {1}",
+                                           i,
                                            dkl16.dkl_vtoc.v_part[i].p_start);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_part[{0}].p_size = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl16.dkl_vtoc.v_part[{0}].p_size = {1}",
+                                           i,
                                            dkl16.dkl_vtoc.v_part[i].p_size);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})", i,
-                                           dkl16.dkl_vtoc.v_part[i].p_tag, (ushort)dkl16.dkl_vtoc.v_part[i].p_tag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl16.dkl_vtoc.v_part[{0}].p_tag = {1} ({2})",
+                                           i,
+                                           dkl16.dkl_vtoc.v_part[i].p_tag,
+                                           (ushort)dkl16.dkl_vtoc.v_part[i].p_tag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})", i,
-                                           dkl16.dkl_vtoc.v_part[i].p_flag, (ushort)dkl16.dkl_vtoc.v_part[i].p_flag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl16.dkl_vtoc.v_part[{0}].p_flag = {1} ({2})",
+                                           i,
+                                           dkl16.dkl_vtoc.v_part[i].p_flag,
+                                           (ushort)dkl16.dkl_vtoc.v_part[i].p_flag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_vtoc.v_timestamp[{0}] = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "dkl16.dkl_vtoc.v_timestamp[{0}] = {1}",
+                                           i,
                                            DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
             }
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_magic = 0x{0:X4}", dkl16.dkl_magic);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dkl16.dkl_cksum = 0x{0:X4}", dkl16.dkl_cksum);
 
-            if(dkl16.dkl_vtoc.v_nparts > NDKMAP16)
-                return false;
+            if(dkl16.dkl_vtoc.v_nparts > NDKMAP16) return false;
 
             for(var i = 0; i < dkl16.dkl_vtoc.v_nparts; i++)
             {
@@ -367,9 +388,10 @@ public sealed class SunDisklabel : IPartition
                 {
                     Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                     Size        = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
-                    Length = (ulong)(dkl16.dkl_vtoc.v_part[i].p_size *
-                                     dkl16.dkl_vtoc.v_sectorsz /
-                                     imagePlugin.Info.SectorSize),
+                    Length =
+                        (ulong)(dkl16.dkl_vtoc.v_part[i].p_size *
+                                dkl16.dkl_vtoc.v_sectorsz /
+                                imagePlugin.Info.SectorSize),
                     Sequence = (ulong)i,
                     Offset   = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
                     Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
@@ -387,8 +409,7 @@ public sealed class SunDisklabel : IPartition
                                       DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors)
-                    partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
 
@@ -463,11 +484,9 @@ public sealed class SunDisklabel : IPartition
     {
         var sb = new StringBuilder();
 
-        if(flags.HasFlag(SunFlags.NoMount))
-            sb.AppendLine(Localization.Unmountable);
+        if(flags.HasFlag(SunFlags.NoMount)) sb.AppendLine(Localization.Unmountable);
 
-        if(flags.HasFlag(SunFlags.ReadOnly))
-            sb.AppendLine(Localization.Read_only);
+        if(flags.HasFlag(SunFlags.ReadOnly)) sb.AppendLine(Localization.Read_only);
 
         return sb.ToString();
     }

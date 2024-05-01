@@ -39,8 +39,7 @@ public abstract class FsExtractIssueTest
 
         Encoding encodingClass = null;
 
-        if(Encoding != null)
-            encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
+        if(Encoding != null) encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
 
         PluginRegister plugins = PluginRegister.Singleton;
 
@@ -73,8 +72,7 @@ public abstract class FsExtractIssueTest
         {
             Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
-            if(idPlugins.Count == 0)
-                continue;
+            if(idPlugins.Count == 0) continue;
 
             ErrorNumber error;
 
@@ -82,8 +80,7 @@ public abstract class FsExtractIssueTest
             {
                 foreach(string pluginName in idPlugins)
                 {
-                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
-                        continue;
+                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs)) continue;
 
                     Assert.IsNotNull(fs, string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
@@ -91,7 +88,8 @@ public abstract class FsExtractIssueTest
 
                     error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                    Assert.AreEqual(ErrorNumber.NoError, error,
+                    Assert.AreEqual(ErrorNumber.NoError,
+                                    error,
                                     string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
                     ExtractFilesInDir("/", fs, Xattrs);
@@ -107,7 +105,8 @@ public abstract class FsExtractIssueTest
 
                 error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, error,
+                Assert.AreEqual(ErrorNumber.NoError,
+                                error,
                                 string.Format(Localization.Could_not_mount_0_in_partition_1, fs.Name, i));
 
                 ExtractFilesInDir("/", fs, Xattrs);
@@ -119,19 +118,20 @@ public abstract class FsExtractIssueTest
 
     static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, bool doXattrs)
     {
-        if(path.StartsWith('/'))
-            path = path[1..];
+        if(path.StartsWith('/')) path = path[1..];
 
         ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
-        Assert.AreEqual(ErrorNumber.NoError, error,
+        Assert.AreEqual(ErrorNumber.NoError,
+                        error,
                         string.Format(Localization.Error_0_reading_root_directory, error.ToString()));
 
         while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-            Assert.AreEqual(ErrorNumber.NoError, error,
+            Assert.AreEqual(ErrorNumber.NoError,
+                            error,
                             string.Format(Localization.Error_getting_stat_for_entry_0, entry));
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
@@ -145,8 +145,10 @@ public abstract class FsExtractIssueTest
             {
                 error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
-                Assert.AreEqual(ErrorNumber.NoError, error,
-                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1, error,
+                Assert.AreEqual(ErrorNumber.NoError,
+                                error,
+                                string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1,
+                                              error,
                                               path + "/" + entry));
 
                 if(error == ErrorNumber.NoError)
@@ -156,9 +158,11 @@ public abstract class FsExtractIssueTest
                         byte[] xattrBuf = Array.Empty<byte>();
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
-                        Assert.AreEqual(ErrorNumber.NoError, error,
+                        Assert.AreEqual(ErrorNumber.NoError,
+                                        error,
                                         string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1,
-                                                      error, path + "/" + entry));
+                                                      error,
+                                                      path + "/" + entry));
                     }
                 }
             }
@@ -166,16 +170,21 @@ public abstract class FsExtractIssueTest
             var         buffer = new byte[stat.Length];
             ErrorNumber ret    = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
-            Assert.AreEqual(ErrorNumber.NoError, ret,
+            Assert.AreEqual(ErrorNumber.NoError,
+                            ret,
                             string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
 
             ret = fs.ReadFile(fileNode, stat.Length, buffer, out long readBytes);
 
-            Assert.AreEqual(ErrorNumber.NoError, ret,
+            Assert.AreEqual(ErrorNumber.NoError,
+                            ret,
                             string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
 
-            Assert.AreEqual(stat.Length, readBytes,
-                            string.Format(Localization.Error_0_reading_file_1, readBytes, stat.Length,
+            Assert.AreEqual(stat.Length,
+                            readBytes,
+                            string.Format(Localization.Error_0_reading_file_1,
+                                          readBytes,
+                                          stat.Length,
                                           path + "/" + entry));
         }
 

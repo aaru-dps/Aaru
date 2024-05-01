@@ -95,13 +95,11 @@ public sealed partial class Vdi
 
         var ibmEntries = (uint)(sectors * sectorSize / DEFAULT_BLOCK_SIZE);
 
-        if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0)
-            ibmEntries++;
+        if(sectors * sectorSize % DEFAULT_BLOCK_SIZE > 0) ibmEntries++;
 
         uint headerSectors = 1 + ibmEntries * 4 / sectorSize;
 
-        if(ibmEntries * 4 % sectorSize != 0)
-            headerSectors++;
+        if(ibmEntries * 4 % sectorSize != 0) headerSectors++;
 
         _ibm                    = new uint[ibmEntries];
         _currentWritingPosition = headerSectors * sectorSize;
@@ -124,8 +122,7 @@ public sealed partial class Vdi
             snapshotUuid = Guid.NewGuid()
         };
 
-        for(uint i = 0; i < ibmEntries; i++)
-            _ibm[i] = VDI_EMPTY;
+        for(uint i = 0; i < ibmEntries; i++) _ibm[i] = VDI_EMPTY;
 
         IsWriting    = true;
         ErrorMessage = null;
@@ -166,8 +163,7 @@ public sealed partial class Vdi
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
         ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
@@ -219,16 +215,14 @@ public sealed partial class Vdi
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         for(uint i = 0; i < length; i++)
         {
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -283,8 +277,7 @@ public sealed partial class Vdi
 
                 _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _vHdr.logicalHeads / _vHdr.logicalSpt);
 
-                if(_vHdr.logicalCylinders == 0 && _vHdr is { logicalHeads: 0, logicalSpt: 0 })
-                    break;
+                if(_vHdr.logicalCylinders == 0 && _vHdr is { logicalHeads: 0, logicalSpt: 0 }) break;
             }
         }
 

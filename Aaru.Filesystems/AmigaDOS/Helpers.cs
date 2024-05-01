@@ -67,8 +67,7 @@ public sealed partial class AmigaDOSPlugin
         {
             uint psum = sum;
 
-            if((sum += (uint)((data[i] << 24) + (data[i + 1] << 16) + (data[i + 2] << 8) + data[i + 3])) < psum)
-                sum++;
+            if((sum += (uint)((data[i] << 24) + (data[i + 1] << 16) + (data[i + 2] << 8) + data[i + 3])) < psum) sum++;
         }
 
         return ~sum;

@@ -98,14 +98,20 @@ sealed class ListDevicesCommand : Command
         AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
         AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                          out string serverVersion, out string serverOperatingSystem,
+        DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote,
+                                                          out string serverApplication,
+                                                          out string serverVersion,
+                                                          out string serverOperatingSystem,
                                                           out string serverOperatingSystemVersion,
-                                                          out string serverArchitecture, aaruRemoteHost);
+                                                          out string serverArchitecture,
+                                                          aaruRemoteHost);
 
         if(isRemote)
         {
-            Statistics.AddRemote(serverApplication, serverVersion, serverOperatingSystem, serverOperatingSystemVersion,
+            Statistics.AddRemote(serverApplication,
+                                 serverVersion,
+                                 serverOperatingSystem,
+                                 serverOperatingSystemVersion,
                                  serverArchitecture);
         }
 
@@ -123,9 +129,12 @@ sealed class ListDevicesCommand : Command
 
             foreach(DeviceInfo dev in devices.OrderBy(d => d.Path))
             {
-                table.AddRow(Markup.Escape(dev.Path  ?? ""), Markup.Escape(dev.Vendor ?? ""),
-                             Markup.Escape(dev.Model ?? ""), Markup.Escape(dev.Serial ?? ""),
-                             Markup.Escape(dev.Bus   ?? ""), dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
+                table.AddRow(Markup.Escape(dev.Path   ?? ""),
+                             Markup.Escape(dev.Vendor ?? ""),
+                             Markup.Escape(dev.Model  ?? ""),
+                             Markup.Escape(dev.Serial ?? ""),
+                             Markup.Escape(dev.Bus    ?? ""),
+                             dev.Supported ? "[green]✓[/]" : "[red]✗[/]");
             }
 
             AnsiConsole.Write(table);

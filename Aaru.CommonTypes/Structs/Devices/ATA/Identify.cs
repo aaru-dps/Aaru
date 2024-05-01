@@ -114,7 +114,7 @@ public static class Identify
         MustBeClear = 0x8000,
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved13 = 0x2000,
         Reserved12 = 0x1000,
         Reserved11 = 0x0800,
@@ -128,7 +128,7 @@ public static class Identify
         Reserved03 = 0x0008,
         Reserved02 = 0x0004,
         Reserved01 = 0x0002,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Indicates a device specific minimum standby timer value</summary>
         SpecificStandbyTimer = 0x0001
     }
@@ -153,9 +153,9 @@ public static class Identify
         SanitizeCommands = 0x0008,
         /// <summary>SANITIZE ANTIFREEZE LOCK EXT is supported</summary>
         SanitizeAntifreeze = 0x0004,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved01 = 0x0002,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Multiple logical sector setting is valid</summary>
         MultipleValid = 0x0001
     }
@@ -298,12 +298,12 @@ public static class Identify
         MustBeClear = 0x8000,
         /// <summary>MUST be set</summary>
         MustBeSet = 0x4000,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved13 = 0x2000,
         Reserved12 = 0x1000,
         Reserved11 = 0x0800,
         Reserved10 = 0x0400,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>DSN feature set is supported</summary>
         DSN = 0x0200,
         /// <summary>Accessible Max Address Configuration is supported</summary>
@@ -376,7 +376,7 @@ public static class Identify
     [Flags]
     public enum DataSetMgmtBit : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved15 = 0x8000,
         Reserved14 = 0x4000,
         Reserved13 = 0x2000,
@@ -392,7 +392,7 @@ public static class Identify
         Reserved03 = 0x0008,
         Reserved02 = 0x0004,
         Reserved01 = 0x0002,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>TRIM is supported</summary>
         Trim = 0x0001
     }
@@ -496,12 +496,12 @@ public static class Identify
     [Flags]
     public enum MajorVersionBit : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved15 = 0x8000,
         Reserved14 = 0x4000,
         Reserved13 = 0x2000,
         Reserved12 = 0x1000,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>ACS-4</summary>
         ACS4 = 0x0800,
         /// <summary>ACS-3</summary>
@@ -524,9 +524,9 @@ public static class Identify
         Ata2 = 0x0004,
         /// <summary>ATA-1</summary>
         Ata1 = 0x0002,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved00 = 0x0001
-    #pragma warning restore 1591
+#pragma warning restore 1591
     }
 
 #endregion
@@ -553,12 +553,12 @@ public static class Identify
         PowerReceipt = 0x0200,
         /// <summary>Supports NCQ</summary>
         NCQ = 0x0100,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved07 = 0x0080,
         Reserved06 = 0x0040,
         Reserved05 = 0x0020,
         Reserved04 = 0x0010,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Supports SATA Gen. 3 Signaling Speed (6.0Gb/s)</summary>
         Gen3Speed = 0x0008,
         /// <summary>Supports SATA Gen. 2 Signaling Speed (3.0Gb/s)</summary>
@@ -577,7 +577,7 @@ public static class Identify
     [Flags]
     public enum SATACapabilitiesBit2 : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved15 = 0x8000,
         Reserved14 = 0x4000,
         Reserved13 = 0x2000,
@@ -587,7 +587,7 @@ public static class Identify
         Reserved09 = 0x0200,
         Reserved08 = 0x0100,
         Reserved07 = 0x0080,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Supports RECEIVE FPDMA QUEUED and SEND FPDMA QUEUED</summary>
         FPDMAQ = 0x0040,
         /// <summary>Supports NCQ Queue Management</summary>
@@ -616,7 +616,7 @@ public static class Identify
     [Flags]
     public enum SATAFeaturesBit : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved15 = 0x8000,
         Reserved14 = 0x4000,
         Reserved13 = 0x2000,
@@ -625,7 +625,7 @@ public static class Identify
         Reserved10 = 0x0400,
         Reserved09 = 0x0200,
         Reserved08 = 0x0100,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Supports NCQ autosense</summary>
         NCQAutoSense = 0x0080,
         /// <summary>Automatic Partial to Slumber transitions are enabled</summary>
@@ -656,7 +656,7 @@ public static class Identify
     [Flags]
     public enum SCTCommandTransportBit : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Vendor15   = 0x8000,
         Vendor14   = 0x4000,
         Vendor13   = 0x2000,
@@ -667,7 +667,7 @@ public static class Identify
         Reserved08 = 0x0100,
         Reserved07 = 0x0080,
         Reserved06 = 0x0040,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>SCT Command Transport Data Tables supported</summary>
         DataTables = 0x0020,
         /// <summary>SCT Command Transport Features Control supported</summary>
@@ -690,7 +690,7 @@ public static class Identify
     [Flags]
     public enum SecurityStatusBit : ushort
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved15 = 0x8000,
         Reserved14 = 0x4000,
         Reserved13 = 0x2000,
@@ -698,13 +698,13 @@ public static class Identify
         Reserved11 = 0x0800,
         Reserved10 = 0x0400,
         Reserved09 = 0x0200,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Maximum security level</summary>
         Maximum = 0x0100,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved07 = 0x0080,
         Reserved06 = 0x0040,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Supports enhanced security erase</summary>
         Enhanced = 0x0020,
         /// <summary>Security count expired</summary>
@@ -744,7 +744,7 @@ public static class Identify
     [Flags]
     public enum TransferMode : byte
     {
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Mode7 = 0x80,
         Mode6 = 0x40,
         Mode5 = 0x20,
@@ -753,7 +753,7 @@ public static class Identify
         Mode2 = 0x04,
         Mode1 = 0x02,
         Mode0 = 0x01
-    #pragma warning restore 1591
+#pragma warning restore 1591
     }
 
 #endregion
@@ -768,7 +768,7 @@ public static class Identify
         Clear = 0x8000,
         /// <summary>MUST be set</summary>
         Set = 0x4000,
-    #pragma warning disable 1591
+#pragma warning disable 1591
         Reserved13 = 0x2000,
         Reserved12 = 0x1000,
         Reserved11 = 0x0800,
@@ -782,7 +782,7 @@ public static class Identify
         Reserved03 = 0x0008,
         Reserved02 = 0x0004,
         Reserved01 = 0x0002,
-    #pragma warning restore 1591
+#pragma warning restore 1591
         /// <summary>Trusted Computing feature set is supported</summary>
         TrustedComputing = 0x0001
     }
@@ -796,8 +796,7 @@ public static class Identify
     /// <returns>Decoded IDENTIFY DEVICE</returns>
     public static IdentifyDevice? Decode(byte[] IdentifyDeviceResponse)
     {
-        if(IdentifyDeviceResponse == null)
-            return null;
+        if(IdentifyDeviceResponse == null) return null;
 
         if(IdentifyDeviceResponse.Length != 512)
         {
@@ -827,8 +826,7 @@ public static class Identify
     /// <returns>Raw IDENTIFY DEVICE response</returns>
     public static byte[] Encode(IdentifyDevice? identify)
     {
-        if(identify is null)
-            return null;
+        if(identify is null) return null;
 
         IdentifyDevice ataId = identify.Value;
 
@@ -893,11 +891,9 @@ public static class Identify
     {
         var buf = new byte[length];
 
-        for(var i = 0; i < length; i++)
-            buf[i] = 0x20;
+        for(var i = 0; i < length; i++) buf[i] = 0x20;
 
-        if(str is null)
-            return buf;
+        if(str is null) return buf;
 
         byte[] bytes = Encoding.ASCII.GetBytes(str);
 

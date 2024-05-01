@@ -58,8 +58,7 @@ public class TapePartition
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator TapePartition(TapePartitionType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         TapePartition partition = new()
         {
@@ -74,17 +73,14 @@ public class TapePartition
         {
             partition.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                partition.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) partition.Checksums.Add(chk);
         }
 
-        if(cicm.File is null)
-            return partition;
+        if(cicm.File is null) return partition;
 
         partition.Files = new List<TapeFile>();
 
-        foreach(TapeFileType file in cicm.File)
-            partition.Files.Add(file);
+        foreach(TapeFileType file in cicm.File) partition.Files.Add(file);
 
         return partition;
     }
@@ -103,8 +99,7 @@ public class TapeFile
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator TapeFile(TapeFileType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var file = new TapeFile
         {
@@ -116,13 +111,11 @@ public class TapeFile
             EndBlock   = cicm.EndBlock
         };
 
-        if(cicm.Checksums is null)
-            return file;
+        if(cicm.Checksums is null) return file;
 
         file.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            file.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) file.Checksums.Add(chk);
 
         return file;
     }

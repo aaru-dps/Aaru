@@ -47,30 +47,25 @@ public sealed partial class AppleMFS
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
-            attributes |= FileAttributes.Alias;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias)) attributes |= FileAttributes.Alias;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
-            attributes |= FileAttributes.Bundle;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle)) attributes |= FileAttributes.Bundle;
 
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
             attributes |= FileAttributes.HasBeenInited;
@@ -78,20 +73,15 @@ public sealed partial class AppleMFS
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
             attributes |= FileAttributes.HasCustomIcon;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
-            attributes |= FileAttributes.HasNoINITs;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs)) attributes |= FileAttributes.HasNoINITs;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
-            attributes |= FileAttributes.Hidden;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible)) attributes |= FileAttributes.Hidden;
 
-        if(entry.flFlags.HasFlag(FileFlags.Locked))
-            attributes |= FileAttributes.Immutable;
+        if(entry.flFlags.HasFlag(FileFlags.Locked)) attributes |= FileAttributes.Immutable;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
-            attributes |= FileAttributes.IsOnDesk;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk)) attributes |= FileAttributes.IsOnDesk;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
-            attributes |= FileAttributes.Shared;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared)) attributes |= FileAttributes.Shared;
 
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
             attributes |= FileAttributes.Stationery;
@@ -111,8 +101,7 @@ public sealed partial class AppleMFS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         byte[]      file;
         ErrorNumber error = ErrorNumber.NoError;
@@ -141,8 +130,7 @@ public sealed partial class AppleMFS
                 break;
         }
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         node = new AppleMfsFileNode
         {
@@ -158,11 +146,9 @@ public sealed partial class AppleMFS
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not AppleMfsFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleMfsFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode._cache = null;
 
@@ -174,19 +160,15 @@ public sealed partial class AppleMFS
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not AppleMfsFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleMfsFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
 
@@ -200,16 +182,15 @@ public sealed partial class AppleMFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
@@ -257,16 +238,13 @@ public sealed partial class AppleMFS
             }
         }
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         ErrorNumber error = GetAttributes(path, out FileAttributes attr);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         stat = new FileEntryInfo
         {
@@ -297,24 +275,21 @@ public sealed partial class AppleMFS
     {
         buf = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         uint nextBlock;
 
@@ -346,16 +321,19 @@ public sealed partial class AppleMFS
         do
         {
             ErrorNumber errno = tags
-                                    ? _device.
-                                        ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                                       (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag,
-                                                       out byte[] sectors)
-                                    : _device.
-                                        ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                                    (uint)_sectorsPerBlock, out sectors);
+                                    ? _device.ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) +
+                                                             _volMdb.drAlBlSt                            +
+                                                             _partitionStart,
+                                                             (uint)_sectorsPerBlock,
+                                                             SectorTagType.AppleSectorTag,
+                                                             out byte[] sectors)
+                                    : _device.ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) +
+                                                          _volMdb.drAlBlSt                            +
+                                                          _partitionStart,
+                                                          (uint)_sectorsPerBlock,
+                                                          out sectors);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sectors, 0, sectors.Length);
 

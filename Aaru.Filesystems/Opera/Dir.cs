@@ -45,8 +45,7 @@ public sealed partial class OperaFS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
@@ -77,18 +76,17 @@ public sealed partial class OperaFS
         }
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntryWithPointers> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
 
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-        if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-            return ErrorNumber.NotDirectory;
+        if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return ErrorNumber.NotDirectory;
 
         string currentPath = pieces[0];
 
@@ -96,31 +94,25 @@ public sealed partial class OperaFS
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry =
-                currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
-                                                                  StringComparison.CurrentCultureIgnoreCase));
+            entry = currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
+                                                                      StringComparison.CurrentCultureIgnoreCase));
 
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-            if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-                return ErrorNumber.NotDirectory;
+            if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return ErrorNumber.NotDirectory;
 
             currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
-            if(entry.Value.Pointers.Length < 1)
-                return ErrorNumber.InvalidArgument;
+            if(entry.Value.Pointers.Length < 1) return ErrorNumber.InvalidArgument;
 
             currentDirectory = DecodeDirectory((int)entry.Value.Pointers[0]);
 
             _directoryCache.Add(currentPath, currentDirectory);
         }
 
-        if(currentDirectory is null)
-            return ErrorNumber.NoSuchFile;
+        if(currentDirectory is null) return ErrorNumber.NoSuchFile;
 
         node = new OperaDirNode
         {
@@ -137,17 +129,13 @@ public sealed partial class OperaFS
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not OperaDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not OperaDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
 
         filename = mynode.Contents[mynode.Position++];
 
@@ -157,8 +145,7 @@ public sealed partial class OperaFS
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not OperaDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not OperaDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Contents = null;
@@ -178,11 +165,11 @@ public sealed partial class OperaFS
 
         do
         {
-            ErrorNumber errno = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio), _volumeBlockSizeRatio,
+            ErrorNumber errno = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio),
+                                                   _volumeBlockSizeRatio,
                                                    out byte[] data);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
             nextBlock = header.next_block + firstBlock;
@@ -217,8 +204,7 @@ public sealed partial class OperaFS
                 off += (int)(_directoryEntrySize + (entry.last_copy + 1) * 4);
             }
 
-            if((entry.flags & (uint)FileFlags.LastEntry) != 0)
-                break;
+            if((entry.flags & (uint)FileFlags.LastEntry) != 0) break;
         } while(header.next_block != -1);
 
         return entries;

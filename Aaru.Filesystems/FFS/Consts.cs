@@ -27,8 +27,6 @@
 // ****************************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
-using time_t = int;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 

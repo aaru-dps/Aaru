@@ -65,8 +65,7 @@ public class AudioMedia
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator AudioMedia(AudioMediaType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var media = new AudioMedia
         {
@@ -87,25 +86,21 @@ public class AudioMedia
         {
             media.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                media.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) media.Checksums.Add(chk);
         }
 
         if(cicm.Block is not null)
         {
             media.Blocks = new List<AudioBlock>();
 
-            foreach(AudioBlockType blk in cicm.Block)
-                media.Blocks.Add(blk);
+            foreach(AudioBlockType blk in cicm.Block) media.Blocks.Add(blk);
         }
 
-        if(cicm.DumpHardwareArray is null)
-            return media;
+        if(cicm.DumpHardwareArray is null) return media;
 
         media.DumpHardware = new List<DumpHardware>();
 
-        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
-            media.DumpHardware.Add(hw);
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray) media.DumpHardware.Add(hw);
 
         return media;
     }
@@ -122,8 +117,7 @@ public class AudioBlock
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator AudioBlock(AudioBlockType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var blk = new AudioBlock
         {
@@ -133,13 +127,11 @@ public class AudioBlock
             Format    = cicm.Format
         };
 
-        if(cicm.Checksums is null)
-            return blk;
+        if(cicm.Checksums is null) return blk;
 
         blk.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            blk.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) blk.Checksums.Add(chk);
 
         return blk;
     }

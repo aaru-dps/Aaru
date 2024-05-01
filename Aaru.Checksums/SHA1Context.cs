@@ -89,11 +89,9 @@ public sealed class Sha1Context : IChecksum
         _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
         var sha1Output = new StringBuilder();
 
-        if(_provider.Hash is null)
-            return null;
+        if(_provider.Hash is null) return null;
 
-        foreach(byte h in _provider.Hash)
-            sha1Output.Append(h.ToString("x2"));
+        foreach(byte h in _provider.Hash) sha1Output.Append(h.ToString("x2"));
 
         return sha1Output.ToString();
     }
@@ -102,6 +100,7 @@ public sealed class Sha1Context : IChecksum
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
@@ -123,8 +122,7 @@ public sealed class Sha1Context : IChecksum
         hash = localSha1Provider.ComputeHash(fileStream);
         var sha1Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            sha1Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -141,8 +139,7 @@ public sealed class Sha1Context : IChecksum
         hash = localSha1Provider.ComputeHash(data, 0, (int)len);
         var sha1Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            sha1Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) sha1Output.Append(h.ToString("x2"));
 
         return sha1Output.ToString();
     }

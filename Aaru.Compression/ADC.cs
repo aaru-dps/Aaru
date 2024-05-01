@@ -57,7 +57,11 @@ public static class ADC
     static extern int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static int GetChunkType(byte byt) => (byt & 0x80) == 0x80 ? PLAIN : (byt & 0x40) == 0x40 ? THREE_BYTE : TWO_BYTE;
+    static int GetChunkType(byte byt) => (byt & 0x80) == 0x80
+                                             ? PLAIN
+                                             : (byt & 0x40) == 0x40
+                                                 ? THREE_BYTE
+                                                 : TWO_BYTE;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkSize(byte byt) => GetChunkType(byt) switch
@@ -84,8 +88,7 @@ public static class ADC
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        if(Native.IsSupported)
-            return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
+        if(Native.IsSupported) return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
 
         var        inputPosition = 0;
         var        outPosition   = 0;
@@ -106,8 +109,7 @@ public static class ADC
                 case PLAIN:
                     chunkSize = GetChunkSize(readByte);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     Array.Copy(source, inputPosition, destination, outPosition, chunkSize);
                     outPosition   += chunkSize;
@@ -120,8 +122,7 @@ public static class ADC
                     temp[1]   = source[inputPosition++];
                     offset    = GetOffset(temp);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     if(offset == 0)
                     {
@@ -150,8 +151,7 @@ public static class ADC
                     temp[2]   = source[inputPosition++];
                     offset    = GetOffset(temp);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     if(offset == 0)
                     {

@@ -322,8 +322,7 @@ public sealed class MBR : IPartition
 
         partitions = new List<Partition>();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         uint sectorSize = imagePlugin.Info.SectorSize;
 
@@ -338,8 +337,7 @@ public sealed class MBR : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         MasterBootRecord      mbr     = Marshal.ByteArrayToStructureLittleEndian<MasterBootRecord>(sector);
         TimedMasterBootRecord mbrTime = Marshal.ByteArrayToStructureLittleEndian<TimedMasterBootRecord>(sector);
@@ -356,33 +354,28 @@ public sealed class MBR : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "xmlmedia = {0}",     imagePlugin.Info.MetadataMediaType);
         AaruConsole.DebugWriteLine(MODULE_NAME, "mbr.magic = {0:X4}", mbr.magic);
 
-        if(mbr.magic != MBR_MAGIC)
-            return false; // Not MBR
+        if(mbr.magic != MBR_MAGIC) return false; // Not MBR
 
         errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] hdrBytes);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var signature = BitConverter.ToUInt64(hdrBytes, 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "gpt.signature = 0x{0:X16}", signature);
 
-        if(signature == GPT_MAGIC)
-            return false;
+        if(signature == GPT_MAGIC) return false;
 
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             signature = BitConverter.ToUInt64(hdrBytes, 512);
             AaruConsole.DebugWriteLine(MODULE_NAME, "gpt.signature @ 0x200 = 0x{0:X16}", signature);
 
-            if(signature == GPT_MAGIC)
-                return false;
+            if(signature == GPT_MAGIC) return false;
         }
 
         PartitionEntry[] entries;
@@ -409,8 +402,7 @@ public sealed class MBR : IPartition
             var extended = false;
             var minix    = false;
 
-            if(entry.status != 0x00 && entry.status != 0x80)
-                return false; // Maybe a FAT filesystem
+            if(entry.status != 0x00 && entry.status != 0x80) return false; // Maybe a FAT filesystem
 
             valid &= entry.type != 0x00;
 
@@ -433,10 +425,16 @@ public sealed class MBR : IPartition
 
             if(entry is { lba_start: 0, lba_sectors: 0 } && valid)
             {
-                lbaStart = CHS.ToLBA(startCylinder, entry.start_head, startSector, imagePlugin.Info.Heads,
+                lbaStart = CHS.ToLBA(startCylinder,
+                                     entry.start_head,
+                                     startSector,
+                                     imagePlugin.Info.Heads,
                                      imagePlugin.Info.SectorsPerTrack);
 
-                lbaSectors = CHS.ToLBA(endCylinder, entry.end_head, entry.end_sector, imagePlugin.Info.Heads,
+                lbaSectors = CHS.ToLBA(endCylinder,
+                                       entry.end_head,
+                                       entry.end_sector,
+                                       imagePlugin.Info.Heads,
                                        imagePlugin.Info.SectorsPerTrack) -
                              lbaStart;
             }
@@ -445,8 +443,7 @@ public sealed class MBR : IPartition
             lbaStart   /= divider;
             lbaSectors /= divider;
 
-            if(minix && lbaStart == sectorOffset)
-                minix = false;
+            if(minix && lbaStart == sectorOffset) minix = false;
 
             if(lbaStart > imagePlugin.Info.Sectors)
             {
@@ -455,8 +452,7 @@ public sealed class MBR : IPartition
             }
 
             // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-            if(lbaStart + lbaSectors > imagePlugin.Info.Sectors)
-                lbaSectors = imagePlugin.Info.Sectors - lbaStart;
+            if(lbaStart + lbaSectors > imagePlugin.Info.Sectors) lbaSectors = imagePlugin.Info.Sectors - lbaStart;
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.status {0}",         entry.status);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.type {0}",           entry.type);
@@ -513,8 +509,7 @@ public sealed class MBR : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.extended = {0}", extended);
 
-            if(!extended)
-                continue;
+            if(!extended) continue;
 
             var   processingExtended = true;
             ulong chainStart         = lbaStart;
@@ -523,15 +518,13 @@ public sealed class MBR : IPartition
             {
                 errno = imagePlugin.ReadSector(lbaStart, out sector);
 
-                if(errno != ErrorNumber.NoError)
-                    break;
+                if(errno != ErrorNumber.NoError) break;
 
                 ExtendedBootRecord ebr = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
 
-                if(ebr.magic != MBR_MAGIC)
-                    break;
+                if(ebr.magic != MBR_MAGIC) break;
 
                 ulong nextStart = 0;
 
@@ -572,11 +565,17 @@ public sealed class MBR : IPartition
 
                     if(ebrEntry is { lba_start: 0, lba_sectors: 0 } && extValid)
                     {
-                        extStart = CHS.ToLBA(startCylinder, ebrEntry.start_head, startSector, imagePlugin.Info.Heads,
+                        extStart = CHS.ToLBA(startCylinder,
+                                             ebrEntry.start_head,
+                                             startSector,
+                                             imagePlugin.Info.Heads,
                                              imagePlugin.Info.SectorsPerTrack);
 
-                        extSectors = CHS.ToLBA(endCylinder, ebrEntry.end_head, ebrEntry.end_sector,
-                                               imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) -
+                        extSectors = CHS.ToLBA(endCylinder,
+                                               ebrEntry.end_head,
+                                               ebrEntry.end_sector,
+                                               imagePlugin.Info.Heads,
+                                               imagePlugin.Info.SectorsPerTrack) -
                                      extStart;
                     }
 
@@ -604,15 +603,18 @@ public sealed class MBR : IPartition
 
                     if(extValid && extMinix) // Let's mix the fun
                     {
-                        if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize,
+                        if(GetMinix(imagePlugin,
+                                    lbaStart,
+                                    divider,
+                                    sectorOffset,
+                                    sectorSize,
                                     out List<Partition> mnxParts))
                             partitions.AddRange(mnxParts);
                         else
                             extMinix = false;
                     }
 
-                    if(!extValid || extMinix)
-                        continue;
+                    if(!extValid || extMinix) continue;
 
                     var part = new Partition();
 
@@ -626,8 +628,7 @@ public sealed class MBR : IPartition
                     else
                         extValid = false;
 
-                    if(!extValid)
-                        continue;
+                    if(!extValid) continue;
 
                     part.Type        = $"0x{ebrEntry.type:X2}";
                     part.Name        = DecodeMbrType(ebrEntry.type);
@@ -659,15 +660,13 @@ public sealed class MBR : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         ExtendedBootRecord mnx = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
 
-        if(mnx.magic != MBR_MAGIC)
-            return false;
+        if(mnx.magic != MBR_MAGIC) return false;
 
         var anyMnx = false;
 
@@ -706,10 +705,16 @@ public sealed class MBR : IPartition
 
             if(mnxEntry is { lba_start: 0, lba_sectors: 0 } && mnxValid)
             {
-                mnxStart = CHS.ToLBA(startCylinder, mnxEntry.start_head, startSector, imagePlugin.Info.Heads,
+                mnxStart = CHS.ToLBA(startCylinder,
+                                     mnxEntry.start_head,
+                                     startSector,
+                                     imagePlugin.Info.Heads,
                                      imagePlugin.Info.SectorsPerTrack);
 
-                mnxSectors = CHS.ToLBA(endCylinder, mnxEntry.end_head, mnxEntry.end_sector, imagePlugin.Info.Heads,
+                mnxSectors = CHS.ToLBA(endCylinder,
+                                       mnxEntry.end_head,
+                                       mnxEntry.end_sector,
+                                       imagePlugin.Info.Heads,
                                        imagePlugin.Info.SectorsPerTrack) -
                              mnxStart;
             }
@@ -721,8 +726,7 @@ public sealed class MBR : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_start {0}",   mnxStart);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_sectors {0}", mnxSectors);
 
-            if(!mnxValid)
-                continue;
+            if(!mnxValid) continue;
 
             var part = new Partition();
 
@@ -736,8 +740,7 @@ public sealed class MBR : IPartition
             else
                 mnxValid = false;
 
-            if(!mnxValid)
-                continue;
+            if(!mnxValid) continue;
 
             anyMnx           = true;
             part.Type        = "MINIX";

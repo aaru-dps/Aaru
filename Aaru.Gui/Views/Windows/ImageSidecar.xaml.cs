@@ -41,9 +41,9 @@ public sealed class ImageSidecar : Window
     public ImageSidecar()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

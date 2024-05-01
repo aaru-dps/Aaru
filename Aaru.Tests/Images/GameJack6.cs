@@ -270,7 +270,6 @@ public class GameJack6 : OpticalMediaImageTest
             Sectors   = 471091,
             Md5       = "b6fe37716c05c1d52ef19c28946f3b76",
             LongMd5   = "b6fe37716c05c1d52ef19c28946f3b76",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -301,7 +300,6 @@ public class GameJack6 : OpticalMediaImageTest
             Sectors   = 471091,
             Md5       = "b6fe37716c05c1d52ef19c28946f3b76",
             LongMd5   = "b6fe37716c05c1d52ef19c28946f3b76",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected

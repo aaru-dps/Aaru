@@ -44,8 +44,7 @@ public static class BlockLimits
 {
     public static BlockLimitsData? Decode(byte[] response)
     {
-        if(response?.Length != 6)
-            return null;
+        if(response?.Length != 6) return null;
 
         return new BlockLimitsData
         {
@@ -57,8 +56,7 @@ public static class BlockLimits
 
     public static string Prettify(BlockLimitsData? decoded)
     {
-        if(decoded == null)
-            return null;
+        if(decoded == null) return null;
 
         var sb = new StringBuilder();
 
@@ -75,9 +73,10 @@ public static class BlockLimits
 
             if(decoded.Value.granularity > 0)
             {
-                sb.AppendFormat(Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes, decoded.Value.granularity,
-                                Math.Pow(2, decoded.Value.granularity)).
-                   AppendLine();
+                sb.AppendFormat(Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes,
+                                decoded.Value.granularity,
+                                Math.Pow(2, decoded.Value.granularity))
+                  .AppendLine();
             }
         }
 

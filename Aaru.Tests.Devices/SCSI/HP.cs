@@ -94,18 +94,19 @@ static class Hp
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Parameters_for_READ_LONG_command);
 
-            AaruConsole.
-                WriteLine(physical ? Localization.Physical_Block_Address_0 : Localization.Logical_Block_Address_0,
-                          address);
+            AaruConsole.WriteLine(physical
+                                      ? Localization.Physical_Block_Address_0
+                                      : Localization.Logical_Block_Address_0,
+                                  address);
 
             AaruConsole.WriteLine(Localization.Relative_0, relative);
 
-            AaruConsole.
-                WriteLine(sectorCount ? Localization.Will_transfer_0_sectors : Localization.Will_transfer_0_bytes,
-                          length);
+            AaruConsole.WriteLine(sectorCount
+                                      ? Localization.Will_transfer_0_sectors
+                                      : Localization.Will_transfer_0_bytes,
+                                  length);
 
-            if(sectorCount)
-                AaruConsole.WriteLine(Localization.Expected_sector_size_0_bytes, bps);
+            if(sectorCount) AaruConsole.WriteLine(Localization.Expected_sector_size_0_bytes, bps);
 
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -218,8 +219,16 @@ static class Hp
     start:
         System.Console.Clear();
 
-        bool sense = dev.HpReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps, physical,
-                                    sectorCount, dev.Timeout, out double duration);
+        bool sense = dev.HpReadLong(out byte[] buffer,
+                                    out byte[] senseBuffer,
+                                    relative,
+                                    address,
+                                    length,
+                                    bps,
+                                    physical,
+                                    sectorCount,
+                                    dev.Timeout,
+                                    out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -267,8 +276,7 @@ static class Hp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -281,8 +289,7 @@ static class Hp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

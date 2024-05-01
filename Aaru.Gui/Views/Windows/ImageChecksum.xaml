@@ -31,103 +31,138 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.ImageChecksum" Icon="/Assets/aaru-logo.png"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.ImageChecksum"
+        Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
         <windows:ImageChecksumViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Vertical">
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsVisible="{Binding ChecksumTracksVisible}"
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsVisible="{Binding ChecksumTracksVisible}"
                       IsChecked="{Binding ChecksumMediaChecked}">
                 <TextBlock Text="{Binding ChecksumMediaLabel}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsVisible="{Binding ChecksumTracksVisible}"
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsVisible="{Binding ChecksumTracksVisible}"
                       IsChecked="{Binding ChecksumTracksChecked}">
                 <TextBlock Text="{Binding ChecksumTracksLabel}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Adler32Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Adler32Checked}">
                 <TextBlock Text="{Binding Adler32Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc16Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Crc16Checked}">
                 <TextBlock Text="{Binding Crc16Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc32Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Crc32Checked}">
                 <TextBlock Text="{Binding Crc32Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Crc64Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Crc64Checked}">
                 <TextBlock Text="{Binding Crc64Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Fletcher16Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Fletcher16Checked}">
                 <TextBlock Text="{Binding Fletcher16Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Fletcher32Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Fletcher32Checked}">
                 <TextBlock Text="{Binding Fletcher32Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Md5Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Md5Checked}">
                 <TextBlock Text="{Binding Md5Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha1Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Sha1Checked}">
                 <TextBlock Text="{Binding Sha1Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha256Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Sha256Checked}">
                 <TextBlock Text="{Binding Sha256Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha384Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Sha384Checked}">
                 <TextBlock Text="{Binding Sha384Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding Sha512Checked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding Sha512Checked}">
                 <TextBlock Text="{Binding Sha512Label}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding OptionsEnabled}" IsChecked="{Binding SpamsumChecked}">
+            <CheckBox IsEnabled="{Binding OptionsEnabled}"
+                      IsChecked="{Binding SpamsumChecked}">
                 <TextBlock Text="{Binding SpamSumLabel}" />
             </CheckBox>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding TrackChecksumsVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ResultsVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding TrackChecksumsVisible}">
                 <TextBlock Text="{Binding TrackChecksumsLabel}" />
                 <DataGrid ItemsSource="{Binding TrackChecksums}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
-                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
-                        <DataGridTextColumn Header="{Binding HashLabel}" Binding="{Binding Value}" />
+                        <DataGridTextColumn Header="{Binding TrackLabel}"
+                                            Binding="{Binding Track}" />
+                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}"
+                                            Binding="{Binding Algorithm}" />
+                        <DataGridTextColumn Header="{Binding HashLabel}"
+                                            Binding="{Binding Value}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding MediaChecksumsVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding MediaChecksumsVisible}">
                 <TextBlock Text="{Binding MediaChecksumsLabel}" />
                 <DataGrid ItemsSource="{Binding MediaChecksums}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}" Binding="{Binding Algorithm}" />
-                        <DataGridTextColumn Header="{Binding HashLabel}" Binding="{Binding Value}" />
+                        <DataGridTextColumn Header="{Binding AlgorithmsLabel}"
+                                            Binding="{Binding Algorithm}" />
+                        <DataGridTextColumn Header="{Binding HashLabel}"
+                                            Binding="{Binding Value}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}" />
+                <ProgressBar Maximum="{Binding ProgressMax}"
+                             Value="{Binding ProgressValue}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBlock Text="{Binding Progress2Text}" />
-                <ProgressBar Maximum="{Binding Progress2Max}" Value="{Binding Progress2Value}" />
+                <ProgressBar Maximum="{Binding Progress2Max}"
+                             Value="{Binding Progress2Value}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsEnabled="{Binding StartCommandEnabled}"
+            <Button Command="{Binding StartCommand}"
+                    IsEnabled="{Binding StartCommandEnabled}"
                     IsVisible="{Binding StartCommandVisible}">
                 <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsEnabled="{Binding CloseCommandEnabled}"
+            <Button Command="{Binding CloseCommand}"
+                    IsEnabled="{Binding CloseCommandEnabled}"
                     IsVisible="{Binding CloseCommandVisible}">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsEnabled="{Binding StopCommandEnabled}"
+            <Button Command="{Binding StopCommand}"
+                    IsEnabled="{Binding StopCommandEnabled}"
                     IsVisible="{Binding StopCommandVisible}">
                 <TextBlock Text="{Binding StopLabel}" />
             </Button>

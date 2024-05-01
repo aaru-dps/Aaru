@@ -87,8 +87,7 @@ public sealed class Acorn : IPartition
                                       ref ulong   counter)
     {
         // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
-        if(sectorOffset != 0)
-            return;
+        if(sectorOffset != 0) return;
 
         ulong sbSector;
 
@@ -99,27 +98,23 @@ public sealed class Acorn : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sbSector, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return;
 
         AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
         var checksum = 0;
 
-        for(var i = 0; i < 0x1FF; i++)
-            checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
+        for(var i = 0; i < 0x1FF; i++) checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
 
         int heads     = bootBlock.discRecord.heads + (bootBlock.discRecord.lowsector >> 6 & 1);
         int secCyl    = bootBlock.discRecord.spt * heads;
         int mapSector = bootBlock.startCylinder  * secCyl;
 
-        if((ulong)mapSector >= imagePlugin.Info.Sectors)
-            return;
+        if((ulong)mapSector >= imagePlugin.Info.Sectors) return;
 
         errno = imagePlugin.ReadSector((ulong)mapSector, out byte[] map);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         if(checksum == bootBlock.checksum)
         {
@@ -164,8 +159,7 @@ public sealed class Acorn : IPartition
 
                     part.Offset = part.Start * (ulong)sector.Length;
 
-                    if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC)
-                        continue;
+                    if(entry.magic != LINUX_MAGIC && entry.magic != SWAP_MAGIC) continue;
 
                     partitions.Add(part);
                     counter++;
@@ -195,8 +189,7 @@ public sealed class Acorn : IPartition
 
                         part.Offset = part.Start * (ulong)sector.Length;
 
-                        if(entry.length <= 0)
-                            continue;
+                        if(entry.length <= 0) continue;
 
                         partitions.Add(part);
                         counter++;
@@ -211,23 +204,19 @@ public sealed class Acorn : IPartition
     void GetIcsPartitions(IMediaImage imagePlugin, List<Partition> partitions, ulong sectorOffset, ref ulong counter)
     {
         // RISC OS always checks for the partition on 0. Afaik no emulator chains it.
-        if(sectorOffset != 0)
-            return;
+        if(sectorOffset != 0) return;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return;
 
         uint icsSum = 0x50617274;
 
-        for(var i = 0; i < 508; i++)
-            icsSum += sector[i];
+        for(var i = 0; i < 508; i++) icsSum += sector[i];
 
         var discCheck = BitConverter.ToUInt32(sector, 508);
 
-        if(icsSum != discCheck)
-            return;
+        if(icsSum != discCheck) return;
 
         IcsTable table = Marshal.ByteArrayToStructureLittleEndian<IcsTable>(sector);
 
@@ -259,19 +248,20 @@ public sealed class Acorn : IPartition
             // Negative size means Linux partition, first sector needs to be read
             errno = imagePlugin.ReadSector(entry.start, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
-            if(_linuxIcsMagic.Where((t, i) => t != sector[i]).Any())
-                continue;
+            if(_linuxIcsMagic.Where((t, i) => t != sector[i]).Any()) continue;
 
             part = new Partition
             {
                 Start  = entry.start,
                 Length = (ulong)(entry.size * -1),
                 Size   = (ulong)(entry.size * -1 * sector.Length),
-                Type = sector[9] == 'N' ? Localization.Linux :
-                       sector[9] == 'S' ? Localization.Linux_swap : Localization.Unknown_partition_type,
+                Type = sector[9] == 'N'
+                           ? Localization.Linux
+                           : sector[9] == 'S'
+                               ? Localization.Linux_swap
+                               : Localization.Unknown_partition_type,
                 Sequence = counter,
                 Scheme   = "ICS"
             };

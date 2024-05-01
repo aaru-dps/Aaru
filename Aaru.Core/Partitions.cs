@@ -64,15 +64,15 @@ public static class Partitions
             {
                 foreach(IPartition plugin in plugins.Partitions.Values)
                 {
-                    if(plugin is null)
-                        continue;
+                    if(plugin is null) continue;
 
-                    if(!plugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
-                        continue;
+                    if(!plugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock)) continue;
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Core.Found_0_at_1,
+                                               plugin.Name,
                                                tapeFile.FirstBlock);
                 }
 
@@ -87,15 +87,15 @@ public static class Partitions
             {
                 foreach(IPartition plugin in plugins.Partitions.Values)
                 {
-                    if(plugin is null)
-                        continue;
+                    if(plugin is null) continue;
 
-                    if(!plugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
-                        continue;
+                    if(!plugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start)) continue;
 
                     foundPartitions.AddRange(partitions);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Core.Found_0_at_1,
+                                               plugin.Name,
                                                imagePartition.Start);
                 }
 
@@ -108,11 +108,9 @@ public static class Partitions
         {
             foreach(IPartition plugin in plugins.Partitions.Values)
             {
-                if(plugin is null)
-                    continue;
+                if(plugin is null) continue;
 
-                if(!plugin.GetInformation(image, out List<Partition> partitions, 0))
-                    continue;
+                if(!plugin.GetInformation(image, out List<Partition> partitions, 0)) continue;
 
                 foundPartitions.AddRange(partitions);
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_zero, plugin.Name);
@@ -135,16 +133,18 @@ public static class Partitions
 
             foreach(IPartition plugin in plugins.Partitions.Values)
             {
-                if(plugin is null)
-                    continue;
+                if(plugin is null) continue;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_0_at_1, plugin.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Core.Trying_0_at_1,
+                                           plugin.Name,
                                            foundPartitions[0].Start);
 
-                if(!plugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
-                    continue;
+                if(!plugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start)) continue;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_0_at_1, plugin.Name,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Core.Found_0_at_1,
+                                           plugin.Name,
                                            foundPartitions[0].Start);
 
                 children.AddRange(partitions);
@@ -183,8 +183,8 @@ public static class Partitions
 
             if(tapeImage.Files != null)
             {
-                childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock)).
-                                                   Select(tapeFile => new Partition
+                childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock))
+                                                  .Select(tapeFile => new Partition
                                                    {
                                                        Start    = tapeFile.FirstBlock,
                                                        Length   = tapeFile.LastBlock - tapeFile.FirstBlock + 1,
@@ -200,18 +200,17 @@ public static class Partitions
             if(partitionableImage.Partitions != null)
             {
                 childPartitions.AddRange(partitionableImage.Partitions.Where(imagePartition =>
-                                                                                 !startLocations.
-                                                                                     Contains(imagePartition.Start)));
+                                                                                 !startLocations.Contains(imagePartition
+                                                                                    .Start)));
             }
         }
 
-        Partition[] childArray = childPartitions.OrderBy(part => part.Start).
-                                                 ThenBy(part => part.Length).
-                                                 ThenBy(part => part.Scheme).
-                                                 ToArray();
+        Partition[] childArray = childPartitions.OrderBy(part => part.Start)
+                                                .ThenBy(part => part.Length)
+                                                .ThenBy(part => part.Scheme)
+                                                .ToArray();
 
-        for(long i = 0; i < childArray.LongLength; i++)
-            childArray[i].Sequence = (ulong)i;
+        for(long i = 0; i < childArray.LongLength; i++) childArray[i].Sequence = (ulong)i;
 
         return childArray.ToList();
     }
@@ -220,15 +219,12 @@ public static class Partitions
     /// <param name="partitions">List of partitions</param>
     public static void AddSchemesToStats(List<Partition> partitions)
     {
-        if(partitions == null || partitions.Count == 0)
-            return;
+        if(partitions == null || partitions.Count == 0) return;
 
         List<string> schemes = new();
 
-        foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme)))
-            schemes.Add(part.Scheme);
+        foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme))) schemes.Add(part.Scheme);
 
-        foreach(string scheme in schemes)
-            Statistics.AddPartition(scheme);
+        foreach(string scheme in schemes) Statistics.AddPartition(scheme);
     }
 }

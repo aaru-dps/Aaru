@@ -35,10 +35,11 @@ public static partial class ArrayHelpers
     /// <param name="destinationArray">Array</param>
     /// <param name="value">Value</param>
     /// <typeparam name="T">Array type</typeparam>
-    public static void ArrayFill<T>(T[] destinationArray, T value) => ArrayFill(destinationArray, new[]
-    {
-        value
-    });
+    public static void ArrayFill<T>(T[] destinationArray, T value) => ArrayFill(destinationArray,
+                                                                                new[]
+                                                                                {
+                                                                                    value
+                                                                                });
 
     /// <summary>Fills an array with the contents of the specified array</summary>
     /// <param name="destinationArray">Array</param>
@@ -71,8 +72,7 @@ public static partial class ArrayHelpers
     {
         var sb = new StringBuilder();
 
-        for(long i = 0; i < array.LongLength; i++)
-            sb.Append($"{array[i]:x2}");
+        for(long i = 0; i < array.LongLength; i++) sb.Append($"{array[i]:x2}");
 
         return upper ? sb.ToString().ToUpper() : sb.ToString();
     }

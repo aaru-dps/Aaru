@@ -141,8 +141,7 @@ public sealed partial class VMware
                 else
                     curPath = $"{basePath}-{cowCount:D2}.vmdk";
 
-                if(!File.Exists(curPath))
-                    break;
+                if(!File.Exists(curPath)) break;
 
                 IFilter extentFilter = PluginRegister.Singleton.GetFilter(curPath);
                 Stream  extentStream = extentFilter.GetDataForkStream();
@@ -154,8 +153,7 @@ public sealed partial class VMware
                     extentStream.EnsureRead(vmCHdrB, 0, Marshal.SizeOf<CowHeader>());
                     CowHeader extHdrCow = Marshal.ByteArrayToStructureLittleEndian<CowHeader>(vmCHdrB);
 
-                    if(extHdrCow.magic != VMWARE_COW_MAGIC)
-                        break;
+                    if(extHdrCow.magic != VMWARE_COW_MAGIC) break;
 
                     var newExtent = new Extent
                     {
@@ -167,8 +165,13 @@ public sealed partial class VMware
                         Type     = "SPARSE"
                     };
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
-                                               newExtent.Sectors, newExtent.Type, newExtent.Filename, newExtent.Offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "{0} {1} {2} \"{3}\" {4}",
+                                               newExtent.Access,
+                                               newExtent.Sectors,
+                                               newExtent.Type,
+                                               newExtent.Filename,
+                                               newExtent.Offset);
 
                     _extents.Add(currentSector, newExtent);
                     currentSector += newExtent.Sectors;
@@ -251,8 +254,13 @@ public sealed partial class VMware
                     uint.TryParse(matchExtent.Groups["sectors"].Value, out newExtent.Sectors);
                     newExtent.Type = matchExtent.Groups["type"].Value;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
-                                               newExtent.Sectors, newExtent.Type, newExtent.Filename, newExtent.Offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "{0} {1} {2} \"{3}\" {4}",
+                                               newExtent.Access,
+                                               newExtent.Sectors,
+                                               newExtent.Type,
+                                               newExtent.Filename,
+                                               newExtent.Offset);
 
                     _extents.Add(currentSector, newExtent);
                     currentSector += newExtent.Sectors;
@@ -335,8 +343,7 @@ public sealed partial class VMware
                 return ErrorNumber.InvalidArgument;
             }
 
-            if(extent.Type is "FLAT" or "ZERO" or "VMFS" || cowD)
-                continue;
+            if(extent.Type is "FLAT" or "ZERO" or "VMFS" || cowD) continue;
 
             Stream extentStream = extent.Filter.GetDataForkStream();
             extentStream.Seek(0, SeekOrigin.Begin);
@@ -361,9 +368,10 @@ public sealed partial class VMware
 
             if(extentHdr.capacity < extent.Sectors)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Extent_contains_incorrect_number_of_sectors_0_1_were_expected,
-                                                 extentHdr.capacity, extent.Sectors));
+                AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                            .Extent_contains_incorrect_number_of_sectors_0_1_were_expected,
+                                                         extentHdr.capacity,
+                                                         extent.Sectors));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -388,8 +396,8 @@ public sealed partial class VMware
 
         if(oneNoFlat && !vmEHdrSet && !cowD)
         {
-            AaruConsole.ErrorWriteLine(Localization.
-                                           There_are_sparse_extents_but_there_is_no_header_to_find_the_grain_tables_cannot_proceed);
+            AaruConsole.ErrorWriteLine(Localization
+                                          .There_are_sparse_extents_but_there_is_no_header_to_find_the_grain_tables_cannot_proceed);
 
             return ErrorNumber.InvalidArgument;
         }
@@ -418,15 +426,18 @@ public sealed partial class VMware
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.overhead = {0}",         _vmEHdr.overhead);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.uncleanShutdown = {0}",  _vmEHdr.uncleanShutdown);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.singleEndLineChar = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vmEHdr.singleEndLineChar = 0x{0:X2}",
                                            _vmEHdr.singleEndLineChar);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.nonEndLineChar = 0x{0:X2}", _vmEHdr.nonEndLineChar);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
                                            _vmEHdr.doubleEndLineChar1);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
                                            _vmEHdr.doubleEndLineChar2);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmEHdr.compression = 0x{0:X4}", _vmEHdr.compression);
@@ -459,7 +470,8 @@ public sealed partial class VMware
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.name = {0}", StringHandlers.CToString(_vmCHdr.name));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.description = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vmCHdr.description = {0}",
                                            StringHandlers.CToString(_vmCHdr.description));
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vmCHdr.savedGeneration = {0}", _vmCHdr.savedGeneration);
@@ -486,8 +498,11 @@ public sealed partial class VMware
                 return ErrorNumber.InOutError;
             }
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization._0_sectors_in_1_grains_in_2_tables, _imageInfo.Sectors,
-                                       grains, gdEntries);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization._0_sectors_in_1_grains_in_2_tables,
+                                       _imageInfo.Sectors,
+                                       grains,
+                                       gdEntries);
 
             Stream gdStream = _gdFilter.GetDataForkStream();
 
@@ -544,7 +559,8 @@ public sealed partial class VMware
 
             if(parentError != ErrorNumber.NoError)
             {
-                AaruConsole.ErrorWriteLine(string.Format(Localization.Error_0_opening_parent_1, parentError,
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Error_0_opening_parent_1,
+                                                         parentError,
                                                          _parentName));
 
                 return parentError;
@@ -585,11 +601,9 @@ public sealed partial class VMware
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         var   currentExtent     = new Extent();
         var   extentFound       = false;
@@ -602,8 +616,7 @@ public sealed partial class VMware
             extentStartSector = kvp.Key;
         }
 
-        if(!extentFound)
-            return ErrorNumber.SectorNotFound;
+        if(!extentFound) return ErrorNumber.SectorNotFound;
 
         Stream dataStream;
 
@@ -612,8 +625,7 @@ public sealed partial class VMware
             case "ZERO":
                 buffer = new byte[SECTOR_SIZE];
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -628,8 +640,7 @@ public sealed partial class VMware
                 buffer = new byte[SECTOR_SIZE];
                 dataStream.EnsureRead(buffer, 0, buffer.Length);
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -649,8 +660,7 @@ public sealed partial class VMware
             {
                 buffer = new byte[SECTOR_SIZE];
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -665,8 +675,7 @@ public sealed partial class VMware
             dataStream.Seek((long)((grainOff - extentStartSector) * SECTOR_SIZE), SeekOrigin.Begin);
             dataStream.EnsureRead(grain, 0, grain.Length);
 
-            if(_grainCache.Count >= _maxCachedGrains)
-                _grainCache.Clear();
+            if(_grainCache.Count >= _maxCachedGrains) _grainCache.Clear();
 
             _grainCache.Add(grainOff, grain);
         }
@@ -674,8 +683,7 @@ public sealed partial class VMware
         buffer = new byte[SECTOR_SIZE];
         Array.Copy(grain, (int)secOff, buffer, 0, SECTOR_SIZE);
 
-        if(_sectorCache.Count > MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -687,11 +695,9 @@ public sealed partial class VMware
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -699,8 +705,7 @@ public sealed partial class VMware
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

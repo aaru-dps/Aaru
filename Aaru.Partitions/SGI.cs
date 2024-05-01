@@ -71,8 +71,7 @@ public sealed class SGI : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Label dvh = Marshal.ByteArrayToStructureBigEndian<Label>(sector);
 
@@ -82,11 +81,12 @@ public sealed class SGI : IPartition
         for(var i = 0; i < dvh.partitions.Length; i++)
             dvh.partitions[i] = (Partition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.dvh_magic_equals_0_X8_should_be_1_X8, dvh.magic,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.dvh_magic_equals_0_X8_should_be_1_X8,
+                                   dvh.magic,
                                    SGI_MAGIC);
 
-        if(dvh.magic != SGI_MAGIC)
-            return false;
+        if(dvh.magic != SGI_MAGIC) return false;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.root_part_num = {0}", dvh.root_part_num);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.swap_part_num = {0}", dvh.swap_part_num);
@@ -97,7 +97,8 @@ public sealed class SGI : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_gap1 = {0}", dvh.device_params.dp_gap1);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_gap2 = {0}", dvh.device_params.dp_gap2);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_spares_cyl = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dvh.device_params.dp_spares_cyl = {0}",
                                    dvh.device_params.dp_spares_cyl);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_cyls = {0}",  dvh.device_params.dp_cyls);
@@ -112,7 +113,8 @@ public sealed class SGI : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_secbytes = {0}", dvh.device_params.dp_secbytes);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_interleave = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dvh.device_params.dp_interleave = {0}",
                                    dvh.device_params.dp_interleave);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.device_params.dp_flags = {0}", dvh.device_params.dp_flags);
@@ -135,10 +137,14 @@ public sealed class SGI : IPartition
 
         for(var i = 0; i < dvh.partitions.Length; i++)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.partitions[{0}].num_blocks = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dvh.partitions[{0}].num_blocks = {1}",
+                                       i,
                                        dvh.partitions[i].num_blocks);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.partitions[{0}].first_block = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dvh.partitions[{0}].first_block = {1}",
+                                       i,
                                        dvh.partitions[i].first_block);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
@@ -154,8 +160,7 @@ public sealed class SGI : IPartition
                 Scheme   = Name
             };
 
-            if(part.Size <= 0 || dvh.partitions[i].type is SGIType.Header or SGIType.Volume)
-                continue;
+            if(part.Size <= 0 || dvh.partitions[i].type is SGIType.Header or SGIType.Volume) continue;
 
             partitions.Add(part);
             counter++;

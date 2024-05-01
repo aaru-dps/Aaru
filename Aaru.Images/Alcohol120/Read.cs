@@ -56,8 +56,7 @@ public sealed partial class Alcohol120
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 88)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 88) return ErrorNumber.InvalidArgument;
 
         _isDvd = false;
         var hdr = new byte[88];
@@ -92,8 +91,7 @@ public sealed partial class Alcohol120
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.dpmOffset = {0}",     _header.dpmOffset);
 
-        if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION)
-            return ErrorNumber.NotSupported;
+        if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
 
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
@@ -143,8 +141,7 @@ public sealed partial class Alcohol120
                 stream.EnsureRead(trkHdr, 0, 80);
                 Track track = Marshal.ByteArrayToStructureLittleEndian<Track>(trkHdr);
 
-                if(track.mode is TrackMode.Mode2F1Alt or TrackMode.Mode2F1Alt)
-                    oldIncorrectImage = true;
+                if(track.mode is TrackMode.Mode2F1Alt or TrackMode.Mode2F1Alt) oldIncorrectImage = true;
 
                 // Solve our own mistake here, sorry, but anyway seems Alcohol doesn't support DDCD
                 if(track is { zero: > 0, point: >= 1 and <= 99 })
@@ -154,72 +151,125 @@ public sealed partial class Alcohol120
                     oldIncorrectImage =  true;
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].mode = {0}", track.mode, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].mode = {0}",
+                                           track.mode,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].subMode = {0}", track.subMode,
-                                           track.point, session.sessionSequence);
-
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].adrCtl = {0}", track.adrCtl,
-                                           track.point, session.sessionSequence);
-
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].tno = {0}", track.tno, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].subMode = {0}",
+                                           track.subMode,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].point = {0:X2}", track.point,
-                                           track.point, session.sessionSequence);
-
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].min = {0}", track.min, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].adrCtl = {0}",
+                                           track.adrCtl,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].sec = {0}", track.sec, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].tno = {0}",
+                                           track.tno,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].frame = {0}", track.frame, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].point = {0:X2}",
+                                           track.point,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].zero = {0}", track.zero, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].min = {0}",
+                                           track.min,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].pmin = {0}", track.pmin, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].sec = {0}",
+                                           track.sec,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].psec = {0}", track.psec, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].frame = {0}",
+                                           track.frame,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].pframe = {0}", track.pframe,
-                                           track.point, session.sessionSequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].zero = {0}",
+                                           track.zero,
+                                           track.point,
+                                           session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].extraOffset = {0}", track.extraOffset,
-                                           track.point, session.sessionSequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].pmin = {0}",
+                                           track.pmin,
+                                           track.point,
+                                           session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].sectorSize = {0}", track.sectorSize,
-                                           track.point, session.sessionSequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].psec = {0}",
+                                           track.psec,
+                                           track.point,
+                                           session.sessionSequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].pframe = {0}",
+                                           track.pframe,
+                                           track.point,
+                                           session.sessionSequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].extraOffset = {0}",
+                                           track.extraOffset,
+                                           track.point,
+                                           session.sessionSequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].sectorSize = {0}",
+                                           track.sectorSize,
+                                           track.point,
+                                           session.sessionSequence);
 
                 //for(int j = 0; j < track.unknown.Length; j++)
                 //    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].unknown[{2}] = {0}", track.unknown[j], i, j, session.sessionSequence);
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].startLba = {0}", track.startLba,
-                                           track.point, session.sessionSequence);
-
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].startOffset = {0}", track.startOffset,
-                                           track.point, session.sessionSequence);
-
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].files = {0}", track.files, track.point,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].startLba = {0}",
+                                           track.startLba,
+                                           track.point,
                                            session.sessionSequence);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].footerOffset = {0}",
-                                           track.footerOffset, track.point, session.sessionSequence);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].startOffset = {0}",
+                                           track.startOffset,
+                                           track.point,
+                                           session.sessionSequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].files = {0}",
+                                           track.files,
+                                           track.point,
+                                           session.sessionSequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "session[{2}].track[{1}].footerOffset = {0}",
+                                           track.footerOffset,
+                                           track.point,
+                                           session.sessionSequence);
 
                 //for(int j = 0; j < track.unknown2.Length; j++)
                 //    AaruConsole.DebugWriteLine(MODULE_NAME, "session[{2}].track[{1}].unknown2[{2}] = {0}", track.unknown2[j], i, j, session.sessionSequence);
 
-                if(track.subMode == SubchannelMode.Interleaved)
-                    track.sectorSize -= 96;
+                if(track.subMode == SubchannelMode.Interleaved) track.sectorSize -= 96;
 
                 if(track is { point: 1, startLba: > 0 })
                 {
-                    AaruConsole.ErrorWriteLine(Localization.
-                                                   The_disc_this_image_represents_contained_a_hidden_track_in_the_first_pregap_that_this_image_format_cannot_store_This_dump_is_therefore_incorrect);
+                    AaruConsole.ErrorWriteLine(Localization
+                                                  .The_disc_this_image_represents_contained_a_hidden_track_in_the_first_pregap_that_this_image_format_cannot_store_This_dump_is_therefore_incorrect);
 
                     track1Index1   = track.startLba;
                     track.startLba = 0;
@@ -227,11 +277,9 @@ public sealed partial class Alcohol120
 
                 sesToc.TryAdd(track.point, track);
 
-                if(track.point < 0xA0)
-                    _alcTracks.Add(track.point, track);
+                if(track.point < 0xA0) _alcTracks.Add(track.point, track);
 
-                if(footerOff == 0)
-                    footerOff = track.footerOffset;
+                if(footerOff == 0) footerOff = track.footerOffset;
 
                 _isDvd |= track.mode == TrackMode.DVD;
             }
@@ -345,17 +393,13 @@ public sealed partial class Alcohol120
         {
             var session = new CommonTypes.Structs.Session();
 
-            if(!_alcTracks.TryGetValue(alcSes.firstTrack, out Track startingTrack))
-                break;
+            if(!_alcTracks.TryGetValue(alcSes.firstTrack, out Track startingTrack)) break;
 
-            if(!_alcTracks.TryGetValue(alcSes.lastTrack, out Track endingTrack))
-                break;
+            if(!_alcTracks.TryGetValue(alcSes.lastTrack, out Track endingTrack)) break;
 
-            if(!_alcTrackExtras.TryGetValue(alcSes.firstTrack, out _))
-                break;
+            if(!_alcTrackExtras.TryGetValue(alcSes.firstTrack, out _)) break;
 
-            if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out TrackExtra endingTrackExtra))
-                break;
+            if(!_alcTrackExtras.TryGetValue(alcSes.lastTrack, out TrackExtra endingTrackExtra)) break;
 
             session.StartSector = startingTrack.startLba;
             session.StartTrack  = alcSes.firstTrack;
@@ -365,8 +409,7 @@ public sealed partial class Alcohol120
 
             Sessions.Add(session);
 
-            if(session.EndSector > _imageInfo.Sectors)
-                _imageInfo.Sectors = session.EndSector + 1;
+            if(session.EndSector > _imageInfo.Sectors) _imageInfo.Sectors = session.EndSector + 1;
         }
 
         if(_isDvd)
@@ -420,9 +463,8 @@ public sealed partial class Alcohol120
                                            };
 
                     if(DMI.IsXbox(_dmi))
-                        _imageInfo.MediaType = MediaType.XGD;
-                    else if(DMI.IsXbox360(_dmi))
-                        _imageInfo.MediaType = MediaType.XGD2;
+                        _imageInfo.MediaType                          = MediaType.XGD;
+                    else if(DMI.IsXbox360(_dmi)) _imageInfo.MediaType = MediaType.XGD2;
 
                     var tmp = new byte[2048];
                     Array.Copy(_dmi, 4, tmp, 0, 2048);
@@ -542,8 +584,7 @@ public sealed partial class Alcohol120
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                    if(_imageInfo.SectorSize < 2048)
-                        _imageInfo.SectorSize = 2048;
+                    if(_imageInfo.SectorSize < 2048) _imageInfo.SectorSize = 2048;
 
                     break;
                 case TrackMode.Mode2:
@@ -556,8 +597,7 @@ public sealed partial class Alcohol120
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
 
-                    if(_imageInfo.SectorSize < 2336)
-                        _imageInfo.SectorSize = 2336;
+                    if(_imageInfo.SectorSize < 2336) _imageInfo.SectorSize = 2336;
 
                     break;
                 case TrackMode.Mode2F2:
@@ -574,8 +614,7 @@ public sealed partial class Alcohol120
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                    if(_imageInfo.SectorSize < 2324)
-                        _imageInfo.SectorSize = 2324;
+                    if(_imageInfo.SectorSize < 2324) _imageInfo.SectorSize = 2324;
 
                     break;
                 case TrackMode.DVD:
@@ -640,17 +679,17 @@ public sealed partial class Alcohol120
             var  tocMs        = new MemoryStream();
 
             tocMs.Write(new byte[]
-            {
-                0, 0
-            }, 0, 2); // Reserved for TOC session numbers
+                        {
+                            0, 0
+                        },
+                        0,
+                        2); // Reserved for TOC session numbers
 
             foreach(KeyValuePair<int, Dictionary<int, Track>> sessionToc in _alcToc)
             {
-                if(sessionToc.Key < firstSession)
-                    firstSession = (byte)sessionToc.Key;
+                if(sessionToc.Key < firstSession) firstSession = (byte)sessionToc.Key;
 
-                if(sessionToc.Key > lastSession)
-                    lastSession = (byte)sessionToc.Key;
+                if(sessionToc.Key > lastSession) lastSession = (byte)sessionToc.Key;
 
                 foreach(Track sessionTrack in sessionToc.Value.Values)
                 {
@@ -685,8 +724,8 @@ public sealed partial class Alcohol120
 
         if(oldIncorrectImage)
         {
-            AaruConsole.WriteLine(Localization.
-                                      Incorrect_Alcohol_120_image_created_by_an_old_version_of_Aaru_Convert_image_to_correct_it);
+            AaruConsole.WriteLine(Localization
+                                     .Incorrect_Alcohol_120_image_created_by_an_old_version_of_Aaru_Convert_image_to_correct_it);
         }
 
         return ErrorNumber.NoError;
@@ -746,16 +785,13 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress < kvp.Value)
-                continue;
+            if(sectorAddress < kvp.Value) continue;
 
             foreach(Track track in _alcTracks.Values)
             {
-                if(track.point != kvp.Key || !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
-                    continue;
+                if(track.point != kvp.Key || !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra)) continue;
 
-                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
-                    continue;
+                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap) continue;
 
                 return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
             }
@@ -771,16 +807,13 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress < kvp.Value)
-                continue;
+            if(sectorAddress < kvp.Value) continue;
 
             foreach(Track track in _alcTracks.Values)
             {
-                if(track.point != kvp.Key || !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra))
-                    continue;
+                if(track.point != kvp.Key || !_alcTrackExtras.TryGetValue(track.point, out TrackExtra extra)) continue;
 
-                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap)
-                    continue;
+                if(sectorAddress - kvp.Value >= extra.sectors + extra.pregap) continue;
 
                 return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
             }
@@ -798,8 +831,7 @@ public sealed partial class Alcohol120
            !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
             return ErrorNumber.OutOfRange;
 
-        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
@@ -873,8 +905,7 @@ public sealed partial class Alcohol120
 
         if(alcTrack.point == 1 && alcExtra.pregap > 150)
         {
-            if(sectorAddress + 150 < alcExtra.pregap)
-                return ErrorNumber.NoError;
+            if(sectorAddress + 150 < alcExtra.pregap) return ErrorNumber.NoError;
 
             sectorAddress -= alcExtra.pregap - 150;
         }
@@ -882,8 +913,7 @@ public sealed partial class Alcohol120
         uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
         var  fileOffset  = (long)alcTrack.startOffset;
 
-        if(alcTrack.startOffset >= pregapBytes)
-            fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+        if(alcTrack.startOffset >= pregapBytes) fileOffset = (long)(alcTrack.startOffset - pregapBytes);
 
         _imageStream = _alcImage.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
@@ -929,22 +959,19 @@ public sealed partial class Alcohol120
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags)
-            track = (uint)sectorAddress;
+        if(tag == SectorTagType.CdTrackFlags) track = (uint)sectorAddress;
 
         if(!_alcTracks.TryGetValue((int)track, out Track alcTrack) ||
            !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
             return ErrorNumber.SectorNotFound;
 
-        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
         uint sectorSkip;
 
-        if(alcTrack.mode == TrackMode.DVD)
-            return ErrorNumber.NotSupported;
+        if(alcTrack.mode == TrackMode.DVD) return ErrorNumber.NotSupported;
 
         switch(tag)
         {
@@ -1300,8 +1327,7 @@ public sealed partial class Alcohol120
 
                 break;
             case SubchannelMode.Interleaved:
-                if(tag != SectorTagType.CdSectorSubchannel)
-                    sectorSkip += 96;
+                if(tag != SectorTagType.CdSectorSubchannel) sectorSkip += 96;
 
                 break;
             default:
@@ -1312,8 +1338,7 @@ public sealed partial class Alcohol120
 
         if(alcTrack.point == 1 && alcExtra.pregap > 150)
         {
-            if(sectorAddress + 150 < alcExtra.pregap)
-                return ErrorNumber.NoError;
+            if(sectorAddress + 150 < alcExtra.pregap) return ErrorNumber.NoError;
 
             sectorAddress -= alcExtra.pregap - 150;
         }
@@ -1321,8 +1346,7 @@ public sealed partial class Alcohol120
         uint pregapBytes = alcExtra.pregap * (sectorOffset + sectorSize + sectorSkip);
         var  fileOffset  = (long)alcTrack.startOffset;
 
-        if(alcTrack.startOffset >= pregapBytes)
-            fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+        if(alcTrack.startOffset >= pregapBytes) fileOffset = (long)(alcTrack.startOffset - pregapBytes);
 
         _imageStream = _alcImage.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
@@ -1361,16 +1385,14 @@ public sealed partial class Alcohol120
 
         foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
         {
-            if(sectorAddress < kvp.Value)
-                continue;
+            if(sectorAddress < kvp.Value) continue;
 
             foreach(Track alcTrack in _alcTracks.Values)
             {
                 if(alcTrack.point != kvp.Key || !_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
                     continue;
 
-                if(sectorAddress - kvp.Value >= alcExtra.sectors + alcExtra.pregap)
-                    continue;
+                if(sectorAddress - kvp.Value >= alcExtra.sectors + alcExtra.pregap) continue;
 
                 return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
             }
@@ -1388,8 +1410,7 @@ public sealed partial class Alcohol120
            !_alcTrackExtras.TryGetValue((int)track, out TrackExtra alcExtra))
             return ErrorNumber.SectorNotFound;
 
-        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > alcExtra.sectors + alcExtra.pregap) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
@@ -1419,15 +1440,13 @@ public sealed partial class Alcohol120
                 return ErrorNumber.NotSupported;
         }
 
-        if(alcTrack.subMode == SubchannelMode.Interleaved)
-            sectorSkip = 96;
+        if(alcTrack.subMode == SubchannelMode.Interleaved) sectorSkip = 96;
 
         buffer = new byte[sectorSize * length];
 
         if(alcTrack.point == 1 && alcExtra.pregap > 150)
         {
-            if(sectorAddress + 150 < alcExtra.pregap)
-                return ErrorNumber.NoError;
+            if(sectorAddress + 150 < alcExtra.pregap) return ErrorNumber.NoError;
 
             sectorAddress -= alcExtra.pregap - 150;
         }
@@ -1435,8 +1454,7 @@ public sealed partial class Alcohol120
         uint pregapBytes = alcExtra.pregap * (sectorSize + sectorSkip);
         var  fileOffset  = (long)alcTrack.startOffset;
 
-        if(alcTrack.startOffset >= pregapBytes)
-            fileOffset = (long)(alcTrack.startOffset - pregapBytes);
+        if(alcTrack.startOffset >= pregapBytes) fileOffset = (long)(alcTrack.startOffset - pregapBytes);
 
         _imageStream = _alcImage.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
@@ -1476,8 +1494,7 @@ public sealed partial class Alcohol120
                  where alcTrack.point >= ses.StartTrack || alcTrack.point <= ses.EndTrack
                  select ses.Sequence).FirstOrDefault();
 
-            if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra) || session != sessionNo)
-                continue;
+            if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra) || session != sessionNo) continue;
 
             var aaruTrack = new CommonTypes.Structs.Track
             {
@@ -1495,8 +1512,7 @@ public sealed partial class Alcohol120
                 BytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
             };
 
-            if(alcExtra.pregap > 0)
-                aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
+            if(alcExtra.pregap > 0) aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
 
             aaruTrack.Indexes.Add(1, (int)alcTrack.startLba);
 

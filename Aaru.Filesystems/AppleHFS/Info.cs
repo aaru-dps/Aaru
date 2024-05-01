@@ -46,8 +46,7 @@ public sealed partial class AppleHFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         byte[]      mdbSector;
         ushort      drSigWord;
@@ -57,18 +56,16 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             foreach(int offset in new[]
-                {
-                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                }.Where(offset => mdbSector.Length >= offset + 0x7C + 2))
+                    {
+                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                    }.Where(offset => mdbSector.Length >= offset + 0x7C + 2))
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
-                if(drSigWord != AppleCommon.HFS_MAGIC)
-                    continue;
+                if(drSigWord != AppleCommon.HFS_MAGIC) continue;
 
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
@@ -79,16 +76,13 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(mdbSector.Length < 0x7C + 2)
-                return false;
+            if(mdbSector.Length < 0x7C + 2) return false;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
-            if(drSigWord != AppleCommon.HFS_MAGIC)
-                return false;
+            if(drSigWord != AppleCommon.HFS_MAGIC) return false;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x7C); // Seek to embedded HFS+ signature
 
@@ -119,24 +113,21 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmpSector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             foreach(int offset in new[]
-                {
-                    0, 0x200, 0x400, 0x600, 0x800, 0xA00
-                })
+                    {
+                        0, 0x200, 0x400, 0x600, 0x800, 0xA00
+                    })
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
 
-                if(drSigWord != AppleCommon.HFS_MAGIC)
-                    continue;
+                if(drSigWord != AppleCommon.HFS_MAGIC) continue;
 
                 bbSector  = new byte[1024];
                 mdbSector = new byte[512];
 
-                if(offset >= 0x400)
-                    Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
+                if(offset >= 0x400) Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
 
                 Array.Copy(tmpSector, offset, mdbSector, 0, 512);
                 apmFromHddOnCd = true;
@@ -144,15 +135,13 @@ public sealed partial class AppleHFS
                 break;
             }
 
-            if(!apmFromHddOnCd)
-                return;
+            if(!apmFromHddOnCd) return;
         }
         else
         {
             errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
@@ -160,8 +149,7 @@ public sealed partial class AppleHFS
             {
                 errno = imagePlugin.ReadSector(partition.Start, out bbSector);
 
-                if(errno != ErrorNumber.NoError)
-                    return;
+                if(errno != ErrorNumber.NoError) return;
             }
             else
                 return;
@@ -206,8 +194,7 @@ public sealed partial class AppleHFS
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.ReusedIds))
             sb.AppendLine(Localization.There_are_reused_CNIDs);
 
-        if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Journaled))
-            sb.AppendLine(Localization.Volume_is_journaled);
+        if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Journaled)) sb.AppendLine(Localization.Volume_is_journaled);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Inconsistent))
             sb.AppendLine(Localization.Volume_is_seriously_inconsistent);
@@ -277,8 +264,7 @@ public sealed partial class AppleHFS
 
         metadata = new FileSystem();
 
-        if(mdb.drVolBkUp > 0)
-            metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
+        if(mdb.drVolBkUp > 0) metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
 
         metadata.Bootable =
             bootBlockInfo != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0;
@@ -286,15 +272,13 @@ public sealed partial class AppleHFS
         metadata.Clusters    = mdb.drNmAlBlks;
         metadata.ClusterSize = mdb.drAlBlkSiz;
 
-        if(mdb.drCrDate > 0)
-            metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+        if(mdb.drCrDate > 0) metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
 
         metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
         metadata.Files        = mdb.drFilCnt;
         metadata.FreeClusters = mdb.drFreeBks;
 
-        if(mdb.drLsMod > 0)
-            metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
+        if(mdb.drLsMod > 0) metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
 
         metadata.Type       = FS_TYPE;
         metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, encoding);

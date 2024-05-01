@@ -96,8 +96,7 @@ sealed class FormatsCommand : Command
             Title = new TableTitle(string.Format(UI.Supported_filters_0, PluginRegister.Singleton.Filters.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Filter);
 
@@ -116,17 +115,16 @@ sealed class FormatsCommand : Command
         table = new Table
         {
             Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
-                                                 plugins.MediaImages.Count(t => !plugins.WritableImages.
-                                                                               ContainsKey(t.Key))))
+                                                 plugins.MediaImages.Count(t => !plugins.WritableImages
+                                                                              .ContainsKey(t.Key))))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Media_image_format);
 
         foreach(IMediaImage imagePlugin in
-            plugins.MediaImages.Values.Where(t => !plugins.WritableImages.ContainsKey(t.Name)))
+                plugins.MediaImages.Values.Where(t => !plugins.WritableImages.ContainsKey(t.Name)))
         {
             if(verbose)
                 table.AddRow(imagePlugin.Id.ToString(), Markup.Escape(imagePlugin.Name));
@@ -143,15 +141,13 @@ sealed class FormatsCommand : Command
             Title = new TableTitle(string.Format(UI.Read_write_media_image_formats_0, plugins.WritableImages.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Media_image_format);
 
         foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
         {
-            if(plugin is null)
-                continue;
+            if(plugin is null) continue;
 
             if(verbose)
                 table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
@@ -163,10 +159,10 @@ sealed class FormatsCommand : Command
 
         AaruConsole.WriteLine();
 
-        var idOnlyFilesystems = plugins.Filesystems.Where(t => !plugins.ReadOnlyFilesystems.ContainsKey(t.Key)).
-                                        Select(t => t.Value).
-                                        Where(t => t is not null).
-                                        ToList();
+        var idOnlyFilesystems = plugins.Filesystems.Where(t => !plugins.ReadOnlyFilesystems.ContainsKey(t.Key))
+                                       .Select(t => t.Value)
+                                       .Where(t => t is not null)
+                                       .ToList();
 
         table = new Table
         {
@@ -174,8 +170,7 @@ sealed class FormatsCommand : Command
                                                  idOnlyFilesystems.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Filesystem);
 
@@ -197,15 +192,13 @@ sealed class FormatsCommand : Command
                                                  plugins.ReadOnlyFilesystems.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Filesystem);
 
         foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(fs is null)
-                continue;
+            if(fs is null) continue;
 
             if(verbose)
                 table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
@@ -222,15 +215,13 @@ sealed class FormatsCommand : Command
             Title = new TableTitle(string.Format(UI.Supported_partitioning_schemes_0, plugins.Partitions.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn(UI.Title_Scheme);
 
         foreach(IPartition plugin in plugins.Partitions.Values)
         {
-            if(plugin is null)
-                continue;
+            if(plugin is null) continue;
 
             if(verbose)
                 table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
@@ -247,15 +238,13 @@ sealed class FormatsCommand : Command
             Title = new TableTitle(string.Format(UI.Supported_archive_formats_0, plugins.Archives.Count))
         };
 
-        if(verbose)
-            table.AddColumn(UI.Title_GUID);
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn("Archive format");
 
         foreach(IArchive archive in plugins.Archives.Values)
         {
-            if(archive is null)
-                continue;
+            if(archive is null) continue;
 
             if(verbose)
                 table.AddRow(archive.Id.ToString(), Markup.Escape(archive.Name));

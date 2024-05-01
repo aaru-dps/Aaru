@@ -31,11 +31,15 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.CompactDiscInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.CompactDiscInfo">
     <Design.DataContext>
         <tabs:CompactDiscInfoViewModel />
     </Design.DataContext>
@@ -45,7 +49,8 @@
                 <TextBlock Text="{Binding CdInformationLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdInformationText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdInformationText}" />
                 <Button Command="{Binding SaveCdInformationCommand}">
                     <TextBlock Text="{Binding SaveCdInformationLabel}" />
                 </Button>
@@ -56,7 +61,8 @@
                 <TextBlock Text="{Binding CdTocLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdTocText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdTocText}" />
                 <Button Command="{Binding SaveCdTocCommand}">
                     <TextBlock Text="{Binding SaveCdTocLabel}" />
                 </Button>
@@ -67,7 +73,8 @@
                 <TextBlock Text="{Binding CdFullTocLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdFullTocText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdFullTocText}" />
                 <Button Command="{Binding SaveCdFullTocCommand}">
                     <TextBlock Text="{Binding SaveCdFullTocLabel}" />
                 </Button>
@@ -78,7 +85,8 @@
                 <TextBlock Text="{Binding CdSessionLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdSessionText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdSessionText}" />
                 <Button Command="{Binding SaveCdSessionCommand}">
                     <TextBlock Text="{Binding SaveCdSessionLabel}" />
                 </Button>
@@ -89,7 +97,8 @@
                 <TextBlock Text="{Binding CdTextLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdTextText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdTextText}" />
                 <Button Command="{Binding SaveCdTextCommand}">
                     <TextBlock Text="{Binding SaveCdTextLabel}" />
                 </Button>
@@ -100,7 +109,8 @@
                 <TextBlock Text="{Binding CdAtipLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBox IsReadOnly="True" Text="{Binding CdAtipText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding CdAtipText}" />
                 <Button Command="{Binding SaveCdAtipCommand}">
                     <TextBlock Text="{Binding SaveCdAtipLabel}" />
                 </Button>
@@ -111,19 +121,25 @@
                 <TextBlock Text="{Binding MiscellaneousLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <StackPanel Orientation="Horizontal" IsVisible="{Binding !!McnText}">
-                    <TextBlock Text="{Binding McnLabel}" /> <TextBox IsReadOnly="True" Text="{Binding McnText}" />
+                <StackPanel Orientation="Horizontal"
+                            IsVisible="{Binding !!McnText}">
+                    <TextBlock Text="{Binding McnLabel}" />
+                    <TextBox IsReadOnly="True"
+                             Text="{Binding McnText}" />
                 </StackPanel>
                 <StackPanel IsVisible="{Binding !!IsrcList.Count}">
                     <TextBlock Text="{Binding IsrCsLabel}" />
                     <DataGrid ItemsSource="{Binding IsrcList}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Track}" Header="{Binding TrackLabel}" />
-                            <DataGridTextColumn Binding="{Binding ISRC}" Header="{Binding ISRCLabel}" />
+                            <DataGridTextColumn Binding="{Binding Track}"
+                                                Header="{Binding TrackLabel}" />
+                            <DataGridTextColumn Binding="{Binding ISRC}"
+                                                Header="{Binding ISRCLabel}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
-                <Button Command="{Binding SaveCdPmaCommand}" IsVisible="{Binding CdPmaVisible}">
+                <Button Command="{Binding SaveCdPmaCommand}"
+                        IsVisible="{Binding CdPmaVisible}">
                     <TextBlock Text="{Binding SaveCdPmaLabel}" />
                 </Button>
             </StackPanel>

@@ -87,8 +87,7 @@ public class BlockMedia
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator BlockMedia(BlockMediaType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var media = new BlockMedia
         {
@@ -127,24 +126,21 @@ public class BlockMedia
         {
             media.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                media.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) media.Checksums.Add(chk);
         }
 
         if(cicm.ContentChecksums is not null)
         {
             media.ContentChecksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.ContentChecksums)
-                media.ContentChecksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.ContentChecksums) media.ContentChecksums.Add(chk);
         }
 
         if(cicm.VariableBlockSize is not null)
         {
             media.VariableBlockSize = new List<BlockSize>();
 
-            foreach(BlockSizeType blkSize in cicm.VariableBlockSize)
-                media.VariableBlockSize.Add(blkSize);
+            foreach(BlockSizeType blkSize in cicm.VariableBlockSize) media.VariableBlockSize.Add(blkSize);
         }
 
         if(cicm.TapeInformation is not null)
@@ -159,17 +155,14 @@ public class BlockMedia
         {
             media.FileSystemInformation = new List<Partition>();
 
-            foreach(PartitionType fsInfo in cicm.FileSystemInformation)
-                media.FileSystemInformation.Add(fsInfo);
+            foreach(PartitionType fsInfo in cicm.FileSystemInformation) media.FileSystemInformation.Add(fsInfo);
         }
 
-        if(cicm.DumpHardwareArray is null)
-            return media;
+        if(cicm.DumpHardwareArray is null) return media;
 
         media.DumpHardware = new List<DumpHardware>();
 
-        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
-            media.DumpHardware.Add(hw);
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray) media.DumpHardware.Add(hw);
 
         return media;
     }
@@ -191,8 +184,7 @@ public class BlockTrack
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator BlockTrack(BlockTrackType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var trk = new BlockTrack
         {
@@ -207,13 +199,11 @@ public class BlockTrack
             Format         = cicm.Format
         };
 
-        if(cicm.Checksums is null)
-            return trk;
+        if(cicm.Checksums is null) return trk;
 
         trk.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            trk.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) trk.Checksums.Add(chk);
 
         return trk;
     }

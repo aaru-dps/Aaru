@@ -80,8 +80,7 @@ public sealed partial class LisaFS
             {
                 ErrorNumber errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
                 DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
@@ -90,14 +89,12 @@ public sealed partial class LisaFS
                 if(_volumePrefix == _device.Info.Sectors && searchTag.FileId == FILEID_LOADER_SIGNED)
                     _volumePrefix = i - 1;
 
-                if(searchTag.FileId != FILEID_MDDF)
-                    continue;
+                if(searchTag.FileId != FILEID_MDDF) continue;
 
                 _devTagSize = tag.Length;
                 errno       = _device.ReadSector(i, out byte[] sector);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 _mddf = new MDDF();
                 var pString = new byte[33];
@@ -230,11 +227,9 @@ public sealed partial class LisaFS
 
                 options ??= GetDefaultOptions();
 
-                if(options.TryGetValue("debug", out string debugString))
-                    bool.TryParse(debugString, out _debug);
+                if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
-                if(_debug)
-                    _printedExtents = new List<short>();
+                if(_debug) _printedExtents = new List<short>();
 
                 // Read the S-Records file
                 ErrorNumber error = ReadSRecords();
@@ -258,7 +253,8 @@ public sealed partial class LisaFS
 
                 if(error != ErrorNumber.NoError)
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cannot_read_Catalog_File_error_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Cannot_read_Catalog_File_error_0,
                                                error.ToString());
 
                     _mounted = false;
@@ -323,14 +319,12 @@ public sealed partial class LisaFS
                 // Create XML metadata for mounted filesystem
                 Metadata = new FileSystem();
 
-                if(DateTime.Compare(_mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
-                    Metadata.BackupDate = _mddf.dtvb;
+                if(DateTime.Compare(_mddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0) Metadata.BackupDate = _mddf.dtvb;
 
                 Metadata.Clusters    = _mddf.vol_size;
                 Metadata.ClusterSize = (uint)(_mddf.clustersize * _mddf.datasize);
 
-                if(DateTime.Compare(_mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
-                    Metadata.CreationDate = _mddf.dtvc;
+                if(DateTime.Compare(_mddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0) Metadata.CreationDate = _mddf.dtvc;
 
                 Metadata.Dirty        = _mddf.vol_left_mounted != 0;
                 Metadata.Files        = _mddf.filecount;
@@ -377,8 +371,7 @@ public sealed partial class LisaFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = new FileSystemInfo
         {

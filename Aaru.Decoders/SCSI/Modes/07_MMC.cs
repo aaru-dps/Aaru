@@ -55,17 +55,13 @@ public static partial class Modes
 
     public static ModePage_07_MMC? DecodeModePage_07_MMC(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x07)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x07) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_07_MMC();
 
@@ -81,21 +77,19 @@ public static partial class Modes
 
     public static string PrettifyModePage_07_MMC(ModePage_07_MMC? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_07_MMC page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Verify_error_recovery_page_for_MultiMedia_Devices);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.VerifyRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount)
+              .AppendLine();
         }
 
         string AllUsed              = "\t" + Localization.All_available_recovery_procedures_will_be_used + "\n";

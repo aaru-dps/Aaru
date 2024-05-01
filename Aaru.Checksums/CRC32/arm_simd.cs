@@ -86,8 +86,7 @@ static class ArmSimd
             len    -= 8;
         }
 
-        while(len-- > 0)
-            c = Crc32.ComputeCrc32(c, buf[bufPos++]);
+        while(len-- > 0) c = Crc32.ComputeCrc32(c, buf[bufPos++]);
 
         return c;
     }
@@ -126,8 +125,7 @@ static class ArmSimd
             len    -= 4;
         }
 
-        while(len-- > 0)
-            c = Crc32.ComputeCrc32(c, buf[bufPos++]);
+        while(len-- > 0) c = Crc32.ComputeCrc32(c, buf[bufPos++]);
 
         return c;
     }

@@ -47,8 +47,7 @@ public sealed partial class CopyQm
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 133)
-            return false;
+        if(stream.Length < 133) return false;
 
         var hdr = new byte[133];
         stream.EnsureRead(hdr, 0, 133);

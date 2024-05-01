@@ -51,17 +51,13 @@ public static partial class Modes
 
     public static HP_ModePage_3D? DecodeHPModePage_3D(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x3D)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x3D) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 4)
-            return null;
+        if(pageResponse.Length != 4) return null;
 
         var decoded = new HP_ModePage_3D();
 
@@ -76,16 +72,14 @@ public static partial class Modes
 
     public static string PrettifyHPModePage_3D(HP_ModePage_3D? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         HP_ModePage_3D page = modePage.Value;
         var            sb   = new StringBuilder();
 
         sb.AppendLine(Localization.HP_Extended_Reset_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.ResetBehaviour)
         {

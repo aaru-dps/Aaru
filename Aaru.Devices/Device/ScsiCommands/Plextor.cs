@@ -66,15 +66,26 @@ public partial class Device
 
         buffer = new byte[blockSize * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
-                                   Localization.
-                                       Plextor_READ_CD_DA_LBA_1_Block_Size_2_Transfer_Length_3_Subchannel_4_Sense_5_Last_Error_6_took_0_ms,
-                                   duration, lba, blockSize, transferLength, subchannel, sense, LastError);
+                                   Localization
+                                      .Plextor_READ_CD_DA_LBA_1_Block_Size_2_Transfer_Length_3_Subchannel_4_Sense_5_Last_Error_6_took_0_ms,
+                                   duration,
+                                   lba,
+                                   blockSize,
+                                   transferLength,
+                                   subchannel,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -103,7 +114,12 @@ public partial class Device
         cdb[4] = (byte)((buffer.Length & 0xFF00)   >> 8);
         cdb[5] = (byte)(buffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -128,7 +144,12 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 1;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -153,7 +174,12 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.PlextorReadEeprom;
         cdb[8] = 2;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -184,7 +210,12 @@ public partial class Device
         cdb[8] = (byte)((blockSize & 0xFF00) >> 8);
         cdb[9] = (byte)(blockSize & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -216,15 +247,19 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.PlextorPoweRec;
         cdb[9] = (byte)buf.Length;
 
-        LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buf,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PLEXTOR_POWEREC_GET_SPEEDS_took_0_ms, duration);
 
-        if(sense || Error)
-            return sense;
+        if(sense || Error) return sense;
 
         selected = BigEndianBitConverter.ToUInt16(buf, 4);
         max      = BigEndianBitConverter.ToUInt16(buf, 6);
@@ -254,15 +289,19 @@ public partial class Device
         cdb[1] = (byte)PlextorSubCommands.GetMode;
         cdb[9] = (byte)buf.Length;
 
-        LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buf,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PLEXTOR_POWEREC_GET_SPEEDS_took_0_ms, duration);
 
-        if(sense || Error)
-            return sense;
+        if(sense || Error) return sense;
 
         enabled = buf[2] != 0;
         speed   = BigEndianBitConverter.ToUInt16(buf, 4);
@@ -288,7 +327,12 @@ public partial class Device
         cdb[3]  = 4;
         cdb[10] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -315,7 +359,12 @@ public partial class Device
         cdb[2]  = (byte)PlextorSubCommands.GigaRec;
         cdb[10] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -349,7 +398,12 @@ public partial class Device
         else
             cdb[3] = 0x02;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -375,7 +429,12 @@ public partial class Device
         cdb[2]  = (byte)PlextorSubCommands.SecuRec;
         cdb[10] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -402,7 +461,12 @@ public partial class Device
         cdb[2]  = (byte)PlextorSubCommands.SpeedRead;
         cdb[10] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -429,12 +493,18 @@ public partial class Device
         cdb[2] = (byte)PlextorSubCommands.SessionHide;
         cdb[9] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PLEXTOR_GET_SINGLE_SESSION_HIDE_CD_R_took_0_ms,
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.PLEXTOR_GET_SINGLE_SESSION_HIDE_CD_R_took_0_ms,
                                    duration);
 
         return sense;
@@ -464,7 +534,12 @@ public partial class Device
         else
             cdb[3] = (byte)PlextorSubCommands.BitSetR;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -491,7 +566,12 @@ public partial class Device
         cdb[2]  = (byte)PlextorSubCommands.TestWriteDvdPlus;
         cdb[10] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

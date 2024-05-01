@@ -43,22 +43,22 @@ public static partial class Modes
 {
     public static string GetMediumTypeDescription(MediumTypes type) => type switch
                                                                        {
-                                                                           MediumTypes.ECMA54 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_54,
-                                                                           MediumTypes.ECMA59 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_59,
-                                                                           MediumTypes.ECMA69 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_69,
-                                                                           MediumTypes.ECMA66 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_66,
-                                                                           MediumTypes.ECMA70 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_70,
-                                                                           MediumTypes.ECMA78 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_78,
-                                                                           MediumTypes.ECMA99 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_99,
-                                                                           MediumTypes.ECMA100 => Localization.
-                                                                               GetMediumTypeDescription_ECMA_100,
+                                                                           MediumTypes.ECMA54 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_54,
+                                                                           MediumTypes.ECMA59 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_59,
+                                                                           MediumTypes.ECMA69 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_69,
+                                                                           MediumTypes.ECMA66 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_66,
+                                                                           MediumTypes.ECMA70 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_70,
+                                                                           MediumTypes.ECMA78 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_78,
+                                                                           MediumTypes.ECMA99 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_99,
+                                                                           MediumTypes.ECMA100 => Localization
+                                                                              .GetMediumTypeDescription_ECMA_100,
 
                                                                            // Most probably they will never appear, but magneto-opticals use these codes
                                                                            /*
@@ -67,24 +67,24 @@ public static partial class Modes
                                                                    case MediumTypes.Unspecified_DS:
                                                                    return "Unspecified double sided flexible disk";
                                                                    */
-                                                                           MediumTypes.X3_73 => Localization.
-                                                                               GetMediumTypeDescription_X3_73,
-                                                                           MediumTypes.X3_73_DS => Localization.
-                                                                               GetMediumTypeDescription_X3_73_DS,
-                                                                           MediumTypes.X3_82 => Localization.
-                                                                               GetMediumTypeDescription_X3_82,
-                                                                           MediumTypes.Type3Floppy => Localization.
-                                                                               GetMediumTypeDescription_Type3Floppy,
-                                                                           MediumTypes.HDFloppy => Localization.
-                                                                               GetMediumTypeDescription_HDFloppy,
-                                                                           MediumTypes.ReadOnly => Localization.
-                                                                               GetMediumTypeDescription_ReadOnly,
-                                                                           MediumTypes.WORM => Localization.
-                                                                               GetMediumTypeDescription_WORM,
-                                                                           MediumTypes.Erasable => Localization.
-                                                                               GetMediumTypeDescription_Erasable,
-                                                                           MediumTypes.RO_WORM => Localization.
-                                                                               GetMediumTypeDescription_RO_WORM,
+                                                                           MediumTypes.X3_73 => Localization
+                                                                              .GetMediumTypeDescription_X3_73,
+                                                                           MediumTypes.X3_73_DS => Localization
+                                                                              .GetMediumTypeDescription_X3_73_DS,
+                                                                           MediumTypes.X3_82 => Localization
+                                                                              .GetMediumTypeDescription_X3_82,
+                                                                           MediumTypes.Type3Floppy => Localization
+                                                                              .GetMediumTypeDescription_Type3Floppy,
+                                                                           MediumTypes.HDFloppy => Localization
+                                                                              .GetMediumTypeDescription_HDFloppy,
+                                                                           MediumTypes.ReadOnly => Localization
+                                                                              .GetMediumTypeDescription_ReadOnly,
+                                                                           MediumTypes.WORM => Localization
+                                                                              .GetMediumTypeDescription_WORM,
+                                                                           MediumTypes.Erasable => Localization
+                                                                              .GetMediumTypeDescription_Erasable,
+                                                                           MediumTypes.RO_WORM => Localization
+                                                                              .GetMediumTypeDescription_RO_WORM,
 
                                                                            // These magneto-opticals were never manufactured
                                                                            /*
@@ -94,19 +94,18 @@ public static partial class Modes
                                                                    case MediumTypes.WORM_RW:
                                                                    return "a combination of write-once and erasable optical";
                                                                    */
-                                                                           MediumTypes.DOW => Localization.
-                                                                               GetMediumTypeDescription_DOW,
-                                                                           MediumTypes.HiMD => Localization.
-                                                                               GetMediumTypeDescription_HiMD,
-                                                                           _ => string.
-                                                                               Format(Localization.Unknown_medium_type_0,
-                                                                                   (byte)type)
+                                                                           MediumTypes.DOW => Localization
+                                                                              .GetMediumTypeDescription_DOW,
+                                                                           MediumTypes.HiMD => Localization
+                                                                              .GetMediumTypeDescription_HiMD,
+                                                                           _ => string.Format(Localization
+                                                                                  .Unknown_medium_type_0,
+                                                                               (byte)type)
                                                                        };
 
     public static string PrettifyModeHeader(ModeHeader? header, PeripheralDeviceTypes deviceType)
     {
-        if(!header.HasValue)
-            return null;
+        if(!header.HasValue) return null;
 
         var sb = new StringBuilder();
 
@@ -114,21 +113,19 @@ public static partial class Modes
 
         switch(deviceType)
         {
-        #region Direct access device mode header
+#region Direct access device mode header
 
             case PeripheralDeviceTypes.DirectAccess:
             {
                 if(header.Value.MediumType != MediumTypes.Default)
                 {
-                    sb.AppendFormat("\t" + Localization.Medium_is_0, GetMediumTypeDescription(header.Value.MediumType)).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Medium_is_0, GetMediumTypeDescription(header.Value.MediumType))
+                      .AppendLine();
                 }
 
-                if(header.Value.WriteProtected)
-                    sb.AppendLine("\t" + Localization.Medium_is_write_protected);
+                if(header.Value.WriteProtected) sb.AppendLine("\t" + Localization.Medium_is_write_protected);
 
-                if(header.Value.DPOFUA)
-                    sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
+                if(header.Value.DPOFUA) sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
                 {
@@ -164,27 +161,31 @@ public static partial class Modes
                             if(descriptor.Blocks == 0)
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
-                                                density, descriptor.BlockLength).
-                                   AppendLine();
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                         else
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each,
+                                            descriptor.Blocks,
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                     }
                 }
@@ -192,9 +193,9 @@ public static partial class Modes
                 break;
             }
 
-        #endregion Direct access device mode header
+#endregion Direct access device mode header
 
-        #region Sequential access device mode header
+#region Sequential access device mode header
 
             case PeripheralDeviceTypes.SequentialAccess:
             {
@@ -214,8 +215,8 @@ public static partial class Modes
 
                         break;
                     default:
-                        sb.AppendFormat("\t" + Localization.Unknown_buffered_mode_code_0, header.Value.BufferedMode).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.Unknown_buffered_mode_code_0, header.Value.BufferedMode)
+                          .AppendLine();
 
                         break;
                 }
@@ -225,8 +226,7 @@ public static partial class Modes
                 else
                     sb.AppendFormat("\t" + Localization.Device_uses_speed_0, header.Value.Speed).AppendLine();
 
-                if(header.Value.WriteProtected)
-                    sb.AppendLine("\t" + Localization.Medium_is_write_protected);
+                if(header.Value.WriteProtected) sb.AppendLine("\t" + Localization.Medium_is_write_protected);
 
                 string medium = header.Value.MediumType switch
                                 {
@@ -1224,56 +1224,62 @@ public static partial class Modes
                             {
                                 if(descriptor.BlockLength == 0)
                                 {
-                                    sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_have_a_variable_length,
-                                                     density).
-                                        AppendLine();
+                                    sb.AppendFormat("\t" +
+                                                    Localization
+                                                       .All_remaining_blocks_conform_to_0_and_have_a_variable_length,
+                                                    density)
+                                      .AppendLine();
                                 }
                                 else
                                 {
-                                    sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
-                                                     density, descriptor.BlockLength).
-                                        AppendLine();
+                                    sb.AppendFormat("\t" +
+                                                    Localization.All_remaining_blocks_conform_to_0_and_are_1_bytes_each,
+                                                    density,
+                                                    descriptor.BlockLength)
+                                      .AppendLine();
                                 }
                             }
                             else if(descriptor.BlockLength == 0)
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_have_a_variable_length,
-                                                descriptor.Blocks, density).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_conform_to_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             if(descriptor.BlockLength == 0)
                             {
-                                sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length).
-                                   AppendLine();
+                                sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                                descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.BlockLength == 0)
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks)
+                              .AppendLine();
                         }
                         else
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each,
+                                            descriptor.Blocks,
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                     }
                 }
@@ -1281,9 +1287,9 @@ public static partial class Modes
                 break;
             }
 
-        #endregion Sequential access device mode header
+#endregion Sequential access device mode header
 
-        #region Printer device mode header
+#region Printer device mode header
 
             case PeripheralDeviceTypes.PrinterDevice:
             {
@@ -1298,8 +1304,8 @@ public static partial class Modes
 
                         break;
                     default:
-                        sb.AppendFormat("\t" + Localization.Unknown_buffered_mode_code_0, header.Value.BufferedMode).
-                           AppendLine();
+                        sb.AppendFormat("\t" + Localization.Unknown_buffered_mode_code_0, header.Value.BufferedMode)
+                          .AppendLine();
 
                         break;
                 }
@@ -1307,9 +1313,9 @@ public static partial class Modes
                 break;
             }
 
-        #endregion Printer device mode header
+#endregion Printer device mode header
 
-        #region Optical device mode header
+#region Optical device mode header
 
             case PeripheralDeviceTypes.OpticalDevice:
             {
@@ -1348,21 +1354,18 @@ public static partial class Modes
 
                             break;
                         default:
-                            sb.AppendFormat(Localization.an_unknown_medium_type_0, (byte)header.Value.MediumType).
-                               AppendLine();
+                            sb.AppendFormat(Localization.an_unknown_medium_type_0, (byte)header.Value.MediumType)
+                              .AppendLine();
 
                             break;
                     }
                 }
 
-                if(header.Value.WriteProtected)
-                    sb.AppendLine("\t" + Localization.Medium_is_write_protected);
+                if(header.Value.WriteProtected) sb.AppendLine("\t" + Localization.Medium_is_write_protected);
 
-                if(header.Value.EBC)
-                    sb.AppendLine("\t" + Localization.Blank_checking_during_write_is_enabled);
+                if(header.Value.EBC) sb.AppendLine("\t" + Localization.Blank_checking_during_write_is_enabled);
 
-                if(header.Value.DPOFUA)
-                    sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
+                if(header.Value.DPOFUA) sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
                 {
@@ -1422,55 +1425,60 @@ public static partial class Modes
                             {
                                 if(descriptor.BlockLength == 0)
                                 {
-                                    sb.
-                                        AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
-                                                     density).
-                                        AppendLine();
+                                    sb.AppendFormat("\t" +
+                                                    Localization.All_remaining_blocks_are_0_and_have_a_variable_length,
+                                                    density)
+                                      .AppendLine();
                                 }
                                 else
                                 {
                                     sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_and_are_1_bytes_each,
-                                                    density, descriptor.BlockLength).
-                                       AppendLine();
+                                                    density,
+                                                    descriptor.BlockLength)
+                                      .AppendLine();
                                 }
                             }
                             else if(descriptor.BlockLength == 0)
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_have_a_variable_length,
-                                                descriptor.Blocks, density).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_are_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             if(descriptor.BlockLength == 0)
                             {
-                                sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length).
-                                   AppendLine();
+                                sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_a_variable_length)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                                descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.BlockLength == 0)
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_have_a_variable_length, descriptor.Blocks)
+                              .AppendLine();
                         }
                         else
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each,
+                                            descriptor.Blocks,
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                     }
                 }
@@ -1478,9 +1486,9 @@ public static partial class Modes
                 break;
             }
 
-        #endregion Optical device mode header
+#endregion Optical device mode header
 
-        #region Multimedia device mode header
+#region Multimedia device mode header
 
             case PeripheralDeviceTypes.MultiMediaDevice:
             {
@@ -1638,11 +1646,9 @@ public static partial class Modes
                         break;
                 }
 
-                if(header.Value.WriteProtected)
-                    sb.AppendLine("\t" + Localization.Medium_is_write_protected);
+                if(header.Value.WriteProtected) sb.AppendLine("\t" + Localization.Medium_is_write_protected);
 
-                if(header.Value.DPOFUA)
-                    sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
+                if(header.Value.DPOFUA) sb.AppendLine("\t" + Localization.Drive_supports_DPO_and_FUA_bits);
 
                 if(header.Value.BlockDescriptors != null)
                 {
@@ -1698,27 +1704,31 @@ public static partial class Modes
                             if(descriptor.Blocks == 0)
                             {
                                 sb.AppendFormat("\t" + Localization.All_remaining_blocks_have_0_and_are_1_bytes_each,
-                                                density, descriptor.BlockLength).
-                                   AppendLine();
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                             else
                             {
                                 sb.AppendFormat("\t" + Localization._0_blocks_have_1_and_are_2_bytes_each,
-                                                descriptor.Blocks, density, descriptor.BlockLength).
-                                   AppendLine();
+                                                descriptor.Blocks,
+                                                density,
+                                                descriptor.BlockLength)
+                                  .AppendLine();
                             }
                         }
                         else if(descriptor.Blocks == 0)
                         {
                             sb.AppendFormat("\t" + Localization.All_remaining_blocks_are_0_bytes_each,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                         else
                         {
-                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each, descriptor.Blocks,
-                                            descriptor.BlockLength).
-                               AppendLine();
+                            sb.AppendFormat("\t" + Localization._0_blocks_are_1_bytes_each,
+                                            descriptor.Blocks,
+                                            descriptor.BlockLength)
+                              .AppendLine();
                         }
                     }
                 }
@@ -1726,7 +1736,7 @@ public static partial class Modes
                 break;
             }
 
-        #endregion Multimedia device mode header
+#endregion Multimedia device mode header
         }
 
         return sb.ToString();

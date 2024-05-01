@@ -45,8 +45,7 @@ public sealed partial class AaruFormat
 
     void EccInit()
     {
-        if(_initedEdc)
-            return;
+        if(_initedEdc) return;
 
         _eccFTable = new byte[256];
         _eccBTable = new byte[256];
@@ -59,8 +58,7 @@ public sealed partial class AaruFormat
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
-            for(j = 0; j < 8; j++)
-                edc = edc >> 1 ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
+            for(j = 0; j < 8; j++) edc = edc >> 1 ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
 
             _edcTable[i] = edc;
         }
@@ -70,8 +68,7 @@ public sealed partial class AaruFormat
 
     bool SuffixIsCorrect(byte[] sector)
     {
-        if(!_initedEdc)
-            EccInit();
+        if(!_initedEdc) EccInit();
 
         if(sector[0x814] != 0x00 || // reserved (8 bytes)
            sector[0x815] != 0x00 ||
@@ -85,21 +82,18 @@ public sealed partial class AaruFormat
 
         bool correctEccP = CheckEcc(sector, sector, 86, 24, 2, 86, sector, 0xC, 0x10, 0x81C);
 
-        if(!correctEccP)
-            return false;
+        if(!correctEccP) return false;
 
         bool correctEccQ = CheckEcc(sector, sector, 52, 43, 86, 88, sector, 0xC, 0x10, 0x81C + 0xAC);
 
-        if(!correctEccQ)
-            return false;
+        if(!correctEccQ) return false;
 
         var  storedEdc = BitConverter.ToUInt32(sector, 0x810);
         uint edc       = 0;
         var  size      = 0x810;
         var  pos       = 0;
 
-        for(; size > 0; size--)
-            edc = edc >> 8 ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
+        for(; size > 0; size--) edc = edc >> 8 ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
 
         uint calculatedEdc = edc;
 
@@ -108,28 +102,24 @@ public sealed partial class AaruFormat
 
     bool SuffixIsCorrectMode2(byte[] sector)
     {
-        if(!_initedEdc)
-            EccInit();
+        if(!_initedEdc) EccInit();
 
         var zeroAddress = new byte[4];
 
         bool correctEccP = CheckEcc(zeroAddress, sector, 86, 24, 2, 86, sector, 0, 0x10, 0x81C);
 
-        if(!correctEccP)
-            return false;
+        if(!correctEccP) return false;
 
         bool correctEccQ = CheckEcc(zeroAddress, sector, 52, 43, 86, 88, sector, 0, 0x10, 0x81C + 0xAC);
 
-        if(!correctEccQ)
-            return false;
+        if(!correctEccQ) return false;
 
         var  storedEdc = BitConverter.ToUInt32(sector, 0x818);
         uint edc       = 0;
         var  size      = 0x808;
         var  pos       = 0x10;
 
-        for(; size > 0; size--)
-            edc = edc >> 8 ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
+        for(; size > 0; size--) edc = edc >> 8 ^ _edcTable[(edc ^ sector[pos++]) & 0xFF];
 
         uint calculatedEdc = edc;
 
@@ -154,8 +144,7 @@ public sealed partial class AaruFormat
                 byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                 idx += minorInc;
 
-                if(idx >= size)
-                    idx -= size;
+                if(idx >= size) idx -= size;
 
                 eccA ^= temp;
                 eccB ^= temp;
@@ -164,8 +153,7 @@ public sealed partial class AaruFormat
 
             eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
-            if(ecc[major + eccOffset] != eccA || ecc[major + majorCount + eccOffset] != (eccA ^ eccB))
-                return false;
+            if(ecc[major + eccOffset] != eccA || ecc[major + majorCount + eccOffset] != (eccA ^ eccB)) return false;
         }
 
         return true;
@@ -189,8 +177,7 @@ public sealed partial class AaruFormat
                 byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                 idx += minorInc;
 
-                if(idx >= size)
-                    idx -= size;
+                if(idx >= size) idx -= size;
 
                 eccA ^= temp;
                 eccB ^= temp;
@@ -273,8 +260,7 @@ public sealed partial class AaruFormat
     {
         byte[] computedEdc;
 
-        if(!_initedEdc)
-            EccInit();
+        if(!_initedEdc) EccInit();
 
         switch(type)
         {
@@ -346,13 +332,11 @@ public sealed partial class AaruFormat
 
     uint ComputeEdc(uint edc, byte[] src, int size, int srcOffset = 0)
     {
-        if(!_initedEdc)
-            EccInit();
+        if(!_initedEdc) EccInit();
 
         int pos = srcOffset;
 
-        for(; size > 0; size--)
-            edc = edc >> 8 ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
+        for(; size > 0; size--) edc = edc >> 8 ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
 
         return edc;
     }

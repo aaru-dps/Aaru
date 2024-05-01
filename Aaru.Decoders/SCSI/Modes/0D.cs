@@ -57,17 +57,13 @@ public static partial class Modes
 
     public static ModePage_0D? DecodeModePage_0D(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x0D)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x0D) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_0D();
 
@@ -84,23 +80,21 @@ public static partial class Modes
 
     public static string PrettifyModePage_0D(ModePage_0D? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0D page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_CD_ROM_parameters_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.InactivityTimerMultiplier)
         {
             case 0:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_track_hold_state_a_vendor_specified_time_after_a_seek_or_read);
+                              Localization
+                                 .Drive_will_remain_in_track_hold_state_a_vendor_specified_time_after_a_seek_or_read);
 
                 break;
             case 1:

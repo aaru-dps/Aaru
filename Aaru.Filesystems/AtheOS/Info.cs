@@ -51,21 +51,17 @@ public sealed partial class AtheOS
         uint  offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
         uint  run    = 1;
 
-        if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
-            run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
+        if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE) run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
-        if(sector + partition.Start >= partition.End)
-            return false;
+        if(sector + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(sector + partition.Start, run, out byte[] tmp);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
 
-        if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length)
-            return false;
+        if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length) return false;
 
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
@@ -88,13 +84,11 @@ public sealed partial class AtheOS
         uint  offset = AFS_BOOTBLOCK_SIZE % imagePlugin.Info.SectorSize;
         uint  run    = 1;
 
-        if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE)
-            run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
+        if(imagePlugin.Info.SectorSize < AFS_SUPERBLOCK_SIZE) run = AFS_SUPERBLOCK_SIZE / imagePlugin.Info.SectorSize;
 
         ErrorNumber errno = imagePlugin.ReadSectors(sector + partition.Start, run, out byte[] tmp);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var sbSector = new byte[AFS_SUPERBLOCK_SIZE];
         Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
@@ -103,57 +97,67 @@ public sealed partial class AtheOS
 
         sb.AppendLine(Localization.Atheos_filesystem);
 
-        if(afsSb.flags == 1)
-            sb.AppendLine(Localization.Filesystem_is_read_only);
+        if(afsSb.flags == 1) sb.AppendLine(Localization.Filesystem_is_read_only);
 
         sb.AppendFormat(Localization.Volume_name_0,      StringHandlers.CToString(afsSb.name, encoding)).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_block, afsSb.block_size).AppendLine();
 
-        sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, afsSb.num_blocks,
-                        afsSb.num_blocks * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_blocks_in_volume_1_bytes, afsSb.num_blocks, afsSb.num_blocks * afsSb.block_size)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_used_blocks_1_bytes, afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_used_blocks_1_bytes, afsSb.used_blocks, afsSb.used_blocks * afsSb.block_size)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_bytes_per_i_node, afsSb.inode_size).AppendLine();
 
-        sb.AppendFormat(Localization._0_blocks_per_allocation_group_1_bytes, afsSb.blocks_per_ag,
-                        afsSb.blocks_per_ag * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_blocks_per_allocation_group_1_bytes,
+                        afsSb.blocks_per_ag,
+                        afsSb.blocks_per_ag * afsSb.block_size)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_allocation_groups_in_volume, afsSb.num_ags).AppendLine();
 
         sb.AppendFormat(Localization.Journal_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                        afsSb.log_blocks_start, afsSb.log_blocks_ag, afsSb.log_blocks_len,
-                        afsSb.log_blocks_len * afsSb.block_size).
-           AppendLine();
+                        afsSb.log_blocks_start,
+                        afsSb.log_blocks_ag,
+                        afsSb.log_blocks_len,
+                        afsSb.log_blocks_len * afsSb.block_size)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Journal_starts_in_byte_0_and_has_1_bytes_in_2_blocks, afsSb.log_start,
-                        afsSb.log_size, afsSb.log_valid_blocks).
-           AppendLine();
+        sb.AppendFormat(Localization.Journal_starts_in_byte_0_and_has_1_bytes_in_2_blocks,
+                        afsSb.log_start,
+                        afsSb.log_size,
+                        afsSb.log_valid_blocks)
+          .AppendLine();
 
-        sb.
-            AppendFormat(Localization.Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.root_dir_start, afsSb.root_dir_ag, afsSb.root_dir_len,
-                         afsSb.root_dir_len * afsSb.block_size).
-            AppendLine();
+        sb.AppendFormat(Localization
+                           .Root_folder_s_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                        afsSb.root_dir_start,
+                        afsSb.root_dir_ag,
+                        afsSb.root_dir_len,
+                        afsSb.root_dir_len * afsSb.block_size)
+          .AppendLine();
 
-        sb.
-            AppendFormat(Localization.Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.deleted_start, afsSb.deleted_ag, afsSb.deleted_len,
-                         afsSb.deleted_len * afsSb.block_size).
-            AppendLine();
+        sb.AppendFormat(Localization
+                           .Directory_containing_files_scheduled_for_deletion_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                        afsSb.deleted_start,
+                        afsSb.deleted_ag,
+                        afsSb.deleted_len,
+                        afsSb.deleted_len * afsSb.block_size)
+          .AppendLine();
 
-        sb.
-            AppendFormat(Localization.Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
-                         afsSb.indices_start, afsSb.indices_ag, afsSb.indices_len,
-                         afsSb.indices_len * afsSb.block_size).
-            AppendLine();
+        sb.AppendFormat(Localization
+                           .Indices_i_node_resides_in_block_0_of_allocation_group_1_and_runs_for_2_blocks_3_bytes,
+                        afsSb.indices_start,
+                        afsSb.indices_ag,
+                        afsSb.indices_len,
+                        afsSb.indices_len * afsSb.block_size)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_blocks_for_bootloader_1_bytes, afsSb.boot_size,
-                        afsSb.boot_size * afsSb.block_size).
-           AppendLine();
+        sb.AppendFormat(Localization._0_blocks_for_bootloader_1_bytes,
+                        afsSb.boot_size,
+                        afsSb.boot_size * afsSb.block_size)
+          .AppendLine();
 
         information = sb.ToString();
 

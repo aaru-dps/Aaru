@@ -67,10 +67,17 @@ public partial class Device
     /// </param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool PlasmonReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
-                                ushort     transferLen, ushort blockBytes, bool pba, bool sectorCount, uint timeout,
-                                out double duration) => HpReadLong(out buffer,  out senseBuffer, relAddr, address,
-                                                                   transferLen, blockBytes, pba, sectorCount, timeout,
+    public bool PlasmonReadLong(out byte[] buffer,      out byte[] senseBuffer, bool relAddr, uint address,
+                                ushort     transferLen, ushort     blockBytes, bool pba, bool sectorCount, uint timeout,
+                                out double duration) => HpReadLong(out buffer,
+                                                                   out senseBuffer,
+                                                                   relAddr,
+                                                                   address,
+                                                                   transferLen,
+                                                                   blockBytes,
+                                                                   pba,
+                                                                   sectorCount,
+                                                                   timeout,
                                                                    out duration);
 
     /// <summary>Retrieves the logical or physical block address for the specified <paramref name="address" /></summary>
@@ -93,12 +100,16 @@ public partial class Device
         cdb[4] = (byte)((address & 0xFF00)     >> 8);
         cdb[5] = (byte)(address & 0xFF);
 
-        if(pba)
-            cdb[9] += 0x80;
+        if(pba) cdb[9] += 0x80;
 
         buffer = new byte[8];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

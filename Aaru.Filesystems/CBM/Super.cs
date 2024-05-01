@@ -53,11 +53,9 @@ public sealed partial class CBM
     public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                              Dictionary<string, string> options,     string    @namespace)
     {
-        if(partition.Start > 0)
-            return ErrorNumber.InvalidArgument;
+        if(partition.Start > 0) return ErrorNumber.InvalidArgument;
 
-        if(imagePlugin.Info.SectorSize != 256)
-            return ErrorNumber.InvalidArgument;
+        if(imagePlugin.Info.SectorSize != 256) return ErrorNumber.InvalidArgument;
 
         if(imagePlugin.Info.Sectors != 683  &&
            imagePlugin.Info.Sectors != 768  &&
@@ -67,25 +65,28 @@ public sealed partial class CBM
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         encoding = new PETSCII();
         byte[] sector;
         ulong  rootLba;
         string volumeName = null;
+
         Metadata = new FileSystem
         {
-            Type = FS_TYPE, Clusters = imagePlugin.Info.Sectors, ClusterSize = 256
+            Type        = FS_TYPE,
+            Clusters    = imagePlugin.Info.Sectors,
+            ClusterSize = 256
         };
+
         uint serial;
+
         // Commodore 1581
         if(imagePlugin.Info.Sectors == 3200)
         {
             ErrorNumber errno = imagePlugin.ReadSector(1560, out _diskHeader);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             Header cbmHdr = Marshal.ByteArrayToStructureBigEndian<Header>(_diskHeader);
 
@@ -93,11 +94,11 @@ public sealed partial class CBM
                 return ErrorNumber.InvalidArgument;
 
             _bam = new byte[512];
+
             // Got to first BAM sector
             errno = imagePlugin.ReadSector(1561, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             Array.Copy(sector, 0, _bam, 0, 256);
 
@@ -106,14 +107,12 @@ public sealed partial class CBM
                 // Got to next (and last) BAM sector
                 errno = imagePlugin.ReadSector((ulong)((_bam[0] - 1) * 40), out sector);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 Array.Copy(sector, 0, _bam, 256, 256);
             }
 
-            if(cbmHdr.directoryTrack == 0)
-                return ErrorNumber.InvalidArgument;
+            if(cbmHdr.directoryTrack == 0) return ErrorNumber.InvalidArgument;
 
             rootLba               = CbmChsToLba(cbmHdr.directoryTrack, cbmHdr.directorySector, true);
             serial                = cbmHdr.diskId;
@@ -125,8 +124,7 @@ public sealed partial class CBM
         {
             ErrorNumber errno = imagePlugin.ReadSector(357, out _bam);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             BAM cbmBam = Marshal.ByteArrayToStructureBigEndian<BAM>(_bam);
 
@@ -141,8 +139,7 @@ public sealed partial class CBM
             Metadata.VolumeSerial = $"{cbmBam.diskId}";
         }
 
-        if(rootLba >= imagePlugin.Info.Sectors)
-            return ErrorNumber.IllegalSeek;
+        if(rootLba >= imagePlugin.Info.Sectors) return ErrorNumber.IllegalSeek;
 
         ulong nextLba                  = rootLba;
         var   rootMs                   = new MemoryStream();
@@ -152,13 +149,11 @@ public sealed partial class CBM
         {
             ErrorNumber errno = imagePlugin.ReadSector(nextLba, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             rootMs.Write(sector, 0, 256);
 
-            if(sector[0] == 0)
-                break;
+            if(sector[0] == 0) break;
 
             nextLba = CbmChsToLba(sector[0], sector[1], _is1581);
         } while(nextLba > 0);
@@ -176,7 +171,8 @@ public sealed partial class CBM
             FreeFiles = (ulong)(_root.Length / 32),
             Id = new FileSystemId
             {
-                Serial32 = serial, IsInt = true
+                Serial32 = serial,
+                IsInt    = true
             },
             PluginId = Id,
             Type     = "CBMFS"
@@ -190,38 +186,42 @@ public sealed partial class CBM
         if(_debug)
         {
             // Root
-            _cache.Add("$", new CachedFile
-            {
-                attributes = FileAttributes.Directory | FileAttributes.Hidden | FileAttributes.System,
-                length     = (ulong)_root.Length,
-                data       = _root,
-                blocks     = _root.Length / 256,
-                id         = fileId++
-            });
+            _cache.Add("$",
+                       new CachedFile
+                       {
+                           attributes = FileAttributes.Directory | FileAttributes.Hidden | FileAttributes.System,
+                           length     = (ulong)_root.Length,
+                           data       = _root,
+                           blocks     = _root.Length / 256,
+                           id         = fileId++
+                       });
 
             // BAM
-            _cache.Add("$BAM", new CachedFile
-            {
-                attributes = FileAttributes.File | FileAttributes.Hidden | FileAttributes.System,
-                length     = (ulong)_bam.Length,
-                data       = _bam,
-                blocks     = _bam.Length / 256,
-                id         = fileId++
-            });
+            _cache.Add("$BAM",
+                       new CachedFile
+                       {
+                           attributes = FileAttributes.File | FileAttributes.Hidden | FileAttributes.System,
+                           length     = (ulong)_bam.Length,
+                           data       = _bam,
+                           blocks     = _bam.Length / 256,
+                           id         = fileId++
+                       });
 
             _statfs.Files += 2;
 
             // 1581 disk header
             if(_diskHeader != null)
             {
-                _cache.Add("$DISK_HEADER", new CachedFile
-                {
-                    attributes = FileAttributes.File | FileAttributes.Hidden | FileAttributes.System,
-                    length     = (ulong)_diskHeader.Length,
-                    data       = _diskHeader,
-                    blocks     = _diskHeader.Length / 256,
-                    id         = fileId++
-                });
+                _cache.Add("$DISK_HEADER",
+                           new CachedFile
+                           {
+                               attributes = FileAttributes.File | FileAttributes.Hidden | FileAttributes.System,
+                               length     = (ulong)_diskHeader.Length,
+                               data       = _diskHeader,
+                               blocks     = _diskHeader.Length / 256,
+                               id         = fileId++
+                           });
+
                 _statfs.Files++;
             }
         }
@@ -233,6 +233,7 @@ public sealed partial class CBM
             if(dirEntry.fileType == 0)
             {
                 offset += 32;
+
                 continue;
             }
 
@@ -241,8 +242,7 @@ public sealed partial class CBM
 
             for(var i = 0; i < dirEntry.name.Length; i++)
             {
-                if(dirEntry.name[i] == 0xA0)
-                    dirEntry.name[i] = 0;
+                if(dirEntry.name[i] == 0xA0) dirEntry.name[i] = 0;
             }
 
             string name = StringHandlers.CToString(dirEntry.name, encoding);
@@ -261,33 +261,27 @@ public sealed partial class CBM
 
             while(dirEntry.blocks > 0)
             {
-                if(dirEntry.firstFileBlockTrack == 0)
-                    break;
+                if(dirEntry.firstFileBlockTrack == 0) break;
 
                 ErrorNumber errno = imagePlugin.ReadSector(nextLba, out sector);
-                if(errno != ErrorNumber.NoError)
-                    break;
+
+                if(errno != ErrorNumber.NoError) break;
 
                 byte toRead = sector[0] == 0 ? sector[1] : (byte)254;
-                if(toRead == 255)
-                    toRead--;
+                if(toRead == 255) toRead--;
 
                 data.Write(sector, 2, toRead);
 
-                if(sector[0] == 0)
-                    break;
+                if(sector[0] == 0) break;
 
                 nextLba = CbmChsToLba(sector[0], sector[1], _is1581);
             }
 
             FileAttributes attributes = FileAttributes.File;
 
-            if((dirEntry.fileType & 0x80) != 0x80)
-                attributes |= FileAttributes.Open;
-            if((dirEntry.fileType & 0x40) > 0)
-                attributes |= FileAttributes.ReadOnly;
-            if((dirEntry.fileType & 7) == 2)
-                attributes |= FileAttributes.Executable;
+            if((dirEntry.fileType & 0x80) != 0x80) attributes |= FileAttributes.Open;
+            if((dirEntry.fileType & 0x40) > 0) attributes     |= FileAttributes.ReadOnly;
+            if((dirEntry.fileType & 7)    == 2) attributes    |= FileAttributes.Executable;
 
             _cache[name] = new CachedFile
             {
@@ -302,14 +296,14 @@ public sealed partial class CBM
         }
 
         _mounted = true;
+
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
     public ErrorNumber Unmount()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         _mounted = false;
 
@@ -321,8 +315,7 @@ public sealed partial class CBM
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _statfs.ShallowCopy();
 

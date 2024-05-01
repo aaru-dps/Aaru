@@ -47,8 +47,7 @@ public sealed partial class Alcohol120
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 88)
-            return false;
+        if(stream.Length < 88) return false;
 
         var hdr = new byte[88];
         stream.EnsureRead(hdr, 0, 88);

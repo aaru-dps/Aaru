@@ -1390,8 +1390,7 @@ public sealed class UNIX : IPartition
         partitions = new List<Partition>();
         Partition[] parts;
 
-        if(sectorOffset != 0)
-            return false;
+        if(sectorOffset != 0) return false;
 
         switch(imagePlugin.Info.MediaType)
         {
@@ -1473,8 +1472,7 @@ public sealed class UNIX : IPartition
                 return false;
         }
 
-        for(var i = 0; i < parts.Length; i++)
-            parts[i].Scheme = "";
+        for(var i = 0; i < parts.Length; i++) parts[i].Scheme = "";
 
         partitions = parts.ToList();
 

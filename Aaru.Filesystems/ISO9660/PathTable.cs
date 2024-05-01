@@ -36,8 +36,7 @@ public sealed partial class ISO9660
 {
     PathTableEntryInternal[] DecodePathTable(byte[] data)
     {
-        if(data is null || data.Length == 0)
-            return null;
+        if(data is null || data.Length == 0) return null;
 
         List<PathTableEntryInternal> table = new();
 
@@ -56,8 +55,7 @@ public sealed partial class ISO9660
         {
             entry = Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
-            if(entry.name_len == 0)
-                break;
+            if(entry.name_len == 0) break;
 
             off += Marshal.SizeOf<PathTableEntry>();
 
@@ -73,8 +71,7 @@ public sealed partial class ISO9660
 
             off += entry.name_len;
 
-            if(entry.name_len % 2 != 0)
-                off++;
+            if(entry.name_len % 2 != 0) off++;
         }
 
         return table.ToArray();
@@ -82,8 +79,7 @@ public sealed partial class ISO9660
 
     PathTableEntryInternal[] DecodeHighSierraPathTable(byte[] data)
     {
-        if(data is null)
-            return null;
+        if(data is null) return null;
 
         List<PathTableEntryInternal> table = new();
 
@@ -92,13 +88,13 @@ public sealed partial class ISO9660
         while(off < data.Length)
         {
             HighSierraPathTableEntry entry =
-                Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                                                                                    Marshal.
-                                                                                        SizeOf<
+                Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data,
+                                                                                    off,
+                                                                                    Marshal
+                                                                                       .SizeOf<
                                                                                             HighSierraPathTableEntry>());
 
-            if(entry.name_len == 0)
-                break;
+            if(entry.name_len == 0) break;
 
             off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
@@ -114,8 +110,7 @@ public sealed partial class ISO9660
 
             off += entry.name_len;
 
-            if(entry.name_len % 2 != 0)
-                off++;
+            if(entry.name_len % 2 != 0) off++;
         }
 
         return table.ToArray();

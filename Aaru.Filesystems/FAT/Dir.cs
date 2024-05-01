@@ -58,8 +58,7 @@ public sealed partial class FAT
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
@@ -90,18 +89,17 @@ public sealed partial class FAT
         }
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, CompleteDirectoryEntry> entry =
             _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
 
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-        if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory))
-            return ErrorNumber.NotDirectory;
+        if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory)) return ErrorNumber.NotDirectory;
 
         string currentPath = pieces[0];
 
@@ -111,20 +109,16 @@ public sealed partial class FAT
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
 
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-            if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory))
-                return ErrorNumber.NotDirectory;
+            if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory)) return ErrorNumber.NotDirectory;
 
             currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
             uint currentCluster = entry.Value.Dirent.start_cluster;
 
-            if(_fat32)
-                currentCluster += (uint)(entry.Value.Dirent.ea_handle << 16);
+            if(_fat32) currentCluster += (uint)(entry.Value.Dirent.ea_handle << 16);
 
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
             // Reserved unallocated directory, seen in Atari ST
             if(currentCluster == 0)
@@ -143,18 +137,17 @@ public sealed partial class FAT
 
             uint[] clusters = GetClusters(currentCluster);
 
-            if(clusters is null)
-                return ErrorNumber.InvalidArgument;
+            if(clusters is null) return ErrorNumber.InvalidArgument;
 
             var directoryBuffer = new byte[_bytesPerCluster * clusters.Length];
 
             for(var i = 0; i < clusters.Length; i++)
             {
                 ErrorNumber errno = _image.ReadSectors(_firstClusterSector + clusters[i] * _sectorsPerCluster,
-                                                       _sectorsPerCluster, out byte[] buffer);
+                                                       _sectorsPerCluster,
+                                                       out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 Array.Copy(buffer, 0, directoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
             }
@@ -166,25 +159,24 @@ public sealed partial class FAT
             for(var pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
             {
                 DirectoryEntry dirent =
-                    Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer, pos,
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer,
+                                                                             pos,
                                                                              Marshal.SizeOf<DirectoryEntry>());
 
-                if(dirent.filename[0] == DIRENT_FINISHED)
-                    break;
+                if(dirent.filename[0] == DIRENT_FINISHED) break;
 
                 if(dirent.attributes.HasFlag(FatAttributes.LFN))
                 {
-                    if(_namespace != Namespace.Lfn && _namespace != Namespace.Ecs)
-                        continue;
+                    if(_namespace != Namespace.Lfn && _namespace != Namespace.Ecs) continue;
 
                     LfnEntry lfnEntry =
-                        Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(directoryBuffer, pos,
+                        Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(directoryBuffer,
+                                                                           pos,
                                                                            Marshal.SizeOf<LfnEntry>());
 
                     int lfnSequence = lfnEntry.sequence & LFN_MASK;
 
-                    if((lfnEntry.sequence & LFN_ERASED) > 0)
-                        continue;
+                    if((lfnEntry.sequence & LFN_ERASED) > 0) continue;
 
                     if((lfnEntry.sequence & LFN_LAST) > 0)
                     {
@@ -192,11 +184,9 @@ public sealed partial class FAT
                         lastLfnChecksum = lfnEntry.checksum;
                     }
 
-                    if(lastLfnName is null)
-                        continue;
+                    if(lastLfnName is null) continue;
 
-                    if(lfnEntry.checksum != lastLfnChecksum)
-                        continue;
+                    if(lfnEntry.checksum != lastLfnChecksum) continue;
 
                     lfnSequence--;
 
@@ -208,25 +198,20 @@ public sealed partial class FAT
                 }
 
                 // Not a correct entry
-                if(dirent.filename[0] < DIRENT_MIN && dirent.filename[0] != DIRENT_E5)
-                    continue;
+                if(dirent.filename[0] < DIRENT_MIN && dirent.filename[0] != DIRENT_E5) continue;
 
                 // Self
-                if(_encoding.GetString(dirent.filename).TrimEnd() == ".")
-                    continue;
+                if(_encoding.GetString(dirent.filename).TrimEnd() == ".") continue;
 
                 // Parent
-                if(_encoding.GetString(dirent.filename).TrimEnd() == "..")
-                    continue;
+                if(_encoding.GetString(dirent.filename).TrimEnd() == "..") continue;
 
                 // Deleted
-                if(dirent.filename[0] == DIRENT_DELETED)
-                    continue;
+                if(dirent.filename[0] == DIRENT_DELETED) continue;
 
                 string filename;
 
-                if(dirent.attributes.HasFlag(FatAttributes.VolumeLabel))
-                    continue;
+                if(dirent.attributes.HasFlag(FatAttributes.VolumeLabel)) continue;
 
                 var completeEntry = new CompleteDirectoryEntry
                 {
@@ -247,8 +232,7 @@ public sealed partial class FAT
                     }
                 }
 
-                if(dirent.filename[0] == DIRENT_E5)
-                    dirent.filename[0] = DIRENT_DELETED;
+                if(dirent.filename[0] == DIRENT_E5) dirent.filename[0] = DIRENT_DELETED;
 
                 string name      = _encoding.GetString(dirent.filename).TrimEnd();
                 string extension = _encoding.GetString(dirent.extension).TrimEnd();
@@ -257,8 +241,7 @@ public sealed partial class FAT
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_empty_filename_in_0, path);
 
-                    if(!_debug || dirent is { size: > 0, start_cluster: 0 })
-                        continue; // Skip invalid name
+                    if(!_debug || dirent is { size: > 0, start_cluster: 0 }) continue; // Skip invalid name
 
                     // If debug, add it
                     name = ":{EMPTYNAME}:";
@@ -268,13 +251,11 @@ public sealed partial class FAT
                     {
                         extension = $"{uniq:D03}";
 
-                        if(!currentDirectory.ContainsKey($"{name}.{extension}"))
-                            break;
+                        if(!currentDirectory.ContainsKey($"{name}.{extension}")) break;
                     }
 
                     // If we couldn't find it, just skip over
-                    if(currentDirectory.ContainsKey($"{name}.{extension}"))
-                        continue;
+                    if(currentDirectory.ContainsKey($"{name}.{extension}")) continue;
                 }
 
                 if(_namespace == Namespace.Nt)
@@ -294,7 +275,8 @@ public sealed partial class FAT
                 if(_namespace == Namespace.Human)
                 {
                     HumanDirectoryEntry humanEntry =
-                        Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(directoryBuffer, pos,
+                        Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(directoryBuffer,
+                            pos,
                             Marshal.SizeOf<HumanDirectoryEntry>());
 
                     completeEntry.HumanDirent = humanEntry;
@@ -330,19 +312,15 @@ public sealed partial class FAT
                 {
                     Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.Dirent.ea_handle);
 
-                    if(eas is null)
-                        continue;
+                    if(eas is null) continue;
 
-                    if(!eas.TryGetValue("com.microsoft.os2.longname", out byte[] longnameEa))
-                        continue;
+                    if(!eas.TryGetValue("com.microsoft.os2.longname", out byte[] longnameEa)) continue;
 
-                    if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII)
-                        continue;
+                    if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII) continue;
 
                     var longnameSize = BitConverter.ToUInt16(longnameEa, 2);
 
-                    if(longnameSize + 4 > longnameEa.Length)
-                        continue;
+                    if(longnameSize + 4 > longnameEa.Length) continue;
 
                     var longnameBytes = new byte[longnameSize];
 
@@ -350,8 +328,7 @@ public sealed partial class FAT
 
                     string longname = StringHandlers.CToString(longnameBytes, _encoding);
 
-                    if(string.IsNullOrWhiteSpace(longname))
-                        continue;
+                    if(string.IsNullOrWhiteSpace(longname)) continue;
 
                     // Forward slash is allowed in .LONGNAME, so change it to visually similar division slash
                     longname = longname.Replace('/', '\u2215');
@@ -365,8 +342,8 @@ public sealed partial class FAT
             // Check FAT32.IFS EAs
             if(_fat32 || _debug)
             {
-                var fat32EaSidecars = currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo)).
-                                                       ToList();
+                var fat32EaSidecars = currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo))
+                                                      .ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {
@@ -387,16 +364,14 @@ public sealed partial class FAT
 
                     fileWithEa.Fat32Ea = sidecar.Value.Dirent;
 
-                    if(!_debug)
-                        currentDirectory.Remove(sidecar.Key);
+                    if(!_debug) currentDirectory.Remove(sidecar.Key);
                 }
             }
 
             _directoryCache.Add(currentPath, currentDirectory);
         }
 
-        if(currentDirectory is null)
-            return ErrorNumber.NoSuchFile;
+        if(currentDirectory is null) return ErrorNumber.NoSuchFile;
 
         node = new FatDirNode
         {
@@ -413,17 +388,13 @@ public sealed partial class FAT
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not FatDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Entries.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Entries.Length) return ErrorNumber.NoError;
 
         CompleteDirectoryEntry entry = mynode.Entries[mynode.Position];
 
@@ -445,8 +416,7 @@ public sealed partial class FAT
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not FatDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Entries  = null;

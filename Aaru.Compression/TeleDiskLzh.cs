@@ -147,8 +147,7 @@ public class TeleDiskLzh
         _tdctl.Bufcnt  = 0;
         StartHuff();
 
-        for(i = 0; i < N - F; i++)
-            _textBuf[i] = 0x20;
+        for(i = 0; i < N - F; i++) _textBuf[i] = 0x20;
 
         _tdctl.R  = N - F;
         _inStream = dataStream;
@@ -175,10 +174,10 @@ public class TeleDiskLzh
         for(count = 0; count < len;)
         {
             short c;
+
             if(_tdctl.Bufcnt == 0)
             {
-                if((c = DecodeChar()) < 0)
-                    return count; // fatal error
+                if((c = DecodeChar()) < 0) return count; // fatal error
 
                 if(c < 256)
                 {
@@ -191,8 +190,7 @@ public class TeleDiskLzh
                 {
                     short pos;
 
-                    if((pos = DecodePosition()) < 0)
-                        return count; // fatal error
+                    if((pos = DecodePosition()) < 0) return count; // fatal error
 
                     _tdctl.Bufpos = (ushort)(_tdctl.R - pos - 1 & N - 1);
                     _tdctl.Bufcnt = (ushort)(c        - 255 + THRESHOLD);
@@ -213,8 +211,7 @@ public class TeleDiskLzh
                 }
 
                 // reset bufcnt after copy string from text_buf[]
-                if(_tdctl.Bufndx >= _tdctl.Bufcnt)
-                    _tdctl.Bufndx = _tdctl.Bufcnt = 0;
+                if(_tdctl.Bufndx >= _tdctl.Bufcnt) _tdctl.Bufndx = _tdctl.Bufcnt = 0;
             }
         }
 
@@ -223,8 +220,7 @@ public class TeleDiskLzh
 
     long DataRead(out byte[] buf, long size)
     {
-        if(size > _inStream.Length - _inStream.Position)
-            size = _inStream.Length - _inStream.Position;
+        if(size > _inStream.Length - _inStream.Position) size = _inStream.Length - _inStream.Position;
 
         buf = new byte[size];
         _inStream.EnsureRead(buf, 0, (int)size);
@@ -239,8 +235,7 @@ public class TeleDiskLzh
             _tdctl.Ibufndx = 0;
             _tdctl.Ibufcnt = (ushort)DataRead(out _tdctl.Inbuf, BUFSZ);
 
-            if(_tdctl.Ibufcnt <= 0)
-                return -1;
+            if(_tdctl.Ibufcnt <= 0) return -1;
         }
 
         while(_getlen <= 8)
@@ -255,8 +250,7 @@ public class TeleDiskLzh
 
     int GetBit() /* get one bit */
     {
-        if(NextWord() < 0)
-            return -1;
+        if(NextWord() < 0) return -1;
 
         var i = (short)_getbuf;
         _getbuf <<= 1;
@@ -267,8 +261,7 @@ public class TeleDiskLzh
 
     int GetByte() /* get a byte */
     {
-        if(NextWord() != 0)
-            return -1;
+        if(NextWord() != 0) return -1;
 
         ushort i = _getbuf;
         _getbuf <<= 8;
@@ -318,8 +311,7 @@ public class TeleDiskLzh
 
         for(i = 0; i < T; i++)
         {
-            if(_son[i] < T)
-                continue;
+            if(_son[i] < T) continue;
 
             _freq[j] = (ushort)((_freq[i] + 1) / 2);
             _son[j]  = _son[i];
@@ -357,8 +349,7 @@ public class TeleDiskLzh
 
     void Update(int c)
     {
-        if(_freq[ROOT] == MAX_FREQ)
-            Reconst();
+        if(_freq[ROOT] == MAX_FREQ) Reconst();
 
         c = _prnt[c + T];
 
@@ -369,8 +360,7 @@ public class TeleDiskLzh
             /* swap nodes to keep the tree freq-ordered */
             int l;
 
-            if(k <= _freq[l = c + 1])
-                continue;
+            if(k <= _freq[l = c + 1]) continue;
 
             while(k > _freq[++l]) {}
 
@@ -381,16 +371,14 @@ public class TeleDiskLzh
             int i = _son[c];
             _prnt[i] = (short)l;
 
-            if(i < T)
-                _prnt[i + 1] = (short)l;
+            if(i < T) _prnt[i + 1] = (short)l;
 
             int j = _son[l];
             _son[l] = (short)i;
 
             _prnt[j] = (short)c;
 
-            if(j < T)
-                _prnt[j + 1] = (short)c;
+            if(j < T) _prnt[j + 1] = (short)c;
 
             _son[c] = (short)j;
 
@@ -411,8 +399,7 @@ public class TeleDiskLzh
         {
             int ret;
 
-            if((ret = GetBit()) < 0)
-                return -1;
+            if((ret = GetBit()) < 0) return -1;
 
             c += (ushort)ret;
             c =  (ushort)_son[c];
@@ -429,8 +416,7 @@ public class TeleDiskLzh
         short bit;
 
         /* decode upper 6 bits from given table */
-        if((bit = (short)GetByte()) < 0)
-            return -1;
+        if((bit = (short)GetByte()) < 0) return -1;
 
         var    i = (ushort)bit;
         var    c = (ushort)(_dCode[i] << 6);
@@ -441,8 +427,7 @@ public class TeleDiskLzh
 
         while(j-- > 0)
         {
-            if((bit = (short)GetBit()) < 0)
-                return -1;
+            if((bit = (short)GetBit()) < 0) return -1;
 
             i = (ushort)((i << 1) + bit);
         }

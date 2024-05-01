@@ -46,12 +46,12 @@ public sealed partial class AppleMFS
         internal string[] _contents;
         internal int      _position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -62,7 +62,7 @@ public sealed partial class AppleMFS
     {
         internal byte[] _cache;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -73,7 +73,7 @@ public sealed partial class AppleMFS
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

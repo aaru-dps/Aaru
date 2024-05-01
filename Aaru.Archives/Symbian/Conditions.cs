@@ -42,19 +42,18 @@ public sealed partial class Symbian
     ConditionalExpression ParseConditionalExpression(BinaryReader   br, uint maxOffset, StringBuilder sb,
                                                      ref Attribute? attribute)
     {
-        if(br.BaseStream.Position >= maxOffset)
-            return null;
+        if(br.BaseStream.Position >= maxOffset) return null;
 
         var type           = (ConditionalType)br.ReadUInt32();
         var operatorString = "";
 
         SubConditionalExpression     subExpression;
         TwoSubsConditionalExpression twoSubsConditionalExpression;
+
         switch(type)
         {
             case ConditionalType.Equals:
-                if(type == ConditionalType.Equals)
-                    operatorString = " == ";
+                if(type == ConditionalType.Equals) operatorString = " == ";
 
                 twoSubsConditionalExpression = new TwoSubsConditionalExpression
                 {
@@ -64,8 +63,10 @@ public sealed partial class Symbian
                 sb.Append("(");
                 twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute);
                 sb.Append(operatorString);
+
                 twoSubsConditionalExpression.rightOperand =
                     ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+
                 sb.Append(")");
 
                 attribute = null;
@@ -94,11 +95,13 @@ public sealed partial class Symbian
                 goto case ConditionalType.Equals;
             case ConditionalType.Exists:
                 sb.Append("exists(");
+
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
                     subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute)
                 };
+
                 sb.Append(")");
 
                 attribute = null;
@@ -106,11 +109,13 @@ public sealed partial class Symbian
                 return subExpression;
             case ConditionalType.DeviceCapability:
                 sb.Append("devcap(");
+
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
                     subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute)
                 };
+
                 sb.Append(')');
 
                 attribute = null;
@@ -125,8 +130,10 @@ public sealed partial class Symbian
                 sb.Append("appcap(");
                 twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute);
                 sb.Append(", ");
+
                 twoSubsConditionalExpression.rightOperand =
                     ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+
                 sb.Append(')');
 
                 attribute = null;
@@ -134,6 +141,7 @@ public sealed partial class Symbian
                 return twoSubsConditionalExpression;
             case ConditionalType.Not:
                 sb.Append('!');
+
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
@@ -208,11 +216,13 @@ public sealed partial class Symbian
                     {
                         case Attribute.Manufacturer:
                             sb.Append($"{(ManufacturerCode)numberExpression.number}");
+
                             break;
                         case Attribute.ManufacturerHardwareRev:
                         case Attribute.ManufacturerSoftwareRev:
                         case Attribute.DeviceFamilyRev:
                             sb.Append($"{numberExpression.number >> 8}.{numberExpression.number & 0xFF}");
+
                             break;
                         case Attribute.MachineUid:
                             sb.Append($"{DecodeMachineUid(numberExpression.number)}");
@@ -220,18 +230,23 @@ public sealed partial class Symbian
                             break;
                         case Attribute.DeviceFamily:
                             sb.Append($"{(DeviceFamilyCode)numberExpression.number}");
+
                             break;
                         case Attribute.CPU:
                             sb.Append($"{(CpuCode)numberExpression.number}");
+
                             break;
                         case Attribute.CPUArch:
                             sb.Append($"{(CpuArchitecture)numberExpression.number}");
+
                             break;
                         case Attribute.CPUABI:
                             sb.Append($"{(CpuAbiCode)numberExpression.number}");
+
                             break;
                         case Attribute.CPUSpeed:
                             sb.Append($"{numberExpression.number / 1024}MHz");
+
                             break;
                         case Attribute.SystemTickPeriod:
                             sb.Append($"{numberExpression.number}μs");
@@ -264,6 +279,7 @@ public sealed partial class Symbian
                         case Attribute.NumHalAttributes:
                         case Attribute.Language:
                             sb.Append($"{numberExpression.number}");
+
                             break;
                         case Attribute.PowerBackup:
                         case Attribute.KeyboardClick:
@@ -276,9 +292,11 @@ public sealed partial class Symbian
                         case Attribute.IntegratedPhone:
                         case Attribute.RemoteInstall:
                             sb.Append(numberExpression.number == 0 ? "false" : "true");
+
                             break;
                         default:
                             sb.Append($"0x{numberExpression.number:X8}");
+
                             break;
                     }
                 }

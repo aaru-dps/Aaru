@@ -328,20 +328,25 @@ public static class Marshal
                 var    flt   = (float)(fi.GetValue(str) ?? default(float));
                 byte[] flt_b = BitConverter.GetBytes(flt);
 
-                fi.SetValue(str, BitConverter.ToSingle(new[]
-                {
-                    flt_b[3], flt_b[2], flt_b[1], flt_b[0]
-                }, 0));
+                fi.SetValue(str,
+                            BitConverter.ToSingle(new[]
+                                                  {
+                                                      flt_b[3], flt_b[2], flt_b[1], flt_b[0]
+                                                  },
+                                                  0));
             }
             else if(fi.FieldType == typeof(double))
             {
                 var    dbl   = (double)(fi.GetValue(str) ?? default(double));
                 byte[] dbl_b = BitConverter.GetBytes(dbl);
 
-                fi.SetValue(str, BitConverter.ToDouble(new[]
-                {
-                    dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2], dbl_b[1], dbl_b[0]
-                }, 0));
+                fi.SetValue(str,
+                            BitConverter.ToDouble(new[]
+                                                  {
+                                                      dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2],
+                                                      dbl_b[1], dbl_b[0]
+                                                  },
+                                                  0));
             }
             else if(fi.FieldType == typeof(byte) || fi.FieldType == typeof(sbyte))
             {
@@ -443,13 +448,11 @@ public static class Marshal
     {
         outBuf = null;
 
-        if(hex is null or "")
-            return -1;
+        if(hex is null or "") return -1;
 
         var off = 0;
 
-        if(hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
-            off = 2;
+        if(hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) off = 2;
 
         outBuf = new byte[(hex.Length - off) / 2];
         var count = 0;
@@ -458,8 +461,7 @@ public static class Marshal
         {
             char c = hex[i];
 
-            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f')
-                break;
+            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f') break;
 
             c -= c switch
                  {
@@ -472,8 +474,7 @@ public static class Marshal
 
             c = hex[i + 1];
 
-            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f')
-                break;
+            if(c is < '0' or > '9' and < 'A' or > 'F' and < 'a' or > 'f') break;
 
             c -= c switch
                  {

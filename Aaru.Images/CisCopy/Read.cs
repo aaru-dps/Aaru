@@ -113,8 +113,7 @@ public sealed partial class CisCopy
 
         var headStep = 1;
 
-        if(type is DiskType.MD1DD or DiskType.MD1DD8)
-            headStep = 2;
+        if(type is DiskType.MD1DD or DiskType.MD1DD8) headStep = 2;
 
         var decodedImage = new MemoryStream();
 
@@ -215,11 +214,9 @@ public sealed partial class CisCopy
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

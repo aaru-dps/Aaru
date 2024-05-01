@@ -130,7 +130,9 @@ static class Mcpt
     start:
         System.Console.Clear();
 
-        bool sense = dev.CheckMediaCardType(feature, out AtaErrorRegistersChs errorRegisters, dev.Timeout,
+        bool sense = dev.CheckMediaCardType(feature,
+                                            out AtaErrorRegistersChs errorRegisters,
+                                            dev.Timeout,
                                             out double duration);
 
     menu:

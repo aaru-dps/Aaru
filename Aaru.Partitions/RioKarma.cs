@@ -65,13 +65,11 @@ public sealed class RioKarma : IPartition
         partitions = null;
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
-        if(table.magic != KARMA_MAGIC)
-            return false;
+        if(table.magic != KARMA_MAGIC) return false;
 
         ulong counter = 0;
 

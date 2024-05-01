@@ -42,13 +42,11 @@ public sealed partial class XboxFatPlugin
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -62,15 +60,13 @@ public sealed partial class XboxFatPlugin
         information = "";
         metadata    = new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         var bigEndian = true;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -80,8 +76,7 @@ public sealed partial class XboxFatPlugin
             bigEndian = false;
         }
 
-        if(fatxSb.magic != FATX_MAGIC)
-            return;
+        if(fatxSb.magic != FATX_MAGIC) return;
 
         int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && !bigEndian ? 8 : 1;
 
@@ -89,18 +84,21 @@ public sealed partial class XboxFatPlugin
 
         sb.AppendLine(Localization.FATX_filesystem);
 
-        sb.AppendFormat(Localization._0_logical_sectors_1_bytes_per_physical_sector, logicalSectorsPerPhysicalSectors,
-                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
-           AppendLine();
+        sb.AppendFormat(Localization._0_logical_sectors_1_bytes_per_physical_sector,
+                        logicalSectorsPerPhysicalSectors,
+                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_sectors_1_bytes_per_cluster, fatxSb.sectorsPerCluster,
-                        fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_1_bytes_per_cluster,
+                        fatxSb.sectorsPerCluster,
+                        fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Root_directory_starts_at_cluster_0, fatxSb.rootDirectoryCluster).AppendLine();
 
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
-                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);
+                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
+                                                      true);
 
         sb.AppendFormat(Localization.Volume_label_0,     volumeLabel).AppendLine();
         sb.AppendFormat(Localization.Volume_serial_0_X8, fatxSb.id).AppendLine();

@@ -37,8 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class ReFsMbr() : FilesystemTest("refs")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
-                                                      "Resilient File System (MBR)");
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Resilient File System (MBR)");
 
     public override IFilesystem Plugin     => new ReFS();
     public override bool        Partitions => true;

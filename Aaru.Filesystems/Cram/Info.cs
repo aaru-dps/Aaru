@@ -49,13 +49,11 @@ public sealed partial class Cram
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -71,8 +69,7 @@ public sealed partial class Cram
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
         metadata = new FileSystem();
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var magic = BitConverter.ToUInt32(sector, 0x00);
 
@@ -98,8 +95,8 @@ public sealed partial class Cram
         sbInformation.AppendLine(littleEndian ? Localization.Little_endian : Localization.Big_endian);
         sbInformation.AppendFormat(Localization.Volume_edition_0, crSb.edition).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, encoding)).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(crSb.name, encoding))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes,  crSb.size).AppendLine();
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks, crSb.blocks).AppendLine();

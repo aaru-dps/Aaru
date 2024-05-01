@@ -47,8 +47,7 @@ public sealed partial class Anex86
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<Header>()) return false;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);

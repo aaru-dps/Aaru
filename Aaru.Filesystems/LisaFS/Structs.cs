@@ -227,12 +227,12 @@ public sealed partial class LisaFS
         internal string[] Contents;
         internal int      Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -243,7 +243,7 @@ public sealed partial class LisaFS
     {
         internal short FileId;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -254,7 +254,7 @@ public sealed partial class LisaFS
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -411,7 +411,7 @@ public sealed partial class LisaFS
         public ushort vol_sequence;
         /// <summary>0x138, Volume is dirty?</summary>
         public byte vol_left_mounted;
-    #pragma warning disable CS0649
+#pragma warning disable CS0649
         /// <summary>Is password present? (On-disk position unknown)</summary>
         public byte passwd_present;
         /// <summary>Opened files (memory-only?) (On-disk position unknown)</summary>
@@ -432,7 +432,7 @@ public sealed partial class LisaFS
         public byte copy_flag;
         /// <summary>No idea (On-disk position unknown)</summary>
         public byte scavenge_flag;
-    #pragma warning restore CS0649
+#pragma warning restore CS0649
     }
 
 #endregion

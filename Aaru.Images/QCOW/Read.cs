@@ -55,8 +55,7 @@ public sealed partial class Qcow
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var qHdrB = new byte[48];
         stream.EnsureRead(qHdrB, 0, 48);
@@ -140,8 +139,7 @@ public sealed partial class Qcow
         _l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_L1_table);
 
-        for(long i = 0; i < _l1Table.LongLength; i++)
-            _l1Table[i] = Swapping.Swap(_l1Table[i]);
+        for(long i = 0; i < _l1Table.LongLength; i++) _l1Table[i] = Swapping.Swap(_l1Table[i]);
 
         _l1Mask = 0;
         var c = 0;
@@ -151,8 +149,7 @@ public sealed partial class Qcow
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -160,15 +157,13 @@ public sealed partial class Qcow
 
         _l2Mask = 0;
 
-        for(var i = 0; i < _qHdr.l2_bits; i++)
-            _l2Mask = (_l2Mask << 1) + 1;
+        for(var i = 0; i < _qHdr.l2_bits; i++) _l2Mask = (_l2Mask << 1) + 1;
 
         _l2Mask <<= _qHdr.cluster_bits;
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _qHdr.cluster_bits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _qHdr.cluster_bits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Mask = {0:X}",     _l1Mask);
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Shift = {0}",      _l1Shift);
@@ -209,12 +204,10 @@ public sealed partial class Qcow
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         // Check cache
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -224,7 +217,8 @@ public sealed partial class Qcow
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        string.Format(Localization.Trying_to_read_past_L1_table_position_0_of_a_max_1,
-                                                     l1Off, _l1Table.LongLength));
+                                                     l1Off,
+                                                     _l1Table.LongLength));
 
             return ErrorNumber.InvalidArgument;
         }
@@ -245,11 +239,9 @@ public sealed partial class Qcow
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_L2_table_0, l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
-            for(long i = 0; i < l2Table.LongLength; i++)
-                l2Table[i] = Swapping.Swap(l2Table[i]);
+            for(long i = 0; i < l2Table.LongLength; i++) l2Table[i] = Swapping.Swap(l2Table[i]);
 
-            if(_l2TableCache.Count >= _maxL2TableCache)
-                _l2TableCache.Clear();
+            if(_l2TableCache.Count >= _maxL2TableCache) _l2TableCache.Clear();
 
             _l2TableCache.Add(l1Off, l2Table);
         }
@@ -281,8 +273,7 @@ public sealed partial class Qcow
                     cluster = new byte[_clusterSize];
                     int read = zStream.EnsureRead(cluster, 0, _clusterSize);
 
-                    if(read != _clusterSize)
-                        return ErrorNumber.InOutError;
+                    if(read != _clusterSize) return ErrorNumber.InOutError;
                 }
                 else
                 {
@@ -291,8 +282,7 @@ public sealed partial class Qcow
                     _imageStream.EnsureRead(cluster, 0, _clusterSize);
                 }
 
-                if(_clusterCache.Count >= _maxClusterCache)
-                    _clusterCache.Clear();
+                if(_clusterCache.Count >= _maxClusterCache) _clusterCache.Clear();
 
                 _clusterCache.Add(offset, cluster);
             }
@@ -300,8 +290,7 @@ public sealed partial class Qcow
             Array.Copy(cluster, (int)(byteAddress & _sectorMask), buffer, 0, 512);
         }
 
-        if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -313,11 +302,9 @@ public sealed partial class Qcow
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -325,8 +312,7 @@ public sealed partial class Qcow
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

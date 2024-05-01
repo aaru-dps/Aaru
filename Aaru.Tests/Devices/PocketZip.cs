@@ -79,20 +79,22 @@ public class PocketZip
 
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, _testFiles[i]));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(_sectors[i], image.Info.Sectors,
+                        Assert.AreEqual(_sectors[i],
+                                        image.Info.Sectors,
                                         string.Format(Localization.Sectors_0, _testFiles[i]));
 
-                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize,
+                        Assert.AreEqual(_sectorSize[i],
+                                        image.Info.SectorSize,
                                         string.Format(Localization.Sector_size_0, _testFiles[i]));
 
-                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType,
+                        Assert.AreEqual(_mediaTypes[i],
+                                        image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, _testFiles[i]));
                     });
                 }

@@ -155,8 +155,11 @@ static class Pioneer
 
                     AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, PioneerSubchannel.None,
-                                          PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          PioneerSubchannel.None,
+                                          PioneerSubchannel.Q16,
+                                          PioneerSubchannel.All,
+                                          PioneerSubchannel.Only);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -187,8 +190,14 @@ static class Pioneer
     start:
         System.Console.Clear();
 
-        bool sense = dev.PioneerReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, subchan,
-                                         dev.Timeout, out double duration);
+        bool sense = dev.PioneerReadCdDa(out byte[] buffer,
+                                         out byte[] senseBuffer,
+                                         address,
+                                         blockSize,
+                                         length,
+                                         subchan,
+                                         dev.Timeout,
+                                         out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -236,8 +245,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -250,8 +258,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -404,8 +411,11 @@ static class Pioneer
 
                     AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, PioneerSubchannel.None,
-                                          PioneerSubchannel.Q16, PioneerSubchannel.All, PioneerSubchannel.Only);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          PioneerSubchannel.None,
+                                          PioneerSubchannel.Q16,
+                                          PioneerSubchannel.All,
+                                          PioneerSubchannel.Only);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -438,8 +448,14 @@ static class Pioneer
         var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
         System.Console.Clear();
 
-        bool sense = dev.PioneerReadCdDaMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize,
-                                            subchan, dev.Timeout, out double duration);
+        bool sense = dev.PioneerReadCdDaMsf(out byte[] buffer,
+                                            out byte[] senseBuffer,
+                                            startMsf,
+                                            endMsf,
+                                            blockSize,
+                                            subchan,
+                                            dev.Timeout,
+                                            out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -487,8 +503,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_MSF_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -501,8 +516,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_MSF_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -632,8 +646,14 @@ static class Pioneer
     start:
         System.Console.Clear();
 
-        bool sense = dev.PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, address, length, errorFlags,
-                                         wholeSector, dev.Timeout, out double duration);
+        bool sense = dev.PioneerReadCdXa(out byte[] buffer,
+                                         out byte[] senseBuffer,
+                                         address,
+                                         length,
+                                         errorFlags,
+                                         wholeSector,
+                                         dev.Timeout,
+                                         out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -681,8 +701,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_XA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -695,8 +714,7 @@ static class Pioneer
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_XA_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

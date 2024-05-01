@@ -44,6 +44,7 @@ public sealed partial class Partimage
 #region IMediaImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

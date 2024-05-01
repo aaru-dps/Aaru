@@ -59,8 +59,7 @@ public sealed partial class ISO9660
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         if(options.TryGetValue("use_path_table", out string usePathTableString))
             bool.TryParse(usePathTableString, out _usePathTable);
@@ -68,8 +67,7 @@ public sealed partial class ISO9660
         if(options.TryGetValue("use_trans_tbl", out string useTransTblString))
             bool.TryParse(useTransTblString, out _useTransTbl);
 
-        if(options.TryGetValue("use_evd", out string useEvdString))
-            bool.TryParse(useEvdString, out _useEvd);
+        if(options.TryGetValue("use_evd", out string useEvdString)) bool.TryParse(useEvdString, out _useEvd);
 
         // Default namespace
         @namespace ??= "joliet";
@@ -107,27 +105,23 @@ public sealed partial class ISO9660
         FileStructureVolumeDescriptor?     fsvd     = null;
 
         // ISO9660 is designed for 2048 bytes/sector devices
-        if(imagePlugin.Info.SectorSize < 2048)
-            return ErrorNumber.InvalidArgument;
+        if(imagePlugin.Info.SectorSize < 2048) return ErrorNumber.InvalidArgument;
 
         // ISO9660 Primary Volume Descriptor starts at sector 16, so that's minimal size.
-        if(partition.End < 16)
-            return ErrorNumber.InvalidArgument;
+        if(partition.End < 16) return ErrorNumber.InvalidArgument;
 
         ulong counter = 0;
 
         ErrorNumber errno = imagePlugin.ReadSector(16 + partition.Start, out byte[] vdSector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         int xaOff = vdSector.Length == 2336 ? 8 : 0;
         Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
         _highSierra = _encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
         var hsOff = 0;
 
-        if(_highSierra)
-            hsOff = 8;
+        if(_highSierra) hsOff = 8;
 
         _cdi = false;
         List<ulong> bvdSectors = new();
@@ -144,8 +138,7 @@ public sealed partial class ISO9660
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_sector_0, 16 + counter + partition.Start);
             errno = imagePlugin.ReadSector(16 + counter + partition.Start, out byte[] vdSectorTmp);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             vdSector = new byte[vdSectorTmp.Length - xaOff];
             Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
@@ -155,8 +148,7 @@ public sealed partial class ISO9660
 
             if(vdType == 255) // Supposedly we are in the PVD.
             {
-                if(counter == 0)
-                    return ErrorNumber.InvalidArgument;
+                if(counter == 0) return ErrorNumber.InvalidArgument;
 
                 break;
             }
@@ -168,8 +160,7 @@ public sealed partial class ISO9660
                _encoding.GetString(hsMagic) != HIGH_SIERRA_MAGIC &&
                _encoding.GetString(vdMagic) != CDI_MAGIC) // Recognized, it is an ISO9660, now check for rest of data.
             {
-                if(counter == 0)
-                    return ErrorNumber.InvalidArgument;
+                if(counter == 0) return ErrorNumber.InvalidArgument;
 
                 break;
             }
@@ -180,8 +171,7 @@ public sealed partial class ISO9660
             {
                 case 0:
                 {
-                    if(_debug)
-                        bvdSectors.Add(16 + counter + partition.Start);
+                    if(_debug) bvdSectors.Add(16 + counter + partition.Start);
 
                     break;
                 }
@@ -195,8 +185,7 @@ public sealed partial class ISO9660
                     else
                         pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
-                    if(_debug)
-                        pvdSectors.Add(16 + counter + partition.Start);
+                    if(_debug) pvdSectors.Add(16 + counter + partition.Start);
 
                     break;
                 }
@@ -223,13 +212,11 @@ public sealed partial class ISO9660
                             }
                         }
 
-                        if(_debug)
-                            svdSectors.Add(16 + counter + partition.Start);
+                        if(_debug) svdSectors.Add(16 + counter + partition.Start);
                     }
                     else
                     {
-                        if(_debug)
-                            evdSectors.Add(16 + counter + partition.Start);
+                        if(_debug) evdSectors.Add(16 + counter + partition.Start);
 
                         if(_useEvd)
                         {
@@ -245,8 +232,7 @@ public sealed partial class ISO9660
 
                 case 3:
                 {
-                    if(_debug)
-                        vpdSectors.Add(16 + counter + partition.Start);
+                    if(_debug) vpdSectors.Add(16 + counter + partition.Start);
 
                     break;
                 }
@@ -274,11 +260,9 @@ public sealed partial class ISO9660
         else
             decodedVd = DecodeVolumeDescriptor(pvd.Value, _namespace == Namespace.Romeo ? _encoding : Encoding.ASCII);
 
-        if(jolietvd != null)
-            decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
+        if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
-        if(_namespace != Namespace.Romeo)
-            _encoding = Encoding.ASCII;
+        if(_namespace != Namespace.Romeo) _encoding = Encoding.ASCII;
 
         string fsFormat;
         byte[] pathTableData;
@@ -292,11 +276,11 @@ public sealed partial class ISO9660
         {
             _blockSize = hsvd.Value.logical_block_size;
 
-            errno = ReadSingleExtent(hsvd.Value.path_table_size, Swapping.Swap(hsvd.Value.mandatory_path_table_msb),
+            errno = ReadSingleExtent(hsvd.Value.path_table_size,
+                                     Swapping.Swap(hsvd.Value.mandatory_path_table_msb),
                                      out pathTableData);
 
-            if(errno != ErrorNumber.NoError)
-                pathTableData = null;
+            if(errno != ErrorNumber.NoError) pathTableData = null;
 
             fsFormat = FS_TYPE_HSF;
 
@@ -309,8 +293,7 @@ public sealed partial class ISO9660
 
             errno = ReadSingleExtent(fsvd.Value.path_table_size, fsvd.Value.path_table_addr, out pathTableData);
 
-            if(errno != ErrorNumber.NoError)
-                pathTableData = null;
+            if(errno != ErrorNumber.NoError) pathTableData = null;
 
             fsFormat = FS_TYPE_CDI;
 
@@ -323,11 +306,11 @@ public sealed partial class ISO9660
         {
             _blockSize = pvd.Value.logical_block_size;
 
-            errno = ReadSingleExtent(pvd.Value.path_table_size, Swapping.Swap(pvd.Value.type_m_path_table),
+            errno = ReadSingleExtent(pvd.Value.path_table_size,
+                                     Swapping.Swap(pvd.Value.type_m_path_table),
                                      out pathTableData);
 
-            if(errno != ErrorNumber.NoError)
-                pathTableData = null;
+            if(errno != ErrorNumber.NoError) pathTableData = null;
 
             fsFormat = FS_TYPE_ISO;
 
@@ -348,8 +331,7 @@ public sealed partial class ISO9660
         if((_highSierra || _cdi) && _namespace != Namespace.Normal && _namespace != Namespace.Vms)
             _namespace = Namespace.Normal;
 
-        if(jolietvd is null && _namespace == Namespace.Joliet)
-            _namespace = Namespace.Normal;
+        if(jolietvd is null && _namespace == Namespace.Joliet) _namespace = Namespace.Normal;
 
         uint rootLocation;
         uint rootSize;
@@ -370,13 +352,12 @@ public sealed partial class ISO9660
             if(_pathTable?.Length > 1 && rootLocation != _pathTable[0].Extent)
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               Path_table_and_PVD_do_not_point_to_the_same_location_for_the_root_directory);
+                                           Localization
+                                              .Path_table_and_PVD_do_not_point_to_the_same_location_for_the_root_directory);
 
                 errno = ReadSector(rootLocation, out byte[] firstRootSector);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 var pvdWrongRoot = false;
 
@@ -385,23 +366,21 @@ public sealed partial class ISO9660
                     HighSierraDirectoryRecord rootEntry =
                         Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
 
-                    if(rootEntry.extent != rootLocation)
-                        pvdWrongRoot = true;
+                    if(rootEntry.extent != rootLocation) pvdWrongRoot = true;
                 }
                 else
                 {
                     DirectoryRecord rootEntry =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(firstRootSector);
 
-                    if(rootEntry.extent != rootLocation)
-                        pvdWrongRoot = true;
+                    if(rootEntry.extent != rootLocation) pvdWrongRoot = true;
                 }
 
                 if(pvdWrongRoot)
                 {
                     AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.
-                                                   PVD_does_not_point_to_correct_root_directory_checking_path_table);
+                                               Localization
+                                                  .PVD_does_not_point_to_correct_root_directory_checking_path_table);
 
                     var pathTableWrongRoot = false;
 
@@ -414,16 +393,14 @@ public sealed partial class ISO9660
                         HighSierraDirectoryRecord rootEntry =
                             Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(firstRootSector);
 
-                        if(rootEntry.extent != rootLocation)
-                            pathTableWrongRoot = true;
+                        if(rootEntry.extent != rootLocation) pathTableWrongRoot = true;
                     }
                     else
                     {
                         DirectoryRecord rootEntry =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(firstRootSector);
 
-                        if(rootEntry.extent != rootLocation)
-                            pathTableWrongRoot = true;
+                        if(rootEntry.extent != rootLocation) pathTableWrongRoot = true;
                     }
 
                     if(pathTableWrongRoot)
@@ -443,8 +420,7 @@ public sealed partial class ISO9660
 
             errno = ReadSector(rootLocation, out byte[] firstRootSector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             CdiDirectoryRecord rootEntry = Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
 
@@ -455,8 +431,7 @@ public sealed partial class ISO9660
         }
 
         // In case the path table is incomplete
-        if(_usePathTable && (_pathTable is null || _pathTable?.Length <= 1))
-            _usePathTable = false;
+        if(_usePathTable && (_pathTable is null || _pathTable?.Length <= 1)) _usePathTable = false;
 
         if(_usePathTable && !_cdi)
         {
@@ -464,8 +439,7 @@ public sealed partial class ISO9660
 
             errno = ReadSector(rootLocation, out byte[] firstRootSector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             if(_highSierra)
             {
@@ -495,8 +469,7 @@ public sealed partial class ISO9660
 
         errno = ReadSector(partition.Start, out byte[] ipbinSector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         CD.IPBin?        segaCd    = CD.DecodeIPBin(ipbinSector);
         Saturn.IPBin?    saturn    = Saturn.DecodeIPBin(ipbinSector);
@@ -509,14 +482,15 @@ public sealed partial class ISO9660
         }
 
         // Cannot traverse path table if we substitute the names for the ones in TRANS.TBL
-        if(_useTransTbl)
-            _usePathTable = false;
+        if(_useTransTbl) _usePathTable = false;
 
         if(_namespace != Namespace.Joliet)
         {
-            _rootDirectoryCache = _cdi        ? DecodeCdiDirectory(rootLocation        + rootXattrLength, rootSize) :
-                                  _highSierra ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize) :
-                                                DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
+            _rootDirectoryCache = _cdi
+                                      ? DecodeCdiDirectory(rootLocation + rootXattrLength, rootSize)
+                                      : _highSierra
+                                          ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize)
+                                          : DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
         }
 
         Metadata.Type = fsFormat;
@@ -586,14 +560,11 @@ public sealed partial class ISO9660
 
             Metadata.CreationDate = decodedJolietVd.CreationTime;
 
-            if(decodedJolietVd.HasModificationTime)
-                Metadata.ModificationDate = decodedJolietVd.ModificationTime;
+            if(decodedJolietVd.HasModificationTime) Metadata.ModificationDate = decodedJolietVd.ModificationTime;
 
-            if(decodedJolietVd.HasExpirationTime)
-                Metadata.ExpirationDate = decodedJolietVd.ExpirationTime;
+            if(decodedJolietVd.HasExpirationTime) Metadata.ExpirationDate = decodedJolietVd.ExpirationTime;
 
-            if(decodedJolietVd.HasEffectiveTime)
-                Metadata.EffectiveDate = decodedJolietVd.EffectiveTime;
+            if(decodedJolietVd.HasEffectiveTime) Metadata.EffectiveDate = decodedJolietVd.EffectiveTime;
 
             decodedVd = decodedJolietVd;
         }
@@ -607,164 +578,172 @@ public sealed partial class ISO9660
             Metadata.ApplicationIdentifier  = decodedVd.ApplicationIdentifier;
             Metadata.CreationDate           = decodedVd.CreationTime;
 
-            if(decodedVd.HasModificationTime)
-                Metadata.ModificationDate = decodedVd.ModificationTime;
+            if(decodedVd.HasModificationTime) Metadata.ModificationDate = decodedVd.ModificationTime;
 
-            if(decodedVd.HasExpirationTime)
-                Metadata.ExpirationDate = decodedVd.ExpirationTime;
+            if(decodedVd.HasExpirationTime) Metadata.ExpirationDate = decodedVd.ExpirationTime;
 
-            if(decodedVd.HasEffectiveTime)
-                Metadata.EffectiveDate = decodedVd.EffectiveTime;
+            if(decodedVd.HasEffectiveTime) Metadata.EffectiveDate = decodedVd.EffectiveTime;
         }
 
         if(_debug)
         {
-            _rootDirectoryCache.Add("$", new DecodedDirectoryEntry
-            {
-                Extents = new List<(uint extent, uint size)>
-                {
-                    (rootLocation, rootSize)
-                },
-                Filename  = "$",
-                Size      = rootSize,
-                Timestamp = decodedVd.CreationTime
-            });
+            _rootDirectoryCache.Add("$",
+                                    new DecodedDirectoryEntry
+                                    {
+                                        Extents = new List<(uint extent, uint size)>
+                                        {
+                                            (rootLocation, rootSize)
+                                        },
+                                        Filename  = "$",
+                                        Size      = rootSize,
+                                        Timestamp = decodedVd.CreationTime
+                                    });
 
             if(!_cdi)
             {
-                _rootDirectoryCache.Add("$PATH_TABLE.LSB", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        (pathTableLsbLocation, (uint)pathTableData.Length)
-                    },
-                    Filename  = "$PATH_TABLE.LSB",
-                    Size      = (uint)pathTableData.Length,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add("$PATH_TABLE.LSB",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                (pathTableLsbLocation, (uint)pathTableData.Length)
+                                            },
+                                            Filename  = "$PATH_TABLE.LSB",
+                                            Size      = (uint)pathTableData.Length,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
-            _rootDirectoryCache.Add("$PATH_TABLE.MSB", new DecodedDirectoryEntry
-            {
-                Extents = new List<(uint extent, uint size)>
-                {
-                    (Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)
-                },
-                Filename  = "$PATH_TABLE.MSB",
-                Size      = (uint)pathTableData.Length,
-                Timestamp = decodedVd.CreationTime
-            });
+            _rootDirectoryCache.Add("$PATH_TABLE.MSB",
+                                    new DecodedDirectoryEntry
+                                    {
+                                        Extents = new List<(uint extent, uint size)>
+                                        {
+                                            (Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)
+                                        },
+                                        Filename  = "$PATH_TABLE.MSB",
+                                        Size      = (uint)pathTableData.Length,
+                                        Timestamp = decodedVd.CreationTime
+                                    });
 
             for(var i = 0; i < bvdSectors.Count; i++)
             {
-                _rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)i, 2048)
-                    },
-                    Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
-                    Size      = 2048,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)i, 2048)
+                                            },
+                                            Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
+                                            Size      = 2048,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             for(var i = 0; i < pvdSectors.Count; i++)
             {
-                _rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)i, 2048)
-                    },
-                    Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
-                    Size      = 2048,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)i, 2048)
+                                            },
+                                            Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
+                                            Size      = 2048,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             for(var i = 0; i < svdSectors.Count; i++)
             {
-                _rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)i, 2048)
-                    },
-                    Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
-                    Size      = 2048,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)i, 2048)
+                                            },
+                                            Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
+                                            Size      = 2048,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             for(var i = 0; i < evdSectors.Count; i++)
             {
-                _rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)i, 2048)
-                    },
-                    Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
-                    Size      = 2048,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)i, 2048)
+                                            },
+                                            Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
+                                            Size      = 2048,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             for(var i = 0; i < vpdSectors.Count; i++)
             {
-                _rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)i, 2048)
-                    },
-                    Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
-                    Size      = 2048,
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)i, 2048)
+                                            },
+                                            Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
+                                            Size      = 2048,
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             if(segaCd != null)
             {
-                _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())
-                    },
-                    Filename  = "$IP.BIN",
-                    Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add("$IP.BIN",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())
+                                            },
+                                            Filename  = "$IP.BIN",
+                                            Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             if(saturn != null)
             {
-                _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())
-                    },
-                    Filename  = "$IP.BIN",
-                    Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add("$IP.BIN",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())
+                                            },
+                                            Filename  = "$IP.BIN",
+                                            Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
 
             if(dreamcast != null)
             {
-                _rootDirectoryCache.Add("$IP.BIN", new DecodedDirectoryEntry
-                {
-                    Extents = new List<(uint extent, uint size)>
-                    {
-                        ((uint)partition.Start, (uint)Marshal.SizeOf<Dreamcast.IPBin>())
-                    },
-                    Filename  = "$IP.BIN",
-                    Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
-                    Timestamp = decodedVd.CreationTime
-                });
+                _rootDirectoryCache.Add("$IP.BIN",
+                                        new DecodedDirectoryEntry
+                                        {
+                                            Extents = new List<(uint extent, uint size)>
+                                            {
+                                                ((uint)partition.Start, (uint)Marshal.SizeOf<Dreamcast.IPBin>())
+                                            },
+                                            Filename  = "$IP.BIN",
+                                            Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
+                                            Timestamp = decodedVd.CreationTime
+                                        });
             }
         }
 
@@ -784,9 +763,11 @@ public sealed partial class ISO9660
 
         if(_usePathTable)
         {
-            foreach(DecodedDirectoryEntry subDirectory in _cdi        ? GetSubdirsFromCdiPathTable("") :
-                                                          _highSierra ? GetSubdirsFromHighSierraPathTable("") :
-                                                                        GetSubdirsFromIsoPathTable(""))
+            foreach(DecodedDirectoryEntry subDirectory in _cdi
+                                                              ? GetSubdirsFromCdiPathTable("")
+                                                              : _highSierra
+                                                                  ? GetSubdirsFromHighSierraPathTable("")
+                                                                  : GetSubdirsFromIsoPathTable(""))
                 _rootDirectoryCache[subDirectory.Filename] = subDirectory;
         }
 
@@ -798,8 +779,7 @@ public sealed partial class ISO9660
     /// <inheritdoc />
     public ErrorNumber Unmount()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         _rootDirectoryCache = null;
         _directoryCache     = null;
@@ -813,8 +793,7 @@ public sealed partial class ISO9660
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _statfs.ShallowCopy();
 

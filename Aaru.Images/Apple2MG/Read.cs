@@ -88,10 +88,12 @@ public sealed partial class Apple2Mg
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
                                    _imageHeader.CreatorSpecificOffset);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creatorSpecificSize = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ImageHeader.creatorSpecificSize = {0}",
                                    _imageHeader.CreatorSpecificSize);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved1 = 0x{0:X8}", _imageHeader.Reserved1);
@@ -117,8 +119,7 @@ public sealed partial class Apple2Mg
                 nibPlugin.Open(noFilter);
                 ErrorNumber errno = nibPlugin.ReadSectors(0, (uint)nibPlugin.Info.Sectors, out _decodedImage);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 _imageInfo.Sectors    = nibPlugin.Info.Sectors;
                 _imageInfo.SectorSize = nibPlugin.Info.SectorSize;
@@ -140,8 +141,11 @@ public sealed partial class Apple2Mg
 
                 _decodedImage = new byte[_imageHeader.DataSize];
 
-                offsets = _imageHeader.ImageFormat == SectorOrder.Dos ? isDos ? _deinterleave : _interleave :
-                          isDos                                       ? _interleave : _deinterleave;
+                offsets = _imageHeader.ImageFormat == SectorOrder.Dos
+                              ? isDos ? _deinterleave : _interleave
+                              : isDos
+                                  ? _interleave
+                                  : _deinterleave;
 
                 for(var t = 0; t < 35; t++)
                 {
@@ -281,17 +285,18 @@ public sealed partial class Apple2Mg
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
         if(_decodedImage != null)
         {
-            Array.Copy(_decodedImage, (long)(sectorAddress * _imageInfo.SectorSize), buffer, 0,
+            Array.Copy(_decodedImage,
+                       (long)(sectorAddress * _imageInfo.SectorSize),
+                       buffer,
+                       0,
                        length * _imageInfo.SectorSize);
         }
         else

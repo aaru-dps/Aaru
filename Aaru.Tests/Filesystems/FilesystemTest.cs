@@ -41,8 +41,7 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
@@ -52,7 +51,8 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
+                Assert.AreEqual(ErrorNumber.NoError,
+                                image.Open(inputFilter),
                                 string.Format(Localization.Cannot_open_image_for_0, testFile));
 
                 List<string> idPlugins;
@@ -61,7 +61,8 @@ public abstract class FilesystemTest(string fileSystemType)
                 {
                     List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
-                    Assert.Greater(partitionsList.Count, 0,
+                    Assert.Greater(partitionsList.Count,
+                                   0,
                                    string.Format(Localization.No_partitions_found_for_0, testFile));
 
                     var found = false;
@@ -70,11 +71,9 @@ public abstract class FilesystemTest(string fileSystemType)
                     {
                         Core.Filesystems.Identify(image, out idPlugins, p, true);
 
-                        if(idPlugins.Count == 0)
-                            continue;
+                        if(idPlugins.Count == 0) continue;
 
-                        if(!idPlugins.Contains(Plugin.Id.ToString()))
-                            continue;
+                        if(!idPlugins.Contains(Plugin.Id.ToString())) continue;
 
                         found = true;
 
@@ -94,7 +93,8 @@ public abstract class FilesystemTest(string fileSystemType)
 
                     Core.Filesystems.Identify(image, out idPlugins, wholePart, true);
 
-                    Assert.Greater(idPlugins.Count, 0,
+                    Assert.Greater(idPlugins.Count,
+                                   0,
                                    string.Format(Localization.No_filesystems_found_for_0, testFile));
 
                     Assert.True(idPlugins.Contains(Plugin.Id.ToString()),
@@ -120,8 +120,7 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
@@ -131,7 +130,8 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
+                Assert.AreEqual(ErrorNumber.NoError,
+                                image.Open(inputFilter),
                                 string.Format(Localization.Cannot_open_image_for_0, testFile));
 
                 Assert.AreEqual(test.MediaType,  image.Info.MediaType,  testFile);
@@ -159,8 +159,7 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
@@ -170,7 +169,8 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-                Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
+                Assert.AreEqual(ErrorNumber.NoError,
+                                image.Open(inputFilter),
                                 string.Format(Localization.Cannot_open_image_for_0, testFile));
 
                 List<string> idPlugins;
@@ -179,7 +179,8 @@ public abstract class FilesystemTest(string fileSystemType)
                 {
                     List<Partition> partitionsList = Core.Partitions.GetAll(image);
 
-                    Assert.Greater(partitionsList.Count, 0,
+                    Assert.Greater(partitionsList.Count,
+                                   0,
                                    string.Format(Localization.No_partitions_found_for_0, testFile));
 
                     // In reverse to skip boot partitions we're not interested in
@@ -187,11 +188,9 @@ public abstract class FilesystemTest(string fileSystemType)
                     {
                         Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
 
-                        if(idPlugins.Count == 0)
-                            continue;
+                        if(idPlugins.Count == 0) continue;
 
-                        if(!idPlugins.Contains(Plugin.Id.ToString()))
-                            continue;
+                        if(!idPlugins.Contains(Plugin.Id.ToString())) continue;
 
                         found     = true;
                         partition = partitionsList[index];
@@ -210,7 +209,8 @@ public abstract class FilesystemTest(string fileSystemType)
 
                     Core.Filesystems.Identify(image, out idPlugins, partition, true);
 
-                    Assert.Greater(idPlugins.Count, 0,
+                    Assert.Greater(idPlugins.Count,
+                                   0,
                                    string.Format(Localization.No_filesystems_found_for_0, testFile));
 
                     found = idPlugins.Contains(Plugin.Id.ToString());
@@ -220,8 +220,7 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It is not the case, it changes
-                if(!found)
-                    continue;
+                if(!found) continue;
 
                 var fs = Activator.CreateInstance(Plugin.GetType()) as IFilesystem;
 
@@ -231,29 +230,35 @@ public abstract class FilesystemTest(string fileSystemType)
 
                 if(test.ApplicationId != null)
                 {
-                    Assert.AreEqual(test.ApplicationId, fsMetadata.ApplicationIdentifier,
+                    Assert.AreEqual(test.ApplicationId,
+                                    fsMetadata.ApplicationIdentifier,
                                     string.Format(Localization.Application_ID_0, testFile));
                 }
 
                 Assert.AreEqual(test.Bootable, fsMetadata.Bootable, string.Format(Localization.Bootable_0, testFile));
                 Assert.AreEqual(test.Clusters, fsMetadata.Clusters, string.Format(Localization.Clusters_0, testFile));
 
-                Assert.AreEqual(test.ClusterSize, fsMetadata.ClusterSize,
+                Assert.AreEqual(test.ClusterSize,
+                                fsMetadata.ClusterSize,
                                 string.Format(Localization.Cluster_size_0, testFile));
 
                 if(test.SystemId != null)
                 {
-                    Assert.AreEqual(test.SystemId, fsMetadata.SystemIdentifier,
+                    Assert.AreEqual(test.SystemId,
+                                    fsMetadata.SystemIdentifier,
                                     string.Format(Localization.System_ID_0, testFile));
                 }
 
-                Assert.AreEqual(fileSystemType ?? test.Type, fsMetadata.Type,
+                Assert.AreEqual(fileSystemType ?? test.Type,
+                                fsMetadata.Type,
                                 string.Format(Localization.Filesystem_type_0, testFile));
 
-                Assert.AreEqual(test.VolumeName, fsMetadata.VolumeName,
+                Assert.AreEqual(test.VolumeName,
+                                fsMetadata.VolumeName,
                                 string.Format(Localization.Volume_name_0, testFile));
 
-                Assert.AreEqual(test.VolumeSerial, fsMetadata.VolumeSerial,
+                Assert.AreEqual(test.VolumeSerial,
+                                fsMetadata.VolumeSerial,
                                 string.Format(Localization.Volume_serial_0, testFile));
             }
         });

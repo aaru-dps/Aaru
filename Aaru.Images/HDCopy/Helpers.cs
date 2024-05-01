@@ -47,8 +47,7 @@ public sealed partial class HdCopy
 
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 16 + 2 * 82)
-            return false;
+        if(stream.Length < 16 + 2 * 82) return false;
 
         FileHeader fheader = new();
 
@@ -74,21 +73,17 @@ public sealed partial class HdCopy
          * We know the image is from a DOS floppy disk, so assume
          * some sane cylinder and sectors-per-track count.
          */
-        if(fheader.sectorsPerTrack is < 8 or > 40)
-            return false;
+        if(fheader.sectorsPerTrack is < 8 or > 40) return false;
 
-        if(fheader.lastCylinder is < 37 or >= 84)
-            return false;
+        if(fheader.lastCylinder is < 37 or >= 84) return false;
 
         // Validate the trackmap. First two tracks need to be present
-        if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1)
-            return false;
+        if(fheader.trackMap[0] != 1 || fheader.trackMap[1] != 1) return false;
 
         // all other tracks must be either present (=1) or absent (=0)
         for(var i = 0; i < 2 * numTracks; i++)
         {
-            if(fheader.trackMap[i] > 1)
-                return false;
+            if(fheader.trackMap[i] > 1) return false;
         }
 
         /* return success */
@@ -133,8 +128,7 @@ public sealed partial class HdCopy
                 byte fillCount = cBuffer[sIndex++];
 
                 // fill destination buffer
-                for(var i = 0; i < fillCount; i++)
-                    trackData[dIndex++] = fillByte;
+                for(var i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
             }
             else
                 trackData[dIndex++] = cBuffer[sIndex++];

@@ -96,8 +96,7 @@ partial class Device : Devices.Device
         }
 
         // Seems ioctl(2) does not allow the atomicity needed
-        if(dev.PlatformId == PlatformID.Linux)
-            ReadMultipleBlockCannotSetBlockCount = true;
+        if(dev.PlatformId == PlatformID.Linux) ReadMultipleBlockCannotSetBlockCount = true;
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
@@ -128,37 +127,33 @@ partial class Device : Devices.Device
                 {
                     int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out dev.CachedCsd);
 
-                    if(len == 0)
-                        dev.CachedCsd = null;
+                    if(len == 0) dev.CachedCsd = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/cid"))
                 {
                     int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out dev.CachedCid);
 
-                    if(len == 0)
-                        dev.CachedCid = null;
+                    if(len == 0) dev.CachedCid = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/scr"))
                 {
                     int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out dev.CachedScr);
 
-                    if(len == 0)
-                        dev.CachedScr = null;
+                    if(len == 0) dev.CachedScr = null;
                 }
 
                 if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
                 {
                     int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out dev.CachedOcr);
 
-                    if(len == 0)
-                        dev.CachedOcr = null;
+                    if(len == 0) dev.CachedOcr = null;
                 }
             }
         }
 
-    #region SecureDigital / MultiMediaCard
+#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -193,9 +188,9 @@ partial class Device : Devices.Device
             return dev;
         }
 
-    #endregion SecureDigital / MultiMediaCard
+#endregion SecureDigital / MultiMediaCard
 
-    #region USB
+#region USB
 
         string resolvedLink;
 
@@ -233,7 +228,9 @@ partial class Device : Devices.Device
                         var    usbSr   = new StreamReader(resolvedLink + "/idProduct");
                         string usbTemp = usbSr.ReadToEnd();
 
-                        ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                        ushort.TryParse(usbTemp,
+                                        NumberStyles.HexNumber,
+                                        CultureInfo.InvariantCulture,
                                         out dev.UsbProduct);
 
                         usbSr.Close();
@@ -241,7 +238,9 @@ partial class Device : Devices.Device
                         usbSr   = new StreamReader(resolvedLink + "/idVendor");
                         usbTemp = usbSr.ReadToEnd();
 
-                        ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                        ushort.TryParse(usbTemp,
+                                        NumberStyles.HexNumber,
+                                        CultureInfo.InvariantCulture,
                                         out dev.UsbVendor);
 
                         usbSr.Close();
@@ -275,9 +274,9 @@ partial class Device : Devices.Device
             }
         }
 
-    #endregion USB
+#endregion USB
 
-    #region FireWire
+#region FireWire
 
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
@@ -304,7 +303,9 @@ partial class Device : Devices.Device
                         var    fwSr   = new StreamReader(resolvedLink + "/model");
                         string fwTemp = fwSr.ReadToEnd();
 
-                        uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                        uint.TryParse(fwTemp,
+                                      NumberStyles.HexNumber,
+                                      CultureInfo.InvariantCulture,
                                       out dev.FirewireModel);
 
                         fwSr.Close();
@@ -312,7 +313,9 @@ partial class Device : Devices.Device
                         fwSr   = new StreamReader(resolvedLink + "/vendor");
                         fwTemp = fwSr.ReadToEnd();
 
-                        uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                        uint.TryParse(fwTemp,
+                                      NumberStyles.HexNumber,
+                                      CultureInfo.InvariantCulture,
                                       out dev.FirewireVendor);
 
                         fwSr.Close();
@@ -320,7 +323,9 @@ partial class Device : Devices.Device
                         fwSr   = new StreamReader(resolvedLink + "/guid");
                         fwTemp = fwSr.ReadToEnd();
 
-                        ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                        ulong.TryParse(fwTemp,
+                                       NumberStyles.HexNumber,
+                                       CultureInfo.InvariantCulture,
                                        out dev.FirewireGuid);
 
                         fwSr.Close();
@@ -347,9 +352,9 @@ partial class Device : Devices.Device
             }
         }
 
-    #endregion FireWire
+#endregion FireWire
 
-    #region PCMCIA
+#region PCMCIA
 
         if(!devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) &&
            !devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) &&
@@ -358,32 +363,28 @@ partial class Device : Devices.Device
 
         devPath = devicePath[5..];
 
-        if(!Directory.Exists("/sys/block/" + devPath))
-            return dev;
+        if(!Directory.Exists("/sys/block/" + devPath)) return dev;
 
         resolvedLink = ReadLink("/sys/block/" + devPath);
         resolvedLink = "/sys" + resolvedLink[2..];
 
-        if(string.IsNullOrEmpty(resolvedLink))
-            return dev;
+        if(string.IsNullOrEmpty(resolvedLink)) return dev;
 
         while(resolvedLink.Contains("/sys/devices"))
         {
             resolvedLink = Path.GetDirectoryName(resolvedLink);
 
-            if(!Directory.Exists(resolvedLink + "/pcmcia_socket"))
-                continue;
+            if(!Directory.Exists(resolvedLink + "/pcmcia_socket")) continue;
 
-            string[] subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket", "pcmcia_socket*",
+            string[] subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
+                                                        "pcmcia_socket*",
                                                         SearchOption.TopDirectoryOnly);
 
-            if(subdirs.Length <= 0)
-                continue;
+            if(subdirs.Length <= 0) continue;
 
             string possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
 
-            if(!File.Exists(possibleDir + "/card_type") || !File.Exists(possibleDir + "/cis"))
-                continue;
+            if(!File.Exists(possibleDir + "/card_type") || !File.Exists(possibleDir + "/cis")) continue;
 
             var cisFs = new FileStream(possibleDir + "/cis", FileMode.Open, FileAccess.Read);
 
@@ -398,7 +399,7 @@ partial class Device : Devices.Device
             break;
         }
 
-    #endregion PCMCIA
+#endregion PCMCIA
 
         return dev;
     }
@@ -418,8 +419,7 @@ partial class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(_fileDescriptor == 0)
-            return;
+        if(_fileDescriptor == 0) return;
 
         Extern.close(_fileDescriptor);
 

@@ -56,8 +56,7 @@ public sealed partial class RsIde
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        if(!hdr.magic.SequenceEqual(_signature))
-            return ErrorNumber.InvalidArgument;
+        if(!hdr.magic.SequenceEqual(_signature)) return ErrorNumber.InvalidArgument;
 
         _dataOff = hdr.dataOff;
 
@@ -111,11 +110,9 @@ public sealed partial class RsIde
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

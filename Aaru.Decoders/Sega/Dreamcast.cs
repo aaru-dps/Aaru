@@ -53,56 +53,66 @@ public static class Dreamcast
     /// <returns>Decoded IP.BIN</returns>
     public static IPBin? DecodeIPBin(byte[] ipbin_sector)
     {
-        if(ipbin_sector == null)
-            return null;
+        if(ipbin_sector == null) return null;
 
-        if(ipbin_sector.Length < 512)
-            return null;
+        if(ipbin_sector.Length < 512) return null;
 
         IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.maker_id = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.maker_id = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.maker_id));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space1 = \"{0}\"", (char)ipbin.spare_space1);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.dreamcast_media = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.dreamcast_media = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.dreamcast_media));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_no_separator = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.disc_no_separator = \"{0}\"",
                                    (char)ipbin.disc_no_separator);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.disc_total_nos = \"{0}\"", (char)ipbin.disc_total_nos);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space2 = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.spare_space2 = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.spare_space2));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.region_codes = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.region_codes = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.region_codes));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.peripherals = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.peripherals = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.peripherals));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.product_no = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.product_no = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_no));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.product_version = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.product_version = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_version));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.release_date = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.spare_space3 = \"{0}\"", (char)ipbin.spare_space3);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.boot_filename = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.boot_filename = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.boot_filename));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.producer = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.producer = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.producer));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "dreamcast_ipbin.product_name = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "dreamcast_ipbin.product_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_name));
 
         return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : null;
@@ -113,8 +123,7 @@ public static class Dreamcast
     /// <returns>Description of the IP.BIN contents</returns>
     public static string Prettify(IPBin? decoded)
     {
-        if(decoded == null)
-            return null;
+        if(decoded == null) return null;
 
         IPBin ipbin = decoded.Value;
 
@@ -128,20 +137,20 @@ public static class Dreamcast
         CultureInfo provider  = CultureInfo.InvariantCulture;
         var         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-        IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version))
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Product_CRC_0, ipbin.dreamcast_crc).AppendLine();
         IPBinInformation.AppendFormat(Localization.Producer_0, Encoding.ASCII.GetString(ipbin.producer)).AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Disc_media_0, Encoding.ASCII.GetString(ipbin.dreamcast_media)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Disc_media_0, Encoding.ASCII.GetString(ipbin.dreamcast_media))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Disc_number_0_of_1, (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Disc_number_0_of_1, (char)ipbin.disc_no, (char)ipbin.disc_total_nos)
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Release_date_0, ipbindate).AppendLine();
 
@@ -157,8 +166,8 @@ public static class Dreamcast
                 break;
             default:
                 IPBinInformation.AppendFormat(Localization.Disc_boots_using_unknown_loader_0,
-                                              Encoding.ASCII.GetString(ipbin.boot_filename)).
-                                 AppendLine();
+                                              Encoding.ASCII.GetString(ipbin.boot_filename))
+                                .AppendLine();
 
                 break;
         }
@@ -192,8 +201,7 @@ public static class Dreamcast
 
         var iPeripherals = int.Parse(Encoding.ASCII.GetString(ipbin.peripherals), NumberStyles.HexNumber);
 
-        if((iPeripherals & 0x00000001) == 0x00000001)
-            IPBinInformation.AppendLine(Localization.Game_uses_Windows_CE);
+        if((iPeripherals & 0x00000001) == 0x00000001) IPBinInformation.AppendLine(Localization.Game_uses_Windows_CE);
 
         IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
@@ -215,20 +223,15 @@ public static class Dreamcast
         if((iPeripherals & 0x00001000) == 0x00001000)
             IPBinInformation.AppendLine(Localization.Game_requires_A_B_Start_buttons_and_D_Pad);
 
-        if((iPeripherals & 0x00002000) == 0x00002000)
-            IPBinInformation.AppendLine(Localization.Game_requires_C_button);
+        if((iPeripherals & 0x00002000) == 0x00002000) IPBinInformation.AppendLine(Localization.Game_requires_C_button);
 
-        if((iPeripherals & 0x00004000) == 0x00004000)
-            IPBinInformation.AppendLine(Localization.Game_requires_D_button);
+        if((iPeripherals & 0x00004000) == 0x00004000) IPBinInformation.AppendLine(Localization.Game_requires_D_button);
 
-        if((iPeripherals & 0x00008000) == 0x00008000)
-            IPBinInformation.AppendLine(Localization.Game_requires_X_button);
+        if((iPeripherals & 0x00008000) == 0x00008000) IPBinInformation.AppendLine(Localization.Game_requires_X_button);
 
-        if((iPeripherals & 0x00010000) == 0x00010000)
-            IPBinInformation.AppendLine(Localization.Game_requires_Y_button);
+        if((iPeripherals & 0x00010000) == 0x00010000) IPBinInformation.AppendLine(Localization.Game_requires_Y_button);
 
-        if((iPeripherals & 0x00020000) == 0x00020000)
-            IPBinInformation.AppendLine(Localization.Game_requires_Z_button);
+        if((iPeripherals & 0x00020000) == 0x00020000) IPBinInformation.AppendLine(Localization.Game_requires_Z_button);
 
         if((iPeripherals & 0x00040000) == 0x00040000)
             IPBinInformation.AppendLine(Localization.Game_requires_expanded_direction_buttons);
@@ -251,14 +254,11 @@ public static class Dreamcast
         if((iPeripherals & 0x01000000) == 0x01000000)
             IPBinInformation.AppendLine(Localization.Game_requires_expanded_analog_vertical_controller);
 
-        if((iPeripherals & 0x02000000) == 0x02000000)
-            IPBinInformation.AppendLine(Localization.Game_supports_Gun);
+        if((iPeripherals & 0x02000000) == 0x02000000) IPBinInformation.AppendLine(Localization.Game_supports_Gun);
 
-        if((iPeripherals & 0x04000000) == 0x04000000)
-            IPBinInformation.AppendLine(Localization.Game_supports_keyboard);
+        if((iPeripherals & 0x04000000) == 0x04000000) IPBinInformation.AppendLine(Localization.Game_supports_keyboard);
 
-        if((iPeripherals & 0x08000000) == 0x08000000)
-            IPBinInformation.AppendLine(Localization.Game_supports_mouse);
+        if((iPeripherals & 0x08000000) == 0x08000000) IPBinInformation.AppendLine(Localization.Game_supports_mouse);
 
         if((iPeripherals & 0xEE) != 0)
             IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripherals_mask_0, iPeripherals & 0xEE);

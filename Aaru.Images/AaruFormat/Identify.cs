@@ -46,8 +46,7 @@ public sealed partial class AaruFormat
         _imageStream = imageFilter.GetDataForkStream();
         _imageStream.Seek(0, SeekOrigin.Begin);
 
-        if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
-            return false;
+        if(_imageStream.Length < Marshal.SizeOf<AaruHeader>()) return false;
 
         _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
         _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);

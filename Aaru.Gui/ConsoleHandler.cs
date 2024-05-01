@@ -48,8 +48,7 @@ static class ConsoleHandler
     {
         set
         {
-            if(_debug == value)
-                return;
+            if(_debug == value) return;
 
             _debug = value;
 
@@ -68,14 +67,13 @@ static class ConsoleHandler
 
     public static ObservableCollection<LogEntry> Entries { get; } = new();
 
-    static void OnWriteExceptionEvent([NotNull] Exception ex) =>
-        Entries.Add(new LogEntry
-        {
-            Message   = ex.ToString(),
-            Module    = null,
-            Timestamp = DateTime.Now,
-            Type      = UI.LogEntry_Type_Exception
-        });
+    static void OnWriteExceptionEvent([NotNull] Exception ex) => Entries.Add(new LogEntry
+    {
+        Message   = ex.ToString(),
+        Module    = null,
+        Timestamp = DateTime.Now,
+        Type      = UI.LogEntry_Type_Exception
+    });
 
     internal static void Init()
     {
@@ -85,8 +83,7 @@ static class ConsoleHandler
 
     static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null || arg == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {
@@ -99,8 +96,7 @@ static class ConsoleHandler
 
     static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null || arg == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {
@@ -113,8 +109,7 @@ static class ConsoleHandler
 
     static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null || arg == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {

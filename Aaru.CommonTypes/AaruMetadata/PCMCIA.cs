@@ -66,15 +66,16 @@ public class Pcmcia
                                                                            cicm.ManufacturerCodeSpecified
                                                                                ? cicm.ManufacturerCode
                                                                                : null,
-                                                                       CardCode = cicm.CardCodeSpecified
-                                                                           ? cicm.CardCode
-                                                                           : null,
+                                                                       CardCode =
+                                                                           cicm.CardCodeSpecified
+                                                                               ? cicm.CardCode
+                                                                               : null,
                                                                        Manufacturer = cicm.Manufacturer,
                                                                        ProductName  = cicm.ProductName,
                                                                        AdditionalInformation =
                                                                            cicm.AdditionalInformation is null
                                                                                ? null
-                                                                               : new List<string>(cicm.
-                                                                                   AdditionalInformation)
+                                                                               : new List<string>(cicm
+                                                                                  .AdditionalInformation)
                                                                    };
 }

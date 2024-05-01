@@ -44,7 +44,8 @@ public abstract class PartitionSchemeTest
 
             Assert.IsNotNull(image, string.Format(Localization.Image_format_0, testFile));
 
-            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter),
+            Assert.AreEqual(ErrorNumber.NoError,
+                            image.Open(inputFilter),
                             string.Format(Localization.Cannot_open_image_for_0, testFile));
 
             List<Partition> partitions = Core.Partitions.GetAll(image);

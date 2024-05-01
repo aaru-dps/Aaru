@@ -55,13 +55,11 @@ public sealed partial class MinixFS
             offset = 0x400;
         }
 
-        if(sector + partition.Start >= partition.End)
-            return false;
+        if(sector + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         // Optical media
         if(offset > 0)
@@ -73,8 +71,14 @@ public sealed partial class MinixFS
 
         var magic = BitConverter.ToUInt16(minixSbSector, 0x010);
 
-        if(magic is MINIX_MAGIC or MINIX_MAGIC2 or MINIX2_MAGIC or MINIX2_MAGIC2 or MINIX_CIGAM or MINIX_CIGAM2
-                 or MINIX2_CIGAM or MINIX2_CIGAM2)
+        if(magic is MINIX_MAGIC
+                 or MINIX_MAGIC2
+                 or MINIX2_MAGIC
+                 or MINIX2_MAGIC2
+                 or MINIX_CIGAM
+                 or MINIX_CIGAM2
+                 or MINIX2_CIGAM
+                 or MINIX2_CIGAM2)
             return true;
 
         magic = BitConverter.ToUInt16(minixSbSector, 0x018); // Here should reside magic number on Minix v3
@@ -105,8 +109,7 @@ public sealed partial class MinixFS
         string      minixVersion;
         ErrorNumber errno = imagePlugin.ReadSector(sector + partition.Start, out byte[] minixSbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         // Optical media
         if(offset > 0)
@@ -223,33 +226,34 @@ public sealed partial class MinixFS
                                     ? Marshal.ByteArrayToStructureLittleEndian<SuperBlock3>(minixSbSector)
                                     : Marshal.ByteArrayToStructureBigEndian<SuperBlock3>(minixSbSector);
 
-            if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM)
-                mnxSb.s_blocksize = 1024;
+            if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnxSb.s_blocksize = 1024;
 
             sb.AppendLine(minixVersion);
             sb.AppendFormat(Localization._0_chars_in_filename, filenamesize).AppendLine();
 
             if(mnxSb.s_zones > 0) // On V2
             {
-                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
-                   AppendLine();
+                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024)
+                  .AppendLine();
             }
             else
             {
-                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
-                   AppendLine();
+                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024)
+                  .AppendLine();
             }
 
             sb.AppendFormat(Localization._0_bytes_block,      mnxSb.s_blocksize).AppendLine();
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
-                            mnxSb.s_imap_blocks * mnxSb.s_blocksize).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes,
+                            mnxSb.s_imap_blocks,
+                            mnxSb.s_imap_blocks * mnxSb.s_blocksize)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
-                            mnxSb.s_zmap_blocks * mnxSb.s_blocksize).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes,
+                            mnxSb.s_zmap_blocks,
+                            mnxSb.s_zmap_blocks * mnxSb.s_blocksize)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 
@@ -271,24 +275,24 @@ public sealed partial class MinixFS
 
             if(mnxSb.s_zones > 0) // On V2
             {
-                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024).
-                   AppendLine();
+                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_zones, mnxSb.s_zones * 1024)
+                  .AppendLine();
             }
             else
             {
-                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024).
-                   AppendLine();
+                sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, mnxSb.s_nzones, mnxSb.s_nzones * 1024)
+                  .AppendLine();
             }
 
             sb.AppendFormat(Localization._0_inodes_in_volume, mnxSb.s_ninodes).AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes, mnxSb.s_imap_blocks,
-                            mnxSb.s_imap_blocks * 1024).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_inode_map_1_bytes,
+                            mnxSb.s_imap_blocks,
+                            mnxSb.s_imap_blocks * 1024)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks,
-                            mnxSb.s_zmap_blocks * 1024).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_on_zone_map_1_bytes, mnxSb.s_zmap_blocks, mnxSb.s_zmap_blocks * 1024)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0, mnxSb.s_firstdatazone).AppendLine();
 

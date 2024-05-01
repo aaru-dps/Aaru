@@ -34,26 +34,19 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using commitcnt_t = int;
 
 // Disk address
-using daddr_t = int;
 
 // Fstore
-using fstore_t = int;
 
 // Global File System number
-using gfs_t = int;
 
 // Inode number
-using ino_t = int;
 using Partition = Aaru.CommonTypes.Partition;
 
 // Filesystem pack number
-using pckno_t = short;
 
 // Timestamp
-using time_t = int;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedType.Local
@@ -69,33 +62,27 @@ public sealed partial class Locus
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         for(ulong location = 0; location <= 8; location++)
         {
             var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-            if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors)
-                break;
+            if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return false;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
             Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_1_equals_0, locusSb.s_magic, location);
 
-            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD)
-                return true;
+            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD) return true;
         }
 
         return false;
@@ -109,8 +96,7 @@ public sealed partial class Locus
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         var    locusSb = new Superblock();
         byte[] sector  = null;
@@ -119,21 +105,17 @@ public sealed partial class Locus
         {
             var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
             locusSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD)
-                break;
+            if(locusSb.s_magic is LOCUS_MAGIC or LOCUS_CIGAM or LOCUS_MAGIC_OLD or LOCUS_CIGAM_OLD) break;
         }
 
         // We don't care about old version for information
@@ -186,57 +168,46 @@ public sealed partial class Locus
         AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_fmod = {0}",       locusSb.s_fmod);
         AaruConsole.DebugWriteLine(MODULE_NAME, "LocusSb.s_version = {0}",    locusSb.s_version);
 
-        sb.AppendFormat(Localization.Superblock_last_modified_on_0, DateHandlers.UnixToDateTime(locusSb.s_time)).
-           AppendLine();
+        sb.AppendFormat(Localization.Superblock_last_modified_on_0, DateHandlers.UnixToDateTime(locusSb.s_time))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each_total_2_bytes, locusSb.s_fsize, blockSize,
-                        locusSb.s_fsize * blockSize).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each_total_2_bytes,
+                        locusSb.s_fsize,
+                        blockSize,
+                        locusSb.s_fsize * blockSize)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_free_1_bytes, locusSb.s_tfree, locusSb.s_tfree * blockSize).AppendLine();
         sb.AppendFormat(Localization.Inode_list_uses_0_blocks, locusSb.s_isize).AppendLine();
         sb.AppendFormat(Localization._0_free_inodes, locusSb.s_tinode).AppendLine();
         sb.AppendFormat(Localization.Next_free_inode_search_will_start_at_inode_0, locusSb.s_lasti).AppendLine();
 
-        sb.AppendFormat(Localization.There_are_an_estimate_of_0_free_inodes_before_next_search_start,
-                        locusSb.s_nbehind).
-           AppendLine();
+        sb.AppendFormat(Localization.There_are_an_estimate_of_0_free_inodes_before_next_search_start, locusSb.s_nbehind)
+          .AppendLine();
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_RDONLY))
-            sb.AppendLine(Localization.Read_only_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_RDONLY)) sb.AppendLine(Localization.Read_only_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_CLEAN))
-            sb.AppendLine(Localization.Clean_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_CLEAN)) sb.AppendLine(Localization.Clean_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_DIRTY))
-            sb.AppendLine(Localization.Dirty_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_DIRTY)) sb.AppendLine(Localization.Dirty_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_RMV))
-            sb.AppendLine(Localization.Removable_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_RMV)) sb.AppendLine(Localization.Removable_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_PRIMPACK))
-            sb.AppendLine(Localization.This_is_the_primary_pack);
+        if(locusSb.s_flags.HasFlag(Flags.SB_PRIMPACK)) sb.AppendLine(Localization.This_is_the_primary_pack);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_REPLTYPE))
-            sb.AppendLine(Localization.Replicated_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_REPLTYPE)) sb.AppendLine(Localization.Replicated_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_USER))
-            sb.AppendLine(Localization.User_replicated_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_USER)) sb.AppendLine(Localization.User_replicated_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_BACKBONE))
-            sb.AppendLine(Localization.Backbone_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_BACKBONE)) sb.AppendLine(Localization.Backbone_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_NFS))
-            sb.AppendLine(Localization.NFS_volume);
+        if(locusSb.s_flags.HasFlag(Flags.SB_NFS)) sb.AppendLine(Localization.NFS_volume);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_BYHAND))
-            sb.AppendLine(Localization.Volume_inhibits_automatic_fsck);
+        if(locusSb.s_flags.HasFlag(Flags.SB_BYHAND)) sb.AppendLine(Localization.Volume_inhibits_automatic_fsck);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_NOSUID))
-            sb.AppendLine(Localization.Set_uid_set_gid_is_disabled);
+        if(locusSb.s_flags.HasFlag(Flags.SB_NOSUID)) sb.AppendLine(Localization.Set_uid_set_gid_is_disabled);
 
-        if(locusSb.s_flags.HasFlag(Flags.SB_SYNCW))
-            sb.AppendLine(Localization.Volume_uses_synchronous_writes);
+        if(locusSb.s_flags.HasFlag(Flags.SB_SYNCW)) sb.AppendLine(Localization.Volume_uses_synchronous_writes);
 
         sb.AppendFormat(Localization.Volume_label_0,                   s_fsmnt).AppendLine();
         sb.AppendFormat(Localization.Physical_volume_name_0,           s_fpack).AppendLine();

@@ -46,13 +46,11 @@ public sealed partial class PFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Length < 3)
-            return false;
+        if(partition.Length < 3) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
@@ -68,8 +66,7 @@ public sealed partial class PFS
         metadata    =   new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] rootBlockSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         RootBlock rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
@@ -97,28 +94,28 @@ public sealed partial class PFS
                 break;
         }
 
-        if(rootBlock.diskType is MUAF_DISK or MUPFS_DISK)
-            sbInformation.Append(Localization.with_multi_user_support);
+        if(rootBlock.diskType is MUAF_DISK or MUPFS_DISK) sbInformation.Append(Localization.with_multi_user_support);
 
         sbInformation.AppendLine();
 
-        sbInformation.
-            AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(rootBlock.diskname, encoding)).
-            AppendLine();
+        sbInformation
+           .AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(rootBlock.diskname, encoding))
+           .AppendLine();
 
-        sbInformation.
-            AppendFormat(Localization.Volume_has_0_free_sectors_of_1, rootBlock.blocksfree, rootBlock.diskSize).
-            AppendLine();
+        sbInformation
+           .AppendFormat(Localization.Volume_has_0_free_sectors_of_1, rootBlock.blocksfree, rootBlock.diskSize)
+           .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.AmigaToDateTime(rootBlock.creationday, rootBlock.creationminute,
-                                                                rootBlock.creationtick)).
-                      AppendLine();
+                                   DateHandlers.AmigaToDateTime(rootBlock.creationday,
+                                                                rootBlock.creationminute,
+                                                                rootBlock.creationtick))
+                     .AppendLine();
 
         if(rootBlock.extension > 0)
         {
-            sbInformation.AppendFormat(Localization.Root_block_extension_resides_at_block_0, rootBlock.extension).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Root_block_extension_resides_at_block_0, rootBlock.extension)
+                         .AppendLine();
         }
 
         information = sbInformation.ToString();

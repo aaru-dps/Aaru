@@ -47,8 +47,7 @@ public sealed partial class AppleNib
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var test = new byte[512];
         stream.EnsureRead(test, 0, 512);

@@ -77,11 +77,9 @@ public sealed partial class ZFS
     {
         decodedNvList = new Dictionary<string, NVS_Item>();
 
-        if(nvlist == null || nvlist.Length < 16)
-            return false;
+        if(nvlist == null || nvlist.Length < 16) return false;
 
-        if(!xdr)
-            return false;
+        if(!xdr) return false;
 
         var offset = 8;
 
@@ -93,8 +91,7 @@ public sealed partial class ZFS
             item.encodedSize = BigEndianBitConverter.ToUInt32(nvlist, offset);
 
             // Finished
-            if(item.encodedSize == 0)
-                break;
+            if(item.encodedSize == 0) break;
 
             offset           += 4;
             item.decodedSize =  BigEndianBitConverter.ToUInt32(nvlist, offset);
@@ -102,8 +99,7 @@ public sealed partial class ZFS
             var nameLength = BigEndianBitConverter.ToUInt32(nvlist, offset);
             offset += 4;
 
-            if(nameLength % 4 > 0)
-                nameLength += 4 - nameLength % 4;
+            if(nameLength % 4 > 0) nameLength += 4 - nameLength % 4;
 
             var nameBytes = new byte[nameLength];
             Array.Copy(nvlist, offset, nameBytes, 0, nameLength);
@@ -157,8 +153,7 @@ public sealed partial class ZFS
                         Array.Copy(nvlist, offset, byteArray, 0, item.elements);
                         offset += (int)item.elements;
 
-                        if(item.elements % 4 > 0)
-                            offset += 4 - (int)(item.elements % 4);
+                        if(item.elements % 4 > 0) offset += 4 - (int)(item.elements % 4);
 
                         item.value = byteArray;
                     }
@@ -295,8 +290,7 @@ public sealed partial class ZFS
 
                         item.value = sbyteArray;
 
-                        if(sbyteArray.Length % 4 > 0)
-                            offset += 4 - sbyteArray.Length % 4;
+                        if(sbyteArray.Length % 4 > 0) offset += 4 - sbyteArray.Length % 4;
                     }
                     else
                     {
@@ -320,8 +314,7 @@ public sealed partial class ZFS
                             stringArray[i] =  StringHandlers.CToString(strBytes);
                             offset         += (int)strLength;
 
-                            if(strLength % 4 > 0)
-                                offset += 4 - (int)(strLength % 4);
+                            if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                         }
 
                         item.value = stringArray;
@@ -335,8 +328,7 @@ public sealed partial class ZFS
                         item.value =  StringHandlers.CToString(strBytes);
                         offset     += (int)strLength;
 
-                        if(strLength % 4 > 0)
-                            offset += 4 - (int)(strLength % 4);
+                        if(strLength % 4 > 0) offset += 4 - (int)(strLength % 4);
                     }
 
                     break;
@@ -407,8 +399,7 @@ public sealed partial class ZFS
 
                     break;
                 case NVS_DataTypes.DATA_TYPE_NVLIST:
-                    if(item.elements > 1)
-                        goto default;
+                    if(item.elements > 1) goto default;
 
                     var subListBytes = new byte[item.encodedSize - (offset - currOff)];
                     Array.Copy(nvlist, offset, subListBytes, 0, subListBytes.Length);
@@ -587,14 +578,15 @@ public sealed partial class ZFS
                 case NVS_DataTypes.DATA_TYPE_NVLIST:
                     if(item.elements == 1)
                     {
-                        sb.Append($"{item.name} =\n{PrintNvList((Dictionary<string, NVS_Item>)item.value)}").
-                           AppendLine();
+                        sb.Append($"{item.name} =\n{PrintNvList((Dictionary<string, NVS_Item>)item.value)}")
+                          .AppendLine();
                     }
                     else
                     {
-                        sb.AppendFormat(Localization._0_equals_1_elements_nvlist_array_unable_to_print, item.name,
-                                        item.elements).
-                           AppendLine();
+                        sb.AppendFormat(Localization._0_equals_1_elements_nvlist_array_unable_to_print,
+                                        item.name,
+                                        item.elements)
+                          .AppendLine();
                     }
 
                     break;
@@ -603,14 +595,14 @@ public sealed partial class ZFS
                     {
                         for(var i = 0; i < item.elements; i++)
                         {
-                            sb.AppendFormat(Localization._0_1_equals_unknown_data_type_2, item.name, i, item.dataType).
-                               AppendLine();
+                            sb.AppendFormat(Localization._0_1_equals_unknown_data_type_2, item.name, i, item.dataType)
+                              .AppendLine();
                         }
                     }
                     else
                     {
-                        sb.AppendFormat(Localization._0_equals_unknown_data_type_1, item.name, item.dataType).
-                           AppendLine();
+                        sb.AppendFormat(Localization._0_equals_unknown_data_type_1, item.name, item.dataType)
+                          .AppendLine();
                     }
 
                     break;

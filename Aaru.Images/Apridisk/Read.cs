@@ -100,20 +100,20 @@ public sealed partial class Apridisk
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                record.compression == CompressType.Compressed
-                                                   ? Localization.
-                                                       Found_compressed_sector_record_at_0_for_cylinder_1_head_2_sector_3
-                                                   : Localization.
-                                                       Found_uncompressed_sector_record_at_0_for_cylinder_1_head_2_sector_3,
-                                               stream.Position, record.cylinder, record.head, record.sector);
+                                                   ? Localization
+                                                      .Found_compressed_sector_record_at_0_for_cylinder_1_head_2_sector_3
+                                                   : Localization
+                                                      .Found_uncompressed_sector_record_at_0_for_cylinder_1_head_2_sector_3,
+                                               stream.Position,
+                                               record.cylinder,
+                                               record.head,
+                                               record.sector);
 
-                    if(record.cylinder > totalCylinders)
-                        totalCylinders = record.cylinder;
+                    if(record.cylinder > totalCylinders) totalCylinders = record.cylinder;
 
-                    if(record.head > totalHeads)
-                        totalHeads = record.head;
+                    if(record.head > totalHeads) totalHeads = record.head;
 
-                    if(record.sector > maxSector)
-                        maxSector = record.sector;
+                    if(record.sector > maxSector) maxSector = record.sector;
 
                     stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
 
@@ -126,8 +126,7 @@ public sealed partial class Apridisk
         totalCylinders++;
         totalHeads++;
 
-        if(totalCylinders <= 0 || totalHeads <= 0)
-            return ErrorNumber.NotSupported;
+        if(totalCylinders <= 0 || totalHeads <= 0) return ErrorNumber.NotSupported;
 
         _sectorsData = new byte[totalCylinders][][][];
 
@@ -139,7 +138,9 @@ public sealed partial class Apridisk
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.Found_0_cylinders_and_1_heads_with_a_maximum_sector_number_of_2,
-                                   totalCylinders, totalHeads, maxSector);
+                                   totalCylinders,
+                                   totalHeads,
+                                   maxSector);
 
         // Create heads
         for(var i = 0; i < totalCylinders; i++)
@@ -147,8 +148,7 @@ public sealed partial class Apridisk
             _sectorsData[i] = new byte[totalHeads][][];
             spts[i]         = new uint[totalHeads];
 
-            for(var j = 0; j < totalHeads; j++)
-                _sectorsData[i][j] = new byte[maxSector + 1][];
+            for(var j = 0; j < totalHeads; j++) _sectorsData[i][j] = new byte[maxSector + 1][];
         }
 
         _imageInfo.SectorSize = uint.MaxValue;
@@ -189,8 +189,7 @@ public sealed partial class Apridisk
                     else
                         _sectorsData[record.cylinder][record.head][record.sector] = data;
 
-                    if(realLength < _imageInfo.SectorSize)
-                        _imageInfo.SectorSize = realLength;
+                    if(realLength < _imageInfo.SectorSize) _imageInfo.SectorSize = realLength;
 
                     headerSizes += record.headerSize + record.dataSize;
 
@@ -198,7 +197,8 @@ public sealed partial class Apridisk
             }
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_a_minimum_of_0_bytes_per_sector,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Found_a_minimum_of_0_bytes_per_sector,
                                    _imageInfo.SectorSize);
 
         // Count sectors per track
@@ -208,14 +208,14 @@ public sealed partial class Apridisk
         {
             for(ushort head = 0; head < _imageInfo.Heads; head++)
             {
-                if(spts[cyl][head] < spt)
-                    spt = spts[cyl][head];
+                if(spts[cyl][head] < spt) spt = spts[cyl][head];
             }
         }
 
         _imageInfo.SectorsPerTrack = spt;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_a_minimum_of_0_sectors_per_track,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Found_a_minimum_of_0_sectors_per_track,
                                    _imageInfo.SectorsPerTrack);
 
         _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
@@ -238,14 +238,11 @@ public sealed partial class Apridisk
         buffer                                    = null;
         (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
-        if(cylinder >= _sectorsData.Length)
-            return ErrorNumber.SectorNotFound;
+        if(cylinder >= _sectorsData.Length) return ErrorNumber.SectorNotFound;
 
-        if(head >= _sectorsData[cylinder].Length)
-            return ErrorNumber.SectorNotFound;
+        if(head >= _sectorsData[cylinder].Length) return ErrorNumber.SectorNotFound;
 
-        if(sector > _sectorsData[cylinder][head].Length)
-            return ErrorNumber.SectorNotFound;
+        if(sector > _sectorsData[cylinder][head].Length) return ErrorNumber.SectorNotFound;
 
         buffer = _sectorsData[cylinder][head][sector];
 
@@ -257,11 +254,9 @@ public sealed partial class Apridisk
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -269,8 +264,7 @@ public sealed partial class Apridisk
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

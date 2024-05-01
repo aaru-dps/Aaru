@@ -46,13 +46,11 @@ public sealed partial class APFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         ContainerSuperBlock nxSb;
 
@@ -76,13 +74,11 @@ public sealed partial class APFS
         metadata    = new FileSystem();
         information = "";
 
-        if(partition.Start >= partition.End)
-            return;
+        if(partition.Start >= partition.End) return;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         ContainerSuperBlock nxSb;
 
@@ -95,16 +91,16 @@ public sealed partial class APFS
             return;
         }
 
-        if(nxSb.magic != APFS_CONTAINER_MAGIC)
-            return;
+        if(nxSb.magic != APFS_CONTAINER_MAGIC) return;
 
         sbInformation.AppendLine(Localization.Apple_File_System);
         sbInformation.AppendLine();
         sbInformation.AppendFormat(Localization._0_bytes_per_block, nxSb.blockSize).AppendLine();
 
         sbInformation.AppendFormat(Localization.Container_has_0_bytes_in_1_blocks,
-                                   nxSb.containerBlocks * nxSb.blockSize, nxSb.containerBlocks).
-                      AppendLine();
+                                   nxSb.containerBlocks * nxSb.blockSize,
+                                   nxSb.containerBlocks)
+                     .AppendLine();
 
         information = sbInformation.ToString();
 

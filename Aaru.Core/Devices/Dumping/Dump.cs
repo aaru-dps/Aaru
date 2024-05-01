@@ -247,8 +247,7 @@ public partial class Dump
             _dumpLog.WriteLine(string.Format(Localization.Core.Device_in_database_since_0,   _dbDev.LastSynchronized));
             UpdateStatus?.Invoke(string.Format(Localization.Core.Device_in_database_since_0, _dbDev.LastSynchronized));
 
-            if(_dbDev.OptimalMultipleSectorsRead > 0)
-                _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
+            if(_dbDev.OptimalMultipleSectorsRead > 0) _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
         }
 
         switch(_dev.IsUsb)
@@ -296,8 +295,7 @@ public partial class Dump
         _errorLog.Close();
         _dumpLog.Close();
 
-        if(_resume == null || !_doResume)
-            return;
+        if(_resume == null || !_doResume) return;
 
         _resume.LastWriteDate = DateTime.UtcNow;
         _resume.BadBlocks.Sort();
@@ -308,18 +306,19 @@ public partial class Dump
             _mediaGraph?.WriteTo($"{_outputPrefix}.graph.png");
         }
 
-        if(File.Exists(_outputPrefix + ".resume.xml"))
-            File.Delete(_outputPrefix + ".resume.xml");
+        if(File.Exists(_outputPrefix + ".resume.xml")) File.Delete(_outputPrefix + ".resume.xml");
 
-        if(File.Exists(_outputPrefix + ".resume.json"))
-            File.Delete(_outputPrefix + ".resume.json");
+        if(File.Exists(_outputPrefix + ".resume.json")) File.Delete(_outputPrefix + ".resume.json");
 
         var fs = new FileStream(_outputPrefix + ".resume.json", FileMode.Create, FileAccess.ReadWrite);
 
-        JsonSerializer.Serialize(fs, new ResumeJson
-        {
-            Resume = _resume
-        }, typeof(ResumeJson), ResumeJsonContext.Default);
+        JsonSerializer.Serialize(fs,
+                                 new ResumeJson
+                                 {
+                                     Resume = _resume
+                                 },
+                                 typeof(ResumeJson),
+                                 ResumeJsonContext.Default);
 
         fs.Close();
     }

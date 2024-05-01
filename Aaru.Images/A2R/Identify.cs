@@ -49,8 +49,7 @@ public sealed partial class A2R
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         var hdr = new byte[4];
 

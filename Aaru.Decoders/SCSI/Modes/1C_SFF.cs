@@ -57,17 +57,13 @@ public static partial class Modes
 
     public static ModePage_1C_SFF? DecodeModePage_1C_SFF(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x1C)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x1C) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_1C_SFF();
 
@@ -85,119 +81,115 @@ public static partial class Modes
 
     public static string PrettifyModePage_1C_SFF(ModePage_1C_SFF? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1C_SFF page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Timer_Protect_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.DISP)
-            sb.AppendLine("\t" + Localization.Drive_is_disabled_until_power_is_cycled);
+        if(page.DISP) sb.AppendLine("\t" + Localization.Drive_is_disabled_until_power_is_cycled);
 
-        if(page.SWPP)
-            sb.AppendLine("\t" + Localization.Drive_is_software_write_protected_until_powered_down);
+        if(page.SWPP) sb.AppendLine("\t" + Localization.Drive_is_software_write_protected_until_powered_down);
 
         switch(page.InactivityTimeMultiplier)
         {
             case 0:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_a_vendor_specified_time_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_a_vendor_specified_time_after_a_seek_read_or_write_operation);
 
                 break;
             case 1:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_125_ms_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_125_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 2:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_250_ms_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_250_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 3:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_500_ms_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_500_ms_after_a_seek_read_or_write_operation);
 
                 break;
             case 4:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_1_second_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_1_second_after_a_seek_read_or_write_operation);
 
                 break;
             case 5:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_2_seconds_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_2_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 6:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_4_seconds_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_4_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 7:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_8_seconds_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_8_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 8:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_16_seconds_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_16_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 9:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_32_seconds_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_32_seconds_after_a_seek_read_or_write_operation);
 
                 break;
             case 10:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_1_minute_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_1_minute_after_a_seek_read_or_write_operation);
 
                 break;
             case 11:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_2_minutes_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_2_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 12:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_4_minutes_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_4_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 13:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_8_minutes_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_8_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 14:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_16_minutes_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_16_minutes_after_a_seek_read_or_write_operation);
 
                 break;
             case 15:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Drive_will_remain_in_same_status_32_minutes_after_a_seek_read_or_write_operation);
+                              Localization
+                                 .Drive_will_remain_in_same_status_32_minutes_after_a_seek_read_or_write_operation);
 
                 break;
         }

@@ -77,8 +77,15 @@ public partial class Device
             Sector  = 1
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,              out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 

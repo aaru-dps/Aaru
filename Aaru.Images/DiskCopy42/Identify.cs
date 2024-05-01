@@ -53,8 +53,7 @@ public sealed partial class DiskCopy42
         stream.EnsureRead(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42
-        if(buffer[0] > 63)
-            return false;
+        if(buffer[0] > 63) return false;
 
         var tmpHeader = new Header();
 
@@ -80,8 +79,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.valid = {0}",             tmpHeader.Valid);
         AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.reserved = {0}",          tmpHeader.Reserved);
 
-        if(tmpHeader.Valid != 1 || tmpHeader.Reserved != 0)
-            return false;
+        if(tmpHeader.Valid != 1 || tmpHeader.Reserved != 0) return false;
 
         // Some versions seem to incorrectly create little endian fields
         if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.DataForkLength &&
@@ -105,7 +103,8 @@ public sealed partial class DiskCopy42
            tmpHeader.Format != kSigmaFormatTwiggy &&
            tmpHeader.Format != kNotStandardFormat)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unknown_tmp_header_format_equals_0_value,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Unknown_tmp_header_format_equals_0_value,
                                        tmpHeader.Format);
 
             return false;
@@ -120,14 +119,14 @@ public sealed partial class DiskCopy42
            tmpHeader.FmtByte != kFmtNotStandard           &&
            tmpHeader.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unknown_tmp_header_fmtByte_equals_0_value,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Unknown_tmp_header_fmtByte_equals_0_value,
                                        tmpHeader.FmtByte);
 
             return false;
         }
 
-        if(tmpHeader.FmtByte != kInvalidFmtByte)
-            return true;
+        if(tmpHeader.FmtByte != kInvalidFmtByte) return true;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_says_its_unformatted);
 

@@ -45,16 +45,13 @@ public sealed partial class Symbian
     {
         xattrs = null;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         xattrs = new List<string>();
 
-        if(_files[entryNumber].mime is not null)
-            xattrs.Add("org.iana.mime_type");
+        if(_files[entryNumber].mime is not null) xattrs.Add("org.iana.mime_type");
 
         return ErrorNumber.NoError;
     }
@@ -64,11 +61,9 @@ public sealed partial class Symbian
     {
         buffer = null;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         if(xattr != "org.iana.mime_type" || _files[entryNumber].mime is null)
             return ErrorNumber.NoSuchExtendedAttribute;

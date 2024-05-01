@@ -50,16 +50,14 @@ public sealed partial class T98
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length % 256 != 0)
-            return false;
+        if(stream.Length % 256 != 0) return false;
 
         var hdrB = new byte[256];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         for(var i = 4; i < 256; i++)
         {
-            if(hdrB[i] != 0)
-                return false;
+            if(hdrB[i] != 0) return false;
         }
 
         var cylinders = BitConverter.ToInt32(hdrB, 0);

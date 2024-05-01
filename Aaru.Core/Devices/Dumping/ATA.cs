@@ -149,12 +149,15 @@ public partial class Dump
                 byte   heads        = ataReader.Heads;
                 byte   sectors      = ataReader.Sectors;
 
-                UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes, blocks,
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Device_reports_0_blocks_1_bytes,
+                                                   blocks,
                                                    blocks * blockSize));
 
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Device_reports_0_cylinders_1_heads_2_sectors_per_track,
-                                         cylinders, heads, sectors));
+                UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                               .Device_reports_0_cylinders_1_heads_2_sectors_per_track,
+                                                   cylinders,
+                                                   heads,
+                                                   sectors));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Device_can_read_0_blocks_at_a_time, blocksToRead));
 
@@ -166,8 +169,10 @@ public partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Device_reports_0_blocks_1_bytes, blocks, blocks * blockSize);
 
-                _dumpLog.WriteLine(Localization.Core.Device_reports_0_cylinders_1_heads_2_sectors_per_track, cylinders,
-                                   heads, sectors);
+                _dumpLog.WriteLine(Localization.Core.Device_reports_0_cylinders_1_heads_2_sectors_per_track,
+                                   cylinders,
+                                   heads,
+                                   sectors);
 
                 _dumpLog.WriteLine(Localization.Core.Device_can_read_0_blocks_at_a_time,        blocksToRead);
                 _dumpLog.WriteLine(Localization.Core.Device_reports_0_bytes_per_logical_block,  blockSize);
@@ -179,9 +184,19 @@ public partial class Dump
                 DumpHardware currentTry = null;
                 ExtentsULong extents    = null;
 
-                ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                      _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
-                                      _private, _force);
+                ResumeSupport.Process(ataReader.IsLba,
+                                      removable,
+                                      blocks,
+                                      _dev.Manufacturer,
+                                      _dev.Model,
+                                      _dev.Serial,
+                                      _dev.PlatformId,
+                                      ref _resume,
+                                      ref currentTry,
+                                      ref extents,
+                                      _dev.FirmwareRevision,
+                                      _private,
+                                      _force);
 
                 if(currentTry == null || extents == null)
                 {
@@ -237,8 +252,12 @@ public partial class Dump
                     }
                 }
 
-                mediaType = MediaTypeFromDevice.GetFromAta(_dev.Manufacturer, _dev.Model, _dev.IsRemovable,
-                                                           _dev.IsCompactFlash, _dev.IsPcmcia, blocks);
+                mediaType = MediaTypeFromDevice.GetFromAta(_dev.Manufacturer,
+                                                           _dev.Model,
+                                                           _dev.IsRemovable,
+                                                           _dev.IsCompactFlash,
+                                                           _dev.IsPcmcia,
+                                                           blocks);
 
                 ret = outputFormat.Create(_outputPath, mediaType, _formatOptions, blocks, blockSize);
 
@@ -264,11 +283,15 @@ public partial class Dump
                 {
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
-                    if(_skip < blocksToRead)
-                        _skip = blocksToRead;
+                    if(_skip < blocksToRead) _skip = blocksToRead;
 
-                    mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
-                                          _private, _dimensions);
+                    mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin",
+                                          _dev,
+                                          blocks,
+                                          blockSize,
+                                          blocksToRead,
+                                          _private,
+                                          _dimensions);
 
                     ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
@@ -314,24 +337,27 @@ public partial class Dump
                             break;
                         }
 
-                        if(blocks - i < blocksToRead)
-                            blocksToRead = (byte)(blocks - i);
+                        if(blocks - i < blocksToRead) blocksToRead = (byte)(blocks - i);
 
-                        if(currentSpeed > maxSpeed && currentSpeed > 0)
-                            maxSpeed = currentSpeed;
+                        if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                        if(currentSpeed < minSpeed && currentSpeed > 0)
-                            minSpeed = currentSpeed;
+                        if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                        UpdateProgress?.
-                            Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                                   (long)i, (long)blocks);
+                        UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                             i,
+                                                             blocks,
+                                                             ByteSize.FromMegabytes(currentSpeed)
+                                                                     .Per(_oneSecond)
+                                                                     .Humanize()),
+                                               (long)i,
+                                               (long)blocks);
 
                         _speedStopwatch.Start();
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
                         _speedStopwatch.Stop();
 
                         _writeStopwatch.Restart();
+
                         if(!error)
                         {
                             mhddLog.Write(i, duration, blocksToRead);
@@ -343,11 +369,9 @@ public partial class Dump
                         }
                         else
                         {
-                            if(i + _skip > blocks)
-                                _skip = (uint)(blocks - i);
+                            if(i + _skip > blocks) _skip = (uint)(blocks - i);
 
-                            for(ulong b = i; b < i + _skip; b++)
-                                _resume.BadBlocks.Add(b);
+                            for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
                             mhddLog.Write(i, duration < 500 ? 65535 : duration, _skip);
 
@@ -366,8 +390,7 @@ public partial class Dump
 
                         double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                        if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
-                            continue;
+                        if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
                         currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                         sectorSpeedStart = 0;
@@ -382,36 +405,41 @@ public partial class Dump
                     EndProgress?.Invoke();
                     mhddLog.Close();
 
-                    ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
+                    ibgLog.Close(_dev,
+                                 blocks,
+                                 blockSize,
+                                 _dumpStopwatch.Elapsed.TotalSeconds,
+                                 currentSpeed                     * 1024,
+                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                                 _devicePath);
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
                                                        _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                                Per(totalDuration.Milliseconds()).
-                                                                Humanize()));
+                                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                               .Per(totalDuration.Milliseconds())
+                                                               .Humanize()));
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                                Per(imageWriteDuration.Seconds()).
-                                                                Humanize()));
+                                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                               .Per(imageWriteDuration.Seconds())
+                                                               .Humanize()));
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                                      _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                     _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                Per(totalDuration.Milliseconds()).
-                                                Humanize());
+                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                               .Per(totalDuration.Milliseconds())
+                                               .Humanize());
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
-                                                     ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                              Per(imageWriteDuration.Seconds()).
-                                                              Humanize()));
+                                                     ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                             .Per(imageWriteDuration.Seconds())
+                                                             .Humanize()));
 
-                #region Trimming
+#region Trimming
 
                     if(_resume.BadBlocks.Count > 0 && !_aborted && _trim && newTrim)
                     {
@@ -440,8 +468,7 @@ public partial class Dump
 
                             totalDuration += duration;
 
-                            if(error && !recoveredError)
-                                continue;
+                            if(error && !recoveredError) continue;
 
                             _resume.BadBlocks.Remove(badSector);
                             extents.Add(badSector);
@@ -459,9 +486,9 @@ public partial class Dump
                                                          _trimStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
                     }
 
-                #endregion Trimming
+#endregion Trimming
 
-                #region Error handling
+#region Error handling
 
                     if(_resume.BadBlocks.Count > 0 && !_aborted && _retryPasses > 0)
                     {
@@ -486,22 +513,26 @@ public partial class Dump
                             if(forward)
                             {
                                 PulseProgress?.Invoke(_persistent
-                                                          ? string.
-                                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_forward,
-                                                                     badSector, pass)
-                                                          : string.
-                                                              Format(Localization.Core.Retrying_sector_0_pass_1_forward,
-                                                                     badSector, pass));
+                                                          ? string.Format(Localization.Core
+                                                                             .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                                          badSector,
+                                                                          pass)
+                                                          : string.Format(Localization.Core
+                                                                             .Retrying_sector_0_pass_1_forward,
+                                                                          badSector,
+                                                                          pass));
                             }
                             else
                             {
                                 PulseProgress?.Invoke(_persistent
-                                                          ? string.
-                                                              Format(Localization.Core.Retrying_sector_0_pass_1_recovering_partial_data_reverse,
-                                                                     badSector, pass)
-                                                          : string.
-                                                              Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
-                                                                     badSector, pass));
+                                                          ? string.Format(Localization.Core
+                                                                             .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                                          badSector,
+                                                                          pass)
+                                                          : string.Format(Localization.Core
+                                                                             .Retrying_sector_0_pass_1_reverse,
+                                                                          badSector,
+                                                                          pass));
                             }
 
                             bool error =
@@ -516,15 +547,16 @@ public partial class Dump
                                 outputFormat.WriteSector(cmdBuf, badSector);
                                 _mediaGraph?.PaintSectorGood(badSector);
 
-                                UpdateStatus?.
-                                    Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1,
-                                                         badSector, pass));
+                                UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                                      .Correctly_retried_block_0_in_pass_1,
+                                                                   badSector,
+                                                                   pass));
 
-                                _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector,
+                                _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1,
+                                                   badSector,
                                                    pass);
                             }
-                            else if(_persistent)
-                                outputFormat.WriteSector(cmdBuf, badSector);
+                            else if(_persistent) outputFormat.WriteSector(cmdBuf, badSector);
                         }
 
                         if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
@@ -533,8 +565,7 @@ public partial class Dump
                             forward = !forward;
                             _resume.BadBlocks.Sort();
 
-                            if(!forward)
-                                _resume.BadBlocks.Reverse();
+                            if(!forward) _resume.BadBlocks.Reverse();
 
                             goto repeatRetryLba;
                         }
@@ -542,14 +573,19 @@ public partial class Dump
                         EndProgress?.Invoke();
                     }
 
-                #endregion Error handling LBA
+#endregion Error handling LBA
 
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                 }
                 else
                 {
-                    mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead,
-                                          _private, _dimensions);
+                    mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin",
+                                          _dev,
+                                          blocks,
+                                          blockSize,
+                                          blocksToRead,
+                                          _private,
+                                          _dimensions);
 
                     ibgLog = new IbgLog(_outputPrefix + ".ibg", ataProfile);
 
@@ -593,21 +629,24 @@ public partial class Dump
                                     break;
                                 }
 
-                                if(currentSpeed > maxSpeed && currentSpeed > 0)
-                                    maxSpeed = currentSpeed;
+                                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                                if(currentSpeed < minSpeed && currentSpeed > 0)
-                                    minSpeed = currentSpeed;
+                                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                                PulseProgress?.
-                                    Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3, cy, hd,
-                                                         sc,
-                                                         ByteSize.FromMegabytes(currentSpeed).
-                                                                  Per(_oneSecond).
-                                                                  Humanize()));
+                                PulseProgress?.Invoke(string.Format(Localization.Core
+                                                                       .Reading_cylinder_0_head_1_sector_2_3,
+                                                                    cy,
+                                                                    hd,
+                                                                    sc,
+                                                                    ByteSize.FromMegabytes(currentSpeed)
+                                                                            .Per(_oneSecond)
+                                                                            .Humanize()));
+
                                 _speedStopwatch.Start();
+
                                 bool error =
                                     ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out recoveredError);
+
                                 _speedStopwatch.Stop();
 
                                 totalDuration += duration;
@@ -625,8 +664,10 @@ public partial class Dump
                                     extents.Add(currentBlock);
                                     _mediaGraph?.PaintSectorGood((ulong)((cy * heads + hd) * sectors + (sc - 1)));
 
-                                    _dumpLog.WriteLine(Localization.Core.Error_reading_cylinder_0_head_1_sector_2, cy,
-                                                       hd, sc);
+                                    _dumpLog.WriteLine(Localization.Core.Error_reading_cylinder_0_head_1_sector_2,
+                                                       cy,
+                                                       hd,
+                                                       sc);
                                 }
                                 else
                                 {
@@ -648,8 +689,7 @@ public partial class Dump
 
                                 double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                                if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
-                                    continue;
+                                if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
                                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                                 sectorSpeedStart = 0;
@@ -665,34 +705,39 @@ public partial class Dump
                     EndProgress?.Invoke();
                     mhddLog.Close();
 
-                    ibgLog.Close(_dev, blocks, blockSize, _dumpStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000), _devicePath);
+                    ibgLog.Close(_dev,
+                                 blocks,
+                                 blockSize,
+                                 _dumpStopwatch.Elapsed.TotalSeconds,
+                                 currentSpeed                     * 1024,
+                                 blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
+                                 _devicePath);
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
                                                        _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
-                                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                                Per(totalDuration.Milliseconds()).
-                                                                Humanize()));
+                                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                               .Per(totalDuration.Milliseconds())
+                                                               .Humanize()));
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
-                                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                                Per(imageWriteDuration.Seconds()).
-                                                                Humanize()));
+                                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                               .Per(imageWriteDuration.Seconds())
+                                                               .Humanize()));
 
                     _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
                                                      _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                     _dumpLog.WriteLine(Localization.Core.Average_dump_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                Per(totalDuration.Milliseconds()).
-                                                Humanize());
+                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                               .Per(totalDuration.Milliseconds())
+                                               .Humanize());
 
                     _dumpLog.WriteLine(Localization.Core.Average_write_speed_0,
-                                       ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                Per(imageWriteDuration.Seconds()).
-                                                Humanize());
+                                       ByteSize.FromBytes(blockSize * (blocks + 1))
+                                               .Per(imageWriteDuration.Seconds())
+                                               .Humanize());
                 }
 
                 foreach(ulong bad in _resume.BadBlocks)
@@ -714,8 +759,7 @@ public partial class Dump
                                          outputFormat.ErrorMessage);
                 }
 
-                if(_preSidecar != null)
-                    outputFormat.SetMetadata(_preSidecar);
+                if(_preSidecar != null) outputFormat.SetMetadata(_preSidecar);
 
                 _dumpLog.WriteLine(Localization.Core.Closing_output_file);
                 UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
@@ -744,8 +788,7 @@ public partial class Dump
                 if(_dev.IsUsb && _dev.UsbDescriptors != null)
                     outputFormat.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
 
-                if(_dev.IsPcmcia && _dev.Cis != null)
-                    outputFormat.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
+                if(_dev.IsPcmcia && _dev.Cis != null) outputFormat.WriteMediaTag(_dev.Cis, MediaTagType.PCMCIA_CIS);
 
                 if(_metadata)
                 {
@@ -861,8 +904,7 @@ public partial class Dump
                             }
                         }
 
-                        if(_private)
-                            DeviceReport.ClearIdentify(ataIdentify);
+                        if(_private) DeviceReport.ClearIdentify(ataIdentify);
 
                         sidecar.BlockMedias[0].ATA = new ATA
                         {
@@ -879,21 +921,21 @@ public partial class Dump
                         totalChkDuration = _sidecarStopwatch.Elapsed.TotalMilliseconds;
 
                         UpdateStatus?.Invoke(string.Format(Localization.Core.Sidecar_created_in_0,
-                                                           _sidecarStopwatch.Elapsed.
-                                                                             Humanize(minUnit: TimeUnit.Second)));
+                                                           _sidecarStopwatch.Elapsed
+                                                                            .Humanize(minUnit: TimeUnit.Second)));
 
                         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_checksum_speed_0,
-                                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                                    Per(totalChkDuration.Milliseconds()).
-                                                                    Humanize()));
+                                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                                   .Per(totalChkDuration.Milliseconds())
+                                                                   .Humanize()));
 
                         _dumpLog.WriteLine(Localization.Core.Sidecar_created_in_0,
                                            _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
                         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                    Per(totalChkDuration.Milliseconds()).
-                                                    Humanize());
+                                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                   .Per(totalChkDuration.Milliseconds())
+                                                   .Humanize());
 
                         List<(ulong start, string type)> filesystems = new();
 
@@ -911,13 +953,15 @@ public partial class Dump
                                                                   {
                                                                       o.start,
                                                                       o.type
-                                                                  }).
-                                                                  Distinct())
+                                                                  })
+                                                                 .Distinct())
                             {
                                 UpdateStatus?.Invoke(string.Format(Localization.Core.Found_filesystem_0_at_sector_1,
-                                                                   filesystem.type, filesystem.start));
+                                                                   filesystem.type,
+                                                                   filesystem.start));
 
-                                _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type,
+                                _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1,
+                                                   filesystem.type,
                                                    filesystem.start);
                             }
                         }
@@ -933,8 +977,7 @@ public partial class Dump
                         sidecar.BlockMedias[0].Manufacturer      = _dev.Manufacturer;
                         sidecar.BlockMedias[0].Model             = _dev.Model;
 
-                        if(!_private)
-                            sidecar.BlockMedias[0].Serial = _dev.Serial;
+                        if(!_private) sidecar.BlockMedias[0].Serial = _dev.Serial;
 
                         sidecar.BlockMedias[0].Size = blocks * blockSize;
 
@@ -949,10 +992,13 @@ public partial class Dump
 
                         var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-                        JsonSerializer.Serialize(jsonFs, new MetadataJson
-                        {
-                            AaruMetadata = sidecar
-                        }, typeof(MetadataJson), MetadataJsonContext.Default);
+                        JsonSerializer.Serialize(jsonFs,
+                                                 new MetadataJson
+                                                 {
+                                                     AaruMetadata = sidecar
+                                                 },
+                                                 typeof(MetadataJson),
+                                                 MetadataJsonContext.Default);
 
                         jsonFs.Close();
                     }
@@ -960,18 +1006,18 @@ public partial class Dump
 
                 UpdateStatus?.Invoke("");
 
-                UpdateStatus?.
-                    Invoke(string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
-                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
-                                         totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                         totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
-                                         imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
-                                         _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
+                UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                               .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                                   _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                                   totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                                   totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                                   imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                                   _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
                 UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
-                                                   ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                                            Per(totalDuration.Milliseconds()).
-                                                            Humanize()));
+                                                   ByteSize.FromBytes(blockSize * (blocks + 1))
+                                                           .Per(totalDuration.Milliseconds())
+                                                           .Humanize()));
 
                 if(maxSpeed > 0)
                 {
@@ -988,8 +1034,7 @@ public partial class Dump
                 UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_could_not_be_read,
                                                    _resume.BadBlocks.Count));
 
-                if(_resume.BadBlocks.Count > 0)
-                    _resume.BadBlocks.Sort();
+                if(_resume.BadBlocks.Count > 0) _resume.BadBlocks.Sort();
 
                 UpdateStatus?.Invoke("");
             }

@@ -26,10 +26,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using hammer_crc_t = uint;
-using hammer_off_t = ulong;
-using hammer_tid_t = ulong;
-
 #pragma warning disable 169
 
 namespace Aaru.Filesystems;

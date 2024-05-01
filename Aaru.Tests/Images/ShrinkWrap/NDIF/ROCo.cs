@@ -39,8 +39,11 @@ namespace Aaru.Tests.Images.ShrinkWrap.NDIF;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ROCo : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "ShrinkWrap 3",
-                                                      "NDIF", "DiskCopy compression");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot,
+                                                      "Media image formats",
+                                                      "ShrinkWrap 3",
+                                                      "NDIF",
+                                                      "DiskCopy compression");
 
     public override IMediaImage Plugin => new Ndif();
 

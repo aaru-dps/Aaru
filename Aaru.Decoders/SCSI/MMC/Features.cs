@@ -1188,19 +1188,15 @@ public static class Features
 {
     public static Feature_0000? Decode_0000(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0000)
-            return null;
+        if(number != 0x0000) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0000();
 
@@ -1230,19 +1226,15 @@ public static class Features
 
     public static Feature_0001? Decode_0001(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0001)
-            return null;
+        if(number != 0x0001) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0001();
 
@@ -1253,30 +1245,24 @@ public static class Features
         decoded.PhysicalInterfaceStandard =
             (PhysicalInterfaces)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
-        if(decoded.Version >= 1 && feature.Length >= 12)
-            decoded.DBE |= (feature[8] & 0x01) == 0x01;
+        if(decoded.Version >= 1 && feature.Length >= 12) decoded.DBE |= (feature[8] & 0x01) == 0x01;
 
-        if(decoded.Version >= 2 && feature.Length >= 12)
-            decoded.INQ2 |= (feature[8] & 0x02) == 0x02;
+        if(decoded.Version >= 2 && feature.Length >= 12) decoded.INQ2 |= (feature[8] & 0x02) == 0x02;
 
         return decoded;
     }
 
     public static Feature_0002? Decode_0002(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0002)
-            return null;
+        if(number != 0x0002) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0002();
 
@@ -1286,27 +1272,22 @@ public static class Features
 
         decoded.Async |= (feature[4] & 0x01) == 0x01;
 
-        if(decoded.Version >= 1)
-            decoded.OCEvent |= (feature[4] & 0x02) == 0x02;
+        if(decoded.Version >= 1) decoded.OCEvent |= (feature[4] & 0x02) == 0x02;
 
         return decoded;
     }
 
     public static Feature_0003? Decode_0003(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0003)
-            return null;
+        if(number != 0x0003) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0003();
 
@@ -1319,8 +1300,7 @@ public static class Features
         decoded.PreventJumper        |= (feature[4] & 0x04) == 0x04;
         decoded.Lock                 |= (feature[4] & 0x01) == 0x01;
 
-        if(decoded.Version < 2)
-            return decoded;
+        if(decoded.Version < 2) return decoded;
 
         decoded.Load |= (feature[4] & 0x10) == 0x10;
         decoded.DBML |= (feature[4] & 0x02) == 0x02;
@@ -1330,19 +1310,15 @@ public static class Features
 
     public static Feature_0004? Decode_0004(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0004)
-            return null;
+        if(number != 0x0004) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0004();
 
@@ -1353,30 +1329,24 @@ public static class Features
         decoded.SPWP  |= (feature[4] & 0x02) == 0x02;
         decoded.SSWPP |= (feature[4] & 0x01) == 0x01;
 
-        if(decoded.Version >= 1)
-            decoded.WDCB |= (feature[4] & 0x04) == 0x04;
+        if(decoded.Version >= 1) decoded.WDCB |= (feature[4] & 0x04) == 0x04;
 
-        if(decoded.Version >= 2)
-            decoded.DWP |= (feature[4] & 0x08) == 0x08;
+        if(decoded.Version >= 2) decoded.DWP |= (feature[4] & 0x08) == 0x08;
 
         return decoded;
     }
 
     public static Feature_0010? Decode_0010(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 12)
-            return null;
+        if(feature.Length < 12) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0010)
-            return null;
+        if(number != 0x0010) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0010();
 
@@ -1395,19 +1365,15 @@ public static class Features
 
     public static Feature_001D? Decode_001D(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x001D)
-            return null;
+        if(number != 0x001D) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_001D();
 
@@ -1420,19 +1386,15 @@ public static class Features
 
     public static Feature_001E? Decode_001E(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x001E)
-            return null;
+        if(number != 0x001E) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_001E();
 
@@ -1446,27 +1408,22 @@ public static class Features
             decoded.CDText |= (feature[4] & 0x01) == 0x01;
         }
 
-        if(decoded.Version >= 2)
-            decoded.DAP |= (feature[4] & 0x80) == 0x80;
+        if(decoded.Version >= 2) decoded.DAP |= (feature[4] & 0x80) == 0x80;
 
         return decoded;
     }
 
     public static Feature_001F? Decode_001F(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x001F)
-            return null;
+        if(number != 0x001F) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_001F();
 
@@ -1481,27 +1438,22 @@ public static class Features
         }
 
         // TODO: Check this
-        if(decoded.Version >= 2 && feature.Length >= 8)
-            decoded.DualRW |= (feature[6] & 0x02) == 0x02;
+        if(decoded.Version >= 2 && feature.Length >= 8) decoded.DualRW |= (feature[6] & 0x02) == 0x02;
 
         return decoded;
     }
 
     public static Feature_0020? Decode_0020(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 16)
-            return null;
+        if(feature.Length < 16) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0020)
-            return null;
+        if(number != 0x0020) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0020();
 
@@ -1509,8 +1461,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version < 1)
-            return decoded;
+        if(decoded.Version < 1) return decoded;
 
         decoded.LastLBA = (uint)((feature[4] << 24) + (feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
@@ -1524,19 +1475,15 @@ public static class Features
 
     public static Feature_0021? Decode_0021(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0021)
-            return null;
+        if(number != 0x0021) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0021();
 
@@ -1550,12 +1497,10 @@ public static class Features
             decoded.BUF               |= (feature[6] & 0x01) == 0x01;
             decoded.LinkSizes         =  new byte[feature[7]];
 
-            if(feature.Length > feature[7] + 8)
-                Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
+            if(feature.Length > feature[7] + 8) Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
         }
 
-        if(decoded.Version < 3)
-            return decoded;
+        if(decoded.Version < 3) return decoded;
 
         decoded.TRIO |= (feature[6] & 0x04) == 0x04;
         decoded.ARSV |= (feature[6] & 0x02) == 0x02;
@@ -1565,19 +1510,15 @@ public static class Features
 
     public static Feature_0022? Decode_0022(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0022)
-            return null;
+        if(number != 0x0022) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0022();
 
@@ -1590,19 +1531,15 @@ public static class Features
 
     public static Feature_0023? Decode_0023(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0023)
-            return null;
+        if(number != 0x0023) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0023();
 
@@ -1619,27 +1556,22 @@ public static class Features
             decoded.RRM    |= (feature[8] & 0x01) == 0x01;
         }
 
-        if(decoded.Version >= 2 && feature.Length >= 12)
-            decoded.FRF |= (feature[4] & 0x80) == 0x80;
+        if(decoded.Version >= 2 && feature.Length >= 12) decoded.FRF |= (feature[4] & 0x80) == 0x80;
 
         return decoded;
     }
 
     public static Feature_0024? Decode_0024(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0024)
-            return null;
+        if(number != 0x0024) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0024();
 
@@ -1647,27 +1579,22 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 1 && feature.Length >= 8)
-            decoded.SSA |= (feature[4] & 0x80) == 0x80;
+        if(decoded.Version >= 1 && feature.Length >= 8) decoded.SSA |= (feature[4] & 0x80) == 0x80;
 
         return decoded;
     }
 
     public static Feature_0025? Decode_0025(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 12)
-            return null;
+        if(feature.Length < 12) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0025)
-            return null;
+        if(number != 0x0025) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0025();
 
@@ -1686,19 +1613,15 @@ public static class Features
 
     public static Feature_0026? Decode_0026(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0026)
-            return null;
+        if(number != 0x0026) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0026();
 
@@ -1711,19 +1634,15 @@ public static class Features
 
     public static Feature_0027? Decode_0027(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0027)
-            return null;
+        if(number != 0x0027) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0027();
 
@@ -1736,19 +1655,15 @@ public static class Features
 
     public static Feature_0028? Decode_0028(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0028)
-            return null;
+        if(number != 0x0028) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0028();
 
@@ -1758,8 +1673,7 @@ public static class Features
 
         decoded.Write |= (feature[4] & 0x01) == 0x01;
 
-        if(decoded.Version < 1)
-            return decoded;
+        if(decoded.Version < 1) return decoded;
 
         decoded.DVDPWrite |= (feature[4] & 0x04) == 0x04;
         decoded.DVDPRead  |= (feature[4] & 0x02) == 0x02;
@@ -1769,19 +1683,15 @@ public static class Features
 
     public static Feature_0029? Decode_0029(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0029)
-            return null;
+        if(number != 0x0029) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0029();
 
@@ -1798,19 +1708,15 @@ public static class Features
 
     public static Feature_002A? Decode_002A(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002A)
-            return null;
+        if(number != 0x002A) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002A();
 
@@ -1821,27 +1727,22 @@ public static class Features
         decoded.Write     |= (feature[4] & 0x01) == 0x01;
         decoded.CloseOnly |= (feature[5] & 0x01) == 0x01;
 
-        if(decoded.Version >= 1)
-            decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
+        if(decoded.Version >= 1) decoded.QuickStart |= (feature[5] & 0x02) == 0x02;
 
         return decoded;
     }
 
     public static Feature_002B? Decode_002B(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002B)
-            return null;
+        if(number != 0x002B) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002B();
 
@@ -1856,19 +1757,15 @@ public static class Features
 
     public static Feature_002C? Decode_002C(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002C)
-            return null;
+        if(number != 0x002C) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002C();
 
@@ -1886,19 +1783,15 @@ public static class Features
 
     public static Feature_002D? Decode_002D(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002D)
-            return null;
+        if(number != 0x002D) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002D();
 
@@ -1911,8 +1804,7 @@ public static class Features
         decoded.RWSubchannel      |= (feature[4] & 0x01) == 0x01;
         decoded.DataTypeSupported =  (ushort)((feature[6] << 8) + feature[7]);
 
-        if(decoded.Version < 2)
-            return decoded;
+        if(decoded.Version < 2) return decoded;
 
         decoded.BUF    |= (feature[4] & 0x40) == 0x40;
         decoded.RWRaw  |= (feature[4] & 0x10) == 0x10;
@@ -1923,19 +1815,15 @@ public static class Features
 
     public static Feature_002E? Decode_002E(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002E)
-            return null;
+        if(number != 0x002E) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002E();
 
@@ -1951,27 +1839,22 @@ public static class Features
         decoded.RW          |= (feature[4] & 0x01) == 0x01;
         decoded.MaxCueSheet =  (uint)((feature[5] << 16) + (feature[6] << 8) + feature[7]);
 
-        if(decoded.Version >= 1)
-            decoded.BUF |= (feature[4] & 0x40) == 0x40;
+        if(decoded.Version >= 1) decoded.BUF |= (feature[4] & 0x40) == 0x40;
 
         return decoded;
     }
 
     public static Feature_002F? Decode_002F(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x002F)
-            return null;
+        if(number != 0x002F) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_002F();
 
@@ -1982,30 +1865,24 @@ public static class Features
         decoded.BUF       |= (feature[4] & 0x40) == 0x40;
         decoded.TestWrite |= (feature[4] & 0x04) == 0x04;
 
-        if(decoded.Version >= 1)
-            decoded.DVDRW |= (feature[4] & 0x02) == 0x02;
+        if(decoded.Version >= 1) decoded.DVDRW |= (feature[4] & 0x02) == 0x02;
 
-        if(decoded.Version >= 2)
-            decoded.RDL |= (feature[4] & 0x08) == 0x08;
+        if(decoded.Version >= 2) decoded.RDL |= (feature[4] & 0x08) == 0x08;
 
         return decoded;
     }
 
     public static Feature_0030? Decode_0030(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0030)
-            return null;
+        if(number != 0x0030) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0030();
 
@@ -2018,19 +1895,15 @@ public static class Features
 
     public static Feature_0031? Decode_0031(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0031)
-            return null;
+        if(number != 0x0031) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0031();
 
@@ -2045,19 +1918,15 @@ public static class Features
 
     public static Feature_0032? Decode_0032(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0032)
-            return null;
+        if(number != 0x0032) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0032();
 
@@ -2073,19 +1942,15 @@ public static class Features
 
     public static Feature_0033? Decode_0033(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0033)
-            return null;
+        if(number != 0x0033) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0033();
 
@@ -2093,8 +1958,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(feature[7] <= 0 || feature.Length <= feature[7] + 8)
-            return decoded;
+        if(feature[7] <= 0 || feature.Length <= feature[7] + 8) return decoded;
 
         decoded.LinkSizes = new byte[feature[7]];
         Array.Copy(feature, 8, decoded.LinkSizes, 0, feature[7]);
@@ -2104,19 +1968,15 @@ public static class Features
 
     public static Feature_0035? Decode_0035(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0035)
-            return null;
+        if(number != 0x0035) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0035();
 
@@ -2129,19 +1989,15 @@ public static class Features
 
     public static Feature_0037? Decode_0037(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0037)
-            return null;
+        if(number != 0x0037) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0037();
 
@@ -2156,19 +2012,15 @@ public static class Features
 
     public static Feature_0038? Decode_0038(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0038)
-            return null;
+        if(number != 0x0038) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0038();
 
@@ -2181,19 +2033,15 @@ public static class Features
 
     public static Feature_003A? Decode_003A(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x003A)
-            return null;
+        if(number != 0x003A) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_003A();
 
@@ -2210,19 +2058,15 @@ public static class Features
 
     public static Feature_003B? Decode_003B(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x003B)
-            return null;
+        if(number != 0x003B) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_003B();
 
@@ -2237,19 +2081,15 @@ public static class Features
 
     public static Feature_0040? Decode_0040(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 32)
-            return null;
+        if(feature.Length < 32) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0040)
-            return null;
+        if(number != 0x0040) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0040();
 
@@ -2261,8 +2101,7 @@ public static class Features
         decoded.OldR   |= (feature[17] & 0x01) == 0x01;
         decoded.OldROM |= (feature[25] & 0x01) == 0x01;
 
-        if(decoded.Version < 1)
-            return decoded;
+        if(decoded.Version < 1) return decoded;
 
         decoded.BCA |= (feature[4]  & 0x01) == 0x01;
         decoded.RE2 |= (feature[9]  & 0x04) == 0x04;
@@ -2275,19 +2114,15 @@ public static class Features
 
     public static Feature_0041? Decode_0041(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 24)
-            return null;
+        if(feature.Length < 24) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0041)
-            return null;
+        if(number != 0x0041) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0041();
 
@@ -2299,8 +2134,7 @@ public static class Features
         decoded.OldRE |= (feature[9]  & 0x01) == 0x01;
         decoded.OldR  |= (feature[17] & 0x01) == 0x01;
 
-        if(decoded.Version < 1)
-            return decoded;
+        if(decoded.Version < 1) return decoded;
 
         decoded.RE2 |= (feature[9]  & 0x04) == 0x04;
         decoded.RE1 |= (feature[9]  & 0x02) == 0x02;
@@ -2311,19 +2145,15 @@ public static class Features
 
     public static Feature_0042? Decode_0042(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0042)
-            return null;
+        if(number != 0x0042) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0042();
 
@@ -2336,19 +2166,15 @@ public static class Features
 
     public static Feature_0050? Decode_0050(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0050)
-            return null;
+        if(number != 0x0050) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0050();
 
@@ -2364,19 +2190,15 @@ public static class Features
 
     public static Feature_0051? Decode_0051(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0051)
-            return null;
+        if(number != 0x0051) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0051();
 
@@ -2392,19 +2214,15 @@ public static class Features
 
     public static Feature_0080? Decode_0080(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0080)
-            return null;
+        if(number != 0x0080) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0080();
 
@@ -2419,19 +2237,15 @@ public static class Features
 
     public static Feature_0100? Decode_0100(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0100)
-            return null;
+        if(number != 0x0100) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0100();
 
@@ -2444,19 +2258,15 @@ public static class Features
 
     public static Feature_0101? Decode_0101(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0101)
-            return null;
+        if(number != 0x0101) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0101();
 
@@ -2471,19 +2281,15 @@ public static class Features
 
     public static Feature_0102? Decode_0102(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0102)
-            return null;
+        if(number != 0x0102) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0102();
 
@@ -2500,19 +2306,15 @@ public static class Features
 
     public static Feature_0103? Decode_0103(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0103)
-            return null;
+        if(number != 0x0103) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0103();
 
@@ -2530,19 +2332,15 @@ public static class Features
 
     public static Feature_0104? Decode_0104(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0104)
-            return null;
+        if(number != 0x0104) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0104();
 
@@ -2550,27 +2348,22 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version >= 1 && feature.Length >= 8)
-            decoded.M5 |= (feature[4] & 0x01) == 0x01;
+        if(decoded.Version >= 1 && feature.Length >= 8) decoded.M5 |= (feature[4] & 0x01) == 0x01;
 
         return decoded;
     }
 
     public static Feature_0105? Decode_0105(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0105)
-            return null;
+        if(number != 0x0105) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0105();
 
@@ -2578,8 +2371,7 @@ public static class Features
         decoded.Persistent |= (feature[2] & 0x02) == 0x02;
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
-        if(decoded.Version < 1 || feature.Length < 8)
-            return decoded;
+        if(decoded.Version < 1 || feature.Length < 8) return decoded;
 
         decoded.Group3     |= (feature[4] & 0x01) == 0x01;
         decoded.UnitLength =  (ushort)((feature[6] << 8) + feature[7]);
@@ -2589,19 +2381,15 @@ public static class Features
 
     public static Feature_0106? Decode_0106(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0106)
-            return null;
+        if(number != 0x0106) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0106();
 
@@ -2616,19 +2404,15 @@ public static class Features
 
     public static Feature_0107? Decode_0107(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0107)
-            return null;
+        if(number != 0x0107) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0107();
 
@@ -2645,8 +2429,7 @@ public static class Features
             decoded.SW   |= (feature[4] & 0x01) == 0x01;
         }
 
-        if(decoded.Version < 5 || feature.Length < 8)
-            return decoded;
+        if(decoded.Version < 5 || feature.Length < 8) return decoded;
 
         decoded.SMP  |= (feature[4] & 0x20) == 0x20;
         decoded.RBCB |= (feature[4] & 0x10) == 0x10;
@@ -2656,19 +2439,15 @@ public static class Features
 
     public static Feature_0108? Decode_0108(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0108)
-            return null;
+        if(number != 0x0108) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0108();
 
@@ -2685,19 +2464,15 @@ public static class Features
 
     public static Feature_0109? Decode_0109(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0109)
-            return null;
+        if(number != 0x0109) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0109();
 
@@ -2710,19 +2485,15 @@ public static class Features
 
     public static Feature_010A? Decode_010A(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x010A)
-            return null;
+        if(number != 0x010A) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_010A();
 
@@ -2745,19 +2516,15 @@ public static class Features
 
     public static Feature_010B? Decode_010B(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x010B)
-            return null;
+        if(number != 0x010B) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_010B();
 
@@ -2772,19 +2539,15 @@ public static class Features
 
     public static Feature_010C? Decode_010C(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 20)
-            return null;
+        if(feature.Length < 20) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x010C)
-            return null;
+        if(number != 0x010C) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_010C();
 
@@ -2805,19 +2568,15 @@ public static class Features
 
     public static Feature_010D? Decode_010D(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x010D)
-            return null;
+        if(number != 0x010D) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_010D();
 
@@ -2830,8 +2589,7 @@ public static class Features
         decoded.AGIDs           =  (byte)(feature[6] & 0x0F);
         decoded.AACSVersion     =  feature[7];
 
-        if(decoded.Version < 2)
-            return decoded;
+        if(decoded.Version < 2) return decoded;
 
         decoded.RDC |= (feature[4] & 0x10) == 0x10;
         decoded.RMC |= (feature[4] & 0x08) == 0x08;
@@ -2843,19 +2601,15 @@ public static class Features
 
     public static Feature_010E? Decode_010E(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x010E)
-            return null;
+        if(number != 0x010E) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_010E();
 
@@ -2870,19 +2624,15 @@ public static class Features
 
     public static Feature_0110? Decode_0110(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 8)
-            return null;
+        if(feature.Length < 8) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0110)
-            return null;
+        if(number != 0x0110) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0110();
 
@@ -2895,19 +2645,15 @@ public static class Features
 
     public static Feature_0113? Decode_0113(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 4)
-            return null;
+        if(feature.Length < 4) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0113)
-            return null;
+        if(number != 0x0113) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0113();
 
@@ -2920,19 +2666,15 @@ public static class Features
 
     public static Feature_0142? Decode_0142(byte[] feature)
     {
-        if(feature == null)
-            return null;
+        if(feature == null) return null;
 
-        if(feature.Length < 6)
-            return null;
+        if(feature.Length < 6) return null;
 
         var number = (ushort)((feature[0] << 8) + feature[1]);
 
-        if(number != 0x0142)
-            return null;
+        if(number != 0x0142) return null;
 
-        if(feature[3] + 4 != feature.Length)
-            return null;
+        if(feature[3] + 4 != feature.Length) return null;
 
         var decoded = new Feature_0142();
 
@@ -2945,8 +2687,7 @@ public static class Features
         decoded.ME       |= (feature[4] & 0x01) == 0x01;
         decoded.Profiles =  new ushort[feature[5]];
 
-        if(feature[5] * 2 + 6 != feature.Length)
-            return decoded;
+        if(feature[5] * 2 + 6 != feature.Length) return decoded;
 
         for(var i = 0; i < feature[5]; i++)
             decoded.Profiles[i] = (ushort)((feature[0 + 6 + 2 * i] << 8) + feature[1 + 6 + 2 * i]);
@@ -2956,16 +2697,14 @@ public static class Features
 
     public static string Prettify_0000(Feature_0000? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0000 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.MMC_Supported_Profiles);
 
-        if(ftr.Profiles == null)
-            return sb.ToString();
+        if(ftr.Profiles == null) return sb.ToString();
 
         foreach(Profile prof in ftr.Profiles)
         {
@@ -3144,8 +2883,7 @@ public static class Features
 
     public static string Prettify_0001(Feature_0001? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0001 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3197,20 +2935,19 @@ public static class Features
                 break;
             default:
                 sb.AppendFormat(Localization.Drive_uses_an_unknown_interface_with_code_0,
-                                (uint)ftr.PhysicalInterfaceStandard).
-                   AppendLine();
+                                (uint)ftr.PhysicalInterfaceStandard)
+                  .AppendLine();
 
                 break;
         }
 
-        if(ftr.DBE)
-            sb.AppendLine("\t" + Localization.Drive_supports_Device_Busy_events);
+        if(ftr.DBE) sb.AppendLine("\t" + Localization.Drive_supports_Device_Busy_events);
 
         if(ftr.INQ2)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Drive_supports_EVPD_Page_Code_and_16_bit_Allocation_Length_as_described_in_SPC_3);
+                          Localization
+                             .Drive_supports_EVPD_Page_Code_and_16_bit_Allocation_Length_as_described_in_SPC_3);
         }
 
         return sb.ToString();
@@ -3218,8 +2955,7 @@ public static class Features
 
     public static string Prettify_0002(Feature_0002? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0002 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3238,8 +2974,7 @@ public static class Features
 
     public static string Prettify_0003(Feature_0003? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0003 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3262,8 +2997,8 @@ public static class Features
                 break;
             case 4:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Features_Prettify_0003_Drive_is_a_changer_with_individually_changeable_discs);
+                              Localization
+                                 .Features_Prettify_0003_Drive_is_a_changer_with_individually_changeable_discs);
 
                 break;
             case 5:
@@ -3272,29 +3007,25 @@ public static class Features
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Features_Prettify_0003_Drive_uses_unknown_loading_mechanism_type_0,
-                                ftr.LoadingMechanismType).
-                   AppendLine();
+                                ftr.LoadingMechanismType)
+                  .AppendLine();
 
                 break;
         }
 
-        if(ftr.Lock)
-            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_lock_media);
+        if(ftr.Lock) sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_lock_media);
 
-        if(ftr.PreventJumper)
-            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_power_ups_locked);
+        if(ftr.PreventJumper) sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_power_ups_locked);
 
-        if(ftr.Eject)
-            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_eject_media);
+        if(ftr.Eject) sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_eject_media);
 
-        if(ftr.Load)
-            sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_load_media);
+        if(ftr.Load) sb.AppendLine("\t" + Localization.Features_Prettify_0003_Drive_can_load_media);
 
         if(ftr.DBML)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Features_Prettify_0003_Drive_reports_Device_Busy_Class_events_during_medium_loading_unloading);
+                          Localization
+                             .Features_Prettify_0003_Drive_reports_Device_Busy_Class_events_during_medium_loading_unloading);
         }
 
         return sb.ToString();
@@ -3302,8 +3033,7 @@ public static class Features
 
     public static string Prettify_0004(Feature_0004? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0004 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3316,11 +3046,9 @@ public static class Features
                           Localization.Drive_supports_reading_writing_the_Disc_Write_Protect_PAC_on_BD_R_RE_media);
         }
 
-        if(ftr.WDCB)
-            sb.AppendLine("\t" + Localization.Drive_supports_writing_the_Write_Inhibit_DCB_on_DVD_RW_media);
+        if(ftr.WDCB) sb.AppendLine("\t" + Localization.Drive_supports_writing_the_Write_Inhibit_DCB_on_DVD_RW_media);
 
-        if(ftr.SPWP)
-            sb.AppendLine("\t" + Localization.Drive_supports_set_release_of_PWP_status);
+        if(ftr.SPWP) sb.AppendLine("\t" + Localization.Drive_supports_set_release_of_PWP_status);
 
         if(ftr.SSWPP)
             sb.AppendLine("\t" + Localization.Drive_supports_the_SWPP_bit_of_the_Timeout_and_Protect_mode_page);
@@ -3330,21 +3058,18 @@ public static class Features
 
     public static string Prettify_0010(Feature_0010? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0010 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.Append(Localization.MMC_Random_Readable);
 
-        if(ftr.Current)
-            sb.Append(Localization.current);
+        if(ftr.Current) sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
-        if(ftr.PP)
-            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
+        if(ftr.PP) sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
             sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
@@ -3363,76 +3088,64 @@ public static class Features
 
     public static string Prettify_001E(Feature_001E? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_001E ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.Append(Localization.MMC_CD_Read);
 
-        if(ftr.Current)
-            sb.Append(Localization.current);
+        if(ftr.Current) sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
         if(ftr.DAP)
             sb.AppendLine("\t" + Localization.Drive_supports_the_DAP_bit_in_the_READ_CD_and_READ_CD_MSF_commands);
 
-        if(ftr.C2)
-            sb.AppendLine("\t" + Localization.Drive_supports_C2_Error_Pointers);
+        if(ftr.C2) sb.AppendLine("\t" + Localization.Drive_supports_C2_Error_Pointers);
 
-        if(ftr.CDText)
-            sb.AppendLine("\t" + Localization.Drive_can_return_CD_Text_from_Lead_In);
+        if(ftr.CDText) sb.AppendLine("\t" + Localization.Drive_can_return_CD_Text_from_Lead_In);
 
         return sb.ToString();
     }
 
     public static string Prettify_001F(Feature_001F? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_001F ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.Append(Localization.MMC_DVD_Read);
 
-        if(ftr.Current)
-            sb.Append(Localization.current);
+        if(ftr.Current) sb.Append(Localization.current);
 
         sb.AppendLine(":");
         sb.AppendLine("\t" + Localization.Drive_can_read_DVD_media);
 
-        if(ftr.DualR)
-            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_R_DL_from_all_recording_modes);
+        if(ftr.DualR) sb.AppendLine("\t" + Localization.Drive_can_read_DVD_R_DL_from_all_recording_modes);
 
-        if(ftr.DualRW)
-            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_RW_DL_from_all_recording_modes);
+        if(ftr.DualRW) sb.AppendLine("\t" + Localization.Drive_can_read_DVD_RW_DL_from_all_recording_modes);
 
-        if(ftr.MULTI110)
-            sb.AppendLine("\t" + Localization.Drive_conforms_to_DVD_Multi_Drive_Read_only_Specifications);
+        if(ftr.MULTI110) sb.AppendLine("\t" + Localization.Drive_conforms_to_DVD_Multi_Drive_Read_only_Specifications);
 
         return sb.ToString();
     }
 
     public static string Prettify_0020(Feature_0020? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0020 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.Append(Localization.MMC_Random_Writable);
 
-        if(ftr.Current)
-            sb.Append(Localization.current);
+        if(ftr.Current) sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
-        if(ftr.PP)
-            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
+        if(ftr.PP) sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
             sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
@@ -3448,8 +3161,7 @@ public static class Features
 
     public static string Prettify_0021(Feature_0021? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0021 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3460,65 +3172,47 @@ public static class Features
         {
             sb.Append("\t" + Localization.Drive_supports_data_block_types);
 
-            if((ftr.DataTypeSupported & 0x0001) == 0x0001)
-                sb.Append(" 0");
+            if((ftr.DataTypeSupported & 0x0001) == 0x0001) sb.Append(" 0");
 
-            if((ftr.DataTypeSupported & 0x0002) == 0x0002)
-                sb.Append(" 1");
+            if((ftr.DataTypeSupported & 0x0002) == 0x0002) sb.Append(" 1");
 
-            if((ftr.DataTypeSupported & 0x0004) == 0x0004)
-                sb.Append(" 2");
+            if((ftr.DataTypeSupported & 0x0004) == 0x0004) sb.Append(" 2");
 
-            if((ftr.DataTypeSupported & 0x0008) == 0x0008)
-                sb.Append(" 3");
+            if((ftr.DataTypeSupported & 0x0008) == 0x0008) sb.Append(" 3");
 
-            if((ftr.DataTypeSupported & 0x0010) == 0x0010)
-                sb.Append(" 4");
+            if((ftr.DataTypeSupported & 0x0010) == 0x0010) sb.Append(" 4");
 
-            if((ftr.DataTypeSupported & 0x0020) == 0x0020)
-                sb.Append(" 5");
+            if((ftr.DataTypeSupported & 0x0020) == 0x0020) sb.Append(" 5");
 
-            if((ftr.DataTypeSupported & 0x0040) == 0x0040)
-                sb.Append(" 6");
+            if((ftr.DataTypeSupported & 0x0040) == 0x0040) sb.Append(" 6");
 
-            if((ftr.DataTypeSupported & 0x0080) == 0x0080)
-                sb.Append(" 7");
+            if((ftr.DataTypeSupported & 0x0080) == 0x0080) sb.Append(" 7");
 
-            if((ftr.DataTypeSupported & 0x0100) == 0x0100)
-                sb.Append(" 8");
+            if((ftr.DataTypeSupported & 0x0100) == 0x0100) sb.Append(" 8");
 
-            if((ftr.DataTypeSupported & 0x0200) == 0x0200)
-                sb.Append(" 9");
+            if((ftr.DataTypeSupported & 0x0200) == 0x0200) sb.Append(" 9");
 
-            if((ftr.DataTypeSupported & 0x0400) == 0x0400)
-                sb.Append(" 10");
+            if((ftr.DataTypeSupported & 0x0400) == 0x0400) sb.Append(" 10");
 
-            if((ftr.DataTypeSupported & 0x0800) == 0x0800)
-                sb.Append(" 11");
+            if((ftr.DataTypeSupported & 0x0800) == 0x0800) sb.Append(" 11");
 
-            if((ftr.DataTypeSupported & 0x1000) == 0x1000)
-                sb.Append(" 12");
+            if((ftr.DataTypeSupported & 0x1000) == 0x1000) sb.Append(" 12");
 
-            if((ftr.DataTypeSupported & 0x2000) == 0x2000)
-                sb.Append(" 13");
+            if((ftr.DataTypeSupported & 0x2000) == 0x2000) sb.Append(" 13");
 
-            if((ftr.DataTypeSupported & 0x4000) == 0x4000)
-                sb.Append(" 14");
+            if((ftr.DataTypeSupported & 0x4000) == 0x4000) sb.Append(" 14");
 
-            if((ftr.DataTypeSupported & 0x8000) == 0x8000)
-                sb.Append(" 15");
+            if((ftr.DataTypeSupported & 0x8000) == 0x8000) sb.Append(" 15");
 
             sb.AppendLine();
         }
 
-        if(ftr.TRIO)
-            sb.AppendLine("\t" + Localization.Drive_claims_support_to_report_Track_Resources_Information);
+        if(ftr.TRIO) sb.AppendLine("\t" + Localization.Drive_claims_support_to_report_Track_Resources_Information);
 
         if(ftr.ARSV)
             sb.AppendLine("\t" + Localization.Drive_supports_address_mode_reservation_on_the_RESERVE_TRACK_command);
 
-        if(ftr.BUF)
-            sb.AppendLine("\t" + Localization.Drive_is_capable_of_zero_loss_linking);
+        if(ftr.BUF) sb.AppendLine("\t" + Localization.Drive_is_capable_of_zero_loss_linking);
 
         return sb.ToString();
     }
@@ -3528,8 +3222,7 @@ public static class Features
 
     public static string Prettify_0023(Feature_0023? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0023 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3537,31 +3230,24 @@ public static class Features
         sb.AppendLine(Localization.MMC_Formattable);
         sb.AppendLine("\t" + Localization.Drive_can_format_media_into_logical_blocks);
 
-        if(ftr.RENoSA)
-            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_with_no_spares_allocated);
+        if(ftr.RENoSA) sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_with_no_spares_allocated);
 
-        if(ftr.Expand)
-            sb.AppendLine("\t" + Localization.Drive_can_expand_the_spare_area_on_a_formatted_BD_RE_disc);
+        if(ftr.Expand) sb.AppendLine("\t" + Localization.Drive_can_expand_the_spare_area_on_a_formatted_BD_RE_disc);
 
-        if(ftr.QCert)
-            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_quick_certification);
+        if(ftr.QCert) sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_quick_certification);
 
-        if(ftr.Cert)
-            sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_full_certification);
+        if(ftr.Cert) sb.AppendLine("\t" + Localization.Drive_can_format_BD_RE_discs_with_full_certification);
 
-        if(ftr.FRF)
-            sb.AppendLine("\t" + Localization.Drive_can_fast_re_format_BD_RE_discs);
+        if(ftr.FRF) sb.AppendLine("\t" + Localization.Drive_can_fast_re_format_BD_RE_discs);
 
-        if(ftr.RRM)
-            sb.AppendLine("\t" + Localization.Drive_can_format_BD_R_discs_with_RRM_format);
+        if(ftr.RRM) sb.AppendLine("\t" + Localization.Drive_can_format_BD_R_discs_with_RRM_format);
 
         return sb.ToString();
     }
 
     public static string Prettify_0024(Feature_0024? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0024 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3569,29 +3255,25 @@ public static class Features
         sb.AppendLine(Localization.MMC_Hardware_Defect_Management);
         sb.AppendLine("\t" + Localization.Drive_shall_be_able_to_provide_a_defect_free_contiguous_address_space);
 
-        if(ftr.SSA)
-            sb.AppendLine("\t" + Localization.Drive_can_return_Spare_Area_Information);
+        if(ftr.SSA) sb.AppendLine("\t" + Localization.Drive_can_return_Spare_Area_Information);
 
         return sb.ToString();
     }
 
     public static string Prettify_0025(Feature_0025? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0025 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.Append(Localization.MMC_Write_Once);
 
-        if(ftr.Current)
-            sb.Append(Localization.current);
+        if(ftr.Current) sb.Append(Localization.current);
 
         sb.AppendLine(":");
 
-        if(ftr.PP)
-            sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
+        if(ftr.PP) sb.AppendLine("\t" + Localization.Drive_shall_report_Read_Write_Error_Recovery_mode_page);
 
         if(ftr.LogicalBlockSize > 0)
             sb.AppendFormat("\t" + Localization._0_bytes_per_logical_block, ftr.LogicalBlockSize).AppendLine();
@@ -3609,8 +3291,7 @@ public static class Features
 
     public static string Prettify_0027(Feature_0027? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0027 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3627,8 +3308,7 @@ public static class Features
 
     public static string Prettify_0028(Feature_0028? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0028 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3670,8 +3350,7 @@ public static class Features
 
     public static string Prettify_0029(Feature_0029? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0029 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3685,16 +3364,14 @@ public static class Features
         if(ftr.DBICacheZones > 0)
             sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_cache_zones, ftr.DBICacheZones).AppendLine();
 
-        if(ftr.Entries > 0)
-            sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_entries, ftr.Entries).AppendLine();
+        if(ftr.Entries > 0) sb.AppendFormat("\t" + Localization.Drive_has_0_DBI_entries, ftr.Entries).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_002A(Feature_002A? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002A ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3712,8 +3389,7 @@ public static class Features
                               ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
                               : "\t" + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
-            if(ftr.QuickStart)
-                sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
+            if(ftr.QuickStart) sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
         }
         else
         {
@@ -3730,8 +3406,7 @@ public static class Features
 
     public static string Prettify_002B(Feature_002B? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002B ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3760,8 +3435,7 @@ public static class Features
 
     public static string Prettify_002C(Feature_002C? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002C ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3769,8 +3443,7 @@ public static class Features
         sb.Append(Localization.MMC_Rigid_Restricted_Overwrite);
         sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
-        if(ftr.Blank)
-            sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
+        if(ftr.Blank) sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
 
         if(ftr.Intermediate)
         {
@@ -3778,19 +3451,16 @@ public static class Features
                           Localization.Drive_supports_writing_on_an_intermediate_state_session_and_quick_formatting);
         }
 
-        if(ftr.DSDR)
-            sb.AppendLine("\t" + Localization.Drive_can_read_Defect_Status_data_recorded_on_the_medium);
+        if(ftr.DSDR) sb.AppendLine("\t" + Localization.Drive_can_read_Defect_Status_data_recorded_on_the_medium);
 
-        if(ftr.DSDG)
-            sb.AppendLine("\t" + Localization.Drive_can_generate_Defect_Status_data_during_formatting);
+        if(ftr.DSDG) sb.AppendLine("\t" + Localization.Drive_can_generate_Defect_Status_data_during_formatting);
 
         return sb.ToString();
     }
 
     public static string Prettify_002D(Feature_002D? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002D ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3801,74 +3471,52 @@ public static class Features
         {
             sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
 
-            if(ftr.RWRaw)
-                sb.AppendLine("\t" + Localization.Drive_accepts_RAW_R_W_subchannel_data);
+            if(ftr.RWRaw) sb.AppendLine("\t" + Localization.Drive_accepts_RAW_R_W_subchannel_data);
 
-            if(ftr.RWPack)
-                sb.AppendLine("\t" + Localization.Drive_accepts_Packed_R_W_subchannel_data);
+            if(ftr.RWPack) sb.AppendLine("\t" + Localization.Drive_accepts_Packed_R_W_subchannel_data);
         }
 
-        if(ftr.CDRW)
-            sb.AppendLine("\t" + Localization.Drive_can_overwrite_a_TAO_track_with_another_in_CD_RWs);
+        if(ftr.CDRW) sb.AppendLine("\t" + Localization.Drive_can_overwrite_a_TAO_track_with_another_in_CD_RWs);
 
-        if(ftr.TestWrite)
-            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
+        if(ftr.TestWrite) sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
-        if(ftr.BUF)
-            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
+        if(ftr.BUF) sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
-        if(ftr.DataTypeSupported <= 0)
-            return sb.ToString();
+        if(ftr.DataTypeSupported <= 0) return sb.ToString();
 
         sb.Append("\t" + Localization.Drive_supports_data_block_types);
 
-        if((ftr.DataTypeSupported & 0x0001) == 0x0001)
-            sb.Append(" 0");
+        if((ftr.DataTypeSupported & 0x0001) == 0x0001) sb.Append(" 0");
 
-        if((ftr.DataTypeSupported & 0x0002) == 0x0002)
-            sb.Append(" 1");
+        if((ftr.DataTypeSupported & 0x0002) == 0x0002) sb.Append(" 1");
 
-        if((ftr.DataTypeSupported & 0x0004) == 0x0004)
-            sb.Append(" 2");
+        if((ftr.DataTypeSupported & 0x0004) == 0x0004) sb.Append(" 2");
 
-        if((ftr.DataTypeSupported & 0x0008) == 0x0008)
-            sb.Append(" 3");
+        if((ftr.DataTypeSupported & 0x0008) == 0x0008) sb.Append(" 3");
 
-        if((ftr.DataTypeSupported & 0x0010) == 0x0010)
-            sb.Append(" 4");
+        if((ftr.DataTypeSupported & 0x0010) == 0x0010) sb.Append(" 4");
 
-        if((ftr.DataTypeSupported & 0x0020) == 0x0020)
-            sb.Append(" 5");
+        if((ftr.DataTypeSupported & 0x0020) == 0x0020) sb.Append(" 5");
 
-        if((ftr.DataTypeSupported & 0x0040) == 0x0040)
-            sb.Append(" 6");
+        if((ftr.DataTypeSupported & 0x0040) == 0x0040) sb.Append(" 6");
 
-        if((ftr.DataTypeSupported & 0x0080) == 0x0080)
-            sb.Append(" 7");
+        if((ftr.DataTypeSupported & 0x0080) == 0x0080) sb.Append(" 7");
 
-        if((ftr.DataTypeSupported & 0x0100) == 0x0100)
-            sb.Append(" 8");
+        if((ftr.DataTypeSupported & 0x0100) == 0x0100) sb.Append(" 8");
 
-        if((ftr.DataTypeSupported & 0x0200) == 0x0200)
-            sb.Append(" 9");
+        if((ftr.DataTypeSupported & 0x0200) == 0x0200) sb.Append(" 9");
 
-        if((ftr.DataTypeSupported & 0x0400) == 0x0400)
-            sb.Append(" 10");
+        if((ftr.DataTypeSupported & 0x0400) == 0x0400) sb.Append(" 10");
 
-        if((ftr.DataTypeSupported & 0x0800) == 0x0800)
-            sb.Append(" 11");
+        if((ftr.DataTypeSupported & 0x0800) == 0x0800) sb.Append(" 11");
 
-        if((ftr.DataTypeSupported & 0x1000) == 0x1000)
-            sb.Append(" 12");
+        if((ftr.DataTypeSupported & 0x1000) == 0x1000) sb.Append(" 12");
 
-        if((ftr.DataTypeSupported & 0x2000) == 0x2000)
-            sb.Append(" 13");
+        if((ftr.DataTypeSupported & 0x2000) == 0x2000) sb.Append(" 13");
 
-        if((ftr.DataTypeSupported & 0x4000) == 0x4000)
-            sb.Append(" 14");
+        if((ftr.DataTypeSupported & 0x4000) == 0x4000) sb.Append(" 14");
 
-        if((ftr.DataTypeSupported & 0x8000) == 0x8000)
-            sb.Append(" 15");
+        if((ftr.DataTypeSupported & 0x8000) == 0x8000) sb.Append(" 15");
 
         sb.AppendLine();
 
@@ -3877,8 +3525,7 @@ public static class Features
 
     public static string Prettify_002E(Feature_002E? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002E ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3902,23 +3549,19 @@ public static class Features
         if(ftr is { RAW: true, RAWMS: true })
             sb.AppendLine("\t" + Localization.Drive_can_write_multi_session_CDs_in_raw_mode);
 
-        if(ftr.RW)
-            sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
+        if(ftr.RW) sb.AppendLine("\t" + Localization.Drive_can_write_user_provided_data_in_the_R_W_subchannels);
 
-        if(ftr.CDRW)
-            sb.AppendLine("\t" + Localization.Drive_can_write_CD_RW);
+        if(ftr.CDRW) sb.AppendLine("\t" + Localization.Drive_can_write_CD_RW);
 
-        if(ftr.TestWrite)
-            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
+        if(ftr.TestWrite) sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
-        if(ftr.BUF)
-            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
+        if(ftr.BUF) sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         if(ftr.MaxCueSheet > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_supports_a_maximum_of_0_bytes_in_a_single_cue_sheet,
-                            ftr.MaxCueSheet).
-               AppendLine();
+                            ftr.MaxCueSheet)
+              .AppendLine();
         }
 
         return sb.ToString();
@@ -3926,8 +3569,7 @@ public static class Features
 
     public static string Prettify_002F(Feature_002F? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_002F ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -3941,11 +3583,9 @@ public static class Features
         else
             sb.AppendLine(Localization.Drive_supports_writing_DVD_R);
 
-        if(ftr.TestWrite)
-            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
+        if(ftr.TestWrite) sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
-        if(ftr.BUF)
-            sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
+        if(ftr.BUF) sb.AppendLine("\t" + Localization.Drive_supports_zero_loss_linking);
 
         return sb.ToString();
     }
@@ -3955,51 +3595,44 @@ public static class Features
 
     public static string Prettify_0031(Feature_0031? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0031 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_supports_writing_DDCD_R);
 
-        if(ftr.TestWrite)
-            sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
+        if(ftr.TestWrite) sb.AppendLine("\t" + Localization.Drive_can_do_a_test_writing);
 
         return sb.ToString();
     }
 
     public static string Prettify_0032(Feature_0032? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0032 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_supports_writing_DDCD_RW);
 
-        if(ftr.Blank)
-            sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
+        if(ftr.Blank) sb.AppendLine("\t" + Localization.Drive_supports_the_BLANK_command);
 
-        if(ftr.Intermediate)
-            sb.AppendLine("\t" + Localization.Drive_supports_quick_formatting);
+        if(ftr.Intermediate) sb.AppendLine("\t" + Localization.Drive_supports_quick_formatting);
 
         return sb.ToString();
     }
 
     public static string Prettify_0033(Feature_0033? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0033 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.MMC_Layer_Jump_Recording);
 
-        if(ftr.LinkSizes == null)
-            return sb.ToString();
+        if(ftr.LinkSizes == null) return sb.ToString();
 
         foreach(byte link in ftr.LinkSizes)
             sb.AppendFormat("\t" + Localization.Current_media_has_a_0_bytes_link_available, link).AppendLine();
@@ -4012,42 +3645,32 @@ public static class Features
 
     public static string Prettify_0037(Feature_0037? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0037 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_can_write_CD_RW);
 
-        if(ftr.SubtypeSupport <= 0)
-            return sb.ToString();
+        if(ftr.SubtypeSupport <= 0) return sb.ToString();
 
         sb.Append("\t" + Localization.Drive_supports_CD_RW_subtypes);
 
-        if((ftr.SubtypeSupport & 0x01) == 0x01)
-            sb.Append(" 0");
+        if((ftr.SubtypeSupport & 0x01) == 0x01) sb.Append(" 0");
 
-        if((ftr.SubtypeSupport & 0x02) == 0x02)
-            sb.Append(" 1");
+        if((ftr.SubtypeSupport & 0x02) == 0x02) sb.Append(" 1");
 
-        if((ftr.SubtypeSupport & 0x04) == 0x04)
-            sb.Append(" 2");
+        if((ftr.SubtypeSupport & 0x04) == 0x04) sb.Append(" 2");
 
-        if((ftr.SubtypeSupport & 0x08) == 0x08)
-            sb.Append(" 3");
+        if((ftr.SubtypeSupport & 0x08) == 0x08) sb.Append(" 3");
 
-        if((ftr.SubtypeSupport & 0x10) == 0x10)
-            sb.Append(" 4");
+        if((ftr.SubtypeSupport & 0x10) == 0x10) sb.Append(" 4");
 
-        if((ftr.SubtypeSupport & 0x20) == 0x20)
-            sb.Append(" 5");
+        if((ftr.SubtypeSupport & 0x20) == 0x20) sb.Append(" 5");
 
-        if((ftr.SubtypeSupport & 0x40) == 0x40)
-            sb.Append(" 6");
+        if((ftr.SubtypeSupport & 0x40) == 0x40) sb.Append(" 6");
 
-        if((ftr.SubtypeSupport & 0x80) == 0x80)
-            sb.Append(" 7");
+        if((ftr.SubtypeSupport & 0x80) == 0x80) sb.Append(" 7");
 
         sb.AppendLine();
 
@@ -4059,8 +3682,7 @@ public static class Features
 
     public static string Prettify_003A(Feature_003A? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_003A ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4078,8 +3700,7 @@ public static class Features
                               ? "\t" + Localization.Drive_supports_only_the_read_compatibility_stop
                               : "\t" + Localization.Drive_supports_both_forms_of_background_format_stopping);
 
-            if(ftr.QuickStart)
-                sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
+            if(ftr.QuickStart) sb.AppendLine("\t" + Localization.Drive_can_do_a_quick_start_formatting);
         }
         else
         {
@@ -4096,8 +3717,7 @@ public static class Features
 
     public static string Prettify_003B(Feature_003B? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_003B ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4126,8 +3746,7 @@ public static class Features
 
     public static string Prettify_0040(Feature_0040? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0040 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4135,37 +3754,28 @@ public static class Features
         sb.Append(Localization.MMC_BD_Read);
         sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
-        if(ftr.OldROM)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_pre_1_0);
+        if(ftr.OldROM) sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_pre_1_0);
 
-        if(ftr.ROM)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_Ver_1);
+        if(ftr.ROM) sb.AppendLine("\t" + Localization.Drive_can_read_BD_ROM_Ver_1);
 
-        if(ftr.OldR)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_pre_1_0);
+        if(ftr.OldR) sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_pre_1_0);
 
-        if(ftr.R)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_Ver_1);
+        if(ftr.R) sb.AppendLine("\t" + Localization.Drive_can_read_BD_R_Ver_1);
 
-        if(ftr.OldRE)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_pre_1_0);
+        if(ftr.OldRE) sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_pre_1_0);
 
-        if(ftr.RE1)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_1);
+        if(ftr.RE1) sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_1);
 
-        if(ftr.RE2)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_2);
+        if(ftr.RE2) sb.AppendLine("\t" + Localization.Drive_can_read_BD_RE_Ver_2);
 
-        if(ftr.BCA)
-            sb.AppendLine("\t" + Localization.Drive_can_read_BDs_Burst_Cutting_Area);
+        if(ftr.BCA) sb.AppendLine("\t" + Localization.Drive_can_read_BDs_Burst_Cutting_Area);
 
         return sb.ToString();
     }
 
     public static string Prettify_0041(Feature_0041? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0041 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4173,23 +3783,17 @@ public static class Features
         sb.Append(Localization.MMC_BD_Write);
         sb.AppendLine(ftr.Current ? $"{Localization.current}:" : ":");
 
-        if(ftr.OldR)
-            sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_pre_1_0);
+        if(ftr.OldR) sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_pre_1_0);
 
-        if(ftr.R)
-            sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_Ver_1);
+        if(ftr.R) sb.AppendLine("\t" + Localization.Drive_can_write_BD_R_Ver_1);
 
-        if(ftr.OldRE)
-            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_pre_1_0);
+        if(ftr.OldRE) sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_pre_1_0);
 
-        if(ftr.RE1)
-            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_1);
+        if(ftr.RE1) sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_1);
 
-        if(ftr.RE2)
-            sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_2);
+        if(ftr.RE2) sb.AppendLine("\t" + Localization.Drive_can_write_BD_RE_Ver_2);
 
-        if(ftr.SVNR)
-            sb.AppendLine("\t" + Localization.Drive_supports_write_without_verify_requirement);
+        if(ftr.SVNR) sb.AppendLine("\t" + Localization.Drive_supports_write_without_verify_requirement);
 
         return sb.ToString();
     }
@@ -4197,14 +3801,13 @@ public static class Features
     public static string Prettify_0042(Feature_0042? feature) =>
         !feature.HasValue
             ? null
-            : Localization.
-                  Features_Prettify_0042_Drive_is_able_to_detect_and_report_defective_writable_unit_and_behave_accordingly +
+            : Localization
+                 .Features_Prettify_0042_Drive_is_able_to_detect_and_report_defective_writable_unit_and_behave_accordingly +
               "\n";
 
     public static string Prettify_0050(Feature_0050? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0050 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4239,8 +3842,7 @@ public static class Features
 
     public static string Prettify_0051(Feature_0051? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0051 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4275,8 +3877,7 @@ public static class Features
 
     public static string Prettify_0080(Feature_0080? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0080 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4291,8 +3892,8 @@ public static class Features
         if(ftr.RI)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Drive_is_able_to_maintain_the_online_format_layer_through_reset_and_power_cycling);
+                          Localization
+                             .Drive_is_able_to_maintain_the_online_format_layer_through_reset_and_power_cycling);
         }
 
         return sb.ToString();
@@ -4305,35 +3906,30 @@ public static class Features
 
     public static string Prettify_0101(Feature_0101? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0101 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_supports_SMART);
 
-        if(ftr.PP)
-            sb.AppendLine("\t" + Localization.Drive_supports_the_Informational_Exceptions_Control_mode_page_1Ch);
+        if(ftr.PP) sb.AppendLine("\t" + Localization.Drive_supports_the_Informational_Exceptions_Control_mode_page_1Ch);
 
         return sb.ToString();
     }
 
     public static string Prettify_0102(Feature_0102? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0102 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.MMC_Embedded_Changer);
 
-        if(ftr.SCC)
-            sb.AppendLine("\t" + Localization.Drive_can_change_disc_side);
+        if(ftr.SCC) sb.AppendLine("\t" + Localization.Drive_can_change_disc_side);
 
-        if(ftr.SDP)
-            sb.AppendLine("\t" + Localization.Drive_is_able_to_report_slots_contents_after_a_reset_or_change);
+        if(ftr.SDP) sb.AppendLine("\t" + Localization.Drive_is_able_to_report_slots_contents_after_a_reset_or_change);
 
         sb.AppendFormat("\t" + Localization.Drive_has_0_slots, ftr.HighestSlotNumber + 1).AppendLine();
 
@@ -4342,22 +3938,18 @@ public static class Features
 
     public static string Prettify_0103(Feature_0103? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0103 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_has_an_analogue_audio_output);
 
-        if(ftr.Scan)
-            sb.AppendLine("\t" + Localization.Drive_supports_the_SCAN_command);
+        if(ftr.Scan) sb.AppendLine("\t" + Localization.Drive_supports_the_SCAN_command);
 
-        if(ftr.SCM)
-            sb.AppendLine("\t" + Localization.Drive_is_able_to_mute_channels_separately);
+        if(ftr.SCM) sb.AppendLine("\t" + Localization.Drive_is_able_to_mute_channels_separately);
 
-        if(ftr.SV)
-            sb.AppendLine("\t" + Localization.Drive_supports_separate_volume_per_channel);
+        if(ftr.SV) sb.AppendLine("\t" + Localization.Drive_supports_separate_volume_per_channel);
 
         sb.AppendFormat("\t" + Localization.Drive_has_0_volume_levels, ftr.VolumeLevels + 1).AppendLine();
 
@@ -4366,8 +3958,7 @@ public static class Features
 
     public static string Prettify_0104(Feature_0104? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0104 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4376,8 +3967,8 @@ public static class Features
 
         if(ftr.M5)
         {
-            sb.AppendLine(Localization.
-                              Drive_supports_validating_the_5_bit_Mode_of_the_READ_BUFFER_and_WRITE_BUFFER_commands);
+            sb.AppendLine(Localization
+                             .Drive_supports_validating_the_5_bit_Mode_of_the_READ_BUFFER_and_WRITE_BUFFER_commands);
         }
 
         return sb.ToString();
@@ -4385,16 +3976,14 @@ public static class Features
 
     public static string Prettify_0105(Feature_0105? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0105 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_supports_Timeout_Protect_mode_page_1Dh);
 
-        if(!ftr.Group3)
-            return sb.ToString();
+        if(!ftr.Group3) return sb.ToString();
 
         sb.AppendLine("\t" + Localization.Drive_supports_the_Group3_in_Timeout_Protect_mode_page_1Dh);
 
@@ -4406,8 +3995,7 @@ public static class Features
 
     public static string Prettify_0106(Feature_0106? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0106 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4415,8 +4003,8 @@ public static class Features
         if(ftr.Current)
         {
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0_and_current_disc_is_encrypted,
-                            ftr.CSSVersion).
-               AppendLine();
+                            ftr.CSSVersion)
+              .AppendLine();
         }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CSS_CPPM_version_0, ftr.CSSVersion).AppendLine();
@@ -4426,8 +4014,7 @@ public static class Features
 
     public static string Prettify_0107(Feature_0107? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0107 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4440,33 +4027,30 @@ public static class Features
         if(ftr.RBCB)
             sb.AppendLine("\t" + Localization.Drive_supports_the_block_bit_in_the_READ_BUFFER_CAPACITY_command);
 
-        if(ftr.SCS)
-            sb.AppendLine("\t" + Localization.Drive_supports_the_SET_CD_SPEED_command);
+        if(ftr.SCS) sb.AppendLine("\t" + Localization.Drive_supports_the_SET_CD_SPEED_command);
 
         if(ftr.MP2A)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Drive_supports_the_Write_Speed_Performance_Descriptor_Blocks_in_the_MMC_mode_page_2Ah);
+                          Localization
+                             .Drive_supports_the_Write_Speed_Performance_Descriptor_Blocks_in_the_MMC_mode_page_2Ah);
         }
 
         if(ftr.WSPD)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Drive_supports_the_Write_Speed_data_of_GET_PERFORMANCE_and_the_WRC_field_of_SET_STREAMING);
+                          Localization
+                             .Drive_supports_the_Write_Speed_data_of_GET_PERFORMANCE_and_the_WRC_field_of_SET_STREAMING);
         }
 
-        if(ftr.SW)
-            sb.AppendLine("\t" + Localization.Drive_supports_stream_recording);
+        if(ftr.SW) sb.AppendLine("\t" + Localization.Drive_supports_stream_recording);
 
         return sb.ToString();
     }
 
     public static string Prettify_0108(Feature_0108? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0108 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4481,25 +4065,21 @@ public static class Features
 
     public static string Prettify_010A(Feature_010A? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_010A ftr = feature.Value;
         var          sb  = new StringBuilder();
 
-        if(ftr.DCBs == null)
-            return sb.ToString();
+        if(ftr.DCBs == null) return sb.ToString();
 
-        foreach(uint dcb in ftr.DCBs)
-            sb.AppendFormat(Localization.Drive_supports_DCB_0, dcb).AppendLine();
+        foreach(uint dcb in ftr.DCBs) sb.AppendFormat(Localization.Drive_supports_DCB_0, dcb).AppendLine();
 
         return sb.ToString();
     }
 
     public static string Prettify_010B(Feature_010B? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_010B ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4507,8 +4087,8 @@ public static class Features
         if(ftr.Current)
         {
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0_and_current_disc_is_or_can_be_encrypted,
-                            ftr.CPRMVersion).
-               AppendLine();
+                            ftr.CPRMVersion)
+              .AppendLine();
         }
         else
             sb.AppendFormat(Localization.Drive_supports_DVD_CPRM_version_0, ftr.CPRMVersion).AppendLine();
@@ -4518,8 +4098,7 @@ public static class Features
 
     public static string Prettify_010C(Feature_010C? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_010C ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4553,48 +4132,48 @@ public static class Features
 
         try
         {
-            var fwDate = new DateTime(int.Parse(syear), int.Parse(smonth), int.Parse(sday), int.Parse(shour),
-                                      int.Parse(sminute), int.Parse(ssecond), DateTimeKind.Utc);
+            var fwDate = new DateTime(int.Parse(syear),
+                                      int.Parse(smonth),
+                                      int.Parse(sday),
+                                      int.Parse(shour),
+                                      int.Parse(sminute),
+                                      int.Parse(ssecond),
+                                      DateTimeKind.Utc);
 
             sb.AppendFormat(Localization.Drive_firmware_is_dated_0, fwDate).AppendLine();
         }
-    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
         {
             // ignored
         }
-    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
         return sb.ToString();
     }
 
     public static string Prettify_010D(Feature_010D? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_010D ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         if(ftr.Current)
         {
-            sb.AppendFormat(Localization.Drive_supports_AACS_version_0_and_current_disc_is_encrypted, ftr.AACSVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Drive_supports_AACS_version_0_and_current_disc_is_encrypted, ftr.AACSVersion)
+              .AppendLine();
         }
         else
             sb.AppendFormat(Localization.Drive_supports_AACS_version_0, ftr.AACSVersion).AppendLine();
 
-        if(ftr.RDC)
-            sb.AppendLine("\t" + Localization.Drive_supports_reading_the_Drive_Certificate);
+        if(ftr.RDC) sb.AppendLine("\t" + Localization.Drive_supports_reading_the_Drive_Certificate);
 
-        if(ftr.RMC)
-            sb.AppendLine("\t" + Localization.Drive_supports_reading_Media_Key_Block_of_CPRM);
+        if(ftr.RMC) sb.AppendLine("\t" + Localization.Drive_supports_reading_Media_Key_Block_of_CPRM);
 
-        if(ftr.WBE)
-            sb.AppendLine("\t" + Localization.Drive_supports_writing_with_bus_encryption);
+        if(ftr.WBE) sb.AppendLine("\t" + Localization.Drive_supports_writing_with_bus_encryption);
 
-        if(ftr.BEC)
-            sb.AppendLine("\t" + Localization.Drive_supports_bus_encryption);
+        if(ftr.BEC) sb.AppendLine("\t" + Localization.Drive_supports_bus_encryption);
 
         if(ftr.BNG)
         {
@@ -4603,8 +4182,8 @@ public static class Features
             if(ftr.BindNonceBlocks > 0)
             {
                 sb.AppendFormat("\t" + Localization._0_media_blocks_are_required_for_the_binding_nonce,
-                                ftr.BindNonceBlocks).
-                   AppendLine();
+                                ftr.BindNonceBlocks)
+                  .AppendLine();
             }
         }
 
@@ -4616,8 +4195,7 @@ public static class Features
 
     public static string Prettify_010E(Feature_010E? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_010E ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4631,8 +4209,8 @@ public static class Features
 
         if(ftr.MaxScrambleExtent > 0)
         {
-            sb.AppendFormat("\t" + Localization.Maximum_0_scramble_extent_information_entries, ftr.MaxScrambleExtent).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Maximum_0_scramble_extent_information_entries, ftr.MaxScrambleExtent)
+              .AppendLine();
         }
 
         return sb.ToString();
@@ -4640,8 +4218,7 @@ public static class Features
 
     public static string Prettify_0110(Feature_0110? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0110 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4655,8 +4232,7 @@ public static class Features
 
     public static string Prettify_0113(Feature_0113? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0113 ftr = feature.Value;
         var          sb  = new StringBuilder();
@@ -4670,28 +4246,22 @@ public static class Features
 
     public static string Prettify_0142(Feature_0142? feature)
     {
-        if(!feature.HasValue)
-            return null;
+        if(!feature.HasValue) return null;
 
         Feature_0142 ftr = feature.Value;
         var          sb  = new StringBuilder();
 
         sb.AppendLine(Localization.Drive_supports_the_Trusted_Computing_Group_Optical_Security_Subsystem_Class);
 
-        if(ftr.Current)
-            sb.AppendLine("\t" + Localization.Current_media_is_initialized_with_TCG_OSSC);
+        if(ftr.Current) sb.AppendLine("\t" + Localization.Current_media_is_initialized_with_TCG_OSSC);
 
-        if(ftr.PSAU)
-            sb.AppendLine("\t" + Localization.Drive_supports_PSA_updates_on_write_once_media);
+        if(ftr.PSAU) sb.AppendLine("\t" + Localization.Drive_supports_PSA_updates_on_write_once_media);
 
-        if(ftr.LOSPB)
-            sb.AppendLine("\t" + Localization.Drive_supports_linked_OSPBs);
+        if(ftr.LOSPB) sb.AppendLine("\t" + Localization.Drive_supports_linked_OSPBs);
 
-        if(ftr.ME)
-            sb.AppendLine("\t" + Localization.Drive_will_only_record_on_the_OSSC_Disc_Format);
+        if(ftr.ME) sb.AppendLine("\t" + Localization.Drive_will_only_record_on_the_OSSC_Disc_Format);
 
-        if(ftr.Profiles == null)
-            return sb.ToString();
+        if(ftr.Profiles == null) return sb.ToString();
 
         for(var i = 0; i < ftr.Profiles.Length; i++)
             sb.AppendFormat("\t" + Localization.Profile_0_1, i, ftr.Profiles[i]).AppendLine();
@@ -4834,8 +4404,7 @@ public static class Features
                 Data = new byte[response[offset + 3] + 4]
             };
 
-            if(desc.Data.Length + offset > response.Length)
-                desc.Data = new byte[response.Length - offset];
+            if(desc.Data.Length + offset > response.Length) desc.Data = new byte[response.Length - offset];
 
             Array.Copy(response, offset, desc.Data, 0, desc.Data.Length);
             offset += (uint)desc.Data.Length;

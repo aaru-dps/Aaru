@@ -80,17 +80,13 @@ public static partial class Modes
 
     public static ModePage_03? DecodeModePage_03(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x03)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x03) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 24)
-            return null;
+        if(pageResponse.Length < 24) return null;
 
         var decoded = new ModePage_03();
 
@@ -117,62 +113,58 @@ public static partial class Modes
 
     public static string PrettifyModePage_03(ModePage_03? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_03 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Format_device_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.
-            AppendFormat("\t" + Localization._0_tracks_per_zone_to_use_in_dividing_the_capacity_for_the_purpose_of_allocating_alternate_sectors,
-                         page.TracksPerZone).
-            AppendLine();
+        sb.AppendFormat("\t" +
+                        Localization
+                           ._0_tracks_per_zone_to_use_in_dividing_the_capacity_for_the_purpose_of_allocating_alternate_sectors,
+                        page.TracksPerZone)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_sectors_per_zone_that_shall_be_reserved_for_defect_handling,
-                        page.AltSectorsPerZone).
-           AppendLine();
+                        page.AltSectorsPerZone)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_tracks_per_zone_that_shall_be_reserved_for_defect_handling,
-                        page.AltTracksPerZone).
-           AppendLine();
+                        page.AltTracksPerZone)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_tracks_per_LUN_that_shall_be_reserved_for_defect_handling,
-                        page.AltTracksPerLun).
-           AppendLine();
+                        page.AltTracksPerLun)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_physical_sectors_per_track,          page.SectorsPerTrack).AppendLine();
         sb.AppendFormat("\t" + Localization._0_Bytes_per_physical_sector,           page.BytesPerSector).AppendLine();
         sb.AppendFormat("\t" + Localization.Target_dependent_interleave_value_is_0, page.Interleave).AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_sectors_between_last_block_of_one_track_and_first_block_of_the_next,
-                        page.TrackSkew).
-           AppendLine();
+                        page.TrackSkew)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization._0_sectors_between_last_block_of_a_cylinder_and_first_block_of_the_next_one,
-                        page.CylinderSkew).
-           AppendLine();
+                        page.CylinderSkew)
+          .AppendLine();
 
-        if(page.SSEC)
-            sb.AppendLine("\t" + Localization.Drive_supports_soft_sectoring_format);
+        if(page.SSEC) sb.AppendLine("\t" + Localization.Drive_supports_soft_sectoring_format);
 
-        if(page.HSEC)
-            sb.AppendLine("\t" + Localization.Drive_supports_hard_sectoring_format);
+        if(page.HSEC) sb.AppendLine("\t" + Localization.Drive_supports_hard_sectoring_format);
 
-        if(page.RMB)
-            sb.AppendLine("\t" + Localization.Drive_media_is_removable);
+        if(page.RMB) sb.AppendLine("\t" + Localization.Drive_media_is_removable);
 
         sb.AppendLine(page.SURF
                           ? "\t" +
-                            Localization.
-                                Sector_addressing_is_progressively_incremented_in_one_surface_before_going_to_the_next
+                            Localization
+                               .Sector_addressing_is_progressively_incremented_in_one_surface_before_going_to_the_next
                           : "\t" +
-                            Localization.
-                                Sector_addressing_is_progressively_incremented_in_one_cylinder_before_going_to_the_next);
+                            Localization
+                               .Sector_addressing_is_progressively_incremented_in_one_cylinder_before_going_to_the_next);
 
         return sb.ToString();
     }

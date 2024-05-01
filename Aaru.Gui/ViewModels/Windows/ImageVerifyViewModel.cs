@@ -376,8 +376,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
             ProgressVisible  = true;
             ProgressMaxValue = 0;
 
-            if(VerifyImageChecked || VerifySectorsChecked)
-                ProgressMaxValue = 1;
+            if(VerifyImageChecked || VerifySectorsChecked) ProgressMaxValue = 1;
 
             if(formatHasTracks && inputOptical != null)
                 ProgressMaxValue += inputOptical.Tracks.Count;
@@ -469,7 +468,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ProgressText = string.Format(UI.Verifying_track_0_of_1, currentTrack.Sequence,
+                        ProgressText = string.Format(UI.Verifying_track_0_of_1,
+                                                     currentTrack.Sequence,
                                                      inputOptical.Tracks.Count);
 
                         ProgressValue++;
@@ -498,8 +498,10 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                         {
                             Progress2Value = all / 512d;
 
-                            Progress2Text = string.Format(UI.Checking_sector_0_of_1_on_track_2, all,
-                                                          _inputFormat.Info.Sectors, currentTrack.Sequence);
+                            Progress2Text = string.Format(UI.Checking_sector_0_of_1_on_track_2,
+                                                          all,
+                                                          _inputFormat.Info.Sectors,
+                                                          currentTrack.Sequence);
                         });
 
                         List<ulong> tempFailingLbas;
@@ -507,12 +509,18 @@ public sealed class ImageVerifyViewModel : ViewModelBase
 
                         if(remainingSectors < 512)
                         {
-                            inputOptical.VerifySectors(currentSector, (uint)remainingSectors, currentTrack.Sequence,
-                                                       out tempFailingLbas, out tempUnknownLbas);
+                            inputOptical.VerifySectors(currentSector,
+                                                       (uint)remainingSectors,
+                                                       currentTrack.Sequence,
+                                                       out tempFailingLbas,
+                                                       out tempUnknownLbas);
                         }
                         else
                         {
-                            inputOptical.VerifySectors(currentSector, 512, currentTrack.Sequence, out tempFailingLbas,
+                            inputOptical.VerifySectors(currentSector,
+                                                       512,
+                                                       currentTrack.Sequence,
+                                                       out tempFailingLbas,
                                                        out tempUnknownLbas);
                         }
 
@@ -571,12 +579,16 @@ public sealed class ImageVerifyViewModel : ViewModelBase
 
                     if(remainingSectors < 512)
                     {
-                        verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors, out tempFailingLbas,
+                        verifiableSectorsImage.VerifySectors(currentSector,
+                                                             (uint)remainingSectors,
+                                                             out tempFailingLbas,
                                                              out tempUnknownLbas);
                     }
                     else
                     {
-                        verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                        verifiableSectorsImage.VerifySectors(currentSector,
+                                                             512,
+                                                             out tempFailingLbas,
                                                              out tempUnknownLbas);
                     }
 

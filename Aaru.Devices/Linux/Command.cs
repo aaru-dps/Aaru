@@ -47,15 +47,13 @@ partial class Device
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         senseBuffer = null;
         duration    = 0;
         sense       = false;
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         ScsiIoctlDirection dir = direction switch
                                  {
@@ -90,8 +88,7 @@ partial class Device
         int error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
         cmdStopWatch.Stop();
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(ioHdr.dxferp, buffer,      0, buffer.Length);
         Marshal.Copy(ioHdr.cmdp,   cdb,         0, cdb.Length);
@@ -139,15 +136,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersChs();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
@@ -168,8 +163,7 @@ partial class Device
                     break;
             }
 
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -184,11 +178,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -210,15 +208,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba28();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
@@ -239,8 +235,7 @@ partial class Device
                     break;
             }
 
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -255,11 +250,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -281,15 +280,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba48();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] =  (byte)ScsiCommands.AtaPassThrough16;
@@ -311,8 +308,7 @@ partial class Device
                     break;
             }
 
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -332,11 +328,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb,                                  ref buffer,   out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -363,8 +363,7 @@ partial class Device
                                        out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         var cmdStopwatch = new Stopwatch();
 
@@ -425,8 +424,7 @@ partial class Device
         duration = 0;
         sense    = false;
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var ioCmd = new MmcIocCmd();
 
@@ -457,8 +455,7 @@ partial class Device
 
         sense |= error < 0;
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
 
@@ -475,8 +472,7 @@ partial class Device
                                                 uint               timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration = 0;
         sense    = false;
@@ -542,8 +538,7 @@ partial class Device
 
         sense |= error < 0;
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
         duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
@@ -642,8 +637,7 @@ partial class Device
         {
             long result64 = Extern.readlink64(path, buf, 4096);
 
-            if(result64 <= 0)
-                return null;
+            if(result64 <= 0) return null;
 
             resultSize = (int)result64;
         }
@@ -651,8 +645,7 @@ partial class Device
         {
             int result = Extern.readlink(path, buf, 4096);
 
-            if(result <= 0)
-                return null;
+            if(result <= 0) return null;
 
             resultSize = result;
         }
@@ -696,9 +689,8 @@ partial class Device
         int errno = Marshal.GetLastWin32Error();
 
         if(sense == length)
-            errno = 0;
-        else if(errno == 0)
-            errno = -22;
+            errno                 = 0;
+        else if(errno == 0) errno = -22;
 
         LastError = errno;
         Error     = errno == 0;

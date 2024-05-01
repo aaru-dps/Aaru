@@ -103,14 +103,12 @@ public static partial class Decoders
 
     public static string PrettifyOCR(OCR ocr)
     {
-        if(ocr == null)
-            return null;
+        if(ocr == null) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.MultiMediaCard_Operation_Conditions_Register);
 
-        if(!ocr.PowerUp)
-            sb.AppendLine("\t" + Localization.Device_is_powering_up);
+        if(!ocr.PowerUp) sb.AppendLine("\t" + Localization.Device_is_powering_up);
 
         switch(ocr.AccessMode)
         {
@@ -128,53 +126,37 @@ public static partial class Decoders
                 break;
         }
 
-        if(ocr.ThreeFive)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_5_3_6V);
+        if(ocr.ThreeFive) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_5_3_6V);
 
-        if(ocr.ThreeFour)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_4_3_5V);
+        if(ocr.ThreeFour) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_4_3_5V);
 
-        if(ocr.ThreeThree)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_3_3_4V);
+        if(ocr.ThreeThree) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_3_3_4V);
 
-        if(ocr.ThreeTwo)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_2_3_3V);
+        if(ocr.ThreeTwo) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_2_3_3V);
 
-        if(ocr.ThreeOne)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_1_3_2V);
+        if(ocr.ThreeOne) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_3_1_3_2V);
 
-        if(ocr.TwoNine)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_9_3_0V);
+        if(ocr.TwoNine) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_9_3_0V);
 
-        if(ocr.TwoEight)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_8_2_9V);
+        if(ocr.TwoEight) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_8_2_9V);
 
-        if(ocr.TwoSeven)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_7_2_8V);
+        if(ocr.TwoSeven) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_7_2_8V);
 
-        if(ocr.TwoSix)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_6_2_7V);
+        if(ocr.TwoSix) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_6_2_7V);
 
-        if(ocr.TwoFive)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_5_2_6V);
+        if(ocr.TwoFive) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_5_2_6V);
 
-        if(ocr.TwoFour)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_4_2_5V);
+        if(ocr.TwoFour) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_4_2_5V);
 
-        if(ocr.TwoThree)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_3_2_4V);
+        if(ocr.TwoThree) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_3_2_4V);
 
-        if(ocr.TwoTwo)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_2_2_3V);
+        if(ocr.TwoTwo) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_2_2_3V);
 
-        if(ocr.TwoOne)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_1_2_2V);
+        if(ocr.TwoOne) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_1_2_2V);
 
-        if(ocr.TwoZero)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_0_2_1V);
+        if(ocr.TwoZero) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_2_0_2_1V);
 
-        if(ocr.OneSix)
-            sb.AppendLine("\t" + Localization.Device_can_work_with_supply_1_65_1_95V);
+        if(ocr.OneSix) sb.AppendLine("\t" + Localization.Device_can_work_with_supply_1_65_1_95V);
 
         return sb.ToString();
     }

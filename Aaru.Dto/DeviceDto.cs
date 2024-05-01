@@ -97,8 +97,7 @@ public class DeviceDto : DeviceReport
                 TestedMedia[] medias = ATA.RemovableMedias.ToArray();
                 ATA.RemovableMedias = new List<TestedMedia>();
 
-                foreach(TestedMedia media in medias)
-                    ATA.RemovableMedias.Add(ClearBinaries(media));
+                foreach(TestedMedia media in medias) ATA.RemovableMedias.Add(ClearBinaries(media));
             }
         }
 
@@ -112,8 +111,7 @@ public class DeviceDto : DeviceReport
                 TestedMedia[] medias = ATAPI.RemovableMedias.ToArray();
                 ATAPI.RemovableMedias = new List<TestedMedia>();
 
-                foreach(TestedMedia media in medias)
-                    ATAPI.RemovableMedias.Add(ClearBinaries(media));
+                foreach(TestedMedia media in medias) ATAPI.RemovableMedias.Add(ClearBinaries(media));
             }
         }
 
@@ -149,32 +147,28 @@ public class DeviceDto : DeviceReport
                 TestedMedia[] medias = SCSI.RemovableMedias.ToArray();
                 SCSI.RemovableMedias = new List<TestedMedia>();
 
-                foreach(TestedMedia media in medias)
-                    SCSI.RemovableMedias.Add(ClearBinaries(media));
+                foreach(TestedMedia media in medias) SCSI.RemovableMedias.Add(ClearBinaries(media));
             }
 
             if(SCSI.MultiMediaDevice != null)
             {
                 SCSI.MultiMediaDevice.ModeSense2AData = null;
 
-                if(SCSI.MultiMediaDevice.Features != null)
-                    SCSI.MultiMediaDevice.Features.BinaryData = null;
+                if(SCSI.MultiMediaDevice.Features != null) SCSI.MultiMediaDevice.Features.BinaryData = null;
 
                 if(SCSI.MultiMediaDevice.TestedMedia != null)
                 {
                     TestedMedia[] medias = SCSI.MultiMediaDevice.TestedMedia.ToArray();
                     SCSI.MultiMediaDevice.TestedMedia = new List<TestedMedia>();
 
-                    foreach(TestedMedia media in medias)
-                        SCSI.MultiMediaDevice.TestedMedia.Add(ClearBinaries(media));
+                    foreach(TestedMedia media in medias) SCSI.MultiMediaDevice.TestedMedia.Add(ClearBinaries(media));
                 }
             }
 
             SCSI.SequentialDevice = null;
         }
 
-        if(USB != null)
-            USB.Descriptors = null;
+        if(USB != null) USB.Descriptors = null;
 
         Id                         = id;
         OptimalMultipleSectorsRead = optimalMultipleSectorsRead;
@@ -192,8 +186,7 @@ public class DeviceDto : DeviceReport
 
     static TestedMedia ClearBinaries(TestedMedia media)
     {
-        if(media is null)
-            return null;
+        if(media is null) return null;
 
         media.AdipData                      = null;
         media.AtipData                      = null;

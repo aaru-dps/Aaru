@@ -32,9 +32,6 @@ using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using hammer_crc_t = uint;
-using hammer_off_t = ulong;
-using hammer_tid_t = ulong;
 using Partition = Aaru.CommonTypes.Partition;
 
 #pragma warning disable 169
@@ -52,16 +49,13 @@ public sealed partial class HAMMER
     {
         uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-        if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
-            run++;
+        if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
 
-        if(run + partition.Start >= partition.End)
-            return false;
+        if(run + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, run, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BitConverter.ToUInt64(sbSector, 0);
 
@@ -80,13 +74,11 @@ public sealed partial class HAMMER
 
         uint run = HAMMER_VOLHDR_SIZE / imagePlugin.Info.SectorSize;
 
-        if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0)
-            run++;
+        if(HAMMER_VOLHDR_SIZE % imagePlugin.Info.SectorSize > 0) run++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, run, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var magic = BitConverter.ToUInt64(sbSector, 0);
 
@@ -98,11 +90,11 @@ public sealed partial class HAMMER
 
         sb.AppendFormat(Localization.Volume_version_0, superBlock.vol_version).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_0_of_1_on_this_filesystem, superBlock.vol_no + 1, superBlock.vol_count).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_0_of_1_on_this_filesystem, superBlock.vol_no + 1, superBlock.vol_count)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(superBlock.vol_label, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Volume_serial_0,                 superBlock.vol_fsid).AppendLine();
         sb.AppendFormat(Localization.Filesystem_type_0,               superBlock.vol_fstype).AppendLine();
@@ -123,13 +115,15 @@ public sealed partial class HAMMER
 
         if(superBlock.vol_no == superBlock.vol_rootvol)
         {
-            sb.AppendFormat(Localization.Filesystem_contains_0_big_blocks_1_bytes, superBlock.vol0_stat_bigblocks,
-                            superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE).
-               AppendLine();
+            sb.AppendFormat(Localization.Filesystem_contains_0_big_blocks_1_bytes,
+                            superBlock.vol0_stat_bigblocks,
+                            superBlock.vol0_stat_bigblocks * HAMMER_BIGBLOCK_SIZE)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Filesystem_has_0_big_blocks_free_1_bytes, superBlock.vol0_stat_freebigblocks,
-                            superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).
-               AppendLine();
+            sb.AppendFormat(Localization.Filesystem_has_0_big_blocks_free_1_bytes,
+                            superBlock.vol0_stat_freebigblocks,
+                            superBlock.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE)
+              .AppendLine();
 
             sb.AppendFormat(Localization.Filesystem_has_0_inodes_used, superBlock.vol0_stat_inodes).AppendLine();
 

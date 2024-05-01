@@ -120,8 +120,7 @@ public sealed partial class Qcow
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -129,15 +128,13 @@ public sealed partial class Qcow
 
         _l2Mask = 0;
 
-        for(var i = 0; i < _qHdr.l2_bits; i++)
-            _l2Mask = (_l2Mask << 1) + 1;
+        for(var i = 0; i < _qHdr.l2_bits; i++) _l2Mask = (_l2Mask << 1) + 1;
 
         _l2Mask <<= _qHdr.cluster_bits;
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _qHdr.cluster_bits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _qHdr.cluster_bits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         var empty = new byte[_qHdr.l1_table_offset + _l1Size * 8];
         _writingStream.Write(empty, 0, empty.Length);
@@ -181,8 +178,7 @@ public sealed partial class Qcow
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -190,7 +186,8 @@ public sealed partial class Qcow
 
         if((long)l1Off >= _l1Table.LongLength)
         {
-            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1, l1Off,
+            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1,
+                                         l1Off,
                                          _l1Table.LongLength);
 
             return false;
@@ -260,16 +257,14 @@ public sealed partial class Qcow
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         for(uint i = 0; i < length; i++)
         {
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -320,8 +315,7 @@ public sealed partial class Qcow
 
         _writingStream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
 
-        for(long i = 0; i < _l1Table.LongLength; i++)
-            _l1Table[i] = Swapping.Swap(_l1Table[i]);
+        for(long i = 0; i < _l1Table.LongLength; i++) _l1Table[i] = Swapping.Swap(_l1Table[i]);
 
         byte[] l1TableB = MemoryMarshal.Cast<ulong, byte>(_l1Table).ToArray();
         _writingStream.Write(l1TableB, 0, l1TableB.Length);

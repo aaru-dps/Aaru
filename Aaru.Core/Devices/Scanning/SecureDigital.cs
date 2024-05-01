@@ -88,8 +88,7 @@ public sealed partial class MediaScan
 
                             blocksToRead = (ushort)(ecsd.OptimalReadSize * 4096 / blockSize);
 
-                            if(blocksToRead == 0)
-                                blocksToRead = 128;
+                            if(blocksToRead == 0) blocksToRead = 128;
 
                             // Supposing it's high-capacity MMC if it has Extended CSD...
                             byteAddressed = false;
@@ -128,8 +127,8 @@ public sealed partial class MediaScan
 
                     if(!sense)
                     {
-                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)?.
-                                                 CommandSupport.HasFlag(CommandSupport.SetBlockCount) ??
+                        supportsCmd23 = Decoders.SecureDigital.Decoders.DecodeSCR(cmdBuf)
+                                               ?.CommandSupport.HasFlag(CommandSupport.SetBlockCount) ??
                                         false;
                     }
                 }
@@ -151,8 +150,8 @@ public sealed partial class MediaScan
 
             if(sense || _dev.Error)
             {
-                UpdateStatus?.Invoke(Localization.Core.
-                                                  Environment_does_not_support_setting_block_count_downgrading_to_OS_reading);
+                UpdateStatus?.Invoke(Localization.Core
+                                                 .Environment_does_not_support_setting_block_count_downgrading_to_OS_reading);
 
                 supportsCmd23 = false;
             }
@@ -172,21 +171,25 @@ public sealed partial class MediaScan
         {
             while(true)
             {
-                sense = _dev.ReadWithBlockCount(out cmdBuf, out _, 0, blockSize, blocksToRead, byteAddressed, timeout,
+                sense = _dev.ReadWithBlockCount(out cmdBuf,
+                                                out _,
+                                                0,
+                                                blockSize,
+                                                blocksToRead,
+                                                byteAddressed,
+                                                timeout,
                                                 out duration);
 
-                if(sense)
-                    blocksToRead /= 2;
+                if(sense) blocksToRead /= 2;
 
-                if(!sense || blocksToRead == 1)
-                    break;
+                if(!sense || blocksToRead == 1) break;
             }
 
             if(sense)
             {
-                StoppingErrorMessage?.
-                    Invoke(string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
-                                         _dev.LastError));
+                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                       .Device_error_0_trying_to_guess_ideal_transfer_length,
+                                                           _dev.LastError));
 
                 return results;
             }
@@ -235,40 +238,56 @@ public sealed partial class MediaScan
 
         for(ulong i = 0; i < results.Blocks; i += blocksToRead)
         {
-            if(_aborted)
-                break;
+            if(_aborted) break;
 
-            if(results.Blocks - i < blocksToRead)
-                blocksToRead = (byte)(results.Blocks - i);
+            if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
 
-            if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
-                results.MaxSpeed = currentSpeed;
+            if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-            if(currentSpeed < results.MinSpeed && currentSpeed > 0)
-                results.MinSpeed = currentSpeed;
+            if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-            UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)results.Blocks);
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                 i,
+                                                 results.Blocks,
+                                                 ByteSize.FromBytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i,
+                                   (long)results.Blocks);
 
             bool error;
 
             if(blocksToRead == 1)
             {
-                error = _dev.ReadSingleBlock(out cmdBuf, out _, (uint)i, blockSize, byteAddressed, timeout,
+                error = _dev.ReadSingleBlock(out cmdBuf,
+                                             out _,
+                                             (uint)i,
+                                             blockSize,
+                                             byteAddressed,
+                                             timeout,
                                              out duration);
             }
             else if(supportsCmd23)
             {
-                error = _dev.ReadWithBlockCount(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                                timeout, out duration);
+                error = _dev.ReadWithBlockCount(out cmdBuf,
+                                                out _,
+                                                (uint)i,
+                                                blockSize,
+                                                blocksToRead,
+                                                byteAddressed,
+                                                timeout,
+                                                out duration);
             }
             else if(_useBufferedReads)
                 error = _dev.BufferedOsRead(out cmdBuf, (long)(i * blockSize), blockSize * blocksToRead, out duration);
             else
             {
-                error = _dev.ReadMultipleUsingSingle(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed,
-                                                     timeout, out duration);
+                error = _dev.ReadMultipleUsingSingle(out cmdBuf,
+                                                     out _,
+                                                     (uint)i,
+                                                     blockSize,
+                                                     blocksToRead,
+                                                     byteAddressed,
+                                                     timeout,
+                                                     out duration);
             }
 
             if(!error)
@@ -310,8 +329,7 @@ public sealed partial class MediaScan
                 ScanUnreadable?.Invoke(i);
                 results.Errored += blocksToRead;
 
-                for(ulong b = i; b < i + blocksToRead; b++)
-                    results.UnreadableSectors.Add(b);
+                for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                 mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
@@ -322,8 +340,7 @@ public sealed partial class MediaScan
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
-                continue;
+            if(elapsed <= 0) continue;
 
             currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
             ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
@@ -336,15 +353,19 @@ public sealed partial class MediaScan
         EndProgress?.Invoke();
         mhddLog.Close();
 
-        ibgLog.Close(_dev, results.Blocks, blockSize, _scanStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
-                     blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000), _devicePath);
+        ibgLog.Close(_dev,
+                     results.Blocks,
+                     blockSize,
+                     _scanStopwatch.Elapsed.TotalSeconds,
+                     currentSpeed                             * 1024,
+                     blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
+                     _devicePath);
 
         InitProgress?.Invoke();
 
         for(var i = 0; i < seekTimes; i++)
         {
-            if(_aborted || !_seekTest)
-                break;
+            if(_aborted || !_seekTest) break;
 
             var seekPos = (uint)rnd.Next((int)results.Blocks);
 
@@ -352,11 +373,9 @@ public sealed partial class MediaScan
 
             _dev.ReadSingleBlock(out cmdBuf, out _, seekPos, blockSize, byteAddressed, timeout, out double seekCur);
 
-            if(seekCur > results.SeekMax && seekCur > 0)
-                results.SeekMax = seekCur;
+            if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-            if(seekCur < results.SeekMin && seekCur > 0)
-                results.SeekMin = seekCur;
+            if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
             results.SeekTotal += seekCur;
             GC.Collect();

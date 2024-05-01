@@ -47,13 +47,11 @@ public sealed partial class Fossil
     {
         ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
-        if(partition.Start + hdrSector > imagePlugin.Info.Sectors)
-            return false;
+        if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + hdrSector, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 
@@ -71,15 +69,13 @@ public sealed partial class Fossil
         information = "";
         metadata    = new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + hdrSector, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         Header hdr = Marshal.ByteArrayToStructureBigEndian<Header>(sector);
 

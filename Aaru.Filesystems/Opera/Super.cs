@@ -50,21 +50,17 @@ public sealed partial class OperaFS
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        if(sb.record_type != 1 || sb.record_version != 1)
-            return ErrorNumber.InvalidArgument;
+        if(sb.record_type != 1 || sb.record_version != 1) return ErrorNumber.InvalidArgument;
 
-        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
-            return ErrorNumber.InvalidArgument;
+        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC) return ErrorNumber.InvalidArgument;
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             _volumeBlockSizeRatio = sb.block_size / 2048;
@@ -107,8 +103,7 @@ public sealed partial class OperaFS
     /// <inheritdoc />
     public ErrorNumber Unmount()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         _mounted = false;
 
@@ -120,8 +115,7 @@ public sealed partial class OperaFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _statfs.ShallowCopy();
 

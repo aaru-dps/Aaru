@@ -52,8 +52,7 @@ public sealed partial class DiscFerret
         stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
-        if(magic != DFI_MAGIC && magic != DFI_MAGIC2)
-            return ErrorNumber.InvalidArgument;
+        if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return ErrorNumber.InvalidArgument;
 
         TrackOffsets = new SortedDictionary<int, long>();
         TrackLengths = new SortedDictionary<int, long>();
@@ -104,11 +103,9 @@ public sealed partial class DiscFerret
                 t++;
             }
 
-            if(blockHeader.cylinder > _imageInfo.Cylinders)
-                _imageInfo.Cylinders = blockHeader.cylinder;
+            if(blockHeader.cylinder > _imageInfo.Cylinders) _imageInfo.Cylinders = blockHeader.cylinder;
 
-            if(blockHeader.head > _imageInfo.Heads)
-                _imageInfo.Heads = blockHeader.head;
+            if(blockHeader.head > _imageInfo.Heads) _imageInfo.Heads = blockHeader.head;
         }
 
         _imageInfo.Heads++;

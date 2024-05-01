@@ -54,8 +54,7 @@ public class Xbox
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Xbox(XboxType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         Xbox xbox = new()
         {
@@ -63,11 +62,9 @@ public class Xbox
             Dmi = cicm.DMI
         };
 
-        if(cicm.SecuritySectors is null)
-            return xbox;
+        if(cicm.SecuritySectors is null) return xbox;
 
-        foreach(XboxSecuritySectorsType ss in cicm.SecuritySectors)
-            xbox.SecuritySectors.Add(ss);
+        foreach(XboxSecuritySectorsType ss in cicm.SecuritySectors) xbox.SecuritySectors.Add(ss);
 
         return xbox;
     }
@@ -80,13 +77,12 @@ public class XboxSecuritySector
     public Dump SecuritySectors { get; set; }
 
     [Obsolete("Will be removed in Aaru 7")]
-    public static implicit operator XboxSecuritySector(XboxSecuritySectorsType cicm) =>
-        cicm is null
-            ? null
-            : new XboxSecuritySector
-            {
-                RequestNumber   = cicm.RequestNumber,
-                RequestVersion  = cicm.RequestVersion,
-                SecuritySectors = cicm.SecuritySectors
-            };
+    public static implicit operator XboxSecuritySector(XboxSecuritySectorsType cicm) => cicm is null
+        ? null
+        : new XboxSecuritySector
+        {
+            RequestNumber   = cicm.RequestNumber,
+            RequestVersion  = cicm.RequestVersion,
+            SecuritySectors = cicm.SecuritySectors
+        };
 }

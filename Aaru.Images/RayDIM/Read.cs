@@ -48,8 +48,7 @@ public sealed partial class RayDim
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
@@ -62,8 +61,7 @@ public sealed partial class RayDim
         var   sx = new Regex(REGEX_SIGNATURE);
         Match sm = sx.Match(signature);
 
-        if(!sm.Success)
-            return ErrorNumber.InvalidArgument;
+        if(!sm.Success) return ErrorNumber.InvalidArgument;
 
         _imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
@@ -116,11 +114,9 @@ public sealed partial class RayDim
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

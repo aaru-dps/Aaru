@@ -48,6 +48,7 @@ public sealed partial class PartClone
     public Guid Id => new("AB1D7518-B548-4099-A4E2-C29C53DDE0C3");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

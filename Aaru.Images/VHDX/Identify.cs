@@ -46,8 +46,7 @@ public sealed partial class Vhdx
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var vhdxIdB = new byte[Marshal.SizeOf<Identifier>()];
         stream.EnsureRead(vhdxIdB, 0, Marshal.SizeOf<Identifier>());

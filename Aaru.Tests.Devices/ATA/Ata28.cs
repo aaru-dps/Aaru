@@ -130,7 +130,9 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadBuffer(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+        bool sense = dev.ReadBuffer(out byte[] buffer,
+                                    out AtaErrorRegistersLba28 errorRegisters,
+                                    dev.Timeout,
                                     out double duration);
 
     menu:
@@ -170,8 +172,7 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_BUFFER_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -206,7 +207,9 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadBufferDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+        bool sense = dev.ReadBufferDma(out byte[] buffer,
+                                       out AtaErrorRegistersLba28 errorRegisters,
+                                       dev.Timeout,
                                        out double duration);
 
     menu:
@@ -246,8 +249,7 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_BUFFER_DMA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -334,9 +336,9 @@ static class Ata28
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
@@ -360,8 +362,13 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
-                                 dev.Timeout, out double duration);
+        bool sense = dev.ReadDma(out byte[] buffer,
+                                 out AtaErrorRegistersLba28 errorRegisters,
+                                 retries,
+                                 lba,
+                                 count,
+                                 dev.Timeout,
+                                 out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -408,8 +415,7 @@ static class Ata28
                                           ? Localization.READ_DMA_WITH_RETRIES_response
                                           : Localization.READ_DMA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -502,9 +508,9 @@ static class Ata28
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
@@ -528,8 +534,13 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, blockSize,
-                                  dev.Timeout, out double duration);
+        bool sense = dev.ReadLong(out byte[] buffer,
+                                  out AtaErrorRegistersLba28 errorRegisters,
+                                  retries,
+                                  lba,
+                                  blockSize,
+                                  dev.Timeout,
+                                  out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -576,8 +587,7 @@ static class Ata28
                                           ? Localization.READ_LONG_WITH_RETRIES_response
                                           : Localization.READ_LONG_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -666,9 +676,9 @@ static class Ata28
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
@@ -692,8 +702,12 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, count,
-                                      dev.Timeout, out double duration);
+        bool sense = dev.ReadMultiple(out byte[] buffer,
+                                      out AtaErrorRegistersLba28 errorRegisters,
+                                      lba,
+                                      count,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -733,8 +747,7 @@ static class Ata28
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_MULTIPLE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -771,7 +784,9 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+        bool sense = dev.ReadNativeMaxAddress(out uint lba,
+                                              out AtaErrorRegistersLba28 errorRegisters,
+                                              dev.Timeout,
                                               out double duration);
 
     menu:
@@ -883,9 +898,9 @@ static class Ata28
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
@@ -909,8 +924,13 @@ static class Ata28
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, retries, lba, count,
-                              dev.Timeout, out double duration);
+        bool sense = dev.Read(out byte[] buffer,
+                              out AtaErrorRegistersLba28 errorRegisters,
+                              retries,
+                              lba,
+                              count,
+                              dev.Timeout,
+                              out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -957,8 +977,7 @@ static class Ata28
                                           ? Localization.READ_SECTORS_WITH_RETRIES_response
                                           : Localization.READ_SECTORS_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1045,9 +1064,9 @@ static class Ata28
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }

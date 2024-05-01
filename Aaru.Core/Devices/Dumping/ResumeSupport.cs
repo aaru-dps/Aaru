@@ -68,8 +68,7 @@ static class ResumeSupport
                                  ref ExtentsULong extents, string firmware, bool @private, bool force,
                                  bool isTape = false)
     {
-        if(@private)
-            serial = null;
+        if(@private) serial = null;
 
         if(resume != null)
         {
@@ -88,19 +87,20 @@ static class ResumeSupport
             {
                 if(resume.Removable)
                 {
-                    throw new InvalidOperationException(Localization.Core.
-                                                                     Resume_specifies_removable_but_device_is_non_removable);
+                    throw new InvalidOperationException(Localization.Core
+                                                                    .Resume_specifies_removable_but_device_is_non_removable);
                 }
 
-                throw new InvalidOperationException(Localization.Core.
-                                                                 Resume_specifies_non_removable_but_device_is_removable);
+                throw new InvalidOperationException(Localization.Core
+                                                                .Resume_specifies_non_removable_but_device_is_removable);
             }
 
             if(!isTape && resume.LastBlock != blocks - 1 && !force)
             {
-                throw new
-                    InvalidOperationException(string.Format(Localization.Core.Resume_file_different_number_of_blocks_not_continuing,
-                                                            resume.LastBlock + 1, blocks));
+                throw new InvalidOperationException(string.Format(Localization.Core
+                                                                              .Resume_file_different_number_of_blocks_not_continuing,
+                                                                  resume.LastBlock + 1,
+                                                                  blocks));
             }
 
             foreach(DumpHardware oldTry in resume.Tries)
@@ -109,34 +109,34 @@ static class ResumeSupport
                 {
                     if(oldTry.Manufacturer != manufacturer)
                     {
-                        throw new
-                            InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_manufacturer_not_continuing,
-                                                                 oldTry.Manufacturer, manufacturer));
+                        throw new InvalidOperationException(string.Format(Localization.Core
+                                                                             .Resume_file_different_manufacturer_not_continuing,
+                                                                          oldTry.Manufacturer,
+                                                                          manufacturer));
                     }
 
                     if(oldTry.Model != model)
                     {
-                        throw new
-                            InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_model_not_continuing,
-                                                                 oldTry.Model, model));
+                        throw new InvalidOperationException(string.Format(Localization.Core
+                                                                             .Resume_file_different_model_not_continuing,
+                                                                          oldTry.Model,
+                                                                          model));
                     }
 
                     if(oldTry.Serial != serial)
                     {
-                        throw new
-                            InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_serial_number_not_continuing,
-                                                                 oldTry.Serial, serial));
+                        throw new InvalidOperationException(string.Format(Localization.Core
+                                                                             .Resume_file_different_serial_number_not_continuing,
+                                                                          oldTry.Serial,
+                                                                          serial));
                     }
 
                     if(oldTry.Firmware != firmware)
                     {
-                        throw new
-                            InvalidOperationException(string.
-                                                          Format(Localization.Core.Resume_file_different_firmware_revision_not_continuing,
-                                                                 oldTry.Firmware, firmware));
+                        throw new InvalidOperationException(string.Format(Localization.Core
+                                                                             .Resume_file_different_firmware_revision_not_continuing,
+                                                                          oldTry.Firmware,
+                                                                          firmware));
                     }
                 }
 
@@ -161,8 +161,7 @@ static class ResumeSupport
                 break;
             }
 
-            if(currentTry != null)
-                return;
+            if(currentTry != null) return;
 
             currentTry = new DumpHardware
             {

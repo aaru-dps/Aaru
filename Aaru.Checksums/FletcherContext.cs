@@ -64,8 +64,7 @@ public sealed class Fletcher32Context : IChecksum
         _sum1 = 0xFFFF;
         _sum2 = 0xFFFF;
 
-        if(!Native.IsSupported)
-            return;
+        if(!Native.IsSupported) return;
 
         _nativeContext = fletcher32_init();
         _useNative     = _nativeContext != IntPtr.Zero;
@@ -99,8 +98,7 @@ public sealed class Fletcher32Context : IChecksum
     {
         var finalSum = (uint)(_sum2 << 16 | _sum1);
 
-        if(!_useNative)
-            return BigEndianBitConverter.GetBytes(finalSum);
+        if(!_useNative) return BigEndianBitConverter.GetBytes(finalSum);
 
         fletcher32_final(_nativeContext, ref finalSum);
         fletcher32_free(_nativeContext);
@@ -177,13 +175,11 @@ public sealed class Fletcher32Context : IChecksum
             {
                 sum1 += data[dataOff];
 
-                if(sum1 >= FLETCHER_MODULE)
-                    sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
 
                 sum2 += sum1;
 
-                if(sum2 >= FLETCHER_MODULE)
-                    sum2 -= FLETCHER_MODULE;
+                if(sum2 >= FLETCHER_MODULE) sum2 -= FLETCHER_MODULE;
 
                 previousSum1 = (ushort)(sum1 & 0xFFFF);
                 previousSum2 = (ushort)(sum2 & 0xFFFF);
@@ -199,8 +195,7 @@ public sealed class Fletcher32Context : IChecksum
                     sum2 += sum1;
                 }
 
-                if(sum1 >= FLETCHER_MODULE)
-                    sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
 
                 sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
                 previousSum1 =  (ushort)(sum1 & 0xFFFF);
@@ -337,8 +332,7 @@ public sealed class Fletcher32Context : IChecksum
         {
             nativeContext = fletcher32_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         var fileStream = new FileStream(filename, FileMode.Open);
@@ -368,8 +362,7 @@ public sealed class Fletcher32Context : IChecksum
 
         var fletcherOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            fletcherOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -389,8 +382,7 @@ public sealed class Fletcher32Context : IChecksum
         {
             nativeContext = fletcher32_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         ushort localSum1 = 0xFFFF;
@@ -410,8 +402,7 @@ public sealed class Fletcher32Context : IChecksum
 
         var adlerOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            adlerOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
         return adlerOutput.ToString();
     }
@@ -442,8 +433,7 @@ public sealed class Fletcher16Context : IChecksum
         _sum1 = 0xFF;
         _sum2 = 0xFF;
 
-        if(!Native.IsSupported)
-            return;
+        if(!Native.IsSupported) return;
 
         _nativeContext = fletcher16_init();
         _useNative     = _nativeContext != IntPtr.Zero;
@@ -477,8 +467,7 @@ public sealed class Fletcher16Context : IChecksum
     {
         var finalSum = (ushort)(_sum2 << 8 | _sum1);
 
-        if(!_useNative)
-            return BigEndianBitConverter.GetBytes(finalSum);
+        if(!_useNative) return BigEndianBitConverter.GetBytes(finalSum);
 
         fletcher16_final(_nativeContext, ref finalSum);
         fletcher16_free(_nativeContext);
@@ -541,13 +530,11 @@ public sealed class Fletcher16Context : IChecksum
             {
                 sum1 += data[dataOff];
 
-                if(sum1 >= FLETCHER_MODULE)
-                    sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
 
                 sum2 += sum1;
 
-                if(sum2 >= FLETCHER_MODULE)
-                    sum2 -= FLETCHER_MODULE;
+                if(sum2 >= FLETCHER_MODULE) sum2 -= FLETCHER_MODULE;
 
                 previousSum1 = (byte)(sum1 & 0xFF);
                 previousSum2 = (byte)(sum2 & 0xFF);
@@ -563,8 +550,7 @@ public sealed class Fletcher16Context : IChecksum
                     sum2 += sum1;
                 }
 
-                if(sum1 >= FLETCHER_MODULE)
-                    sum1 -= FLETCHER_MODULE;
+                if(sum1 >= FLETCHER_MODULE) sum1 -= FLETCHER_MODULE;
 
                 sum2         %= FLETCHER_MODULE; /* only added so many FLETCHER_MODULE's */
                 previousSum1 =  (byte)(sum1 & 0xFF);
@@ -681,8 +667,7 @@ public sealed class Fletcher16Context : IChecksum
         {
             nativeContext = fletcher16_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         var fileStream = new FileStream(filename, FileMode.Open);
@@ -712,8 +697,7 @@ public sealed class Fletcher16Context : IChecksum
 
         var fletcherOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            fletcherOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) fletcherOutput.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -733,8 +717,7 @@ public sealed class Fletcher16Context : IChecksum
         {
             nativeContext = fletcher16_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         byte localSum1 = 0xFF;
@@ -754,8 +737,7 @@ public sealed class Fletcher16Context : IChecksum
 
         var adlerOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            adlerOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
         return adlerOutput.ToString();
     }

@@ -28,8 +28,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using time_t = int;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 

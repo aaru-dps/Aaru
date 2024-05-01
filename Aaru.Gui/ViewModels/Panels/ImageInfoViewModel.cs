@@ -107,13 +107,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         MediaLogo = AssetLoader.Exists(mediaResource)
                         ? new Bitmap(AssetLoader.Open(mediaResource))
-                        :
-                        imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
+                        : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                             ? genericHddIcon
-                            :
-                            imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
-                                ?
-                                genericOpticalIcon
+                            : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
+                                ? genericOpticalIcon
                                 : genericFolderIcon;
 
         ImagePathText       = string.Format(UI.Path_0,                         imagePath);
@@ -129,11 +126,13 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         SectorsText =
             string.Format(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
-                          imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
+                          imageFormat.Info.Sectors,
+                          imageFormat.Info.SectorSize,
                           ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize).Humanize());
 
         MediaTypeText = string.Format(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1,
-                                      imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
+                                      imageFormat.Info.MediaType,
+                                      imageFormat.Info.MetadataMediaType);
 
         HasPartitionsText = imageFormat.Info.HasPartitions ? UI.Has_partitions : UI.Doesnt_have_partitions;
         HasSessionsText   = imageFormat.Info.HasSessions ? UI.Has_sessions : UI.Doesnt_have_sessions;
@@ -142,7 +141,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
                                   ? string.Format(Localization.Core.Was_created_with_0_version_1,
-                                                  imageFormat.Info.Application, imageFormat.Info.ApplicationVersion)
+                                                  imageFormat.Info.Application,
+                                                  imageFormat.Info.ApplicationVersion)
                                   : string.Format(Localization.Core.Was_created_with_0, imageFormat.Info.Application);
         }
 
@@ -161,7 +161,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
         if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
         {
             MediaSequenceText = string.Format(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
-                                              imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
+                                              imageFormat.Info.MediaSequence,
+                                              imageFormat.Info.LastMediaSequence);
         }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
@@ -209,7 +210,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
            imageFormat is not ITapeImage { IsTape: true })
         {
             MediaGeometryText = string.Format(UI.Media_geometry_0_cylinders_1_heads_2_sectors_per_track,
-                                              imageFormat.Info.Cylinders, imageFormat.Info.Heads,
+                                              imageFormat.Info.Cylinders,
+                                              imageFormat.Info.Heads,
                                               imageFormat.Info.SectorsPerTrack);
         }
 
@@ -249,22 +251,27 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out scsiModeSense6);
 
-            if(errno == ErrorNumber.NoError)
-                scsiMode = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
+            if(errno == ErrorNumber.NoError) scsiMode = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
         }
 
         if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_10) == true)
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out scsiModeSense10);
 
-            if(errno == ErrorNumber.NoError)
-                scsiMode = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
+            if(errno == ErrorNumber.NoError) scsiMode = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
         }
 
         ScsiInfo = new ScsiInfo
         {
-            DataContext = new ScsiInfoViewModel(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType,
-                                                scsiModeSense6, scsiModeSense10, null, view)
+            DataContext = new ScsiInfoViewModel(scsiInquiryData,
+                                                scsiInquiry,
+                                                null,
+                                                scsiMode,
+                                                scsiDeviceType,
+                                                scsiModeSense6,
+                                                scsiModeSense10,
+                                                null,
+                                                view)
         };
 
         byte[] ataIdentify   = null;
@@ -407,15 +414,27 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcn);
 
-            if(errno == ErrorNumber.NoError)
-                mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
+            if(errno == ErrorNumber.NoError) mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
         }
 
         CompactDiscInfo = new CompactDiscInfo
         {
-            DataContext = new CompactDiscInfoViewModel(toc, atip, null, null, fullToc, pma, cdtext, decodedToc,
-                                                       decodedAtip, null, decodedFullToc, decodedCdText, null,
-                                                       mediaCatalogueNumber, null, view)
+            DataContext = new CompactDiscInfoViewModel(toc,
+                                                       atip,
+                                                       null,
+                                                       null,
+                                                       fullToc,
+                                                       pma,
+                                                       cdtext,
+                                                       decodedToc,
+                                                       decodedAtip,
+                                                       null,
+                                                       decodedFullToc,
+                                                       decodedCdText,
+                                                       null,
+                                                       mediaCatalogueNumber,
+                                                       null,
+                                                       view)
         };
 
         byte[]                         dvdPfi                    = null;
@@ -429,8 +448,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.DVD_PFI, out dvdPfi);
 
-            if(errno == ErrorNumber.NoError)
-                decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
+            if(errno == ErrorNumber.NoError) decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
         }
 
         if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_DMI) == true)
@@ -447,8 +465,14 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(dvdPfi, dvdDmi, dvdCmi, hddvdCopyrightInformation, dvdBca, null,
-                                               decodedPfi, view)
+            DataContext = new DvdInfoViewModel(dvdPfi,
+                                               dvdDmi,
+                                               dvdCmi,
+                                               hddvdCopyrightInformation,
+                                               dvdBca,
+                                               null,
+                                               decodedPfi,
+                                               view)
         };
 
         byte[] dvdRamDds                     = null;
@@ -510,11 +534,22 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdWritableInfo = new DvdWritableInfo
         {
-            DataContext = new DvdWritableInfoViewModel(dvdRamDds, dvdRamCartridgeStatus, dvdRamSpareArea,
-                                                       lastBorderOutRmd, dvdPreRecordedInfo, dvdrMediaIdentifier,
-                                                       dvdrPhysicalInformation, hddvdrMediumStatus, null,
-                                                       dvdrLayerCapacity, dvdrDlMiddleZoneStart, dvdrDlJumpIntervalSize,
-                                                       dvdrDlManualLayerJumpStartLba, null, dvdPlusAdip, dvdPlusDcb,
+            DataContext = new DvdWritableInfoViewModel(dvdRamDds,
+                                                       dvdRamCartridgeStatus,
+                                                       dvdRamSpareArea,
+                                                       lastBorderOutRmd,
+                                                       dvdPreRecordedInfo,
+                                                       dvdrMediaIdentifier,
+                                                       dvdrPhysicalInformation,
+                                                       hddvdrMediumStatus,
+                                                       null,
+                                                       dvdrLayerCapacity,
+                                                       dvdrDlMiddleZoneStart,
+                                                       dvdrDlJumpIntervalSize,
+                                                       dvdrDlManualLayerJumpStartLba,
+                                                       null,
+                                                       dvdPlusAdip,
+                                                       dvdPlusDcb,
                                                        view)
         };
 
@@ -549,9 +584,16 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         BlurayInfo = new BlurayInfo
         {
-            DataContext = new BlurayInfoViewModel(blurayDiscInformation, blurayBurstCuttingArea, blurayDds,
-                                                  blurayCartridgeStatus, bluraySpareAreaInformation, blurayPowResources,
-                                                  blurayTrackResources, null, null, view)
+            DataContext = new BlurayInfoViewModel(blurayDiscInformation,
+                                                  blurayBurstCuttingArea,
+                                                  blurayDds,
+                                                  blurayCartridgeStatus,
+                                                  bluraySpareAreaInformation,
+                                                  blurayPowResources,
+                                                  blurayTrackResources,
+                                                  null,
+                                                  null,
+                                                  view)
         };
 
         byte[]             xboxDmi                   = null;
@@ -565,8 +607,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_SecuritySector, out xboxSecuritySector);
 
-            if(errno == ErrorNumber.NoError)
-                decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
+            if(errno == ErrorNumber.NoError) decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
         }
 
         XboxInfo = new XboxInfo
@@ -654,8 +695,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
             {
                 if(opticalMediaImage.Sessions is { Count: > 0 })
                 {
-                    foreach(Session session in opticalMediaImage.Sessions)
-                        Sessions.Add(session);
+                    foreach(Session session in opticalMediaImage.Sessions) Sessions.Add(session);
                 }
             }
             catch
@@ -667,8 +707,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
             {
                 if(opticalMediaImage.Tracks is { Count: > 0 })
                 {
-                    foreach(Track track in opticalMediaImage.Tracks)
-                        Tracks.Add(track);
+                    foreach(Track track in opticalMediaImage.Tracks) Tracks.Add(track);
                 }
             }
             catch
@@ -677,8 +716,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
             }
         }
 
-        if(imageFormat.DumpHardware is null)
-            return;
+        if(imageFormat.DumpHardware is null) return;
 
         foreach(DumpHardware dump in imageFormat.DumpHardware)
         {

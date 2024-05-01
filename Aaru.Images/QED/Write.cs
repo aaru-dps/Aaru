@@ -118,8 +118,7 @@ public sealed partial class Qed
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -127,8 +126,7 @@ public sealed partial class Qed
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _clusterBits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _clusterBits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         var empty = new byte[_qHdr.l1_table_offset + _tableSize * 8];
         _writingStream.Write(empty, 0, empty.Length);
@@ -172,8 +170,7 @@ public sealed partial class Qed
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -181,7 +178,8 @@ public sealed partial class Qed
 
         if((long)l1Off >= _l1Table.LongLength)
         {
-            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1, l1Off,
+            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1,
+                                         l1Off,
                                          _l1Table.LongLength);
 
             return false;
@@ -251,16 +249,14 @@ public sealed partial class Qed
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         for(uint i = 0; i < length; i++)
         {
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";

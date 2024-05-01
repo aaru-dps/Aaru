@@ -211,8 +211,7 @@ public sealed partial class Nhdr0
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                    break;
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
             }
         }
 
@@ -233,7 +232,10 @@ public sealed partial class Nhdr0
         {
             byte[] commentBytes = Encoding.GetEncoding("shift_jis").GetBytes(_imageInfo.Comments);
 
-            Array.Copy(commentBytes, 0, header.szComment, 0,
+            Array.Copy(commentBytes,
+                       0,
+                       header.szComment,
+                       0,
                        commentBytes.Length >= 0x100 ? 0x100 : commentBytes.Length);
         }
 

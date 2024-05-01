@@ -315,9 +315,12 @@ public static class BigEndianBitConverter
     public static Guid ToGuid(byte[] value, int startIndex) => new(ToUInt32(value, 0 + startIndex),
                                                                    ToUInt16(value, 4 + startIndex),
                                                                    ToUInt16(value, 6 + startIndex),
-                                                                   value[8 + startIndex + 0], value[8 + startIndex + 1],
-                                                                   value[8 + startIndex + 2], value[8 + startIndex + 3],
-                                                                   value[8 + startIndex + 5], value[8 + startIndex + 5],
-                                                                   value[8 + startIndex + 6],
-                                                                   value[8 + startIndex + 7]);
+                                                                   value[8           + startIndex + 0],
+                                                                   value[8           + startIndex + 1],
+                                                                   value[8           + startIndex + 2],
+                                                                   value[8           + startIndex + 3],
+                                                                   value[8           + startIndex + 5],
+                                                                   value[8           + startIndex + 5],
+                                                                   value[8           + startIndex + 6],
+                                                                   value[8           + startIndex + 7]);
 }

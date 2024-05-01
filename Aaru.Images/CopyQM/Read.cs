@@ -96,8 +96,7 @@ public sealed partial class CopyQm
         {
             var runLengthBytes = new byte[2];
 
-            if(stream.EnsureRead(runLengthBytes, 0, 2) != 2)
-                break;
+            if(stream.EnsureRead(runLengthBytes, 0, 2) != 2) break;
 
             var runLength = BitConverter.ToInt16(runLengthBytes, 0);
 
@@ -147,15 +146,18 @@ public sealed partial class CopyQm
 
         var sum = 0;
 
-        for(var i = 0; i < hdr.Length - 1; i++)
-            sum += hdr[i];
+        for(var i = 0; i < hdr.Length - 1; i++) sum += hdr[i];
 
         _headerChecksumOk = (-1 * sum & 0xFF) == _header.headerChecksum;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_header_checksum_equals_0_X2_1, -1 * sum & 0xFF,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Calculated_header_checksum_equals_0_X2_1,
+                                   -1 * sum & 0xFF,
                                    _headerChecksumOk);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_CRC_equals_0_X8_1, _calculatedDataCrc,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Calculated_data_CRC_equals_0_X8_1,
+                                   _calculatedDataCrc,
                                    _calculatedDataCrc == _header.crc);
 
         _imageInfo.Application          = "CopyQM";
@@ -211,11 +213,9 @@ public sealed partial class CopyQm
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

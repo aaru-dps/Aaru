@@ -52,8 +52,10 @@ public class LZFSE
     public static int DecodeBuffer(byte[] source, byte[] destination) => Native.IsSupported
                                                                              ? (int)
                                                                              AARU_lzfse_decode_buffer(destination,
-                                                                                                      (nuint)destination.Length, source,
-                                                                                                      (nuint)source.Length,      null)
+                                                                                                      (nuint)destination.Length,
+                                                                                                      source,
+                                                                                                      (nuint)source.Length,
+                                                                                                      null)
                                                                              : 0;
 
     /// <summary>Compresses a buffer using BZIP2</summary>
@@ -63,7 +65,9 @@ public class LZFSE
     public static int EncodeBuffer(byte[] source, byte[] destination) => Native.IsSupported
                                                                              ? (int)
                                                                              AARU_lzfse_encode_buffer(destination,
-                                                                                                      (nuint)destination.Length, source,
-                                                                                                      (nuint)source.Length,      null)
+                                                                                                      (nuint)destination.Length,
+                                                                                                      source,
+                                                                                                      (nuint)source.Length,
+                                                                                                      null)
                                                                              : 0;
 }

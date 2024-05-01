@@ -56,17 +56,16 @@ public static class Version
         Assembly assembly = typeof(GCSettings).Assembly;
 
         string[] assemblyPath = assembly.CodeBase?.Split(new[]
-        {
-            '/', '\\'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                                         {
+                                                             '/', '\\'
+                                                         },
+                                                         StringSplitOptions.RemoveEmptyEntries);
 
-        if(assemblyPath is null)
-            return null;
+        if(assemblyPath is null) return null;
 
         int netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 
-        if(netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2)
-            return assemblyPath[netCoreAppIndex + 1];
+        if(netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2) return assemblyPath[netCoreAppIndex + 1];
 
         return null;
     }
@@ -75,14 +74,12 @@ public static class Version
     /// <returns>Version</returns>
     public static string GetMonoVersion()
     {
-        if(!DetectOS.IsMono)
-            return null;
+        if(!DetectOS.IsMono) return null;
 
-        MethodInfo monoDisplayName = Type.GetType("Mono.Runtime")?.
-                                          GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
+        MethodInfo monoDisplayName = Type.GetType("Mono.Runtime")
+                                        ?.GetMethod("GetDisplayName", BindingFlags.NonPublic | BindingFlags.Static);
 
-        if(monoDisplayName != null)
-            return (string)monoDisplayName.Invoke(null, null);
+        if(monoDisplayName != null) return (string)monoDisplayName.Invoke(null, null);
 
         return null;
     }

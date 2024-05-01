@@ -61,8 +61,7 @@ sealed class IbgLog
     /// <param name="currentProfile">Profile as defined by SCSI MultiMedia Commands specification</param>
     internal IbgLog(string outputFile, ushort currentProfile)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _logFile      = outputFile;
         _ibgSb        = new StringBuilder();
@@ -239,15 +238,13 @@ sealed class IbgLog
     /// <param name="currentSpeed">Current speed at the snapshot</param>
     internal void Write(ulong sector, double currentSpeed)
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
 
         _ibgIntSpeed   += currentSpeed;
         _ibgSampleRate += (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
         _ibgSnaps++;
 
-        if(_ibgSampleRate < 100)
-            return;
+        if(_ibgSampleRate < 100) return;
 
         if(_ibgIntSpeed > 0 && !_ibgStartSet)
         {
@@ -255,11 +252,10 @@ sealed class IbgLog
             _ibgStartSet   = true;
         }
 
-        _ibgSb.Append($"{_ibgIntSpeed / _ibgSnaps / _ibgDivider:0.00},{_ibgIntSector},{_ibgSampleRate:0},0").
-               AppendLine();
+        _ibgSb.Append($"{_ibgIntSpeed / _ibgSnaps / _ibgDivider:0.00},{_ibgIntSector},{_ibgSampleRate:0},0")
+              .AppendLine();
 
-        if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed)
-            _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
+        if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed) _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
 
         _ibgStopwatch.Restart();
         _ibgIntSpeed   = 0;
@@ -279,8 +275,7 @@ sealed class IbgLog
     internal void Close(Device dev,          ulong  blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                         double averageSpeed, string devicePath)
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
 
         _ibgStopwatch.Stop();
 

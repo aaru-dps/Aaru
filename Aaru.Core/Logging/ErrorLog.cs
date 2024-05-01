@@ -44,8 +44,7 @@ public sealed class ErrorLog
     /// <param name="outputFile">Output log file</param>
     public ErrorLog(string outputFile)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _logSw = new StreamWriter(outputFile, true);
 
@@ -79,56 +78,42 @@ public sealed class ErrorLog
             List<string> error  = new();
             List<string> status = new();
 
-            if((registers.Status & 0x01) == 0x01)
-                status.Add("ERR");
+            if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
-            if((registers.Status & 0x02) == 0x02)
-                status.Add("IDX");
+            if((registers.Status & 0x02) == 0x02) status.Add("IDX");
 
-            if((registers.Status & 0x04) == 0x04)
-                status.Add("CORR");
+            if((registers.Status & 0x04) == 0x04) status.Add("CORR");
 
-            if((registers.Status & 0x08) == 0x08)
-                status.Add("DRQ");
+            if((registers.Status & 0x08) == 0x08) status.Add("DRQ");
 
-            if((registers.Status & 0x10) == 0x10)
-                status.Add("SRV");
+            if((registers.Status & 0x10) == 0x10) status.Add("SRV");
 
-            if((registers.Status & 0x20) == 0x20)
-                status.Add("DF");
+            if((registers.Status & 0x20) == 0x20) status.Add("DF");
 
-            if((registers.Status & 0x40) == 0x40)
-                status.Add("RDY");
+            if((registers.Status & 0x40) == 0x40) status.Add("RDY");
 
-            if((registers.Status & 0x80) == 0x80)
-                status.Add("BSY");
+            if((registers.Status & 0x80) == 0x80) status.Add("BSY");
 
-            if((registers.Error & 0x01) == 0x01)
-                error.Add("AMNF");
+            if((registers.Error & 0x01) == 0x01) error.Add("AMNF");
 
-            if((registers.Error & 0x02) == 0x02)
-                error.Add("T0NF");
+            if((registers.Error & 0x02) == 0x02) error.Add("T0NF");
 
-            if((registers.Error & 0x04) == 0x04)
-                error.Add("ABRT");
+            if((registers.Error & 0x04) == 0x04) error.Add("ABRT");
 
-            if((registers.Error & 0x08) == 0x08)
-                error.Add("MCR");
+            if((registers.Error & 0x08) == 0x08) error.Add("MCR");
 
-            if((registers.Error & 0x10) == 0x10)
-                error.Add("IDNF");
+            if((registers.Error & 0x10) == 0x10) error.Add("IDNF");
 
-            if((registers.Error & 0x20) == 0x20)
-                error.Add("MC");
+            if((registers.Error & 0x20) == 0x20) error.Add("MC");
 
-            if((registers.Error & 0x40) == 0x40)
-                error.Add("UNC");
+            if((registers.Error & 0x40) == 0x40) error.Add("UNC");
 
-            if((registers.Error & 0x80) == 0x80)
-                error.Add("BBK");
+            if((registers.Error & 0x80) == 0x80) error.Add("BBK");
 
-            _logSw.WriteLine(Localization.Core.ATA_command_0_error_status_1_error_2, command, string.Join(' ', status),
-                             string.Join(' ',                                                                  error));
+            _logSw.WriteLine(Localization.Core.ATA_command_0_error_status_1_error_2,
+                             command,
+                             string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -146,7 +131,10 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_operating_system_error_3, cylinder, head, sector,
+            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_operating_system_error_3,
+                             cylinder,
+                             head,
+                             sector,
                              errno);
 
             _logSw.Flush();
@@ -156,56 +144,44 @@ public sealed class ErrorLog
             List<string> error  = new();
             List<string> status = new();
 
-            if((registers.Status & 0x01) == 0x01)
-                status.Add("ERR");
+            if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
-            if((registers.Status & 0x02) == 0x02)
-                status.Add("IDX");
+            if((registers.Status & 0x02) == 0x02) status.Add("IDX");
 
-            if((registers.Status & 0x04) == 0x04)
-                status.Add("CORR");
+            if((registers.Status & 0x04) == 0x04) status.Add("CORR");
 
-            if((registers.Status & 0x08) == 0x08)
-                status.Add("DRQ");
+            if((registers.Status & 0x08) == 0x08) status.Add("DRQ");
 
-            if((registers.Status & 0x10) == 0x10)
-                status.Add("SRV");
+            if((registers.Status & 0x10) == 0x10) status.Add("SRV");
 
-            if((registers.Status & 0x20) == 0x20)
-                status.Add("DF");
+            if((registers.Status & 0x20) == 0x20) status.Add("DF");
 
-            if((registers.Status & 0x40) == 0x40)
-                status.Add("RDY");
+            if((registers.Status & 0x40) == 0x40) status.Add("RDY");
 
-            if((registers.Status & 0x80) == 0x80)
-                status.Add("BSY");
+            if((registers.Status & 0x80) == 0x80) status.Add("BSY");
 
-            if((registers.Error & 0x01) == 0x01)
-                error.Add("AMNF");
+            if((registers.Error & 0x01) == 0x01) error.Add("AMNF");
 
-            if((registers.Error & 0x02) == 0x02)
-                error.Add("T0NF");
+            if((registers.Error & 0x02) == 0x02) error.Add("T0NF");
 
-            if((registers.Error & 0x04) == 0x04)
-                error.Add("ABRT");
+            if((registers.Error & 0x04) == 0x04) error.Add("ABRT");
 
-            if((registers.Error & 0x08) == 0x08)
-                error.Add("MCR");
+            if((registers.Error & 0x08) == 0x08) error.Add("MCR");
 
-            if((registers.Error & 0x10) == 0x10)
-                error.Add("IDNF");
+            if((registers.Error & 0x10) == 0x10) error.Add("IDNF");
 
-            if((registers.Error & 0x20) == 0x20)
-                error.Add("MC");
+            if((registers.Error & 0x20) == 0x20) error.Add("MC");
 
-            if((registers.Error & 0x40) == 0x40)
-                error.Add("UNC");
+            if((registers.Error & 0x40) == 0x40) error.Add("UNC");
 
-            if((registers.Error & 0x80) == 0x80)
-                error.Add("BBK");
+            if((registers.Error & 0x80) == 0x80) error.Add("BBK");
 
-            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_error_status_3_error_4, cylinder, head, sector,
-                             string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine(Localization.Core.ATA_reading_CHS_0_1_2_error_status_3_error_4,
+                             cylinder,
+                             head,
+                             sector,
+                             string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -228,56 +204,42 @@ public sealed class ErrorLog
             List<string> error  = new();
             List<string> status = new();
 
-            if((registers.Status & 0x01) == 0x01)
-                status.Add("ERR");
+            if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
-            if((registers.Status & 0x02) == 0x02)
-                status.Add("IDX");
+            if((registers.Status & 0x02) == 0x02) status.Add("IDX");
 
-            if((registers.Status & 0x04) == 0x04)
-                status.Add("CORR");
+            if((registers.Status & 0x04) == 0x04) status.Add("CORR");
 
-            if((registers.Status & 0x08) == 0x08)
-                status.Add("DRQ");
+            if((registers.Status & 0x08) == 0x08) status.Add("DRQ");
 
-            if((registers.Status & 0x10) == 0x10)
-                status.Add("SRV");
+            if((registers.Status & 0x10) == 0x10) status.Add("SRV");
 
-            if((registers.Status & 0x20) == 0x20)
-                status.Add("DF");
+            if((registers.Status & 0x20) == 0x20) status.Add("DF");
 
-            if((registers.Status & 0x40) == 0x40)
-                status.Add("RDY");
+            if((registers.Status & 0x40) == 0x40) status.Add("RDY");
 
-            if((registers.Status & 0x80) == 0x80)
-                status.Add("BSY");
+            if((registers.Status & 0x80) == 0x80) status.Add("BSY");
 
-            if((registers.Error & 0x01) == 0x01)
-                error.Add("AMNF");
+            if((registers.Error & 0x01) == 0x01) error.Add("AMNF");
 
-            if((registers.Error & 0x02) == 0x02)
-                error.Add("T0NF");
+            if((registers.Error & 0x02) == 0x02) error.Add("T0NF");
 
-            if((registers.Error & 0x04) == 0x04)
-                error.Add("ABRT");
+            if((registers.Error & 0x04) == 0x04) error.Add("ABRT");
 
-            if((registers.Error & 0x08) == 0x08)
-                error.Add("MCR");
+            if((registers.Error & 0x08) == 0x08) error.Add("MCR");
 
-            if((registers.Error & 0x10) == 0x10)
-                error.Add("IDNF");
+            if((registers.Error & 0x10) == 0x10) error.Add("IDNF");
 
-            if((registers.Error & 0x20) == 0x20)
-                error.Add("MC");
+            if((registers.Error & 0x20) == 0x20) error.Add("MC");
 
-            if((registers.Error & 0x40) == 0x40)
-                error.Add("UNC");
+            if((registers.Error & 0x40) == 0x40) error.Add("UNC");
 
-            if((registers.Error & 0x80) == 0x80)
-                error.Add("BBK");
+            if((registers.Error & 0x80) == 0x80) error.Add("BBK");
 
-            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2, block,
-                             string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2,
+                             block,
+                             string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -300,56 +262,42 @@ public sealed class ErrorLog
             List<string> error  = new();
             List<string> status = new();
 
-            if((registers.Status & 0x01) == 0x01)
-                status.Add("ERR");
+            if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
-            if((registers.Status & 0x02) == 0x02)
-                status.Add("IDX");
+            if((registers.Status & 0x02) == 0x02) status.Add("IDX");
 
-            if((registers.Status & 0x04) == 0x04)
-                status.Add("CORR");
+            if((registers.Status & 0x04) == 0x04) status.Add("CORR");
 
-            if((registers.Status & 0x08) == 0x08)
-                status.Add("DRQ");
+            if((registers.Status & 0x08) == 0x08) status.Add("DRQ");
 
-            if((registers.Status & 0x10) == 0x10)
-                status.Add("SRV");
+            if((registers.Status & 0x10) == 0x10) status.Add("SRV");
 
-            if((registers.Status & 0x20) == 0x20)
-                status.Add("DF");
+            if((registers.Status & 0x20) == 0x20) status.Add("DF");
 
-            if((registers.Status & 0x40) == 0x40)
-                status.Add("RDY");
+            if((registers.Status & 0x40) == 0x40) status.Add("RDY");
 
-            if((registers.Status & 0x80) == 0x80)
-                status.Add("BSY");
+            if((registers.Status & 0x80) == 0x80) status.Add("BSY");
 
-            if((registers.Error & 0x01) == 0x01)
-                error.Add("AMNF");
+            if((registers.Error & 0x01) == 0x01) error.Add("AMNF");
 
-            if((registers.Error & 0x02) == 0x02)
-                error.Add("T0NF");
+            if((registers.Error & 0x02) == 0x02) error.Add("T0NF");
 
-            if((registers.Error & 0x04) == 0x04)
-                error.Add("ABRT");
+            if((registers.Error & 0x04) == 0x04) error.Add("ABRT");
 
-            if((registers.Error & 0x08) == 0x08)
-                error.Add("MCR");
+            if((registers.Error & 0x08) == 0x08) error.Add("MCR");
 
-            if((registers.Error & 0x10) == 0x10)
-                error.Add("IDNF");
+            if((registers.Error & 0x10) == 0x10) error.Add("IDNF");
 
-            if((registers.Error & 0x20) == 0x20)
-                error.Add("MC");
+            if((registers.Error & 0x20) == 0x20) error.Add("MC");
 
-            if((registers.Error & 0x40) == 0x40)
-                error.Add("UNC");
+            if((registers.Error & 0x40) == 0x40) error.Add("UNC");
 
-            if((registers.Error & 0x80) == 0x80)
-                error.Add("BBK");
+            if((registers.Error & 0x80) == 0x80) error.Add("BBK");
 
-            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2, block,
-                             string.Join(' ', status), string.Join(' ', error));
+            _logSw.WriteLine(Localization.Core.ATA_reading_LBA_0_error_status_1_error_2,
+                             block,
+                             string.Join(' ', status),
+                             string.Join(' ', error));
 
             _logSw.Flush();
         }
@@ -378,22 +326,27 @@ public sealed class ErrorLog
         {
             if(prettySense != null)
             {
-                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense[12..];
+                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal)) prettySense = prettySense[12..];
 
-                if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense[..^1];
+                if(prettySense.EndsWith('\n')) prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5, command,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4_5,
+                                 command,
+                                 decodedSense.Value.SenseKey,
+                                 decodedSense.Value.ASC,
+                                 decodedSense.Value.ASCQ,
+                                 hexSense,
                                  prettySense);
             }
             else
             {
-                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4, command,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
+                _logSw.WriteLine(Localization.Core.SCSI_command_0_error_SENSE_1_ASC_2_ASCQ_3_4,
+                                 command,
+                                 decodedSense.Value.SenseKey,
+                                 decodedSense.Value.ASC,
+                                 decodedSense.Value.ASCQ,
                                  hexSense);
             }
         }
@@ -401,11 +354,9 @@ public sealed class ErrorLog
         {
             if(prettySense != null)
             {
-                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense[12..];
+                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal)) prettySense = prettySense[12..];
 
-                if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense[..^1];
+                if(prettySense.EndsWith('\n')) prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
@@ -430,8 +381,7 @@ public sealed class ErrorLog
             _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_operating_system_error_1, block, errno);
             _logSw.Flush();
 
-            if(senseBuffer is null || senseBuffer.Length == 0 || senseBuffer.All(s => s == 0))
-                return;
+            if(senseBuffer is null || senseBuffer.Length == 0 || senseBuffer.All(s => s == 0)) return;
         }
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
@@ -442,22 +392,27 @@ public sealed class ErrorLog
         {
             if(prettySense != null)
             {
-                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense[12..];
+                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal)) prettySense = prettySense[12..];
 
-                if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense[..^1];
+                if(prettySense.EndsWith('\n')) prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
-                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5, block,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ, hexSense,
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4_5,
+                                 block,
+                                 decodedSense.Value.SenseKey,
+                                 decodedSense.Value.ASC,
+                                 decodedSense.Value.ASCQ,
+                                 hexSense,
                                  prettySense);
             }
             else
             {
-                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4, block,
-                                 decodedSense.Value.SenseKey, decodedSense.Value.ASC, decodedSense.Value.ASCQ,
+                _logSw.WriteLine(Localization.Core.SCSI_reading_LBA_0_error_SENSE_1_ASC_2_ASCQ_3_4,
+                                 block,
+                                 decodedSense.Value.SenseKey,
+                                 decodedSense.Value.ASC,
+                                 decodedSense.Value.ASCQ,
                                  hexSense);
             }
         }
@@ -465,11 +420,9 @@ public sealed class ErrorLog
         {
             if(prettySense != null)
             {
-                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal))
-                    prettySense = prettySense[12..];
+                if(prettySense.StartsWith("SCSI SENSE: ", StringComparison.Ordinal)) prettySense = prettySense[12..];
 
-                if(prettySense.EndsWith('\n'))
-                    prettySense = prettySense[..^1];
+                if(prettySense.EndsWith('\n')) prettySense = prettySense[..^1];
 
                 prettySense = prettySense.Replace("\n", " - ");
 
@@ -498,7 +451,8 @@ public sealed class ErrorLog
         }
 
         // TODO: Decode response
-        _logSw.WriteLine(Localization.Core.SD_MMC_command_0_error_1, command,
+        _logSw.WriteLine(Localization.Core.SD_MMC_command_0_error_1,
+                         command,
                          string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         _logSw.Flush();
@@ -515,16 +469,22 @@ public sealed class ErrorLog
     {
         if(osError)
         {
-            _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
-                             block, errno);
+            _logSw.WriteLine(byteAddressed
+                                 ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_operating_system_error_1
+                                 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_operating_system_error_1,
+                             block,
+                             errno);
 
             _logSw.Flush();
 
             return;
         }
 
-        _logSw.WriteLine(byteAddressed ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1 : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
-                         block, string.Join(" - ", response.Select(r => $"0x{r:X8}")));
+        _logSw.WriteLine(byteAddressed
+                             ? Localization.Core.SD_MMC_reading_LBA_0_byte_addressed_error_1
+                             : Localization.Core.SD_MMC_reading_LBA_0_block_addressed_error_1,
+                         block,
+                         string.Join(" - ", response.Select(r => $"0x{r:X8}")));
 
         throw new NotImplementedException();
     }

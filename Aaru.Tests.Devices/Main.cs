@@ -60,19 +60,34 @@ static partial class MainClass
 
             AaruConsole.WriteLine(Localization.Aaru_device_handling_tests);
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", Localization.Path,
-                                  Localization.Vendor, Localization.Model, Localization.Serial, Localization.Bus,
-                                  Localization.Supported, Localization.Number);
+            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
+                                  Localization.Path,
+                                  Localization.Vendor,
+                                  Localization.Model,
+                                  Localization.Serial,
+                                  Localization.Bus,
+                                  Localization.Supported,
+                                  Localization.Number);
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                  "----------------", "------------------------", "------------------------",
-                                  "----------", "----------", "--------");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                                  "----------------------",
+                                  "----------------",
+                                  "------------------------",
+                                  "------------------------",
+                                  "----------",
+                                  "----------",
+                                  "--------");
 
             for(var i = 0; i < devices.Length; i++)
             {
-                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
-                                      devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
-                                      devices[i].Supported, i + 1);
+                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
+                                      devices[i].Path,
+                                      devices[i].Vendor,
+                                      devices[i].Model,
+                                      devices[i].Serial,
+                                      devices[i].Bus,
+                                      devices[i].Supported,
+                                      i + 1);
             }
 
             AaruConsole.Write(Localization.Please_choose_which_drive_to_test_zero_to_exit);

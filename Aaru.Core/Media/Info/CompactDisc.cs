@@ -107,8 +107,14 @@ public static class CompactDisc
                        dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
                        dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        sense = dev.PlextorReadCdDa(out cmdBuf, out _, wantedLba, sectorSize, 3, PlextorSubchannel.None,
-                                                    dev.Timeout, out _);
+                        sense = dev.PlextorReadCdDa(out cmdBuf,
+                                                    out _,
+                                                    wantedLba,
+                                                    sectorSize,
+                                                    3,
+                                                    PlextorSubchannel.None,
+                                                    dev.Timeout,
+                                                    out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -118,8 +124,7 @@ public static class CompactDisc
                             {
                                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
-                                if(!tmpBuf.SequenceEqual(sectorSync))
-                                    continue;
+                                if(!tmpBuf.SequenceEqual(sectorSync)) continue;
 
                                 // De-scramble M and S
                                 minute = cmdBuf[i + 12] ^ 0x01;
@@ -152,34 +157,70 @@ public static class CompactDisc
                         dbDev?.SCSI?.MultiMediaDevice?.TestedMedia?.Any(d => d.CanReadCdScrambled == true) == true ||
                         dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase)))
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
-                                           false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           wantedLba,
+                                           sectorSize,
+                                           3,
+                                           MmcSectorTypes.Cdda,
+                                           false,
+                                           false,
+                                           false,
+                                           MmcHeaderCodes.None,
+                                           true,
+                                           false,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
                             // Clear cache
                             for(var i = 0; i < 63; i++)
                             {
-                                sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + 16 * i), sectorSize, 16,
-                                                   MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None,
-                                                   true, false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                sense = dev.ReadCd(out _,
+                                                   out _,
+                                                   (uint)(wantedLba + 3 + 16 * i),
+                                                   sectorSize,
+                                                   16,
+                                                   MmcSectorTypes.AllTypes,
+                                                   false,
+                                                   false,
+                                                   false,
+                                                   MmcHeaderCodes.None,
+                                                   true,
+                                                   false,
+                                                   MmcErrorField.None,
+                                                   MmcSubchannel.None,
+                                                   dev.Timeout,
                                                    out _);
 
-                                if(sense || dev.Error)
-                                    break;
+                                if(sense || dev.Error) break;
                             }
 
-                            dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false, false,
-                                       false, MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                            dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       wantedLba,
+                                       sectorSize,
+                                       3,
+                                       MmcSectorTypes.Cdda,
+                                       false,
+                                       false,
+                                       false,
+                                       MmcHeaderCodes.None,
+                                       true,
+                                       false,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                             for(var i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                             {
                                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
-                                if(!tmpBuf.SequenceEqual(sectorSync))
-                                    continue;
+                                if(!tmpBuf.SequenceEqual(sectorSync)) continue;
 
                                 // De-scramble M and S
                                 minute = cmdBuf[i + 12] ^ 0x01;
@@ -207,15 +248,13 @@ public static class CompactDisc
                 }
             }
 
-            if(offsetFound)
-                return;
+            if(offsetFound) return;
 
             // Try to get another the offset some other way, we need an audio track just after a data track, same session
 
             for(var i = 1; i < tracks.Length; i++)
             {
-                if(tracks[i - 1].Type == TrackType.Audio || tracks[i].Type != TrackType.Audio)
-                    continue;
+                if(tracks[i - 1].Type == TrackType.Audio || tracks[i].Type != TrackType.Audio) continue;
 
                 dataTrack  = tracks[i - 1];
                 audioTrack = tracks[i];
@@ -223,16 +262,27 @@ public static class CompactDisc
                 break;
             }
 
-            if(dataTrack is null || audioTrack is null)
-                return;
+            if(dataTrack is null || audioTrack is null) return;
 
             // Found them
-            sense = dev.ReadCd(out cmdBuf, out _, (uint)audioTrack.StartSector, sectorSize, 3, MmcSectorTypes.Cdda,
-                               false, false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                               MmcSubchannel.None, dev.Timeout, out _);
+            sense = dev.ReadCd(out cmdBuf,
+                               out _,
+                               (uint)audioTrack.StartSector,
+                               sectorSize,
+                               3,
+                               MmcSectorTypes.Cdda,
+                               false,
+                               false,
+                               false,
+                               MmcHeaderCodes.None,
+                               true,
+                               false,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
-            if(sense || dev.Error)
-                return;
+            if(sense || dev.Error) return;
 
             dataTrack.EndSector += 150;
 
@@ -265,8 +315,7 @@ public static class CompactDisc
             {
                 Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
 
-                if(!tmpBuf.SequenceEqual(sectorSync))
-                    continue;
+                if(!tmpBuf.SequenceEqual(sectorSync)) continue;
 
                 combinedOffset = i + 2352;
                 offsetFound    = true;
@@ -274,18 +323,28 @@ public static class CompactDisc
                 break;
             }
 
-            if(offsetFound || audioTrack.Pregap <= 0)
-                return;
+            if(offsetFound || audioTrack.Pregap <= 0) return;
 
-            sense = dev.ReadCd(out byte[] dataBuf, out _, (uint)dataTrack.EndSector, sectorSize, 1,
-                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                               MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+            sense = dev.ReadCd(out byte[] dataBuf,
+                               out _,
+                               (uint)dataTrack.EndSector,
+                               sectorSize,
+                               1,
+                               MmcSectorTypes.AllTypes,
+                               false,
+                               false,
+                               true,
+                               MmcHeaderCodes.AllHeaders,
+                               true,
+                               true,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
-            if(sense || dev.Error)
-                return;
+            if(sense || dev.Error) return;
 
-            for(var i = 0; i < dataBuf.Length; i++)
-                dataBuf[i] ^= Sector.ScrambleTable[i];
+            for(var i = 0; i < dataBuf.Length; i++) dataBuf[i] ^= Sector.ScrambleTable[i];
 
             for(var i = 0; i < 2352; i++)
             {
@@ -295,8 +354,7 @@ public static class CompactDisc
                 Array.Copy(dataBuf, i, dataSide,  0, dataSide.Length);
                 Array.Copy(cmdBuf,  0, audioSide, 0, audioSide.Length);
 
-                if(!dataSide.SequenceEqual(audioSide))
-                    continue;
+                if(!dataSide.SequenceEqual(audioSide)) continue;
 
                 combinedOffset = audioSide.Length;
 
@@ -307,18 +365,43 @@ public static class CompactDisc
         {
             var videoNowColorFrame = new byte[9 * sectorSize];
 
-            sense = dev.ReadCd(out cmdBuf, out _, 0, sectorSize, 9, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                               dev.Timeout, out _);
+            sense = dev.ReadCd(out cmdBuf,
+                               out _,
+                               0,
+                               sectorSize,
+                               9,
+                               MmcSectorTypes.AllTypes,
+                               false,
+                               false,
+                               true,
+                               MmcHeaderCodes.AllHeaders,
+                               true,
+                               true,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
             if(sense || dev.Error)
             {
-                sense = dev.ReadCd(out cmdBuf, out _, 0, sectorSize, 9, MmcSectorTypes.Cdda, false, false, true,
-                                   MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   0,
+                                   sectorSize,
+                                   9,
+                                   MmcSectorTypes.Cdda,
+                                   false,
+                                   false,
+                                   true,
+                                   MmcHeaderCodes.None,
+                                   true,
+                                   true,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
                                    out _);
 
-                if(sense || dev.Error)
-                    videoNowColorFrame = null;
+                if(sense || dev.Error) videoNowColorFrame = null;
             }
 
             if(videoNowColorFrame is null)

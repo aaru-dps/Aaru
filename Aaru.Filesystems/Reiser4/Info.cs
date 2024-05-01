@@ -45,29 +45,23 @@ public sealed partial class Reiser4
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbAddr + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
         Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -82,31 +76,25 @@ public sealed partial class Reiser4
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         uint sbAddr = REISER4_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
         Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-        if(!_magic.SequenceEqual(reiserSb.magic))
-            return;
+        if(!_magic.SequenceEqual(reiserSb.magic)) return;
 
         var sb = new StringBuilder();
 

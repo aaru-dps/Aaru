@@ -43,8 +43,7 @@ public sealed partial class SuperCardPro
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        if(Header.flags.HasFlag(ScpFlags.Writable))
-            return null;
+        if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
 
         var  wholeFile = new byte[_scpStream.Length];
         uint sum       = 0;
@@ -52,8 +51,7 @@ public sealed partial class SuperCardPro
         _scpStream.Position = 0;
         _scpStream.EnsureRead(wholeFile, 0, wholeFile.Length);
 
-        for(var i = 0x10; i < wholeFile.Length; i++)
-            sum += wholeFile[i];
+        for(var i = 0x10; i < wholeFile.Length; i++) sum += wholeFile[i];
 
         return Header.checksum == sum;
     }

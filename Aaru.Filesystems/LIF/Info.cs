@@ -46,13 +46,11 @@ public sealed partial class LIF
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 256)
-            return false;
+        if(imagePlugin.Info.SectorSize < 256) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_0_expected_1, lifSb.magic, LIF_MAGIC);
@@ -68,18 +66,15 @@ public sealed partial class LIF
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 256)
-            return;
+        if(imagePlugin.Info.SectorSize < 256) return;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         SystemBlock lifSb = Marshal.ByteArrayToStructureBigEndian<SystemBlock>(sector);
 
-        if(lifSb.magic != LIF_MAGIC)
-            return;
+        if(lifSb.magic != LIF_MAGIC) return;
 
         var sb = new StringBuilder();
 

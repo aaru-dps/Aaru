@@ -32,7 +32,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 

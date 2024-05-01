@@ -46,12 +46,12 @@ public sealed partial class PascalPlugin
         internal string[] Contents;
         internal int      Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -82,7 +82,7 @@ public sealed partial class PascalPlugin
     {
         internal byte[] Cache;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -93,7 +93,7 @@ public sealed partial class PascalPlugin
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

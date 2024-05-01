@@ -56,8 +56,7 @@ public sealed partial class SuperCardPro
             return ErrorNumber.WriteError;
         }
 
-        if(subTrack != 0)
-            return ErrorNumber.NotSupported;
+        if(subTrack != 0) return ErrorNumber.NotSupported;
 
         Header.start = byte.Min((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.start);
         Header.end   = byte.Max((byte)HeadTrackSubToScpTrack(head, track, subTrack), Header.end);
@@ -71,8 +70,7 @@ public sealed partial class SuperCardPro
         }
 
         // SCP can only have one resolution for all tracks
-        if(Header.resolution != scpResolution)
-            return ErrorNumber.NotSupported;
+        if(Header.resolution != scpResolution) return ErrorNumber.NotSupported;
 
         long scpTrack = HeadTrackSubToScpTrack(head, track, subTrack);
 
@@ -99,8 +97,7 @@ public sealed partial class SuperCardPro
         }
 
         // SCP can only have the same number of revolutions for all tracks
-        if(Header.revolutions != scpIndices.Count)
-            return ErrorNumber.NotSupported;
+        if(Header.revolutions != scpIndices.Count) return ErrorNumber.NotSupported;
 
         List<byte> scpData = FluxRepresentationsToUInt16List(dataBuffer, scpIndices, out uint[] trackLengths);
 

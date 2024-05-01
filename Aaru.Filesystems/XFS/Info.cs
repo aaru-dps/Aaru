@@ -46,72 +46,69 @@ public sealed partial class XFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return false;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             foreach(int location in new[]
-                {
-                    0, 0x200, 0x400
-                })
+                    {
+                        0, 0x200, 0x400
+                    })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2, location,
-                                           xfsSb.magicnum, XFS_MAGIC);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.magic_at_0_X3_equals_1_expected_2,
+                                           location,
+                                           xfsSb.magicnum,
+                                           XFS_MAGIC);
 
-                if(xfsSb.magicnum == XFS_MAGIC)
-                    return true;
+                if(xfsSb.magicnum == XFS_MAGIC) return true;
             }
         }
         else
         {
             foreach(int i in new[]
-                {
-                    0, 1, 2
-                })
+                    {
+                        0, 1, 2
+                    })
             {
                 var location = (ulong)i;
 
                 var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                    sbSize++;
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
-                if(sector.Length < Marshal.SizeOf<Superblock>())
-                    return false;
+                if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
                 Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2, location,
-                                           xfsSb.magicnum, XFS_MAGIC);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.magic_at_0_equals_1_expected_2,
+                                           location,
+                                           xfsSb.magicnum,
+                                           XFS_MAGIC);
 
-                if(xfsSb.magicnum == XFS_MAGIC)
-                    return true;
+                if(xfsSb.magicnum == XFS_MAGIC) return true;
             }
         }
 
@@ -126,8 +123,7 @@ public sealed partial class XFS
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         var xfsSb = new Superblock();
 
@@ -136,62 +132,61 @@ public sealed partial class XFS
         {
             var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>())
-                return;
+            if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>()) return;
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
             foreach(int location in new[]
-                {
-                    0, 0x200, 0x400
-                })
+                    {
+                        0, 0x200, 0x400
+                    })
             {
                 Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf<Superblock>());
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2, location,
-                                           xfsSb.magicnum, XFS_MAGIC);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.magic_at_0_X3_equals_1_expected_2,
+                                           location,
+                                           xfsSb.magicnum,
+                                           XFS_MAGIC);
 
-                if(xfsSb.magicnum == XFS_MAGIC)
-                    break;
+                if(xfsSb.magicnum == XFS_MAGIC) break;
             }
         }
         else
         {
             foreach(int i in new[]
-                {
-                    0, 1, 2
-                })
+                    {
+                        0, 1, 2
+                    })
             {
                 var location = (ulong)i;
                 var sbSize   = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                    sbSize++;
+                if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + location, sbSize, out byte[] sector);
 
-                if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>())
-                    return;
+                if(errno != ErrorNumber.NoError || sector.Length < Marshal.SizeOf<Superblock>()) return;
 
                 xfsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2, location,
-                                           xfsSb.magicnum, XFS_MAGIC);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.magic_at_0_equals_1_expected_2,
+                                           location,
+                                           xfsSb.magicnum,
+                                           XFS_MAGIC);
 
-                if(xfsSb.magicnum == XFS_MAGIC)
-                    break;
+                if(xfsSb.magicnum == XFS_MAGIC) break;
             }
         }
 
-        if(xfsSb.magicnum != XFS_MAGIC)
-            return;
+        if(xfsSb.magicnum != XFS_MAGIC) return;
 
         var sb = new StringBuilder();
 
@@ -205,8 +200,7 @@ public sealed partial class XFS
         sb.AppendFormat(Localization._0_allocation_groups_in_volume,  xfsSb.agcount).AppendLine();
         sb.AppendFormat(Localization._0_inodes_in_volume_1_free,      xfsSb.icount, xfsSb.ifree).AppendLine();
 
-        if(xfsSb.inprogress > 0)
-            sb.AppendLine(Localization.fsck_in_progress);
+        if(xfsSb.inprogress > 0) sb.AppendLine(Localization.fsck_in_progress);
 
         sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(xfsSb.fname, encoding)).AppendLine();
         sb.AppendFormat(Localization.Volume_UUID_0, xfsSb.uuid).AppendLine();

@@ -39,8 +39,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -51,20 +50,22 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                        Assert.AreEqual(test.Sectors,
+                                        image.Info.Sectors,
                                         string.Format(Localization.Sectors_0, testFile));
 
-                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                        Assert.AreEqual(test.SectorSize,
+                                        image.Info.SectorSize,
                                         string.Format(Localization.Sector_size_0, testFile));
 
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                        Assert.AreEqual(test.MediaType,
+                                        image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
                     });
                 }
@@ -89,8 +90,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -101,8 +101,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 ulong doneSectors = 0;
                 var   ctx         = new Md5Context();
@@ -142,8 +141,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
         {
             foreach(BlockImageTestExpected test in Tests)
             {
-                if(test.Partitions is null)
-                    continue;
+                if(test.Partitions is null) continue;
 
                 string testFile = test.TestFile;
 
@@ -152,8 +150,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -164,8 +161,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 List<Partition> partitions = Core.Partitions.GetAll(image);
 
@@ -182,9 +178,12 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                     });
                 }
 
-                Assert.AreEqual(test.Partitions.Length, partitions.Count,
+                Assert.AreEqual(test.Partitions.Length,
+                                partitions.Count,
                                 string.Format(Localization.Expected_0_partitions_in_1_but_found_2,
-                                              test.Partitions.Length, testFile, partitions.Count));
+                                              test.Partitions.Length,
+                                              testFile,
+                                              partitions.Count));
 
                 using(new AssertionScope())
                 {
@@ -195,20 +194,27 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                             BlockPartitionVolumes expectedPartition = test.Partitions[i];
                             Partition             foundPartition    = partitions[i];
 
-                            Assert.AreEqual(expectedPartition.Start, foundPartition.Start,
-                                            string.
-                                                Format(Localization.Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
-                                                       i, expectedPartition.Start, foundPartition.Start, testFile));
+                            Assert.AreEqual(expectedPartition.Start,
+                                            foundPartition.Start,
+                                            string.Format(Localization
+                                                             .Expected_partition_0_to_start_at_sector_1_but_found_it_starts_at_2_in_3,
+                                                          i,
+                                                          expectedPartition.Start,
+                                                          foundPartition.Start,
+                                                          testFile));
 
-                            Assert.AreEqual(expectedPartition.Length, foundPartition.Length,
-                                            string.
-                                                Format(Localization.Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
-                                                       i, expectedPartition.Length, foundPartition.Length, testFile));
+                            Assert.AreEqual(expectedPartition.Length,
+                                            foundPartition.Length,
+                                            string.Format(Localization
+                                                             .Expected_partition_0_to_have_1_sectors_but_found_it_has_2_sectors_in_3,
+                                                          i,
+                                                          expectedPartition.Length,
+                                                          foundPartition.Length,
+                                                          testFile));
 
                             var expectedDataFilename = $"{testFile}.contents.partition{i}.json";
 
-                            if(!File.Exists(expectedDataFilename))
-                                continue;
+                            if(!File.Exists(expectedDataFilename)) continue;
 
                             var serializerOptions = new JsonSerializerOptions
                             {
@@ -231,8 +237,7 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                             Core.Filesystems.Identify(image, out List<string> idPlugins, partitions[i]);
 
-                            if(expectedData.Length != idPlugins.Count)
-                                continue;
+                            if(expectedData.Length != idPlugins.Count) continue;
 
                             // Uncomment to generate JSON file
                             /*
@@ -267,10 +272,10 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
                                 sw.Close();
                                 */
 
-                            if(idPlugins.Count == 0)
-                                continue;
+                            if(idPlugins.Count == 0) continue;
 
-                            Assert.AreEqual(expectedData.Length, idPlugins.Count,
+                            Assert.AreEqual(expectedData.Length,
+                                            idPlugins.Count,
                                             $"Expected {expectedData.Length} filesystems identified in partition {i
                                             } but found {idPlugins.Count} in {testFile}");
 
@@ -285,19 +290,24 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                 ErrorNumber error = fs.Mount(image, partitions[i], null, null, null);
 
-                                Assert.AreEqual(ErrorNumber.NoError, error,
+                                Assert.AreEqual(ErrorNumber.NoError,
+                                                error,
                                                 $"Could not mount {pluginName} in partition {i} in {testFile}.");
 
-                                if(error != ErrorNumber.NoError)
-                                    continue;
+                                if(error != ErrorNumber.NoError) continue;
 
                                 VolumeData volumeData = expectedData[j];
 
                                 var currentDepth = 0;
 
-                                ReadOnlyFilesystemTest.TestDirectory(fs, "/", volumeData.Files, testFile, true,
+                                ReadOnlyFilesystemTest.TestDirectory(fs,
+                                                                     "/",
+                                                                     volumeData.Files,
+                                                                     testFile,
+                                                                     true,
                                                                      out List<ReadOnlyFilesystemTest.NextLevel>
-                                                                             currentLevel, currentDepth);
+                                                                             currentLevel,
+                                                                     currentDepth);
 
                                 while(currentLevel.Count > 0)
                                 {
@@ -306,10 +316,14 @@ public abstract class BlockMediaImageTest : BaseMediaImageTest
 
                                     foreach(ReadOnlyFilesystemTest.NextLevel subLevel in currentLevel)
                                     {
-                                        ReadOnlyFilesystemTest.TestDirectory(fs, subLevel.Path, subLevel.Children,
-                                                                             testFile, true,
+                                        ReadOnlyFilesystemTest.TestDirectory(fs,
+                                                                             subLevel.Path,
+                                                                             subLevel.Children,
+                                                                             testFile,
+                                                                             true,
                                                                              out List<ReadOnlyFilesystemTest.NextLevel>
-                                                                                 nextLevel, currentDepth);
+                                                                                 nextLevel,
+                                                                             currentDepth);
 
                                         nextLevels.AddRange(nextLevel);
                                     }

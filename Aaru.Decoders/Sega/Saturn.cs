@@ -53,49 +53,58 @@ public static class Saturn
     /// <returns>Decoded IP.BIN</returns>
     public static IPBin? DecodeIPBin(byte[] ipbin_sector)
     {
-        if(ipbin_sector == null)
-            return null;
+        if(ipbin_sector == null) return null;
 
-        if(ipbin_sector.Length < 512)
-            return null;
+        if(ipbin_sector.Length < 512) return null;
 
         IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.maker_id = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.maker_id = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.maker_id));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.product_no = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.product_no = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_no));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.product_version = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.product_version = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_version));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.release_date = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.saturn_media = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.saturn_media = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.saturn_media));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_no_separator = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.disc_no_separator = \"{0}\"",
                                    (char)ipbin.disc_no_separator);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.disc_total_nos = {0}", (char)ipbin.disc_total_nos);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.release_date = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.spare_space1 = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.spare_space1 = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.spare_space1));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.region_codes = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.region_codes = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.region_codes));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.peripherals = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.peripherals = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.peripherals));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "saturn_ipbin.product_name = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "saturn_ipbin.product_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_name));
 
         return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : null;
@@ -106,8 +115,7 @@ public static class Saturn
     /// <returns>Description of the IP.BIN contents</returns>
     public static string Prettify(IPBin? decoded)
     {
-        if(decoded == null)
-            return null;
+        if(decoded == null) return null;
 
         IPBin ipbin = decoded.Value;
 
@@ -121,18 +129,18 @@ public static class Saturn
         CultureInfo provider  = CultureInfo.InvariantCulture;
         var         ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "yyyyMMdd", provider);
 
-        IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_name_0, Encoding.ASCII.GetString(ipbin.product_name))
+                        .AppendLine();
 
         IPBinInformation.Append($"Product number: {Encoding.ASCII.GetString(ipbin.product_no)}").AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_version_0, Encoding.ASCII.GetString(ipbin.product_version))
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Release_date_0, ipbindate).AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Disc_number_0_of_1, (char)ipbin.disc_no, (char)ipbin.disc_total_nos).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Disc_number_0_of_1, (char)ipbin.disc_no, (char)ipbin.disc_total_nos)
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
@@ -167,8 +175,8 @@ public static class Saturn
                 case ' ':
                     break;
                 default:
-                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
-                                     AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral)
+                                    .AppendLine();
 
                     break;
             }

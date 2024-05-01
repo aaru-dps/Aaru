@@ -54,16 +54,14 @@ public sealed partial class DiscJuggler
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dscLen = {0}", dscLen);
 
-        if(dscLen >= _imageStream.Length)
-            return false;
+        if(dscLen >= _imageStream.Length) return false;
 
         var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
         _imageStream.EnsureRead(descriptor, 0, dscLen);
 
         // Sessions
-        if(descriptor.Length < 1 || descriptor[0] > 99 || descriptor[0] == 0)
-            return false;
+        if(descriptor.Length < 1 || descriptor[0] > 99 || descriptor[0] == 0) return false;
 
         // Seems all sessions start with this data
         if(descriptor[1]  != 0x00 ||

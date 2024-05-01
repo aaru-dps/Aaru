@@ -130,8 +130,7 @@ public sealed partial class CopyTape
         _dataStream.Write(data,   0, data.Length);
         _dataStream.WriteByte(0x0A);
 
-        if(sectorAddress > _lastWrittenBlock)
-            _lastWrittenBlock = sectorAddress;
+        if(sectorAddress > _lastWrittenBlock) _lastWrittenBlock = sectorAddress;
 
         _dataStream.Seek(0, SeekOrigin.End);
 
@@ -145,8 +144,7 @@ public sealed partial class CopyTape
         {
             bool ret = WriteSector(data, sectorAddress + i);
 
-            if(!ret)
-                return false;
+            if(!ret) return false;
         }
 
         return true;
@@ -242,8 +240,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool AddPartition(TapePartition partition)
     {
-        if(partition.Number == 0)
-            return true;
+        if(partition.Number == 0) return true;
 
         ErrorMessage = Localization.Unsupported_feature;
 

@@ -43,13 +43,11 @@ public sealed partial class OperaFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var syncBytes = new byte[5];
 
@@ -57,8 +55,7 @@ public sealed partial class OperaFS
         Array.Copy(sbSector, 0x001, syncBytes, 0, 5);
         byte recordVersion = sbSector[0x006];
 
-        if(recordType != 1 || recordVersion != 1)
-            return false;
+        if(recordType != 1 || recordVersion != 1) return false;
 
         return Encoding.ASCII.GetString(syncBytes) == SYNC;
     }
@@ -75,31 +72,28 @@ public sealed partial class OperaFS
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        if(sb.record_type != 1 || sb.record_version != 1)
-            return;
+        if(sb.record_type != 1 || sb.record_version != 1) return;
 
-        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
-            return;
+        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC) return;
 
         superBlockmetadata.AppendFormat(Localization.Opera_filesystem_disc).AppendLine();
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, encoding)))
         {
-            superBlockmetadata.
-                AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, encoding)).
-                AppendLine();
+            superBlockmetadata
+               .AppendFormat(Localization.Volume_label_0, StringHandlers.CToString(sb.volume_label, encoding))
+               .AppendLine();
         }
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_comment, encoding)))
         {
-            superBlockmetadata.
-                AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, encoding)).
-                AppendLine();
+            superBlockmetadata
+               .AppendFormat(Localization.Volume_comment_0, StringHandlers.CToString(sb.volume_comment, encoding))
+               .AppendLine();
         }
 
         superBlockmetadata.AppendFormat(Localization.Volume_identifier_0_X8, sb.volume_id).AppendLine();
@@ -109,35 +103,39 @@ public sealed partial class OperaFS
         {
             if(sb.block_size != 2048)
             {
-                superBlockmetadata.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                 sb.block_size, 2048);
+                superBlockmetadata.AppendFormat(Localization
+                                                   .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                                sb.block_size,
+                                                2048);
             }
         }
         else if(imagePlugin.Info.SectorSize != sb.block_size)
         {
-            superBlockmetadata.
-                AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                             sb.block_size, imagePlugin.Info.SectorSize);
+            superBlockmetadata.AppendFormat(Localization
+                                               .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                            sb.block_size,
+                                            imagePlugin.Info.SectorSize);
         }
 
-        superBlockmetadata.
-            AppendFormat(Localization.Volume_size_0_blocks_1_bytes, sb.block_count, sb.block_size * sb.block_count).
-            AppendLine();
+        superBlockmetadata
+           .AppendFormat(Localization.Volume_size_0_blocks_1_bytes, sb.block_count, sb.block_size * sb.block_count)
+           .AppendLine();
 
         if(sb.block_count > imagePlugin.Info.Sectors)
         {
-            superBlockmetadata.
-                AppendFormat(Localization.WARNING__Filesystem_indicates_0_blocks_while_device_indicates_1_blocks,
-                             sb.block_count, imagePlugin.Info.Sectors);
+            superBlockmetadata.AppendFormat(Localization
+                                               .WARNING__Filesystem_indicates_0_blocks_while_device_indicates_1_blocks,
+                                            sb.block_count,
+                                            imagePlugin.Info.Sectors);
         }
 
         superBlockmetadata.AppendFormat(Localization.Root_directory_identifier_0,       sb.root_dirid).AppendLine();
         superBlockmetadata.AppendFormat(Localization.Root_directory_block_size_0_bytes, sb.rootdir_bsize).AppendLine();
 
-        superBlockmetadata.AppendFormat(Localization.Root_directory_size_0_blocks_1_bytes, sb.rootdir_blocks,
-                                        sb.rootdir_bsize * sb.rootdir_blocks).
-                           AppendLine();
+        superBlockmetadata.AppendFormat(Localization.Root_directory_size_0_blocks_1_bytes,
+                                        sb.rootdir_blocks,
+                                        sb.rootdir_bsize * sb.rootdir_blocks)
+                          .AppendLine();
 
         superBlockmetadata.AppendFormat(Localization.Last_root_directory_copy_0, sb.last_root_copy).AppendLine();
 

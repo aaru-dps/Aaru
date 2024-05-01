@@ -90,8 +90,10 @@ static class Cfa
     start:
         System.Console.Clear();
 
-        bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 errorRegisters,
-                                                  dev.Timeout, out double duration);
+        bool sense = dev.RequestExtendedErrorCode(out byte errorCode,
+                                                  out AtaErrorRegistersLba28 errorRegisters,
+                                                  dev.Timeout,
+                                                  out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -235,8 +237,13 @@ static class Cfa
     start:
         System.Console.Clear();
 
-        bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
-                                         sector, dev.Timeout, out double duration);
+        bool sense = dev.TranslateSector(out byte[] buffer,
+                                         out AtaErrorRegistersChs errorRegisters,
+                                         cylinder,
+                                         head,
+                                         sector,
+                                         dev.Timeout,
+                                         out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -276,8 +283,7 @@ static class Cfa
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -360,9 +366,9 @@ static class Cfa
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
@@ -376,7 +382,10 @@ static class Cfa
     start:
         System.Console.Clear();
 
-        bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, dev.Timeout,
+        bool sense = dev.TranslateSector(out byte[] buffer,
+                                         out AtaErrorRegistersLba28 errorRegisters,
+                                         lba,
+                                         dev.Timeout,
                                          out double duration);
 
     menu:
@@ -417,8 +426,7 @@ static class Cfa
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

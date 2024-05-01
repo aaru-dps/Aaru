@@ -100,8 +100,7 @@ partial class Dump
                                          _                  => PlextorSubchannel.None
                                      };
 
-        if(_resume.BadBlocks.Count <= 0 || _aborted || !_trim || !newTrim)
-            return;
+        if(_resume.BadBlocks.Count <= 0 || _aborted || !_trim || !newTrim) return;
 
         UpdateStatus?.Invoke(Localization.Core.Trimming_skipped_sectors);
         _dumpLog.WriteLine(Localization.Core.Trimming_skipped_sectors);
@@ -146,16 +145,34 @@ partial class Dump
 
             if(_supportsPlextorD8 && audioExtents.Contains(badSector))
             {
-                sense = ReadPlextorWithSubchannel(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                                  supportedPlextorSubchannel, out cmdDuration);
+                sense = ReadPlextorWithSubchannel(out cmdBuf,
+                                                  out senseBuf,
+                                                  badSectorToRead,
+                                                  blockSize,
+                                                  sectorsToTrim,
+                                                  supportedPlextorSubchannel,
+                                                  out cmdDuration);
             }
             else if(readcd)
             {
                 if(audioExtents.Contains(badSector))
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                        MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                                        MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        badSectorToRead,
+                                        blockSize,
+                                        sectorsToTrim,
+                                        MmcSectorTypes.Cdda,
+                                        false,
+                                        false,
+                                        false,
+                                        MmcHeaderCodes.None,
+                                        true,
+                                        false,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     if(sense)
                     {
@@ -164,9 +181,21 @@ partial class Dump
                         // Try to workaround firmware
                         if(decSense is { ASC: 0x11, ASCQ: 0x05 } || decSense?.ASC == 0x64)
                         {
-                            sense = _dev.ReadCd(out cmdBuf, out _, badSectorToRead, blockSize, sectorsToTrim,
-                                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                                true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
+                            sense = _dev.ReadCd(out cmdBuf,
+                                                out _,
+                                                badSectorToRead,
+                                                blockSize,
+                                                sectorsToTrim,
+                                                MmcSectorTypes.AllTypes,
+                                                false,
+                                                false,
+                                                true,
+                                                MmcHeaderCodes.AllHeaders,
+                                                true,
+                                                true,
+                                                MmcErrorField.None,
+                                                supportedSubchannel,
+                                                _dev.Timeout,
                                                 out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
@@ -175,9 +204,22 @@ partial class Dump
                 }
                 else
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        badSectorToRead,
+                                        blockSize,
+                                        sectorsToTrim,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     if(sense)
                     {
@@ -203,24 +245,46 @@ partial class Dump
                                 scrambledSectorsToTrim += (byte)sectorsForOffset;
                             }
 
-                            sense = _dev.ReadCd(out cmdBuf, out _, scrambledBadSectorToRead, blockSize,
-                                                scrambledSectorsToTrim, MmcSectorTypes.Cdda, false, false, false,
-                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                supportedSubchannel, _dev.Timeout, out double cmdDuration2);
+                            sense = _dev.ReadCd(out cmdBuf,
+                                                out _,
+                                                scrambledBadSectorToRead,
+                                                blockSize,
+                                                scrambledSectorsToTrim,
+                                                MmcSectorTypes.Cdda,
+                                                false,
+                                                false,
+                                                false,
+                                                MmcHeaderCodes.None,
+                                                true,
+                                                false,
+                                                MmcErrorField.None,
+                                                supportedSubchannel,
+                                                _dev.Timeout,
+                                                out double cmdDuration2);
 
                             cmdDuration += cmdDuration2;
 
                             if(!sense)
                             {
                                 uint scrambledBlocksToRead = scrambledSectorsToTrim;
-                                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
-                                              ref scrambledBlocksToRead, subSize, ref cmdBuf, blockSize, false);
+
+                                FixOffsetData(offsetBytes,
+                                              sectorSize,
+                                              sectorsForOffset,
+                                              supportedSubchannel,
+                                              ref scrambledBlocksToRead,
+                                              subSize,
+                                              ref cmdBuf,
+                                              blockSize,
+                                              false);
 
                                 // Descramble
                                 cmdBuf = Sector.Scramble(cmdBuf);
 
                                 // Check valid sector
-                                CdChecksums.CheckCdSector(cmdBuf, out bool? correctEccP, out bool? correctEccQ,
+                                CdChecksums.CheckCdSector(cmdBuf,
+                                                          out bool? correctEccP,
+                                                          out bool? correctEccQ,
                                                           out bool? correctEdc);
 
                                 // Check mode, set sense if EDC/ECC validity is not correct
@@ -230,8 +294,7 @@ partial class Dump
 
                                         for(var c = 16; c < 2352; c++)
                                         {
-                                            if(cmdBuf[c] == 0x00)
-                                                continue;
+                                            if(cmdBuf[c] == 0x00) continue;
 
                                             sense = true;
 
@@ -246,15 +309,12 @@ partial class Dump
                                     case 2:
                                         if((cmdBuf[18] & 0x20) != 0x20)
                                         {
-                                            if(correctEccP != true)
-                                                sense = true;
+                                            if(correctEccP != true) sense = true;
 
-                                            if(correctEccQ != true)
-                                                sense = true;
+                                            if(correctEccQ != true) sense = true;
                                         }
 
-                                        if(correctEdc != true)
-                                            sense = true;
+                                        if(correctEdc != true) sense = true;
 
                                         break;
                                 }
@@ -267,22 +327,61 @@ partial class Dump
             }
             else if(read16)
             {
-                sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize, 0,
-                                    sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read16(out cmdBuf,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    true,
+                                    false,
+                                    badSectorToRead,
+                                    blockSize,
+                                    0,
+                                    sectorsToTrim,
+                                    false,
+                                    _dev.Timeout,
+                                    out cmdDuration);
             }
             else if(read12)
             {
-                sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
-                                    0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read12(out cmdBuf,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    true,
+                                    false,
+                                    false,
+                                    badSectorToRead,
+                                    blockSize,
+                                    0,
+                                    sectorsToTrim,
+                                    false,
+                                    _dev.Timeout,
+                                    out cmdDuration);
             }
             else if(read10)
             {
-                sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead, blockSize,
-                                    0, sectorsToTrim, _dev.Timeout, out cmdDuration);
+                sense = _dev.Read10(out cmdBuf,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    true,
+                                    false,
+                                    false,
+                                    badSectorToRead,
+                                    blockSize,
+                                    0,
+                                    sectorsToTrim,
+                                    _dev.Timeout,
+                                    out cmdDuration);
             }
             else if(read6)
             {
-                sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim, _dev.Timeout,
+                sense = _dev.Read6(out cmdBuf,
+                                   out senseBuf,
+                                   badSectorToRead,
+                                   blockSize,
+                                   sectorsToTrim,
+                                   _dev.Timeout,
                                    out cmdDuration);
             }
 
@@ -307,8 +406,15 @@ partial class Dump
             {
                 uint blocksToRead = sectorsToTrim;
 
-                FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead, subSize,
-                              ref cmdBuf,  blockSize,  false);
+                FixOffsetData(offsetBytes,
+                              sectorSize,
+                              sectorsForOffset,
+                              supportedSubchannel,
+                              ref blocksToRead,
+                              subSize,
+                              ref cmdBuf,
+                              blockSize,
+                              false);
             }
 
             if(supportedSubchannel != MmcSubchannel.None)
@@ -325,18 +431,29 @@ partial class Dump
 
                 ulong trkStartBefore = track.StartSector;
 
-                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel, desiredSubchannel,
-                                                                               sub, badSector, 1, subLog, isrcs,
-                                                                               (byte)track.Sequence, ref mcn, tracks,
+                bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
+                                                                               desiredSubchannel,
+                                                                               sub,
+                                                                               badSector,
+                                                                               1,
+                                                                               subLog,
+                                                                               isrcs,
+                                                                               (byte)track.Sequence,
+                                                                               ref mcn,
+                                                                               tracks,
                                                                                subchannelExtents,
-                                                                               _fixSubchannelPosition, outputOptical,
-                                                                               _fixSubchannel, _fixSubchannelCrc,
-                                                                               _dumpLog, UpdateStatus,
-                                                                               smallestPregapLbaPerTrack, true, out _);
+                                                                               _fixSubchannelPosition,
+                                                                               outputOptical,
+                                                                               _fixSubchannel,
+                                                                               _fixSubchannelCrc,
+                                                                               _dumpLog,
+                                                                               UpdateStatus,
+                                                                               smallestPregapLbaPerTrack,
+                                                                               true,
+                                                                               out _);
 
                 // Set tracks and go back
-                if(!indexesChanged)
-                    continue;
+                if(!indexesChanged) continue;
 
                 outputOptical.SetTracks(tracks.ToList());
 

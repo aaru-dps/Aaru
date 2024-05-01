@@ -66,17 +66,13 @@ public static partial class Modes
 
     public static ModePage_07? DecodeModePage_07(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x07)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x07) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 12)
-            return null;
+        if(pageResponse.Length < 12) return null;
 
         var decoded = new ModePage_07();
 
@@ -98,40 +94,34 @@ public static partial class Modes
 
     public static string PrettifyModePage_07(ModePage_07? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_07 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Verify_error_recovery_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.EER)
-            sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
+        if(page.EER) sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
 
-        if(page.PER)
-            sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
+        if(page.PER) sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
 
-        if(page.DTE)
-            sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
+        if(page.DTE) sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
 
-        if(page.DCR)
-            sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
+        if(page.DCR) sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.VerifyRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_verify_operations_0_times, page.VerifyRetryCount)
+              .AppendLine();
         }
 
         if(page.RecoveryTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
-                            page.RecoveryTimeLimit).
-               AppendLine();
+                            page.RecoveryTimeLimit)
+              .AppendLine();
         }
 
         return sb.ToString();

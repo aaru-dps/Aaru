@@ -41,6 +41,7 @@ public class AtariLynx : IByteAddressableImage
     public Guid Id => new("809A6835-0486-4FD3-BD8B-2EF40C3EF97B");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -50,14 +51,12 @@ public class AtariLynx : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if((stream.Length - 64) % 65536 != 0)
-            return false;
+        if((stream.Length - 64) % 65536 != 0) return false;
 
         stream.Position = 0;
         var magicBytes = new byte[4];
@@ -71,22 +70,19 @@ public class AtariLynx : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if((stream.Length - 64) % 65536 != 0)
-            return ErrorNumber.InvalidArgument;
+        if((stream.Length - 64) % 65536 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x0;
         var magicBytes = new byte[4];
         stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
-        if(magic != 0x584E594C)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x584E594C) return ErrorNumber.InvalidArgument;
 
         var headerBytes = new byte[64];
         stream.Position = 0;
@@ -108,8 +104,7 @@ public class AtariLynx : IByteAddressableImage
 
         HandyHeader header = Marshal.ByteArrayToStructureBigEndian<HandyHeader>(headerBytes, 0, 64);
 
-        if(header.Version != 256)
-            return ErrorNumber.NotSupported;
+        if(header.Version != 256) return ErrorNumber.NotSupported;
 
         _imageInfo.MediaTitle        = StringHandlers.CToString(header.Name);
         _imageInfo.MediaManufacturer = StringHandlers.CToString(header.Manufacturer);
@@ -119,11 +114,11 @@ public class AtariLynx : IByteAddressableImage
         sb.AppendFormat(Localization.Name_0,         _imageInfo.MediaTitle).AppendLine();
         sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
 
-        sb.AppendFormat(Localization.Bank_zero_size_0_pages_1_bytes, header.Bank0Length, header.Bank0Length * 65536).
-           AppendLine();
+        sb.AppendFormat(Localization.Bank_zero_size_0_pages_1_bytes, header.Bank0Length, header.Bank0Length * 65536)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Bank_one_size_0_pages_1_bytes, header.Bank1Length, header.Bank1Length * 65536).
-           AppendLine();
+        sb.AppendFormat(Localization.Bank_one_size_0_pages_1_bytes, header.Bank1Length, header.Bank1Length * 65536)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Rotation_0, header.Rotation).AppendLine();
 
@@ -235,8 +230,7 @@ public class AtariLynx : IByteAddressableImage
             return false;
         }
 
-        if(!string.IsNullOrWhiteSpace(imageInfo.MediaTitle))
-            _imageInfo.MediaTitle = imageInfo.MediaTitle[..32];
+        if(!string.IsNullOrWhiteSpace(imageInfo.MediaTitle)) _imageInfo.MediaTitle = imageInfo.MediaTitle[..32];
 
         if(!string.IsNullOrWhiteSpace(imageInfo.MediaManufacturer))
             _imageInfo.MediaManufacturer = imageInfo.MediaManufacturer[..16];
@@ -345,8 +339,7 @@ public class AtariLynx : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -382,16 +375,13 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -464,8 +454,7 @@ public class AtariLynx : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -509,16 +498,13 @@ public class AtariLynx : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 

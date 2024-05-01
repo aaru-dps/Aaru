@@ -42,16 +42,14 @@ public sealed partial class SuperCardPro
 {
     static string ReadPStringUtf8(Stream stream, uint position)
     {
-        if(position == 0)
-            return null;
+        if(position == 0) return null;
 
         stream.Position = position;
         var lenB = new byte[2];
         stream.EnsureRead(lenB, 0, 2);
         var len = BitConverter.ToUInt16(lenB, 0);
 
-        if(len == 0 || len + stream.Position >= stream.Length)
-            return null;
+        if(len == 0 || len + stream.Position >= stream.Length) return null;
 
         var str = new byte[len];
         stream.EnsureRead(str, 0, len);
@@ -66,6 +64,7 @@ public sealed partial class SuperCardPro
     /// <param name="track">The track number</param>
     /// <param name="subTrack">The sub-track number</param>
     /// <returns>SCP format track number</returns>
+
     // ReSharper disable once UnusedParameter.Local
     static long HeadTrackSubToScpTrack(uint head, ushort track, byte subTrack) =>
 
@@ -167,8 +166,7 @@ public sealed partial class SuperCardPro
         stream.Position = 0;
         stream.EnsureRead(wholeFile, 0, wholeFile.Length);
 
-        for(int i = HEADER_OFFSET; i < wholeFile.Length; i++)
-            sum += wholeFile[i];
+        for(int i = HEADER_OFFSET; i < wholeFile.Length; i++) sum += wholeFile[i];
 
         return sum;
     }

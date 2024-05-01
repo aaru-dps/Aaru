@@ -77,17 +77,13 @@ public static partial class Modes
 
     public static ModePage_0E? DecodeModePage_0E(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x0E)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x0E) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_0E();
 
@@ -114,23 +110,20 @@ public static partial class Modes
 
     public static string PrettifyModePage_0E(ModePage_0E? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0E page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_CD_ROM_audio_control_parameters_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendLine(page.Immed
                           ? "\t" + Localization.Drive_will_return_from_playback_command_immediately
                           : "\t" + Localization.Drive_will_return_from_playback_command_when_playback_ends);
 
-        if(page.SOTC)
-            sb.AppendLine("\t" + Localization.Drive_will_stop_playback_on_track_end);
+        if(page.SOTC) sb.AppendLine("\t" + Localization.Drive_will_stop_playback_on_track_end);
 
         if(page.APRVal)
         {
@@ -148,17 +141,13 @@ public static partial class Modes
         {
             sb.Append("\t" + Localization.Output_port_0_has_channels);
 
-            if((page.OutputPort0ChannelSelection & 0x01) == 0x01)
-                sb.Append("0 ");
+            if((page.OutputPort0ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
 
-            if((page.OutputPort0ChannelSelection & 0x02) == 0x02)
-                sb.Append("1 ");
+            if((page.OutputPort0ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
 
-            if((page.OutputPort0ChannelSelection & 0x04) == 0x04)
-                sb.Append("2 ");
+            if((page.OutputPort0ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
 
-            if((page.OutputPort0ChannelSelection & 0x08) == 0x08)
-                sb.Append("3 ");
+            if((page.OutputPort0ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
             switch(page.OutputPort0Volume)
             {
@@ -181,17 +170,13 @@ public static partial class Modes
         {
             sb.Append("\t" + Localization.Output_port_1_has_channels);
 
-            if((page.OutputPort1ChannelSelection & 0x01) == 0x01)
-                sb.Append("0 ");
+            if((page.OutputPort1ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
 
-            if((page.OutputPort1ChannelSelection & 0x02) == 0x02)
-                sb.Append("1 ");
+            if((page.OutputPort1ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
 
-            if((page.OutputPort1ChannelSelection & 0x04) == 0x04)
-                sb.Append("2 ");
+            if((page.OutputPort1ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
 
-            if((page.OutputPort1ChannelSelection & 0x08) == 0x08)
-                sb.Append("3 ");
+            if((page.OutputPort1ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
             switch(page.OutputPort1Volume)
             {
@@ -214,17 +199,13 @@ public static partial class Modes
         {
             sb.Append("\t" + Localization.Output_port_2_has_channels);
 
-            if((page.OutputPort2ChannelSelection & 0x01) == 0x01)
-                sb.Append("0 ");
+            if((page.OutputPort2ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
 
-            if((page.OutputPort2ChannelSelection & 0x02) == 0x02)
-                sb.Append("1 ");
+            if((page.OutputPort2ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
 
-            if((page.OutputPort2ChannelSelection & 0x04) == 0x04)
-                sb.Append("2 ");
+            if((page.OutputPort2ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
 
-            if((page.OutputPort2ChannelSelection & 0x08) == 0x08)
-                sb.Append("3 ");
+            if((page.OutputPort2ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
             switch(page.OutputPort2Volume)
             {
@@ -243,22 +224,17 @@ public static partial class Modes
             }
         }
 
-        if(page.OutputPort3ChannelSelection <= 0)
-            return sb.ToString();
+        if(page.OutputPort3ChannelSelection <= 0) return sb.ToString();
 
         sb.Append("\t" + Localization.Output_port_3_has_channels);
 
-        if((page.OutputPort3ChannelSelection & 0x01) == 0x01)
-            sb.Append("0 ");
+        if((page.OutputPort3ChannelSelection & 0x01) == 0x01) sb.Append("0 ");
 
-        if((page.OutputPort3ChannelSelection & 0x02) == 0x02)
-            sb.Append("1 ");
+        if((page.OutputPort3ChannelSelection & 0x02) == 0x02) sb.Append("1 ");
 
-        if((page.OutputPort3ChannelSelection & 0x04) == 0x04)
-            sb.Append("2 ");
+        if((page.OutputPort3ChannelSelection & 0x04) == 0x04) sb.Append("2 ");
 
-        if((page.OutputPort3ChannelSelection & 0x08) == 0x08)
-            sb.Append("3 ");
+        if((page.OutputPort3ChannelSelection & 0x08) == 0x08) sb.Append("3 ");
 
         switch(page.OutputPort3Volume)
         {

@@ -73,8 +73,8 @@ public sealed partial class ZZZRawImage
             case ".128" when sectorSize  != 128:
             case ".256" when sectorSize  != 256:
             case ".iso" when sectorSize  != 2048:
-                ErrorMessage = Localization.
-                    The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
+                ErrorMessage = Localization
+                   .The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
 
                 return false;
         }
@@ -149,8 +149,7 @@ public sealed partial class ZZZRawImage
             return false;
         }
 
-        if(_mediaTags.ContainsKey(tag))
-            _mediaTags.Remove(tag);
+        if(_mediaTags.ContainsKey(tag)) _mediaTags.Remove(tag);
 
         _mediaTags.Add(tag, data);
 
@@ -240,8 +239,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool SetTracks(List<Track> tracks)
     {
-        if(tracks.Count <= 1)
-            return true;
+        if(tracks.Count <= 1) return true;
 
         ErrorMessage = "This format supports only 1 track";
 
@@ -264,13 +262,12 @@ public sealed partial class ZZZRawImage
 
         foreach(KeyValuePair<MediaTagType, byte[]> tag in _mediaTags)
         {
-            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars).
-                                               Where(t => t.tag == tag.Key).
-                                               Select(t => t.name).
-                                               FirstOrDefault();
+            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars)
+                                              .Where(t => t.tag == tag.Key)
+                                              .Select(t => t.name)
+                                              .FirstOrDefault();
 
-            if(suffix == null)
-                continue;
+            if(suffix == null) continue;
 
             var tagStream = new FileStream(_basePath + suffix, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 

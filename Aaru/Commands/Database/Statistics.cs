@@ -121,7 +121,7 @@ sealed class StatisticsCommand : Command
                 ulong count = 0;
 
                 foreach(Aaru.Database.Models.Command fsInfo in ctx.Commands.Where(c => c.Name == "fs-info" &&
-                        c.Synchronized))
+                            c.Synchronized))
                 {
                     count += fsInfo.Count;
                     ctx.Remove(fsInfo);
@@ -142,14 +142,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string command in ctx.Commands.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == command && !c.Synchronized);
 
-                if(count == 0)
-                    continue;
+                if(count == 0) continue;
 
                 table.AddRow(Markup.Escape(command), $"{count}");
                 thereAreStats = true;
@@ -172,14 +171,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string filter in ctx.Filters.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.Filters.Where(c => c.Name == filter && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Filters.Where(c => c.Name == filter && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Filters.LongCount(c => c.Name == filter && !c.Synchronized);
 
-                if(count == 0)
-                    continue;
+                if(count == 0) continue;
 
                 table.AddRow(Markup.Escape(filter), $"{count}");
                 thereAreStats = true;
@@ -202,14 +200,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string format in ctx.MediaFormats.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.MediaFormats.Where(c => c.Name == format && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.MediaFormats.Where(c => c.Name == format && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.MediaFormats.LongCount(c => c.Name == format && !c.Synchronized);
 
-                if(count == 0)
-                    continue;
+                if(count == 0) continue;
 
                 table.AddRow(Markup.Escape(format), $"{count}");
                 thereAreStats = true;
@@ -232,14 +229,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string partition in ctx.Partitions.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.Partitions.Where(c => c.Name == partition && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Partitions.Where(c => c.Name == partition && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Partitions.LongCount(c => c.Name == partition && !c.Synchronized);
 
-                if(count == 0)
-                    continue;
+                if(count == 0) continue;
 
                 table.AddRow(Markup.Escape(partition), $"{count}");
                 thereAreStats = true;
@@ -262,14 +258,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string filesystem in ctx.Filesystems.Select(c => c.Name).Distinct().OrderBy(c => c))
             {
-                ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Filesystems.LongCount(c => c.Name == filesystem && !c.Synchronized);
 
-                if(count == 0)
-                    continue;
+                if(count == 0) continue;
 
                 table.AddRow(Markup.Escape(filesystem), $"{count}");
                 thereAreStats = true;
@@ -291,13 +286,15 @@ sealed class StatisticsCommand : Command
             table.AddColumn(UI.Title_Revision);
             table.AddColumn(UI.Title_Bus);
 
-            foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).
-                                         ThenBy(ds => ds.Model).
-                                         ThenBy(ds => ds.Revision).
-                                         ThenBy(ds => ds.Bus))
+            foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer)
+                                        .ThenBy(ds => ds.Model)
+                                        .ThenBy(ds => ds.Revision)
+                                        .ThenBy(ds => ds.Bus))
             {
-                table.AddRow(Markup.Escape(ds.Manufacturer ?? ""), Markup.Escape(ds.Model ?? ""),
-                             Markup.Escape(ds.Revision     ?? ""), Markup.Escape(ds.Bus   ?? ""));
+                table.AddRow(Markup.Escape(ds.Manufacturer ?? ""),
+                             Markup.Escape(ds.Model        ?? ""),
+                             Markup.Escape(ds.Revision     ?? ""),
+                             Markup.Escape(ds.Bus          ?? ""));
             }
 
             AnsiConsole.Write(table);
@@ -318,14 +315,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string media in ctx.Medias.Where(ms => ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
             {
-                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
-                if(count <= 0)
-                    continue;
+                if(count <= 0) continue;
 
                 table.AddRow(Markup.Escape(media), $"{count}");
 
@@ -349,14 +345,13 @@ sealed class StatisticsCommand : Command
 
             foreach(string media in ctx.Medias.Where(ms => !ms.Real).Select(ms => ms.Type).Distinct().OrderBy(ms => ms))
             {
-                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 
-                if(count <= 0)
-                    continue;
+                if(count <= 0) continue;
 
                 table.AddRow(Markup.Escape(media), $"{count}");
 
@@ -367,8 +362,7 @@ sealed class StatisticsCommand : Command
             AaruConsole.WriteLine();
         }
 
-        if(!thereAreStats)
-            AaruConsole.WriteLine(UI.There_are_no_statistics);
+        if(!thereAreStats) AaruConsole.WriteLine(UI.There_are_no_statistics);
 
         return (int)ErrorNumber.NoError;
     }

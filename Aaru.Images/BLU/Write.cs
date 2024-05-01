@@ -424,7 +424,8 @@ public sealed partial class Blu
         _writingStream.Write(blockSize, 1, 2);
         _writingStream.Seek(512, SeekOrigin.Begin);
 
-        _writingStream.Write(markerTag, 0,
+        _writingStream.Write(markerTag,
+                             0,
                              markerTag.Length >= longSectorSize - 512 ? longSectorSize - 512 : markerTag.Length);
 
         _writingStream.Flush();

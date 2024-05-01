@@ -36,8 +36,7 @@ public sealed partial class Qed
 {
     static bool IsPowerOfTwo(uint x)
     {
-        while((x & 1) == 0 && x > 1)
-            x >>= 1;
+        while((x & 1) == 0 && x > 1) x >>= 1;
 
         return x == 1;
     }
@@ -76,8 +75,7 @@ public sealed partial class Qed
             val >>= 1;
         }
 
-        if((val & 0x1) == 0)
-            cnt++;
+        if((val & 0x1) == 0) cnt++;
 
         return cnt;
     }

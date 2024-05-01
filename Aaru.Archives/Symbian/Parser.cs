@@ -49,15 +49,16 @@ public sealed partial class Symbian
     {
         currentFile++;
 
-        if(currentFile > maxFiles)
-            return;
+        if(currentFile > maxFiles) return;
 
-        var tabulationChars = new char[conditionLevel];
-        for(var i = 0; i < conditionLevel; i++)
-            tabulationChars[i] = '\t';
-        string tabulation = new(tabulationChars);
+        var tabulationChars                                        = new char[conditionLevel];
+        for(var i = 0; i < conditionLevel; i++) tabulationChars[i] = '\t';
+        string tabulation                                          = new(tabulationChars);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "Seeking to {0} for parsing of file {1} of {2}", offset, currentFile,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "Seeking to {0} for parsing of file {1} of {2}",
+                                   offset,
+                                   currentFile,
                                    maxFiles);
 
         br.BaseStream.Seek(offset, SeekOrigin.Begin);
@@ -72,6 +73,7 @@ public sealed partial class Symbian
 
         StringBuilder conditionSb;
         Attribute?    nullAttribute;
+
         switch(recordType)
         {
             case FileRecordType.SimpleFile:
@@ -81,11 +83,9 @@ public sealed partial class Symbian
                 offset = (uint)br.BaseStream.Position;
 
                 // Remove the 3 fields that exist only on >= ER6
-                if(!_release6)
-                    offset -= sizeof(uint) * 3;
+                if(!_release6) offset -= sizeof(uint) * 3;
 
-                if(optionsOnly)
-                    break;
+                if(optionsOnly) break;
 
                 var decodedFileRecord = new DecodedFileRecord
                 {
@@ -118,8 +118,10 @@ public sealed partial class Symbian
                     decodedFileRecord.mime = _encoding.GetString(buffer);
                 }
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "Found file for \"{0}\" with length {1} at {2}",
-                                           decodedFileRecord.destinationName, decodedFileRecord.length,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "Found file for \"{0}\" with length {1} at {2}",
+                                           decodedFileRecord.destinationName,
+                                           decodedFileRecord.length,
                                            decodedFileRecord.pointer);
 
                 _files.Add(decodedFileRecord);
@@ -127,10 +129,12 @@ public sealed partial class Symbian
                 if(conditionLevel > 0)
                 {
                     bool wait, close;
+
                     switch(decodedFileRecord.type)
                     {
                         case FileType.File:
                             _conditions.Add(tabulation + $"InstallFileTo(\"{decodedFileRecord.destinationName}\")");
+
                             break;
                         case FileType.FileText:
                             switch((FileDetails)((uint)decodedFileRecord.details & 0xFF))
@@ -138,18 +142,22 @@ public sealed partial class Symbian
                                 case FileDetails.TextContinue:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_CONTINUE, ACTION_CONTINUE)");
+
                                     break;
                                 case FileDetails.TextSkip:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_SKIP)");
+
                                     break;
                                 case FileDetails.TextAbort:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_ABORT)");
+
                                     break;
                                 case FileDetails.TextExit:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecord.sourceName}\", BUTTONS_YES_NO, ACTION_EXIT)");
+
                                     break;
                             }
 
@@ -158,7 +166,9 @@ public sealed partial class Symbian
                             // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
                             wait  = (decodedFileRecord.details & FileDetails.RunWait) != 0;
                             close = (decodedFileRecord.details & FileDetails.RunsEnd) != 0;
+
                             // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+
                             switch((FileDetails)((uint)decodedFileRecord.details & 0xFF))
                             {
                                 case FileDetails.RunInstall:
@@ -237,7 +247,9 @@ public sealed partial class Symbian
                             // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
                             wait  = (decodedFileRecord.details & FileDetails.RunWait) != 0;
                             close = (decodedFileRecord.details & FileDetails.RunsEnd) != 0;
+
                             // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+
                             if(wait && close)
                                 _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", WAIT | CLOSE)");
                             else if(close)
@@ -246,6 +258,7 @@ public sealed partial class Symbian
                                 _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", WAIT)");
                             else
                                 _conditions.Add(tabulation + $"Open(\"{decodedFileRecord.sourceName}\", 0)");
+
                             break;
                     }
                 }
@@ -270,8 +283,10 @@ public sealed partial class Symbian
                 {
                     buffer = br.ReadBytes(sizeof(uint) * languages.Count);
                     span   = buffer;
+
                     multipleFileRecord.originalLengths =
                         MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+
                     multipleFileRecord.mimeLen = br.ReadUInt32();
                     multipleFileRecord.mimePtr = br.ReadUInt32();
                 }
@@ -279,8 +294,8 @@ public sealed partial class Symbian
                     multipleFileRecord.originalLengths = multipleFileRecord.lengths;
 
                 offset = (uint)br.BaseStream.Position;
-                if(optionsOnly)
-                    break;
+
+                if(optionsOnly) break;
 
                 br.BaseStream.Seek(multipleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
                 buffer = br.ReadBytes((int)multipleFileRecord.record.sourceNameLen);
@@ -326,10 +341,12 @@ public sealed partial class Symbian
                 if(conditionLevel > 0)
                 {
                     bool wait, close;
+
                     switch(decodedFileRecords[0].type)
                     {
                         case FileType.File:
                             _conditions.Add(tabulation + $"InstallFileTo(\"{decodedFileRecords[0].destinationName}\")");
+
                             break;
                         case FileType.FileText:
                             switch((FileDetails)((uint)decodedFileRecords[0].details & 0xFF))
@@ -337,18 +354,22 @@ public sealed partial class Symbian
                                 case FileDetails.TextContinue:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_CONTINUE, ACTION_CONTINUE)");
+
                                     break;
                                 case FileDetails.TextSkip:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_SKIP)");
+
                                     break;
                                 case FileDetails.TextAbort:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_ABORT)");
+
                                     break;
                                 case FileDetails.TextExit:
                                     _conditions.Add(tabulation +
                                                     $"ShowText(\"{decodedFileRecords[0].sourceName}\", BUTTONS_YES_NO, ACTION_EXIT)");
+
                                     break;
                             }
 
@@ -357,7 +378,9 @@ public sealed partial class Symbian
                             // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
                             wait  = (decodedFileRecords[0].details & FileDetails.RunWait) != 0;
                             close = (decodedFileRecords[0].details & FileDetails.RunsEnd) != 0;
+
                             // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+
                             switch((FileDetails)((uint)decodedFileRecords[0].details & 0xFF))
                             {
                                 case FileDetails.RunInstall:
@@ -436,7 +459,9 @@ public sealed partial class Symbian
                             // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
                             wait  = (decodedFileRecords[0].details & FileDetails.RunWait) != 0;
                             close = (decodedFileRecords[0].details & FileDetails.RunsEnd) != 0;
+
                             // ReSharper restore BitwiseOperatorOnEnumWithoutFlags
+
                             if(wait && close)
                             {
                                 _conditions.Add(tabulation +
@@ -469,11 +494,13 @@ public sealed partial class Symbian
 
                     buffer = br.ReadBytes(sizeof(uint) * languages.Count);
                     span   = buffer;
+
                     optionsLineRecord.options[i].lengths =
                         MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
 
                     buffer = br.ReadBytes(sizeof(uint) * languages.Count);
                     span   = buffer;
+
                     optionsLineRecord.options[i].pointers =
                         MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
 
@@ -490,18 +517,17 @@ public sealed partial class Symbian
 
                     br.BaseStream.Seek(offset, SeekOrigin.Begin);
 
-                    if(optionsOnly)
-                        _options.Add(optionsLineRecord.options[i]);
+                    if(optionsOnly) _options.Add(optionsLineRecord.options[i]);
                 }
 
                 offset = (uint)br.BaseStream.Position;
+
                 break;
             case FileRecordType.If:
                 conditionLevel--;
 
                 tabulationChars = new char[conditionLevel];
-                for(var i = 0; i < conditionLevel; i++)
-                    tabulationChars[i] = '\t';
+                for(var i = 0; i < conditionLevel; i++) tabulationChars[i] = '\t';
                 tabulation = new string(tabulationChars);
 
                 conditionalRecord = new ConditionalRecord
@@ -512,8 +538,7 @@ public sealed partial class Symbian
 
                 offset = (uint)(br.BaseStream.Position + conditionalRecord.length);
 
-                if(optionsOnly)
-                    break;
+                if(optionsOnly) break;
 
                 conditionSb   = new StringBuilder();
                 nullAttribute = null;
@@ -527,8 +552,7 @@ public sealed partial class Symbian
                 break;
             case FileRecordType.ElseIf:
                 tabulationChars = new char[conditionLevel - 1];
-                for(var i = 0; i < conditionLevel - 1; i++)
-                    tabulationChars[i] = '\t';
+                for(var i = 0; i < conditionLevel - 1; i++) tabulationChars[i] = '\t';
                 tabulation = new string(tabulationChars);
 
                 conditionalRecord = new ConditionalRecord
@@ -539,8 +563,7 @@ public sealed partial class Symbian
 
                 offset = (uint)(br.BaseStream.Position + conditionalRecord.length);
 
-                if(optionsOnly)
-                    break;
+                if(optionsOnly) break;
 
                 conditionSb   = new StringBuilder();
                 nullAttribute = null;
@@ -554,14 +577,12 @@ public sealed partial class Symbian
                 break;
             case FileRecordType.Else:
                 tabulationChars = new char[conditionLevel - 1];
-                for(var i = 0; i < conditionLevel - 1; i++)
-                    tabulationChars[i] = '\t';
+                for(var i = 0; i < conditionLevel - 1; i++) tabulationChars[i] = '\t';
                 tabulation = new string(tabulationChars);
 
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
 
-                if(optionsOnly)
-                    break;
+                if(optionsOnly) break;
 
                 _conditions.Add(tabulation + "else");
 
@@ -570,8 +591,7 @@ public sealed partial class Symbian
                 conditionLevel++;
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
 
-                if(optionsOnly)
-                    break;
+                if(optionsOnly) break;
 
                 _conditions.Add(tabulation + "endif()" + Environment.NewLine);
 

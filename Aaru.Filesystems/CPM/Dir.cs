@@ -47,8 +47,7 @@ public sealed partial class CPM
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
@@ -68,17 +67,13 @@ public sealed partial class CPM
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not CpmDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CpmDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
 
         filename = mynode.Contents[mynode.Position++];
 
@@ -88,8 +83,7 @@ public sealed partial class CPM
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not CpmDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CpmDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Contents = null;
@@ -110,8 +104,7 @@ public sealed partial class CPM
     {
         try
         {
-            if(directory == null)
-                return false;
+            if(directory == null) return false;
 
             var fileCount = 0;
 
@@ -123,18 +116,15 @@ public sealed partial class CPM
                 {
                     for(var f = 0; f < 8; f++)
                     {
-                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
-                            return false;
+                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
                     }
 
                     for(var e = 0; e < 3; e++)
                     {
-                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
-                            return false;
+                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
                     }
 
-                    if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
-                        fileCount++;
+                    if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                 }
                 else
                 {
@@ -144,14 +134,12 @@ public sealed partial class CPM
                         {
                             for(var f = 0; f < 8; f++)
                             {
-                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
-                                    return false;
+                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00) return false;
                             }
 
                             for(var e = 0; e < 3; e++)
                             {
-                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
-                                    return false;
+                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00) return false;
                             }
 
                             _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();

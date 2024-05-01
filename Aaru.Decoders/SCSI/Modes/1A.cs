@@ -77,17 +77,13 @@ public static partial class Modes
 
     public static ModePage_1A? DecodeModePage_1A(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x1A)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x1A) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 12)
-            return null;
+        if(pageResponse.Length < 12) return null;
 
         var decoded = new ModePage_1A();
 
@@ -106,8 +102,7 @@ public static partial class Modes
                                       (pageResponse[10] << 8)  +
                                       pageResponse[11]);
 
-        if(pageResponse.Length < 40)
-            return decoded;
+        if(pageResponse.Length < 40) return decoded;
 
         decoded.PM_BG_Precedence =  (byte)((pageResponse[2] & 0xC0) >> 6);
         decoded.Standby_Y        |= (pageResponse[2] & 0x01) == 0x01;
@@ -141,16 +136,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_1A(ModePage_1A? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1A page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine("SCSI Power condition page:");
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page is { Standby: true, StandbyTimer: > 0 } or { Standby_Y: true, StandbyTimer_Y: > 0 })
         {
@@ -163,7 +156,9 @@ public static partial class Modes
         else
             sb.AppendLine("\t" + "Drive will not enter standby mode");
 
-        if(page is { Idle: true, IdleTimer: > 0 } or { Idle_B: true, IdleTimer_B: > 0 } or { Idle_C: true, IdleTimer_C: > 0 })
+        if(page is { Idle  : true, IdleTimer  : > 0 }
+                or { Idle_B: true, IdleTimer_B: > 0 }
+                or { Idle_C: true, IdleTimer_C: > 0 })
         {
             if(page is { Idle: true, IdleTimer: > 0 })
                 sb.AppendFormat("\t" + "Idle timer A is set to {0} ms", page.IdleTimer * 100).AppendLine();
@@ -213,20 +208,15 @@ public static partial class Modes
 
     public static ModePage_1A_S01? DecodeModePage_1A_S01(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) != 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) != 0x40) return null;
 
-        if((pageResponse[0] & 0x3F) != 0x1A)
-            return null;
+        if((pageResponse[0] & 0x3F) != 0x1A) return null;
 
-        if(pageResponse[1] != 0x01)
-            return null;
+        if(pageResponse[1] != 0x01) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_1A_S01();
 
@@ -242,24 +232,23 @@ public static partial class Modes
 
     public static string PrettifyModePage_1A_S01(ModePage_1A_S01? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1A_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Power_Consumption_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.ActiveLevel)
         {
             case 0:
-                sb.
-                    AppendFormat("\t" + Localization.Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
-                                 page.PowerConsumptionIdentifier).
-                    AppendLine();
+                sb.AppendFormat("\t" +
+                                Localization
+                                   .Device_power_consumption_is_dictated_by_identifier_0_of_Power_Consumption_VPD,
+                                page.PowerConsumptionIdentifier)
+                  .AppendLine();
 
                 break;
             case 1:

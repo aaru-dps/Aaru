@@ -73,17 +73,13 @@ public static partial class Modes
 
     public static ModePage_1C? DecodeModePage_1C(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x1C)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x1C) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_1C();
 
@@ -120,16 +116,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_1C(ModePage_1C? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1C page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Informational_exceptions_control_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DExcpt)
             sb.AppendLine("\t" + Localization.Informational_exceptions_are_disabled);
@@ -181,11 +175,9 @@ public static partial class Modes
                               Localization.Informational_exceptions_reporting_should_not_affect_drive_performance);
             }
 
-            if(page.Test)
-                sb.AppendLine("\t" + Localization.A_test_informational_exception_will_raise_on_next_timer);
+            if(page.Test) sb.AppendLine("\t" + Localization.A_test_informational_exception_will_raise_on_next_timer);
 
-            if(page.LogErr)
-                sb.AppendLine("\t" + Localization.Drive_shall_log_informational_exception_conditions);
+            if(page.LogErr) sb.AppendLine("\t" + Localization.Drive_shall_log_informational_exception_conditions);
 
             if(page.IntervalTimer > 0)
             {
@@ -197,19 +189,17 @@ public static partial class Modes
 
             if(page.ReportCount > 0)
             {
-                sb.AppendFormat("\t" + Localization.Informational_exception_conditions_will_be_reported_a_maximum_of_0_times,
+                sb.AppendFormat("\t" +
+                                Localization.Informational_exception_conditions_will_be_reported_a_maximum_of_0_times,
                                 page.ReportCount);
             }
         }
 
-        if(page.EWasc)
-            sb.AppendLine("\t" + Localization.Warning_reporting_is_enabled);
+        if(page.EWasc) sb.AppendLine("\t" + Localization.Warning_reporting_is_enabled);
 
-        if(page.EBF)
-            sb.AppendLine("\t" + Localization.Background_functions_are_enabled);
+        if(page.EBF) sb.AppendLine("\t" + Localization.Background_functions_are_enabled);
 
-        if(page.EBACKERR)
-            sb.AppendLine("\t" + Localization.Drive_will_report_background_self_test_errors);
+        if(page.EBACKERR) sb.AppendLine("\t" + Localization.Drive_will_report_background_self_test_errors);
 
         return sb.ToString();
     }
@@ -243,20 +233,15 @@ public static partial class Modes
 
     public static ModePage_1C_S01? DecodeModePage_1C_S01(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) != 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) != 0x40) return null;
 
-        if((pageResponse[0] & 0x3F) != 0x1C)
-            return null;
+        if((pageResponse[0] & 0x3F) != 0x1C) return null;
 
-        if(pageResponse[1] != 0x01)
-            return null;
+        if(pageResponse[1] != 0x01) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_1C_S01();
 
@@ -280,58 +265,56 @@ public static partial class Modes
 
     public static string PrettifyModePage_1C_S01(ModePage_1C_S01? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1C_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Background_Control_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.S_L_Full)
-            sb.AppendLine("\t" + Localization.Background_scans_will_be_halted_if_log_is_full);
+        if(page.S_L_Full) sb.AppendLine("\t" + Localization.Background_scans_will_be_halted_if_log_is_full);
 
         if(page.LOWIR)
             sb.AppendLine("\t" + Localization.Background_scans_will_only_be_logged_if_they_require_intervention);
 
-        if(page.En_Bms)
-            sb.AppendLine("\t" + Localization.Background_medium_scans_are_enabled);
+        if(page.En_Bms) sb.AppendLine("\t" + Localization.Background_medium_scans_are_enabled);
 
-        if(page.En_Ps)
-            sb.AppendLine("\t" + Localization.Background_pre_scans_are_enabled);
+        if(page.En_Ps) sb.AppendLine("\t" + Localization.Background_pre_scans_are_enabled);
 
         if(page.BackgroundScanInterval > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0__hours_shall_be_between_the_start_of_a_background_scan_operation_and_the_next,
-                             page.BackgroundScanInterval).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               ._0__hours_shall_be_between_the_start_of_a_background_scan_operation_and_the_next,
+                            page.BackgroundScanInterval)
+              .AppendLine();
         }
 
         if(page.BackgroundPrescanTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Background_pre_scan_operations_can_take_a_maximum_of_0_hours,
-                            page.BackgroundPrescanTimeLimit).
-               AppendLine();
+                            page.BackgroundPrescanTimeLimit)
+              .AppendLine();
         }
 
         if(page.MinIdleBeforeBgScan > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization.At_least_0_ms_must_be_idle_before_resuming_a_suspended_background_scan_operation,
-                             page.MinIdleBeforeBgScan).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               .At_least_0_ms_must_be_idle_before_resuming_a_suspended_background_scan_operation,
+                            page.MinIdleBeforeBgScan)
+              .AppendLine();
         }
 
         if(page.MaxTimeSuspendBgScan > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization.At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands,
-                             page.MaxTimeSuspendBgScan).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               .At_most_0_ms_must_be_before_suspending_a_background_scan_operation_and_processing_received_commands,
+                            page.MaxTimeSuspendBgScan)
+              .AppendLine();
         }
 
         return sb.ToString();

@@ -71,8 +71,11 @@ public sealed partial class AppleDos
 
             _deinterleaved = new byte[tmp.Length];
 
-            int[] offsets = _extension == ".do" ? isDos ? _deinterleave : _interleave :
-                            isDos               ? _interleave : _deinterleave;
+            int[] offsets = _extension == ".do"
+                                ? isDos ? _deinterleave : _interleave
+                                : isDos
+                                    ? _interleave
+                                    : _deinterleave;
 
             for(var t = 0; t < 35; t++)
             {
@@ -104,11 +107,9 @@ public sealed partial class AppleDos
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

@@ -31,12 +31,20 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="675" Height="432" x:Class="Aaru.Gui.Views.Dialogs.SettingsDialog"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="675"
+        Height="432"
+        x:Class="Aaru.Gui.Views.Dialogs.SettingsDialog"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <dialogs:SettingsViewModel />
     </Design.DataContext>
@@ -45,7 +53,9 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TabControl Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <TabControl Grid.Row="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         SelectedIndex="{Binding TabControlSelectedIndex}">
                 <TabItem IsVisible="{Binding GdprVisible}">
                     <TabItem.Header>
@@ -85,7 +95,8 @@
                         <CheckBox IsChecked="{Binding SaveStatsChecked}">
                             <TextBlock Text="{Binding SaveStatsText}" />
                         </CheckBox>
-                        <StackPanel IsVisible="{Binding SaveStatsChecked}" Spacing="5">
+                        <StackPanel IsVisible="{Binding SaveStatsChecked}"
+                                    Spacing="5">
                             <CheckBox IsChecked="{Binding ShareStatsChecked}">
                                 <TextBlock Text="{Binding ShareStatsText}" />
                             </CheckBox>
@@ -120,7 +131,10 @@
                     </StackPanel>
                 </TabItem>
             </TabControl>
-            <StackPanel Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal"
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
                         Spacing="5">
                 <Button Command="{Binding SaveCommand}">
                     <TextBlock Text="{Binding SaveLabel}" />

@@ -88,18 +88,18 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public Stream GetDataForkStream()
     {
-        if(_header.dataLength == 0)
-            return null;
+        if(_header.dataLength == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _dataForkOff, _dataForkOff + _header.dataLength - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _dataForkOff, _dataForkOff + _header.dataLength - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _dataForkOff, _dataForkOff + _header.dataLength - 1);
+        if(_isStream) return new OffsetStream(_stream, _dataForkOff, _dataForkOff + _header.dataLength - 1);
 
         if(_isPath)
         {
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _dataForkOff,
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _dataForkOff,
                                     _dataForkOff + _header.dataLength - 1);
         }
 
@@ -127,18 +127,18 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public Stream GetResourceForkStream()
     {
-        if(_header.resourceLength == 0)
-            return null;
+        if(_header.resourceLength == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
+        if(_isStream) return new OffsetStream(_stream, _rsrcForkOff, _rsrcForkOff + _header.resourceLength - 1);
 
         if(_isPath)
         {
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _rsrcForkOff,
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _rsrcForkOff,
                                     _rsrcForkOff + _header.resourceLength - 1);
         }
 
@@ -151,8 +151,7 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer == null || buffer.Length < 128)
-            return false;
+        if(buffer == null || buffer.Length < 128) return false;
 
         var hdrB = new byte[128];
         Array.Copy(buffer, 0, hdrB, 0, 128);
@@ -170,8 +169,7 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        if(stream == null || stream.Length < 128)
-            return false;
+        if(stream == null || stream.Length < 128) return false;
 
         var hdrB = new byte[128];
         stream.Seek(0, SeekOrigin.Begin);
@@ -190,13 +188,11 @@ public sealed class MacBinary : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-        if(fstream.Length < 128)
-            return false;
+        if(fstream.Length < 128) return false;
 
         var hdrB = new byte[128];
         fstream.EnsureRead(hdrB, 0, 128);
@@ -226,14 +222,12 @@ public sealed class MacBinary : IFilter
         uint blocks = 1;
         blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-        if(_header.secondaryHeaderLength % 128 > 0)
-            blocks++;
+        if(_header.secondaryHeaderLength % 128 > 0) blocks++;
 
         _dataForkOff =  blocks             * 128;
         blocks       += _header.dataLength / 128;
 
-        if(_header.dataLength % 128 > 0)
-            blocks++;
+        if(_header.dataLength % 128 > 0) blocks++;
 
         _rsrcForkOff = blocks * 128;
 
@@ -260,14 +254,12 @@ public sealed class MacBinary : IFilter
         uint blocks = 1;
         blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-        if(_header.secondaryHeaderLength % 128 > 0)
-            blocks++;
+        if(_header.secondaryHeaderLength % 128 > 0) blocks++;
 
         _dataForkOff =  blocks             * 128;
         blocks       += _header.dataLength / 128;
 
-        if(_header.dataLength % 128 > 0)
-            blocks++;
+        if(_header.dataLength % 128 > 0) blocks++;
 
         _rsrcForkOff = blocks * 128;
 
@@ -295,14 +287,12 @@ public sealed class MacBinary : IFilter
         uint blocks = 1;
         blocks += (uint)(_header.secondaryHeaderLength / 128);
 
-        if(_header.secondaryHeaderLength % 128 > 0)
-            blocks++;
+        if(_header.secondaryHeaderLength % 128 > 0) blocks++;
 
         _dataForkOff =  blocks             * 128;
         blocks       += _header.dataLength / 128;
 
-        if(_header.dataLength % 128 > 0)
-            blocks++;
+        if(_header.dataLength % 128 > 0) blocks++;
 
         _rsrcForkOff = blocks * 128;
 
@@ -360,7 +350,7 @@ public sealed class MacBinary : IFilter
         /// <summary>0x65, Low byte of Finder flags</summary>
         public readonly byte finderFlags2;
 
-    #region MacBinary III
+#region MacBinary III
 
         /// <summary>0x66, magic identifier, "mBIN"</summary>
         public readonly uint magic;
@@ -369,14 +359,14 @@ public sealed class MacBinary : IFilter
         /// <summary>0x6B, fdXFlags from fxInfo, extended Mac OS 8 finder flags</summary>
         public readonly byte fdXFlags;
 
-    #endregion MacBinary III
+#endregion MacBinary III
 
         /// <summary>0x6C, unused</summary>
         public readonly ulong reserved;
         /// <summary>0x74, Total unpacked files</summary>
         public readonly uint totalPackedFiles;
 
-    #region MacBinary II
+#region MacBinary II
 
         /// <summary>0x78, Length of secondary header</summary>
         public readonly ushort secondaryHeaderLength;
@@ -387,7 +377,7 @@ public sealed class MacBinary : IFilter
         /// <summary>0x7C, CRC of previous bytes</summary>
         public readonly short crc;
 
-    #endregion MacBinary II
+#endregion MacBinary II
 
         /// <summary>0x7E, Reserved for computer type and OS ID</summary>
         public readonly short computerID;

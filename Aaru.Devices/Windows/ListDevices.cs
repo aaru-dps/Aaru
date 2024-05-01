@@ -87,31 +87,33 @@ static class ListDevices
         }
         catch(Exception)
         {
-        #if DEBUG
+#if DEBUG
             throw;
-        #else
+#else
                 return null;
-        #endif
+#endif
         }
 
         var devList = new List<DeviceInfo>();
 
         foreach(string devId in deviceIDs)
         {
-            if(devId is null)
-                continue;
+            if(devId is null) continue;
 
             string physId = devId;
 
             // TODO: This can be done better
-            if(devId.Length == 2 && devId[1] == ':')
-                physId = "\\\\?\\" + devId;
+            if(devId.Length == 2 && devId[1] == ':') physId = "\\\\?\\" + devId;
 
-            SafeFileHandle fd = Extern.CreateFile(physId, 0, FileShare.Read | FileShare.Write, IntPtr.Zero,
-                                                  FileMode.OpenExisting, 0, IntPtr.Zero);
+            SafeFileHandle fd = Extern.CreateFile(physId,
+                                                  0,
+                                                  FileShare.Read | FileShare.Write,
+                                                  IntPtr.Zero,
+                                                  FileMode.OpenExisting,
+                                                  0,
+                                                  IntPtr.Zero);
 
-            if(fd.IsInvalid)
-                continue;
+            if(fd.IsInvalid) continue;
 
             var query = new StoragePropertyQuery
             {
@@ -129,17 +131,20 @@ static class ListDevices
             uint returned = 0;
             var  error    = 0;
 
-            bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty, ref query,
-                                                                (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
-                                                                ref returned, IntPtr.Zero);
+            bool hasError = !Extern.DeviceIoControlStorageQuery(fd,
+                                                                WindowsIoctl.IoctlStorageQueryProperty,
+                                                                ref query,
+                                                                (uint)Marshal.SizeOf(query),
+                                                                descriptorPtr,
+                                                                1000,
+                                                                ref returned,
+                                                                IntPtr.Zero);
 
-            if(hasError)
-                error = Marshal.GetLastWin32Error();
+            if(hasError) error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
-            if(hasError && error != 0)
-                continue;
+            if(hasError && error != 0) continue;
 
             var descriptor = new StorageDeviceDescriptor
             {

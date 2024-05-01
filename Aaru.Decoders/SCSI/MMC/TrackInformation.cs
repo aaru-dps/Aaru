@@ -59,8 +59,7 @@ public class TrackInformation
 
     public static TrackInformation Decode(byte[] response)
     {
-        if(response.Length < 32)
-            return null;
+        if(response.Length < 32) return null;
 
         var decoded = new TrackInformation
         {
@@ -89,8 +88,7 @@ public class TrackInformation
                 (uint)((response[28] << 24) + (response[29] << 16) + (response[30] << 8) + response[31])
         };
 
-        if(response.Length < 48)
-            return decoded;
+        if(response.Length < 48) return decoded;
 
         decoded.LogicalTrackNumber += (ushort)(response[32] << 8);
 

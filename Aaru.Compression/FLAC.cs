@@ -62,7 +62,9 @@ public class FLAC
     {
         if(Native.IsSupported)
         {
-            return (int)AARU_flac_decode_redbook_buffer(destination, (nuint)destination.Length, source,
+            return (int)AARU_flac_decode_redbook_buffer(destination,
+                                                        (nuint)destination.Length,
+                                                        source,
                                                         (nuint)source.Length);
         }
 
@@ -99,12 +101,21 @@ public class FLAC
     {
         if(Native.IsSupported)
         {
-            return (int)AARU_flac_encode_redbook_buffer(destination, (nuint)destination.Length, source,
-                                                        (nuint)source.Length, blockSize, doMidSideStereo ? 1 : 0,
-                                                        looseMidSideStereo ? 1 : 0, apodization, maxLpcOrder,
-                                                        qlpCoeffPrecision, doQlpCoeffPrecSearch ? 1 : 0,
-                                                        doExhaustiveModelSearch ? 1 : 0, minResidualPartitionOrder,
-                                                        maxResidualPartitionOrder, applicationID,
+            return (int)AARU_flac_encode_redbook_buffer(destination,
+                                                        (nuint)destination.Length,
+                                                        source,
+                                                        (nuint)source.Length,
+                                                        blockSize,
+                                                        doMidSideStereo ? 1 : 0,
+                                                        looseMidSideStereo ? 1 : 0,
+                                                        apodization,
+                                                        maxLpcOrder,
+                                                        qlpCoeffPrecision,
+                                                        doQlpCoeffPrecSearch ? 1 : 0,
+                                                        doExhaustiveModelSearch ? 1 : 0,
+                                                        minResidualPartitionOrder,
+                                                        maxResidualPartitionOrder,
+                                                        applicationID,
                                                         (uint)applicationID.Length);
         }
 
@@ -131,11 +142,9 @@ public class FLAC
         };
 
         // Check if FLAKE's block size is bigger than what we want
-        if(flakeWriterSettings.BlockSize > 4608)
-            flakeWriterSettings.BlockSize = 4608;
+        if(flakeWriterSettings.BlockSize > 4608) flakeWriterSettings.BlockSize = 4608;
 
-        if(flakeWriterSettings.BlockSize < 256)
-            flakeWriterSettings.BlockSize = 256;
+        if(flakeWriterSettings.BlockSize < 256) flakeWriterSettings.BlockSize = 256;
 
         var flacMs      = new NonClosableStream(destination);
         var flakeWriter = new AudioEncoder(flakeWriterSettings, "", flacMs);

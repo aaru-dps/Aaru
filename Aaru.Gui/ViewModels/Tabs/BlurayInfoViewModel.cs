@@ -188,8 +188,7 @@ public sealed class BlurayInfoViewModel
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(data, 0, data.Length);

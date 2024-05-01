@@ -50,7 +50,11 @@ public class AppleDoubleNetatalk
     {
         _location = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "netatalk", "DOS_720.dmg");
 
-        _sidecar = Path.Combine(Consts.TestFilesRoot, "Filters", "AppleDouble", "netatalk", ".AppleDouble",
+        _sidecar = Path.Combine(Consts.TestFilesRoot,
+                                "Filters",
+                                "AppleDouble",
+                                "netatalk",
+                                ".AppleDouble",
                                 "DOS_720.dmg");
     }
 

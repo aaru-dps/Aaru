@@ -45,8 +45,7 @@ public sealed partial class Chd
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
@@ -60,13 +59,11 @@ public sealed partial class Chd
         unknownLbas = new List<ulong>();
         failingLbas = new List<ulong>();
 
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -89,8 +86,7 @@ public sealed partial class Chd
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -102,13 +98,11 @@ public sealed partial class Chd
         unknownLbas = new List<ulong>();
         failingLbas = new List<ulong>();
 
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -131,8 +125,7 @@ public sealed partial class Chd
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -154,8 +147,7 @@ public sealed partial class Chd
             {
                 ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return null;
+                if(errno != ErrorNumber.NoError) return null;
 
                 sha1Ctx.Update(buffer);
             }
@@ -170,8 +162,7 @@ public sealed partial class Chd
             {
                 ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return null;
+                if(errno != ErrorNumber.NoError) return null;
 
                 md5Ctx.Update(buffer);
             }

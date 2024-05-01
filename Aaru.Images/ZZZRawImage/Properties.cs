@@ -59,6 +59,7 @@ public sealed partial class ZZZRawImage
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -73,8 +74,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
-                return null;
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
             var trk = new Track
             {
@@ -87,8 +87,11 @@ public sealed partial class ZZZRawImage
                 Sequence          = 1,
                 StartSector       = 0,
                 SubchannelType    = _hasSubchannel ? TrackSubchannelType.RawInterleaved : TrackSubchannelType.None,
-                Type = _toastXa        ? TrackType.CdMode2Form1 :
-                       _rawCompactDisc ? _mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1 : TrackType.Data,
+                Type = _toastXa
+                           ? TrackType.CdMode2Form1
+                           : _rawCompactDisc
+                               ? _mode2 ? TrackType.CdMode2Formless : TrackType.CdMode1
+                               : TrackType.Data,
                 Session = 1
             };
 
@@ -98,8 +101,7 @@ public sealed partial class ZZZRawImage
                 trk.Indexes[0] = -150;
                 trk.Indexes[1] = 0;
 
-                if(trk.Type == TrackType.Data)
-                    trk.Type = TrackType.CdMode1;
+                if(trk.Type == TrackType.Data) trk.Type = TrackType.CdMode1;
             }
 
             List<Track> lst = new()
@@ -116,8 +118,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
-                return null;
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
             var sess = new Session
             {
@@ -142,19 +143,21 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
-                return null;
+            if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
             List<Partition> parts = new();
 
             var part = new Partition
             {
-                Start = 0,
-                Length = _imageInfo.Sectors,
-                Offset = 0,
+                Start    = 0,
+                Length   = _imageInfo.Sectors,
+                Offset   = 0,
                 Sequence = 0,
-                Type = _rawCompactDisc ? _mode2 || _toastXa ? "MODE2/2352" : "MODE1/2352" :
-                       _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM ? "DATA/512" : "MODE1/2048",
+                Type = _rawCompactDisc
+                           ? _mode2 || _toastXa ? "MODE2/2352" : "MODE1/2352"
+                           : _imageInfo.MediaType is MediaType.PD650 or MediaType.PD650_WORM
+                               ? "DATA/512"
+                               : "MODE1/2048",
                 Size = _imageInfo.Sectors * _imageInfo.SectorSize
             };
 
@@ -171,10 +174,10 @@ public sealed partial class ZZZRawImage
     public Metadata AaruMetadata { get; private set; }
 
     /// <inheritdoc />
-    public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars).
-                                                                              OrderBy(t => t.tag).
-                                                                              Select(t => t.tag).
-                                                                              ToArray();
+    public IEnumerable<MediaTagType> SupportedMediaTags => _readWriteSidecars.Concat(_writeOnlySidecars)
+                                                                             .OrderBy(t => t.tag)
+                                                                             .Select(t => t.tag)
+                                                                             .ToArray();
 
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();

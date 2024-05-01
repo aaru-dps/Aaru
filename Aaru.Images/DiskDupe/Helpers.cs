@@ -47,21 +47,18 @@ public sealed partial class DiskDupe
 
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 256)
-            return false;
+        if(stream.Length < 256) return false;
 
         // read and check signature
         fHeader.signature = new byte[10];
         stream.EnsureRead(fHeader.signature, 0, 10);
 
-        if(!fHeader.signature.SequenceEqual(_headerMagic))
-            return false;
+        if(!fHeader.signature.SequenceEqual(_headerMagic)) return false;
 
         // read and check disk type byte
         fHeader.diskType = (byte)stream.ReadByte();
 
-        if(fHeader.diskType is < 1 or > 4)
-            return false;
+        if(fHeader.diskType is < 1 or > 4) return false;
 
         // seek to start of the trackmap
         stream.Seek(TRACKMAP_OFFSET, SeekOrigin.Begin);
@@ -70,8 +67,10 @@ public sealed partial class DiskDupe
         var trackMap     = new TrackInfo[numTracks];
         var trackOffsets = new long[numTracks];
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Identified_image_with_CHS_equals_0_1_2,
-                                   _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].hd,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Identified_image_with_CHS_equals_0_1_2,
+                                   _diskTypes[fHeader.diskType].cyl,
+                                   _diskTypes[fHeader.diskType].hd,
                                    _diskTypes[fHeader.diskType].spt);
 
         // read the trackmap and store the track offsets

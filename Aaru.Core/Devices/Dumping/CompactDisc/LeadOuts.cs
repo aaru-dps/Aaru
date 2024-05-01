@@ -114,37 +114,83 @@ partial class Dump
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed && currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed && currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1,
+                                                    i,
                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        (uint)i,
+                                        blockSize,
+                                        1,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
                 {
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
-                                        _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read16(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read12)
                 {
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read10)
                 {
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
@@ -172,9 +218,25 @@ partial class Dump
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
+                            desiredSubchannel,
+                            sub,
+                            i,
+                            _maximumReadable,
+                            subLog,
+                            isrcs,
+                            0xAA,
+                            ref mcn,
+                            tracks,
+                            subchannelExtents,
+                            _fixSubchannelPosition,
+                            outputOptical,
+                            _fixSubchannel,
+                            _fixSubchannelCrc,
+                            _dumpLog,
+                            UpdateStatus,
+                            smallestPregapLbaPerTrack,
+                            true,
+                            out _);
 
                         // Set tracks and go back
                         if(indexesChanged)
@@ -195,8 +257,7 @@ partial class Dump
                     _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
                     // Write empty data
                     _writeStopwatch.Restart();
@@ -205,7 +266,9 @@ partial class Dump
                     {
                         outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
-                        outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                        outputOptical.WriteSectorsTag(new byte[subSize * _skip],
+                                                      i,
+                                                      1,
                                                       SectorTagType.CdSectorSubchannel);
                     }
                     else
@@ -221,8 +284,7 @@ partial class Dump
                 _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
-                if(!double.IsInfinity(newSpeed))
-                    currentSpeed = newSpeed;
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
 
                 _resume.NextBlock = i + 1;
             }
@@ -292,37 +354,83 @@ partial class Dump
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed && currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed && currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1, i,
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1,
+                                                    i,
                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        (uint)i,
+                                        blockSize,
+                                        1,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
                 {
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
-                                        _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read16(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read12)
                 {
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read10)
                 {
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        _dev.Timeout,
+                                        out cmdDuration);
                 }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
@@ -350,9 +458,25 @@ partial class Dump
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
+                            desiredSubchannel,
+                            sub,
+                            i,
+                            _maximumReadable,
+                            subLog,
+                            isrcs,
+                            0xAA,
+                            ref mcn,
+                            tracks,
+                            subchannelExtents,
+                            _fixSubchannelPosition,
+                            outputOptical,
+                            _fixSubchannel,
+                            _fixSubchannelCrc,
+                            _dumpLog,
+                            UpdateStatus,
+                            smallestPregapLbaPerTrack,
+                            true,
+                            out _);
 
                         // Set tracks and go back
                         if(indexesChanged)
@@ -373,8 +497,7 @@ partial class Dump
                     _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
                     // Write empty data
                     _writeStopwatch.Restart();
@@ -385,7 +508,9 @@ partial class Dump
 
                         if(desiredSubchannel != MmcSubchannel.None)
                         {
-                            outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                            outputOptical.WriteSectorsTag(new byte[subSize * _skip],
+                                                          i,
+                                                          1,
                                                           SectorTagType.CdSectorSubchannel);
                         }
                     }
@@ -402,8 +527,7 @@ partial class Dump
                 _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
-                if(!double.IsInfinity(newSpeed))
-                    currentSpeed = newSpeed;
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
             }
         }
 

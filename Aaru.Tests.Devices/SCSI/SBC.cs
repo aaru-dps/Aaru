@@ -200,7 +200,12 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read6(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, dev.Timeout,
+        bool sense = dev.Read6(out byte[] buffer,
+                               out byte[] senseBuffer,
+                               lba,
+                               blockSize,
+                               count,
+                               dev.Timeout,
                                out double duration);
 
     menu:
@@ -249,8 +254,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_6_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -263,8 +267,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -464,8 +467,19 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read10(out byte[] buffer, out byte[] senseBuffer, rdprotect, dpo, fua, fuaNv, relative, lba,
-                                blockSize, groupNumber, count, dev.Timeout, out double duration);
+        bool sense = dev.Read10(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                rdprotect,
+                                dpo,
+                                fua,
+                                fuaNv,
+                                relative,
+                                lba,
+                                blockSize,
+                                groupNumber,
+                                count,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -513,8 +527,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_10_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -527,8 +540,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -742,8 +754,20 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read12(out byte[] buffer, out byte[] senseBuffer, rdprotect, dpo, fua, fuaNv, relative, lba,
-                                blockSize, groupNumber, count, streaming, dev.Timeout, out double duration);
+        bool sense = dev.Read12(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                rdprotect,
+                                dpo,
+                                fua,
+                                fuaNv,
+                                relative,
+                                lba,
+                                blockSize,
+                                groupNumber,
+                                count,
+                                streaming,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -791,8 +815,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_12_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -805,8 +828,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_12_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1006,8 +1028,19 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read16(out byte[] buffer, out byte[] senseBuffer, rdprotect, dpo, fua, fuaNv, lba, blockSize,
-                                groupNumber, count, streaming, dev.Timeout, out double duration);
+        bool sense = dev.Read16(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                rdprotect,
+                                dpo,
+                                fua,
+                                fuaNv,
+                                lba,
+                                blockSize,
+                                groupNumber,
+                                count,
+                                streaming,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1055,8 +1088,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_16_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1069,8 +1101,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1200,8 +1231,14 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLong10(out byte[] buffer, out byte[] senseBuffer, correct, relative, lba, blockSize,
-                                    dev.Timeout, out double duration);
+        bool sense = dev.ReadLong10(out byte[] buffer,
+                                    out byte[] senseBuffer,
+                                    correct,
+                                    relative,
+                                    lba,
+                                    blockSize,
+                                    dev.Timeout,
+                                    out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1249,8 +1286,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_10_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1263,8 +1299,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1380,7 +1415,12 @@ static class Sbc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLong16(out byte[] buffer, out byte[] senseBuffer, correct, lba, blockSize, dev.Timeout,
+        bool sense = dev.ReadLong16(out byte[] buffer,
+                                    out byte[] senseBuffer,
+                                    correct,
+                                    lba,
+                                    blockSize,
+                                    dev.Timeout,
                                     out double duration);
 
     menu:
@@ -1429,8 +1469,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_16_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1443,8 +1482,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LONG_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1585,8 +1623,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEEK_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1708,8 +1745,7 @@ static class Sbc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEEK_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

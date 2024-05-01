@@ -41,18 +41,15 @@ public sealed partial class ISO9660
         {
             SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).Replace('\u0000', ' ').TrimEnd(),
             VolumeIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).Replace('\u0000', ' ').TrimEnd(),
-            VolumeSetIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).
-                                           Replace('\u0000', ' ').
-                                           TrimEnd(),
-            PublisherIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).
-                                           Replace('\u0000', ' ').
-                                           TrimEnd(),
-            DataPreparerIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).
-                                              Replace('\u0000', ' ').
-                                              TrimEnd(),
-            ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.application_id).
-                                             Replace('\u0000', ' ').
-                                             TrimEnd()
+            VolumeSetIdentifier =
+                Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).Replace('\u0000', ' ').TrimEnd(),
+            PublisherIdentifier =
+                Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).Replace('\u0000', ' ').TrimEnd(),
+            DataPreparerIdentifier =
+                Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).Replace('\u0000', ' ').TrimEnd(),
+            ApplicationIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.application_id)
+                                            .Replace('\u0000', ' ')
+                                            .TrimEnd()
         };
 
         if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)

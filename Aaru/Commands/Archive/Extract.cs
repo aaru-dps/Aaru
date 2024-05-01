@@ -59,14 +59,18 @@ sealed class ArchiveExtractCommand : Command
         AddAlias("x");
 
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-        {
-            "--xattrs", "-x"
-        }, () => false, UI.Extract_extended_attributes_if_present));
+                             {
+                                 "--xattrs", "-x"
+                             },
+                             () => false,
+                             UI.Extract_extended_attributes_if_present));
 
         AddArgument(new Argument<string>
         {
@@ -151,8 +155,7 @@ sealed class ArchiveExtractCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -225,40 +228,47 @@ sealed class ArchiveExtractCommand : Command
                 if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno, i);
+
                     continue;
                 }
 
                 errno = archive.Stat(i, out FileEntryInfo stat);
+
                 if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.ErrorWriteLine(UI.Error_0_retrieving_stat_for_archive_entry_1, errno, i);
+
                     continue;
                 }
 
                 errno = archive.GetUncompressedSize(i, out long uncompressedSize);
+
                 if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.ErrorWriteLine(UI.Error_0_getting_uncompressed_size_for_archive_entry_1, errno, i);
+
                     continue;
                 }
 
                 errno = archive.GetEntry(i, out IFilter filter);
+
                 if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.ErrorWriteLine(UI.Error_0_getting_filter_for_archive_entry_1, errno, i);
+
                     continue;
                 }
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    fileName = fileName.Replace('<', '\uFF1C').
-                                        Replace('>',  '\uFF1E').
-                                        Replace(':',  '\uFF1A').
-                                        Replace('\"', '\uFF02').
-                                        Replace('|',  '\uFF5C').
-                                        Replace('?',  '\uFF1F').
-                                        Replace('*',  '\uFF0A').
-                                        Replace('/',  '\\');
+                    fileName = fileName.Replace('<', '\uFF1C')
+                                       .Replace('>',  '\uFF1E')
+                                       .Replace(':',  '\uFF1A')
+                                       .Replace('\"', '\uFF02')
+                                       .Replace('|',  '\uFF5C')
+                                       .Replace('?',  '\uFF1F')
+                                       .Replace('*',  '\uFF0A')
+                                       .Replace('/',  '\\');
                 }
 
                 // Prevent absolute path attack
@@ -270,24 +280,27 @@ sealed class ArchiveExtractCommand : Command
                 if(File.Exists(destinationDir))
                 {
                     AaruConsole.ErrorWriteLine(UI.Cannot_write_file_0_output_exists, Markup.Escape(fileName));
+
                     continue;
                 }
 
-                if(destinationDir is not null)
-                    Directory.CreateDirectory(destinationDir);
+                if(destinationDir is not null) Directory.CreateDirectory(destinationDir);
 
                 if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                 {
-                    AnsiConsole.Progress().
-                                AutoClear(true).
-                                HideCompleted(true).
-                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                                Start(ctx =>
+                    AnsiConsole.Progress()
+                               .AutoClear(true)
+                               .HideCompleted(true)
+                               .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                               .Start(ctx =>
                                 {
                                     var position = 0;
 
-                                    var outputFile = new FileStream(outputPath, FileMode.CreateNew,
-                                                                    FileAccess.ReadWrite, FileShare.None);
+                                    var outputFile =
+                                        new FileStream(outputPath,
+                                                       FileMode.CreateNew,
+                                                       FileAccess.ReadWrite,
+                                                       FileShare.None);
 
                                     ProgressTask task =
                                         ctx.AddTask(string.Format(UI.Reading_file_0, Markup.Escape(fileName)));
@@ -318,11 +331,10 @@ sealed class ArchiveExtractCommand : Command
                                 });
 
                     var fi = new FileInfo(outputPath);
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
-                        if(stat.CreationTimeUtc.HasValue)
-                            fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                        if(stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
                     }
                     catch
                     {
@@ -331,8 +343,7 @@ sealed class ArchiveExtractCommand : Command
 
                     try
                     {
-                        if(stat.LastWriteTimeUtc.HasValue)
-                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                        if(stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
                     }
                     catch
                     {
@@ -341,34 +352,36 @@ sealed class ArchiveExtractCommand : Command
 
                     try
                     {
-                        if(stat.AccessTimeUtc.HasValue)
-                            fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                        if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
                     }
                     catch
                     {
                         // ignored
                     }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2, uncompressedSize, Markup.Escape(fileName),
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2,
+                                          uncompressedSize,
+                                          Markup.Escape(fileName),
                                           Markup.Escape(outputPath));
                 }
                 else
                     AaruConsole.ErrorWriteLine(UI.Cannot_write_file_0_output_exists, Markup.Escape(fileName));
 
-                if(!xattrs)
-                    continue;
+                if(!xattrs) continue;
 
                 errno = archive.ListXAttr(i, out List<string> xattrNames);
 
                 if(errno != ErrorNumber.NoError)
                 {
                     AaruConsole.ErrorWriteLine(UI.Error_0_listing_extended_attributes_for_archive_entry_1, errno, i);
+
                     continue;
                 }
 
                 foreach(string xattrName in xattrNames)
                 {
                     byte[] xattrBuffer = Array.Empty<byte>();
+
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
                         ctx.AddTask(UI.Reading_extended_attribute).IsIndeterminate();
@@ -378,8 +391,11 @@ sealed class ArchiveExtractCommand : Command
                     if(errno != ErrorNumber.NoError)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   UI.Error_0_reading_extended_attribute_1_for_archive_entry_2, errno,
-                                                   xattrName, i);
+                                                   UI.Error_0_reading_extended_attribute_1_for_archive_entry_2,
+                                                   errno,
+                                                   xattrName,
+                                                   i);
+
                         continue;
                     }
 
@@ -387,19 +403,18 @@ sealed class ArchiveExtractCommand : Command
 
                     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        outputPath = outputPath.Replace('<', '\uFF1C').
-                                                Replace('>',  '\uFF1E').
-                                                Replace(':',  '\uFF1A').
-                                                Replace('\"', '\uFF02').
-                                                Replace('|',  '\uFF5C').
-                                                Replace('?',  '\uFF1F').
-                                                Replace('*',  '\uFF0A').
-                                                Replace('/',  '\\');
+                        outputPath = outputPath.Replace('<', '\uFF1C')
+                                               .Replace('>',  '\uFF1E')
+                                               .Replace(':',  '\uFF1A')
+                                               .Replace('\"', '\uFF02')
+                                               .Replace('|',  '\uFF5C')
+                                               .Replace('?',  '\uFF1F')
+                                               .Replace('*',  '\uFF0A')
+                                               .Replace('/',  '\\');
                     }
 
                     destinationDir = Path.GetDirectoryName(outputPath);
-                    if(destinationDir is not null)
-                        Directory.CreateDirectory(destinationDir);
+                    if(destinationDir is not null) Directory.CreateDirectory(destinationDir);
 
                     if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
                     {
@@ -407,19 +422,18 @@ sealed class ArchiveExtractCommand : Command
                         {
                             ctx.AddTask(UI.Writing_extended_attribute).IsIndeterminate();
 
-                            var outputFile = new FileStream(outputPath, FileMode.CreateNew,
-                                                            FileAccess.ReadWrite, FileShare.None);
+                            var outputFile =
+                                new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 
                             outputFile.Write(xattrBuffer, 0, xattrBuffer.Length);
 
                             outputFile.Close();
 
                             var fi = new FileInfo(outputPath);
-                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                             try
                             {
-                                if(stat.CreationTimeUtc.HasValue)
-                                    fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                                if(stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
                             }
                             catch
                             {
@@ -428,8 +442,7 @@ sealed class ArchiveExtractCommand : Command
 
                             try
                             {
-                                if(stat.LastWriteTimeUtc.HasValue)
-                                    fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                                if(stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
                             }
                             catch
                             {
@@ -438,16 +451,17 @@ sealed class ArchiveExtractCommand : Command
 
                             try
                             {
-                                if(stat.AccessTimeUtc.HasValue)
-                                    fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                                if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
                             }
                             catch
                             {
                                 // ignored
                             }
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2, uncompressedSize,
-                                                  Markup.Escape(fileName), Markup.Escape(outputPath));
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                            AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2,
+                                                  uncompressedSize,
+                                                  Markup.Escape(fileName),
+                                                  Markup.Escape(outputPath));
                         });
                     }
                     else

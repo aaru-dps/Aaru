@@ -70,8 +70,7 @@ public class LinearMedia
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator LinearMedia(LinearMediaType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var linearMedia = new LinearMedia
         {
@@ -97,25 +96,21 @@ public class LinearMedia
         {
             linearMedia.ImageChecksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.ImageChecksums)
-                linearMedia.ImageChecksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.ImageChecksums) linearMedia.ImageChecksums.Add(chk);
         }
 
         if(cicm.Checksums is not null)
         {
             linearMedia.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                linearMedia.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) linearMedia.Checksums.Add(chk);
         }
 
-        if(cicm.DumpHardwareArray is null)
-            return linearMedia;
+        if(cicm.DumpHardwareArray is null) return linearMedia;
 
         linearMedia.DumpHardware = new List<DumpHardware>();
 
-        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
-            linearMedia.DumpHardware.Add(hw);
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray) linearMedia.DumpHardware.Add(hw);
 
         return linearMedia;
     }

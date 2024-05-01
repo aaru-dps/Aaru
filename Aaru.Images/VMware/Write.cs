@@ -156,8 +156,10 @@ public sealed partial class VMware
             _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
             // TODO: Support split
-            _writingStream = new FileStream(_writingBaseName + "-flat.vmdk", FileMode.OpenOrCreate,
-                                            FileAccess.ReadWrite, FileShare.None);
+            _writingStream = new FileStream(_writingBaseName + "-flat.vmdk",
+                                            FileMode.OpenOrCreate,
+                                            FileAccess.ReadWrite,
+                                            FileShare.None);
         }
         catch(IOException ex)
         {
@@ -294,8 +296,7 @@ public sealed partial class VMware
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                    break;
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
             }
         }
 

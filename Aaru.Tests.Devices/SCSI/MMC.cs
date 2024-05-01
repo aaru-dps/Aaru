@@ -154,8 +154,10 @@ static class Mmc
                 case 1:
                     AaruConsole.WriteLine(Localization.RT);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, MmcGetConfigurationRt.All,
-                                          MmcGetConfigurationRt.Current, MmcGetConfigurationRt.Reserved,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcGetConfigurationRt.All,
+                                          MmcGetConfigurationRt.Current,
+                                          MmcGetConfigurationRt.Reserved,
                                           MmcGetConfigurationRt.Single);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -189,8 +191,12 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.GetConfiguration(out byte[] buffer, out byte[] senseBuffer, startingFeatureNumber, rt,
-                                          dev.Timeout, out double duration);
+        bool sense = dev.GetConfiguration(out byte[] buffer,
+                                          out byte[] senseBuffer,
+                                          startingFeatureNumber,
+                                          rt,
+                                          dev.Timeout,
+                                          out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -239,8 +245,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.GET_CONFIGURATION_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -578,8 +583,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.GET_CONFIGURATION_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -592,8 +596,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.GET_CONFIGURATION_decoded_sense);
 
-                if(senseBuffer != null)
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                if(senseBuffer != null) AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -684,8 +687,12 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.PreventAllowMediumRemoval(out byte[] senseBuffer, persistent, prevent, dev.Timeout,
-                                                   out double duration);
+        bool sense =
+            dev.PreventAllowMediumRemoval(out byte[] senseBuffer,
+                                          persistent,
+                                          prevent,
+                                          dev.Timeout,
+                                          out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -731,8 +738,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.PREVENT_ALLOW_MEDIUM_REMOVAL_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -850,9 +856,13 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Sector_type);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5, MmcSectorTypes.AllTypes,
-                                          MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
-                                          MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5,
+                                          MmcSectorTypes.AllTypes,
+                                          MmcSectorTypes.Cdda,
+                                          MmcSectorTypes.Mode1,
+                                          MmcSectorTypes.Mode2,
+                                          MmcSectorTypes.Mode2Form1,
+                                          MmcSectorTypes.Mode2Form2);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -892,8 +902,10 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Header_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, MmcHeaderCodes.None,
-                                          MmcHeaderCodes.HeaderOnly, MmcHeaderCodes.SubHeaderOnly,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcHeaderCodes.None,
+                                          MmcHeaderCodes.HeaderOnly,
+                                          MmcHeaderCodes.SubHeaderOnly,
                                           MmcHeaderCodes.AllHeaders);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -934,8 +946,10 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.C2_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2, MmcErrorField.None,
-                                          MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          MmcErrorField.None,
+                                          MmcErrorField.C2Pointers,
+                                          MmcErrorField.C2PointersAndBlock);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -951,8 +965,11 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, MmcSubchannel.None, MmcSubchannel.Raw,
-                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcSubchannel.None,
+                                          MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16,
+                                          MmcSubchannel.Rw);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -985,8 +1002,22 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, sectorType, dap,
-                                relative, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
+        bool sense = dev.ReadCd(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                address,
+                                blockSize,
+                                length,
+                                sectorType,
+                                dap,
+                                relative,
+                                sync,
+                                header,
+                                user,
+                                edc,
+                                c2,
+                                subchan,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1034,8 +1065,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1048,8 +1078,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1216,9 +1245,13 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Sector_type);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5, MmcSectorTypes.AllTypes,
-                                          MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
-                                          MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5,
+                                          MmcSectorTypes.AllTypes,
+                                          MmcSectorTypes.Cdda,
+                                          MmcSectorTypes.Mode1,
+                                          MmcSectorTypes.Mode2,
+                                          MmcSectorTypes.Mode2Form1,
+                                          MmcSectorTypes.Mode2Form2);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -1258,8 +1291,10 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Header_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, MmcHeaderCodes.None,
-                                          MmcHeaderCodes.HeaderOnly, MmcHeaderCodes.SubHeaderOnly,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcHeaderCodes.None,
+                                          MmcHeaderCodes.HeaderOnly,
+                                          MmcHeaderCodes.SubHeaderOnly,
                                           MmcHeaderCodes.AllHeaders);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -1300,8 +1335,10 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.C2_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2, MmcErrorField.None,
-                                          MmcErrorField.C2Pointers, MmcErrorField.C2PointersAndBlock);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          MmcErrorField.None,
+                                          MmcErrorField.C2Pointers,
+                                          MmcErrorField.C2PointersAndBlock);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -1317,8 +1354,11 @@ static class Mmc
 
                     AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, MmcSubchannel.None, MmcSubchannel.Raw,
-                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcSubchannel.None,
+                                          MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16,
+                                          MmcSubchannel.Rw);
 
                     AaruConsole.Write(Localization.Choose_Q);
                     strDev = System.Console.ReadLine();
@@ -1353,8 +1393,21 @@ static class Mmc
         var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
         System.Console.Clear();
 
-        bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize, sectorType,
-                                   dap, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
+        bool sense = dev.ReadCdMsf(out byte[] buffer,
+                                   out byte[] senseBuffer,
+                                   startMsf,
+                                   endMsf,
+                                   blockSize,
+                                   sectorType,
+                                   dap,
+                                   sync,
+                                   header,
+                                   user,
+                                   edc,
+                                   c2,
+                                   subchan,
+                                   dev.Timeout,
+                                   out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1402,8 +1455,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_MSF_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1416,8 +1468,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_MSF_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1512,7 +1563,10 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, info, dev.Timeout,
+        bool sense = dev.ReadDiscInformation(out byte[] buffer,
+                                             out byte[] senseBuffer,
+                                             info,
+                                             dev.Timeout,
                                              out double duration);
 
     menu:
@@ -1562,8 +1616,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1587,8 +1640,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1667,7 +1719,8 @@ static class Mmc
                 case 1:
                     AaruConsole.WriteLine(Localization.Media_type);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1, MmcDiscStructureMediaType.Dvd,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1,
+                                          MmcDiscStructureMediaType.Dvd,
                                           MmcDiscStructureMediaType.Bd);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -1688,7 +1741,8 @@ static class Mmc
                     switch(mediaType)
                     {
                         case MmcDiscStructureMediaType.Dvd:
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.PhysicalInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.PhysicalInformation,
                                                   MmcDiscStructureFormat.CopyrightInformation,
                                                   MmcDiscStructureFormat.DiscKey,
                                                   MmcDiscStructureFormat.BurstCuttingArea);
@@ -1699,51 +1753,66 @@ static class Mmc
                                                   MmcDiscStructureFormat.MediaIdentifier,
                                                   MmcDiscStructureFormat.MediaKeyBlock);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdramDds,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DvdramDds,
                                                   MmcDiscStructureFormat.DvdramMediumStatus,
                                                   MmcDiscStructureFormat.DvdramSpareAreaInformation,
                                                   MmcDiscStructureFormat.DvdramRecordingType);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.LastBorderOutRmd,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.LastBorderOutRmd,
                                                   MmcDiscStructureFormat.SpecifiedRmd,
                                                   MmcDiscStructureFormat.PreRecordedInfo,
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdrPhysicalInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DvdrPhysicalInformation,
                                                   MmcDiscStructureFormat.Adip,
                                                   MmcDiscStructureFormat.HddvdCopyrightInformation,
                                                   MmcDiscStructureFormat.DvdAacs);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.HddvdrMediumStatus,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.HddvdrMediumStatus,
                                                   MmcDiscStructureFormat.HddvdrLastRmd,
                                                   MmcDiscStructureFormat.DvdrLayerCapacity,
                                                   MmcDiscStructureFormat.MiddleZoneStart);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.JumpIntervalSize,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.JumpIntervalSize,
                                                   MmcDiscStructureFormat.ManualLayerJumpStartLba,
-                                                  MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.Dcb);
+                                                  MmcDiscStructureFormat.RemapAnchorPoint,
+                                                  MmcDiscStructureFormat.Dcb);
 
                             break;
                         case MmcDiscStructureMediaType.Bd:
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DiscInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DiscInformation,
                                                   MmcDiscStructureFormat.BdBurstCuttingArea,
-                                                  MmcDiscStructureFormat.BdDds, MmcDiscStructureFormat.CartridgeStatus);
+                                                  MmcDiscStructureFormat.BdDds,
+                                                  MmcDiscStructureFormat.CartridgeStatus);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BdSpareAreaInformation,
-                                                  MmcDiscStructureFormat.RawDfl, MmcDiscStructureFormat.Pac);
+                            AaruConsole.WriteLine("\t{0} {1} {2}",
+                                                  MmcDiscStructureFormat.BdSpareAreaInformation,
+                                                  MmcDiscStructureFormat.RawDfl,
+                                                  MmcDiscStructureFormat.Pac);
 
                             break;
                     }
 
-                    AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsVolId,
-                                          MmcDiscStructureFormat.AacsMediaSerial, MmcDiscStructureFormat.AacsMediaId,
+                    AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                          MmcDiscStructureFormat.AacsVolId,
+                                          MmcDiscStructureFormat.AacsMediaSerial,
+                                          MmcDiscStructureFormat.AacsMediaId,
                                           MmcDiscStructureFormat.Aacsmkb);
 
-                    AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsDataKeys,
-                                          MmcDiscStructureFormat.AacslbaExtents, MmcDiscStructureFormat.Aacsmkbcprm,
+                    AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                          MmcDiscStructureFormat.AacsDataKeys,
+                                          MmcDiscStructureFormat.AacslbaExtents,
+                                          MmcDiscStructureFormat.Aacsmkbcprm,
                                           MmcDiscStructureFormat.RecognizedFormatLayers);
 
-                    AaruConsole.WriteLine("\t{0} {1}", MmcDiscStructureFormat.WriteProtectionStatus,
+                    AaruConsole.WriteLine("\t{0} {1}",
+                                          MmcDiscStructureFormat.WriteProtectionStatus,
                                           MmcDiscStructureFormat.CapabilityList);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -1801,8 +1870,15 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, mediaType, address, layer, format,
-                                           agid, dev.Timeout, out double duration);
+        bool sense = dev.ReadDiscStructure(out byte[] buffer,
+                                           out byte[] senseBuffer,
+                                           mediaType,
+                                           address,
+                                           layer,
+                                           format,
+                                           agid,
+                                           dev.Timeout,
+                                           out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1851,8 +1927,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1877,8 +1952,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1994,7 +2068,12 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, msf, format, session, dev.Timeout,
+        bool sense = dev.ReadTocPmaAtip(out byte[] buffer,
+                                        out byte[] senseBuffer,
+                                        msf,
+                                        format,
+                                        session,
+                                        dev.Timeout,
                                         out double duration);
 
     menu:
@@ -2044,8 +2123,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2106,8 +2184,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2120,8 +2197,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_decoded_sense);
 
-                if(senseBuffer != null)
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                if(senseBuffer != null) AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -2268,8 +2344,15 @@ static class Mmc
     start:
         System.Console.Clear();
 
-        bool sense = dev.StartStopUnit(out byte[] senseBuffer, immediate, formatLayer, powerConditions,
-                                       changeFormatLayer, loadEject, start, dev.Timeout, out double duration);
+        bool sense = dev.StartStopUnit(out byte[] senseBuffer,
+                                       immediate,
+                                       formatLayer,
+                                       powerConditions,
+                                       changeFormatLayer,
+                                       loadEject,
+                                       start,
+                                       dev.Timeout,
+                                       out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -2315,8 +2398,7 @@ static class Mmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.START_STOP_UNIT_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

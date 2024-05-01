@@ -127,9 +127,12 @@ static class Smc
                 case 1:
                     AaruConsole.WriteLine(Localization.Attribute_action);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4, ScsiAttributeAction.Values,
-                                          ScsiAttributeAction.List, ScsiAttributeAction.VolumeList,
-                                          ScsiAttributeAction.PartitionList, ScsiAttributeAction.ElementList,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4,
+                                          ScsiAttributeAction.Values,
+                                          ScsiAttributeAction.List,
+                                          ScsiAttributeAction.VolumeList,
+                                          ScsiAttributeAction.PartitionList,
+                                          ScsiAttributeAction.ElementList,
                                           ScsiAttributeAction.Supported);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -223,8 +226,17 @@ static class Smc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadAttribute(out byte[] buffer, out byte[] senseBuffer, action, element, elementType, volume,
-                                       partition, firstAttribute, cache, dev.Timeout, out double duration);
+        bool sense = dev.ReadAttribute(out byte[] buffer,
+                                       out byte[] senseBuffer,
+                                       action,
+                                       element,
+                                       elementType,
+                                       volume,
+                                       partition,
+                                       firstAttribute,
+                                       cache,
+                                       dev.Timeout,
+                                       out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -272,8 +284,7 @@ static class Smc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_ATTRIBUTE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -286,8 +297,7 @@ static class Smc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_ATTRIBUTE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

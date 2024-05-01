@@ -47,8 +47,7 @@ public sealed partial class Apridisk
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < _signature.Length)
-            return false;
+        if(stream.Length < _signature.Length) return false;
 
         var sigB = new byte[_signature.Length];
         stream.EnsureRead(sigB, 0, _signature.Length);

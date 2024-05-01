@@ -45,13 +45,11 @@ public sealed partial class OperaFS
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         attributes = stat.Attributes;
 
@@ -63,19 +61,15 @@ public sealed partial class OperaFS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
-        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory && !_debug)
-            return ErrorNumber.IsDirectory;
+        if((entry.Entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory && !_debug) return ErrorNumber.IsDirectory;
 
-        if(entry.Pointers.Length < 1)
-            return ErrorNumber.InvalidArgument;
+        if(entry.Pointers.Length < 1) return ErrorNumber.InvalidArgument;
 
         node = new OperaFileNode
         {
@@ -91,11 +85,9 @@ public sealed partial class OperaFS
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not OperaFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not OperaFileNode mynode) return ErrorNumber.InvalidArgument;
 
         return ErrorNumber.NoError;
     }
@@ -105,26 +97,21 @@ public sealed partial class OperaFS
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not OperaFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not OperaFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         long firstBlock    = mynode.Offset          / mynode.Dentry.Entry.block_size;
         long offsetInBlock = mynode.Offset          % mynode.Dentry.Entry.block_size;
         long sizeInBlocks  = (read + offsetInBlock) / mynode.Dentry.Entry.block_size;
 
-        if((read + offsetInBlock) % mynode.Dentry.Entry.block_size > 0)
-            sizeInBlocks++;
+        if((read + offsetInBlock) % mynode.Dentry.Entry.block_size > 0) sizeInBlocks++;
 
         uint fileBlockSizeRatio;
 
@@ -134,7 +121,8 @@ public sealed partial class OperaFS
             fileBlockSizeRatio = mynode.Dentry.Entry.block_size / _image.Info.SectorSize;
 
         ErrorNumber errno = _image.ReadSectors((ulong)(mynode.Dentry.Pointers[0] + firstBlock * fileBlockSizeRatio),
-                                               (uint)(sizeInBlocks * fileBlockSizeRatio), out byte[] buf);
+                                               (uint)(sizeInBlocks * fileBlockSizeRatio),
+                                               out byte[] buf);
 
         if(errno != ErrorNumber.NoError)
         {
@@ -155,13 +143,11 @@ public sealed partial class OperaFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DirectoryEntryWithPointers entryWithPointers);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         DirectoryEntry entry = entryWithPointers.Entry;
 
@@ -203,12 +189,12 @@ public sealed partial class OperaFS
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
-        if(pieces.Length == 0)
-            return ErrorNumber.InvalidArgument;
+        if(pieces.Length == 0) return ErrorNumber.InvalidArgument;
 
         var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
@@ -216,8 +202,7 @@ public sealed partial class OperaFS
         {
             ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
-            if(err != ErrorNumber.NoError)
-                return err;
+            if(err != ErrorNumber.NoError) return err;
 
             CloseDir(node);
         }
@@ -226,14 +211,12 @@ public sealed partial class OperaFS
 
         if(pieces.Length == 1)
             parent = _rootDirectoryCache;
-        else if(!_directoryCache.TryGetValue(parentPath, out parent))
-            return ErrorNumber.InvalidArgument;
+        else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
         KeyValuePair<string, DirectoryEntryWithPointers> dirent =
             parent.FirstOrDefault(t => t.Key.Equals(pieces[^1], StringComparison.CurrentCultureIgnoreCase));
 
-        if(string.IsNullOrEmpty(dirent.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
 
         entry = dirent.Value;
 

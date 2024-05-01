@@ -60,6 +60,7 @@ public sealed partial class Alcohol120
                                                            OpticalImageCapabilities.CanStoreMultipleTracks;
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -83,8 +84,7 @@ public sealed partial class Alcohol120
     {
         get
         {
-            if(_writingTracks != null && _alcTracks == null)
-                return _writingTracks;
+            if(_writingTracks != null && _alcTracks == null) return _writingTracks;
 
             List<CommonTypes.Structs.Track> tracks = new();
             _alcTracks ??= new Dictionary<int, Track>();
@@ -96,8 +96,7 @@ public sealed partial class Alcohol120
                      where alcTrack.point >= session.StartTrack && alcTrack.point <= session.EndTrack
                      select session.Sequence).FirstOrDefault();
 
-                if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
-                    continue;
+                if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra)) continue;
 
                 var aaruTrack = new CommonTypes.Structs.Track
                 {
@@ -115,8 +114,7 @@ public sealed partial class Alcohol120
                     BytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
                 };
 
-                if(alcExtra.pregap > 0)
-                    aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
+                if(alcExtra.pregap > 0) aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
 
                 aaruTrack.Indexes.Add(1, (int)alcTrack.startLba);
 

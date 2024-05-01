@@ -57,6 +57,7 @@ public class Nes : IByteAddressableImage
     public Guid Id => new("D597A3F4-2B1C-441C-8487-0BCABC509302");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -66,14 +67,12 @@ public class Nes : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length < 16)
-            return false;
+        if(stream.Length < 16) return false;
 
         stream.Position = 0;
         var magicBytes = new byte[4];
@@ -86,25 +85,21 @@ public class Nes : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length < 16)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 16) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
         var header = new byte[16];
         stream.EnsureRead(header, 0, 8);
         var magic = BitConverter.ToUInt32(header, 0);
 
-        if(magic != 0x1A53454E)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x1A53454E) return ErrorNumber.InvalidArgument;
 
-        if((header[7] & 0x0C) == 0x08)
-            _nes20 = true;
+        if((header[7] & 0x0C) == 0x08) _nes20 = true;
 
         _prgLen     = header[4] * 16384;
         _chrLen     = header[5] * 8192;
@@ -144,17 +139,13 @@ public class Nes : IByteAddressableImage
             else
                 _chrLen += (header[9] >> 4) * 8192;
 
-            if((header[10] & 0xF) > 0)
-                _prgRamLen = 64 << (header[10] & 0xF);
+            if((header[10] & 0xF) > 0) _prgRamLen = 64 << (header[10] & 0xF);
 
-            if((header[10] & 0xF0) > 0)
-                _prgNvramLen = 64 << ((header[10] & 0xF0) >> 4);
+            if((header[10] & 0xF0) > 0) _prgNvramLen = 64 << ((header[10] & 0xF0) >> 4);
 
-            if((header[11] & 0xF) > 0)
-                _chrRamLen = 64 << (header[11] & 0xF);
+            if((header[11] & 0xF) > 0) _chrRamLen = 64 << (header[11] & 0xF);
 
-            if((header[11] & 0xF0) > 0)
-                _chrNvramLen = 64 << ((header[11] & 0xF0) >> 4);
+            if((header[11] & 0xF0) > 0) _chrNvramLen = 64 << ((header[11] & 0xF0) >> 4);
 
             _nesHeaderInfo.TimingMode = (NesTimingMode)(header[12] & 0x3);
 
@@ -196,8 +187,7 @@ public class Nes : IByteAddressableImage
         sb.AppendFormat(Localization.Trainer_size_0_bytes, trainerLen).AppendLine();
         sb.AppendFormat(Localization.Mapper_0,             _nesHeaderInfo.Mapper).AppendLine();
 
-        if(_nesHeaderInfo.BatteryPresent)
-            sb.AppendLine(Localization.Has_battery_backed_RAM);
+        if(_nesHeaderInfo.BatteryPresent) sb.AppendLine(Localization.Has_battery_backed_RAM);
 
         if(_nesHeaderInfo.FourScreenMode)
             sb.AppendLine(Localization.Uses_four_screen_VRAM);
@@ -348,17 +338,13 @@ public class Nes : IByteAddressableImage
         header[5] = (byte)(_chrLen / 8192  & 0xFF);
         header[6] = (byte)((_nesHeaderInfo.Mapper & 0xF) << 4);
 
-        if(_nesHeaderInfo.FourScreenMode)
-            header[6] |= 0x8;
+        if(_nesHeaderInfo.FourScreenMode) header[6] |= 0x8;
 
-        if(_trainer)
-            header[6] |= 0x4;
+        if(_trainer) header[6] |= 0x4;
 
-        if(_nesHeaderInfo.BatteryPresent)
-            header[6] |= 0x2;
+        if(_nesHeaderInfo.BatteryPresent) header[6] |= 0x2;
 
-        if(_nesHeaderInfo.NametableMirroring)
-            header[6] |= 0x1;
+        if(_nesHeaderInfo.NametableMirroring) header[6] |= 0x1;
 
         header[7] =  (byte)(_mapper & 0xF0 | 0x8);
         header[7] |= (byte)_nesHeaderInfo.ConsoleType;
@@ -381,14 +367,11 @@ public class Nes : IByteAddressableImage
 
         header[14] = 0;
 
-        if(_instRomLen > 0)
-            header[14]++;
+        if(_instRomLen > 0) header[14]++;
 
-        if(_promLen > 0)
-            header[14]++;
+        if(_promLen > 0) header[14]++;
 
-        if(_nesHeaderInfo.ExtendedConsoleType == NesExtendedConsoleType.VT369)
-            header[14]++;
+        if(_nesHeaderInfo.ExtendedConsoleType == NesExtendedConsoleType.VT369) header[14]++;
 
         switch(_nesHeaderInfo.Mapper)
         {
@@ -633,8 +616,7 @@ public class Nes : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -670,16 +652,13 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -719,6 +698,7 @@ public class Nes : IByteAddressableImage
         {
             Regex regex;
             Match match;
+
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -838,8 +818,7 @@ public class Nes : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -883,16 +862,13 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 

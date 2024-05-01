@@ -50,8 +50,7 @@ public sealed partial class LisaFS
         xattrs = null;
         ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         return isDir ? ErrorNumber.InvalidArgument : ListXAttr(fileId, out xattrs);
     }
@@ -61,8 +60,7 @@ public sealed partial class LisaFS
     {
         ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         return isDir ? ErrorNumber.InvalidArgument : GetXattr(fileId, xattr, out buf);
     }
@@ -77,14 +75,12 @@ public sealed partial class LisaFS
     {
         xattrs = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         // System files
         if(fileId < 4)
         {
-            if(!_debug || fileId == 0)
-                return ErrorNumber.InvalidArgument;
+            if(!_debug || fileId == 0) return ErrorNumber.InvalidArgument;
 
             xattrs = new List<string>();
 
@@ -94,8 +90,7 @@ public sealed partial class LisaFS
                 byte[] buf = Encoding.ASCII.GetBytes(_mddf.password);
 
                 // If the MDDF contains a password, show it
-                if(buf.Length > 0)
-                    xattrs.Add("com.apple.lisa.password");
+                if(buf.Length > 0) xattrs.Add("com.apple.lisa.password");
             }
         }
         else
@@ -103,27 +98,22 @@ public sealed partial class LisaFS
             // Search for the file
             ErrorNumber error = ReadExtentsFile(fileId, out ExtentFile file);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             xattrs = new List<string>();
 
             // Password field is never emptied, check if valid
-            if(file.password_valid > 0)
-                xattrs.Add("com.apple.lisa.password");
+            if(file.password_valid > 0) xattrs.Add("com.apple.lisa.password");
 
             // Check for a valid copy-protection serial number
-            if(file.serial > 0)
-                xattrs.Add("com.apple.lisa.serial");
+            if(file.serial > 0) xattrs.Add("com.apple.lisa.serial");
 
             // Check if the label contains something or is empty
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo))
-                xattrs.Add("com.apple.lisa.label");
+            if(!ArrayHelpers.ArrayIsNullOrEmpty(file.LisaInfo)) xattrs.Add("com.apple.lisa.label");
         }
 
         // On debug mode allow sector tags to be accessed as an xattr
-        if(_debug)
-            xattrs.Add("com.apple.lisa.tags");
+        if(_debug) xattrs.Add("com.apple.lisa.tags");
 
         xattrs.Sort();
 
@@ -139,14 +129,12 @@ public sealed partial class LisaFS
     {
         buf = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         // System files
         if(fileId < 4)
         {
-            if(!_debug || fileId == 0)
-                return ErrorNumber.InvalidArgument;
+            if(!_debug || fileId == 0) return ErrorNumber.InvalidArgument;
 
             // Only MDDF contains an extended attributes
             if(fileId == FILEID_MDDF)
@@ -160,8 +148,7 @@ public sealed partial class LisaFS
             }
 
             // But on debug mode even system files contain tags
-            if(_debug && xattr == "com.apple.lisa.tags")
-                return ReadSystemFile(fileId, out buf, true);
+            if(_debug && xattr == "com.apple.lisa.tags") return ReadSystemFile(fileId, out buf, true);
 
             return ErrorNumber.NoSuchExtendedAttribute;
         }
@@ -169,8 +156,7 @@ public sealed partial class LisaFS
         // Search for the file
         ErrorNumber error = ReadExtentsFile(fileId, out ExtentFile file);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         switch(xattr)
         {
@@ -193,8 +179,7 @@ public sealed partial class LisaFS
             return ErrorNumber.NoError;
         }
 
-        if(_debug && xattr == "com.apple.lisa.tags")
-            return ReadFile(fileId, out buf, true);
+        if(_debug && xattr == "com.apple.lisa.tags") return ReadFile(fileId, out buf, true);
 
         return ErrorNumber.NoSuchExtendedAttribute;
     }
@@ -208,8 +193,7 @@ public sealed partial class LisaFS
         decoded = new LisaTag.PriamTag();
         LisaTag.PriamTag? pmTag = LisaTag.DecodeTag(tag);
 
-        if(!pmTag.HasValue)
-            return ErrorNumber.InvalidArgument;
+        if(!pmTag.HasValue) return ErrorNumber.InvalidArgument;
 
         decoded = pmTag.Value;
 

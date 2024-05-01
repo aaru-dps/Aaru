@@ -58,8 +58,7 @@ public static class Session
 
     public static CDSessionInfo? Decode(byte[] CDSessionInfoResponse)
     {
-        if(CDSessionInfoResponse is not { Length: > 4 })
-            return null;
+        if(CDSessionInfoResponse is not { Length: > 4 }) return null;
 
         var decoded = new CDSessionInfo
         {
@@ -73,9 +72,10 @@ public static class Session
         if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           Expected_CDSessionInfo_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
-                                       decoded.DataLength + 2, CDSessionInfoResponse.Length);
+                                       Localization
+                                          .Expected_CDSessionInfo_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
+                                       decoded.DataLength + 2,
+                                       CDSessionInfoResponse.Length);
 
             return null;
         }
@@ -97,8 +97,7 @@ public static class Session
 
     public static string Prettify(CDSessionInfo? CDSessionInfoResponse)
     {
-        if(CDSessionInfoResponse == null)
-            return null;
+        if(CDSessionInfoResponse == null) return null;
 
         CDSessionInfo response = CDSessionInfoResponse.Value;
 
@@ -109,14 +108,15 @@ public static class Session
 
         foreach(TrackDataDescriptor descriptor in response.TrackDescriptors)
         {
-            sb.AppendFormat(Localization.First_track_number_in_last_complete_session_0, descriptor.TrackNumber).
-               AppendLine();
+            sb.AppendFormat(Localization.First_track_number_in_last_complete_session_0, descriptor.TrackNumber)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3, descriptor.TrackStartAddress,
+            sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3,
+                            descriptor.TrackStartAddress,
                             (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
                             (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                            (descriptor.TrackStartAddress & 0xFF000000) >> 24).
-               AppendLine();
+                            (descriptor.TrackStartAddress & 0xFF000000) >> 24)
+              .AppendLine();
 
             switch((TocAdr)descriptor.ADR)
             {
@@ -175,13 +175,13 @@ public static class Session
                                   ? Localization.Digital_copy_of_track_is_permitted
                                   : Localization.Digital_copy_of_track_is_prohibited);
 
-            #if DEBUG
+#if DEBUG
                 if(descriptor.Reserved1 != 0)
                     sb.AppendFormat(Localization.Reserved1_equals_0_X8, descriptor.Reserved1).AppendLine();
 
                 if(descriptor.Reserved2 != 0)
                     sb.AppendFormat(Localization.Reserved2_equals_0_X8, descriptor.Reserved2).AppendLine();
-            #endif
+#endif
 
                 sb.AppendLine();
             }

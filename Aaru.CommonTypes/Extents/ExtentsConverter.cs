@@ -51,8 +51,7 @@ public static class ExtentsConverter
     /// <returns>XML based extents</returns>
     public static List<Extent> ToMetadata(ExtentsULong extents)
     {
-        if(extents == null)
-            return null;
+        if(extents == null) return null;
 
         Tuple<ulong, ulong>[] tuples = extents.ToArray();
         List<Extent>          list   = new();
@@ -74,8 +73,7 @@ public static class ExtentsConverter
     /// <returns>Extents</returns>
     public static ExtentsULong FromMetadata(IEnumerable<Extent> extents)
     {
-        if(extents == null)
-            return null;
+        if(extents == null) return null;
 
         var tuples = extents.Select(extent => new Tuple<ulong, ulong>(extent.Start, extent.End)).ToList();
 

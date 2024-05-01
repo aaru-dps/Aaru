@@ -58,8 +58,7 @@ public class Partition
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Partition(PartitionType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var part = new Partition
         {
@@ -71,13 +70,11 @@ public class Partition
             Description = cicm.Description
         };
 
-        if(cicm.FileSystems is null)
-            return part;
+        if(cicm.FileSystems is null) return part;
 
         part.FileSystems = new List<FileSystem>();
 
-        foreach(FileSystemType fs in cicm.FileSystems)
-            part.FileSystems.Add(fs);
+        foreach(FileSystemType fs in cicm.FileSystems) part.FileSystems.Add(fs);
 
         return part;
     }

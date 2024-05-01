@@ -48,8 +48,7 @@ public sealed partial class SuperCardPro
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<ScpHeader>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<ScpHeader>()) return false;
 
         var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         stream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());

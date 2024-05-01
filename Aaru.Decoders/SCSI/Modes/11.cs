@@ -96,17 +96,13 @@ public static partial class Modes
 
     public static ModePage_11? DecodeModePage_11(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x11)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x11) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_11();
 
@@ -139,25 +135,22 @@ public static partial class Modes
 
     public static string PrettifyModePage_11(ModePage_11? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_11 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_medium_partition_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        sb.AppendFormat("\t" + Localization._0_maximum_additional_partitions, page.MaxAdditionalPartitions).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization._0_maximum_additional_partitions, page.MaxAdditionalPartitions)
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization._0_additional_partitions_defined, page.AdditionalPartitionsDefined).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization._0_additional_partitions_defined, page.AdditionalPartitionsDefined)
+          .AppendLine();
 
-        if(page.FDP)
-            sb.AppendLine("\t" + Localization.Partitions_are_fixed_under_device_definitions);
+        if(page.FDP) sb.AppendLine("\t" + Localization.Partitions_are_fixed_under_device_definitions);
 
         if(page.SDP)
         {
@@ -165,14 +158,13 @@ public static partial class Modes
                           Localization.Number_of_partitions_can_be_defined_but_their_size_is_defined_by_the_device);
         }
 
-        if(page.IDP)
-            sb.AppendLine("\t" + Localization.Number_and_size_of_partitions_can_be_manually_defined);
+        if(page.IDP) sb.AppendLine("\t" + Localization.Number_and_size_of_partitions_can_be_manually_defined);
 
         if(page.POFM)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received);
+                          Localization
+                             .Partition_parameters_will_not_be_applied_until_a_FORMAT_MEDIUM_command_is_received);
         }
 
         switch(page.CLEAR)
@@ -192,8 +184,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Device_shall_erase_all_partitions_differing_on_size_on_MODE_SELECT_for_partitioning);
+                              Localization
+                                 .Device_shall_erase_all_partitions_differing_on_size_on_MODE_SELECT_for_partitioning);
 
                 break;
         }
@@ -219,8 +211,8 @@ public static partial class Modes
                 break;
             case PartitionSizeUnitOfMeasures.Exponential:
                 sb.AppendFormat("\t" + Localization.Partitions_are_defined_in_units_of_0_bytes,
-                                Math.Pow(10, page.PartitionUnits)).
-                   AppendLine();
+                                Math.Pow(10, page.PartitionUnits))
+                  .AppendLine();
 
                 measure = string.Format(Localization.units_of_0_bytes, Math.Pow(10, page.PartitionUnits));
 
@@ -253,8 +245,8 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Unknown_medium_recognition_code_0,
-                                (byte)page.MediumFormatRecognition).
-                   AppendLine();
+                                (byte)page.MediumFormatRecognition)
+                  .AppendLine();
 
                 break;
         }
@@ -272,8 +264,8 @@ public static partial class Modes
             }
             else
             {
-                sb.AppendFormat("\t" + Localization.Partition_0_is_1_2_long, i, page.PartitionSizes[i], measure).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Partition_0_is_1_2_long, i, page.PartitionSizes[i], measure)
+                  .AppendLine();
             }
         }
 

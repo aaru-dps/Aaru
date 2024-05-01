@@ -90,11 +90,9 @@ public sealed class Sha512Context : IChecksum
         _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
         var sha512Output = new StringBuilder();
 
-        if(_provider.Hash is null)
-            return null;
+        if(_provider.Hash is null) return null;
 
-        foreach(byte h in _provider.Hash)
-            sha512Output.Append(h.ToString("x2"));
+        foreach(byte h in _provider.Hash) sha512Output.Append(h.ToString("x2"));
 
         return sha512Output.ToString();
     }
@@ -123,8 +121,7 @@ public sealed class Sha512Context : IChecksum
         hash = localSha512Provider.ComputeHash(fileStream);
         var sha512Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            sha512Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) sha512Output.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -141,8 +138,7 @@ public sealed class Sha512Context : IChecksum
         hash = localSha512Provider.ComputeHash(data, 0, (int)len);
         var sha512Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            sha512Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) sha512Output.Append(h.ToString("x2"));
 
         return sha512Output.ToString();
     }

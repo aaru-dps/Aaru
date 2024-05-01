@@ -50,8 +50,7 @@ public sealed partial class Symbian
     /// <inheritdoc />
     public bool Identify(IFilter filter)
     {
-        if(filter.DataForkLength < Marshal.SizeOf<SymbianHeader>())
-            return false;
+        if(filter.DataForkLength < Marshal.SizeOf<SymbianHeader>()) return false;
 
         Stream stream = filter.GetDataForkStream();
 
@@ -61,11 +60,9 @@ public sealed partial class Symbian
 
         SymbianHeader header = Marshal.ByteArrayToStructureLittleEndian<SymbianHeader>(hdr);
 
-        if(header.uid1 == SYMBIAN9_MAGIC)
-            return true;
+        if(header.uid1 == SYMBIAN9_MAGIC) return true;
 
-        if(header.uid3 != SYMBIAN_MAGIC)
-            return false;
+        if(header.uid3 != SYMBIAN_MAGIC) return false;
 
         return header.uid2 is EPOC_MAGIC or EPOC6_MAGIC;
     }
@@ -78,8 +75,7 @@ public sealed partial class Symbian
         var    capabilities = new Dictionary<uint, uint>();
         Stream stream       = filter.GetDataForkStream();
 
-        if(stream.Length < Marshal.SizeOf<SymbianHeader>())
-            return;
+        if(stream.Length < Marshal.SizeOf<SymbianHeader>()) return;
 
         var buffer = new byte[Marshal.SizeOf<SymbianHeader>()];
 
@@ -142,13 +138,16 @@ public sealed partial class Symbian
             {
                 case EPOC_MAGIC:
                     description.AppendLine(Localization.Symbian_3_or_later);
+
                     break;
                 case EPOC6_MAGIC:
                     description.AppendLine(Localization.Symbian_6_or_later);
                     _release6 = true;
+
                     break;
                 default:
                     description.AppendFormat(Localization.Unknown_EPOC_magic_0, sh.uid2).AppendLine();
+
                     break;
             }
 
@@ -164,15 +163,16 @@ public sealed partial class Symbian
 
         // Go to enumerate languages
         br.BaseStream.Seek(sh.lang_ptr, SeekOrigin.Begin);
-        for(var i = 0; i < sh.languages; i++)
-            languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
+        for(var i = 0; i < sh.languages; i++) languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
 
         // Go to component record
         br.BaseStream.Seek(sh.comp_ptr, SeekOrigin.Begin);
+
         var componentRecord = new ComponentRecord
         {
             names = new string[languages.Count]
         };
+
         buffer = new byte[sizeof(uint) * languages.Count];
 
         // Read the component string lenghts
@@ -189,7 +189,9 @@ public sealed partial class Symbian
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        "Found component name for language {0} at {1} with a length of {2} bytes",
-                                       languages[i], componentRecord.namesPointers[i], componentRecord.namesLengths[i]);
+                                       languages[i],
+                                       componentRecord.namesPointers[i],
+                                       componentRecord.namesLengths[i]);
 
             br.BaseStream.Seek(componentRecord.namesPointers[i], SeekOrigin.Begin);
             buffer                   = br.ReadBytes((int)componentRecord.namesLengths[i]);
@@ -198,6 +200,7 @@ public sealed partial class Symbian
 
         // Go to capabilities (???)
         br.BaseStream.Seek(sh.caps_ptr, SeekOrigin.Begin);
+
         for(var i = 0; i < sh.capabilities; i++)
         {
             uint cap_Key   = br.ReadUInt32();
@@ -214,6 +217,7 @@ public sealed partial class Symbian
         {
             case SymbianType.Application:
                 description.AppendLine(Localization.SIS_contains_an_application);
+
                 break;
         }
 
@@ -225,8 +229,7 @@ public sealed partial class Symbian
 
         for(var i = 0; i < languages.Count; i++)
         {
-            if(i > 0)
-                description.Append(", ");
+            if(i > 0) description.Append(", ");
             description.Append($"{languages[i]}");
         }
 
@@ -235,9 +238,10 @@ public sealed partial class Symbian
 
         for(var i = 0; i < languages.Count; i++)
         {
-            description.AppendFormat(Localization.Component_name_for_language_with_code_0_1, languages[i],
-                                     componentRecord.names[i]).
-                        AppendLine();
+            description.AppendFormat(Localization.Component_name_for_language_with_code_0_1,
+                                     languages[i],
+                                     componentRecord.names[i])
+                       .AppendLine();
         }
 
         description.AppendLine();
@@ -252,6 +256,7 @@ public sealed partial class Symbian
             for(var r = 0; r < sh.requisites; r++)
             {
                 br.BaseStream.Seek(offset, SeekOrigin.Begin);
+
                 var requisiteRecord = new RequisiteRecord
                 {
                     uid          = br.ReadUInt32(),
@@ -269,10 +274,13 @@ public sealed partial class Symbian
                 requisiteRecord.namesPointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
 
                 description.AppendFormat(Localization.Requisite_0, r).AppendLine();
+
                 description.AppendFormat("\t" + Localization.Required_UID_0_version_1_2,
-                                         DecodePlatformUid(requisiteRecord.uid), requisiteRecord.majorVersion,
-                                         requisiteRecord.minorVersion).
-                            AppendLine();
+                                         DecodePlatformUid(requisiteRecord.uid),
+                                         requisiteRecord.majorVersion,
+                                         requisiteRecord.minorVersion)
+                           .AppendLine();
+
                 description.AppendFormat("\t" + Localization.Required_variant_0, requisiteRecord.variant).AppendLine();
 
                 offset = (uint)br.BaseStream.Position;
@@ -281,9 +289,11 @@ public sealed partial class Symbian
                 {
                     br.BaseStream.Seek(requisiteRecord.namesPointers[i], SeekOrigin.Begin);
                     buffer = br.ReadBytes((int)requisiteRecord.namesLengths[i]);
-                    description.AppendFormat("\t" + Localization.Requisite_for_language_0_1, languages[i],
-                                             _encoding.GetString(buffer)).
-                                AppendLine();
+
+                    description.AppendFormat("\t" + Localization.Requisite_for_language_0_1,
+                                             languages[i],
+                                             _encoding.GetString(buffer))
+                               .AppendLine();
                 }
 
                 description.AppendLine();
@@ -313,6 +323,7 @@ public sealed partial class Symbian
         offset         = sh.files_ptr;
         currentFile    = 0;
         conditionLevel = 0;
+
         do
         {
             Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, false);
@@ -322,25 +333,29 @@ public sealed partial class Symbian
 
         // Files appear on .sis in the reverse order they should be processed
         _files.Reverse();
+
         // Conditions do as well
         _conditions.Reverse();
 
         if(_files.Any(t => t.language is null))
         {
             description.AppendLine(Localization.Files_for_all_languages);
+
             foreach(DecodedFileRecord file in _files.Where(t => t.language is null))
                 description.AppendLine($"{file.destinationName}");
+
             description.AppendLine();
         }
 
         foreach(string lang in languages)
         {
-            if(_files.All(t => t.language != lang))
-                continue;
+            if(_files.All(t => t.language != lang)) continue;
 
             description.AppendFormat(Localization.Files_for_0_language, lang).AppendLine();
+
             foreach(DecodedFileRecord file in _files.Where(t => t.language == lang))
                 description.AppendLine($"{file.destinationName}");
+
             description.AppendLine();
         }
 
@@ -351,9 +366,12 @@ public sealed partial class Symbian
                 OptionRecord option = _options[i];
 
                 description.AppendFormat(Localization.Option_0, i + 1).AppendLine();
+
                 foreach(KeyValuePair<string, string> kvp in option.names)
-                    description.AppendFormat("\t" + Localization.Name_for_language_0_1, kvp.Key, kvp.Value).
-                                AppendLine();
+                {
+                    description.AppendFormat("\t" + Localization.Name_for_language_0_1, kvp.Key, kvp.Value)
+                               .AppendLine();
+                }
             }
 
             description.AppendLine();
@@ -362,8 +380,7 @@ public sealed partial class Symbian
         if(_conditions.Count > 0)
         {
             description.AppendLine("Conditions:");
-            foreach(string condition in _conditions)
-                description.AppendLine(condition);
+            foreach(string condition in _conditions) description.AppendLine(condition);
         }
 
         information = description.ToString();

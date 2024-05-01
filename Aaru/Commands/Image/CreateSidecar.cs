@@ -60,19 +60,25 @@ sealed class CreateSidecarCommand : Command
     public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
         Add(new Option<int>(new[]
-        {
-            "--block-size", "-b"
-        }, () => 512, UI.Tape_block_size_argument_help));
+                            {
+                                "--block-size", "-b"
+                            },
+                            () => 512,
+                            UI.Tape_block_size_argument_help));
 
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-        {
-            "--tape", "-t"
-        }, () => false, UI.Tape_argument_input_help));
+                             {
+                                 "--tape", "-t"
+                             },
+                             () => false,
+                             UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {
@@ -135,8 +141,7 @@ sealed class CreateSidecarCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encodingName);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -227,11 +232,11 @@ sealed class CreateSidecarCommand : Command
                 var      sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
                 Metadata sidecar      = new();
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 sidecarClass.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
@@ -284,14 +289,18 @@ sealed class CreateSidecarCommand : Command
                     ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                     var jsonFs =
-                        new
-                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                        new FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ??
+                                                    throw new InvalidOperationException(),
+                                                    Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
                                        FileMode.Create);
 
-                    JsonSerializer.Serialize(jsonFs, new MetadataJson
-                    {
-                        AaruMetadata = sidecar
-                    }, typeof(MetadataJson), MetadataJsonContext.Default);
+                    JsonSerializer.Serialize(jsonFs,
+                                             new MetadataJson
+                                             {
+                                                 AaruMetadata = sidecar
+                                             },
+                                             typeof(MetadataJson),
+                                             MetadataJsonContext.Default);
 
                     jsonFs.Close();
                 });
@@ -321,11 +330,11 @@ sealed class CreateSidecarCommand : Command
             var      sidecarClass = new Sidecar();
             Metadata sidecar      = new();
 
-            AnsiConsole.Progress().
-                        AutoClear(true).
-                        HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
                             sidecarClass.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
@@ -375,14 +384,18 @@ sealed class CreateSidecarCommand : Command
                 ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
                 var jsonFs =
-                    new
-                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                    new FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ??
+                                                throw new InvalidOperationException(),
+                                                Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
                                    FileMode.Create);
 
-                JsonSerializer.Serialize(jsonFs, new MetadataJson
-                {
-                    AaruMetadata = sidecar
-                }, typeof(MetadataJson), MetadataJsonContext.Default);
+                JsonSerializer.Serialize(jsonFs,
+                                         new MetadataJson
+                                         {
+                                             AaruMetadata = sidecar
+                                         },
+                                         typeof(MetadataJson),
+                                         MetadataJsonContext.Default);
 
                 jsonFs.Close();
             });

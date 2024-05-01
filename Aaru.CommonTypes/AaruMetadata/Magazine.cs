@@ -61,8 +61,7 @@ public class Magazine
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Magazine(MagazineType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var magazine = new Magazine
         {
@@ -79,15 +78,12 @@ public class Magazine
         {
             magazine.Barcodes = new List<Barcode>();
 
-            foreach(Schemas.BarcodeType code in cicm.Barcodes)
-                magazine.Barcodes.Add(code);
+            foreach(Schemas.BarcodeType code in cicm.Barcodes) magazine.Barcodes.Add(code);
         }
 
-        if(cicm.Language is null)
-            return magazine;
+        if(cicm.Language is null) return magazine;
 
-        foreach(LanguagesTypeLanguage lng in cicm.Language)
-            magazine.Languages.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Language) magazine.Languages.Add((Language)lng);
 
         return magazine;
     }

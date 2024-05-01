@@ -77,17 +77,13 @@ public static partial class Modes
 
     public static ModePage_02? DecodeModePage_02(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x02)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x02) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 12)
-            return null;
+        if(pageResponse.Length < 12) return null;
 
         var decoded = new ModePage_02();
 
@@ -107,8 +103,7 @@ public static partial class Modes
             decoded.DTDC            =  (byte)(pageResponse[12] & 0x07);
         }
 
-        if(pageResponse.Length >= 16)
-            decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+        if(pageResponse.Length >= 16) decoded.FirstBurstSize = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
         return decoded;
     }
@@ -118,79 +113,79 @@ public static partial class Modes
 
     public static string PrettifyModePage_02(ModePage_02? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_02 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Disconnect_Reconnect_mode_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.BufferFullRatio > 0)
         {
             sb.AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_full_prior_to_attempting_a_reselection,
-                            page.BufferFullRatio).
-               AppendLine();
+                            page.BufferFullRatio)
+              .AppendLine();
         }
 
         if(page.BufferEmptyRatio > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0_ratio_of_buffer_that_shall_be_empty_prior_to_attempting_a_reselection,
-                             page.BufferEmptyRatio).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization._0_ratio_of_buffer_that_shall_be_empty_prior_to_attempting_a_reselection,
+                            page.BufferEmptyRatio)
+              .AppendLine();
         }
 
         if(page.BusInactivityLimit > 0)
         {
             sb.AppendFormat("\t" + Localization._0_µs_maximum_permitted_to_assert_BSY_without_a_REQ_ACK_handshake,
-                            page.BusInactivityLimit * 100).
-               AppendLine();
+                            page.BusInactivityLimit * 100)
+              .AppendLine();
         }
 
         if(page.DisconnectTimeLimit > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0_µs_maximum_permitted_wait_after_releasing_the_bus_before_attempting_reselection,
-                             page.DisconnectTimeLimit * 100).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               ._0_µs_maximum_permitted_wait_after_releasing_the_bus_before_attempting_reselection,
+                            page.DisconnectTimeLimit * 100)
+              .AppendLine();
         }
 
         if(page.ConnectTimeLimit > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0_µs_allowed_to_use_the_bus_before_disconnecting_if_granted_the_privilege_and_not_restricted,
-                             page.ConnectTimeLimit * 100).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               ._0_µs_allowed_to_use_the_bus_before_disconnecting_if_granted_the_privilege_and_not_restricted,
+                            page.ConnectTimeLimit * 100)
+              .AppendLine();
         }
 
         if(page.MaxBurstSize > 0)
         {
             sb.AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_before_disconnecting,
-                            page.MaxBurstSize * 512).
-               AppendLine();
+                            page.MaxBurstSize * 512)
+              .AppendLine();
         }
 
         if(page.FirstBurstSize > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command,
-                             page.FirstBurstSize * 512).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               ._0_bytes_maximum_can_be_transferred_for_a_command_along_with_the_disconnect_command,
+                            page.FirstBurstSize * 512)
+              .AppendLine();
         }
 
         if(page.DIMM)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Target_shall_not_transfer_data_for_a_command_during_the_same_interconnect_tenancy);
+                          Localization
+                             .Target_shall_not_transfer_data_for_a_command_during_the_same_interconnect_tenancy);
         }
 
-        if(page.EMDP)
-            sb.AppendLine("\t" + Localization.Target_is_allowed_to_reorder_the_data_transfer);
+        if(page.EMDP) sb.AppendLine("\t" + Localization.Target_is_allowed_to_reorder_the_data_transfer);
 
         switch(page.DTDC)
         {
@@ -200,19 +195,19 @@ public static partial class Modes
                 break;
             case 1:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  All_data_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
+                              Localization
+                                 .All_data_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;
             case 3:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  All_data_and_the_response_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
+                              Localization
+                                 .All_data_and_the_response_for_a_command_shall_be_transferred_within_a_single_interconnect_tenancy);
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Reserved_data_transfer_disconnect_control_value_0, page.DTDC).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Reserved_data_transfer_disconnect_control_value_0, page.DTDC)
+                  .AppendLine();
 
                 break;
         }

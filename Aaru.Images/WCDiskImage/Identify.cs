@@ -50,8 +50,7 @@ public sealed partial class WCDiskImage
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 32)
-            return false;
+        if(stream.Length < 32) return false;
 
         var header = new byte[32];
         stream.EnsureRead(header, 0, 32);
@@ -59,21 +58,16 @@ public sealed partial class WCDiskImage
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
         /* check the signature */
-        if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != FILE_SIGNATURE)
-            return false;
+        if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != FILE_SIGNATURE) return false;
 
         /* Some sanity checks on the values we just read. */
-        if(fheader.version > 1)
-            return false;
+        if(fheader.version > 1) return false;
 
-        if(fheader.heads is < 1 or > 2)
-            return false;
+        if(fheader.heads is < 1 or > 2) return false;
 
-        if(fheader.sectorsPerTrack is < 8 or > 18)
-            return false;
+        if(fheader.sectorsPerTrack is < 8 or > 18) return false;
 
-        if(fheader.cylinders is < 1 or > 80)
-            return false;
+        if(fheader.cylinders is < 1 or > 80) return false;
 
         if(fheader.extraTracks[0] > 1 ||
            fheader.extraTracks[1] > 1 ||

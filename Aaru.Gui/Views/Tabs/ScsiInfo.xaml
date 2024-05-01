@@ -31,11 +31,15 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.ScsiInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.ScsiInfo">
     <Design.DataContext>
         <tabs:ScsiInfoViewModel />
     </Design.DataContext>
@@ -45,8 +49,10 @@
                 <TextBlock Text="{Binding InquiryLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBlock Text="{Binding ScsiInquiryLabel}" HorizontalAlignment="Center" />
-                <TextBox Text="{Binding ScsiInquiryText}" IsReadOnly="True" />
+                <TextBlock Text="{Binding ScsiInquiryLabel}"
+                           HorizontalAlignment="Center" />
+                <TextBox Text="{Binding ScsiInquiryText}"
+                         IsReadOnly="True" />
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding SaveInquiryBinaryCommand}">
                         <TextBlock Text="{Binding SaveInquiryBinaryLabel}" />
@@ -63,14 +69,19 @@
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
                               ItemsSource="{Binding ModeSensePages}"
-                              SelectedItem="{Binding SelectedModeSensePage}" IsReadOnly="True">
+                              SelectedItem="{Binding SelectedModeSensePage}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{Binding PageLabel}" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding PageLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding ModeSensePageText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding ModeSensePageText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -89,13 +100,19 @@
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" ItemsSource="{Binding EvpdPages}"
-                              SelectedItem="{Binding SelectedEvpdPage}" IsReadOnly="True">
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
+                              ItemsSource="{Binding EvpdPages}"
+                              SelectedItem="{Binding SelectedEvpdPage}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{Binding PageLabel}" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding PageLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding EvpdPageText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding EvpdPageText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -111,14 +128,19 @@
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
                               ItemsSource="{Binding MmcFeatures}"
-                              SelectedItem="{Binding SelectedMmcFeature}" IsReadOnly="True">
+                              SelectedItem="{Binding SelectedMmcFeature}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="{Binding FeatureLabel}" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding FeatureLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding MmcFeatureText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding MmcFeatureText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">

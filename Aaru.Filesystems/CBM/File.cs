@@ -44,21 +44,19 @@ public sealed partial class CBM
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(!_cache.TryGetValue(filename, out CachedFile file))
-            return ErrorNumber.NoSuchFile;
+        if(!_cache.TryGetValue(filename, out CachedFile file)) return ErrorNumber.NoSuchFile;
 
         attributes = file.attributes;
 
@@ -70,24 +68,21 @@ public sealed partial class CBM
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(filename.Length > 14)
-            return ErrorNumber.NameTooLong;
+        if(filename.Length > 14) return ErrorNumber.NameTooLong;
 
-        if(!_cache.TryGetValue(filename, out CachedFile file))
-            return ErrorNumber.NoSuchFile;
+        if(!_cache.TryGetValue(filename, out CachedFile file)) return ErrorNumber.NoSuchFile;
 
         stat = new FileEntryInfo
         {
@@ -107,28 +102,28 @@ public sealed partial class CBM
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         string filename = pathElements[0].ToUpperInvariant();
 
-        if(filename.Length > 14)
-            return ErrorNumber.NameTooLong;
+        if(filename.Length > 14) return ErrorNumber.NameTooLong;
 
-        if(!_cache.TryGetValue(filename, out CachedFile file))
-            return ErrorNumber.NoSuchFile;
+        if(!_cache.TryGetValue(filename, out CachedFile file)) return ErrorNumber.NoSuchFile;
 
         node = new CbmFileNode
         {
-            Path = path, Length = (long)file.length, Offset = 0, Cache = file.data
+            Path   = path,
+            Length = (long)file.length,
+            Offset = 0,
+            Cache  = file.data
         };
 
         return ErrorNumber.NoError;
@@ -137,11 +132,9 @@ public sealed partial class CBM
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not CbmFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CbmFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Cache = null;
 
@@ -153,19 +146,15 @@ public sealed partial class CBM
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not CbmFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CbmFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
 

@@ -64,22 +64,18 @@ public sealed class PC98 : IPartition
     {
         partitions = new List<CommonTypes.Partition>();
 
-        if(sectorOffset != 0)
-            return false;
+        if(sectorOffset != 0) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] bootSector);
 
-        if(errno != ErrorNumber.NoError || bootSector[^2] != 0x55 || bootSector[^1] != 0xAA)
-            return false;
+        if(errno != ErrorNumber.NoError || bootSector[^2] != 0x55 || bootSector[^1] != 0xAA) return false;
 
         errno = imagePlugin.ReadSector(1, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         // Prevent false positives with some FAT BPBs
-        if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == Localization.FAT)
-            return false;
+        if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == Localization.FAT) return false;
 
         Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
@@ -101,7 +97,8 @@ public sealed class PC98 : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ehd = {0}",      entry.dp_ehd);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_ecyl = {0}",     entry.dp_ecyl);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.dp_name = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "entry.dp_name = \"{0}\"",
                                        StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
             if(entry.dp_scyl  == entry.dp_ecyl                   ||
@@ -116,8 +113,12 @@ public sealed class PC98 : IPartition
 
             var part = new CommonTypes.Partition
             {
-                Start = CHS.ToLBA(entry.dp_scyl, entry.dp_shd, (uint)(entry.dp_ssect + 1), imagePlugin.Info.Heads,
-                                  imagePlugin.Info.SectorsPerTrack),
+                Start =
+                    CHS.ToLBA(entry.dp_scyl,
+                              entry.dp_shd,
+                              (uint)(entry.dp_ssect + 1),
+                              imagePlugin.Info.Heads,
+                              imagePlugin.Info.SectorsPerTrack),
                 Type     = DecodePC98Sid(entry.dp_sid),
                 Name     = StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)).Trim(),
                 Sequence = counter,
@@ -126,7 +127,10 @@ public sealed class PC98 : IPartition
 
             part.Offset = part.Start * imagePlugin.Info.SectorSize;
 
-            part.Length = CHS.ToLBA(entry.dp_ecyl, entry.dp_ehd, (uint)(entry.dp_esect + 1), imagePlugin.Info.Heads,
+            part.Length = CHS.ToLBA(entry.dp_ecyl,
+                                    entry.dp_ehd,
+                                    (uint)(entry.dp_esect + 1),
+                                    imagePlugin.Info.Heads,
                                     imagePlugin.Info.SectorsPerTrack) -
                           part.Start;
 

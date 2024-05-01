@@ -50,8 +50,7 @@ public sealed partial class Apridisk
             var blklen = BitConverter.ToUInt16(compressed, readp);
             readp += 2;
 
-            for(var i = 0; i < blklen; i++)
-                buffer.WriteByte(compressed[readp]);
+            for(var i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
 
             uLen += blklen;
             readp++;

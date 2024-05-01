@@ -234,8 +234,7 @@ public sealed partial class RsIde
 
                 _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                    break;
+                if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
             }
         }
 
@@ -248,24 +247,25 @@ public sealed partial class RsIde
             reserved = new byte[11]
         };
 
-        if(_imageInfo.SectorSize == 256)
-            header.flags = RsIdeFlags.HalfSectors;
+        if(_imageInfo.SectorSize == 256) header.flags = RsIdeFlags.HalfSectors;
 
         if(_identify == null)
         {
             var ataId = new Identify.IdentifyDevice
             {
-                GeneralConfiguration = CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
-                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
-                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
-                                       CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
+                GeneralConfiguration =
+                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
+                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
+                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
+                    CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
                 Cylinders       = (ushort)_imageInfo.Cylinders,
                 Heads           = (ushort)_imageInfo.Heads,
                 SectorsPerTrack = (ushort)_imageInfo.SectorsPerTrack,
                 VendorWord47    = 0x80,
-                Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
-                               CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
-                               CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
+                Capabilities =
+                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
+                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
+                    CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
                 ExtendedIdentify       = CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
                 CurrentCylinders       = (ushort)_imageInfo.Cylinders,
                 CurrentHeads           = (ushort)_imageInfo.Heads,
@@ -276,14 +276,11 @@ public sealed partial class RsIde
                 DMAActive              = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
             };
 
-            if(string.IsNullOrEmpty(_imageInfo.DriveManufacturer))
-                _imageInfo.DriveManufacturer = "Aaru";
+            if(string.IsNullOrEmpty(_imageInfo.DriveManufacturer)) _imageInfo.DriveManufacturer = "Aaru";
 
-            if(string.IsNullOrEmpty(_imageInfo.DriveModel))
-                _imageInfo.DriveModel = "";
+            if(string.IsNullOrEmpty(_imageInfo.DriveModel)) _imageInfo.DriveModel = "";
 
-            if(string.IsNullOrEmpty(_imageInfo.DriveFirmwareRevision))
-                Version.GetVersion();
+            if(string.IsNullOrEmpty(_imageInfo.DriveFirmwareRevision)) Version.GetVersion();
 
             if(string.IsNullOrEmpty(_imageInfo.DriveSerialNumber))
                 _imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
@@ -296,8 +293,11 @@ public sealed partial class RsIde
 
             System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
-            Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40), 0, ataIdBytes,
-                       27 * 2, 40);
+            Array.Copy(ScrambleAtaString(_imageInfo.DriveManufacturer + " " + _imageInfo.DriveModel, 40),
+                       0,
+                       ataIdBytes,
+                       27 * 2,
+                       40);
 
             Array.Copy(ScrambleAtaString(_imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
             Array.Copy(ScrambleAtaString(_imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);

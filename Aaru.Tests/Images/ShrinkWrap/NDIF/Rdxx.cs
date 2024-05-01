@@ -37,8 +37,11 @@ namespace Aaru.Tests.Images.ShrinkWrap.NDIF;
 [TestFixture]
 public class Rdxx : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "ShrinkWrap 3",
-                                                      "NDIF", "Simple compression");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot,
+                                                      "Media image formats",
+                                                      "ShrinkWrap 3",
+                                                      "NDIF",
+                                                      "Simple compression");
 
     public override IMediaImage Plugin => new Ndif();
 

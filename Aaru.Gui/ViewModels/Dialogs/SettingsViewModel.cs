@@ -85,8 +85,7 @@ public sealed class SettingsViewModel : ViewModelBase
         CancelCommand = ReactiveCommand.Create(ExecuteCancelCommand);
         SaveCommand   = ReactiveCommand.Create(ExecuteSaveCommand);
 
-        if(!_gdprVisible)
-            _tabControlSelectedIndex = 1;
+        if(!_gdprVisible) _tabControlSelectedIndex = 1;
     }
 
     // TODO: Show Preferences in macOS

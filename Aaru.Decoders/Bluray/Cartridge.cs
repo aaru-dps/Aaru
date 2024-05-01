@@ -98,12 +98,12 @@ public static class Cartridge
 
     public static CartridgeStatus? Decode(byte[] CSResponse)
     {
-        if(CSResponse == null)
-            return null;
+        if(CSResponse == null) return null;
 
         if(CSResponse.Length != 8)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_Blu_ray_Cartridge_Status_size_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Found_incorrect_Blu_ray_Cartridge_Status_size_0_bytes,
                                        CSResponse.Length);
 
             return null;
@@ -129,14 +129,13 @@ public static class Cartridge
 
     public static string Prettify(CartridgeStatus? CSResponse)
     {
-        if(CSResponse == null)
-            return null;
+        if(CSResponse == null) return null;
 
         CartridgeStatus response = CSResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
@@ -157,29 +156,25 @@ public static class Cartridge
 
         if(response.Reserved7 != 0)
             sb.AppendFormat(Localization.Reserved7_equals_0_X8, response.Reserved7).AppendLine();
-    #endif
+#endif
 
         if(response.Cartridge)
         {
             sb.AppendLine(Localization.Media_is_inserted_in_a_cartridge);
 
-            if(response.OUT)
-                sb.AppendLine(Localization.Media_has_been_taken_out_or_inserted_in_the_cartridge);
+            if(response.OUT) sb.AppendLine(Localization.Media_has_been_taken_out_or_inserted_in_the_cartridge);
 
-            if(response.CWP)
-                sb.AppendLine(Localization.Media_is_write_protected);
+            if(response.CWP) sb.AppendLine(Localization.Media_is_write_protected);
         }
         else
         {
             sb.AppendLine(Localization.Media_is_not_in_a_cartridge);
 
-        #if DEBUG
-            if(response.OUT)
-                sb.AppendLine(Localization.Media_has_out_bit_marked_shouldnt);
+#if DEBUG
+            if(response.OUT) sb.AppendLine(Localization.Media_has_out_bit_marked_shouldnt);
 
-            if(response.CWP)
-                sb.AppendLine(Localization.Media_has_write_protection_bit_marked_shouldnt);
-        #endif
+            if(response.CWP) sb.AppendLine(Localization.Media_has_write_protection_bit_marked_shouldnt);
+#endif
         }
 
         return sb.ToString();

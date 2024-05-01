@@ -56,8 +56,7 @@ public class SCSI
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator SCSI(SCSIType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var scsi = new SCSI
         {
@@ -67,13 +66,11 @@ public class SCSI
             ModeSense10 = cicm.ModeSense10
         };
 
-        if(cicm.EVPD is null)
-            return cicm;
+        if(cicm.EVPD is null) return cicm;
 
         scsi.Evpds = new List<Evpd>();
 
-        foreach(EVPDType evpd in cicm.EVPD)
-            scsi.Evpds.Add(evpd);
+        foreach(EVPDType evpd in cicm.EVPD) scsi.Evpds.Add(evpd);
 
         return scsi;
     }
@@ -89,8 +86,7 @@ public class Evpd
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Evpd(EVPDType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var evpd = new Evpd
         {
@@ -99,13 +95,11 @@ public class Evpd
             Page  = cicm.pageSpecified ? cicm.page : null
         };
 
-        if(cicm.Checksums is null)
-            return evpd;
+        if(cicm.Checksums is null) return evpd;
 
         evpd.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            evpd.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) evpd.Checksums.Add(chk);
 
         return evpd;
     }

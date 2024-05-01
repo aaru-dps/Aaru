@@ -199,9 +199,9 @@ public sealed partial class Cdrdao
             data = swapped;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -275,9 +275,9 @@ public sealed partial class Cdrdao
         switch(track.SubchannelType)
         {
             case TrackSubchannelType.None:
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                                 SeekOrigin.Begin);
 
                 trackStream.Write(data, 0, data.Length);
 
@@ -286,9 +286,9 @@ public sealed partial class Cdrdao
                 return true;
             case TrackSubchannelType.Raw:
             case TrackSubchannelType.RawInterleaved:
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
+                                 SeekOrigin.Begin);
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -358,9 +358,10 @@ public sealed partial class Cdrdao
 
         var subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) *
+                                (ulong)(track.RawBytesPerSector + subchannelSize)),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -428,9 +429,10 @@ public sealed partial class Cdrdao
 
         for(uint i = 0; i < length; i++)
         {
-            trackStream.
-                Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                     SeekOrigin.Begin);
+            trackStream.Seek((long)(track.FileOffset +
+                                    (i                              + sectorAddress - track.StartSector) *
+                                    (ulong)(track.RawBytesPerSector + subchannelSize)),
+                             SeekOrigin.Begin);
 
             trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
         }
@@ -457,8 +459,7 @@ public sealed partial class Cdrdao
 
         if(_writingTracks != null && _writingStreams != null)
         {
-            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
-                oldTrack.Close();
+            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct()) oldTrack.Close();
         }
 
         ulong currentOffset = 0;
@@ -469,7 +470,8 @@ public sealed partial class Cdrdao
             if(track.SubchannelType is TrackSubchannelType.Q16 or TrackSubchannelType.Q16Interleaved)
             {
                 ErrorMessage = string.Format(Localization.Unsupported_subchannel_type_0_for_track_1,
-                                             track.SubchannelType, track.Sequence);
+                                             track.SubchannelType,
+                                             track.Sequence);
 
                 return false;
             }
@@ -494,17 +496,20 @@ public sealed partial class Cdrdao
             foreach(Track track in _writingTracks)
             {
                 _writingStreams.Add(track.Sequence,
-                                    new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                    new FileStream(track.File,
+                                                   FileMode.OpenOrCreate,
+                                                   FileAccess.ReadWrite,
                                                    FileShare.None));
             }
         }
         else
         {
-            var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+            var jointStream = new FileStream(_writingBaseName + ".bin",
+                                             FileMode.OpenOrCreate,
+                                             FileAccess.ReadWrite,
                                              FileShare.None);
 
-            foreach(Track track in _writingTracks)
-                _writingStreams.Add(track.Sequence, jointStream);
+            foreach(Track track in _writingTracks) _writingStreams.Add(track.Sequence, jointStream);
         }
 
         return true;
@@ -537,8 +542,9 @@ public sealed partial class Cdrdao
         bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
 
         bool mode2 =
-            _writingTracks.Count(t => t.Type is TrackType.CdMode2Form1 or TrackType.CdMode2Form2
-                                                                       or TrackType.CdMode2Formless) >
+            _writingTracks.Count(t => t.Type is TrackType.CdMode2Form1
+                                             or TrackType.CdMode2Form2
+                                             or TrackType.CdMode2Formless) >
             0;
 
         if(mode2)
@@ -551,18 +557,17 @@ public sealed partial class Cdrdao
         if(!string.IsNullOrWhiteSpace(_discimage.Comment))
         {
             string[] commentLines = _discimage.Comment.Split(new[]
-            {
-                '\n'
-            }, StringSplitOptions.RemoveEmptyEntries);
+                                                             {
+                                                                 '\n'
+                                                             },
+                                                             StringSplitOptions.RemoveEmptyEntries);
 
-            foreach(string line in commentLines)
-                _descriptorStream.WriteLine("// {0}", line);
+            foreach(string line in commentLines) _descriptorStream.WriteLine("// {0}", line);
         }
 
         _descriptorStream.WriteLine();
 
-        if(!string.IsNullOrEmpty(_discimage.Mcn))
-            _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
+        if(!string.IsNullOrEmpty(_discimage.Mcn)) _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
 
         foreach(Track track in _writingTracks)
         {
@@ -610,7 +615,10 @@ public sealed partial class Cdrdao
             (byte minute, byte second, byte frame) msf = LbaToMsf(track.EndSector - track.StartSector + 1);
 
             _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
-                                        Path.GetFileName(track.File), track.FileOffset, msf.minute, msf.second,
+                                        Path.GetFileName(track.File),
+                                        track.FileOffset,
+                                        msf.minute,
+                                        msf.second,
                                         msf.frame,
                                         (track.EndSector - track.StartSector + 1) *
                                         (ulong)(track.RawBytesPerSector +
@@ -689,8 +697,7 @@ public sealed partial class Cdrdao
             }
             case SectorTagType.CdTrackIsrc:
             {
-                if(data != null)
-                    _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+                if(data != null) _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
 
                 return true;
             }
@@ -721,9 +728,10 @@ public sealed partial class Cdrdao
                     return false;
                 }
 
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) +
+                                 track.RawBytesPerSector,
+                                 SeekOrigin.Begin);
 
                 trackStream.Write(data, 0, data.Length);
 
@@ -790,9 +798,11 @@ public sealed partial class Cdrdao
 
                 for(uint i = 0; i < length; i++)
                 {
-                    trackStream.
-                        Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                             SeekOrigin.Begin);
+                    trackStream.Seek((long)(track.FileOffset +
+                                            (i                              + sectorAddress - track.StartSector) *
+                                            (ulong)(track.RawBytesPerSector + 96)) +
+                                     track.RawBytesPerSector,
+                                     SeekOrigin.Begin);
 
                     trackStream.Write(data, (int)(i * 96), 96);
                 }

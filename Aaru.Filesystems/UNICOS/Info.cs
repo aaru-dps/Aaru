@@ -34,13 +34,7 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
-using blkno_t = long;
-using daddr_t = long;
-using dev_t = long;
-using extent_t = long;
-using ino_t = long;
 using Partition = Aaru.CommonTypes.Partition;
-using time_t = long;
 
 namespace Aaru.Filesystems;
 
@@ -53,24 +47,19 @@ public sealed partial class UNICOS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
         Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -87,33 +76,27 @@ public sealed partial class UNICOS
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
         Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-        if(unicosSb.s_magic != UNICOS_MAGIC)
-            return;
+        if(unicosSb.s_magic != UNICOS_MAGIC) return;
 
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.UNICOS_filesystem);
 
-        if(unicosSb.s_secure == UNICOS_SECURE)
-            sb.AppendLine(Localization.Volume_is_secure);
+        if(unicosSb.s_secure == UNICOS_SECURE) sb.AppendLine(Localization.Volume_is_secure);
 
         sb.AppendFormat(Localization.Volume_contains_0_partitions, unicosSb.s_npart).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_sector,          unicosSb.s_iounit).AppendLine();
@@ -122,8 +105,8 @@ public sealed partial class UNICOS
         sb.AppendFormat(Localization.Root_resides_on_inode_0,  unicosSb.s_root).AppendLine();
         sb.AppendFormat(Localization._0_inodes_in_volume,      unicosSb.s_isize).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_last_updated_on_0, DateHandlers.UnixToDateTime(unicosSb.s_time)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_updated_on_0, DateHandlers.UnixToDateTime(unicosSb.s_time))
+          .AppendLine();
 
         if(unicosSb.s_error > 0)
             sb.AppendFormat(Localization.Volume_is_dirty_error_code_equals_0, unicosSb.s_error).AppendLine();

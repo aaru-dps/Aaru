@@ -93,8 +93,8 @@ static class ArchiveCorp
             System.Console.Clear();
             AaruConsole.WriteLine(Localization.Device_0, devPath);
 
-            AaruConsole.WriteLine(Localization.
-                                      ArchiveCorp_RequestBlockAddress_Parameters_for_REQUEST_BLOCK_ADDRESS_command);
+            AaruConsole.WriteLine(Localization
+                                     .ArchiveCorp_RequestBlockAddress_Parameters_for_REQUEST_BLOCK_ADDRESS_command);
 
             AaruConsole.WriteLine(Localization.LBA_0, lba);
             AaruConsole.WriteLine();
@@ -116,8 +116,8 @@ static class ArchiveCorp
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine(Localization.
-                                              ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
+                    AaruConsole.WriteLine(Localization
+                                             .ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
 
                     return;
                 case 1:
@@ -140,8 +140,12 @@ static class ArchiveCorp
     start:
         System.Console.Clear();
 
-        bool sense = dev.ArchiveCorpRequestBlockAddress(out byte[] buffer, out byte[] senseBuffer, lba, dev.Timeout,
-                                                        out double duration);
+        bool sense =
+            dev.ArchiveCorpRequestBlockAddress(out byte[] buffer,
+                                               out byte[] senseBuffer,
+                                               lba,
+                                               dev.Timeout,
+                                               out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -181,8 +185,8 @@ static class ArchiveCorp
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine(Localization.
-                                          ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
+                AaruConsole.WriteLine(Localization
+                                         .ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
 
                 return;
             case 1:
@@ -190,8 +194,7 @@ static class ArchiveCorp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.ArchiveCorp_RequestBlockAddress_REQUEST_BLOCK_ADDRESS_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -204,8 +207,7 @@ static class ArchiveCorp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.ArchiveCorp_RequestBlockAddress_REQUEST_BLOCK_ADDRESS_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -272,8 +274,8 @@ static class ArchiveCorp
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine(Localization.
-                                              ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
+                    AaruConsole.WriteLine(Localization
+                                             .ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
 
                     return;
                 case 1:
@@ -346,8 +348,8 @@ static class ArchiveCorp
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine(Localization.
-                                          ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
+                AaruConsole.WriteLine(Localization
+                                         .ArchiveCorp_RequestBlockAddress_Returning_to_Archive_vendor_commands_menu);
 
                 return;
             case 1:
@@ -355,8 +357,7 @@ static class ArchiveCorp
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEEK_BLOCK_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

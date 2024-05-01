@@ -67,8 +67,7 @@ public sealed partial class Sidecar
     void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
                     List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         sidecar.BlockMedias = new List<BlockMedia>
         {
@@ -106,16 +105,14 @@ public sealed partial class Sidecar
 
         foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
         {
-            if(_aborted)
-                return;
+            if(_aborted) return;
 
             switch(tagType)
             {
                 case MediaTagType.ATAPI_IDENTIFY:
                     errno = image.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].ATA = new ATA
                     {
@@ -130,8 +127,7 @@ public sealed partial class Sidecar
                 case MediaTagType.ATA_IDENTIFY:
                     errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].ATA = new ATA
                     {
@@ -146,8 +142,7 @@ public sealed partial class Sidecar
                 case MediaTagType.PCMCIA_CIS:
                     errno = image.ReadMediaTag(MediaTagType.PCMCIA_CIS, out byte[] cis);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].Pcmcia = new Pcmcia
                     {
@@ -202,8 +197,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SCSI_INQUIRY:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SCSI = new SCSI
                     {
@@ -218,8 +212,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_CID:
                     errno = image.ReadMediaTag(MediaTagType.SD_CID, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
@@ -233,8 +226,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_CSD:
                     errno = image.ReadMediaTag(MediaTagType.SD_CSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
@@ -248,8 +240,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_SCR:
                     errno = image.ReadMediaTag(MediaTagType.SD_SCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
@@ -263,8 +254,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_OCR:
                     errno = image.ReadMediaTag(MediaTagType.SD_OCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
@@ -278,8 +268,7 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_CID:
                     errno = image.ReadMediaTag(MediaTagType.MMC_CID, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
@@ -293,8 +282,7 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_CSD:
                     errno = image.ReadMediaTag(MediaTagType.MMC_CSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
@@ -308,8 +296,7 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_OCR:
                     errno = image.ReadMediaTag(MediaTagType.MMC_OCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
@@ -323,8 +310,7 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_ExtendedCSD:
                     errno = image.ReadMediaTag(MediaTagType.MMC_ExtendedCSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
@@ -338,8 +324,7 @@ public sealed partial class Sidecar
                 case MediaTagType.USB_Descriptors:
                     errno = image.ReadMediaTag(MediaTagType.USB_Descriptors, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].Usb ??= new Usb();
 
@@ -353,8 +338,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SCSI_MODESENSE_6:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SCSI ??= new SCSI();
 
@@ -368,8 +352,7 @@ public sealed partial class Sidecar
                 case MediaTagType.SCSI_MODESENSE_10:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
                     sidecar.BlockMedias[0].SCSI ??= new SCSI();
 
@@ -488,8 +471,7 @@ public sealed partial class Sidecar
                 {
                     UpdateStatus(string.Format(Localization.Core.Hashing_partition_0, tapePartition.Number));
 
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
                     var tapePartitionChk = new Checksum();
 
@@ -515,7 +497,8 @@ public sealed partial class Sidecar
 
                         if(sectors - doneSectors >= sectorsToRead)
                         {
-                            errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead,
+                            errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                                      sectorsToRead,
                                                       out sector);
 
                             if(errno != ErrorNumber.NoError)
@@ -535,7 +518,8 @@ public sealed partial class Sidecar
                         else
                         {
                             errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
-                                                      (uint)(sectors - doneSectors), out sector);
+                                                      (uint)(sectors - doneSectors),
+                                                      out sector);
 
                             if(errno != ErrorNumber.NoError)
                             {
@@ -568,7 +552,7 @@ public sealed partial class Sidecar
                 List<TapeFile> filesInPartition = new();
 
                 foreach(CommonTypes.Structs.TapeFile tapeFile in
-                    tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
+                        tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
                 {
                     var thisFile = new TapeFile
                     {
@@ -589,8 +573,7 @@ public sealed partial class Sidecar
                     {
                         UpdateStatus(string.Format(Localization.Core.Hashing_file_0, tapeFile.File));
 
-                        if(_aborted)
-                            return;
+                        if(_aborted) return;
 
                         var tapeFileChk = new Checksum();
 
@@ -621,14 +604,16 @@ public sealed partial class Sidecar
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
-                                                                             errno, tapeFile.FirstBlock + doneSectors));
+                                                                             errno,
+                                                                             tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors,
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1,
+                                                (long)doneSectors,
                                                 (long)sectors);
 
                                 doneSectors += sectorsToRead;
@@ -636,19 +621,22 @@ public sealed partial class Sidecar
                             else
                             {
                                 errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors,
-                                                          (uint)(sectors - doneSectors), out sector);
+                                                          (uint)(sectors - doneSectors),
+                                                          out sector);
 
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
-                                                                             errno, tapeFile.FirstBlock + doneSectors));
+                                                                             errno,
+                                                                             tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors,
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1,
+                                                (long)doneSectors,
                                                 (long)sectors);
 
                                 doneSectors += sectors - doneSectors;
@@ -682,8 +670,7 @@ public sealed partial class Sidecar
 
         UpdateStatus(Localization.Core.Checking_filesystems);
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         List<Partition> partitions = Partitions.GetAll(image);
         Partitions.AddSchemesToStats(partitions);
@@ -694,8 +681,7 @@ public sealed partial class Sidecar
         {
             foreach(Partition partition in partitions)
             {
-                if(_aborted)
-                    return;
+                if(_aborted) return;
 
                 var fsInfo = new CommonTypes.AaruMetadata.Partition
                 {
@@ -713,14 +699,11 @@ public sealed partial class Sidecar
                 {
                     try
                     {
-                        if(_aborted)
-                            return;
+                        if(_aborted) return;
 
-                        if(fs is null)
-                            continue;
+                        if(fs is null) continue;
 
-                        if(!fs.Identify(image, partition))
-                            continue;
+                        if(!fs.Identify(image, partition)) continue;
 
                         if(fs is IReadOnlyFilesystem rofs &&
                            rofs.Mount(image, partition, encoding, null, null) == ErrorNumber.NoError)
@@ -742,24 +725,22 @@ public sealed partial class Sidecar
                             Statistics.AddFilesystem(fsMetadata.Type);
                         }
                     }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
                         //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                     }
                 }
 
-                if(lstFs.Count > 0)
-                    fsInfo.FileSystems = lstFs;
+                if(lstFs.Count > 0) fsInfo.FileSystems = lstFs;
 
                 sidecar.BlockMedias[0].FileSystemInformation.Add(fsInfo);
             }
         }
         else
         {
-            if(_aborted)
-                return;
+            if(_aborted) return;
 
             var fsInfo = new CommonTypes.AaruMetadata.Partition
             {
@@ -780,14 +761,11 @@ public sealed partial class Sidecar
             {
                 try
                 {
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
-                    if(fs is null)
-                        continue;
+                    if(fs is null) continue;
 
-                    if(!fs.Identify(image, wholePart))
-                        continue;
+                    if(!fs.Identify(image, wholePart)) continue;
 
                     if(fs is IReadOnlyFilesystem rofs &&
                        rofs.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
@@ -809,16 +787,15 @@ public sealed partial class Sidecar
                         Statistics.AddFilesystem(fsMetadata.Type);
                     }
                 }
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 {
                     //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                 }
             }
 
-            if(lstFs.Count > 0)
-                fsInfo.FileSystems = lstFs;
+            if(lstFs.Count > 0) fsInfo.FileSystems = lstFs;
 
             sidecar.BlockMedias[0].FileSystemInformation.Add(fsInfo);
         }
@@ -837,8 +814,7 @@ public sealed partial class Sidecar
             Identify.IdentifyDevice? ataId = null;
             errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
 
-            if(errno == ErrorNumber.NoError)
-                ataId = Identify.Decode(buffer);
+            if(errno == ErrorNumber.NoError) ataId = Identify.Decode(buffer);
 
             switch(ataId)
             {
@@ -846,11 +822,13 @@ public sealed partial class Sidecar
                     sidecar.BlockMedias[0].Cylinders       = ataId.Value.CurrentCylinders;
                     sidecar.BlockMedias[0].Heads           = ataId.Value.CurrentHeads;
                     sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
+
                     break;
                 case { Cylinders: > 0, Heads: > 0, SectorsPerTrack: > 0 }:
                     sidecar.BlockMedias[0].Cylinders       = ataId.Value.Cylinders;
                     sidecar.BlockMedias[0].Heads           = ataId.Value.Heads;
                     sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
+
                     break;
             }
         }
@@ -987,13 +965,12 @@ public sealed partial class Sidecar
                 break;
         }
 
-    #region SuperCardPro
+#region SuperCardPro
 
         string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".scp");
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         if(File.Exists(scpFilePath))
         {
@@ -1021,8 +998,7 @@ public sealed partial class Sidecar
 
                         for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
                         {
-                            if(_aborted)
-                                return;
+                            if(_aborted) return;
 
                             var scpBlockTrackType = new BlockTrack
                             {
@@ -1063,29 +1039,30 @@ public sealed partial class Sidecar
                             scpBlockTrackTypes.Add(scpBlockTrackType);
                         }
 
-                        sidecar.BlockMedias[0].Track = scpBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                          ThenBy(t => t.Head).
-                                                                          ToList();
+                        sidecar.BlockMedias[0].Track =
+                            scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
                     }
                     else
                     {
-                        AaruConsole.
-                            ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                           scpImage.Header.end + 1, image.Info.Cylinders);
+                        AaruConsole.ErrorWriteLine(Localization.Core
+                                                               .SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                                   scpImage.Header.end + 1,
+                                                   image.Info.Cylinders);
                     }
                 }
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine(Localization.Core.SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring, 2,
-                                       image.Info.Heads);
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                               2,
+                                               image.Info.Heads);
                 }
             }
         }
 
-    #endregion
+#endregion
 
-    #region KryoFlux
+#region KryoFlux
 
         string kfFile = null;
 
@@ -1093,8 +1070,7 @@ public sealed partial class Sidecar
 
         var kfDir = false;
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         if(Directory.Exists(basename))
         {
@@ -1107,9 +1083,8 @@ public sealed partial class Sidecar
             }
         }
         else if(File.Exists(basename + "00.0.raw"))
-            kfFile = basename + "00.0.raw";
-        else if(File.Exists(basename + "00.1.raw"))
-            kfFile = basename + "00.1.raw";
+            kfFile                                         = basename + "00.0.raw";
+        else if(File.Exists(basename + "00.1.raw")) kfFile = basename + "00.1.raw";
 
         if(kfFile != null)
         {
@@ -1137,8 +1112,7 @@ public sealed partial class Sidecar
 
                         foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                         {
-                            if(_aborted)
-                                return;
+                            if(_aborted) return;
 
                             var kfBlockTrackType = new BlockTrack
                             {
@@ -1148,9 +1122,9 @@ public sealed partial class Sidecar
                                 {
                                     Format = kfImage.Format,
                                     Value = kfDir
-                                                ? Path.
-                                                    Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.BasePath)),
-                                                            kvp.Value.Filename)
+                                                ? Path.Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value
+                                                                                   .BasePath)),
+                                                               kvp.Value.Filename)
                                                 : kvp.Value.Filename,
                                     Offset = 0
                                 }
@@ -1176,45 +1150,43 @@ public sealed partial class Sidecar
                             kfBlockTrackTypes.Add(kfBlockTrackType);
                         }
 
-                        sidecar.BlockMedias[0].Track = kfBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                         ThenBy(t => t.Head).
-                                                                         ToList();
+                        sidecar.BlockMedias[0].Track =
+                            kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
                     }
                     else
                     {
-                        AaruConsole.
-                            ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                           kfImage.Info.Cylinders, image.Info.Cylinders);
+                        AaruConsole.ErrorWriteLine(Localization.Core
+                                                               .KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                                   kfImage.Info.Cylinders,
+                                                   image.Info.Cylinders);
                     }
                 }
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine(Localization.Core.KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
-                                       kfImage.Info.Heads, image.Info.Heads);
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                               kfImage.Info.Heads,
+                                               image.Info.Heads);
                 }
             }
         }
 
-    #endregion
+#endregion
 
-    #region DiscFerret
+#region DiscFerret
 
         string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
-        if(!File.Exists(dfiFilePath))
-            return;
+        if(!File.Exists(dfiFilePath)) return;
 
         var dfiImage  = new DiscFerret();
         var dfiFilter = new ZZZNoFilter();
         dfiFilter.Open(dfiFilePath);
 
-        if(!dfiImage.Identify(dfiFilter))
-            return;
+        if(!dfiImage.Identify(dfiFilter)) return;
 
         try
         {
@@ -1234,8 +1206,7 @@ public sealed partial class Sidecar
 
                 foreach(int t in dfiImage.TrackOffsets.Keys)
                 {
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
                     var dfiBlockTrackType = new BlockTrack
                     {
@@ -1276,19 +1247,21 @@ public sealed partial class Sidecar
             }
             else
             {
-                AaruConsole.
-                    ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
-                                   dfiImage.Info.Cylinders, image.Info.Cylinders);
+                AaruConsole.ErrorWriteLine(Localization.Core
+                                                       .DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                           dfiImage.Info.Cylinders,
+                                           image.Info.Cylinders);
             }
         }
         else
         {
-            AaruConsole.
-                ErrorWriteLine(Localization.Core.DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring,
-                               dfiImage.Info.Heads, image.Info.Heads);
+            AaruConsole.ErrorWriteLine(Localization.Core
+                                                   .DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                       dfiImage.Info.Heads,
+                                       image.Info.Heads);
         }
 
-    #endregion
+#endregion
 
         // TODO: Implement support for getting CHS from SCSI mode pages
     }

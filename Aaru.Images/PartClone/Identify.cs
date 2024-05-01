@@ -47,15 +47,13 @@ public sealed partial class PartClone
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-        if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
-            return false;
+        if(stream.Position + (long)_pHdr.totalBlocks > stream.Length) return false;
 
         stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 

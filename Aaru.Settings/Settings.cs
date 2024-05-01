@@ -44,9 +44,11 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Settings;
 
-[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+[JsonSourceGenerationOptions(WriteIndented = true,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(DicSettings))]
+
 // ReSharper disable once PartialTypeWithSinglePart
 public partial class SettingsContext : JsonSerializerContext;
 
@@ -139,20 +141,19 @@ public static class Settings
                 case PlatformID.iOS:
                 {
                     string appSupportPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
-                                     "Application Support", "Claunia.com");
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
+                                     "Application Support",
+                                     "Claunia.com");
 
-                    if(!Directory.Exists(appSupportPath))
-                        Directory.CreateDirectory(appSupportPath);
+                    if(!Directory.Exists(appSupportPath)) Directory.CreateDirectory(appSupportPath);
 
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -160,13 +161,11 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
@@ -182,17 +181,14 @@ public static class Settings
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                      "Claunia.com");
 
-                    if(!Directory.Exists(appSupportPath))
-                        Directory.CreateDirectory(appSupportPath);
+                    if(!Directory.Exists(appSupportPath)) Directory.CreateDirectory(appSupportPath);
 
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -200,13 +196,11 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
@@ -214,9 +208,9 @@ public static class Settings
                 // Otherwise, statistics and reports will be saved in ~/.claunia.com/Aaru
                 default:
                 {
-                    string xdgDataPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_DATA_HOME) ?? XDG_DATA_HOME_RESOLVED);
+                    string xdgDataPath = Path.Combine(homePath,
+                                                      Environment.GetEnvironmentVariable(XDG_DATA_HOME) ??
+                                                      XDG_DATA_HOME_RESOLVED);
 
                     string oldDicPath = Path.Combine(homePath,    ".claunia.com", "DiscImageChef");
                     string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
@@ -228,11 +222,9 @@ public static class Settings
                         Directory.Delete(Path.Combine(homePath, ".claunia.com"));
                     }
 
-                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -240,20 +232,17 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
             }
 
-            if(File.Exists(oldMainDbPath))
-                File.Move(oldMainDbPath, MainDbPath);
+            if(File.Exists(oldMainDbPath)) File.Move(oldMainDbPath, MainDbPath);
         }
         catch
         {
@@ -272,15 +261,15 @@ public static class Settings
                 case PlatformID.iOS:
                 {
                     string preferencesPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
                                      "Preferences");
 
                     string dicPreferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
 
                     string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
 
-                    if(File.Exists(dicPreferencesFilePath))
-                        File.Move(dicPreferencesFilePath, preferencesFilePath);
+                    if(File.Exists(dicPreferencesFilePath)) File.Move(dicPreferencesFilePath, preferencesFilePath);
 
                     if(!File.Exists(preferencesFilePath))
                     {
@@ -312,22 +301,22 @@ public static class Settings
                             {
                                 Current.Stats = new StatsSettings
                                 {
-                                    ShareStats = stats.TryGetValue("ShareStats", out NSObject obj2) &&
-                                                 ((NSNumber)obj2).ToBool(),
-                                    CommandStats = stats.TryGetValue("CommandStats", out obj2) &&
-                                                   ((NSNumber)obj2).ToBool(),
-                                    DeviceStats = stats.TryGetValue("DeviceStats", out obj2) &&
-                                                  ((NSNumber)obj2).ToBool(),
-                                    FilesystemStats = stats.TryGetValue("FilesystemStats", out obj2) &&
-                                                      ((NSNumber)obj2).ToBool(),
-                                    FilterStats = stats.TryGetValue("FilterStats", out obj2) &&
-                                                  ((NSNumber)obj2).ToBool(),
-                                    MediaImageStats = stats.TryGetValue("MediaImageStats", out obj2) &&
-                                                      ((NSNumber)obj2).ToBool(),
-                                    MediaScanStats = stats.TryGetValue("MediaScanStats", out obj2) &&
-                                                     ((NSNumber)obj2).ToBool(),
-                                    PartitionStats = stats.TryGetValue("PartitionStats", out obj2) &&
-                                                     ((NSNumber)obj2).ToBool(),
+                                    ShareStats =
+                                        stats.TryGetValue("ShareStats", out NSObject obj2) && ((NSNumber)obj2).ToBool(),
+                                    CommandStats =
+                                        stats.TryGetValue("CommandStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    DeviceStats =
+                                        stats.TryGetValue("DeviceStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    FilesystemStats =
+                                        stats.TryGetValue("FilesystemStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    FilterStats =
+                                        stats.TryGetValue("FilterStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    MediaImageStats =
+                                        stats.TryGetValue("MediaImageStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    MediaScanStats =
+                                        stats.TryGetValue("MediaScanStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    PartitionStats =
+                                        stats.TryGetValue("PartitionStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                     MediaStats = stats.TryGetValue("MediaStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                     VerifyStats = stats.TryGetValue("VerifyStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool()
@@ -353,7 +342,7 @@ public static class Settings
                 }
 
                     break;
-            #if !NETSTANDARD2_0
+#if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
                 case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
@@ -443,7 +432,7 @@ public static class Settings
                 }
 
                     break;
-            #endif
+#endif
 
                 // Otherwise, settings will be saved in ~/.config/Aaru.xml
                 default:
@@ -453,9 +442,9 @@ public static class Settings
 
                     string oldSettingsPath = Path.Combine(oldConfigPath, "DiscImageChef.xml");
 
-                    string xdgConfigPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
+                    string xdgConfigPath = Path.Combine(homePath,
+                                                        Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                                        XDG_CONFIG_HOME_RESOLVED);
 
                     string dicSettingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
                     string xmlSettingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
@@ -463,8 +452,7 @@ public static class Settings
 
                     if(File.Exists(oldSettingsPath) && !File.Exists(xmlSettingsPath))
                     {
-                        if(!Directory.Exists(xdgConfigPath))
-                            Directory.CreateDirectory(xdgConfigPath);
+                        if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
 
                         File.Move(oldSettingsPath, xmlSettingsPath);
                     }
@@ -475,16 +463,16 @@ public static class Settings
                     if(File.Exists(xmlSettingsPath))
                     {
                         // Should be working due to source generator for json below
-                    #pragma warning disable IL2026
+#pragma warning disable IL2026
                         var xs = new XmlSerializer(Current.GetType());
-                    #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                         prefsSr = new StreamReader(xmlSettingsPath);
 
                         // Should be working due to source generator for json below
-                    #pragma warning disable IL2026
+#pragma warning disable IL2026
                         Current = (DicSettings)xs.Deserialize(prefsSr);
-                    #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                         prefsSr.Close();
                         File.Delete(xmlSettingsPath);
@@ -587,7 +575,8 @@ public static class Settings
                     }
 
                     string preferencesPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
                                      "Preferences");
 
                     string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
@@ -598,7 +587,7 @@ public static class Settings
                 }
 
                     break;
-            #if !NETSTANDARD2_0
+#if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
                 case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
@@ -607,8 +596,8 @@ public static class Settings
                 case PlatformID.WinCE when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 case PlatformID.WindowsPhone when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 {
-                    RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.
-                                                     CreateSubKey("Claunia.com");
+                    RegistryKey parentKey =
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.CreateSubKey("Claunia.com");
 
                     RegistryKey key = parentKey?.CreateSubKey("Aaru");
 
@@ -650,21 +639,20 @@ public static class Settings
                 }
 
                     break;
-            #endif
+#endif
 
                 // Otherwise, settings will be saved in ~/.config/Aaru.xml
                 default:
                 {
                     string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-                    string xdgConfigPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
+                    string xdgConfigPath = Path.Combine(homePath,
+                                                        Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                                        XDG_CONFIG_HOME_RESOLVED);
 
                     string settingsPath = Path.Combine(xdgConfigPath, "Aaru.json");
 
-                    if(!Directory.Exists(xdgConfigPath))
-                        Directory.CreateDirectory(xdgConfigPath);
+                    if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
 
                     var fs = new FileStream(settingsPath, FileMode.Create, FileAccess.ReadWrite);
                     JsonSerializer.Serialize(fs, Current, Current.GetType(), SettingsContext.Default);
@@ -674,12 +662,12 @@ public static class Settings
                     break;
             }
         }
-    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
         {
             // ignored
         }
-    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
     }
 
     /// <summary>Sets default settings as all statistics, share everything</summary>

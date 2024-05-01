@@ -73,8 +73,7 @@ public sealed class Human68K : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
-        if(sectorOffset + 4 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 4 >= imagePlugin.Info.Sectors) return false;
 
         switch(imagePlugin.Info.SectorSize)
         {
@@ -97,15 +96,13 @@ public sealed class Human68K : IPartition
                 return false;
         }
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Table table = Marshal.ByteArrayToStructureBigEndian<Table>(sector);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "table.magic = {0:X4}", table.magic);
 
-        if(table.magic != X68K_MAGIC)
-            return false;
+        if(table.magic != X68K_MAGIC) return false;
 
         for(var i = 0; i < table.entries.Length; i++)
             table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
@@ -118,13 +115,16 @@ public sealed class Human68K : IPartition
 
         foreach(Entry entry in table.entries)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.name = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "entry.name = {0}",
                                        StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.stateStart = {0}", entry.stateStart);
             AaruConsole.DebugWriteLine(MODULE_NAME, "entry.length = {0}",     entry.length);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "sectsPerUnit = {0} {1}", sectsPerUnit,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "sectsPerUnit = {0} {1}",
+                                       sectsPerUnit,
                                        imagePlugin.Info.SectorSize);
 
             var part = new Partition
@@ -139,8 +139,7 @@ public sealed class Human68K : IPartition
             part.Offset = part.Start  * (ulong)sector.Length;
             part.Size   = part.Length * (ulong)sector.Length;
 
-            if(entry.length <= 0)
-                continue;
+            if(entry.length <= 0) continue;
 
             partitions.Add(part);
             counter++;

@@ -56,8 +56,7 @@ public sealed partial class D88
         // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
         var shiftjis = Encoding.GetEncoding("shift_jis");
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -65,7 +64,8 @@ public sealed partial class D88
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.name = \"{0}\"", StringHandlers.CToString(hdr.name, shiftjis));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.reserved is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "d88hdr.reserved is empty? = {0}",
                                    hdr.reserved.SequenceEqual(_reservedEmpty));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
@@ -74,30 +74,25 @@ public sealed partial class D88
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.disk_size = {0}", hdr.disk_size);
 
-        if(hdr.disk_size != stream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(hdr.disk_size != stream.Length) return ErrorNumber.InvalidArgument;
 
         if(hdr.disk_type != DiskType.D2 && hdr.disk_type != DiskType.Dd2 && hdr.disk_type != DiskType.Hd2)
             return ErrorNumber.InvalidArgument;
 
-        if(!hdr.reserved.SequenceEqual(_reservedEmpty))
-            return ErrorNumber.InvalidArgument;
+        if(!hdr.reserved.SequenceEqual(_reservedEmpty)) return ErrorNumber.InvalidArgument;
 
         var trkCounter = 0;
 
         foreach(int t in hdr.track_table)
         {
-            if(t > 0)
-                trkCounter++;
+            if(t > 0) trkCounter++;
 
-            if(t < 0 || t > stream.Length)
-                return ErrorNumber.InvalidArgument;
+            if(t < 0 || t > stream.Length) return ErrorNumber.InvalidArgument;
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization._0_tracks, trkCounter);
 
-        if(trkCounter == 0)
-            return ErrorNumber.InvalidArgument;
+        if(trkCounter == 0) return ErrorNumber.InvalidArgument;
 
         hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
         stream.Seek(hdr.track_table[0], SeekOrigin.Begin);
@@ -130,8 +125,14 @@ public sealed partial class D88
 
             if(sechdr.spt != spt || sechdr.n != bps)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
-                                           sechdr.n, bps, i, 0);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Disk_tracks_are_not_same_size,
+                                           sechdr.spt,
+                                           spt,
+                                           sechdr.n,
+                                           bps,
+                                           i,
+                                           0);
 
                 allEqual = false;
             }
@@ -148,11 +149,17 @@ public sealed partial class D88
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-                if(sechdr.spt == spt && sechdr.n == bps)
-                    continue;
+                if(sechdr.spt == spt && sechdr.n == bps) continue;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disk_tracks_are_not_same_size, sechdr.spt, spt,
-                                           sechdr.n, bps, i, j, sechdr.deleted_mark);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Disk_tracks_are_not_same_size,
+                                           sechdr.spt,
+                                           spt,
+                                           sechdr.n,
+                                           bps,
+                                           i,
+                                           j,
+                                           sechdr.deleted_mark);
 
                 allEqual = false;
             }
@@ -161,8 +168,7 @@ public sealed partial class D88
             stream.EnsureRead(secB, 0, secB.Length);
             sectors.Add(sechdr.r, secB);
 
-            foreach(KeyValuePair<byte, byte[]> kvp in sectors)
-                _sectorsData.Add(kvp.Value);
+            foreach(KeyValuePair<byte, byte[]> kvp in sectors) _sectorsData.Add(kvp.Value);
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization._0_sectors, _sectorsData.Count);
@@ -227,8 +233,7 @@ public sealed partial class D88
 
                         break;
                     case 480:
-                        if(spt == 38)
-                            _imageInfo.MediaType = MediaType.NEC_35_TD;
+                        if(spt == 38) _imageInfo.MediaType = MediaType.NEC_35_TD;
 
                         break;
                 }
@@ -352,11 +357,9 @@ public sealed partial class D88
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 

@@ -47,24 +47,20 @@ public sealed partial class extFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
         uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
-        if(sbSectorOff + partition.Start >= partition.End)
-            return false;
+        if(sbSectorOff + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var sb = new byte[512];
 
-        if(sbOff + 512 > sbSector.Length)
-            return false;
+        if(sbOff + 512 > sbSector.Length) return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, 512);
 
@@ -82,19 +78,16 @@ public sealed partial class extFS
 
         var sb = new StringBuilder();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
         uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
-        if(sbSectorOff + partition.Start >= partition.End)
-            return;
+        if(sbSectorOff + partition.Start >= partition.End) return;
 
         ErrorNumber errno = imagePlugin.ReadSector(sbSectorOff + partition.Start, out byte[] sblock);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var sbSector = new byte[512];
         Array.Copy(sblock, sbOff, sbSector, 0, 512);
@@ -116,7 +109,9 @@ public sealed partial class extFS
         sb.AppendFormat(Localization._0_zones_in_volume,     extSb.zones);
         sb.AppendFormat(Localization._0_free_blocks_1_bytes, extSb.freecountblk, extSb.freecountblk * 1024);
 
-        sb.AppendFormat(Localization._0_inodes_in_volume_1_free_2, extSb.inodes, extSb.freecountind,
+        sb.AppendFormat(Localization._0_inodes_in_volume_1_free_2,
+                        extSb.inodes,
+                        extSb.freecountind,
                         extSb.freecountind * 100 / extSb.inodes);
 
         sb.AppendFormat(Localization.First_free_inode_is_0, extSb.firstfreeind);

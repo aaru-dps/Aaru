@@ -48,8 +48,7 @@ public sealed partial class PascalPlugin
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
@@ -79,17 +78,13 @@ public sealed partial class PascalPlugin
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not PascalDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not PascalDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
 
         filename = mynode.Contents[mynode.Position++];
 
@@ -99,8 +94,7 @@ public sealed partial class PascalPlugin
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not PascalDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not PascalDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Contents = null;

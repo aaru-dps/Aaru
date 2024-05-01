@@ -43,9 +43,9 @@ public sealed class SplashWindow : Window
     public SplashWindow()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

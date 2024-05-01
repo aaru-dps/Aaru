@@ -132,8 +132,7 @@ public interface IReadOnlyFilesystem : IFilesystem
     /// <returns>Error number.</returns>
     ErrorNumber Seek(IFileNode node, long position, SeekOrigin origin)
     {
-        if(node is null)
-            return ErrorNumber.InvalidArgument;
+        if(node is null) return ErrorNumber.InvalidArgument;
 
         long desiredPosition = origin switch
                                {
@@ -142,11 +141,9 @@ public interface IReadOnlyFilesystem : IFilesystem
                                    _                => node.Offset + position
                                };
 
-        if(desiredPosition < 0)
-            return ErrorNumber.InvalidArgument;
+        if(desiredPosition < 0) return ErrorNumber.InvalidArgument;
 
-        if(desiredPosition >= node.Length)
-            return ErrorNumber.InvalidArgument;
+        if(desiredPosition >= node.Length) return ErrorNumber.InvalidArgument;
 
         node.Offset = desiredPosition;
 

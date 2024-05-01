@@ -55,17 +55,13 @@ public static partial class Modes
 
     public static ModePage_0B? DecodeModePage_0B(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x0B)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x0B) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_0B();
 
@@ -83,39 +79,37 @@ public static partial class Modes
 
     public static string PrettifyModePage_0B(ModePage_0B? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0B page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Medium_types_supported_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.MediumType1 != MediumTypes.Default)
         {
-            sb.AppendFormat(Localization.Supported_medium_type_one_0, GetMediumTypeDescription(page.MediumType1)).
-               AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_one_0, GetMediumTypeDescription(page.MediumType1))
+              .AppendLine();
         }
 
         if(page.MediumType2 != MediumTypes.Default)
         {
-            sb.AppendFormat(Localization.Supported_medium_type_two_0, GetMediumTypeDescription(page.MediumType2)).
-               AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_two_0, GetMediumTypeDescription(page.MediumType2))
+              .AppendLine();
         }
 
         if(page.MediumType3 != MediumTypes.Default)
         {
-            sb.AppendFormat(Localization.Supported_medium_type_three_0, GetMediumTypeDescription(page.MediumType3)).
-               AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_three_0, GetMediumTypeDescription(page.MediumType3))
+              .AppendLine();
         }
 
         if(page.MediumType4 != MediumTypes.Default)
         {
-            sb.AppendFormat(Localization.Supported_medium_type_four_0, GetMediumTypeDescription(page.MediumType4)).
-               AppendLine();
+            sb.AppendFormat(Localization.Supported_medium_type_four_0, GetMediumTypeDescription(page.MediumType4))
+              .AppendLine();
         }
 
         return sb.ToString();

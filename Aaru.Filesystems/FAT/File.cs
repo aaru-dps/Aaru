@@ -47,13 +47,11 @@ public sealed partial class FAT
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         attributes = stat.Attributes;
 
@@ -65,21 +63,17 @@ public sealed partial class FAT
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
-        if(stat.Attributes.HasFlag(FileAttributes.Directory) && !_debug)
-            return ErrorNumber.IsDirectory;
+        if(stat.Attributes.HasFlag(FileAttributes.Directory) && !_debug) return ErrorNumber.IsDirectory;
 
         uint[] clusters = GetClusters((uint)stat.Inode);
 
-        if(clusters is null)
-            return ErrorNumber.InvalidArgument;
+        if(clusters is null) return ErrorNumber.InvalidArgument;
 
         node = new FatFileNode
         {
@@ -95,11 +89,9 @@ public sealed partial class FAT
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not FatFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Clusters = null;
 
@@ -111,40 +103,34 @@ public sealed partial class FAT
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not FatFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not FatFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         long firstCluster    = mynode.Offset            / _bytesPerCluster;
         long offsetInCluster = mynode.Offset            % _bytesPerCluster;
         long sizeInClusters  = (read + offsetInCluster) / _bytesPerCluster;
 
-        if((read + offsetInCluster) % _bytesPerCluster > 0)
-            sizeInClusters++;
+        if((read + offsetInCluster) % _bytesPerCluster > 0) sizeInClusters++;
 
         var ms = new MemoryStream();
 
         for(var i = 0; i < sizeInClusters; i++)
         {
-            if(i + firstCluster >= mynode.Clusters.Length)
-                return ErrorNumber.InvalidArgument;
+            if(i + firstCluster >= mynode.Clusters.Length) return ErrorNumber.InvalidArgument;
 
             ErrorNumber errno =
                 _image.ReadSectors(_firstClusterSector + mynode.Clusters[i + firstCluster] * _sectorsPerCluster,
-                                   _sectorsPerCluster, out byte[] buf);
+                                   _sectorsPerCluster,
+                                   out byte[] buf);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(buf, 0, buf.Length);
         }
@@ -161,13 +147,11 @@ public sealed partial class FAT
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out CompleteDirectoryEntry completeEntry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         DirectoryEntry entry = completeEntry.Dirent;
 
@@ -181,20 +165,17 @@ public sealed partial class FAT
             Links      = 1
         };
 
-        if(entry.cdate > 0 || entry.ctime > 0)
-            stat.CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+        if(entry.cdate > 0 || entry.ctime > 0) stat.CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
 
         if(_namespace != Namespace.Human)
         {
             if(entry.mdate > 0 || entry.mtime > 0)
                 stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
 
-            if(entry.ctime_ms > 0)
-                stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
+            if(entry.ctime_ms > 0) stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
         }
 
-        if(entry.size % _bytesPerCluster > 0)
-            stat.Blocks++;
+        if(entry.size % _bytesPerCluster > 0) stat.Blocks++;
 
         if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
         {
@@ -210,20 +191,15 @@ public sealed partial class FAT
             stat.Length = stat.Blocks * stat.BlockSize;
         }
 
-        if(entry.attributes.HasFlag(FatAttributes.ReadOnly))
-            stat.Attributes |= FileAttributes.ReadOnly;
+        if(entry.attributes.HasFlag(FatAttributes.ReadOnly)) stat.Attributes |= FileAttributes.ReadOnly;
 
-        if(entry.attributes.HasFlag(FatAttributes.Hidden))
-            stat.Attributes |= FileAttributes.Hidden;
+        if(entry.attributes.HasFlag(FatAttributes.Hidden)) stat.Attributes |= FileAttributes.Hidden;
 
-        if(entry.attributes.HasFlag(FatAttributes.System))
-            stat.Attributes |= FileAttributes.System;
+        if(entry.attributes.HasFlag(FatAttributes.System)) stat.Attributes |= FileAttributes.System;
 
-        if(entry.attributes.HasFlag(FatAttributes.Archive))
-            stat.Attributes |= FileAttributes.Archive;
+        if(entry.attributes.HasFlag(FatAttributes.Archive)) stat.Attributes |= FileAttributes.Archive;
 
-        if(entry.attributes.HasFlag(FatAttributes.Device))
-            stat.Attributes |= FileAttributes.Device;
+        if(entry.attributes.HasFlag(FatAttributes.Device)) stat.Attributes |= FileAttributes.Device;
 
         return ErrorNumber.NoError;
     }
@@ -232,11 +208,9 @@ public sealed partial class FAT
 
     uint[] GetClusters(uint startCluster)
     {
-        if(startCluster == 0)
-            return Array.Empty<uint>();
+        if(startCluster == 0) return Array.Empty<uint>();
 
-        if(startCluster >= Metadata.Clusters)
-            return null;
+        if(startCluster >= Metadata.Clusters) return null;
 
         List<uint> clusters = new();
 
@@ -249,8 +223,7 @@ public sealed partial class FAT
         ulong       currentSector = nextSector;
         ErrorNumber errno         = _image.ReadSector(currentSector, out byte[] fatData);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         if(_fat32)
         {
@@ -262,8 +235,7 @@ public sealed partial class FAT
                 {
                     errno = _image.ReadSector(nextSector, out fatData);
 
-                    if(errno != ErrorNumber.NoError)
-                        return null;
+                    if(errno != ErrorNumber.NoError) return null;
 
                     currentSector = nextSector;
                 }
@@ -279,8 +251,7 @@ public sealed partial class FAT
         {
             while(nextCluster is > 0 and <= FAT16_RESERVED)
             {
-                if(nextCluster >= _fatEntries.Length)
-                    break;
+                if(nextCluster >= _fatEntries.Length) break;
 
                 clusters.Add(nextCluster);
                 nextCluster = _fatEntries[nextCluster];
@@ -290,8 +261,7 @@ public sealed partial class FAT
         {
             while(nextCluster is > 0 and <= FAT12_RESERVED)
             {
-                if(nextCluster >= _fatEntries.Length)
-                    break;
+                if(nextCluster >= _fatEntries.Length) break;
 
                 clusters.Add(nextCluster);
                 nextCluster = _fatEntries[nextCluster];
@@ -308,12 +278,12 @@ public sealed partial class FAT
         string cutPath = path.StartsWith('/') ? path[1..].ToLower(_cultureInfo) : path.ToLower(_cultureInfo);
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
-        if(pieces.Length == 0)
-            return ErrorNumber.InvalidArgument;
+        if(pieces.Length == 0) return ErrorNumber.InvalidArgument;
 
         var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
@@ -321,8 +291,7 @@ public sealed partial class FAT
         {
             ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
-            if(err != ErrorNumber.NoError)
-                return err;
+            if(err != ErrorNumber.NoError) return err;
 
             CloseDir(node);
         }
@@ -331,14 +300,12 @@ public sealed partial class FAT
 
         if(pieces.Length == 1)
             parent = _rootDirectoryCache;
-        else if(!_directoryCache.TryGetValue(parentPath, out parent))
-            return ErrorNumber.InvalidArgument;
+        else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
         KeyValuePair<string, CompleteDirectoryEntry> dirent =
             parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
 
-        if(string.IsNullOrEmpty(dirent.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
 
         entry = dirent.Value;
 
@@ -349,11 +316,9 @@ public sealed partial class FAT
     {
         byte sum = 0;
 
-        for(var i = 0; i < 8; i++)
-            sum = (byte)(((sum & 1) << 7) + (sum >> 1) + name[i]);
+        for(var i = 0; i < 8; i++) sum = (byte)(((sum & 1) << 7) + (sum >> 1) + name[i]);
 
-        for(var i = 0; i < 3; i++)
-            sum = (byte)(((sum & 1) << 7) + (sum >> 1) + extension[i]);
+        for(var i = 0; i < 3; i++) sum = (byte)(((sum & 1) << 7) + (sum >> 1) + extension[i]);
 
         return sum;
     }

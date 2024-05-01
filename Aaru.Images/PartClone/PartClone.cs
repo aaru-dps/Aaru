@@ -44,6 +44,7 @@ namespace Aaru.Images;
 public sealed partial class PartClone : IMediaImage, IVerifiableImage
 {
     const string MODULE_NAME = "PartClone plugin";
+
     // The used block "bitmap" uses one byte per block
     // TODO: Convert on-image bytemap to on-memory bitmap
     byte[]                    _byteMap;

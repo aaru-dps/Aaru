@@ -61,8 +61,7 @@ public sealed class ExtentsULong
         _backend = new List<Tuple<ulong, ulong>>();
 
         // This ensure no overlapping extents are added on creation
-        foreach(Tuple<ulong, ulong> t in list)
-            Add(t.Item1, t.Item2);
+        foreach(Tuple<ulong, ulong> t in list) Add(t.Item1, t.Item2);
     }
 
     /// <summary>Gets a count of how many extents are stored</summary>
@@ -79,8 +78,7 @@ public sealed class ExtentsULong
         for(var i = 0; i < _backend.Count; i++)
         {
             // Already contained in an extent
-            if(item >= _backend[i].Item1 && item <= _backend[i].Item2)
-                return;
+            if(item >= _backend[i].Item1 && item <= _backend[i].Item2) return;
 
             // Expands existing extent start
             if(item == _backend[i].Item1 - 1)
@@ -99,8 +97,7 @@ public sealed class ExtentsULong
             }
 
             // Expands existing extent end
-            if(item != _backend[i].Item2 + 1)
-                continue;
+            if(item != _backend[i].Item2 + 1) continue;
 
             removeOne = _backend[i];
 
@@ -145,8 +142,7 @@ public sealed class ExtentsULong
             realEnd = end;
 
         // TODO: Optimize this
-        for(ulong t = start; t <= realEnd; t++)
-            Add(t);
+        for(ulong t = start; t <= realEnd; t++) Add(t);
     }
 
     /// <summary>Checks if the specified item is contained by an extent on this instance</summary>
@@ -197,8 +193,7 @@ public sealed class ExtentsULong
             }
 
             // Extent is only element
-            if(item != extent.Item1 || item != extent.Item2)
-                continue;
+            if(item != extent.Item1 || item != extent.Item2) continue;
 
             toRemove = extent;
 
@@ -206,16 +201,13 @@ public sealed class ExtentsULong
         }
 
         // Item not found
-        if(toRemove == null)
-            return false;
+        if(toRemove == null) return false;
 
         _backend.Remove(toRemove);
 
-        if(toAddOne != null)
-            _backend.Add(toAddOne);
+        if(toAddOne != null) _backend.Add(toAddOne);
 
-        if(toAddTwo != null)
-            _backend.Add(toAddTwo);
+        if(toAddTwo != null) _backend.Add(toAddTwo);
 
         // Sort
         _backend = _backend.OrderBy(t => t.Item1).ToList();

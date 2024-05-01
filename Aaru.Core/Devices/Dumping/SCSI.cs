@@ -61,19 +61,21 @@ public partial class Dump
                 if(decSense.HasValue)
                 {
                     ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
-                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.SenseKey,
+                                                       decSense.Value.ASC,
                                                        decSense.Value.ASCQ));
 
-                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense, decSense.Value.SenseKey,
-                                       decSense.Value.ASC, decSense.Value.ASCQ);
+                    _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
+                                       decSense.Value.SenseKey,
+                                       decSense.Value.ASC,
+                                       decSense.Value.ASCQ);
 
                     // Just retry, for 5 times
                     if(decSense.Value.ASC == 0x29)
                     {
                         resets++;
 
-                        if(resets < 5)
-                            goto deviceGotReset;
+                        if(resets < 5) goto deviceGotReset;
                     }
 
                     switch(decSense.Value.ASC)
@@ -88,19 +90,20 @@ public partial class Dump
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {
                                     ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.SenseKey,
+                                                                       decSense.Value.ASC,
                                                                        decSense.Value.ASCQ));
 
                                     _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
-                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.SenseKey,
+                                                       decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
 
@@ -126,19 +129,20 @@ public partial class Dump
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {
                                     ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.SenseKey,
+                                                                       decSense.Value.ASC,
                                                                        decSense.Value.ASCQ));
 
                                     _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
-                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.SenseKey,
+                                                       decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
 
@@ -147,9 +151,9 @@ public partial class Dump
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
-                                                         Sense.PrettifySense(senseBuf)));
+                                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                              .Error_testing_unit_was_ready_0,
+                                                                           Sense.PrettifySense(senseBuf)));
 
                                 return;
                             }
@@ -180,19 +184,20 @@ public partial class Dump
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 decSense = Sense.Decode(senseBuf);
 
                                 if(decSense.HasValue)
                                 {
                                     ErrorMessage?.Invoke(string.Format(Localization.Core.Device_not_ready_Sense,
-                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                       decSense.Value.SenseKey,
+                                                                       decSense.Value.ASC,
                                                                        decSense.Value.ASCQ));
 
                                     _dumpLog.WriteLine(Localization.Core.Device_not_ready_Sense,
-                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.SenseKey,
+                                                       decSense.Value.ASC,
                                                        decSense.Value.ASCQ);
                                 }
 
@@ -201,9 +206,9 @@ public partial class Dump
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
-                                                         Sense.PrettifySense(senseBuf)));
+                                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                              .Error_testing_unit_was_ready_0,
+                                                                           Sense.PrettifySense(senseBuf)));
 
                                 return;
                             }
@@ -242,8 +247,8 @@ public partial class Dump
                     Ssc();
                 else
                 {
-                    StoppingErrorMessage?.Invoke(Localization.Core.
-                                                              The_specified_image_format_cannot_represent_streaming_tapes);
+                    StoppingErrorMessage?.Invoke(Localization.Core
+                                                             .The_specified_image_format_cannot_represent_streaming_tapes);
                 }
 
                 return;
@@ -252,8 +257,8 @@ public partial class Dump
                     Mmc();
                 else
                 {
-                    StoppingErrorMessage?.Invoke(Localization.Core.
-                                                              The_specified_image_format_cannot_represent_optical_discs);
+                    StoppingErrorMessage?.Invoke(Localization.Core
+                                                             .The_specified_image_format_cannot_represent_optical_discs);
                 }
 
                 return;

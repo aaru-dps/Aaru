@@ -68,21 +68,26 @@ public class CID
                     Decoders.MMC.CID cid = Decoders.MMC.Decoders.DecodeCID(response);
                     Assert.IsNotNull(cid, string.Format(Localization.Decoded_0, cards[i]));
 
-                    Assert.AreEqual(manufacturers[i], cid.Manufacturer,
+                    Assert.AreEqual(manufacturers[i],
+                                    cid.Manufacturer,
                                     string.Format(Localization.Manufacturer_0, cards[i]));
 
-                    Assert.AreEqual(applications[i], cid.ApplicationID,
+                    Assert.AreEqual(applications[i],
+                                    cid.ApplicationID,
                                     string.Format(Localization.Application_ID_0, cards[i]));
 
                     Assert.AreEqual(names[i], cid.ProductName, string.Format(Localization.Product_name_0, cards[i]));
 
-                    Assert.AreEqual(revisions[i], cid.ProductRevision,
+                    Assert.AreEqual(revisions[i],
+                                    cid.ProductRevision,
                                     string.Format(Localization.Product_revision_0, cards[i]));
 
-                    Assert.AreEqual(serials[i], cid.ProductSerialNumber,
+                    Assert.AreEqual(serials[i],
+                                    cid.ProductSerialNumber,
                                     string.Format(Localization.Serial_number_0, cards[i]));
 
-                    Assert.AreEqual(dates[i], cid.ManufacturingDate,
+                    Assert.AreEqual(dates[i],
+                                    cid.ManufacturingDate,
                                     string.Format(Localization.Manufacturing_date_0, cards[i]));
 
                     Assert.AreEqual(crcs[i], cid.CRC, string.Format(Localization.CRC_0, cards[i]));

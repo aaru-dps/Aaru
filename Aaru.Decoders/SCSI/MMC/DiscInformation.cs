@@ -57,19 +57,16 @@ public static class DiscInformation
 {
     public static StandardDiscInformation? Decode000b(byte[] response)
     {
-        if(response.Length < 32)
-            return null;
+        if(response.Length < 32) return null;
 
-        if((response[2] & 0xE0) != 0)
-            return null;
+        if((response[2] & 0xE0) != 0) return null;
 
         var decoded = new StandardDiscInformation
         {
             DataLength = (ushort)((response[0] << 8) + response[1])
         };
 
-        if(decoded.DataLength + 2 != response.Length)
-            return null;
+        if(decoded.DataLength + 2 != response.Length) return null;
 
         decoded.DataType              =  (byte)((response[2] & 0xE0) >> 5);
         decoded.Erasable              |= (response[2] & 0x10) == 0x10;
@@ -102,14 +99,12 @@ public static class DiscInformation
         Array.Reverse(temp);
         decoded.DiscBarcode = BitConverter.ToUInt64(temp, 0);
 
-        if(response.Length < 34)
-            return null;
+        if(response.Length < 34) return null;
 
         decoded.DiscApplicationCode = response[32];
         decoded.OPCTablesNumber     = response[33];
 
-        if(decoded.OPCTablesNumber <= 0 || response.Length != decoded.OPCTablesNumber * 8 + 34)
-            return decoded;
+        if(decoded.OPCTablesNumber <= 0 || response.Length != decoded.OPCTablesNumber * 8 + 34) return decoded;
 
         decoded.OPCTables = new OPCTable[decoded.OPCTablesNumber];
 
@@ -126,8 +121,7 @@ public static class DiscInformation
 
     public static string Prettify000b(StandardDiscInformation? information)
     {
-        if(information?.DataType != 0)
-            return null;
+        if(information?.DataType != 0) return null;
 
         var sb = new StringBuilder();
 
@@ -171,8 +165,7 @@ public static class DiscInformation
                 break;
         }
 
-        if(information.Value.Erasable)
-            sb.AppendLine(Localization.Disc_is_erasable);
+        if(information.Value.Erasable) sb.AppendLine(Localization.Disc_is_erasable);
 
         switch(information.Value.LastSessionStatus)
         {
@@ -197,8 +190,8 @@ public static class DiscInformation
         switch(information.Value.BGFormatStatus)
         {
             case 1:
-                sb.AppendLine(Localization.
-                                  Media_was_being_formatted_in_the_background_but_it_is_stopped_and_incomplete);
+                sb.AppendLine(Localization
+                                 .Media_was_being_formatted_in_the_background_but_it_is_stopped_and_incomplete);
 
                 break;
             case 2:
@@ -211,31 +204,30 @@ public static class DiscInformation
                 break;
         }
 
-        if(information.Value.Dbit)
-            sb.AppendLine(Localization.MRW_is_dirty);
+        if(information.Value.Dbit) sb.AppendLine(Localization.MRW_is_dirty);
 
         sb.AppendFormat(Localization.First_track_on_disc_is_track_0, information.Value.FirstTrackNumber).AppendLine();
         sb.AppendFormat(Localization.Disc_has_0_sessions,            information.Value.Sessions).AppendLine();
 
-        sb.AppendFormat(Localization.First_track_in_last_session_is_track_0, information.Value.FirstTrackLastSession).
-           AppendLine();
+        sb.AppendFormat(Localization.First_track_in_last_session_is_track_0, information.Value.FirstTrackLastSession)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Last_track_in_last_session_is_track_0, information.Value.LastTrackLastSession).
-           AppendLine();
+        sb.AppendFormat(Localization.Last_track_in_last_session_is_track_0, information.Value.LastTrackLastSession)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Last_session_Lead_In_address_is_0_as_LBA_or_1_2_3,
                         information.Value.LastSessionLeadInStartLBA,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastSessionLeadInStartLBA & 0xFF00)   >> 8,
-                        information.Value.LastSessionLeadInStartLBA & 0xFF).
-           AppendLine();
+                        information.Value.LastSessionLeadInStartLBA & 0xFF)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Last_possible_Lead_Out_address_is_0_as_LBA_or_1_2_3,
                         information.Value.LastPossibleLeadOutStartLBA,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF0000) >> 16,
                         (information.Value.LastPossibleLeadOutStartLBA & 0xFF00)   >> 8,
-                        information.Value.LastPossibleLeadOutStartLBA & 0xFF).
-           AppendLine();
+                        information.Value.LastPossibleLeadOutStartLBA & 0xFF)
+          .AppendLine();
 
         sb.AppendLine(information.Value.URU
                           ? Localization.Disc_is_defined_for_unrestricted_use
@@ -250,15 +242,19 @@ public static class DiscInformation
         if(information.Value.DAC_V)
             sb.AppendFormat(Localization.Disc_application_code_0, information.Value.DiscApplicationCode).AppendLine();
 
-        if(information.Value.OPCTables == null)
-            return sb.ToString();
+        if(information.Value.OPCTables == null) return sb.ToString();
 
         foreach(OPCTable table in information.Value.OPCTables)
         {
-            sb.AppendFormat(Localization.OPC_values_for_0_Kbit_sec_1_2_3_4_5_6, table.Speed, table.OPCValues[0],
-                            table.OPCValues[1], table.OPCValues[2], table.OPCValues[3], table.OPCValues[4],
-                            table.OPCValues[5]).
-               AppendLine();
+            sb.AppendFormat(Localization.OPC_values_for_0_Kbit_sec_1_2_3_4_5_6,
+                            table.Speed,
+                            table.OPCValues[0],
+                            table.OPCValues[1],
+                            table.OPCValues[2],
+                            table.OPCValues[3],
+                            table.OPCValues[4],
+                            table.OPCValues[5])
+              .AppendLine();
         }
 
         return sb.ToString();
@@ -266,19 +262,16 @@ public static class DiscInformation
 
     public static TrackResourcesInformation? Decode001b(byte[] response)
     {
-        if(response.Length != 12)
-            return null;
+        if(response.Length != 12) return null;
 
-        if((response[2] & 0xE0) != 0x20)
-            return null;
+        if((response[2] & 0xE0) != 0x20) return null;
 
         var decoded = new TrackResourcesInformation
         {
             DataLength = (ushort)((response[0] << 8) + response[1])
         };
 
-        if(decoded.DataLength + 2 != response.Length)
-            return null;
+        if(decoded.DataLength + 2 != response.Length) return null;
 
         decoded.DataType            = (byte)((response[2] & 0xE0) >> 5);
         decoded.MaxTracks           = (ushort)((response[4]  << 8) + response[5]);
@@ -291,8 +284,7 @@ public static class DiscInformation
 
     public static string Prettify001b(TrackResourcesInformation? information)
     {
-        if(information?.DataType != 1)
-            return null;
+        if(information?.DataType != 1) return null;
 
         var sb = new StringBuilder();
 
@@ -300,30 +292,27 @@ public static class DiscInformation
         sb.AppendFormat(Localization._0_assigned_tracks_on_the_disc, information.Value.AssignedTracks).AppendLine();
 
         sb.AppendFormat(Localization._0_maximum_possible_appendable_tracks_on_the_disc,
-                        information.Value.AppendableTracks).
-           AppendLine();
+                        information.Value.AppendableTracks)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_current_appendable_tracks_on_the_disc, information.Value.MaxAppendableTracks).
-           AppendLine();
+        sb.AppendFormat(Localization._0_current_appendable_tracks_on_the_disc, information.Value.MaxAppendableTracks)
+          .AppendLine();
 
         return sb.ToString();
     }
 
     public static POWResourcesInformation? Decode010b(byte[] response)
     {
-        if(response.Length != 16)
-            return null;
+        if(response.Length != 16) return null;
 
-        if((response[2] & 0xE0) != 0x40)
-            return null;
+        if((response[2] & 0xE0) != 0x40) return null;
 
         var decoded = new POWResourcesInformation
         {
             DataLength = (ushort)((response[0] << 8) + response[1])
         };
 
-        if(decoded.DataLength + 2 != response.Length)
-            return null;
+        if(decoded.DataLength + 2 != response.Length) return null;
 
         decoded.DataType = (byte)((response[2] & 0xE0) >> 5);
 
@@ -341,17 +330,16 @@ public static class DiscInformation
 
     public static string Prettify010b(POWResourcesInformation? information)
     {
-        if(information?.DataType != 1)
-            return null;
+        if(information?.DataType != 1) return null;
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat(Localization._0_remaining_POW_replacements, information.Value.RemainingPOWReplacements).
-           AppendLine();
+        sb.AppendFormat(Localization._0_remaining_POW_replacements, information.Value.RemainingPOWReplacements)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_remaining_POW_reallocation_map_entries,
-                        information.Value.RemainingPOWReallocation).
-           AppendLine();
+                        information.Value.RemainingPOWReallocation)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_remaining_POW_updates, information.Value.RemainingPOWUpdates).AppendLine();
 
@@ -360,11 +348,9 @@ public static class DiscInformation
 
     public static string Prettify(byte[] response)
     {
-        if(response == null)
-            return null;
+        if(response == null) return null;
 
-        if(response.Length < 12)
-            return null;
+        if(response.Length < 12) return null;
 
         return (response[2] & 0xE0) switch
                {

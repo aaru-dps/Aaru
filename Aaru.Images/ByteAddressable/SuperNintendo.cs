@@ -27,6 +27,7 @@ public class SuperNintendo : IByteAddressableImage
 #region IByteAddressableImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -36,18 +37,15 @@ public class SuperNintendo : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return false;
+        if(stream.Length % 32768 != 0) return false;
 
         // Too many false positives at bigger sizes
-        if(stream.Length > 16 * 1048576)
-            return false;
+        if(stream.Length > 16 * 1048576) return false;
 
         // Check exact sizes, too many positives otherwise
         if(stream.Length != 262144  &&
@@ -74,8 +72,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((header.Mode & 0xF) == 0x5 || (header.Mode & 0xF) == 0xA)
-                    return true;
+                if((header.Mode & 0xF) == 0x5 || (header.Mode & 0xF) == 0xA) return true;
 
                 break;
             }
@@ -86,8 +83,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((header.Mode & 0xF) == 0x1 || (header.Mode & 0xF) == 0xA)
-                    return true;
+                if((header.Mode & 0xF) == 0x1 || (header.Mode & 0xF) == 0xA) return true;
 
                 break;
             }
@@ -106,14 +102,12 @@ public class SuperNintendo : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 32768 != 0) return ErrorNumber.InvalidArgument;
 
         var found       = false;
         var headerBytes = new byte[48];
@@ -127,8 +121,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((_header.Mode & 0xF) == 0x5 || (_header.Mode & 0xF) == 0xA)
-                    found = true;
+                if((_header.Mode & 0xF) == 0x5 || (_header.Mode & 0xF) == 0xA) found = true;
 
                 break;
             }
@@ -139,8 +132,7 @@ public class SuperNintendo : IByteAddressableImage
                 stream.EnsureRead(headerBytes, 0, 48);
                 _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-                if((_header.Mode & 0xF) == 0x1 || (_header.Mode & 0xF) == 0xA)
-                    found = true;
+                if((_header.Mode & 0xF) == 0x1 || (_header.Mode & 0xF) == 0xA) found = true;
 
                 break;
             }
@@ -158,8 +150,7 @@ public class SuperNintendo : IByteAddressableImage
             }
         }
 
-        if(!found)
-            return ErrorNumber.InvalidArgument;
+        if(!found) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
@@ -195,8 +186,7 @@ public class SuperNintendo : IByteAddressableImage
         sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
         sb.AppendFormat(Localization.Region_0,       DecodeRegion(_header.Region)).AppendLine();
 
-        if(_header.OldMakerCode == 0x33)
-            sb.AppendFormat(Localization.Game_code_0, _header.GameCode).AppendLine();
+        if(_header.OldMakerCode == 0x33) sb.AppendFormat(Localization.Game_code_0, _header.GameCode).AppendLine();
 
         sb.AppendFormat(Localization.Revision_0, _header.Revision).AppendLine();
 
@@ -218,8 +208,8 @@ public class SuperNintendo : IByteAddressableImage
 
             if(_header.ExpansionRamSize > 0)
             {
-                sb.AppendFormat(Localization.Expansion_RAM_size_0_bytes, (1 << _header.ExpansionRamSize) * 1024).
-                   AppendLine();
+                sb.AppendFormat(Localization.Expansion_RAM_size_0_bytes, (1 << _header.ExpansionRamSize) * 1024)
+                  .AppendLine();
             }
         }
 
@@ -385,14 +375,11 @@ public class SuperNintendo : IByteAddressableImage
 
         var devices = 1;
 
-        if(hasRam)
-            devices++;
+        if(hasRam) devices++;
 
-        if(hasExtraRam)
-            devices++;
+        if(hasExtraRam) devices++;
 
-        if(hasFlash)
-            devices++;
+        if(hasFlash) devices++;
 
         mappings = new LinearMemoryMap
         {
@@ -484,8 +471,7 @@ public class SuperNintendo : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -521,16 +507,13 @@ public class SuperNintendo : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -627,8 +610,7 @@ public class SuperNintendo : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -672,16 +654,13 @@ public class SuperNintendo : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
@@ -692,8 +671,7 @@ public class SuperNintendo : IByteAddressableImage
 
     static string DecodeCoprocessor(byte chipset, byte subtype)
     {
-        if((chipset & 0xF) < 3)
-            return Localization.None_coprocessor;
+        if((chipset & 0xF) < 3) return Localization.None_coprocessor;
 
         return ((chipset & 0xF0) >> 4) switch
                {
@@ -806,8 +784,7 @@ public class SuperNintendo : IByteAddressableImage
     static string DecodeManufacturer(byte oldMakerCode, string makerCode)
     {
         // TODO: Add full table
-        if(oldMakerCode != 0x33)
-            makerCode = $"{(oldMakerCode >> 4) * 36 + (oldMakerCode & 0x0f)}";
+        if(oldMakerCode != 0x33) makerCode = $"{(oldMakerCode >> 4) * 36 + (oldMakerCode & 0x0f)}";
 
         return makerCode switch
                {

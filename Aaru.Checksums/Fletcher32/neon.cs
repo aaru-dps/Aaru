@@ -73,8 +73,7 @@ static class Neon
         {
             uint n = Fletcher32Context.NMAX / block_Size; /* The NMAX constraint. */
 
-            if(n > blocks)
-                n = blocks;
+            if(n > blocks) n = blocks;
 
             blocks -= n;
             /*
@@ -93,17 +92,41 @@ static class Neon
                 /*
                  * Load 32 input bytes.
                  */
-                var bytes1 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
-                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
-                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
+                var bytes1 = Vector128.Create(buf[bufPos],
+                                              buf[bufPos + 1],
+                                              buf[bufPos + 2],
+                                              buf[bufPos + 3],
+                                              buf[bufPos + 4],
+                                              buf[bufPos + 5],
+                                              buf[bufPos + 6],
+                                              buf[bufPos + 7],
+                                              buf[bufPos + 8],
+                                              buf[bufPos + 9],
+                                              buf[bufPos + 10],
+                                              buf[bufPos + 11],
+                                              buf[bufPos + 12],
+                                              buf[bufPos + 13],
+                                              buf[bufPos + 14],
+                                              buf[bufPos + 15]);
 
                 bufPos += 16;
 
-                var bytes2 = Vector128.Create(buf[bufPos], buf[bufPos + 1], buf[bufPos + 2], buf[bufPos + 3],
-                                              buf[bufPos + 4], buf[bufPos + 5], buf[bufPos + 6], buf[bufPos + 7],
-                                              buf[bufPos + 8], buf[bufPos + 9], buf[bufPos + 10], buf[bufPos + 11],
-                                              buf[bufPos + 12], buf[bufPos + 13], buf[bufPos + 14], buf[bufPos + 15]);
+                var bytes2 = Vector128.Create(buf[bufPos],
+                                              buf[bufPos + 1],
+                                              buf[bufPos + 2],
+                                              buf[bufPos + 3],
+                                              buf[bufPos + 4],
+                                              buf[bufPos + 5],
+                                              buf[bufPos + 6],
+                                              buf[bufPos + 7],
+                                              buf[bufPos + 8],
+                                              buf[bufPos + 9],
+                                              buf[bufPos + 10],
+                                              buf[bufPos + 11],
+                                              buf[bufPos + 12],
+                                              buf[bufPos + 13],
+                                              buf[bufPos + 14],
+                                              buf[bufPos + 15]);
 
                 bufPos += 16;
                 /*
@@ -114,11 +137,11 @@ static class Neon
                 /*
                  * Horizontally add the bytes for s1.
                  */
-                v_S1 =
-                    AdvSimd.AddPairwiseWideningAndAdd(v_S1,
-                                                      AdvSimd.
-                                                          AddPairwiseWideningAndAdd(AdvSimd.AddPairwiseWidening(bytes1),
-                                                              bytes2));
+                v_S1 = AdvSimd.AddPairwiseWideningAndAdd(v_S1,
+                                                         AdvSimd
+                                                            .AddPairwiseWideningAndAdd(AdvSimd
+                                                                    .AddPairwiseWidening(bytes1),
+                                                                 bytes2));
 
                 /*
                  * Vertically add the bytes for s2.
@@ -134,28 +157,36 @@ static class Neon
             /*
              * Multiply-add bytes by [ 32, 31, 30, ... ] for s2.
              */
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_1.GetLower(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_1.GetLower(),
                                                        Vector64.Create((ushort)32, 31, 30, 29));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_1.GetUpper(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_1.GetUpper(),
                                                        Vector64.Create((ushort)28, 27, 26, 25));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_2.GetLower(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_2.GetLower(),
                                                        Vector64.Create((ushort)24, 23, 22, 21));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_2.GetUpper(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_2.GetUpper(),
                                                        Vector64.Create((ushort)20, 19, 18, 17));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_3.GetLower(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_3.GetLower(),
                                                        Vector64.Create((ushort)16, 15, 14, 13));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_3.GetUpper(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_3.GetUpper(),
                                                        Vector64.Create((ushort)12, 11, 10, 9));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_4.GetLower(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_4.GetLower(),
                                                        Vector64.Create((ushort)8, 7, 6, 5));
 
-            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2, v_Column_Sum_4.GetUpper(),
+            v_S2 = AdvSimd.MultiplyWideningLowerAndAdd(v_S2,
+                                                       v_Column_Sum_4.GetUpper(),
                                                        Vector64.Create((ushort)4, 3, 2, 1));
 
             /*
@@ -199,11 +230,9 @@ static class Neon
                 len -= 16;
             }
 
-            while(len-- != 0)
-                s2 += s1 += buf[bufPos++];
+            while(len-- != 0) s2 += s1 += buf[bufPos++];
 
-            if(s1 >= Fletcher32Context.FLETCHER_MODULE)
-                s1 -= Fletcher32Context.FLETCHER_MODULE;
+            if(s1 >= Fletcher32Context.FLETCHER_MODULE) s1 -= Fletcher32Context.FLETCHER_MODULE;
 
             s2 %= Fletcher32Context.FLETCHER_MODULE;
         }

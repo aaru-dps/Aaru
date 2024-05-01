@@ -109,12 +109,12 @@ public sealed partial class ISO9660
         internal DecodedDirectoryEntry[] Entries;
         internal int                     Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -125,7 +125,7 @@ public sealed partial class ISO9660
     {
         internal DecodedDirectoryEntry Dentry;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -136,7 +136,7 @@ public sealed partial class ISO9660
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

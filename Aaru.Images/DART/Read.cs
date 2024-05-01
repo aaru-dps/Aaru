@@ -54,8 +54,7 @@ public sealed partial class Dart
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 84)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 84) return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Header>()];
@@ -63,43 +62,36 @@ public sealed partial class Dart
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
-        if(header.srcCmp > COMPRESS_NONE)
-            return ErrorNumber.NotSupported;
+        if(header.srcCmp > COMPRESS_NONE) return ErrorNumber.NotSupported;
 
         int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
             case DISK_MAC:
-                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_LISA:
-                if(header.srcSize != SIZE_LISA)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_LISA) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_APPLE2:
-                if(header.srcSize != DISK_APPLE2)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != DISK_APPLE2) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_MAC_HD:
-                if(header.srcSize != SIZE_MAC_HD)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_MAC_HD) return ErrorNumber.InvalidArgument;
 
                 expectedMaxSize += 64;
 
                 break;
             case DISK_DOS:
-                if(header.srcSize != SIZE_DOS)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_DOS) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_DOS_HD:
-                if(header.srcSize != SIZE_DOS_HD)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_DOS_HD) return ErrorNumber.InvalidArgument;
 
                 expectedMaxSize += 64;
 
@@ -108,8 +100,7 @@ public sealed partial class Dart
                 return ErrorNumber.InvalidArgument;
         }
 
-        if(stream.Length > expectedMaxSize)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length > expectedMaxSize) return ErrorNumber.InvalidArgument;
 
         var bLength =
             new short[header.srcType is DISK_MAC_HD or DISK_DOS_HD ? BLOCK_ARRAY_LEN_HIGH : BLOCK_ARRAY_LEN_LOW];
@@ -126,8 +117,7 @@ public sealed partial class Dart
 
         foreach(short l in bLength)
         {
-            if(l == 0)
-                continue;
+            if(l == 0) continue;
 
             var buffer = new byte[BUFFER_SIZE];
 
@@ -195,8 +185,7 @@ public sealed partial class Dart
                         var major = $"{version.MajorVersion}";
                         var minor = $".{version.MinorVersion / 10}";
 
-                        if(version.MinorVersion % 10 > 0)
-                            release = $".{version.MinorVersion % 10}";
+                        if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
                         string dev = version.DevStage switch
                                      {
@@ -206,11 +195,9 @@ public sealed partial class Dart
                                          _                                 => null
                                      };
 
-                        if(dev == null && version.PreReleaseVersion > 0)
-                            dev = "f";
+                        if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                        if(dev != null)
-                            pre = $"{version.PreReleaseVersion}";
+                        if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                         _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                         _imageInfo.Application        = version.VersionString;
@@ -262,7 +249,9 @@ public sealed partial class Dart
         }
         catch(InvalidCastException) {}
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
@@ -321,11 +310,9 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -339,17 +326,13 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(tag != SectorTagType.AppleSectorTag)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.AppleSectorTag) return ErrorNumber.NotSupported;
 
-        if(_tagCache == null || _tagCache.Length == 0)
-            return ErrorNumber.NoData;
+        if(_tagCache == null || _tagCache.Length == 0) return ErrorNumber.NoData;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * TAG_SECTOR_SIZE];
 
@@ -367,31 +350,33 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         buffer = new byte[data.Length + tags.Length];
 
         for(uint i = 0; i < length; i++)
         {
-            Array.Copy(data, i * _imageInfo.SectorSize, buffer, i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
+            Array.Copy(data,
+                       i * _imageInfo.SectorSize,
+                       buffer,
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
                        _imageInfo.SectorSize);
 
-            Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
+            Array.Copy(tags,
+                       i * TAG_SECTOR_SIZE,
+                       buffer,
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize,
+                       TAG_SECTOR_SIZE);
         }
 
         return ErrorNumber.NoError;

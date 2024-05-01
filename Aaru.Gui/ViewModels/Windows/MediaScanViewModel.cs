@@ -109,6 +109,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         StartVisible = true;
         CloseVisible = true;
         BlockMapList = new ObservableCollection<(ulong block, double duration)>();
+
 //        ChartPoints  = new ObservableCollection<DataPoint>();
         StepsX    = double.NaN;
         StepsY    = double.NaN;
@@ -136,6 +137,7 @@ public sealed class MediaScanViewModel : ViewModelBase
     }
 
     public ObservableCollection<(ulong block, double duration)> BlockMapList { get; }
+
 //    public ObservableCollection<DataPoint>                      ChartPoints  { get; }
 
     public ulong Blocks
@@ -329,6 +331,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         CloseVisible    = false;
         ProgressVisible = true;
         ResultsVisible  = true;
+
 //        ChartPoints.Clear();
         new Thread(DoWork).Start();
     }
@@ -345,10 +348,12 @@ public sealed class MediaScanViewModel : ViewModelBase
         switch(dev)
         {
             case null:
-                await MessageBoxManager.
-                      GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, devErrno),
-                                            ButtonEnum.Ok,  Icon.Error).
-                      ShowWindowDialogAsync(_view);
+                await MessageBoxManager
+                     .GetMessageBoxStandard(UI.Title_Error,
+                                            string.Format(UI.Error_0_opening_device, devErrno),
+                                            ButtonEnum.Ok,
+                                            Icon.Error)
+                     .ShowWindowDialogAsync(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -357,8 +362,10 @@ public sealed class MediaScanViewModel : ViewModelBase
 
                 return;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -366,10 +373,12 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         if(dev.Error)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandard(UI.Title_Error, string.Format(UI.Error_0_opening_device, dev.LastError),
-                                        ButtonEnum.Ok,  Icon.Error).
-                  ShowWindowDialogAsync(_view);
+            await MessageBoxManager
+                 .GetMessageBoxStandard(UI.Title_Error,
+                                        string.Format(UI.Error_0_opening_device, dev.LastError),
+                                        ButtonEnum.Ok,
+                                        Icon.Error)
+                 .ShowWindowDialogAsync(_view);
 
             StopVisible     = false;
             StartVisible    = true;
@@ -454,8 +463,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         ChartPoints.Add(new DataPoint(sector, currentSpeed));
         */
 
-        if(currentSpeed > MaxY)
-            MaxY = currentSpeed + currentSpeed / 10d;
+        if(currentSpeed > MaxY) MaxY = currentSpeed + currentSpeed / 10d;
     });
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
@@ -599,8 +607,8 @@ public sealed class MediaScanViewModel : ViewModelBase
     {
         ProgressText = text;
 
-        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error).
-                                ShowWindowDialogAsync(_view);
+        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error)
+                               .ShowWindowDialogAsync(_view);
 
         await WorkFinished();
     });

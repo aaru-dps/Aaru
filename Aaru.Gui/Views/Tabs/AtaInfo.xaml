@@ -31,22 +31,31 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.AtaInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.AtaInfo">
     <Design.DataContext>
         <tabs:AtaInfoViewModel />
     </Design.DataContext>
     <StackPanel>
         <TextBlock Text="{Binding AtaOrAtapiText}" />
-        <TextBox IsReadOnly="True" Text="{Binding AtaIdentifyText}" TextWrapping="Wrap" />
-        <CheckBox IsEnabled="False" IsChecked="{Binding AtaMcptChecked}" IsVisible="{Binding AtaMcptVisible}">
+        <TextBox IsReadOnly="True"
+                 Text="{Binding AtaIdentifyText}"
+                 TextWrapping="Wrap" />
+        <CheckBox IsEnabled="False"
+                  IsChecked="{Binding AtaMcptChecked}"
+                  IsVisible="{Binding AtaMcptVisible}">
             <TextBlock Text="{Binding AtaMcptLabel}" />
         </CheckBox>
         <TextBlock Text="{Binding AtaMcptText}" />
-        <CheckBox IsEnabled="False" IsChecked="{Binding AtaMcptWriteProtectionChecked}"
+        <CheckBox IsEnabled="False"
+                  IsChecked="{Binding AtaMcptWriteProtectionChecked}"
                   IsVisible="{Binding AtaMcptChecked}">
             <TextBlock Text="{Binding AtaMcptWriteProtectionLabel}" />
         </CheckBox>

@@ -184,8 +184,7 @@ public class Remote : IDisposable
 
         len = _socket.Send(buf, SocketFlags.None);
 
-        if(len >= buf.Length)
-            return;
+        if(len >= buf.Length) return;
 
         AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
@@ -260,9 +259,9 @@ public class Remote : IDisposable
 
             if(hdr.packetType != AaruPacketType.ResponseAmIRoot)
             {
-                AaruConsole.
-                    ErrorWriteLine(Localization.Remote_IsRoot_Expected_Am_I_Root_Response_Packet_got_packet_type_0,
-                                   hdr.packetType);
+                AaruConsole.ErrorWriteLine(Localization
+                                              .Remote_IsRoot_Expected_Am_I_Root_Response_Packet_got_packet_type_0,
+                                           hdr.packetType);
 
                 return false;
             }
@@ -355,9 +354,9 @@ public class Remote : IDisposable
         {
             if(hdr.packetType != AaruPacketType.Nop)
             {
-                AaruConsole.
-                    ErrorWriteLine(Localization.Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
-                                   hdr.packetType);
+                AaruConsole.ErrorWriteLine(Localization
+                                              .Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
+                                           hdr.packetType);
 
                 return Array.Empty<DeviceInfo>();
             }
@@ -475,9 +474,9 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.Nop)
         {
-            AaruConsole.
-                ErrorWriteLine(Localization.Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
-                               hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization
+                                          .Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             lastError = -1;
 
@@ -543,11 +542,9 @@ public class Remote : IDisposable
             timeout   = timeout * 1000
         };
 
-        if(cdb != null)
-            cmdPkt.cdb_len = (uint)cdb.Length;
+        if(cdb != null) cmdPkt.cdb_len = (uint)cdb.Length;
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
 
@@ -556,8 +553,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdScsi>());
 
-        if(cdb != null)
-            Array.Copy(cdb, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>(), cmdPkt.cdb_len);
+        if(cdb != null) Array.Copy(cdb, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>(), cmdPkt.cdb_len);
 
         if(buffer != null)
             Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
@@ -658,8 +654,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaChs>() + cmdPkt.buf_len);
 
@@ -668,8 +663,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaChs>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
@@ -766,8 +760,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba28>() + cmdPkt.buf_len);
 
@@ -776,8 +769,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba28>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
@@ -875,8 +867,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba48>() + cmdPkt.buf_len);
 
@@ -885,8 +876,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba48>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
@@ -990,8 +980,7 @@ public class Remote : IDisposable
             }
         };
 
-        if(buffer != null)
-            cmdPkt.command.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.command.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.command.buf_len);
 
@@ -1000,8 +989,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdSdhci>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
@@ -1215,8 +1203,7 @@ public class Remote : IDisposable
 
         if(res.csd_len > 0)
         {
-            if(res.csd_len > 16)
-                res.csd_len = 16;
+            if(res.csd_len > 16) res.csd_len = 16;
 
             csd = new byte[res.csd_len];
 
@@ -1225,8 +1212,7 @@ public class Remote : IDisposable
 
         if(res.cid_len > 0)
         {
-            if(res.cid_len > 16)
-                res.cid_len = 16;
+            if(res.cid_len > 16) res.cid_len = 16;
 
             cid = new byte[res.cid_len];
 
@@ -1235,8 +1221,7 @@ public class Remote : IDisposable
 
         if(res.ocr_len > 0)
         {
-            if(res.ocr_len > 16)
-                res.ocr_len = 16;
+            if(res.ocr_len > 16) res.ocr_len = 16;
 
             ocr = new byte[res.ocr_len];
 
@@ -1341,8 +1326,7 @@ public class Remote : IDisposable
 
         AaruPacketResGetUsbData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetUsbData>(buf);
 
-        if(!res.isUsb)
-            return false;
+        if(!res.isUsb) return false;
 
         descriptors = new byte[res.descLen];
         Array.Copy(res.descriptors, 0, descriptors, 0, res.descLen);
@@ -1434,8 +1418,7 @@ public class Remote : IDisposable
 
         AaruPacketResGetFireWireData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetFireWireData>(buf);
 
-        if(!res.isFireWire)
-            return false;
+        if(!res.isFireWire) return false;
 
         idVendor  = res.idVendor;
         idProduct = res.idModel;
@@ -1516,8 +1499,7 @@ public class Remote : IDisposable
 
         AaruPacketResGetPcmciaData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetPcmciaData>(buf);
 
-        if(!res.isPcmcia)
-            return false;
+        if(!res.isPcmcia) return false;
 
         cis = res.cis;
 
@@ -1538,8 +1520,7 @@ public class Remote : IDisposable
         {
             int got = socket.Receive(buffer, offset, size, socketFlags);
 
-            if(got <= 0)
-                break;
+            if(got <= 0) break;
 
             offset += got;
             size   -= got;
@@ -1587,8 +1568,7 @@ public class Remote : IDisposable
     public int SendMultipleMmcCommands(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense,
                                        uint                              timeout = 0)
     {
-        if(ServerProtocolVersion < 2)
-            return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
+        if(ServerProtocolVersion < 2) return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
 
         sense    = false;
         duration = 0;
@@ -1619,17 +1599,17 @@ public class Remote : IDisposable
         int off = tmp.Length;
 
         foreach(AaruCmdSdhci cmd in commands.Select(command => new AaruCmdSdhci
-            {
-                application = command.isApplication,
-                argument    = command.argument,
-                block_size  = command.blockSize,
-                blocks      = command.blocks,
-                buf_len     = (uint)(command.buffer?.Length ?? 0),
-                command     = command.command,
-                flags       = command.flags,
-                timeout     = timeout,
-                write       = command.write
-            }))
+                {
+                    application = command.isApplication,
+                    argument    = command.argument,
+                    block_size  = command.blockSize,
+                    blocks      = command.blocks,
+                    buf_len     = (uint)(command.buffer?.Length ?? 0),
+                    command     = command.command,
+                    flags       = command.flags,
+                    timeout     = timeout,
+                    write       = command.write
+                }))
         {
             tmp = Marshal.StructureToByteArrayLittleEndian(cmd);
             Array.Copy(tmp, 0, buf, off, tmp.Length);
@@ -1638,7 +1618,7 @@ public class Remote : IDisposable
         }
 
         foreach(Devices.Device.MmcSingleCommand command in
-            commands.Where(command => (command.buffer?.Length ?? 0) != 0))
+                commands.Where(command => (command.buffer?.Length ?? 0) != 0))
         {
             Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
 
@@ -1697,7 +1677,8 @@ public class Remote : IDisposable
         if(res.cmd_count != (ulong)commands.Length)
         {
             AaruConsole.ErrorWriteLine(Localization.Expected_the_response_to_0_SD_MMC_commands_but_got_1_responses,
-                                       commands.Length, res.cmd_count);
+                                       commands.Length,
+                                       res.cmd_count);
 
             return -1;
         }
@@ -1714,14 +1695,11 @@ public class Remote : IDisposable
             command.response =  cmdRes.response;
             duration         += cmdRes.duration;
 
-            if(cmdRes.error_no != 0 && error == 0)
-                error = (int)cmdRes.error_no;
+            if(cmdRes.error_no != 0 && error == 0) error = (int)cmdRes.error_no;
 
-            if(cmdRes.sense != 0)
-                sense = true;
+            if(cmdRes.sense != 0) sense = true;
 
-            if(cmdRes.buf_len > 0)
-                command.buffer = new byte[cmdRes.buf_len];
+            if(cmdRes.buf_len > 0) command.buffer = new byte[cmdRes.buf_len];
 
             off += Marshal.SizeOf<AaruResSdhci>();
         }
@@ -1753,12 +1731,20 @@ public class Remote : IDisposable
 
         foreach(Devices.Device.MmcSingleCommand command in commands)
         {
-            error = SendMmcCommand(command.command,      command.write,          command.isApplication, command.flags,
-                                   command.argument,     command.blockSize,      command.blocks, ref command.buffer,
-                                   out command.response, out double cmdDuration, out bool cmdSense, timeout);
+            error = SendMmcCommand(command.command,
+                                   command.write,
+                                   command.isApplication,
+                                   command.flags,
+                                   command.argument,
+                                   command.blockSize,
+                                   command.blocks,
+                                   ref command.buffer,
+                                   out command.response,
+                                   out double cmdDuration,
+                                   out bool cmdSense,
+                                   timeout);
 
-            if(cmdSense)
-                sense = true;
+            if(cmdSense) sense = true;
 
             duration += cmdDuration;
         }
@@ -1770,8 +1756,7 @@ public class Remote : IDisposable
     /// <returns>Returned error number if any</returns>
     public bool ReOpen()
     {
-        if(ServerProtocolVersion < 2)
-            return false;
+        if(ServerProtocolVersion < 2) return false;
 
         var cmdPkt = new AaruPacketCmdReOpen
         {
@@ -1871,8 +1856,7 @@ public class Remote : IDisposable
         duration = 0;
         buffer   = null;
 
-        if(ServerProtocolVersion < 2)
-            return false;
+        if(ServerProtocolVersion < 2) return false;
 
         var cmdPkt = new AaruPacketCmdOsRead
         {

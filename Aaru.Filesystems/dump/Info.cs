@@ -38,7 +38,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Partition = Aaru.CommonTypes.Partition;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 
@@ -53,25 +52,20 @@ public sealed partial class Dump
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         // It should be start of a tape or floppy or file
-        if(partition.Start != 0)
-            return false;
+        if(partition.Start != 0) return false;
 
         var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<s_spcl>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<s_spcl>()) return false;
 
         spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
         spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
@@ -98,24 +92,19 @@ public sealed partial class Dump
         information = "";
         metadata    = new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
-        if(partition.Start != 0)
-            return;
+        if(partition.Start != 0) return;
 
         var sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<s_spcl>())
-            return;
+        if(sector.Length < Marshal.SizeOf<s_spcl>()) return;
 
         spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
         spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
@@ -138,8 +127,7 @@ public sealed partial class Dump
         {
             useAix = true;
 
-            if(aixHdr.c_magic == XIX_CIGAM)
-                aixHdr = Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
+            if(aixHdr.c_magic == XIX_CIGAM) aixHdr = Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
         }
         else if(oldHdr.c_magic == OFS_MAGIC)
         {
@@ -244,18 +232,15 @@ public sealed partial class Dump
 
             string str = StringHandlers.CToString(newHdr.c_filesys);
 
-            if(!string.IsNullOrEmpty(str))
-                sb.AppendFormat(Localization.Dumped_filesystem_name_0, str).AppendLine();
+            if(!string.IsNullOrEmpty(str)) sb.AppendFormat(Localization.Dumped_filesystem_name_0, str).AppendLine();
 
             str = StringHandlers.CToString(newHdr.c_dev);
 
-            if(!string.IsNullOrEmpty(str))
-                sb.AppendFormat(Localization.Dumped_device_0, str).AppendLine();
+            if(!string.IsNullOrEmpty(str)) sb.AppendFormat(Localization.Dumped_device_0, str).AppendLine();
 
             str = StringHandlers.CToString(newHdr.c_host);
 
-            if(!string.IsNullOrEmpty(str))
-                sb.AppendFormat(Localization.Dump_hostname_0, str).AppendLine();
+            if(!string.IsNullOrEmpty(str)) sb.AppendFormat(Localization.Dump_hostname_0, str).AppendLine();
         }
 
         information = sb.ToString();

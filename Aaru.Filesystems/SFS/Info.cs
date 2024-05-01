@@ -44,13 +44,11 @@ public sealed partial class SFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic = BigEndianBitConverter.ToUInt32(sector, 0x00);
 
@@ -65,8 +63,7 @@ public sealed partial class SFS
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] rootBlockSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         RootBlock rootBlock = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
@@ -76,36 +73,37 @@ public sealed partial class SFS
 
         sbInformation.AppendFormat(Localization.Volume_version_0, rootBlock.version).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_starts_on_device_byte_0_and_ends_on_byte_1, rootBlock.firstbyte,
-                                   rootBlock.lastbyte).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_starts_on_device_byte_0_and_ends_on_byte_1,
+                                   rootBlock.firstbyte,
+                                   rootBlock.lastbyte)
+                     .AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, rootBlock.totalblocks,
-                                   rootBlock.blocksize).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each,
+                                   rootBlock.totalblocks,
+                                   rootBlock.blocksize)
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8)).
-                      AppendLine();
+                                   DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Bitmap_starts_at_block_0, rootBlock.bitmapbase).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Admin_space_container_starts_in_block_0, rootBlock.adminspacecontainer).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Admin_space_container_starts_in_block_0, rootBlock.adminspacecontainer)
+                     .AppendLine();
 
-        sbInformation.AppendFormat(Localization.Root_object_container_starts_in_block_0, rootBlock.rootobjectcontainer).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Root_object_container_starts_in_block_0, rootBlock.rootobjectcontainer)
+                     .AppendLine();
 
-        sbInformation.
-            AppendFormat(Localization.Root_node_of_the_extent_B_tree_resides_in_block_0, rootBlock.extentbnoderoot).
-            AppendLine();
+        sbInformation
+           .AppendFormat(Localization.Root_node_of_the_extent_B_tree_resides_in_block_0, rootBlock.extentbnoderoot)
+           .AppendLine();
 
-        sbInformation.
-            AppendFormat(Localization.Root_node_of_the_object_B_tree_resides_in_block_0, rootBlock.objectnoderoot).
-            AppendLine();
+        sbInformation
+           .AppendFormat(Localization.Root_node_of_the_object_B_tree_resides_in_block_0, rootBlock.objectnoderoot)
+           .AppendLine();
 
-        if(rootBlock.bits.HasFlag(Flags.CaseSensitive))
-            sbInformation.AppendLine(Localization.Volume_is_case_sensitive);
+        if(rootBlock.bits.HasFlag(Flags.CaseSensitive)) sbInformation.AppendLine(Localization.Volume_is_case_sensitive);
 
         if(rootBlock.bits.HasFlag(Flags.RecycledFolder))
             sbInformation.AppendLine(Localization.Volume_moves_deleted_files_to_a_recycled_folder);

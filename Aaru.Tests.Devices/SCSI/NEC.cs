@@ -145,7 +145,11 @@ static class Nec
     start:
         System.Console.Clear();
 
-        bool sense = dev.NecReadCdDa(out byte[] buffer, out byte[] senseBuffer, address, length, dev.Timeout,
+        bool sense = dev.NecReadCdDa(out byte[] buffer,
+                                     out byte[] senseBuffer,
+                                     address,
+                                     length,
+                                     dev.Timeout,
                                      out double duration);
 
     menu:
@@ -194,8 +198,7 @@ static class Nec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -208,8 +211,7 @@ static class Nec
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CD_DA_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

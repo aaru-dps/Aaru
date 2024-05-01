@@ -105,17 +105,13 @@ public static partial class Modes
 
     public static ModePage_05? DecodeModePage_05(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x05)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x05) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 32)
-            return null;
+        if(pageResponse.Length < 32) return null;
 
         var decoded = new ModePage_05();
 
@@ -153,16 +149,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_05(ModePage_05? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_05 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Flexible_disk_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization.Transfer_rate_0_kbits, page.TransferRate).AppendLine();
         sb.AppendFormat("\t" + Localization._0_heads,              page.Heads).AppendLine();
@@ -172,14 +166,14 @@ public static partial class Modes
 
         if(page.WritePrecompCylinder < page.Cylinders)
         {
-            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder)
+              .AppendLine();
         }
 
         if(page.WriteReduceCylinder < page.Cylinders)
         {
-            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder)
+              .AppendLine();
         }
 
         if(page.DriveStepRate > 0)
@@ -193,37 +187,37 @@ public static partial class Modes
 
         if(!page.TRDY)
         {
-            sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
-                             (double)page.MotorOnDelay * 10).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               .Target_shall_wait_0_seconds_before_attempting_to_access_the_medium_after_motor_on_is_asserted,
+                            (double)page.MotorOnDelay * 10)
+              .AppendLine();
         }
         else
         {
-            sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
-                             (double)page.MotorOnDelay * 10).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               .Target_shall_wait_0_seconds_after_drive_is_ready_before_aborting_medium_access_attempts,
+                            (double)page.MotorOnDelay * 10)
+              .AppendLine();
         }
 
         if(page.MotorOffDelay != 0xFF)
         {
-            sb.
-                AppendFormat("\t" + Localization.Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
-                             (double)page.MotorOffDelay * 10).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization
+                               .Target_shall_wait_0_seconds_before_releasing_the_motor_on_signal_after_becoming_idle,
+                            (double)page.MotorOffDelay * 10)
+              .AppendLine();
         }
         else
             sb.AppendLine("\t" + Localization.Target_shall_never_release_the_motor_on_signal);
 
-        if(page.TRDY)
-            sb.AppendLine("\t" + Localization.There_is_a_drive_ready_signal);
+        if(page.TRDY) sb.AppendLine("\t" + Localization.There_is_a_drive_ready_signal);
 
-        if(page.SSN)
-            sb.AppendLine("\t" + Localization.Sectors_start_at_1);
+        if(page.SSN) sb.AppendLine("\t" + Localization.Sectors_start_at_1);
 
-        if(page.MO)
-            sb.AppendLine("\t" + Localization.The_motor_on_signal_shall_remain_released);
+        if(page.MO) sb.AppendLine("\t" + Localization.The_motor_on_signal_shall_remain_released);
 
         sb.AppendFormat("\t" + Localization.Drive_needs_to_do_0_step_pulses_per_cylinder, page.SPC + 1).AppendLine();
 
@@ -260,7 +254,10 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin34 & 0x08) == 0x08 ? Localization.Pin_34_indicates_unknown_function_0_when_active_high : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
+                sb.AppendFormat("\t" +
+                                ((page.Pin34 & 0x08) == 0x08
+                                     ? Localization.Pin_34_indicates_unknown_function_0_when_active_high
+                                     : Localization.Pin_34_indicates_unknown_function_0_when_active_low),
                                 page.Pin34 & 0x07);
 
                 break;
@@ -294,7 +291,10 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin4 & 0x08) == 0x08 ? Localization.Pin_4_indicates_unknown_function_0_when_active_high : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
+                sb.AppendFormat("\t" +
+                                ((page.Pin4 & 0x08) == 0x08
+                                     ? Localization.Pin_4_indicates_unknown_function_0_when_active_high
+                                     : Localization.Pin_4_indicates_unknown_function_0_when_active_low),
                                 page.Pin4 & 0x07);
 
                 break;
@@ -307,7 +307,10 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin2 & 0x08) == 0x08 ? Localization.Pin_2_indicates_unknown_function_0_when_active_high : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
+                sb.AppendFormat("\t" +
+                                ((page.Pin2 & 0x08) == 0x08
+                                     ? Localization.Pin_2_indicates_unknown_function_0_when_active_high
+                                     : Localization.Pin_2_indicates_unknown_function_0_when_active_low),
                                 page.Pin2 & 0x07);
 
                 break;
@@ -327,7 +330,10 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + ((page.Pin1 & 0x08) == 0x08 ? Localization.Pin_1_indicates_unknown_function_0_when_active_high : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
+                sb.AppendFormat("\t" +
+                                ((page.Pin1 & 0x08) == 0x08
+                                     ? Localization.Pin_1_indicates_unknown_function_0_when_active_high
+                                     : Localization.Pin_1_indicates_unknown_function_0_when_active_low),
                                 page.Pin1 & 0x07);
 
                 break;

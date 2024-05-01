@@ -110,17 +110,13 @@ public static partial class Modes
 
     public static ModePage_10_SSC? DecodeModePage_10_SSC(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x10)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x10) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_10_SSC();
 
@@ -167,33 +163,32 @@ public static partial class Modes
 
     public static string PrettifyModePage_10_SSC(ModePage_10_SSC? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_10_SSC page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Device_configuration_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization.Active_format_0,    page.ActiveFormat).AppendLine();
         sb.AppendFormat("\t" + Localization.Active_partition_0, page.ActivePartition).AppendLine();
 
         sb.AppendFormat("\t" + Localization.Write_buffer_shall_have_a_full_ratio_of_0_before_being_flushed_to_medium,
-                        page.WriteBufferFullRatio).
-           AppendLine();
+                        page.WriteBufferFullRatio)
+          .AppendLine();
 
-        sb.
-            AppendFormat("\t" + Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
-                         page.ReadBufferEmptyRatio).
-            AppendLine();
+        sb.AppendFormat("\t" +
+                        Localization.Read_buffer_shall_have_an_empty_ratio_of_0_before_more_data_is_read_from_medium,
+                        page.ReadBufferEmptyRatio)
+          .AppendLine();
 
-        sb.
-            AppendFormat("\t" + Localization.Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
-                         page.WriteDelayTime * 100).
-            AppendLine();
+        sb.AppendFormat("\t" +
+                        Localization
+                           .Drive_will_delay_0_ms_before_buffered_data_is_forcefully_written_to_the_medium_even_before_buffer_is_full,
+                        page.WriteDelayTime * 100)
+          .AppendLine();
 
         if(page.DBR)
         {
@@ -204,11 +199,9 @@ public static partial class Modes
                               : "\t" + Localization.Recovered_buffer_data_comes_in_FIFO_order);
         }
 
-        if(page.BIS)
-            sb.AppendLine("\t" + Localization.Medium_supports_block_IDs);
+        if(page.BIS) sb.AppendLine("\t" + Localization.Medium_supports_block_IDs);
 
-        if(page.RSmk)
-            sb.AppendLine("\t" + Localization.Drive_reports_setmarks);
+        if(page.RSmk) sb.AppendLine("\t" + Localization.Drive_reports_setmarks);
 
         switch(page.SOCF)
         {
@@ -234,8 +227,7 @@ public static partial class Modes
         {
             sb.AppendLine("\t" + Localization.Drive_reports_early_warnings);
 
-            if(page.SEW)
-                sb.AppendLine("\t" + Localization.Drive_will_synchronize_buffer_to_medium_on_early_warnings);
+            if(page.SEW) sb.AppendLine("\t" + Localization.Drive_will_synchronize_buffer_to_medium_on_early_warnings);
         }
 
         switch(page.GapSize)
@@ -261,8 +253,8 @@ public static partial class Modes
             case 14:
             case 15:
                 sb.AppendFormat("\t" + Localization.Inter_block_gap_is_0_times_the_device_defined_gap_size,
-                                page.GapSize).
-                   AppendLine();
+                                page.GapSize)
+                  .AppendLine();
 
                 break;
             default:
@@ -271,8 +263,7 @@ public static partial class Modes
                 break;
         }
 
-        if(page.EEG)
-            sb.AppendLine("\t" + Localization.Drive_generates_end_of_data);
+        if(page.EEG) sb.AppendLine("\t" + Localization.Drive_generates_end_of_data);
 
         switch(page.SelectedCompression)
         {
@@ -285,23 +276,19 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Drive_uses_unknown_compression_0, page.SelectedCompression).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_uses_unknown_compression_0, page.SelectedCompression)
+                  .AppendLine();
 
                 break;
         }
 
-        if(page.SWP)
-            sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
+        if(page.SWP) sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
 
-        if(page.ASOCWP)
-            sb.AppendLine("\t" + Localization.Associated_write_protect_is_enabled);
+        if(page.ASOCWP) sb.AppendLine("\t" + Localization.Associated_write_protect_is_enabled);
 
-        if(page.PERSWP)
-            sb.AppendLine("\t" + Localization.Persistent_write_protect_is_enabled);
+        if(page.PERSWP) sb.AppendLine("\t" + Localization.Persistent_write_protect_is_enabled);
 
-        if(page.PRMWP)
-            sb.AppendLine("\t" + Localization.Permanent_write_protect_is_enabled);
+        if(page.PRMWP) sb.AppendLine("\t" + Localization.Permanent_write_protect_is_enabled);
 
         if(page.BAML)
         {

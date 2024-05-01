@@ -48,8 +48,7 @@ public sealed partial class DeviceReport
 
         Tuple[] tuples = CIS.GetTuples(_dev.Cis);
 
-        if(tuples == null)
-            return pcmciaReport;
+        if(tuples == null) return pcmciaReport;
 
         foreach(Tuple tuple in tuples)
         {

@@ -56,8 +56,7 @@ public static class Spare
 {
     public static SpareAreaInformation? Decode(byte[] response)
     {
-        if(response?.Length != 16)
-            return null;
+        if(response?.Length != 16) return null;
 
         return new SpareAreaInformation
         {
@@ -74,19 +73,18 @@ public static class Spare
 
     public static string Prettify(SpareAreaInformation? sai)
     {
-        if(sai == null)
-            return null;
+        if(sai == null) return null;
 
         SpareAreaInformation decoded = sai.Value;
         var                  sb      = new StringBuilder();
 
         sb.AppendFormat(Localization._0_unused_primary_spare_blocks, decoded.UnusedPrimaryBlocks).AppendLine();
 
-        sb.AppendFormat(Localization._0_unused_supplementary_spare_blocks, decoded.UnusedSupplementaryBlocks).
-           AppendLine();
+        sb.AppendFormat(Localization._0_unused_supplementary_spare_blocks, decoded.UnusedSupplementaryBlocks)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_allocated_supplementary_spare_blocks, decoded.AllocatedSupplementaryBlocks).
-           AppendLine();
+        sb.AppendFormat(Localization._0_allocated_supplementary_spare_blocks, decoded.AllocatedSupplementaryBlocks)
+          .AppendLine();
 
         return sb.ToString();
     }

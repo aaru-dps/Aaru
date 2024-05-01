@@ -60,17 +60,21 @@ public static partial class MediaTypeFromDevice
                     if(blocks == 1281856)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_WORM_PD_650,
-                                                   mediumType, blocks, blockSize);
+                                                   Localization
+                                                      .SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_WORM_PD_650,
+                                                   mediumType,
+                                                   blocks,
+                                                   blockSize);
 
                         return MediaType.PD650_WORM;
                     }
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.
-                                                   SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650,
-                                               mediumType, blocks, blockSize);
+                                               Localization
+                                                  .SCSI_medium_type_is_0_media_has_1_blocks_of_2_bytes_setting_media_type_to_PD_650,
+                                               mediumType,
+                                               blocks,
+                                               blockSize);
 
                     return MediaType.PD650;
                 }
@@ -82,15 +86,16 @@ public static partial class MediaTypeFromDevice
                 return MediaType.CD;
             case 0x01:
             case 0x05:
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CD_ROM,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CD_ROM,
                                            mediumType);
 
                 return MediaType.CDROM;
             case 0x02:
             case 0x06:
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc_Digital_Audio,
+                                           Localization
+                                              .SCSI_medium_type_is_0_setting_media_type_to_Compact_Disc_Digital_Audio,
                                            mediumType);
 
                 return MediaType.CDDA;
@@ -116,7 +121,8 @@ public static partial class MediaTypeFromDevice
             case 0x16:
             case 0x17:
             case 0x18:
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CDR,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CDR,
                                            mediumType);
 
                 return MediaType.CDR;
@@ -129,7 +135,8 @@ public static partial class MediaTypeFromDevice
             case 0x26:
             case 0x27:
             case 0x28:
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.SCSI_medium_type_is_0_setting_media_type_to_CDRW,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.SCSI_medium_type_is_0_setting_media_type_to_CDRW,
                                            mediumType);
 
                 return MediaType.CDRW;
@@ -137,8 +144,8 @@ public static partial class MediaTypeFromDevice
             case 0x41 when isUsb && !opticalDisc:
             case 0x42 when isUsb && !opticalDisc:
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               SCSI_medium_type_is_0_and_device_is_USB_setting_media_type_to_Flash_Drive,
+                                           Localization
+                                              .SCSI_medium_type_is_0_and_device_is_USB_setting_media_type_to_Flash_Drive,
                                            mediumType);
 
                 return MediaType.FlashDrive;
@@ -149,30 +156,34 @@ public static partial class MediaTypeFromDevice
                     {
                         case 0x42:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO2,
-                                                       mediumType, densityCode);
+                                                       Localization
+                                                          .SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO2,
+                                                       mediumType,
+                                                       densityCode);
 
                             return MediaType.LTO2;
                         case 0x44:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO3,
-                                                       mediumType, densityCode);
+                                                       Localization
+                                                          .SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO3,
+                                                       mediumType,
+                                                       densityCode);
 
                             return MediaType.LTO3;
                         case 0x46:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO4,
-                                                       mediumType, densityCode);
+                                                       Localization
+                                                          .SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO4,
+                                                       mediumType,
+                                                       densityCode);
 
                             return MediaType.LTO4;
                         case 0x58:
                             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                       Localization.
-                                                           SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO5,
-                                                       mediumType, densityCode);
+                                                       Localization
+                                                          .SCSI_medium_type_is_0_density_code_is_1_drive_starts_with_ult_setting_media_type_to_LTO5,
+                                                       mediumType,
+                                                       densityCode);
 
                             return MediaType.LTO5;
                     }

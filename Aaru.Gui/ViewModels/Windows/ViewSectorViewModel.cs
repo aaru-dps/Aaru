@@ -85,8 +85,7 @@ public sealed class ViewSectorViewModel : ViewModelBase
                                     ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out byte[] sector)
                                     : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
 
-            if(errno == ErrorNumber.NoError)
-                PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
+            if(errno == ErrorNumber.NoError) PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
         }
     }
 

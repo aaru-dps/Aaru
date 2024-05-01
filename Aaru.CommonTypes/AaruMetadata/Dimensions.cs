@@ -56,9 +56,10 @@ public class Dimensions
                                                                            ? null
                                                                            : new Dimensions
                                                                            {
-                                                                               Diameter = cicm.DiameterSpecified
-                                                                                   ? cicm.Diameter
-                                                                                   : null,
+                                                                               Diameter =
+                                                                                   cicm.DiameterSpecified
+                                                                                       ? cicm.Diameter
+                                                                                       : null,
                                                                                Height = cicm.HeightSpecified
                                                                                    ? cicm.Height
                                                                                    : null,
@@ -77,7 +78,7 @@ public class Dimensions
 
         switch(mediaType)
         {
-        #region 5.25" floppy disk
+#region 5.25" floppy disk
 
             case MediaType.Apple32SS:
             case MediaType.Apple32DS:
@@ -122,9 +123,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 5.25" floppy disk
+#endregion 5.25" floppy disk
 
-        #region 3.5" floppy disk
+#region 3.5" floppy disk
 
             case MediaType.AppleSonySS:
             case MediaType.AppleSonyDS:
@@ -159,9 +160,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 3.5" floppy disk
+#endregion 3.5" floppy disk
 
-        #region 8" floppy disk
+#region 8" floppy disk
 
             case MediaType.IBM23FD:
             case MediaType.IBM33FD_128:
@@ -190,9 +191,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 8" floppy disk
+#endregion 8" floppy disk
 
-        #region 356mm magneto optical
+#region 356mm magneto optical
 
             case MediaType.ECMA_260:
             case MediaType.ECMA_260_Double:
@@ -205,9 +206,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 356mm magneto optical
+#endregion 356mm magneto optical
 
-        #region 300mm magneto optical
+#region 300mm magneto optical
 
             case MediaType.ECMA_189:
             case MediaType.ECMA_190:
@@ -221,9 +222,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 300mm magneto optical
+#endregion 300mm magneto optical
 
-        #region 5.25" magneto optical
+#region 5.25" magneto optical
 
             case MediaType.ECMA_153:
             case MediaType.ECMA_153_512:
@@ -258,9 +259,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 5.25" magneto optical
+#endregion 5.25" magneto optical
 
-        #region 3.5" magneto optical
+#region 3.5" magneto optical
 
             case MediaType.ECMA_154:
             case MediaType.ECMA_201:
@@ -279,7 +280,7 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion 3.5" magneto optical
+#endregion 3.5" magneto optical
 
             case MediaType.PD650:
             case MediaType.PD650_WORM:
@@ -941,9 +942,9 @@ public class Dimensions
                 dmns.Thickness = 16.6;
 
                 return dmns;
-        #pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable CS0612 // Type or member is obsolete
             case MediaType.Bernoulli:
-        #pragma warning restore CS0612 // Type or member is obsolete
+#pragma warning restore CS0612 // Type or member is obsolete
             case MediaType.Bernoulli10:
             case MediaType.Bernoulli20:
                 dmns.Height = 280;
@@ -953,9 +954,9 @@ public class Dimensions
                 dmns.Thickness = 18;
 
                 return dmns;
-        #pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable CS0612 // Type or member is obsolete
             case MediaType.Bernoulli2:
-        #pragma warning restore CS0612 // Type or member is obsolete
+#pragma warning restore CS0612 // Type or member is obsolete
             case MediaType.BernoulliBox2_20:
             case MediaType.Bernoulli35:
             case MediaType.Bernoulli44:
@@ -1009,7 +1010,7 @@ public class Dimensions
 
                 return dmns;
 
-        #region CD/DVD/BD
+#region CD/DVD/BD
 
             case MediaType.CDDA:
             case MediaType.CDG:
@@ -1111,9 +1112,9 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion CD/DVD/BD
+#endregion CD/DVD/BD
 
-        #region Apple Hard Disks
+#region Apple Hard Disks
 
             // TODO: Find Apple Widget size
             case MediaType.AppleProfile:
@@ -1133,7 +1134,7 @@ public class Dimensions
 
                 return dmns;
 
-        #endregion Apple Hard Disks
+#endregion Apple Hard Disks
 
             case MediaType.UMD:
                 dmns.Height = 64;

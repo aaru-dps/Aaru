@@ -188,8 +188,7 @@ public sealed partial class Apridisk
             {
                 for(byte s = 0; s < _imageInfo.SectorsPerTrack; s++)
                 {
-                    if(_sectorsData[c][h][s] == null || _sectorsData[c][h][s].Length == 0)
-                        continue;
+                    if(_sectorsData[c][h][s] == null || _sectorsData[c][h][s].Length == 0) continue;
 
                     var record = new Record
                     {
@@ -302,8 +301,7 @@ public sealed partial class Apridisk
         {
             _sectorsData[c] = new byte[heads][][];
 
-            for(byte h = 0; h < heads; h++)
-                _sectorsData[c][h] = new byte[sectorsPerTrack][];
+            for(byte h = 0; h < heads; h++) _sectorsData[c][h] = new byte[sectorsPerTrack][];
         }
 
         _imageInfo.Cylinders       = cylinders;

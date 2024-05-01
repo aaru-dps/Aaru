@@ -43,24 +43,21 @@ public sealed partial class CPM
     /// <inheritdoc />
     public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
-        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-            return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return ErrorNumber.NoSuchFile;
 
         if(string.Compare(xattr, "com.caldera.cpm.password", StringComparison.InvariantCulture) == 0)
         {
-            if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf))
-                return ErrorNumber.NoError;
+            if(!_passwordCache.TryGetValue(pathElements[0].ToUpperInvariant(), out buf)) return ErrorNumber.NoError;
         }
 
         if(string.Compare(xattr, "com.caldera.cpm.password.text", StringComparison.InvariantCulture) != 0)
@@ -76,24 +73,21 @@ public sealed partial class CPM
     {
         xattrs = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
-        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-            return ErrorNumber.NoSuchFile;
+        if(!_fileCache.ContainsKey(pathElements[0].ToUpperInvariant())) return ErrorNumber.NoSuchFile;
 
         xattrs = new List<string>();
 
-        if(_passwordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
-            xattrs.Add("com.caldera.cpm.password");
+        if(_passwordCache.ContainsKey(pathElements[0].ToUpperInvariant())) xattrs.Add("com.caldera.cpm.password");
 
         if(_decodedPasswordCache.ContainsKey(pathElements[0].ToUpperInvariant()))
             xattrs.Add("com.caldera.cpm.password.text");

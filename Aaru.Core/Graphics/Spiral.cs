@@ -103,8 +103,7 @@ public sealed class Spiral : IMediaGraph
     /// <param name="lastSector">Last sector that will be drawn into the spiral</param>
     public Spiral(int width, int height, DiscParameters parameters, ulong lastSector)
     {
-        if(parameters == _gdParameters || parameters == _gdRecordableParameters)
-            _gdrom = true;
+        if(parameters == _gdParameters || parameters == _gdRecordableParameters) _gdrom = true;
 
         // GD-ROM LD area ends at 29mm, HD area starts at 30mm radius
 
@@ -135,8 +134,7 @@ public sealed class Spiral : IMediaGraph
         var lastSector1 = (long)lastSector;
 
         // If the dumped media is overburnt
-        if(lastSector1 > _maxSector)
-            _maxSector = lastSector1;
+        if(lastSector1 > _maxSector) _maxSector = lastSector1;
 
         // Ensure the disc hole is not painted over
         var clipPath = new SKPath();
@@ -144,62 +142,74 @@ public sealed class Spiral : IMediaGraph
         _canvas.ClipPath(clipPath, SKClipOperation.Difference);
 
         // Paint CD
-        _canvas.DrawCircle(center, smallerDimension / 2f, new SKPaint
-        {
-            Style = SKPaintStyle.StrokeAndFill,
-            Color = parameters.DiscColor
-        });
+        _canvas.DrawCircle(center,
+                           smallerDimension / 2f,
+                           new SKPaint
+                           {
+                               Style = SKPaintStyle.StrokeAndFill,
+                               Color = parameters.DiscColor
+                           });
 
         // Draw out border of disc
-        _canvas.DrawCircle(center, smallerDimension / 2f, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.Black,
-            StrokeWidth = 4
-        });
+        _canvas.DrawCircle(center,
+                           smallerDimension / 2f,
+                           new SKPaint
+                           {
+                               Style       = SKPaintStyle.Stroke,
+                               Color       = SKColors.Black,
+                               StrokeWidth = 4
+                           });
 
         // Draw disc hole border
-        _canvas.DrawCircle(center, centerHoleDiameter / 2f, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.Black,
-            StrokeWidth = 4
-        });
+        _canvas.DrawCircle(center,
+                           centerHoleDiameter / 2f,
+                           new SKPaint
+                           {
+                               Style       = SKPaintStyle.Stroke,
+                               Color       = SKColors.Black,
+                               StrokeWidth = 4
+                           });
 
         // Draw clamping area
-        _canvas.DrawCircle(center, clampingDiameter / 2f, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.Gray,
-            StrokeWidth = 4
-        });
+        _canvas.DrawCircle(center,
+                           clampingDiameter / 2f,
+                           new SKPaint
+                           {
+                               Style       = SKPaintStyle.Stroke,
+                               Color       = SKColors.Gray,
+                               StrokeWidth = 4
+                           });
 
         // Some trigonometry thing I do not understand fully but it controls the space between the spiral turns
         const float a = 1f;
 
         // Draw the Lead-In
-        _leadInPoints = GetSpiralPoints(center, informationAreaStartDiameter / 2, leadInEndDiameter / 2,
+        _leadInPoints = GetSpiralPoints(center,
+                                        informationAreaStartDiameter / 2,
+                                        leadInEndDiameter            / 2,
                                         _gdrom ? a : a * 1.5f);
 
         var path = new SKPath();
 
         path.MoveTo(_leadInPoints[0]);
 
-        foreach(SKPoint point in _leadInPoints)
-            path.LineTo(point);
+        foreach(SKPoint point in _leadInPoints) path.LineTo(point);
 
-        _canvas.DrawPath(path, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.LightGray,
-            StrokeWidth = 2
-        });
+        _canvas.DrawPath(path,
+                         new SKPaint
+                         {
+                             Style       = SKPaintStyle.Stroke,
+                             Color       = SKColors.LightGray,
+                             StrokeWidth = 2
+                         });
 
         // If there's a recordable information area, get its points
         if(recordableAreaEndDiameter > 0 && recordableAreaStartDiameter > 0)
         {
-            _recordableInformationPoints = GetSpiralPoints(center, recordableAreaStartDiameter / 2,
-                                                           recordableAreaEndDiameter / 2, _gdrom ? a : a * 1.5f);
+            _recordableInformationPoints = GetSpiralPoints(center,
+                                                           recordableAreaStartDiameter / 2,
+                                                           recordableAreaEndDiameter   / 2,
+                                                           _gdrom ? a : a * 1.5f);
         }
 
         if(_gdrom)
@@ -219,15 +229,15 @@ public sealed class Spiral : IMediaGraph
         {
             path.MoveTo(_pointsLowDensity[0]);
 
-            foreach(SKPoint point in _pointsLowDensity)
-                path.LineTo(point);
+            foreach(SKPoint point in _pointsLowDensity) path.LineTo(point);
 
-            _canvas.DrawPath(path, new SKPaint
-            {
-                Style       = SKPaintStyle.Stroke,
-                Color       = SKColors.Gray,
-                StrokeWidth = 2
-            });
+            _canvas.DrawPath(path,
+                             new SKPaint
+                             {
+                                 Style       = SKPaintStyle.Stroke,
+                                 Color       = SKColors.Gray,
+                                 StrokeWidth = 2
+                             });
         }
 
         path.MoveTo(_points[0]);
@@ -240,22 +250,19 @@ public sealed class Spiral : IMediaGraph
             pointsPerSector = _points.Count / (_maxSector - 45000);
             sectorsPerPoint = (_maxSector                 - 45000) / _points.Count;
 
-            if((_maxSector - 45000) % _points.Count > 0)
-                sectorsPerPoint++;
+            if((_maxSector - 45000) % _points.Count > 0) sectorsPerPoint++;
         }
         else
         {
             pointsPerSector = _points.Count / _maxSector;
             sectorsPerPoint = _maxSector    / _points.Count;
 
-            if(_maxSector % _points.Count > 0)
-                sectorsPerPoint++;
+            if(_maxSector % _points.Count > 0) sectorsPerPoint++;
         }
 
         long lastPoint;
 
-        if(_gdrom)
-            lastSector1 -= 45000;
+        if(_gdrom) lastSector1 -= 45000;
 
         if(pointsPerSector > 0)
             lastPoint = lastSector1 * pointsPerSector;
@@ -268,12 +275,13 @@ public sealed class Spiral : IMediaGraph
             path.LineTo(point);
         }
 
-        _canvas.DrawPath(path, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.Gray,
-            StrokeWidth = 2
-        });
+        _canvas.DrawPath(path,
+                         new SKPaint
+                         {
+                             Style       = SKPaintStyle.Stroke,
+                             Color       = SKColors.Gray,
+                             StrokeWidth = 2
+                         });
     }
 
     public SKBitmap Bitmap { get; }
@@ -344,22 +352,21 @@ public sealed class Spiral : IMediaGraph
     /// <summary>Paints the segment of the spiral that corresponds to the information specific to recordable discs in green</summary>
     public void PaintRecordableInformationGood()
     {
-        if(_recordableInformationPoints is null)
-            return;
+        if(_recordableInformationPoints is null) return;
 
         var path = new SKPath();
 
         path.MoveTo(_recordableInformationPoints[0]);
 
-        foreach(SKPoint point in _recordableInformationPoints)
-            path.LineTo(point);
+        foreach(SKPoint point in _recordableInformationPoints) path.LineTo(point);
 
-        _canvas.DrawPath(path, new SKPaint
-        {
-            Style       = SKPaintStyle.Stroke,
-            Color       = SKColors.Green,
-            StrokeWidth = 2
-        });
+        _canvas.DrawPath(path,
+                         new SKPaint
+                         {
+                             Style       = SKPaintStyle.Stroke,
+                             Color       = SKColors.Green,
+                             StrokeWidth = 2
+                         });
     }
 
     /// <inheritdoc />
@@ -465,14 +472,12 @@ public sealed class Spiral : IMediaGraph
 
     void PaintSectors(ulong startingSector, uint length, SKColor color)
     {
-        for(uint i = 0; i < length; i++)
-            PaintSector(startingSector + i, color);
+        for(uint i = 0; i < length; i++) PaintSector(startingSector + i, color);
     }
 
     void PaintSectors(IEnumerable<ulong> sectors, SKColor color)
     {
-        foreach(ulong sector in sectors)
-            PaintSector(sector, color);
+        foreach(ulong sector in sectors) PaintSector(sector, color);
     }
 
     /// <summary>Paints the segment of the spiral that corresponds to the specified sector in the specified color</summary>
@@ -491,8 +496,7 @@ public sealed class Spiral : IMediaGraph
                 pointsPerSector = points.Count / 45000;
                 sectorsPerPoint = 45000        / points.Count;
 
-                if(45000 % points.Count > 0)
-                    sectorsPerPoint++;
+                if(45000 % points.Count > 0) sectorsPerPoint++;
             }
             else
             {
@@ -500,8 +504,7 @@ public sealed class Spiral : IMediaGraph
                 pointsPerSector =  points.Count / (_maxSector - 45000);
                 sectorsPerPoint =  (_maxSector                - 45000) / points.Count;
 
-                if((_maxSector - 45000) % points.Count > 0)
-                    sectorsPerPoint++;
+                if((_maxSector - 45000) % points.Count > 0) sectorsPerPoint++;
             }
         }
         else
@@ -509,8 +512,7 @@ public sealed class Spiral : IMediaGraph
             pointsPerSector = points.Count / _maxSector;
             sectorsPerPoint = _maxSector   / points.Count;
 
-            if(_maxSector % points.Count > 0)
-                sectorsPerPoint++;
+            if(_maxSector % points.Count > 0) sectorsPerPoint++;
         }
 
         var paint = new SKPaint
@@ -528,8 +530,7 @@ public sealed class Spiral : IMediaGraph
 
             path.MoveTo(points[(int)firstPoint]);
 
-            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
-                path.LineTo(points[i]);
+            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++) path.LineTo(points[i]);
 
             _canvas.DrawPath(path, paint);
 
@@ -569,8 +570,7 @@ public sealed class Spiral : IMediaGraph
         long pointsPerSector = _leadInPoints.Count / leadInSize;
         long sectorsPerPoint = leadInSize          / _leadInPoints.Count;
 
-        if(leadInSize % _leadInPoints.Count > 0)
-            sectorsPerPoint++;
+        if(leadInSize % _leadInPoints.Count > 0) sectorsPerPoint++;
 
         var paint = new SKPaint
         {
@@ -587,8 +587,7 @@ public sealed class Spiral : IMediaGraph
 
             path.MoveTo(_leadInPoints[(int)firstPoint]);
 
-            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++)
-                path.LineTo(_leadInPoints[i]);
+            for(var i = (int)firstPoint; i < firstPoint + pointsPerSector; i++) path.LineTo(_leadInPoints[i]);
 
             _canvas.DrawPath(path, paint);
 
@@ -633,8 +632,7 @@ public sealed class Spiral : IMediaGraph
             // Calculate r.
             float r = a * theta;
 
-            if(r < minRadius)
-                continue;
+            if(r < minRadius) continue;
 
             // Converts polar coordinates (r,theta) to Cartesian (x,y)
             var x = (float)(r * Math.Cos(theta));
@@ -648,8 +646,7 @@ public sealed class Spiral : IMediaGraph
             points.Add(new SKPoint(x, y));
 
             // Terminate the loop if we have reached the end of the spiral
-            if(r > maxRadius)
-                break;
+            if(r > maxRadius) break;
         }
 
         return points;
@@ -668,10 +665,19 @@ public sealed class Spiral : IMediaGraph
     /// <param name="RecordableInformationEnd">Diameter at which the information specific to recordable media starts</param>
     /// <param name="NominalMaxSectors">Number of maximum sectors, for discs following the specifications</param>
     /// <param name="DiscColor">Typical disc color</param>
-    public sealed record DiscParameters(float DiscDiameter,               float   CenterHole, float ClampingMinimum,
-                                        float InformationAreaStart,       float   LeadInEnd,  float InformationAreaEnd,
-                                        float RecordableInformationStart, float   RecordableInformationEnd,
-                                        int   NominalMaxSectors,          SKColor DiscColor);
+    public sealed record DiscParameters
+    (
+        float   DiscDiameter,
+        float   CenterHole,
+        float   ClampingMinimum,
+        float   InformationAreaStart,
+        float   LeadInEnd,
+        float   InformationAreaEnd,
+        float   RecordableInformationStart,
+        float   RecordableInformationEnd,
+        int     NominalMaxSectors,
+        SKColor DiscColor
+    );
 
 #endregion
 }

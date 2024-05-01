@@ -104,8 +104,7 @@ public sealed class Sector
     {
         byte ret = 0;
 
-        for(var i = 0; i < 8; i++)
-            ret = (byte)(ret << 1 | LfsrTick());
+        for(var i = 0; i < 8; i++) ret = (byte)(ret << 1 | LfsrTick());
 
         return ret;
     }
@@ -122,8 +121,7 @@ public sealed class Sector
 
         LfsrInit(seed);
 
-        for(i = 0; i < 2048; i++)
-            cypher[i] = LfsrByte();
+        for(i = 0; i < 2048; i++) cypher[i] = LfsrByte();
 
         _seeds.Add(seed, cypher);
 
@@ -134,8 +132,7 @@ public sealed class Sector
     {
         var pos = 0;
 
-        for(; size > 0; size--)
-            edc = _edcTable[(edc >> 24 ^ src[pos++]) & 0xFF] ^ edc << 8;
+        for(; size > 0; size--) edc = _edcTable[(edc >> 24 ^ src[pos++]) & 0xFF] ^ edc << 8;
 
         return edc;
     }
@@ -153,8 +150,7 @@ public sealed class Sector
 
         LfsrInit(seed);
 
-        for(var i = 12; i < 2060; i++)
-            tmp[i] ^= LfsrByte();
+        for(var i = 12; i < 2060; i++) tmp[i] ^= LfsrByte();
 
         return ComputeEdc(0, tmp, 2060) == BigEndianBitConverter.ToUInt32(sector, 2060);
     }
@@ -167,8 +163,7 @@ public sealed class Sector
     byte[]? GetSeed(byte[] sector)
     {
         // Try the last used key
-        if(TestSeed(sector, _lastSeed))
-            return _seeds[_lastSeed];
+        if(TestSeed(sector, _lastSeed)) return _seeds[_lastSeed];
 
         // Try the cached keys
         foreach(ushort seedsKey in _seeds.Keys.Where(seedsKey => TestSeed(sector, seedsKey)))
@@ -189,8 +184,7 @@ public sealed class Sector
         // Brute force all other keys
         for(ushort i = 0; i < 0x7FFF; i++)
         {
-            if(!TestSeed(sector, i))
-                continue;
+            if(!TestSeed(sector, i)) continue;
 
             _lastSeed = i;
 
@@ -212,8 +206,7 @@ public sealed class Sector
         scrambled = new byte[sector.Length];
         Array.Copy(sector, 0, scrambled, 0, sector.Length);
 
-        for(var i = 0; i < 2048; i++)
-            scrambled[i + 12] = (byte)(sector[i + 12] ^ cipher[i]);
+        for(var i = 0; i < 2048; i++) scrambled[i + 12] = (byte)(sector[i + 12] ^ cipher[i]);
 
         return ComputeEdc(0, scrambled, 2060) != BigEndianBitConverter.ToUInt32(sector, 2060)
                    ? ErrorNumber.NotVerifiable
@@ -224,8 +217,7 @@ public sealed class Sector
     {
         scrambled = new byte[sector.Length];
 
-        if(sector is not { Length: 2064 })
-            return ErrorNumber.NotSupported;
+        if(sector is not { Length: 2064 }) return ErrorNumber.NotSupported;
 
         byte[]? cipher = GetSeed(sector);
 
@@ -236,15 +228,13 @@ public sealed class Sector
     {
         scrambled = new byte[sector.Length];
 
-        if(sector.Length % 2064 != 0 || sector.Length / 2064 != transferLength)
-            return ErrorNumber.NotSupported;
+        if(sector.Length % 2064 != 0 || sector.Length / 2064 != transferLength) return ErrorNumber.NotSupported;
 
         for(uint i = 0; i < transferLength; i++)
         {
             ErrorNumber error = Scramble(sector.Skip((int)(i * 2064)).Take(2064).ToArray(), out byte[]? currentSector);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             Array.Copy(currentSector, 0, scrambled, i * 2064, 2064);
         }

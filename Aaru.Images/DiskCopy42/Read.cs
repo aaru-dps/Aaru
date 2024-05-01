@@ -59,8 +59,7 @@ public sealed partial class DiskCopy42
         IsWriting = false;
 
         // Incorrect pascal string length, not DC42
-        if(buffer[0] > 63)
-            return ErrorNumber.InvalidArgument;
+        if(buffer[0] > 63) return ErrorNumber.InvalidArgument;
 
         header = new Header();
 
@@ -85,8 +84,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.valid = {0}",             header.Valid);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.reserved = {0}",          header.Reserved);
 
-        if(header.Valid != 1 || header.Reserved != 0)
-            return ErrorNumber.InvalidArgument;
+        if(header.Valid != 1 || header.Reserved != 0) return ErrorNumber.InvalidArgument;
 
         // Some versions seem to incorrectly create little endian fields
         if(header.DataSize + header.TagSize + 0x54 != imageFilter.DataForkLength && header.Format != kSigmaFormatTwiggy)
@@ -123,7 +121,8 @@ public sealed partial class DiskCopy42
            header.FmtByte != kFmtNotStandard           &&
            header.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unknown_tmp_header_fmtByte_equals_0_value,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Unknown_tmp_header_fmtByte_equals_0_value,
                                        header.FmtByte);
 
             return ErrorNumber.NotSupported;
@@ -240,11 +239,16 @@ public sealed partial class DiskCopy42
                                         _             => sectorsToCopy
                                     };
 
-                    Array.Copy(data, header.DataSize / 2 + copiedSectors * 512, twiggyCache,
-                               twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512, sectorsToCopy * 512);
+                    Array.Copy(data,
+                               header.DataSize / 2 + copiedSectors * 512,
+                               twiggyCache,
+                               twiggyCache.Length - copiedSectors * 512 - sectorsToCopy * 512,
+                               sectorsToCopy * 512);
 
-                    Array.Copy(tags, header.TagSize / 2 + copiedSectors * bptag, twiggyCacheTags,
-                               twiggyCacheTags.Length   - copiedSectors * bptag - sectorsToCopy * bptag,
+                    Array.Copy(tags,
+                               header.TagSize / 2 + copiedSectors * bptag,
+                               twiggyCacheTags,
+                               twiggyCacheTags.Length - copiedSectors * bptag - sectorsToCopy * bptag,
                                sectorsToCopy * bptag);
 
                     copiedSectors += sectorsToCopy;
@@ -274,8 +278,7 @@ public sealed partial class DiskCopy42
                         var major = $"{version.MajorVersion}";
                         var minor = $".{version.MinorVersion / 10}";
 
-                        if(version.MinorVersion % 10 > 0)
-                            release = $".{version.MinorVersion % 10}";
+                        if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
                         string dev = version.DevStage switch
                                      {
@@ -285,11 +288,9 @@ public sealed partial class DiskCopy42
                                          _                                 => null
                                      };
 
-                        if(dev == null && version.PreReleaseVersion > 0)
-                            dev = "f";
+                        if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                        if(dev != null)
-                            pre = $"{version.PreReleaseVersion}";
+                        if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                         imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                         imageInfo.Application        = version.VersionString;
@@ -320,7 +321,9 @@ public sealed partial class DiskCopy42
         }
         catch(InvalidCastException) {}
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   imageInfo.Application,
                                    imageInfo.ApplicationVersion);
 
         imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
@@ -405,18 +408,19 @@ public sealed partial class DiskCopy42
     {
         buffer = null;
 
-        if(sectorAddress > imageInfo.Sectors - 1)
-            return ErrorNumber.SectorNotFound;
+        if(sectorAddress > imageInfo.Sectors - 1) return ErrorNumber.SectorNotFound;
 
-        if(sectorAddress + length > imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * imageInfo.SectorSize];
 
         if(twiggy)
         {
-            Array.Copy(twiggyCache, (int)sectorAddress * imageInfo.SectorSize, buffer, 0,
-                       length                          * imageInfo.SectorSize);
+            Array.Copy(twiggyCache,
+                       (int)sectorAddress * imageInfo.SectorSize,
+                       buffer,
+                       0,
+                       length * imageInfo.SectorSize);
         }
         else
         {
@@ -433,17 +437,13 @@ public sealed partial class DiskCopy42
     {
         buffer = null;
 
-        if(tag != SectorTagType.AppleSectorTag)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.AppleSectorTag) return ErrorNumber.NotSupported;
 
-        if(header.TagSize == 0)
-            return ErrorNumber.NoData;
+        if(header.TagSize == 0) return ErrorNumber.NoData;
 
-        if(sectorAddress > imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * bptag];
 
@@ -468,27 +468,26 @@ public sealed partial class DiskCopy42
     {
         buffer = null;
 
-        if(sectorAddress > imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         buffer = new byte[data.Length + tags.Length];
 
         for(uint i = 0; i < length; i++)
         {
-            Array.Copy(data, i * imageInfo.SectorSize, buffer, i * (imageInfo.SectorSize + bptag),
+            Array.Copy(data,
+                       i * imageInfo.SectorSize,
+                       buffer,
+                       i * (imageInfo.SectorSize + bptag),
                        imageInfo.SectorSize);
 
             Array.Copy(tags, i * bptag, buffer, i * (imageInfo.SectorSize + bptag) + imageInfo.SectorSize, bptag);

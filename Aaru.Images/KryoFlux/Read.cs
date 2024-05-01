@@ -53,8 +53,7 @@ public sealed partial class KryoFlux
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<OobBlock>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<OobBlock>()) return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[Marshal.SizeOf<OobBlock>()];
         stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
@@ -99,8 +98,8 @@ public sealed partial class KryoFlux
                     if(head == 0)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
+                                                   Localization
+                                                      .Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
 
                         topHead = true;
                         heads   = 1;
@@ -109,8 +108,8 @@ public sealed partial class KryoFlux
                     }
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
-                                               Localization.
-                                                   Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
+                                               Localization
+                                                  .Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
 
                     heads = 1;
 
@@ -134,8 +133,7 @@ public sealed partial class KryoFlux
             var         trackFilter = new ZZZNoFilter();
             ErrorNumber errno       = trackFilter.Open(trackfile);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             _imageInfo.CreationTime         = DateTime.MaxValue;
             _imageInfo.LastModificationTime = DateTime.MinValue;
@@ -176,9 +174,10 @@ public sealed partial class KryoFlux
                         string kfinfoStr = StringHandlers.CToString(kfinfo);
 
                         string[] lines = kfinfoStr.Split(new[]
-                        {
-                            ','
-                        }, StringSplitOptions.RemoveEmptyEntries);
+                                                         {
+                                                             ','
+                                                         },
+                                                         StringSplitOptions.RemoveEmptyEntries);
 
                         DateTime blockDate = DateTime.Now;
                         DateTime blockTime = DateTime.Now;
@@ -193,14 +192,20 @@ public sealed partial class KryoFlux
                             switch(kvp[0])
                             {
                                 case HOST_DATE:
-                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
-                                                              DateTimeStyles.AssumeLocal, out blockDate))
+                                    if(DateTime.TryParseExact(kvp[1],
+                                                              "yyyy.MM.dd",
+                                                              CultureInfo.InvariantCulture,
+                                                              DateTimeStyles.AssumeLocal,
+                                                              out blockDate))
                                         foundDate = true;
 
                                     break;
                                 case HOST_TIME:
-                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
-                                                           DateTimeStyles.AssumeLocal, out blockTime);
+                                    DateTime.TryParseExact(kvp[1],
+                                                           "HH:mm:ss",
+                                                           CultureInfo.InvariantCulture,
+                                                           DateTimeStyles.AssumeLocal,
+                                                           out blockTime);
 
                                     break;
                                 case KF_NAME:
@@ -216,13 +221,16 @@ public sealed partial class KryoFlux
 
                         if(foundDate)
                         {
-                            var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
-                                                              blockTime.Hour, blockTime.Minute, blockTime.Second);
+                            var blockTimestamp = new DateTime(blockDate.Year,
+                                                              blockDate.Month,
+                                                              blockDate.Day,
+                                                              blockTime.Hour,
+                                                              blockTime.Minute,
+                                                              blockTime.Second);
 
                             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_timestamp_0, blockTimestamp);
 
-                            if(blockTimestamp < Info.CreationTime)
-                                _imageInfo.CreationTime = blockTimestamp;
+                            if(blockTimestamp < Info.CreationTime) _imageInfo.CreationTime = blockTimestamp;
 
                             if(blockTimestamp > Info.LastModificationTime)
                                 _imageInfo.LastModificationTime = blockTimestamp;

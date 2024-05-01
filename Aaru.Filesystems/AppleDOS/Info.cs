@@ -42,18 +42,15 @@ public sealed partial class AppleDOS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560)
-            return false;
+        if(imagePlugin.Info.Sectors != 455 && imagePlugin.Info.Sectors != 560) return false;
 
-        if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256)
-            return false;
+        if(partition.Start > 0 || imagePlugin.Info.SectorSize != 256) return false;
 
         int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
         ErrorNumber errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
@@ -75,16 +72,15 @@ public sealed partial class AppleDOS
 
         ErrorNumber errno = imagePlugin.ReadSector((ulong)(17 * spt), out byte[] vtocB);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
         sb.AppendLine(Localization.AppleDOS_Name);
         sb.AppendLine();
 
-        sb.AppendFormat(Localization.Catalog_starts_at_sector_0_of_track_1, _vtoc.catalogSector, _vtoc.catalogTrack).
-           AppendLine();
+        sb.AppendFormat(Localization.Catalog_starts_at_sector_0_of_track_1, _vtoc.catalogSector, _vtoc.catalogTrack)
+          .AppendLine();
 
         sb.AppendFormat(Localization.File_system_initialized_by_DOS_release_0, _vtoc.dosRelease).AppendLine();
         sb.AppendFormat(Localization.Disk_volume_number_0,                     _vtoc.volumeNumber).AppendLine();

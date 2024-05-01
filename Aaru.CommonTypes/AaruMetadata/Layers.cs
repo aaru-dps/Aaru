@@ -55,21 +55,18 @@ public class Layers
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Layers(LayersType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var layers = new Layers
         {
             Type = cicm.typeSpecified ? (LayerType)cicm.type : null
         };
 
-        if(cicm.Sectors is null)
-            return layers;
+        if(cicm.Sectors is null) return layers;
 
         layers.Sectors = new List<Sectors>();
 
-        foreach(SectorsType sec in cicm.Sectors)
-            layers.Sectors.Add(sec);
+        foreach(SectorsType sec in cicm.Sectors) layers.Sectors.Add(sec);
 
         return layers;
     }

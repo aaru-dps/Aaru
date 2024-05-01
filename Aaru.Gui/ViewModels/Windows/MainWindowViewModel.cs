@@ -147,12 +147,13 @@ public sealed class MainWindowViewModel : ViewModelBase
             new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         _usbIcon =
-            new Bitmap(AssetLoader.
-                           Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+            new
+                Bitmap(AssetLoader.Open(new
+                                            Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new Bitmap(AssetLoader.
-                           Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new
+                Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
             new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
@@ -193,8 +194,9 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         get
         {
-            Window mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.
-                MainWindow;
+            Window mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+              ?.MainWindow;
+
             return mainWindow is not null && NativeMenu.GetIsNativeMenuExported(mainWindow);
         }
     }
@@ -231,8 +233,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         get => _treeViewSelectedItem;
         set
         {
-            if(value == _treeViewSelectedItem)
-                return;
+            if(value == _treeViewSelectedItem) return;
 
             this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
 
@@ -281,7 +282,8 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 return;
                             case Devices.Remote.Device remoteDev:
-                                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
+                                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                                     remoteDev.RemoteVersion,
                                                      remoteDev.RemoteOperatingSystem,
                                                      remoteDev.RemoteOperatingSystemVersion,
                                                      remoteDev.RemoteArchitecture);
@@ -375,8 +377,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCalculateEntropyCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageEntropyWindow = new ImageEntropy();
         imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
@@ -388,8 +389,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteVerifyImageCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageVerifyWindow = new ImageVerify();
         imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
@@ -401,8 +401,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteChecksumImageCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageChecksumWindow = new ImageChecksum();
         imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
@@ -414,8 +413,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteConvertImageCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageConvertWindow = new ImageConvert();
 
@@ -429,14 +427,16 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCreateSidecarCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageSidecarWindow = new ImageSidecar();
 
         // TODO: Pass thru chosen default encoding
         imageSidecarWindow.DataContext =
-            new ImageSidecarViewModel(imageModel.Image, imageModel.Path, imageModel.Filter.Id, null,
+            new ImageSidecarViewModel(imageModel.Image,
+                                      imageModel.Path,
+                                      imageModel.Filter.Id,
+                                      null,
                                       imageSidecarWindow);
 
         imageSidecarWindow.Show();
@@ -444,8 +444,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteViewImageSectorsCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         new ViewSector
         {
@@ -455,8 +454,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteDecodeImageMediaTagsCommand()
     {
-        if(TreeViewSelectedItem is not ImageModel imageModel)
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         new DecodeMediaTags
         {
@@ -497,8 +495,8 @@ public sealed class MainWindowViewModel : ViewModelBase
            !ctx.Partitions.Any()   &&
            !ctx.SeenDevices.Any())
         {
-            MessageBoxManager.GetMessageBoxStandard(UI.Title_Warning, UI.There_are_no_statistics).
-                              ShowWindowDialogAsync(_view);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Warning, UI.There_are_no_statistics)
+                             .ShowWindowDialogAsync(_view);
 
             return;
         }
@@ -540,14 +538,15 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         string[] result = await dlgOpenImage.ShowAsync(_view);
 
-        if(result?.Length != 1)
-            return;
+        if(result?.Length != 1) return;
 
         IFilter inputFilter = PluginRegister.Singleton.GetFilter(result[0]);
 
         if(inputFilter == null)
         {
-            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Cannot_open_specified_file, ButtonEnum.Ok,
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                    UI.Cannot_open_specified_file,
+                                                    ButtonEnum.Ok,
                                                     Icon.Error);
 
             return;
@@ -557,7 +556,9 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
-                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Image_format_not_identified, ButtonEnum.Ok,
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                        UI.Image_format_not_identified,
+                                                        ButtonEnum.Ok,
                                                         Icon.Error);
 
                 return;
@@ -573,7 +574,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                 {
                     MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                             string.Format(UI.Error_0_opening_image_format, opened),
-                                                            ButtonEnum.Ok, Icon.Error);
+                                                            ButtonEnum.Ok,
+                                                            Icon.Error);
 
                     AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
                     AaruConsole.ErrorWriteLine(UI.No_error_given);
@@ -588,13 +590,10 @@ public sealed class MainWindowViewModel : ViewModelBase
                     Path = result[0],
                     Icon = AssetLoader.Exists(mediaResource)
                                ? new Bitmap(AssetLoader.Open(mediaResource))
-                               :
-                               imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
+                               : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                                    ? _genericHddIcon
-                                   :
-                                   imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
-                                       ?
-                                       _genericOpticalIcon
+                                   : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
+                                       ? _genericOpticalIcon
                                        : _genericFolderIcon,
                     FileName  = Path.GetFileName(result[0]),
                     Image     = imageFormat,
@@ -627,8 +626,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                             Name = scheme
                         };
 
-                        foreach(CommonTypes.Partition partition in partitions.Where(p => p.Scheme == scheme).
-                                                                              OrderBy(p => p.Start))
+                        foreach(CommonTypes.Partition partition in partitions.Where(p => p.Scheme == scheme)
+                                                                             .OrderBy(p => p.Start))
                         {
                             var partitionModel = new PartitionModel
                             {
@@ -650,23 +649,26 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs))
-                                        continue;
-                                    if(fs is null)
-                                        continue;
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs)) continue;
+                                    if(fs is null) continue;
 
-                                    fs.GetInformation(imageFormat, partition, null, out string information,
+                                    fs.GetInformation(imageFormat,
+                                                      partition,
+                                                      null,
+                                                      out string information,
                                                       out CommonTypes.AaruMetadata.FileSystem fsMetadata);
 
                                     var rofs = fs as IReadOnlyFilesystem;
 
                                     if(rofs != null)
                                     {
-                                        ErrorNumber error = rofs.Mount(imageFormat, partition, null,
-                                                                       new Dictionary<string, string>(), null);
+                                        ErrorNumber error = rofs.Mount(imageFormat,
+                                                                       partition,
+                                                                       null,
+                                                                       new Dictionary<string, string>(),
+                                                                       null);
 
-                                        if(error != ErrorNumber.NoError)
-                                            rofs = null;
+                                        if(error != ErrorNumber.NoError) rofs = null;
                                     }
 
                                     var filesystemModel = new FileSystemModel
@@ -725,23 +727,26 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs))
-                                continue;
-                            if(fs is null)
-                                continue;
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs)) continue;
+                            if(fs is null) continue;
 
-                            fs.GetInformation(imageFormat, wholePart, null, out string information,
+                            fs.GetInformation(imageFormat,
+                                              wholePart,
+                                              null,
+                                              out string information,
                                               out CommonTypes.AaruMetadata.FileSystem fsMetadata);
 
                             var rofs = fs as IReadOnlyFilesystem;
 
                             if(rofs != null)
                             {
-                                ErrorNumber error = rofs.Mount(imageFormat, wholePart, null,
-                                                               new Dictionary<string, string>(), null);
+                                ErrorNumber error = rofs.Mount(imageFormat,
+                                                               wholePart,
+                                                               null,
+                                                               new Dictionary<string, string>(),
+                                                               null);
 
-                                if(error != ErrorNumber.NoError)
-                                    rofs = null;
+                                if(error != ErrorNumber.NoError) rofs = null;
                             }
 
                             var filesystemModel = new FileSystemModel
@@ -783,7 +788,9 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Unable_to_open_image_format, ButtonEnum.Ok,
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                        UI.Unable_to_open_image_format,
+                                                        ButtonEnum.Ok,
                                                         Icon.Error);
 
                 AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
@@ -793,7 +800,9 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
         catch(Exception ex)
         {
-            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, UI.Exception_reading_file, ButtonEnum.Ok,
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                    UI.Exception_reading_file,
+                                                    ButtonEnum.Ok,
                                                     Icon.Error);
 
             AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
@@ -809,22 +818,24 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void RefreshDevices()
     {
-        if(!DevicesSupported)
-            return;
+        if(!DevicesSupported) return;
 
         try
         {
             AaruConsole.WriteLine(UI.Refreshing_devices);
             _devicesRoot.Devices.Clear();
 
-            foreach(Devices.DeviceInfo device in Device.ListDevices().
-                                                        Where(d => d.Supported).
-                                                        OrderBy(d => d.Vendor).
-                                                        ThenBy(d => d.Model))
+            foreach(Devices.DeviceInfo device in Device.ListDevices()
+                                                       .Where(d => d.Supported)
+                                                       .OrderBy(d => d.Vendor)
+                                                       .ThenBy(d => d.Model))
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            UI.Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3,
-                                           device.Model, device.Vendor, device.Bus, device.Path);
+                                           device.Model,
+                                           device.Vendor,
+                                           device.Bus,
+                                           device.Path);
 
                 var deviceModel = new DeviceModel
                 {
@@ -839,8 +850,10 @@ public sealed class MainWindowViewModel : ViewModelBase
                 {
                     if(dev is Devices.Remote.Device remoteDev)
                     {
-                        Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                             remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                        Statistics.AddRemote(remoteDev.RemoteApplication,
+                                             remoteDev.RemoteVersion,
+                                             remoteDev.RemoteOperatingSystem,
+                                             remoteDev.RemoteOperatingSystemVersion,
                                              remoteDev.RemoteArchitecture);
                     }
 

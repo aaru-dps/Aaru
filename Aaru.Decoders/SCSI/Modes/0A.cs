@@ -113,17 +113,13 @@ public static partial class Modes
 
     public static ModePage_0A? DecodeModePage_0A(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x0A)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x0A) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_0A();
 
@@ -141,8 +137,7 @@ public static partial class Modes
 
         decoded.ReadyAENHoldOffPeriod = (ushort)((pageResponse[6] << 8) + pageResponse[7]);
 
-        if(pageResponse.Length < 10)
-            return decoded;
+        if(pageResponse.Length < 10) return decoded;
 
         // SPC-1
         decoded.GLTSD |= (pageResponse[2] & 0x02) == 0x02;
@@ -179,38 +174,33 @@ public static partial class Modes
 
     public static string PrettifyModePage_0A(ModePage_0A? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0A page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Control_mode_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.RLEC)
-            sb.AppendLine("\t" + Localization.If_set_target_shall_report_log_exception_conditions);
+        if(page.RLEC) sb.AppendLine("\t" + Localization.If_set_target_shall_report_log_exception_conditions);
 
-        if(page.DQue)
-            sb.AppendLine("\t" + Localization.Tagged_queuing_is_disabled);
+        if(page.DQue) sb.AppendLine("\t" + Localization.Tagged_queuing_is_disabled);
 
-        if(page.EECA)
-            sb.AppendLine("\t" + Localization.Extended_Contingent_Allegiance_is_enabled);
+        if(page.EECA) sb.AppendLine("\t" + Localization.Extended_Contingent_Allegiance_is_enabled);
 
         if(page.RAENP)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Target_may_issue_an_asynchronous_event_notification_upon_completing_its_initialization);
+                          Localization
+                             .Target_may_issue_an_asynchronous_event_notification_upon_completing_its_initialization);
         }
 
         if(page.UAAENP)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Target_may_issue_an_asynchronous_event_notification_instead_of_a_unit_attention_condition);
+                          Localization
+                             .Target_may_issue_an_asynchronous_event_notification_instead_of_a_unit_attention_condition);
         }
 
         if(page.EAENP)
@@ -219,53 +209,45 @@ public static partial class Modes
                           Localization.Target_may_issue_an_asynchronous_event_notification_instead_of_a_deferred_error);
         }
 
-        if(page.GLTSD)
-            sb.AppendLine("\t" + Localization.Global_logging_target_save_disabled);
+        if(page.GLTSD) sb.AppendLine("\t" + Localization.Global_logging_target_save_disabled);
 
         if(page.RAC)
             sb.AppendLine("\t" + Localization.CHECK_CONDITION_should_be_reported_rather_than_a_long_busy_condition);
 
-        if(page.SWP)
-            sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
+        if(page.SWP) sb.AppendLine("\t" + Localization.Software_write_protect_is_enabled);
 
         if(page.TAS)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED);
+                          Localization
+                             .Tasks_aborted_by_other_initiator_s_actions_should_be_terminated_with_TASK_ABORTED);
         }
 
         if(page.TMF_ONLY)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              All_tasks_received_in_nexus_with_ACA_ACTIVE_is_set_and_an_ACA_condition_is_established_shall_terminate);
+                          Localization
+                             .All_tasks_received_in_nexus_with_ACA_ACTIVE_is_set_and_an_ACA_condition_is_established_shall_terminate);
         }
 
         if(page.D_SENSE)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Device_shall_return_descriptor_format_sense_data_when_returning_sense_data_in_the_same_transactions_as_a_CHECK_CONDITION);
+                          Localization
+                             .Device_shall_return_descriptor_format_sense_data_when_returning_sense_data_in_the_same_transactions_as_a_CHECK_CONDITION);
         }
 
-        if(page.ATO)
-            sb.AppendLine("\t" + Localization.LOGICAL_BLOCK_APPLICATION_TAG_should_not_be_modified);
+        if(page.ATO) sb.AppendLine("\t" + Localization.LOGICAL_BLOCK_APPLICATION_TAG_should_not_be_modified);
 
-        if(page.DPICZ)
-            sb.AppendLine("\t" + Localization.Protector_information_checking_is_disabled);
+        if(page.DPICZ) sb.AppendLine("\t" + Localization.Protector_information_checking_is_disabled);
 
-        if(page.NUAR)
-            sb.AppendLine("\t" + Localization.No_unit_attention_on_release);
+        if(page.NUAR) sb.AppendLine("\t" + Localization.No_unit_attention_on_release);
 
-        if(page.ATMPE)
-            sb.AppendLine("\t" + Localization.Application_Tag_mode_page_is_enabled);
+        if(page.ATMPE) sb.AppendLine("\t" + Localization.Application_Tag_mode_page_is_enabled);
 
-        if(page.RWWP)
-            sb.AppendLine("\t" + Localization.Abort_any_write_command_without_protection_information);
+        if(page.RWWP) sb.AppendLine("\t" + Localization.Abort_any_write_command_without_protection_information);
 
-        if(page.SBLP)
-            sb.AppendLine("\t" + Localization.Supports_block_lengths_and_protection_information);
+        if(page.SBLP) sb.AppendLine("\t" + Localization.Supports_block_lengths_and_protection_information);
 
         switch(page.TST)
         {
@@ -294,8 +276,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_Queue_Algorithm_Modifier_0, page.QueueAlgorithm).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_Queue_Algorithm_Modifier_0, page.QueueAlgorithm)
+                  .AppendLine();
 
                 break;
         }
@@ -304,20 +286,20 @@ public static partial class Modes
         {
             case 0:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  If_ACA_is_established_the_task_set_commands_shall_resume_after_it_is_cleared_otherwise_they_shall_terminate_with_CHECK_CONDITION);
+                              Localization
+                                 .If_ACA_is_established_the_task_set_commands_shall_resume_after_it_is_cleared_otherwise_they_shall_terminate_with_CHECK_CONDITION);
 
                 break;
             case 1:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  All_the_affected_commands_in_the_task_set_shall_be_aborted_when_CHECK_CONDITION_is_returned);
+                              Localization
+                                 .All_the_affected_commands_in_the_task_set_shall_be_aborted_when_CHECK_CONDITION_is_returned);
 
                 break;
             case 3:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  Affected_commands_in_the_task_set_belonging_with_the_CHECK_CONDITION_nexus_shall_be_aborted);
+                              Localization
+                                 .Affected_commands_in_the_task_set_belonging_with_the_CHECK_CONDITION_nexus_shall_be_aborted);
 
                 break;
             default:
@@ -339,8 +321,8 @@ public static partial class Modes
                 break;
             case 3:
                 sb.AppendLine("\t" +
-                              Localization.
-                                  LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus_and_shall_establish_a_unit_attention_condition_for_the_initiator);
+                              Localization
+                                 .LUN_shall_not_clear_unit_attention_condition_reported_in_the_same_nexus_and_shall_establish_a_unit_attention_condition_for_the_initiator);
 
                 break;
             default:
@@ -372,10 +354,10 @@ public static partial class Modes
 
         if(page.ReadyAENHoldOffPeriod > 0)
         {
-            sb.
-                AppendFormat("\t" + Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
-                             page.ReadyAENHoldOffPeriod).
-                AppendLine();
+            sb.AppendFormat("\t" +
+                            Localization._0_ms_before_attempting_asynchronous_event_notifications_after_initialization,
+                            page.ReadyAENHoldOffPeriod)
+              .AppendLine();
         }
 
         if(page.BusyTimeoutPeriod > 0)
@@ -385,8 +367,8 @@ public static partial class Modes
             else
             {
                 sb.AppendFormat("\t" + Localization.A_maximum_of_0_ms_are_allowed_to_remain_busy,
-                                page.BusyTimeoutPeriod * 100).
-                   AppendLine();
+                                page.BusyTimeoutPeriod * 100)
+                  .AppendLine();
             }
         }
 
@@ -425,20 +407,15 @@ public static partial class Modes
 
     public static ModePage_0A_S01? DecodeModePage_0A_S01(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) != 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) != 0x40) return null;
 
-        if((pageResponse[0] & 0x3F) != 0x0A)
-            return null;
+        if((pageResponse[0] & 0x3F) != 0x0A) return null;
 
-        if(pageResponse[1] != 0x01)
-            return null;
+        if(pageResponse[1] != 0x01) return null;
 
-        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 32)
-            return null;
+        if(pageResponse.Length < 32) return null;
 
         var decoded = new ModePage_0A_S01();
 
@@ -458,24 +435,22 @@ public static partial class Modes
 
     public static string PrettifyModePage_0A_S01(ModePage_0A_S01? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0A_S01 page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Control_extension_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.TCMOS)
         {
             if(page.SCSIP)
             {
                 sb.AppendLine("\t" +
-                              Localization.
-                                  S01_Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards_but_SCSI_SET_TIMESTAMP_shall_take_precedence_over_them);
+                              Localization
+                                 .S01_Timestamp_can_be_initialized_by_methods_outside_of_the_SCSI_standards_but_SCSI_SET_TIMESTAMP_shall_take_precedence_over_them);
             }
             else
             {
@@ -484,18 +459,16 @@ public static partial class Modes
             }
         }
 
-        if(page.IALUAE)
-            sb.AppendLine("\t" + Localization.Implicit_Asymmetric_Logical_Unit_Access_is_enabled);
+        if(page.IALUAE) sb.AppendLine("\t" + Localization.Implicit_Asymmetric_Logical_Unit_Access_is_enabled);
 
         sb.AppendFormat("\t" + Localization.Initial_priority_is_0, page.InitialPriority).AppendLine();
 
-        if(page.DLC)
-            sb.AppendLine("\t" + Localization.Device_will_not_degrade_performance_to_extend_its_life);
+        if(page.DLC) sb.AppendLine("\t" + Localization.Device_will_not_degrade_performance_to_extend_its_life);
 
         if(page.MaximumSenseLength > 0)
         {
-            sb.AppendFormat("\t" + Localization.Maximum_sense_data_would_be_0_bytes, page.MaximumSenseLength).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Maximum_sense_data_would_be_0_bytes, page.MaximumSenseLength)
+              .AppendLine();
         }
 
         return sb.ToString();

@@ -37,16 +37,13 @@ static partial class ScsiMmc
             retries++;
             sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-            if(!sense)
-                break;
+            if(!sense) break;
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense.Value.ASC != 0x04)
-                break;
+            if(decodedSense.Value.ASC != 0x04) break;
 
-            if(decodedSense.Value.ASCQ != 0x01)
-                break;
+            if(decodedSense.Value.ASCQ != 0x01) break;
 
             Thread.Sleep(2000);
         } while(retries < 25);
@@ -113,16 +110,13 @@ static partial class ScsiMmc
             retries++;
             sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
-            if(!sense)
-                break;
+            if(!sense) break;
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense.Value.ASC != 0x04)
-                break;
+            if(decodedSense.Value.ASC != 0x04) break;
 
-            if(decodedSense.Value.ASCQ != 0x01)
-                break;
+            if(decodedSense.Value.ASCQ != 0x01) break;
 
             Thread.Sleep(2000);
         } while(retries < 25);
@@ -224,16 +218,13 @@ static partial class ScsiMmc
             retries++;
             sense = dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
 
-            if(!sense)
-                break;
+            if(!sense) break;
 
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
-            if(decodedSense.Value.ASC != 0x04)
-                break;
+            if(decodedSense.Value.ASC != 0x04) break;
 
-            if(decodedSense.Value.ASCQ != 0x01)
-                break;
+            if(decodedSense.Value.ASCQ != 0x01) break;
         } while(retries < 25);
 
         if(sense)
@@ -270,8 +261,7 @@ static partial class ScsiMmc
             return;
         }
 
-        if(newLeadOutTrack.PMIN >= 0xA0 && !tocIsNotBcd)
-            newLeadOutTrack.PMIN -= 0x90;
+        if(newLeadOutTrack.PMIN >= 0xA0 && !tocIsNotBcd) newLeadOutTrack.PMIN -= 0x90;
 
         if(newLeadOutTrack.PMIN   != leadOutTrack.PMIN ||
            newLeadOutTrack.PSEC   != leadOutTrack.PSEC ||
@@ -286,46 +276,124 @@ static partial class ScsiMmc
 
         AaruConsole.Write(Localization.Reading_LBA_0, sectors + 5);
 
-        bool dataResult = dev.ReadCd(out byte[] dataBuffer, out byte[] dataSense, (uint)(sectors + 5), 2352, 1,
-                                     MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                     MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+        bool dataResult = dev.ReadCd(out byte[] dataBuffer,
+                                     out byte[] dataSense,
+                                     (uint)(sectors + 5),
+                                     2352,
+                                     1,
+                                     MmcSectorTypes.AllTypes,
+                                     false,
+                                     false,
+                                     true,
+                                     MmcHeaderCodes.AllHeaders,
+                                     true,
+                                     true,
+                                     MmcErrorField.None,
+                                     MmcSubchannel.None,
+                                     dev.Timeout,
+                                     out _);
 
         AaruConsole.WriteLine(dataResult ? Localization.FAIL : Localization.Success);
 
         AaruConsole.Write(Localization.Reading_LBA_0_as_audio_scrambled, sectors + 5);
 
-        bool scrambledResult = dev.ReadCd(out byte[] scrambledBuffer, out byte[] scrambledSense, (uint)(sectors + 5),
-                                          2352, 1, MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                                          false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+        bool scrambledResult = dev.ReadCd(out byte[] scrambledBuffer,
+                                          out byte[] scrambledSense,
+                                          (uint)(sectors + 5),
+                                          2352,
+                                          1,
+                                          MmcSectorTypes.Cdda,
+                                          false,
+                                          false,
+                                          false,
+                                          MmcHeaderCodes.None,
+                                          true,
+                                          false,
+                                          MmcErrorField.None,
+                                          MmcSubchannel.None,
+                                          dev.Timeout,
+                                          out _);
 
         AaruConsole.WriteLine(scrambledResult ? Localization.FAIL : Localization.Success);
 
         AaruConsole.Write(Localization.Reading_LBA_0_PQ_subchannel, sectors + 5);
 
-        bool pqResult = dev.ReadCd(out byte[] pqBuffer, out byte[] pqSense, (uint)(sectors + 5), 16, 1,
-                                   MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, false, false,
-                                   MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout, out _);
+        bool pqResult = dev.ReadCd(out byte[] pqBuffer,
+                                   out byte[] pqSense,
+                                   (uint)(sectors + 5),
+                                   16,
+                                   1,
+                                   MmcSectorTypes.AllTypes,
+                                   false,
+                                   false,
+                                   false,
+                                   MmcHeaderCodes.None,
+                                   false,
+                                   false,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.Q16,
+                                   dev.Timeout,
+                                   out _);
 
         if(pqResult)
         {
-            pqResult = dev.ReadCd(out pqBuffer, out pqSense, (uint)(sectors + 5), 16, 1, MmcSectorTypes.AllTypes, false,
-                                  false, false, MmcHeaderCodes.None, false, false, MmcErrorField.None,
-                                  MmcSubchannel.Q16, dev.Timeout, out _);
+            pqResult = dev.ReadCd(out pqBuffer,
+                                  out pqSense,
+                                  (uint)(sectors + 5),
+                                  16,
+                                  1,
+                                  MmcSectorTypes.AllTypes,
+                                  false,
+                                  false,
+                                  false,
+                                  MmcHeaderCodes.None,
+                                  false,
+                                  false,
+                                  MmcErrorField.None,
+                                  MmcSubchannel.Q16,
+                                  dev.Timeout,
+                                  out _);
         }
 
         AaruConsole.WriteLine(pqResult ? Localization.FAIL : Localization.Success);
 
         AaruConsole.Write(Localization.Reading_LBA_0_RW_subchannel, sectors + 5);
 
-        bool rwResult = dev.ReadCd(out byte[] rwBuffer, out byte[] rwSense, (uint)(sectors + 5), 16, 1,
-                                   MmcSectorTypes.AllTypes, false, false, false, MmcHeaderCodes.None, false, false,
-                                   MmcErrorField.None, MmcSubchannel.Rw, dev.Timeout, out _);
+        bool rwResult = dev.ReadCd(out byte[] rwBuffer,
+                                   out byte[] rwSense,
+                                   (uint)(sectors + 5),
+                                   16,
+                                   1,
+                                   MmcSectorTypes.AllTypes,
+                                   false,
+                                   false,
+                                   false,
+                                   MmcHeaderCodes.None,
+                                   false,
+                                   false,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.Rw,
+                                   dev.Timeout,
+                                   out _);
 
         if(rwResult)
         {
-            rwResult = dev.ReadCd(out rwBuffer, out rwSense, (uint)(sectors + 5), 16, 1, MmcSectorTypes.Cdda, false,
-                                  false, false, MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Rw,
-                                  dev.Timeout, out _);
+            rwResult = dev.ReadCd(out rwBuffer,
+                                  out rwSense,
+                                  (uint)(sectors + 5),
+                                  16,
+                                  1,
+                                  MmcSectorTypes.Cdda,
+                                  false,
+                                  false,
+                                  false,
+                                  MmcHeaderCodes.None,
+                                  false,
+                                  false,
+                                  MmcErrorField.None,
+                                  MmcSubchannel.Rw,
+                                  dev.Timeout,
+                                  out _);
         }
 
         AaruConsole.WriteLine(pqResult ? Localization.FAIL : Localization.Success);
@@ -338,55 +406,61 @@ static partial class ScsiMmc
                                   ? Localization.Device_cannot_read_Lead_Out
                                   : Localization.Device_can_read_Lead_Out);
 
-        AaruConsole.WriteLine(Localization.LBA_0_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, dataResult,
+        AaruConsole.WriteLine(Localization.LBA_0_sense_is_1_buffer_is_2_sense_buffer_is_3,
+                              sectors + 5,
+                              dataResult,
                               dataBuffer is null
                                   ? Localization._null
-                                  :
-                                  ArrayHelpers.ArrayIsNullOrEmpty(dataBuffer)
-                                      ?
-                                      Localization.empty
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(dataBuffer)
+                                      ? Localization.empty
                                       : string.Format(Localization._0_bytes, dataBuffer.Length),
-                              dataSense is null                          ? Localization._null :
-                              ArrayHelpers.ArrayIsNullOrEmpty(dataSense) ? Localization.empty : $"{dataSense.Length}");
+                              dataSense is null
+                                  ? Localization._null
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(dataSense)
+                                      ? Localization.empty
+                                      : $"{dataSense.Length}");
 
-        AaruConsole.WriteLine(Localization.LBA_0_scrambled_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5,
+        AaruConsole.WriteLine(Localization.LBA_0_scrambled_sense_is_1_buffer_is_2_sense_buffer_is_3,
+                              sectors + 5,
                               scrambledResult,
                               scrambledBuffer is null
                                   ? Localization._null
-                                  :
-                                  ArrayHelpers.ArrayIsNullOrEmpty(scrambledBuffer)
-                                      ?
-                                      Localization.empty
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(scrambledBuffer)
+                                      ? Localization.empty
                                       : string.Format(Localization._0_bytes, scrambledBuffer.Length),
                               scrambledSense is null
                                   ? Localization._null
-                                  :
-                                  ArrayHelpers.ArrayIsNullOrEmpty(scrambledSense)
-                                      ?
-                                      Localization.empty
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(scrambledSense)
+                                      ? Localization.empty
                                       : $"{scrambledSense.Length}");
 
-        AaruConsole.WriteLine(Localization.LBA_0_PQ_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, pqResult,
+        AaruConsole.WriteLine(Localization.LBA_0_PQ_sense_is_1_buffer_is_2_sense_buffer_is_3,
+                              sectors + 5,
+                              pqResult,
                               pqBuffer is null
                                   ? Localization._null
-                                  :
-                                  ArrayHelpers.ArrayIsNullOrEmpty(pqBuffer)
-                                      ?
-                                      Localization.empty
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(pqBuffer)
+                                      ? Localization.empty
                                       : string.Format(Localization._0_bytes, pqBuffer.Length),
-                              pqSense is null                          ? Localization._null :
-                              ArrayHelpers.ArrayIsNullOrEmpty(pqSense) ? Localization.empty : $"{pqSense.Length}");
+                              pqSense is null
+                                  ? Localization._null
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(pqSense)
+                                      ? Localization.empty
+                                      : $"{pqSense.Length}");
 
-        AaruConsole.WriteLine(Localization.LBA_0_RW_sense_is_1_buffer_is_2_sense_buffer_is_3, sectors + 5, rwResult,
+        AaruConsole.WriteLine(Localization.LBA_0_RW_sense_is_1_buffer_is_2_sense_buffer_is_3,
+                              sectors + 5,
+                              rwResult,
                               rwBuffer is null
                                   ? Localization._null
-                                  :
-                                  ArrayHelpers.ArrayIsNullOrEmpty(rwBuffer)
-                                      ?
-                                      Localization.empty
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(rwBuffer)
+                                      ? Localization.empty
                                       : string.Format(Localization._0_bytes, rwBuffer.Length),
-                              rwSense is null                          ? Localization._null :
-                              ArrayHelpers.ArrayIsNullOrEmpty(rwSense) ? Localization.empty : $"{rwSense.Length}");
+                              rwSense is null
+                                  ? Localization._null
+                                  : ArrayHelpers.ArrayIsNullOrEmpty(rwSense)
+                                      ? Localization.empty
+                                      : $"{rwSense.Length}");
 
         AaruConsole.WriteLine();
         AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -428,8 +502,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,       devPath);
                 AaruConsole.WriteLine(Localization.LBA_0_response, sectors + 5);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(dataBuffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(dataBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -440,8 +513,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,    devPath);
                 AaruConsole.WriteLine(Localization.LBA_0_sense, sectors + 5);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(dataSense, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(dataSense, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -461,8 +533,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,                 devPath);
                 AaruConsole.WriteLine(Localization.LBA_0_scrambled_response, sectors + 5);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(scrambledBuffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(scrambledBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -473,8 +544,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,              devPath);
                 AaruConsole.WriteLine(Localization.LBA_0_scrambled_sense, sectors + 5);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(scrambledSense, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(scrambledSense, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -494,8 +564,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,          devPath);
                 AaruConsole.WriteLine(Localization.LBA_PQ_0_response, sectors + 5);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(pqBuffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(pqBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -506,8 +575,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,       devPath);
                 AaruConsole.WriteLine(Localization.LBA_PQ_0_sense, sectors + 5);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(pqSense, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(pqSense, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -527,8 +595,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,          devPath);
                 AaruConsole.WriteLine(Localization.LBA_RW_0_response, sectors + 5);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(rwBuffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(rwBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -539,8 +606,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0,       devPath);
                 AaruConsole.WriteLine(Localization.LBA_RW_0_sense, sectors + 5);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(rwSense, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(rwSense, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

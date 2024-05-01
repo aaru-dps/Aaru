@@ -58,12 +58,18 @@ public partial class Device
         cdb[3] = (byte)(lba & 0xFF);
         cdb[4] = 3;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ARCHIVE_CORP_REQUEST_BLOCK_ADDRESS_took_0_ms,
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.ARCHIVE_CORP_REQUEST_BLOCK_ADDRESS_took_0_ms,
                                    duration);
 
         return sense;
@@ -95,10 +101,14 @@ public partial class Device
         cdb[2] = (byte)((lba & 0xFF00)   >> 8);
         cdb[3] = (byte)(lba & 0xFF);
 
-        if(immediate)
-            cdb[1] += 0x01;
+        if(immediate) cdb[1] += 0x01;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

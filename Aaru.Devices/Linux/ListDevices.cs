@@ -78,8 +78,7 @@ static class ListDevices
                 devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                 devices[i].Model  = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
 
-                if(!string.IsNullOrEmpty(devices[i].Model))
-                    devices[i].Model = devices[i].Model.Replace('_', ' ');
+                if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');
 
                 devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
 

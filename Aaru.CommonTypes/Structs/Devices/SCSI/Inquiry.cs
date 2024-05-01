@@ -271,8 +271,7 @@ public struct Inquiry
 
     public static Inquiry? Decode(byte[] SCSIInquiryResponse)
     {
-        if(SCSIInquiryResponse == null)
-            return null;
+        if(SCSIInquiryResponse == null) return null;
 
         if(SCSIInquiryResponse.Length < 36 && SCSIInquiryResponse.Length != 5)
         {
@@ -287,9 +286,10 @@ public struct Inquiry
            SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field,
-                                       SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
+                                       Localization
+                                          .INQUIRY_response_length_0_bytes_is_different_than_specified_in_length_field,
+                                       SCSIInquiryResponse.Length,
+                                       SCSIInquiryResponse[4] + 4);
 
             return null;
         }
@@ -324,8 +324,7 @@ public struct Inquiry
             decoded.ResponseDataFormat = (byte)(SCSIInquiryResponse[3] & 0x07);
         }
 
-        if(SCSIInquiryResponse.Length >= 5)
-            decoded.AdditionalLength = SCSIInquiryResponse[4];
+        if(SCSIInquiryResponse.Length >= 5) decoded.AdditionalLength = SCSIInquiryResponse[4];
 
         if(SCSIInquiryResponse.Length >= 6)
         {
@@ -465,8 +464,7 @@ public struct Inquiry
             decoded.IUS       = Convert.ToBoolean(SCSIInquiryResponse[56] & 0x01);
         }
 
-        if(SCSIInquiryResponse.Length >= 58)
-            decoded.Reserved4 = SCSIInquiryResponse[57];
+        if(SCSIInquiryResponse.Length >= 58) decoded.Reserved4 = SCSIInquiryResponse[57];
 
         if(SCSIInquiryResponse.Length >= 60)
         {
@@ -511,8 +509,7 @@ public struct Inquiry
             Array.Copy(SCSIInquiryResponse, 96, decoded.Seagate_Copyright, 0, 48);
         }
 
-        if(SCSIInquiryResponse.Length < 148)
-            return decoded;
+        if(SCSIInquiryResponse.Length < 148) return decoded;
 
         // Seagate 2
         decoded.Seagate3Present         = true;
@@ -527,8 +524,7 @@ public struct Inquiry
     /// <returns>Raw SCSI INQUIRY response</returns>
     public static byte[] Encode(Inquiry? inq)
     {
-        if(inq is null)
-            return null;
+        if(inq is null) return null;
 
         Inquiry decoded = inq.Value;
 
@@ -538,8 +534,7 @@ public struct Inquiry
         buffer[0] =  (byte)(decoded.PeripheralQualifier << 5);
         buffer[0] += decoded.PeripheralDeviceType;
 
-        if(decoded.RMB)
-            buffer[1] = 0x80;
+        if(decoded.RMB) buffer[1] = 0x80;
 
         buffer[1] += decoded.DeviceTypeModifier;
 
@@ -547,17 +542,13 @@ public struct Inquiry
         buffer[2] += (byte)(decoded.ECMAVersion << 3);
         buffer[2] += decoded.ANSIVersion;
 
-        if(decoded.AERC)
-            buffer[3] = 0x80;
+        if(decoded.AERC) buffer[3] = 0x80;
 
-        if(decoded.TrmTsk)
-            buffer[3] += 0x40;
+        if(decoded.TrmTsk) buffer[3] += 0x40;
 
-        if(decoded.NormACA)
-            buffer[3] += 0x20;
+        if(decoded.NormACA) buffer[3] += 0x20;
 
-        if(decoded.HiSup)
-            buffer[3] += 0x10;
+        if(decoded.HiSup) buffer[3] += 0x10;
 
         buffer[3] += decoded.ResponseDataFormat;
 
@@ -576,21 +567,17 @@ public struct Inquiry
         {
             length = 6;
 
-            if(decoded.SCCS)
-                buffer[5] = 0x80;
+            if(decoded.SCCS) buffer[5] = 0x80;
 
-            if(decoded.ACC)
-                buffer[5] += 0x40;
+            if(decoded.ACC) buffer[5] += 0x40;
 
             buffer[5] += (byte)(decoded.TPGS << 4);
 
-            if(decoded.ThreePC)
-                buffer[5] += 0x08;
+            if(decoded.ThreePC) buffer[5] += 0x08;
 
             buffer[5] += (byte)(decoded.Reserved2 << 1);
 
-            if(decoded.Protect)
-                buffer[5] += 0x01;
+            if(decoded.Protect) buffer[5] += 0x01;
         }
 
         if(decoded.BQue    ||
@@ -604,29 +591,21 @@ public struct Inquiry
         {
             length = 7;
 
-            if(decoded.BQue)
-                buffer[6] = 0x80;
+            if(decoded.BQue) buffer[6] = 0x80;
 
-            if(decoded.EncServ)
-                buffer[6] += 0x40;
+            if(decoded.EncServ) buffer[6] += 0x40;
 
-            if(decoded.VS1)
-                buffer[6] += 0x20;
+            if(decoded.VS1) buffer[6] += 0x20;
 
-            if(decoded.MultiP)
-                buffer[6] += 0x10;
+            if(decoded.MultiP) buffer[6] += 0x10;
 
-            if(decoded.MChngr)
-                buffer[6] += 0x08;
+            if(decoded.MChngr) buffer[6] += 0x08;
 
-            if(decoded.ACKREQQ)
-                buffer[6] += 0x04;
+            if(decoded.ACKREQQ) buffer[6] += 0x04;
 
-            if(decoded.Addr32)
-                buffer[6] += 0x02;
+            if(decoded.Addr32) buffer[6] += 0x02;
 
-            if(decoded.Addr16)
-                buffer[6] += 0x01;
+            if(decoded.Addr16) buffer[6] += 0x01;
         }
 
         if(decoded.RelAddr ||
@@ -641,36 +620,31 @@ public struct Inquiry
         {
             length = 8;
 
-            if(decoded.RelAddr)
-                buffer[7] = 0x80;
+            if(decoded.RelAddr) buffer[7] = 0x80;
 
-            if(decoded.WBus32)
-                buffer[7] += 0x40;
+            if(decoded.WBus32) buffer[7] += 0x40;
 
-            if(decoded.WBus16)
-                buffer[7] += 0x20;
+            if(decoded.WBus16) buffer[7] += 0x20;
 
-            if(decoded.Sync)
-                buffer[7] += 0x10;
+            if(decoded.Sync) buffer[7] += 0x10;
 
-            if(decoded.Linked)
-                buffer[7] += 0x08;
+            if(decoded.Linked) buffer[7] += 0x08;
 
-            if(decoded.TranDis)
-                buffer[7] += 0x04;
+            if(decoded.TranDis) buffer[7] += 0x04;
 
-            if(decoded.CmdQue)
-                buffer[7] += 0x02;
+            if(decoded.CmdQue) buffer[7] += 0x02;
 
-            if(decoded.SftRe)
-                buffer[7] += 0x01;
+            if(decoded.SftRe) buffer[7] += 0x01;
         }
 
         if(decoded.VendorIdentification != null)
         {
             length = 16;
 
-            Array.Copy(decoded.VendorIdentification, 0, buffer, 8,
+            Array.Copy(decoded.VendorIdentification,
+                       0,
+                       buffer,
+                       8,
                        decoded.VendorIdentification.Length >= 8 ? 8 : decoded.VendorIdentification.Length);
         }
 
@@ -678,7 +652,10 @@ public struct Inquiry
         {
             length = 32;
 
-            Array.Copy(decoded.ProductIdentification, 0, buffer, 16,
+            Array.Copy(decoded.ProductIdentification,
+                       0,
+                       buffer,
+                       16,
                        decoded.ProductIdentification.Length >= 16 ? 16 : decoded.ProductIdentification.Length);
         }
 
@@ -686,7 +663,10 @@ public struct Inquiry
         {
             length = 36;
 
-            Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32,
+            Array.Copy(decoded.ProductRevisionLevel,
+                       0,
+                       buffer,
+                       32,
                        decoded.ProductRevisionLevel.Length >= 4 ? 4 : decoded.ProductRevisionLevel.Length);
         }
 
@@ -708,8 +688,7 @@ public struct Inquiry
         {
             length = 49;
 
-            if(decoded.HP_WORM)
-                buffer[40] = 0x01;
+            if(decoded.HP_WORM) buffer[40] = 0x01;
 
             buffer[40] += (byte)(decoded.HP_WORMVersion << 1);
             Array.Copy(decoded.HP_OBDR, 0, buffer, 43, 6);
@@ -720,8 +699,7 @@ public struct Inquiry
             length = 56;
             Array.Copy(HiMDSignatureContents, 0, buffer, 36, 8);
 
-            if(decoded.HiMDSpecific != null)
-                Array.Copy(decoded.HiMDSpecific, 0, buffer, 44, 12);
+            if(decoded.HiMDSpecific != null) Array.Copy(decoded.HiMDSpecific, 0, buffer, 44, 12);
         }
 
         if(decoded is { VendorSpecific: not null, IsHiMD: false })
@@ -736,11 +714,9 @@ public struct Inquiry
             buffer[56] =  (byte)(decoded.Reserved3 << 4);
             buffer[56] += (byte)(decoded.Clocking  << 2);
 
-            if(decoded.QAS)
-                buffer[56] += 0x02;
+            if(decoded.QAS) buffer[56] += 0x02;
 
-            if(decoded.IUS)
-                buffer[56] += 0x01;
+            if(decoded.IUS) buffer[56] += 0x01;
         }
 
         if(decoded.Reserved4 != 0)

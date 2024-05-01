@@ -52,8 +52,7 @@ public sealed partial class D88
         // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
         var shiftjis = Encoding.GetEncoding("shift_jis");
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<Header>()) return false;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -62,7 +61,8 @@ public sealed partial class D88
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.name = \"{0}\"", StringHandlers.CToString(hdr.name, shiftjis));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.reserved is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "d88hdr.reserved is empty? = {0}",
                                    hdr.reserved.SequenceEqual(_reservedEmpty));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.write_protect = 0x{0:X2}", hdr.write_protect);
@@ -71,24 +71,19 @@ public sealed partial class D88
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "d88hdr.disk_size = {0}", hdr.disk_size);
 
-        if(hdr.disk_size != stream.Length)
-            return false;
+        if(hdr.disk_size != stream.Length) return false;
 
-        if(hdr.disk_type != DiskType.D2 && hdr.disk_type != DiskType.Dd2 && hdr.disk_type != DiskType.Hd2)
-            return false;
+        if(hdr.disk_type != DiskType.D2 && hdr.disk_type != DiskType.Dd2 && hdr.disk_type != DiskType.Hd2) return false;
 
-        if(!hdr.reserved.SequenceEqual(_reservedEmpty))
-            return false;
+        if(!hdr.reserved.SequenceEqual(_reservedEmpty)) return false;
 
         var counter = 0;
 
         foreach(int t in hdr.track_table)
         {
-            if(t > 0)
-                counter++;
+            if(t > 0) counter++;
 
-            if(t < 0 || t > stream.Length)
-                return false;
+            if(t < 0 || t > stream.Length) return false;
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization._0_tracks, counter);

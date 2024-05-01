@@ -384,13 +384,11 @@ public class CSS
     /// <returns>A DiscKey struct with the decoded key.</returns>
     public static CSS_CPRM.DiscKey? DecodeDiscKey(byte[] response, byte[] busKey)
     {
-        if(response.Length != 2052 || busKey.Length != 5)
-            return null;
+        if(response.Length != 2052 || busKey.Length != 5) return null;
 
         byte[] key = response.Skip(4).Take(2048).ToArray();
 
-        for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - i % busKey.Length];
+        for(uint i = 0; i < key.Length; i++) key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.DiscKey
         {
@@ -410,13 +408,11 @@ public class CSS
     /// <returns>A TitleKey struct with the decoded key.</returns>
     public static CSS_CPRM.TitleKey? DecodeTitleKey(byte[] response, byte[] busKey)
     {
-        if(response.Length != 12 || busKey.Length != 5)
-            return null;
+        if(response.Length != 12 || busKey.Length != 5) return null;
 
         byte[] key = response.Skip(5).Take(5).ToArray();
 
-        for(uint i = 0; i < key.Length; i++)
-            key[i] ^= busKey[4 - i % busKey.Length];
+        for(uint i = 0; i < key.Length; i++) key[i] ^= busKey[4 - i % busKey.Length];
 
         return new CSS_CPRM.TitleKey
         {
@@ -446,13 +442,11 @@ public class CSS
         byte carry   = 0;
         key = new byte[5];
 
-        for(var i = 9; i >= 0; --i)
-            scratch[i] = challenge[_permutationChallenge[(uint)keyType, i]];
+        for(var i = 9; i >= 0; --i) scratch[i] = challenge[_permutationChallenge[(uint)keyType, i]];
 
         var cssVariant = (byte)(keyType == 0 ? variant : _permutationVariant[(uint)keyType - 1, variant]);
 
-        for(var i = 5; --i >= 0;)
-            temp1[i] = (byte)(scratch[5 + i] ^ _secret[i] ^ _encryptTable2[i]);
+        for(var i = 5; --i >= 0;) temp1[i] = (byte)(scratch[5 + i] ^ _secret[i] ^ _encryptTable2[i]);
 
         var lfsr0 = (uint)(temp1[0] << 17 | temp1[1] << 9 | (temp1[2] & ~7) << 1 | 8 | temp1[2] & 7);
         var lfsr1 = (uint)(temp1[3] << 9  | 0x100         | temp1[4]);
@@ -618,8 +612,7 @@ public class CSS
                 // we found the correct key.
                 DecryptKey(0, decryptedKey, verificationKey, out byte[] verify);
 
-                if(decryptedKey.SequenceEqual(verify))
-                    return;
+                if(decryptedKey.SequenceEqual(verify)) return;
             }
         }
 
@@ -655,7 +648,10 @@ public class CSS
                 continue;
             }
 
-            Array.Copy(UnscrambleSector(currentKey, currentSector), 0, decryptedBuffer, (int)(i * blockSize),
+            Array.Copy(UnscrambleSector(currentKey, currentSector),
+                       0,
+                       decryptedBuffer,
+                       (int)(i * blockSize),
                        blockSize);
         }
 
@@ -680,23 +676,26 @@ public class CSS
 
         for(uint i = 0; i < blocks; i++)
         {
-            byte[] currentKey    = keyData.Skip((int)(i * 5)).Take(5).ToArray();
+            byte[] currentKey    = keyData.Skip((int)(i    * 5)).Take(5).ToArray();
             byte[] currentPrefix = sectorData.Skip((int)(i * 2064)).Take(12).ToArray();
             byte[] currentSuffix = sectorData.Skip((int)(2060 + i * 2064)).Take(4).ToArray();
-            byte[] currentSector = sectorData.Skip((int)(12 + i * blockSize + (16 * i))).Take((int)blockSize).ToArray();
+            byte[] currentSector = sectorData.Skip((int)(12   + i * blockSize + 16 * i)).Take((int)blockSize).ToArray();
 
             Array.Copy(currentPrefix, 0, decryptedBuffer, (int)(i * 2064),        12);
             Array.Copy(currentSuffix, 0, decryptedBuffer, (int)(2060 + i * 2064), 4);
 
             if(!IsEncrypted(cmiData?[i], currentKey, currentSector))
             {
-                Array.Copy(currentSector, 0, decryptedBuffer, (int)(12 + i * blockSize + (16 * i)), blockSize);
+                Array.Copy(currentSector, 0, decryptedBuffer, (int)(12 + i * blockSize + 16 * i), blockSize);
 
                 continue;
             }
 
-            Array.Copy(UnscrambleSector(currentKey, currentSector), 0, decryptedBuffer,
-                       (int)(12 + i * blockSize + (16 * i)), blockSize);
+            Array.Copy(UnscrambleSector(currentKey, currentSector),
+                       0,
+                       decryptedBuffer,
+                       (int)(12 + i * blockSize + 16 * i),
+                       blockSize);
         }
 
         return decryptedBuffer;
@@ -761,16 +760,13 @@ public class CSS
     static bool IsEncrypted(byte? cmi, byte[]? key, IReadOnlyList<byte> sector)
     {
         // Only MPEG packets can be encrypted.
-        if(!Mpeg.IsMpegPacket(sector))
-            return false;
+        if(!Mpeg.IsMpegPacket(sector)) return false;
 
         // The CMI tells us the sector is not encrypted.
-        if(cmi != null && (cmi & 0x80) >> 7 == 0)
-            return false;
+        if(cmi != null && (cmi & 0x80) >> 7 == 0) return false;
 
         // We have the key but it's all zeroes, so sector is unencrypted.
-        if(key != null && key.All(static k => k == 0))
-            return false;
+        if(key != null && key.All(static k => k == 0)) return false;
 
         // These packet types cannot be encrypted
         if(sector[17] == (byte)Mpeg.Mpeg2StreamId.SystemHeader  ||
@@ -789,8 +785,7 @@ public class CSS
     public static bool CheckRegion(CSS_CPRM.RegionalPlaybackControlState rpc, CSS_CPRM.LeadInCopyright cmi)
     {
         // if disc region is all or none, we cannot do anything but try to read it as is
-        if(cmi.RegionInformation is 0xFF or 0x00)
-            return true;
+        if(cmi.RegionInformation is 0xFF or 0x00) return true;
 
         return (rpc.RegionMask & 0x01) == (cmi.RegionInformation & 0x01) && (rpc.RegionMask & 0x01) != 0x01 ||
                (rpc.RegionMask & 0x02) == (cmi.RegionInformation & 0x02) && (rpc.RegionMask & 0x02) != 0x02 ||
@@ -822,8 +817,7 @@ public class CSS
             // Find the number of bytes that repeats in cycles.
             for(uint j = i + 1; j < 0x80 && sector[0x7F - j % i] == sector[0x7F - j]; j++)
             {
-                if(j <= bestPatternLength)
-                    continue;
+                if(j <= bestPatternLength) continue;
 
                 bestPatternLength = j;
                 bestPattern       = i;
@@ -831,14 +825,15 @@ public class CSS
         }
 
         // If we found an adequate pattern.
-        if(bestPattern <= 0 || bestPatternLength <= 3 || bestPatternLength / bestPattern < 2)
-            return false;
+        if(bestPattern <= 0 || bestPatternLength <= 3 || bestPatternLength / bestPattern < 2) return false;
 
         var offset = (int)(0x80 - bestPatternLength / bestPattern * bestPattern);
 
-        int result = RecoverTitleKey(0, sector.Skip(0x80).Take(sector.Length - 0x80).ToArray(),
-                                     sector.Skip(offset).Take(sector.Length  - offset).ToArray(),
-                                     sector.Skip(0x54).Take(5).ToArray(), out key);
+        int result = RecoverTitleKey(0,
+                                     sector.Skip(0x80).Take(sector.Length   - 0x80).ToArray(),
+                                     sector.Skip(offset).Take(sector.Length - offset).ToArray(),
+                                     sector.Skip(0x54).Take(5).ToArray(),
+                                     out key);
 
         return result >= 0;
     }
@@ -862,8 +857,7 @@ public class CSS
         int  exit = -1;
         key = new byte[5];
 
-        for(i = 0; i < 10; i++)
-            buffer[i] = (byte)(_cssTable1[encryptedBytes[i]] ^ decryptedBytes[i]);
+        for(i = 0; i < 10; i++) buffer[i] = (byte)(_cssTable1[encryptedBytes[i]] ^ decryptedBytes[i]);
 
         for(iTry = start; iTry < 0x10000; iTry++)
         {
@@ -875,6 +869,7 @@ public class CSS
             // Iterate cipher 4 times to reconstruct LFSR2
             long oLfsr1;
             long oLfsr0;
+
             for(i = 0; i < 4; i++)
             {
                 // Advance LFSR1 normally 
@@ -884,11 +879,9 @@ public class CSS
                 oLfsr1  = _cssTable5[oLfsr1];
                 oLfsr0  = buffer[i];
 
-                if(combined > 0)
-                    oLfsr0 = oLfsr0 + 0xff & 0x0ff;
+                if(combined > 0) oLfsr0 = oLfsr0 + 0xff & 0x0ff;
 
-                if(oLfsr0 < oLfsr1)
-                    oLfsr0 += 0x100;
+                if(oLfsr0 < oLfsr1) oLfsr0 += 0x100;
 
                 oLfsr0   -=  oLfsr1;
                 combined +=  oLfsr0 + oLfsr1;
@@ -911,14 +904,12 @@ public class CSS
                 oLfsr0   =  _cssTable4[oLfsr0];
                 combined += oLfsr0 + oLfsr1;
 
-                if((combined & 0xff) != buffer[i])
-                    break;
+                if((combined & 0xff) != buffer[i]) break;
 
                 combined >>= 8;
             }
 
-            if(i != 10)
-                continue;
+            if(i != 10) continue;
 
             lfsr0 = candidate;
 
@@ -932,8 +923,7 @@ public class CSS
                     lfsr0  = lfsr0 & 0x1ffff | j                                << 17;
                     oLfsr0 = (((lfsr0 >> 3 ^ lfsr0) >> 1 ^ lfsr0) >> 8 ^ lfsr0) >> 5 & 0xff;
 
-                    if(oLfsr0 == lfsr1Lo)
-                        break;
+                    if(oLfsr0 == lfsr1Lo) break;
                 }
             }
 
@@ -941,8 +931,7 @@ public class CSS
 
             for(combined = 0; combined < 8; combined++)
             {
-                if((oLfsr1 + combined) * 2 + 8 - (oLfsr1 + combined & 7) != lfsr0)
-                    continue;
+                if((oLfsr1 + combined) * 2 + 8 - (oLfsr1 + combined & 7) != lfsr0) continue;
 
                 key[0] = (byte)(iTry >> 8);
                 key[1] = (byte)(iTry                    & 0xFF);
@@ -953,8 +942,7 @@ public class CSS
             }
         }
 
-        if(exit < 0)
-            return exit;
+        if(exit < 0) return exit;
 
         key[0] ^= sectorSeed[0];
         key[1] ^= sectorSeed[1];
@@ -980,11 +968,9 @@ public class CSS
         {
             input.ReadSector(startSector + i, out byte[] sector);
 
-            if(!IsEncrypted(null, null, sector))
-                continue;
+            if(!IsEncrypted(null, null, sector)) continue;
 
-            if(AttackPattern(sector, out byte[] key))
-                return key;
+            if(AttackPattern(sector, out byte[] key)) return key;
         }
 
         return titleKey;
@@ -1005,28 +991,23 @@ public class CSS
 
         foreach(Partition partition in partitions)
         {
-            if(fs is null)
-                continue;
+            if(fs is null) continue;
 
-            if(!HasVideoTsFolder(input, fs, partition))
-                continue;
+            if(!HasVideoTsFolder(input, fs, partition)) continue;
 
-            if(fs.Mount(input, partition, null, null, null) != ErrorNumber.NoError)
-                continue;
+            if(fs.Mount(input, partition, null, null, null) != ErrorNumber.NoError) continue;
 
             if(fs.OpenDir("VIDEO_TS", out IDirNode node) == ErrorNumber.NoError)
             {
                 while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
                 {
-                    if(!entry.EndsWith(".vob", StringComparison.InvariantCultureIgnoreCase))
-                        continue;
+                    if(!entry.EndsWith(".vob", StringComparison.InvariantCultureIgnoreCase)) continue;
 
                     fs.Stat("VIDEO_TS" + "/" + entry, out FileEntryInfo stat);
 
                     byte[] key = FindTitleKey(input, stat.Inode);
 
-                    for(long i = 0; i < stat.Blocks; i++)
-                        key.CopyTo(keys, (long)(5 * (stat.Inode + (ulong)i)));
+                    for(long i = 0; i < stat.Blocks; i++) key.CopyTo(keys, (long)(5 * (stat.Inode + (ulong)i)));
                 }
 
                 fs.CloseDir(node);
@@ -1049,8 +1030,7 @@ public class CSS
     {
         ErrorNumber error = fs.Mount(input, partition, null, null, null);
 
-        if(error != ErrorNumber.NoError)
-            return false;
+        if(error != ErrorNumber.NoError) return false;
 
         error = fs.Stat("VIDEO_TS", out FileEntryInfo stat);
         fs.Unmount();

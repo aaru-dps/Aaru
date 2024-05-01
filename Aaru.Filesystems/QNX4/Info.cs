@@ -47,22 +47,18 @@ public sealed partial class QNX4
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start + 1 >= imagePlugin.Info.Sectors)
-            return false;
+        if(partition.Start + 1 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < 512)
-            return false;
+        if(sector.Length < 512) return false;
 
         Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
         // Check root directory name
-        if(!_rootDirFname.SequenceEqual(qnxSb.rootDir.di_fname))
-            return false;
+        if(!_rootDirFname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
 
         // Check sizes are multiple of blocks
         if(qnxSb.rootDir.di_size % 512 != 0 ||
@@ -94,11 +90,9 @@ public sealed partial class QNX4
         metadata    = new FileSystem();
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start + 1, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < 512)
-            return;
+        if(sector.Length < 512) return;
 
         Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 

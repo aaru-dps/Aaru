@@ -51,15 +51,13 @@ public sealed partial class HPFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(16 + partition.Start >= partition.End)
-            return false;
+        if(16 + partition.Start >= partition.End) return false;
 
         ErrorNumber errno =
             imagePlugin.ReadSector(16 + partition.Start,
                                    out byte[] hpfsSbSector); // Seek to superblock, on logical sector 16
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var magic1 = BitConverter.ToUInt32(hpfsSbSector, 0x000);
         var magic2 = BitConverter.ToUInt32(hpfsSbSector, 0x004);
@@ -81,20 +79,17 @@ public sealed partial class HPFS
             imagePlugin.ReadSector(0 + partition.Start,
                                    out byte[] hpfsBpbSector); // Seek to BIOS parameter block, on logical sector 0
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSector(16 + partition.Start,
                                        out byte[] hpfsSbSector); // Seek to superblock, on logical sector 16
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSector(17 + partition.Start,
                                        out byte[] hpfsSpSector); // Seek to spareblock, on logical sector 17
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpfsBpbSector);
 
@@ -131,8 +126,8 @@ public sealed partial class HPFS
         //          sb.AppendFormat("{0} heads", hpfs_bpb.heads).AppendLine();
         sb.AppendFormat(Localization._0_sectors_hidden_before_BPB, bpb.hsectors).AppendLine();
 
-        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, hpfsSb.sectors, hpfsSb.sectors * bpb.bps).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, hpfsSb.sectors, hpfsSb.sectors * bpb.bps)
+          .AppendLine();
 
         //          sb.AppendFormat("{0} sectors on volume ({1} bytes)", hpfs_bpb.big_sectors, hpfs_bpb.big_sectors * hpfs_bpb.bps).AppendLine();
         sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
@@ -182,50 +177,35 @@ public sealed partial class HPFS
         sb.AppendLine(Localization.Flags);
         sb.AppendLine((sp.flags1 & 0x01) == 0x01 ? Localization.Filesystem_is_dirty : Localization.Filesystem_is_clean);
 
-        if((sp.flags1 & 0x02) == 0x02)
-            sb.AppendLine(Localization.Spare_directory_blocks_are_in_use);
+        if((sp.flags1 & 0x02) == 0x02) sb.AppendLine(Localization.Spare_directory_blocks_are_in_use);
 
-        if((sp.flags1 & 0x04) == 0x04)
-            sb.AppendLine(Localization.Hotfixes_are_in_use);
+        if((sp.flags1 & 0x04) == 0x04) sb.AppendLine(Localization.Hotfixes_are_in_use);
 
-        if((sp.flags1 & 0x08) == 0x08)
-            sb.AppendLine(Localization.Disk_contains_bad_sectors);
+        if((sp.flags1 & 0x08) == 0x08) sb.AppendLine(Localization.Disk_contains_bad_sectors);
 
-        if((sp.flags1 & 0x10) == 0x10)
-            sb.AppendLine(Localization.Disk_has_a_bad_bitmap);
+        if((sp.flags1 & 0x10) == 0x10) sb.AppendLine(Localization.Disk_has_a_bad_bitmap);
 
-        if((sp.flags1 & 0x20) == 0x20)
-            sb.AppendLine(Localization.Filesystem_was_formatted_fast);
+        if((sp.flags1 & 0x20) == 0x20) sb.AppendLine(Localization.Filesystem_was_formatted_fast);
 
-        if((sp.flags1 & 0x40) == 0x40)
-            sb.AppendLine(Localization.Unknown_flag_0x40_on_flags1_is_active);
+        if((sp.flags1 & 0x40) == 0x40) sb.AppendLine(Localization.Unknown_flag_0x40_on_flags1_is_active);
 
-        if((sp.flags1 & 0x80) == 0x80)
-            sb.AppendLine(Localization.Filesystem_has_been_mounted_by_an_old_IFS);
+        if((sp.flags1 & 0x80) == 0x80) sb.AppendLine(Localization.Filesystem_has_been_mounted_by_an_old_IFS);
 
-        if((sp.flags2 & 0x01) == 0x01)
-            sb.AppendLine(Localization.Install_DASD_limits);
+        if((sp.flags2 & 0x01) == 0x01) sb.AppendLine(Localization.Install_DASD_limits);
 
-        if((sp.flags2 & 0x02) == 0x02)
-            sb.AppendLine(Localization.Resync_DASD_limits);
+        if((sp.flags2 & 0x02) == 0x02) sb.AppendLine(Localization.Resync_DASD_limits);
 
-        if((sp.flags2 & 0x04) == 0x04)
-            sb.AppendLine(Localization.DASD_limits_are_operational);
+        if((sp.flags2 & 0x04) == 0x04) sb.AppendLine(Localization.DASD_limits_are_operational);
 
-        if((sp.flags2 & 0x08) == 0x08)
-            sb.AppendLine(Localization.Multimedia_is_active);
+        if((sp.flags2 & 0x08) == 0x08) sb.AppendLine(Localization.Multimedia_is_active);
 
-        if((sp.flags2 & 0x10) == 0x10)
-            sb.AppendLine(Localization.DCE_ACLs_are_active);
+        if((sp.flags2 & 0x10) == 0x10) sb.AppendLine(Localization.DCE_ACLs_are_active);
 
-        if((sp.flags2 & 0x20) == 0x20)
-            sb.AppendLine(Localization.DASD_limits_are_dirty);
+        if((sp.flags2 & 0x20) == 0x20) sb.AppendLine(Localization.DASD_limits_are_dirty);
 
-        if((sp.flags2 & 0x40) == 0x40)
-            sb.AppendLine(Localization.Unknown_flag_0x40_on_flags2_is_active);
+        if((sp.flags2 & 0x40) == 0x40) sb.AppendLine(Localization.Unknown_flag_0x40_on_flags2_is_active);
 
-        if((sp.flags2 & 0x80) == 0x80)
-            sb.AppendLine(Localization.Unknown_flag_0x80_on_flags2_is_active);
+        if((sp.flags2 & 0x80) == 0x80) sb.AppendLine(Localization.Unknown_flag_0x80_on_flags2_is_active);
 
         metadata = new FileSystem();
 

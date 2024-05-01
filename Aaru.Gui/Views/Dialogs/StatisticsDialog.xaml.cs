@@ -41,9 +41,9 @@ public sealed class StatisticsDialog : Window
     public StatisticsDialog()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

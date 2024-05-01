@@ -57,8 +57,7 @@ public sealed partial class BlindWrite4
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 19)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 19) return ErrorNumber.InvalidArgument;
 
         var tmpArray  = new byte[19];
         var tmpUShort = new byte[2];
@@ -67,8 +66,7 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpArray, 0, 19);
 
-        if(!_bw4Signature.SequenceEqual(tmpArray))
-            return ErrorNumber.InvalidArgument;
+        if(!_bw4Signature.SequenceEqual(tmpArray)) return ErrorNumber.InvalidArgument;
 
         _header = new Header
         {
@@ -393,60 +391,54 @@ public sealed partial class BlindWrite4
                 _dataFilter =
                     PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.DataFile));
 
-                if(_dataFilter != null)
-                    break;
+                if(_dataFilter != null) break;
 
                 _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              _header.DataFile.ToLower(CultureInfo.
-                                                                                  CurrentCulture)));
+                                                                              _header.DataFile
+                                                                                 .ToLower(CultureInfo.CurrentCulture)));
 
-                if(_dataFilter != null)
-                    break;
+                if(_dataFilter != null) break;
 
                 _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              _header.DataFile.ToUpper(CultureInfo.
-                                                                                  CurrentCulture)));
+                                                                              _header.DataFile
+                                                                                 .ToUpper(CultureInfo.CurrentCulture)));
 
-                if(_dataFilter != null)
-                    break;
+                if(_dataFilter != null) break;
 
                 _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                               _header.DataFile.Split(new[]
-                                                                                  {
-                                                                                      '\\'
-                                                                                  },
-                                                                                  StringSplitOptions.
-                                                                                      RemoveEmptyEntries).
-                                                                                  Last()));
+                                                                                      {
+                                                                                          '\\'
+                                                                                      },
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()));
 
-                if(_dataFilter != null)
-                    break;
-
-                _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              _header.DataFile.Split(new[]
-                                                                                  {
-                                                                                      '\\'
-                                                                                  },
-                                                                                  StringSplitOptions.
-                                                                                      RemoveEmptyEntries).
-                                                                                  Last().
-                                                                                  ToLower(CultureInfo.CurrentCulture)));
-
-                if(_dataFilter != null)
-                    break;
+                if(_dataFilter != null) break;
 
                 _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                               _header.DataFile.Split(new[]
-                                                                                  {
-                                                                                      '\\'
-                                                                                  },
-                                                                                  StringSplitOptions.
-                                                                                      RemoveEmptyEntries).
-                                                                                  Last().
-                                                                                  ToUpper(CultureInfo.CurrentCulture)));
+                                                                                      {
+                                                                                          '\\'
+                                                                                      },
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()
+                                                                                 .ToLower(CultureInfo.CurrentCulture)));
 
-                if(_dataFilter != null)
-                    break;
+                if(_dataFilter != null) break;
+
+                _dataFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              _header.DataFile.Split(new[]
+                                                                                      {
+                                                                                          '\\'
+                                                                                      },
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()
+                                                                                 .ToUpper(CultureInfo.CurrentCulture)));
+
+                if(_dataFilter != null) break;
 
                 AaruConsole.ErrorWriteLine(string.Format(Localization.Data_file_0_not_found, _header.DataFile));
 
@@ -466,31 +458,34 @@ public sealed partial class BlindWrite4
                 ((((PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                     _header.SubchannelFile)) ??
                     PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                    _header.SubchannelFile.ToLower(CultureInfo.
-                                                                        CurrentCulture)))) ??
+                                                                    _header.SubchannelFile
+                                                                           .ToLower(CultureInfo.CurrentCulture)))) ??
                    PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                   _header.SubchannelFile.ToUpper(CultureInfo.
-                                                                       CurrentCulture)))) ??
-                  PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.
-                                                                      Split(new[]
-                                                                      {
-                                                                          '\\'
-                                                                      }, StringSplitOptions.RemoveEmptyEntries).
-                                                                      Last()))) ??
-                 PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.
-                                                                     Split(new[]
-                                                                     {
-                                                                         '\\'
-                                                                     }, StringSplitOptions.RemoveEmptyEntries).
-                                                                     Last().
-                                                                     ToLower(CultureInfo.CurrentCulture)))) ??
-                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, _header.SubchannelFile.
-                                                                    Split(new[]
-                                                                    {
-                                                                        '\\'
-                                                                    }, StringSplitOptions.RemoveEmptyEntries).
-                                                                    Last().
-                                                                    ToUpper(CultureInfo.CurrentCulture)));
+                                                                   _header.SubchannelFile
+                                                                          .ToUpper(CultureInfo.CurrentCulture)))) ??
+                  PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                  _header.SubchannelFile.Split(new[]
+                                                                              {
+                                                                                  '\\'
+                                                                              },
+                                                                              StringSplitOptions.RemoveEmptyEntries)
+                                                                         .Last()))) ??
+                 PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                 _header.SubchannelFile.Split(new[]
+                                                                             {
+                                                                                 '\\'
+                                                                             },
+                                                                             StringSplitOptions.RemoveEmptyEntries)
+                                                                        .Last()
+                                                                        .ToLower(CultureInfo.CurrentCulture)))) ??
+                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                _header.SubchannelFile.Split(new[]
+                                                                            {
+                                                                                '\\'
+                                                                            },
+                                                                            StringSplitOptions.RemoveEmptyEntries)
+                                                                       .Last()
+                                                                       .ToUpper(CultureInfo.CurrentCulture)));
         }
 
         Tracks      = new List<Track>();
@@ -519,59 +514,56 @@ public sealed partial class BlindWrite4
                             PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                             bwTrack.filename));
 
-                        if(track.Filter != null)
-                            break;
+                        if(track.Filter != null) break;
 
                         track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              bwTrack.filename.ToLower(CultureInfo.
-                                                                                  CurrentCulture)));
+                                                                              bwTrack.filename
+                                                                                 .ToLower(CultureInfo
+                                                                                     .CurrentCulture)));
 
-                        if(track.Filter != null)
-                            break;
-
-                        track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              bwTrack.filename.ToUpper(CultureInfo.
-                                                                                  CurrentCulture)));
-
-                        if(track.Filter != null)
-                            break;
+                        if(track.Filter != null) break;
 
                         track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                              bwTrack.filename.Split(new[]
-                                                                                      {
-                                                                                          '\\'
-                                                                                      },
-                                                                                      StringSplitOptions.
-                                                                                          RemoveEmptyEntries).
-                                                                                  Last()));
+                                                                              bwTrack.filename
+                                                                                 .ToUpper(CultureInfo
+                                                                                     .CurrentCulture)));
 
-                        if(track.Filter != null)
-                            break;
+                        if(track.Filter != null) break;
 
                         track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                               bwTrack.filename.Split(new[]
                                                                                       {
                                                                                           '\\'
                                                                                       },
-                                                                                      StringSplitOptions.
-                                                                                          RemoveEmptyEntries).
-                                                                                  Last().
-                                                                                  ToLower(CultureInfo.
-                                                                                      CurrentCulture)));
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()));
 
-                        if(track.Filter != null)
-                            break;
+                        if(track.Filter != null) break;
 
                         track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
                                                                               bwTrack.filename.Split(new[]
                                                                                       {
                                                                                           '\\'
                                                                                       },
-                                                                                      StringSplitOptions.
-                                                                                          RemoveEmptyEntries).
-                                                                                  Last().
-                                                                                  ToUpper(CultureInfo.
-                                                                                      CurrentCulture)));
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()
+                                                                                 .ToLower(CultureInfo
+                                                                                     .CurrentCulture)));
+
+                        if(track.Filter != null) break;
+
+                        track.Filter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                              bwTrack.filename.Split(new[]
+                                                                                      {
+                                                                                          '\\'
+                                                                                      },
+                                                                                      StringSplitOptions
+                                                                                         .RemoveEmptyEntries)
+                                                                                 .Last()
+                                                                                 .ToUpper(CultureInfo
+                                                                                     .CurrentCulture)));
 
                         track.Filter = _dataFilter;
                     } while(true);
@@ -608,8 +600,7 @@ public sealed partial class BlindWrite4
                 track.Sequence          = bwTrack.point;
                 track.Session           = bwTrack.session;
 
-                if(track.Session > maxSession)
-                    maxSession = track.Session;
+                if(track.Session > maxSession) maxSession = track.Session;
 
                 track.SubchannelFilter = _subFilter;
                 track.SubchannelFile   = _subFilter?.Filename;
@@ -656,8 +647,7 @@ public sealed partial class BlindWrite4
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                        if(_imageInfo.SectorSize < 2048)
-                            _imageInfo.SectorSize = 2048;
+                        if(_imageInfo.SectorSize < 2048) _imageInfo.SectorSize = 2048;
 
                         track.BytesPerSector = 2048;
 
@@ -671,8 +661,7 @@ public sealed partial class BlindWrite4
                         if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                        if(_imageInfo.SectorSize < 2336)
-                            _imageInfo.SectorSize = 2336;
+                        if(_imageInfo.SectorSize < 2336) _imageInfo.SectorSize = 2336;
 
                         track.BytesPerSector = 2336;
 
@@ -686,8 +675,7 @@ public sealed partial class BlindWrite4
                         break;
                 }
 
-                if(bwTrack.pregap != 0)
-                    track.Indexes.Add(0, bwTrack.pregap);
+                if(bwTrack.pregap != 0) track.Indexes.Add(0, bwTrack.pregap);
 
                 track.Indexes.Add(1, bwTrack.startSector);
 
@@ -715,8 +703,7 @@ public sealed partial class BlindWrite4
 
                 _trackFlags.TryAdd(track.Sequence, (byte)(bwTrack.adrCtl & 0x0F));
 
-                if(bwTrack.lastSector > _imageInfo.Sectors)
-                    _imageInfo.Sectors = bwTrack.lastSector + 1;
+                if(bwTrack.lastSector > _imageInfo.Sectors) _imageInfo.Sectors = bwTrack.lastSector + 1;
             }
             else
             {
@@ -743,17 +730,13 @@ public sealed partial class BlindWrite4
 
             foreach(Track track in Tracks.Where(track => track.Session == i))
             {
-                if(track.Sequence < session.StartTrack)
-                    session.StartTrack = track.Sequence;
+                if(track.Sequence < session.StartTrack) session.StartTrack = track.Sequence;
 
-                if(track.Sequence > session.EndTrack)
-                    session.StartTrack = track.Sequence;
+                if(track.Sequence > session.EndTrack) session.StartTrack = track.Sequence;
 
-                if(track.StartSector < session.StartSector)
-                    session.StartSector = track.StartSector;
+                if(track.StartSector < session.StartSector) session.StartSector = track.StartSector;
 
-                if(track.EndSector > session.EndSector)
-                    session.EndSector = track.EndSector;
+                if(track.EndSector > session.EndSector) session.EndSector = track.EndSector;
             }
 
             Sessions.Add(session);
@@ -762,8 +745,7 @@ public sealed partial class BlindWrite4
         // As long as subchannel is written for any track, it is present for all tracks
         if(Tracks.Any(t => t.SubchannelType == TrackSubchannelType.Packed))
         {
-            foreach(Track track in Tracks)
-                track.SubchannelType = TrackSubchannelType.Packed;
+            foreach(Track track in Tracks) track.SubchannelType = TrackSubchannelType.Packed;
         }
 
         _imageInfo.MediaType = MediaType.CD;
@@ -834,8 +816,7 @@ public sealed partial class BlindWrite4
         {
             case MediaTagType.CD_MCN:
             {
-                if(_imageInfo.MediaSerialNumber == null)
-                    return ErrorNumber.NoData;
+                if(_imageInfo.MediaSerialNumber == null) return ErrorNumber.NoData;
 
                 buffer = Encoding.ASCII.GetBytes(_imageInfo.MediaSerialNumber);
 
@@ -901,11 +882,9 @@ public sealed partial class BlindWrite4
         buffer = null;
         Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
-        if(aaruTrack is null)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
 
-        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
@@ -956,9 +935,9 @@ public sealed partial class BlindWrite4
         _imageStream = aaruTrack.Filter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)aaruTrack.FileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)aaruTrack.FileOffset +
+                           (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
         if(mode2)
         {
@@ -1000,18 +979,15 @@ public sealed partial class BlindWrite4
         buffer = null;
         Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
-        if(aaruTrack is null)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
 
-        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1) return ErrorNumber.OutOfRange;
 
         uint sectorOffset = 0;
         uint sectorSize   = 0;
         uint sectorSkip   = 0;
 
-        if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data)
-            return ErrorNumber.NotSupported;
+        if(aaruTrack.Type == CommonTypes.Enums.TrackType.Data) return ErrorNumber.NotSupported;
 
         switch(tag)
         {
@@ -1025,8 +1001,7 @@ public sealed partial class BlindWrite4
             case SectorTagType.CdSectorSync:
                 break;
             case SectorTagType.CdTrackFlags:
-                if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag))
-                    return ErrorNumber.NoData;
+                if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag)) return ErrorNumber.NoData;
 
                 buffer = new[]
                 {
@@ -1172,9 +1147,11 @@ public sealed partial class BlindWrite4
 
         var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.
-           Seek((long)(tag == SectorTagType.CdSectorSubchannel ? aaruTrack.SubchannelOffset : aaruTrack.FileOffset) + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                SeekOrigin.Begin);
+        br.BaseStream.Seek((long)(tag == SectorTagType.CdSectorSubchannel
+                                      ? aaruTrack.SubchannelOffset
+                                      : aaruTrack.FileOffset) +
+                           (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                           SeekOrigin.Begin);
 
         if(sectorOffset == 0 && sectorSkip == 0)
             buffer = br.ReadBytes((int)(sectorSize * length));
@@ -1189,8 +1166,7 @@ public sealed partial class BlindWrite4
             }
         }
 
-        if(tag == SectorTagType.CdSectorSubchannel)
-            buffer = Subchannel.Interleave(buffer);
+        if(tag == SectorTagType.CdSectorSubchannel) buffer = Subchannel.Interleave(buffer);
 
         return ErrorNumber.NoError;
     }
@@ -1226,11 +1202,9 @@ public sealed partial class BlindWrite4
         buffer = null;
         Track aaruTrack = Tracks.FirstOrDefault(bwTrack => bwTrack.Sequence == track);
 
-        if(aaruTrack is null)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
 
-        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1)
-            return ErrorNumber.OutOfRange;
+        if(length + sectorAddress > aaruTrack.EndSector - aaruTrack.StartSector + 1) return ErrorNumber.OutOfRange;
 
         uint sectorSize;
 

@@ -65,21 +65,17 @@ public sealed class DragonFlyBSD : IPartition
         partitions = new List<Partition>();
         uint nSectors = 2048 / imagePlugin.Info.SectorSize;
 
-        if(2048 % imagePlugin.Info.SectorSize > 0)
-            nSectors++;
+        if(2048 % imagePlugin.Info.SectorSize > 0) nSectors++;
 
-        if(sectorOffset + nSectors >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + nSectors >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(sectorOffset, nSectors, out byte[] sectors);
 
-        if(errno != ErrorNumber.NoError || sectors.Length < 2048)
-            return false;
+        if(errno != ErrorNumber.NoError || sectors.Length < 2048) return false;
 
         Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);
 
-        if(disklabel.d_magic != 0xC4464C59)
-            return false;
+        if(disklabel.d_magic != 0xC4464C59) return false;
 
         ulong counter = 0;
 
@@ -99,11 +95,9 @@ public sealed class DragonFlyBSD : IPartition
                            : BSD.FSTypeToString((BSD.fsType)entry.p_fstype)
             };
 
-            if(entry.p_bsize % imagePlugin.Info.SectorSize > 0)
-                part.Length++;
+            if(entry.p_bsize % imagePlugin.Info.SectorSize > 0) part.Length++;
 
-            if(entry.p_bsize <= 0 || entry.p_boffset <= 0)
-                continue;
+            if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
 
             partitions.Add(part);
             counter++;

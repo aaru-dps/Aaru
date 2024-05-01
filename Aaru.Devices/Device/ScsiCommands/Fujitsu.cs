@@ -83,14 +83,11 @@ public partial class Device
 
         buffer[0] = (byte)((byte)mode << 5);
 
-        if(displayLen)
-            buffer[0] += 0x10;
+        if(displayLen) buffer[0] += 0x10;
 
-        if(flash)
-            buffer[0] += 0x08;
+        if(flash) buffer[0] += 0x08;
 
-        if(halfMsg)
-            buffer[0] += 0x04;
+        if(halfMsg) buffer[0] += 0x04;
 
         buffer[0] += 0x01; // Always ASCII
 
@@ -100,7 +97,12 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.FujitsuDisplay;
         cdb[6] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

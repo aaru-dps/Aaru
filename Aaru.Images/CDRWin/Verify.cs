@@ -49,18 +49,17 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        if(_discImage.DiscHashes.Count == 0)
-            return null;
+        if(_discImage.DiscHashes.Count == 0) return null;
 
         // Read up to 1 MiB at a time for verification
         const int verifySize = 1024 * 1024;
         long      readBytes;
         byte[]    verifyBytes;
 
-        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).
-                                       Select(t => t.TrackFile.DataFilter).
-                                       Distinct().
-                                       ToArray();
+        IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence)
+                                      .Select(t => t.TrackFile.DataFilter)
+                                      .Distinct()
+                                      .ToArray();
 
         if(_discImage.DiscHashes.TryGetValue("sha1", out string sha1))
         {
@@ -172,8 +171,7 @@ public sealed partial class CdrWin
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -196,8 +194,7 @@ public sealed partial class CdrWin
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -210,8 +207,7 @@ public sealed partial class CdrWin
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -234,8 +230,7 @@ public sealed partial class CdrWin
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }

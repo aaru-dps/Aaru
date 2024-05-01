@@ -102,8 +102,7 @@ public sealed partial class Sidecar
 
         while(position < _fi.Length - 1048576)
         {
-            if(_aborted)
-                return _sidecar;
+            if(_aborted) return _sidecar;
 
             data = new byte[1048576];
             _fs.EnsureRead(data, 0, 1048576);
@@ -130,21 +129,26 @@ public sealed partial class Sidecar
 
         List<CommonTypes.AaruMetadata.Checksum> imgChecksums = _imgChkWorker.End();
 
-        if(_aborted)
-            return _sidecar;
+        if(_aborted) return _sidecar;
 
         switch(_image.Info.MetadataMediaType)
         {
             case MetadataMediaType.OpticalDisc:
                 if(_image is IOpticalMediaImage opticalImage)
                 {
-                    OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                    OpticalDisc(opticalImage,
+                                _filterId,
+                                _imagePath,
+                                _fi,
+                                _plugins,
+                                imgChecksums,
+                                ref _sidecar,
                                 _encoding);
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine(Localization.Core.
-                                                            The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them);
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them);
 
                     AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
@@ -155,8 +159,8 @@ public sealed partial class Sidecar
                     BlockMedia(blockImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
                 else
                 {
-                    AaruConsole.ErrorWriteLine(Localization.Core.
-                                                            The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
                     AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
@@ -165,13 +169,19 @@ public sealed partial class Sidecar
             case MetadataMediaType.LinearMedia:
                 if(_image is IByteAddressableImage byteAddressableImage)
                 {
-                    LinearMedia(byteAddressableImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                    LinearMedia(byteAddressableImage,
+                                _filterId,
+                                _imagePath,
+                                _fi,
+                                _plugins,
+                                imgChecksums,
+                                ref _sidecar,
                                 _encoding);
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine(Localization.Core.
-                                                            The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
                     AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }

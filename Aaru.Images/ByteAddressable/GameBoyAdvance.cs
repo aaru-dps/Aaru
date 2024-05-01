@@ -41,6 +41,7 @@ public class GameBoyAdvance : IByteAddressableImage
     public Guid Id => new("0040DDEB-3902-4402-9028-62915C5AA81F");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -50,14 +51,12 @@ public class GameBoyAdvance : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return false;
+        if(stream.Length % 32768 != 0) return false;
 
         stream.Position = 4;
         var magicBytes = new byte[8];
@@ -70,22 +69,19 @@ public class GameBoyAdvance : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 512 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 4;
         var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
-        if(magic != 0x21A29A6951AEFF24)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x21A29A6951AEFF24) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
@@ -291,8 +287,7 @@ public class GameBoyAdvance : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -328,16 +323,13 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -415,8 +407,7 @@ public class GameBoyAdvance : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -460,16 +451,13 @@ public class GameBoyAdvance : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 

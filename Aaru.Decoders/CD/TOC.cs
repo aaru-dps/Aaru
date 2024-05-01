@@ -61,8 +61,7 @@ public static class TOC
 
     public static CDTOC? Decode(byte[] CDTOCResponse)
     {
-        if(CDTOCResponse is not { Length: > 4 })
-            return null;
+        if(CDTOCResponse is not { Length: > 4 }) return null;
 
         var decoded = new CDTOC
         {
@@ -76,9 +75,10 @@ public static class TOC
         if(decoded.DataLength + 2 != CDTOCResponse.Length)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           Expected_CD_TOC_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
-                                       decoded.DataLength + 2, CDTOCResponse.Length);
+                                       Localization
+                                          .Expected_CD_TOC_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
+                                       decoded.DataLength + 2,
+                                       CDTOCResponse.Length);
 
             return null;
         }
@@ -100,8 +100,7 @@ public static class TOC
 
     public static string Prettify(CDTOC? CDTOCResponse)
     {
-        if(CDTOCResponse == null)
-            return null;
+        if(CDTOCResponse == null) return null;
 
         CDTOC response = CDTOCResponse.Value;
 
@@ -117,11 +116,12 @@ public static class TOC
             else
                 sb.AppendFormat(Localization.Track_number_0, descriptor.TrackNumber).AppendLine();
 
-            sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3, descriptor.TrackStartAddress,
+            sb.AppendFormat(Localization.Track_starts_at_LBA_0_or_MSF_2_3,
+                            descriptor.TrackStartAddress,
                             (descriptor.TrackStartAddress & 0x0000FF00) >> 8,
                             (descriptor.TrackStartAddress & 0x00FF0000) >> 16,
-                            (descriptor.TrackStartAddress & 0xFF000000) >> 24).
-               AppendLine();
+                            (descriptor.TrackStartAddress & 0xFF000000) >> 24)
+              .AppendLine();
 
             switch((TocAdr)descriptor.ADR)
             {
@@ -188,13 +188,13 @@ public static class TOC
                                   ? Localization.Digital_copy_of_track_is_permitted
                                   : Localization.Digital_copy_of_track_is_prohibited);
 
-            #if DEBUG
+#if DEBUG
                 if(descriptor.Reserved1 != 0)
                     sb.AppendFormat(Localization.Reserved1_equals_0_X8, descriptor.Reserved1).AppendLine();
 
                 if(descriptor.Reserved2 != 0)
                     sb.AppendFormat(Localization.Reserved2_equals_0_X8, descriptor.Reserved2).AppendLine();
-            #endif
+#endif
 
                 sb.AppendLine();
             }

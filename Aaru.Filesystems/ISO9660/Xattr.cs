@@ -47,50 +47,38 @@ public sealed partial class ISO9660
     {
         xattrs = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         xattrs = new List<string>();
 
-        if(entry.XattrLength > 0)
-            xattrs.Add("org.iso.9660.ea");
+        if(entry.XattrLength > 0) xattrs.Add("org.iso.9660.ea");
 
-        if(entry.AssociatedFile != null)
-            xattrs.Add("org.iso.9660.AssociatedFile");
+        if(entry.AssociatedFile != null) xattrs.Add("org.iso.9660.AssociatedFile");
 
-        if(entry.AppleDosType is not null)
-            xattrs.Add("com.apple.dos.type");
+        if(entry.AppleDosType is not null) xattrs.Add("com.apple.dos.type");
 
-        if(entry.AppleProDosType is not null)
-            xattrs.Add("com.apple.prodos.type");
+        if(entry.AppleProDosType is not null) xattrs.Add("com.apple.prodos.type");
 
-        if(entry.ResourceFork != null)
-            xattrs.Add("com.apple.ResourceFork");
+        if(entry.ResourceFork != null) xattrs.Add("com.apple.ResourceFork");
 
-        if(entry.FinderInfo != null)
-            xattrs.Add("com.apple.FinderInfo");
+        if(entry.FinderInfo != null) xattrs.Add("com.apple.FinderInfo");
 
-        if(entry.AppleIcon != null)
-            xattrs.Add("com.apple.Macintosh.Icon");
+        if(entry.AppleIcon != null) xattrs.Add("com.apple.Macintosh.Icon");
 
-        if(entry.AmigaComment != null)
-            xattrs.Add("com.amiga.comments");
+        if(entry.AmigaComment != null) xattrs.Add("com.amiga.comments");
 
         if(entry.Flags.HasFlag(FileFlags.Directory) || entry.Extents == null || entry.Extents.Count == 0)
             return ErrorNumber.NoError;
 
         ErrorNumber errno = _image.ReadSectorLong(entry.Extents[0].extent * _blockSize / 2048, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        if(sector[15] != 2)
-            return ErrorNumber.NoError;
+        if(sector[15] != 2) return ErrorNumber.NoError;
 
         xattrs.Add("org.iso.mode2.subheader");
         xattrs.Add("org.iso.mode2.subheader.copy");
@@ -103,36 +91,36 @@ public sealed partial class ISO9660
     {
         buf = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         switch(xattr)
         {
             case "org.iso.9660.ea":
-                return entry.XattrLength == 0 ? ErrorNumber.NoSuchExtendedAttribute :
-                       entry.Extents is null  ? ErrorNumber.InvalidArgument :
-                                                ReadSingleExtent(entry.XattrLength * _blockSize,
-                                                                 entry.Extents[0].extent,
-                                                                 out buf);
+                return entry.XattrLength == 0
+                           ? ErrorNumber.NoSuchExtendedAttribute
+                           : entry.Extents is null
+                               ? ErrorNumber.InvalidArgument
+                               : ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent, out buf);
 
             case "org.iso.9660.AssociatedFile":
-                if(entry.AssociatedFile is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.AssociatedFile is null) return ErrorNumber.NoSuchExtendedAttribute;
 
-                if(entry.AssociatedFile.Extents is null)
-                    return ErrorNumber.InvalidArgument;
+                if(entry.AssociatedFile.Extents is null) return ErrorNumber.InvalidArgument;
 
                 if(entry.AssociatedFile.Size != 0)
                 {
-                    return ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents,
+                    return ReadWithExtents(0,
+                                           (long)entry.AssociatedFile.Size,
+                                           entry.AssociatedFile.Extents,
                                            entry.AssociatedFile.XA?.signature == XA_MAGIC &&
                                            entry.AssociatedFile.XA?.attributes.HasFlag(XaAttributes.Interleaved) ==
-                                           true, entry.AssociatedFile.XA?.filenumber ?? 0, out buf);
+                                           true,
+                                           entry.AssociatedFile.XA?.filenumber ?? 0,
+                                           out buf);
                 }
 
                 buf = Array.Empty<byte>();
@@ -140,33 +128,32 @@ public sealed partial class ISO9660
                 return ErrorNumber.NoError;
 
             case "com.apple.dos.type":
-                if(entry.AppleDosType is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.AppleDosType is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf    = new byte[1];
                 buf[0] = entry.AppleDosType.Value;
 
                 return ErrorNumber.NoError;
             case "com.apple.prodos.type":
-                if(entry.AppleProDosType is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.AppleProDosType is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf = BitConverter.GetBytes(entry.AppleProDosType.Value);
 
                 return ErrorNumber.NoError;
             case "com.apple.ResourceFork":
-                if(entry.ResourceFork is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.ResourceFork is null) return ErrorNumber.NoSuchExtendedAttribute;
 
-                if(entry.ResourceFork.Extents is null)
-                    return ErrorNumber.InvalidArgument;
+                if(entry.ResourceFork.Extents is null) return ErrorNumber.InvalidArgument;
 
                 if(entry.ResourceFork.Size != 0)
                 {
-                    return ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents,
+                    return ReadWithExtents(0,
+                                           (long)entry.ResourceFork.Size,
+                                           entry.ResourceFork.Extents,
                                            entry.ResourceFork.XA?.signature == XA_MAGIC &&
                                            entry.ResourceFork.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                           entry.ResourceFork.XA?.filenumber ?? 0, out buf);
+                                           entry.ResourceFork.XA?.filenumber ?? 0,
+                                           out buf);
                 }
 
                 buf = Array.Empty<byte>();
@@ -174,23 +161,20 @@ public sealed partial class ISO9660
                 return ErrorNumber.NoError;
 
             case "com.apple.FinderInfo":
-                if(entry.FinderInfo is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.FinderInfo is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf = Marshal.StructureToByteArrayBigEndian(entry.FinderInfo.Value);
 
                 return ErrorNumber.NoError;
             case "com.apple.Macintosh.Icon":
-                if(entry.AppleIcon is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.AppleIcon is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf = new byte[entry.AppleIcon.Length];
                 Array.Copy(entry.AppleIcon, 0, buf, 0, entry.AppleIcon.Length);
 
                 return ErrorNumber.NoError;
             case "com.amiga.comments":
-                if(entry.AmigaComment is null)
-                    return ErrorNumber.NoSuchExtendedAttribute;
+                if(entry.AmigaComment is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf = new byte[entry.AmigaComment.Length];
                 Array.Copy(entry.AmigaComment, 0, buf, 0, entry.AmigaComment.Length);

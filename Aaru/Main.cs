@@ -131,38 +131,38 @@ class MainClass
             ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
             ctx.Database.EnsureCreated();
 
-            ctx.Database.
-                ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+            ctx.Database
+               .ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in ctx.Database.GetPendingMigrations())
             {
-                ctx.Database.
-                    ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
-                        migration}', '0.0.0')");
+                ctx.Database
+                   .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                       migration}', '0.0.0')");
             }
 
             ctx.SaveChanges();
         }
 
         // Remove duplicates
-        foreach(var duplicate in ctx.SeenDevices.AsEnumerable().
-                                     GroupBy(a => new
+        foreach(var duplicate in ctx.SeenDevices.AsEnumerable()
+                                    .GroupBy(a => new
                                      {
                                          a.Manufacturer,
                                          a.Model,
                                          a.Revision,
                                          a.Bus
-                                     }).
-                                     Where(a => a.Count() > 1).
-                                     Distinct().
-                                     Select(a => a.Key))
+                                     })
+                                    .Where(a => a.Count() > 1)
+                                    .Distinct()
+                                    .Select(a => a.Key))
         {
-            ctx.RemoveRange(ctx.SeenDevices.
-                                Where(d => d.Manufacturer == duplicate.Manufacturer &&
+            ctx.RemoveRange(ctx.SeenDevices
+                               .Where(d => d.Manufacturer == duplicate.Manufacturer &&
                                            d.Model        == duplicate.Model        &&
                                            d.Revision     == duplicate.Revision     &&
-                                           d.Bus          == duplicate.Bus).
-                                Skip(1));
+                                           d.Bus          == duplicate.Bus)
+                               .Skip(1));
         }
 
         // Remove nulls
@@ -219,19 +219,25 @@ class MainClass
         var rootCommand = new RootCommand();
 
         rootCommand.AddGlobalOption(new Option<bool>(new[]
-        {
-            "--verbose", "-v"
-        }, () => false, UI.Shows_verbose_output));
+                                                     {
+                                                         "--verbose", "-v"
+                                                     },
+                                                     () => false,
+                                                     UI.Shows_verbose_output));
 
         rootCommand.AddGlobalOption(new Option<bool>(new[]
-        {
-            "--debug", "-d"
-        }, () => false, UI.Shows_debug_output_from_plugins));
+                                                     {
+                                                         "--debug", "-d"
+                                                     },
+                                                     () => false,
+                                                     UI.Shows_debug_output_from_plugins));
 
         Option<bool> pauseOption = new(new[]
-        {
-            "--pause"
-        }, () => false, UI.Pauses_before_exiting);
+                                       {
+                                           "--pause"
+                                       },
+                                       () => false,
+                                       UI.Pauses_before_exiting);
 
         rootCommand.AddGlobalOption(pauseOption);
 
@@ -253,8 +259,7 @@ class MainClass
 
         Statistics.SaveStats();
 
-        if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption))
-            return ret;
+        if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption)) return ret;
 
         AaruConsole.WriteLine(UI.Press_any_key_to_exit);
         System.Console.ReadKey();
@@ -264,7 +269,8 @@ class MainClass
 
     internal static void PrintCopyright()
     {
-        AaruConsole.WriteLine("[bold][red]{0}[/] [green]{1}[/][/]", _assemblyTitle,
+        AaruConsole.WriteLine("[bold][red]{0}[/] [green]{1}[/][/]",
+                              _assemblyTitle,
                               _assemblyVersion?.InformationalVersion);
 
         AaruConsole.WriteLine("[bold][blue]{0}[/][/]", _assemblyCopyright);

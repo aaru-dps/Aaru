@@ -52,8 +52,7 @@ public sealed class DumpLog
     /// <param name="private">Disable saving paths or serial numbers in log</param>
     public DumpLog(string outputFile, Device dev, bool @private)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _logSw = new StreamWriter(outputFile, true);
 
@@ -68,7 +67,9 @@ public sealed class DumpLog
 
         _logSw.WriteLine(Localization.Core.System_information);
 
-        _logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
+        _logSw.WriteLine("{0} {1} ({2}-bit)",
+                         DetectOS.GetPlatformName(platId, platVer),
+                         platVer,
                          Environment.Is64BitOperatingSystem ? 64 : 32);
 
         if(DetectOS.IsMono)
@@ -87,9 +88,9 @@ public sealed class DumpLog
         _logSw.WriteLine(DetectOS.IsAdmin
                              ? Localization.Core.Running_as_superuser_Yes
                              : Localization.Core.Running_as_superuser_No);
-    #if DEBUG
+#if DEBUG
         _logSw.WriteLine(Localization.Core.DEBUG_version);
-    #endif
+#endif
         if(@private)
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -123,7 +124,8 @@ public sealed class DumpLog
             _logSw.WriteLine(Localization.Core.Server_0,  remoteDev.RemoteApplication);
             _logSw.WriteLine(Localization.Core.Version_0, remoteDev.RemoteVersion);
 
-            _logSw.WriteLine(Localization.Core.Operating_system_0_1, remoteDev.RemoteOperatingSystem,
+            _logSw.WriteLine(Localization.Core.Operating_system_0_1,
+                             remoteDev.RemoteOperatingSystem,
                              remoteDev.RemoteOperatingSystemVersion);
 
             _logSw.WriteLine(Localization.Core.Architecture_0,     remoteDev.RemoteArchitecture);
@@ -141,8 +143,7 @@ public sealed class DumpLog
         _logSw.WriteLine(Localization.Core.Model_0,             dev.Model);
         _logSw.WriteLine(Localization.Core.Firmware_revision_0, dev.FirmwareRevision);
 
-        if(!@private)
-            _logSw.WriteLine(Localization.Core.Serial_number_0, dev.Serial);
+        if(!@private) _logSw.WriteLine(Localization.Core.Serial_number_0, dev.Serial);
 
         _logSw.WriteLine(Localization.Core.Removable_device_0,    dev.IsRemovable);
         _logSw.WriteLine(Localization.Core.Device_type_0,         dev.Type);
@@ -155,8 +156,7 @@ public sealed class DumpLog
             _logSw.WriteLine(Localization.Core.USB_manufacturer_0, dev.UsbManufacturerString);
             _logSw.WriteLine(Localization.Core.USB_product_0,      dev.UsbProductString);
 
-            if(!@private)
-                _logSw.WriteLine(Localization.Core.USB_serial_0, dev.UsbSerialString);
+            if(!@private) _logSw.WriteLine(Localization.Core.USB_serial_0, dev.UsbSerialString);
 
             _logSw.WriteLine(Localization.Core.USB_vendor_ID_0,  dev.UsbVendorId);
             _logSw.WriteLine(Localization.Core.USB_product_ID_0, dev.UsbProductId);
@@ -169,8 +169,7 @@ public sealed class DumpLog
             _logSw.WriteLine(Localization.Core.FireWire_vendor_0, dev.FireWireVendorName);
             _logSw.WriteLine(Localization.Core.FireWire_model_0,  dev.FireWireModelName);
 
-            if(!@private)
-                _logSw.WriteLine(Localization.Core.FireWire_GUID_0, dev.FireWireGuid);
+            if(!@private) _logSw.WriteLine(Localization.Core.FireWire_GUID_0, dev.FireWireGuid);
 
             _logSw.WriteLine(Localization.Core.FireWire_vendor_ID_0,  dev.FireWireVendor);
             _logSw.WriteLine(Localization.Core.FireWire_product_ID_0, dev.FireWireModel);
@@ -188,8 +187,7 @@ public sealed class DumpLog
     /// <param name="args">Arguments</param>
     public void WriteLine(string format, params object[] args)
     {
-        if(_logSw == null)
-            return;
+        if(_logSw == null) return;
 
         var text = string.Format(format, args);
         _logSw.WriteLine("{0:s} {1}", DateTime.Now, text);

@@ -43,16 +43,15 @@ public sealed partial class CPM
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         if(string.IsNullOrEmpty(pathElements[0]) ||
            string.Compare(pathElements[0], "/", StringComparison.OrdinalIgnoreCase) == 0)
@@ -76,19 +75,17 @@ public sealed partial class CPM
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
-        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file))
-            return ErrorNumber.NoSuchFile;
+        if(!_fileCache.TryGetValue(pathElements[0].ToUpperInvariant(), out byte[] file)) return ErrorNumber.NoSuchFile;
 
         node = new CpmFileNode
         {
@@ -104,11 +101,9 @@ public sealed partial class CPM
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not CpmFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CpmFileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Cache = null;
 
@@ -120,19 +115,15 @@ public sealed partial class CPM
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not CpmFileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not CpmFileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
 
@@ -154,16 +145,15 @@ public sealed partial class CPM
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
         {
@@ -178,11 +168,9 @@ public sealed partial class CPM
             BlockSize  = Metadata.ClusterSize
         };
 
-        if(_labelCreationDate != null)
-            stat.CreationTime = DateHandlers.CpmToDateTime(_labelCreationDate);
+        if(_labelCreationDate != null) stat.CreationTime = DateHandlers.CpmToDateTime(_labelCreationDate);
 
-        if(_labelUpdateDate != null)
-            stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
+        if(_labelUpdateDate != null) stat.StatusChangeTime = DateHandlers.CpmToDateTime(_labelUpdateDate);
 
         return ErrorNumber.NoError;
     }

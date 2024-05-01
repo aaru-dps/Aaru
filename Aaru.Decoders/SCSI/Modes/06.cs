@@ -53,17 +53,13 @@ public static partial class Modes
 
     public static ModePage_06? DecodeModePage_06(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x06)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x06) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 4)
-            return null;
+        if(pageResponse.Length < 4) return null;
 
         var decoded = new ModePage_06();
 
@@ -78,19 +74,16 @@ public static partial class Modes
 
     public static string PrettifyModePage_06(ModePage_06? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_06 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_optical_memory);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.RUBR)
-            sb.AppendLine("\t" + Localization.On_reading_an_updated_block_drive_will_return_RECOVERED_ERROR);
+        if(page.RUBR) sb.AppendLine("\t" + Localization.On_reading_an_updated_block_drive_will_return_RECOVERED_ERROR);
 
         return sb.ToString();
     }

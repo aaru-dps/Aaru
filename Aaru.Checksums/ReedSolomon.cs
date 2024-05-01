@@ -188,24 +188,21 @@ public class ReedSolomon
     {
         int ci;
 
-        for(ci = n - 1; ci >= 0; ci--)
-            a[ci] = 0;
+        for(ci = n - 1; ci >= 0; ci--) a[ci] = 0;
     }
 
     static void Copy(ref int[] a, ref int[] b, int n)
     {
         int ci;
 
-        for(ci = n - 1; ci >= 0; ci--)
-            a[ci] = b[ci];
+        for(ci = n - 1; ci >= 0; ci--) a[ci] = b[ci];
     }
 
     static void Copydown(ref int[] a, ref int[] b, int n)
     {
         int ci;
 
-        for(ci = n - 1; ci >= 0; ci--)
-            a[ci] = b[ci];
+        for(ci = n - 1; ci >= 0; ci--) a[ci] = b[ci];
     }
 
     /* generate GF(2**m) from the irreducible polynomial p(X) in p[0]..p[m]
@@ -251,8 +248,7 @@ public class ReedSolomon
             _indexOf[_alphaTo[i]] = i;
 
             /* If Pp[i] == 1 then, term @^i occurs in poly-repr of @^MM */
-            if(_pp[i] != 0)
-                _alphaTo[_mm] ^= mask; /* Bit-wise EXOR operation */
+            if(_pp[i] != 0) _alphaTo[_mm] ^= mask; /* Bit-wise EXOR operation */
 
             mask <<= 1; /* single left-shift */
         }
@@ -320,8 +316,7 @@ public class ReedSolomon
         }
 
         /* convert Gg[] to index form for quicker encoding */
-        for(i = 0; i <= _nn - _kk; i++)
-            _gg[i] = _indexOf[_gg[i]];
+        for(i = 0; i <= _nn - _kk; i++) _gg[i] = _indexOf[_gg[i]];
     }
 
     /*
@@ -350,8 +345,7 @@ public class ReedSolomon
         {
             if(_mm != 8)
             {
-                if(data[i] > _nn)
-                    return -1; /* Illegal symbol */
+                if(data[i] > _nn) return -1; /* Illegal symbol */
             }
 
             int feedback = _indexOf[data[i] ^ bb[_nn - _kk - 1]];
@@ -373,8 +367,7 @@ public class ReedSolomon
             {
                 /* feedback term is zero. encoder becomes a
                  * single-byte shifter */
-                for(int j = _nn - _kk - 1; j > 0; j--)
-                    bb[j] = bb[j - 1];
+                for(int j = _nn - _kk - 1; j > 0; j--) bb[j] = bb[j - 1];
 
                 bb[0] = 0;
             }
@@ -425,8 +418,7 @@ public class ReedSolomon
         {
             if(_mm != 8)
             {
-                if(data[i] > _nn)
-                    return -1; /* Illegal symbol */
+                if(data[i] > _nn) return -1; /* Illegal symbol */
             }
 
             recd[i] = _indexOf[data[i]];
@@ -443,8 +435,7 @@ public class ReedSolomon
 
             for(j = 0; j < _nn; j++)
             {
-                if(recd[j] != _a0) /* recd[j] in index form */
-                    tmp ^= _alphaTo[Modnn(recd[j] + (B0 + i - 1) * j)];
+                if(recd[j] != _a0) /* recd[j] in index form */ tmp ^= _alphaTo[Modnn(recd[j] + (B0 + i - 1) * j)];
             }
 
             synError |= tmp; /* set flag if non-zero syndrome =>
@@ -454,8 +445,7 @@ public class ReedSolomon
             s[i] = _indexOf[tmp];
         }
 
-        if(synError == 0)
-            return 0;
+        if(synError == 0) return 0;
 
         Clear(ref lambda, _nn - _kk);
         lambda[0] = 1;
@@ -473,15 +463,13 @@ public class ReedSolomon
                 {
                     tmp = _indexOf[lambda[j - 1]];
 
-                    if(tmp != _a0)
-                        lambda[j] ^= _alphaTo[Modnn(u + tmp)];
+                    if(tmp != _a0) lambda[j] ^= _alphaTo[Modnn(u + tmp)];
                 }
             }
 
-        #if DEBUG
+#if DEBUG
             /* find roots of the erasure location polynomial */
-            for(i = 1; i <= noEras; i++)
-                reg[i] = _indexOf[lambda[i]];
+            for(i = 1; i <= noEras; i++) reg[i] = _indexOf[lambda[i]];
 
             count = 0;
 
@@ -491,15 +479,13 @@ public class ReedSolomon
 
                 for(j = 1; j <= noEras; j++)
                 {
-                    if(reg[j] == _a0)
-                        continue;
+                    if(reg[j] == _a0) continue;
 
                     reg[j] =  Modnn(reg[j] + j);
                     q      ^= _alphaTo[reg[j]];
                 }
 
-                if(q != 0)
-                    continue;
+                if(q != 0) continue;
 
                 /* store root and error location
                  * number indices
@@ -519,15 +505,13 @@ public class ReedSolomon
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Erasure_positions_as_determined_by_roots_of_Eras_Loc_Poly);
 
-            for(i = 0; i < count; i++)
-                AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
+            for(i = 0; i < count; i++) AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "\n");
-        #endif
+#endif
         }
 
-        for(i = 0; i < _nn - _kk + 1; i++)
-            b[i] = _indexOf[lambda[i]];
+        for(i = 0; i < _nn - _kk + 1; i++) b[i] = _indexOf[lambda[i]];
 
         /*
          * Begin Berlekamp-Massey algorithm to determine error+erasure
@@ -544,8 +528,7 @@ public class ReedSolomon
 
             for(i = 0; i < r; i++)
             {
-                if(lambda[i] != 0 && s[r - i] != _a0)
-                    discrR ^= _alphaTo[Modnn(_indexOf[lambda[i]] + s[r - i])];
+                if(lambda[i] != 0 && s[r - i] != _a0) discrR ^= _alphaTo[Modnn(_indexOf[lambda[i]] + s[r - i])];
             }
 
             discrR = _indexOf[discrR]; /* Index form */
@@ -598,8 +581,7 @@ public class ReedSolomon
         {
             lambda[i] = _indexOf[lambda[i]];
 
-            if(lambda[i] != _a0)
-                degLambda = i;
+            if(lambda[i] != _a0) degLambda = i;
         }
 
         /*
@@ -617,15 +599,13 @@ public class ReedSolomon
 
             for(j = degLambda; j > 0; j--)
             {
-                if(reg[j] == _a0)
-                    continue;
+                if(reg[j] == _a0) continue;
 
                 reg[j] =  Modnn(reg[j] + j);
                 q      ^= _alphaTo[reg[j]];
             }
 
-            if(q != 0)
-                continue;
+            if(q != 0) continue;
 
             /* store root (index-form) and error location number */
             root[count] = i;
@@ -633,17 +613,15 @@ public class ReedSolomon
             count++;
         }
 
-    #if DEBUG
+#if DEBUG
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Final_error_positions);
 
-        for(i = 0; i < count; i++)
-            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
+        for(i = 0; i < count; i++) AaruConsole.DebugWriteLine(MODULE_NAME, "{0} ", loc[i]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "\n");
-    #endif
+#endif
 
-        if(degLambda != count)
-            return -1;
+        if(degLambda != count) return -1;
 
         /*
          * Compute err+eras evaluator poly omega(x) = s(x)*lambda(x) (modulo
@@ -658,12 +636,10 @@ public class ReedSolomon
 
             for(; j >= 0; j--)
             {
-                if(s[i + 1 - j] != _a0 && lambda[j] != _a0)
-                    tmp ^= _alphaTo[Modnn(s[i + 1 - j] + lambda[j])];
+                if(s[i + 1 - j] != _a0 && lambda[j] != _a0) tmp ^= _alphaTo[Modnn(s[i + 1 - j] + lambda[j])];
             }
 
-            if(tmp != 0)
-                degOmega = i;
+            if(tmp != 0) degOmega = i;
 
             omega[i] = _indexOf[tmp];
         }
@@ -680,8 +656,7 @@ public class ReedSolomon
 
             for(i = degOmega; i >= 0; i--)
             {
-                if(omega[i] != _a0)
-                    num1 ^= _alphaTo[Modnn(omega[i] + i * root[j])];
+                if(omega[i] != _a0) num1 ^= _alphaTo[Modnn(omega[i] + i * root[j])];
             }
 
             int num2 = _alphaTo[Modnn(root[j] * (B0 - 1) + _nn)];
@@ -690,8 +665,7 @@ public class ReedSolomon
             /* lambda[i+1] for i even is the formal derivative lambda_pr of lambda[i] */
             for(i = Min(degLambda, _nn - _kk - 1) & ~1; i >= 0; i -= 2)
             {
-                if(lambda[i + 1] != _a0)
-                    den ^= _alphaTo[Modnn(lambda[i + 1] + i * root[j])];
+                if(lambda[i + 1] != _a0) den ^= _alphaTo[Modnn(lambda[i + 1] + i * root[j])];
             }
 
             if(den == 0)
@@ -702,8 +676,7 @@ public class ReedSolomon
             }
 
             /* Apply error to data */
-            if(num1 != 0)
-                data[loc[j]] ^= _alphaTo[Modnn(_indexOf[num1] + _indexOf[num2] + _nn - _indexOf[den])];
+            if(num1 != 0) data[loc[j]] ^= _alphaTo[Modnn(_indexOf[num1] + _indexOf[num2] + _nn - _indexOf[den])];
         }
 
         return count;

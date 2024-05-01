@@ -80,8 +80,7 @@ public static class CompactDisc
                                               out List<ulong> newPregapSectors)
     {
         // We need to work in PW raw subchannels
-        if(supportedSubchannel == MmcSubchannel.Q16)
-            sub = Subchannel.ConvertQToRaw(sub);
+        if(supportedSubchannel == MmcSubchannel.Q16) sub = Subchannel.ConvertQToRaw(sub);
 
         // If not desired to fix, or to save, the subchannel, just save as is (or none)
         if(!fixSubchannelPosition && desiredSubchannel != MmcSubchannel.None)
@@ -91,12 +90,19 @@ public static class CompactDisc
 
         byte[] deSub = Subchannel.Deinterleave(sub);
 
-        bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
-                                                         updateStatus, smallestPregapLbaPerTrack, dumping,
-                                                         out newPregapSectors, sectorAddress);
+        bool indexesChanged = CheckIndexesFromSubchannel(deSub,
+                                                         isrcs,
+                                                         currentTrack,
+                                                         ref mcn,
+                                                         tracks,
+                                                         dumpLog,
+                                                         updateStatus,
+                                                         smallestPregapLbaPerTrack,
+                                                         dumping,
+                                                         out newPregapSectors,
+                                                         sectorAddress);
 
-        if(!fixSubchannelPosition || desiredSubchannel == MmcSubchannel.None)
-            return indexesChanged;
+        if(!fixSubchannelPosition || desiredSubchannel == MmcSubchannel.None) return indexesChanged;
 
         int prePos = int.MinValue;
 
@@ -123,13 +129,11 @@ public static class CompactDisc
             // Check P and weight
             for(int p = subPos; p < subPos + 12; p++)
             {
-                if(deSub[p] != 0 && deSub[p] != 255)
-                    pOk = false;
+                if(deSub[p] != 0 && deSub[p] != 255) pOk = false;
 
                 for(var w = 0; w < 8; w++)
                 {
-                    if((deSub[p] >> w & 1) > 0)
-                        pWeight++;
+                    if((deSub[p] >> w & 1) > 0) pWeight++;
                 }
             }
 
@@ -165,11 +169,9 @@ public static class CompactDisc
                 DetectRwPackets(sectorSub, out _, out rwPacket, out cdtextPacket);
 
                 // TODO: CD+G reed solomon
-                if(rwPacket && !cdtextPacket)
-                    rwOk = true;
+                if(rwPacket && !cdtextPacket) rwOk = true;
 
-                if(cdtextPacket)
-                    rwOk = CheckCdTextPackets(sectorSub);
+                if(cdtextPacket) rwOk = CheckCdTextPackets(sectorSub);
             }
 
             // Fix P
@@ -177,13 +179,11 @@ public static class CompactDisc
             {
                 if(pWeight >= 48)
                 {
-                    for(int p = subPos; p < subPos + 12; p++)
-                        deSub[p] = 255;
+                    for(int p = subPos; p < subPos + 12; p++) deSub[p] = 255;
                 }
                 else
                 {
-                    for(int p = subPos; p < subPos + 12; p++)
-                        deSub[p] = 0;
+                    for(int p = subPos; p < subPos + 12; p++) deSub[p] = 0;
                 }
 
                 pOk    = true;
@@ -195,8 +195,7 @@ public static class CompactDisc
             // RW is not a known pattern or packet, fix it
             if(!rwOk && !rwPacket && !cdtextPacket && fixSubchannel)
             {
-                for(int rw = subPos + 24; rw < subPos + 96; rw++)
-                    deSub[rw] = 0;
+                for(int rw = subPos + 24; rw < subPos + 96; rw++) deSub[rw] = 0;
 
                 rwOk   = true;
                 @fixed = true;
@@ -211,9 +210,21 @@ public static class CompactDisc
             {
                 isrcs.TryGetValue(currentTrack, out string knownGoodIsrc);
 
-                crcOk = FixQSubchannel(deSub, q, subPos, mcn, knownGoodIsrc, fixSubchannelCrc, out bool fixedAdr,
-                                       out bool controlFix, out bool fixedZero, out bool fixedTno, out bool fixedIndex,
-                                       out bool fixedRelPos, out bool fixedAbsPos, out bool fixedCrc, out bool fixedMcn,
+                crcOk = FixQSubchannel(deSub,
+                                       q,
+                                       subPos,
+                                       mcn,
+                                       knownGoodIsrc,
+                                       fixSubchannelCrc,
+                                       out bool fixedAdr,
+                                       out bool controlFix,
+                                       out bool fixedZero,
+                                       out bool fixedTno,
+                                       out bool fixedIndex,
+                                       out bool fixedRelPos,
+                                       out bool fixedAbsPos,
+                                       out bool fixedCrc,
+                                       out bool fixedMcn,
                                        out bool fixedIsrc);
 
                 if(crcOk)
@@ -221,40 +232,29 @@ public static class CompactDisc
                     Array.Copy(q, 0, deSub, subPos + 12, 12);
                     @fixed = true;
 
-                    if(fixedAdr)
-                        subLog?.WriteQAdrFix(lba);
+                    if(fixedAdr) subLog?.WriteQAdrFix(lba);
 
-                    if(controlFix)
-                        subLog?.WriteQCtrlFix(lba);
+                    if(controlFix) subLog?.WriteQCtrlFix(lba);
 
-                    if(fixedZero)
-                        subLog?.WriteQZeroFix(lba);
+                    if(fixedZero) subLog?.WriteQZeroFix(lba);
 
-                    if(fixedTno)
-                        subLog?.WriteQTnoFix(lba);
+                    if(fixedTno) subLog?.WriteQTnoFix(lba);
 
-                    if(fixedIndex)
-                        subLog?.WriteQIndexFix(lba);
+                    if(fixedIndex) subLog?.WriteQIndexFix(lba);
 
-                    if(fixedRelPos)
-                        subLog?.WriteQRelPosFix(lba);
+                    if(fixedRelPos) subLog?.WriteQRelPosFix(lba);
 
-                    if(fixedAbsPos)
-                        subLog?.WriteQAbsPosFix(lba);
+                    if(fixedAbsPos) subLog?.WriteQAbsPosFix(lba);
 
-                    if(fixedCrc)
-                        subLog?.WriteQCrcFix(lba);
+                    if(fixedCrc) subLog?.WriteQCrcFix(lba);
 
-                    if(fixedMcn)
-                        subLog?.WriteQMcnFix(lba);
+                    if(fixedMcn) subLog?.WriteQMcnFix(lba);
 
-                    if(fixedIsrc)
-                        subLog?.WriteQIsrcFix(lba);
+                    if(fixedIsrc) subLog?.WriteQIsrcFix(lba);
                 }
             }
 
-            if(!pOk || !crcOk || !rwOk)
-                continue;
+            if(!pOk || !crcOk || !rwOk) continue;
 
             var aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
 
@@ -274,13 +274,11 @@ public static class CompactDisc
                 aPos = smin * 60 * 75 + ssec * 75 + aframe - 150;
 
                 // Next second
-                if(aPos < prePos)
-                    aPos += 75;
+                if(aPos < prePos) aPos += 75;
             }
 
             // TODO: Negative sectors
-            if(aPos < 0)
-                continue;
+            if(aPos < 0) continue;
 
             prePos = aPos;
 
@@ -291,8 +289,7 @@ public static class CompactDisc
 
             subchannelExtents.Remove(aPos);
 
-            if(@fixed)
-                subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1, false, true);
+            if(@fixed) subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1, false, true);
         }
 
         return indexesChanged;
@@ -339,18 +336,18 @@ public static class CompactDisc
                 {
                     string isrc = Subchannel.DecodeIsrc(q);
 
-                    if(isrc is null or "000000000000")
-                        continue;
+                    if(isrc is null or "000000000000") continue;
 
-                    if(!crcOk)
-                        continue;
+                    if(!crcOk) continue;
 
                     if(!isrcs.ContainsKey(currentTrackNumber))
                     {
-                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1, isrc,
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1,
+                                                         isrc,
                                                          currentTrackNumber));
 
-                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1, isrc,
+                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1,
+                                                           isrc,
                                                            currentTrackNumber));
 
                         isrcs[currentTrackNumber] = isrc;
@@ -363,10 +360,14 @@ public static class CompactDisc
                         if(currentTrack?.Sequence == currentTrackNumber)
                         {
                             dumpLog?.WriteLine(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
-                                                             currentTrackNumber, isrcs[currentTrackNumber], isrc));
+                                                             currentTrackNumber,
+                                                             isrcs[currentTrackNumber],
+                                                             isrc));
 
                             updateStatus?.Invoke(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
-                                                               currentTrackNumber, isrcs[currentTrackNumber], isrc));
+                                                               currentTrackNumber,
+                                                               isrcs[currentTrackNumber],
+                                                               isrc));
 
                             isrcs[currentTrackNumber] = isrc;
                         }
@@ -380,11 +381,9 @@ public static class CompactDisc
                 {
                     string newMcn = Subchannel.DecodeMcn(q);
 
-                    if(newMcn is null or "0000000000000")
-                        continue;
+                    if(newMcn is null or "0000000000000") continue;
 
-                    if(!crcOk)
-                        continue;
+                    if(!crcOk) continue;
 
                     if(mcn is null)
                     {
@@ -411,8 +410,7 @@ public static class CompactDisc
 
                     for(var i = 0; i < tracks.Length; i++)
                     {
-                        if(tracks[i].Sequence != trackNo)
-                            continue;
+                        if(tracks[i].Sequence != trackNo) continue;
 
                         // Pregap
                         if(q[2] == 0 && trackNo > 1)
@@ -426,12 +424,10 @@ public static class CompactDisc
                             // When we are not, we go from index 0.
                             smallestPregapLbaPerTrack.TryAdd(trackNo, dumping ? 1 : 0);
 
-                            uint firstTrackNumberInSameSession = tracks.
-                                                                 Where(t => t.Session == tracks[i].Session).
-                                                                 Min(t => t.Sequence);
+                            uint firstTrackNumberInSameSession =
+                                tracks.Where(t => t.Session == tracks[i].Session).Min(t => t.Sequence);
 
-                            if(tracks[i].Sequence == firstTrackNumberInSameSession)
-                                continue;
+                            if(tracks[i].Sequence == firstTrackNumberInSameSession) continue;
 
                             if(qPos < smallestPregapLbaPerTrack[trackNo])
                             {
@@ -444,20 +440,20 @@ public static class CompactDisc
                                     tracks[i         - 1].EndSector = tracks[i].StartSector - 1;
 
                                 dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
-                                                                 trackNo, tracks[i].Pregap));
+                                                                 trackNo,
+                                                                 tracks[i].Pregap));
 
-                                updateStatus?.
-                                    Invoke(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors, trackNo,
-                                                         tracks[i].Pregap));
+                                updateStatus?.Invoke(string.Format(Localization.Core
+                                                                      .Pregap_for_track_0_set_to_1_sectors,
+                                                                   trackNo,
+                                                                   tracks[i].Pregap));
 
-                                for(var p = 0; p < dif; p++)
-                                    newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
+                                for(var p = 0; p < dif; p++) newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
 
                                 status = true;
                             }
 
-                            if(tracks[i].Pregap >= (ulong)qPos)
-                                continue;
+                            if(tracks[i].Pregap >= (ulong)qPos) continue;
 
                             ulong oldPregap = tracks[i].Pregap;
 
@@ -468,10 +464,12 @@ public static class CompactDisc
                                 tracks[i         - 1].EndSector = tracks[i].StartSector - 1;
 
                             dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
-                                                             trackNo, tracks[i].Pregap));
+                                                             trackNo,
+                                                             tracks[i].Pregap));
 
                             updateStatus?.Invoke(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
-                                                               trackNo, tracks[i].Pregap));
+                                                               trackNo,
+                                                               tracks[i].Pregap));
 
                             for(var p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
                                 newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
@@ -481,8 +479,7 @@ public static class CompactDisc
                             continue;
                         }
 
-                        if(q[2] == 0)
-                            continue;
+                        if(q[2] == 0) continue;
 
                         var amin   = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
                         var asec   = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
@@ -490,17 +487,19 @@ public static class CompactDisc
                         int aPos   = amin * 60 * 75 + asec * 75 + aframe - 150;
 
                         // Do not set INDEX 1 to a value higher than what the TOC already said.
-                        if(q[2] == 1 && aPos > (int)tracks[i].StartSector)
-                            continue;
+                        if(q[2] == 1 && aPos > (int)tracks[i].StartSector) continue;
 
-                        if(tracks[i].Indexes.ContainsKey(q[2]) && aPos >= tracks[i].Indexes[q[2]])
-                            continue;
+                        if(tracks[i].Indexes.ContainsKey(q[2]) && aPos >= tracks[i].Indexes[q[2]]) continue;
 
-                        dumpLog?.WriteLine(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2, q[2],
-                                                         trackNo, aPos));
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2,
+                                                         q[2],
+                                                         trackNo,
+                                                         aPos));
 
-                        updateStatus?.Invoke(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2, q[2],
-                                                           trackNo, aPos));
+                        updateStatus?.Invoke(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2,
+                                                           q[2],
+                                                           trackNo,
+                                                           aPos));
 
                         tracks[i].Indexes[q[2]] = aPos;
 
@@ -543,17 +542,13 @@ public static class CompactDisc
 
             cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -562,17 +557,13 @@ public static class CompactDisc
 
             cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -581,17 +572,13 @@ public static class CompactDisc
 
             cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -600,32 +587,24 @@ public static class CompactDisc
 
             cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
         }
 
         i = 0;
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
         {
@@ -707,17 +686,13 @@ public static class CompactDisc
                 break;
         }
 
-        if((cdTextPack1[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack1[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack2[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack2[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack3[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack3[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack4[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack4[0] & 0x80) == 0x80) cdtextPacket = true;
     }
 
     /// <summary>Checks if subchannel contains a TEXT packet</summary>
@@ -738,17 +713,13 @@ public static class CompactDisc
 
             cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -757,17 +728,13 @@ public static class CompactDisc
 
             cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -776,17 +743,13 @@ public static class CompactDisc
 
             cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
@@ -795,17 +758,13 @@ public static class CompactDisc
 
             cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
         }
 
         var status = true;
@@ -817,8 +776,7 @@ public static class CompactDisc
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
             ushort calculatedCdtp1Crc = CRC16CcittContext.Calculate(cdTextPack1ForCrc);
 
-            if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0)
-                status = false;
+            if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0) status = false;
         }
 
         if((cdTextPack2[0] & 0x80) == 0x80)
@@ -828,8 +786,7 @@ public static class CompactDisc
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             ushort calculatedCdtp2Crc = CRC16CcittContext.Calculate(cdTextPack2ForCrc);
 
-            if(cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0)
-                status = false;
+            if(cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0) status = false;
         }
 
         if((cdTextPack3[0] & 0x80) == 0x80)
@@ -839,20 +796,17 @@ public static class CompactDisc
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             ushort calculatedCdtp3Crc = CRC16CcittContext.Calculate(cdTextPack3ForCrc);
 
-            if(cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0)
-                status = false;
+            if(cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0) status = false;
         }
 
-        if((cdTextPack4[0] & 0x80) != 0x80)
-            return status;
+        if((cdTextPack4[0] & 0x80) != 0x80) return status;
 
         var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
         var cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         ushort calculatedCdtp4Crc = CRC16CcittContext.Calculate(cdTextPack4ForCrc);
 
-        if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0)
-            return status;
+        if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0) return status;
 
         return false;
     }
@@ -915,8 +869,7 @@ public static class CompactDisc
         CRC16CcittContext.Data(q, 10, out byte[] qCrc);
         bool status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-        if(fixedAdr && status)
-            return true;
+        if(fixedAdr && status) return true;
 
         int oldAdr = q[0] & 0x3;
 
@@ -1017,8 +970,7 @@ public static class CompactDisc
                     CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
                 if(preCrcOk && nextCrcOk)
@@ -1031,8 +983,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1046,8 +997,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1123,8 +1073,7 @@ public static class CompactDisc
                             CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                            if(status)
-                                return true;
+                            if(status) return true;
                         }
                     }
 
@@ -1182,8 +1131,7 @@ public static class CompactDisc
                             CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                            if(status)
-                                return true;
+                            if(status) return true;
                         }
                     }
                 }
@@ -1238,8 +1186,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1297,8 +1244,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1306,8 +1252,7 @@ public static class CompactDisc
                 status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                 // Game Over
-                if(!fixCrc || status)
-                    return false;
+                if(!fixCrc || status) return false;
 
                 // Previous Q's CRC is correct
                 if(preCrcOk)
@@ -1397,16 +1342,14 @@ public static class CompactDisc
                         else
                             q[9]++;
 
-                        if(q[9] >= 0x74)
-                            q[9] = 0;
+                        if(q[9] >= 0x74) q[9] = 0;
 
                         fixedAbsPos = true;
 
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1432,8 +1375,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1454,12 +1396,10 @@ public static class CompactDisc
                     CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
-                if(!fixCrc || !nextCrcOk || !preCrcOk)
-                    return false;
+                if(!fixCrc || !nextCrcOk || !preCrcOk) return false;
 
                 CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
@@ -1488,16 +1428,14 @@ public static class CompactDisc
                         else
                             q[9]++;
 
-                        if(q[9] >= 0x74)
-                            q[9] = 0;
+                        if(q[9] >= 0x74) q[9] = 0;
 
                         fixedAbsPos = true;
 
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1523,8 +1461,7 @@ public static class CompactDisc
                         CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1551,12 +1488,10 @@ public static class CompactDisc
                     CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
-                if(!fixCrc || !nextCrcOk || !preCrcOk)
-                    return false;
+                if(!fixCrc || !nextCrcOk || !preCrcOk) return false;
 
                 CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
@@ -1597,8 +1532,7 @@ public static class CompactDisc
             ulong trackStart;
             ulong pregap;
 
-            if(track == null)
-                continue;
+            if(track == null) continue;
 
             // Hidden track
             if(track.Sequence == 0)
@@ -1626,7 +1560,8 @@ public static class CompactDisc
             else
                 index = 0;
 
-            updateProgress?.Invoke(string.Format(Localization.Core.Generating_subchannel_for_sector_0, sector), sector,
+            updateProgress?.Invoke(string.Format(Localization.Core.Generating_subchannel_for_sector_0, sector),
+                                   sector,
                                    (long)blocks);
 
             dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");

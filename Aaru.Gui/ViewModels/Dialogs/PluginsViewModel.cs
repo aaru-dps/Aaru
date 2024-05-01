@@ -63,8 +63,7 @@ public sealed class PluginsViewModel : ViewModelBase
         // TODO: Takes too much time
         foreach(IFilter filter in PluginRegister.Singleton.Filters.Values)
         {
-            if(filter is null)
-                continue;
+            if(filter is null) continue;
 
             Filters.Add(new PluginModel
             {
@@ -77,8 +76,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IFloppyImage floppyImage in PluginRegister.Singleton.FloppyImages.Values)
         {
-            if(floppyImage is null)
-                continue;
+            if(floppyImage is null) continue;
 
             FloppyImages.Add(new PluginModel
             {
@@ -91,8 +89,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IMediaImage mediaImage in PluginRegister.Singleton.MediaImages.Values)
         {
-            if(mediaImage is null)
-                continue;
+            if(mediaImage is null) continue;
 
             Images.Add(new PluginModel
             {
@@ -105,8 +102,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IPartition partition in PluginRegister.Singleton.Partitions.Values)
         {
-            if(partition is null)
-                continue;
+            if(partition is null) continue;
 
             PartitionSchemes.Add(new PluginModel
             {
@@ -119,8 +115,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IFilesystem filesystem in PluginRegister.Singleton.Filesystems.Values)
         {
-            if(filesystem is null)
-                continue;
+            if(filesystem is null) continue;
 
             Filesystems.Add(new PluginModel
             {
@@ -133,8 +128,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IReadOnlyFilesystem fs in PluginRegister.Singleton.ReadOnlyFilesystems.Values)
         {
-            if(fs is null)
-                continue;
+            if(fs is null) continue;
 
             ReadOnlyFilesystems.Add(new PluginModel
             {
@@ -147,8 +141,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IWritableFloppyImage writableFloppyImage in PluginRegister.Singleton.WritableFloppyImages.Values)
         {
-            if(writableFloppyImage is null)
-                continue;
+            if(writableFloppyImage is null) continue;
 
             WritableFloppyImages.Add(new PluginModel
             {
@@ -161,8 +154,7 @@ public sealed class PluginsViewModel : ViewModelBase
 
         foreach(IBaseWritableImage writableImage in PluginRegister.Singleton.WritableImages.Values)
         {
-            if(writableImage is null)
-                continue;
+            if(writableImage is null) continue;
 
             WritableImages.Add(new PluginModel
             {

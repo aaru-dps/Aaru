@@ -52,21 +52,17 @@ public sealed partial class AODOS
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
         // Does AO-DOS support hard disks?
-        if(partition.Start > 0)
-            return false;
+        if(partition.Start > 0) return false;
 
         // How is it really?
-        if(imagePlugin.Info.SectorSize != 512)
-            return false;
+        if(imagePlugin.Info.SectorSize != 512) return false;
 
         // Does AO-DOS support any other kind of disk?
-        if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600)
-            return false;
+        if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         BootBlock bb = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
@@ -82,8 +78,7 @@ public sealed partial class AODOS
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
         metadata = new FileSystem();
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         BootBlock bb = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
 
@@ -105,8 +100,8 @@ public sealed partial class AODOS
         sbInformation.AppendFormat(Localization._0_files_in_volume,        bb.files).AppendLine();
         sbInformation.AppendFormat(Localization._0_used_sectors_on_volume, bb.usedSectors).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, encoding)).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Disk_name_0, StringHandlers.CToString(bb.volumeLabel, encoding))
+                     .AppendLine();
 
         information = sbInformation.ToString();
     }

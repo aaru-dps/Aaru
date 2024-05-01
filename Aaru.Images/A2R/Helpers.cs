@@ -52,8 +52,7 @@ public sealed partial class A2R
     /// <returns>A2R format location</returns>
     static long HeadTrackSubToA2RLocation(uint head, ushort track, byte subTrack, MediaType mediaType)
     {
-        if(mediaType == MediaType.Apple32SS)
-            return head + track * 4 + subTrack;
+        if(mediaType == MediaType.Apple32SS) return head + track * 4 + subTrack;
 
         return head + track * 2;
     }
@@ -69,8 +68,7 @@ public sealed partial class A2R
     /// <returns>A2R format location</returns>
     static long HeadTrackSubToA2RLocation(uint head, ushort track, byte subTrack, A2rDriveType driveType)
     {
-        if(driveType == A2rDriveType.SS_525_40trk_quarterStep)
-            return head + track * 4 + subTrack;
+        if(driveType == A2rDriveType.SS_525_40trk_quarterStep) return head + track * 4 + subTrack;
 
         return head + track * 2;
     }

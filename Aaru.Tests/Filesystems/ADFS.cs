@@ -37,8 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Adfs() : FilesystemTest("adfs")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
-                                                      "Acorn Advanced Disc Filing System");
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acorn Advanced Disc Filing System");
 
     public override IFilesystem Plugin     => new AcornADFS();
     public override bool        Partitions => false;

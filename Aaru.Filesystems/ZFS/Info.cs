@@ -69,8 +69,7 @@ public sealed partial class ZFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         byte[]      sector;
         ulong       magic;
@@ -80,22 +79,18 @@ public sealed partial class ZFS
         {
             errno = imagePlugin.ReadSector(partition.Start + 31, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic is ZEC_MAGIC or ZEC_CIGAM)
-                return true;
+            if(magic is ZEC_MAGIC or ZEC_CIGAM) return true;
         }
 
-        if(partition.Start + 16 >= partition.End)
-            return false;
+        if(partition.Start + 16 >= partition.End) return false;
 
         errno = imagePlugin.ReadSector(partition.Start + 16, out sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         magic = BitConverter.ToUInt64(sector, 0x1D8);
 
@@ -111,8 +106,7 @@ public sealed partial class ZFS
         metadata    = new FileSystem();
         ErrorNumber errno;
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         byte[] sector;
         ulong  magic;
@@ -124,26 +118,22 @@ public sealed partial class ZFS
         {
             errno = imagePlugin.ReadSector(partition.Start + 31, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic is ZEC_MAGIC or ZEC_CIGAM)
-                nvlistOff = 32;
+            if(magic is ZEC_MAGIC or ZEC_CIGAM) nvlistOff = 32;
         }
 
         if(partition.Start + 16 < partition.End)
         {
             errno = imagePlugin.ReadSector(partition.Start + 16, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             magic = BitConverter.ToUInt64(sector, 0x1D8);
 
-            if(magic is ZEC_MAGIC or ZEC_CIGAM)
-                nvlistOff = 17;
+            if(magic is ZEC_MAGIC or ZEC_CIGAM) nvlistOff = 17;
         }
 
         var sb = new StringBuilder();
@@ -151,8 +141,7 @@ public sealed partial class ZFS
 
         errno = imagePlugin.ReadSectors(partition.Start + nvlistOff, nvlistLen, out byte[] nvlist);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         sb.AppendLine(!DecodeNvList(nvlist, out Dictionary<string, NVS_Item> decodedNvList)
                           ? "Could not decode nvlist"
@@ -165,14 +154,11 @@ public sealed partial class ZFS
             Type = FS_TYPE
         };
 
-        if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj))
-            metadata.VolumeName = (string)tmpObj.value;
+        if(decodedNvList.TryGetValue("name", out NVS_Item tmpObj)) metadata.VolumeName = (string)tmpObj.value;
 
-        if(decodedNvList.TryGetValue("guid", out tmpObj))
-            metadata.VolumeSerial = $"{(ulong)tmpObj.value}";
+        if(decodedNvList.TryGetValue("guid", out tmpObj)) metadata.VolumeSerial = $"{(ulong)tmpObj.value}";
 
-        if(decodedNvList.TryGetValue("pool_guid", out tmpObj))
-            metadata.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
+        if(decodedNvList.TryGetValue("pool_guid", out tmpObj)) metadata.VolumeSetIdentifier = $"{(ulong)tmpObj.value}";
     }
 
 #endregion

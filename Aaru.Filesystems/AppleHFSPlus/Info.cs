@@ -46,23 +46,19 @@ public sealed partial class AppleHFSPlus
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         ulong hfspOffset;
 
         uint sectorsToRead = 0x800 / imagePlugin.Info.SectorSize;
 
-        if(0x800 % imagePlugin.Info.SectorSize > 0)
-            sectorsToRead++;
+        if(0x800 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectorsToRead, out byte[] vhSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(vhSector.Length < 0x800)
-            return false;
+        if(vhSector.Length < 0x800) return false;
 
         var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
@@ -87,11 +83,11 @@ public sealed partial class AppleHFSPlus
         else
             hfspOffset = 0;
 
-        errno = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead,
+        errno = imagePlugin.ReadSectors(partition.Start + hfspOffset,
+                                        sectorsToRead,
                                         out vhSector); // Read volume header
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
@@ -112,13 +108,11 @@ public sealed partial class AppleHFSPlus
 
         uint sectorsToRead = 0x800 / imagePlugin.Info.SectorSize;
 
-        if(0x800 % imagePlugin.Info.SectorSize > 0)
-            sectorsToRead++;
+        if(0x800 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectorsToRead, out byte[] vhSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
@@ -150,16 +144,15 @@ public sealed partial class AppleHFSPlus
             wrapped    = false;
         }
 
-        errno = imagePlugin.ReadSectors(partition.Start + hfspOffset, sectorsToRead,
+        errno = imagePlugin.ReadSectors(partition.Start + hfspOffset,
+                                        sectorsToRead,
                                         out vhSector); // Read volume header
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         vh.signature = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-        if(vh.signature != AppleCommon.HFSP_MAGIC && vh.signature != AppleCommon.HFSX_MAGIC)
-            return;
+        if(vh.signature != AppleCommon.HFSP_MAGIC && vh.signature != AppleCommon.HFSX_MAGIC) return;
 
         var sb = new StringBuilder();
 
@@ -175,8 +168,7 @@ public sealed partial class AppleHFSPlus
                 break;
         }
 
-        if(wrapped)
-            sb.AppendLine(Localization.Volume_is_wrapped_inside_an_HFS_volume);
+        if(wrapped) sb.AppendLine(Localization.Volume_is_wrapped_inside_an_HFS_volume);
 
         var tmp = new byte[0x400];
         Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
@@ -188,54 +180,46 @@ public sealed partial class AppleHFSPlus
         {
             sb.AppendFormat(Localization.Filesystem_version_is_0, vh.version).AppendLine();
 
-            if((vh.attributes & 0x80) == 0x80)
-                sb.AppendLine(Localization.Volume_is_locked_by_hardware);
+            if((vh.attributes & 0x80) == 0x80) sb.AppendLine(Localization.Volume_is_locked_by_hardware);
 
-            if((vh.attributes & 0x100) == 0x100)
-                sb.AppendLine(Localization.Volume_is_unmounted);
+            if((vh.attributes & 0x100) == 0x100) sb.AppendLine(Localization.Volume_is_unmounted);
 
-            if((vh.attributes & 0x200) == 0x200)
-                sb.AppendLine(Localization.There_are_bad_blocks_in_the_extents_file);
+            if((vh.attributes & 0x200) == 0x200) sb.AppendLine(Localization.There_are_bad_blocks_in_the_extents_file);
 
-            if((vh.attributes & 0x400) == 0x400)
-                sb.AppendLine(Localization.Volume_does_not_need_cache);
+            if((vh.attributes & 0x400) == 0x400) sb.AppendLine(Localization.Volume_does_not_need_cache);
 
-            if((vh.attributes & 0x800) == 0x800)
-                sb.AppendLine(Localization.Volume_state_is_inconsistent);
+            if((vh.attributes & 0x800) == 0x800) sb.AppendLine(Localization.Volume_state_is_inconsistent);
 
-            if((vh.attributes & 0x1000) == 0x1000)
-                sb.AppendLine(Localization.There_are_reused_CNIDs);
+            if((vh.attributes & 0x1000) == 0x1000) sb.AppendLine(Localization.There_are_reused_CNIDs);
 
-            if((vh.attributes & 0x2000) == 0x2000)
-                sb.AppendLine(Localization.Volume_is_journaled);
+            if((vh.attributes & 0x2000) == 0x2000) sb.AppendLine(Localization.Volume_is_journaled);
 
-            if((vh.attributes & 0x8000) == 0x8000)
-                sb.AppendLine(Localization.Volume_is_locked_by_software);
+            if((vh.attributes & 0x8000) == 0x8000) sb.AppendLine(Localization.Volume_is_locked_by_software);
 
             sb.AppendFormat(Localization.Implementation_that_last_mounted_the_volume_0,
-                            Encoding.ASCII.GetString(vh.lastMountedVersion)).
-               AppendLine();
+                            Encoding.ASCII.GetString(vh.lastMountedVersion))
+              .AppendLine();
 
             if((vh.attributes & 0x2000) == 0x2000)
                 sb.AppendFormat(Localization.Journal_starts_at_allocation_block_0, vh.journalInfoBlock).AppendLine();
 
             sb.AppendFormat(Localization.Creation_date_0, DateHandlers.MacToDateTime(vh.createDate)).AppendLine();
 
-            sb.AppendFormat(Localization.Last_modification_date_0, DateHandlers.MacToDateTime(vh.modifyDate)).
-               AppendLine();
+            sb.AppendFormat(Localization.Last_modification_date_0, DateHandlers.MacToDateTime(vh.modifyDate))
+              .AppendLine();
 
             if(vh.backupDate > 0)
             {
-                sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(vh.backupDate)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(vh.backupDate))
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_backed_up);
 
             if(vh.backupDate > 0)
             {
-                sb.AppendFormat(Localization.Last_check_date_0, DateHandlers.MacToDateTime(vh.checkedDate)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Last_check_date_0, DateHandlers.MacToDateTime(vh.checkedDate))
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_checked_up);
@@ -267,22 +251,19 @@ public sealed partial class AppleHFSPlus
 
             metadata = new FileSystem();
 
-            if(vh.backupDate > 0)
-                metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
+            if(vh.backupDate > 0) metadata.BackupDate = DateHandlers.MacToDateTime(vh.backupDate);
 
             metadata.Bootable    |= vh.drFndrInfo0 != 0 || vh.drFndrInfo3 != 0 || vh.drFndrInfo5 != 0;
             metadata.Clusters    =  vh.totalBlocks;
             metadata.ClusterSize =  vh.blockSize;
 
-            if(vh.createDate > 0)
-                metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
+            if(vh.createDate > 0) metadata.CreationDate = DateHandlers.MacToDateTime(vh.createDate);
 
             metadata.Dirty        = (vh.attributes & 0x100) != 0x100;
             metadata.Files        = vh.fileCount;
             metadata.FreeClusters = vh.freeBlocks;
 
-            if(vh.modifyDate > 0)
-                metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
+            if(vh.modifyDate > 0) metadata.ModificationDate = DateHandlers.MacToDateTime(vh.modifyDate);
 
             metadata.Type = vh.signature switch
                             {

@@ -62,21 +62,24 @@ public sealed partial class A2R
 
         _header = Marshal.ByteArrayToStructureLittleEndian<A2RHeader>(hdr);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.signature = \"{0}\"",
                                    StringHandlers.CToString(_header.signature));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}",        _header.version);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.highBitTest = {0:X2}", _header.highBitTest);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.lineTest = {0:X2} {1:X2} {2:X2}", _header.lineTest[0],
-                                   _header.lineTest[1], _header.lineTest[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.lineTest = {0:X2} {1:X2} {2:X2}",
+                                   _header.lineTest[0],
+                                   _header.lineTest[1],
+                                   _header.lineTest[2]);
 
         var infoMagic = new byte[4];
         _a2RStream.EnsureRead(infoMagic, 0, 4);
 
         // There must be an INFO chunk after the header (at byte 16)
-        if(!_infoChunkSignature.SequenceEqual(infoMagic))
-            return ErrorNumber.UnrecognizedFormat;
+        if(!_infoChunkSignature.SequenceEqual(infoMagic)) return ErrorNumber.UnrecognizedFormat;
 
         _a2RStream.Seek(-4, SeekOrigin.Current);
 
@@ -88,15 +91,18 @@ public sealed partial class A2R
                 _a2RStream.EnsureRead(infoChnk, 0, Marshal.SizeOf<InfoChunkV2>());
                 _infoChunkV2 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV2>(infoChnk);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.header.chunkId = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV2.header.chunkId));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkSize = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.header.chunkSize = {0}",
                                            _infoChunkV2.header.chunkSize);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.version = {0}", _infoChunkV2.version);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.creator = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.creator = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV2.creator).TrimEnd());
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.diskType = {0}", _infoChunkV2.diskType);
@@ -134,15 +140,18 @@ public sealed partial class A2R
                 _a2RStream.EnsureRead(infoChk, 0, Marshal.SizeOf<InfoChunkV3>());
                 _infoChunkV3 = Marshal.ByteArrayToStructureLittleEndian<InfoChunkV3>(infoChk);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkId = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.header.chunkId = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV3.header.chunkId));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.header.chunkSize = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.header.chunkSize = {0}",
                                            _infoChunkV3.header.chunkSize);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.version = {0}", _infoChunkV3.version);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.creator = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.creator = \"{0}\"",
                                            StringHandlers.CToString(_infoChunkV3.creator).TrimEnd());
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.driveType = {0}", _infoChunkV3.driveType);
@@ -151,7 +160,8 @@ public sealed partial class A2R
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.synchronized = {0}", _infoChunkV3.synchronized);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "infoChunk.hardSectorCount = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "infoChunk.hardSectorCount = {0}",
                                            _infoChunkV3.hardSectorCount);
 
                 _imageInfo.Creator = Encoding.ASCII.GetString(_infoChunkV3.creator).TrimEnd();
@@ -232,14 +242,15 @@ public sealed partial class A2R
                         _a2RStream.EnsureRead(location, 0, 2);
                         capture.location = BitConverter.ToUInt16(location);
 
-                        A2RLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
-                                                  out capture.track, out capture.subTrack);
+                        A2RLocationToHeadTrackSub(capture.location,
+                                                  _imageInfo.MediaType,
+                                                  out capture.head,
+                                                  out capture.track,
+                                                  out capture.subTrack);
 
-                        if(capture.head + 1 > _imageInfo.Heads)
-                            _imageInfo.Heads = capture.head + 1;
+                        if(capture.head + 1 > _imageInfo.Heads) _imageInfo.Heads = capture.head + 1;
 
-                        if(capture.track + 1 > _imageInfo.Cylinders)
-                            _imageInfo.Cylinders = (uint)(capture.track + 1);
+                        if(capture.track + 1 > _imageInfo.Cylinders) _imageInfo.Cylinders = (uint)(capture.track + 1);
 
                         capture.numberOfIndexSignals = (byte)_a2RStream.ReadByte();
                         capture.indexSignals         = new uint[capture.numberOfIndexSignals];
@@ -277,15 +288,14 @@ public sealed partial class A2R
 
                     string[] metaFields = metaData.Split('\n');
 
-                    foreach(string[] keyValue in metaFields.Select(field => field.Split('\t')).
-                                                            Where(keyValue => keyValue.Length == 2))
+                    foreach(string[] keyValue in metaFields.Select(field => field.Split('\t'))
+                                                           .Where(keyValue => keyValue.Length == 2))
                         _meta.Add(keyValue[0], keyValue[1]);
 
                     if(_meta.TryGetValue("image_date", out string imageDate))
                         _imageInfo.CreationTime = DateTime.Parse(imageDate);
 
-                    if(_meta.TryGetValue("title", out string title))
-                        _imageInfo.MediaTitle = title;
+                    if(_meta.TryGetValue("title", out string title)) _imageInfo.MediaTitle = title;
 
                     break;
                 case var slvd when slvd.SequenceEqual(_slvdChunkSignature):
@@ -308,14 +318,15 @@ public sealed partial class A2R
                             numberOfIndexSignals = 1
                         };
 
-                        A2RLocationToHeadTrackSub(capture.location,  _imageInfo.MediaType, out capture.head,
-                                                  out capture.track, out capture.subTrack);
+                        A2RLocationToHeadTrackSub(capture.location,
+                                                  _imageInfo.MediaType,
+                                                  out capture.head,
+                                                  out capture.track,
+                                                  out capture.subTrack);
 
-                        if(capture.head + 1 > _imageInfo.Heads)
-                            _imageInfo.Heads = capture.head + 1;
+                        if(capture.head + 1 > _imageInfo.Heads) _imageInfo.Heads = capture.head + 1;
 
-                        if(capture.track + 1 > _imageInfo.Cylinders)
-                            _imageInfo.Cylinders = (uint)(capture.track + 1);
+                        if(capture.track + 1 > _imageInfo.Cylinders) _imageInfo.Cylinders = (uint)(capture.track + 1);
 
                         var dataSize = new byte[4];
                         _a2RStream.EnsureRead(dataSize, 0, 4);
@@ -388,13 +399,11 @@ public sealed partial class A2R
         ErrorNumber error =
             ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution, out dataResolution);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         error = ReadFluxDataCapture(head, track, subTrack, captureIndex, out dataBuffer);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         error = ReadFluxIndexCapture(head, track, subTrack, captureIndex, out indexBuffer);
 
@@ -437,8 +446,7 @@ public sealed partial class A2R
 
         StreamCapture capture = StreamCaptureAtIndex(head, track, subTrack, captureIndex);
 
-        if(capture.captureType == 2)
-            return ErrorNumber.NotImplemented;
+        if(capture.captureType == 2) return ErrorNumber.NotImplemented;
 
         Stream stream = _a2RFilter.GetDataForkStream();
         var    br     = new BinaryReader(stream);
@@ -456,8 +464,7 @@ public sealed partial class A2R
 
         List<StreamCapture> captures = _a2RCaptures.FindAll(c => c.head == head && c.track == track);
 
-        if(captures.Count <= 0)
-            return ErrorNumber.OutOfRange;
+        if(captures.Count <= 0) return ErrorNumber.OutOfRange;
 
         length = (byte)(captures.Max(static c => c.subTrack) + 1);
 

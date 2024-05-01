@@ -140,8 +140,7 @@ public class Mpeg
     {
         for(uint i = 0; i < blocks; i++)
         {
-            if(IsMpegPacket(sectorData.Skip((int)(i * blockSize))))
-                return true;
+            if(IsMpegPacket(sectorData.Skip((int)(i * blockSize)))) return true;
         }
 
         return false;

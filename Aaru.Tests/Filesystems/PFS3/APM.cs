@@ -37,8 +37,8 @@ namespace Aaru.Tests.Filesystems.PFS3;
 [TestFixture]
 public class APM() : FilesystemTest("pfs")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
-                                                      "Professional File System 3 (APM)");
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Professional File System 3 (APM)");
 
     public override IFilesystem Plugin     => new PFS();
     public override bool        Partitions => true;

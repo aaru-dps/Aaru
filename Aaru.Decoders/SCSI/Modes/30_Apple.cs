@@ -47,17 +47,13 @@ public static partial class Modes
 
     public static bool IsAppleModePage_30(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return false;
+        if((pageResponse?[0] & 0x40) == 0x40) return false;
 
-        if((pageResponse?[0] & 0x3F) != 0x30)
-            return false;
+        if((pageResponse?[0] & 0x3F) != 0x30) return false;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return false;
+        if(pageResponse[1] + 2 != pageResponse.Length) return false;
 
-        if(pageResponse.Length != 30)
-            return false;
+        if(pageResponse.Length != 30) return false;
 
         var str = new byte[20];
         Array.Copy(pageResponse, 10, str, 0, 20);

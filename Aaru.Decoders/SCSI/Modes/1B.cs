@@ -61,17 +61,13 @@ public static partial class Modes
 
     public static ModePage_1B? DecodeModePage_1B(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x1B)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x1B) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 12)
-            return null;
+        if(pageResponse.Length < 12) return null;
 
         var decoded = new ModePage_1B();
 
@@ -91,31 +87,24 @@ public static partial class Modes
 
     public static string PrettifyModePage_1B(ModePage_1B? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_1B page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Removable_Block_Access_Capabilities_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.SFLP)
-            sb.AppendLine("\t" + Localization.Drive_can_be_used_as_a_system_floppy_device);
+        if(page.SFLP) sb.AppendLine("\t" + Localization.Drive_can_be_used_as_a_system_floppy_device);
 
-        if(page.SRFP)
-            sb.AppendLine("\t" + Localization.Drive_supports_reporting_progress_of_format);
+        if(page.SRFP) sb.AppendLine("\t" + Localization.Drive_supports_reporting_progress_of_format);
 
-        if(page.NCD)
-            sb.AppendLine("\t" + Localization.Drive_is_a_Non_CD_Optical_Device);
+        if(page.NCD) sb.AppendLine("\t" + Localization.Drive_is_a_Non_CD_Optical_Device);
 
-        if(page.SML)
-            sb.AppendLine("\t" + Localization.Device_is_a_dual_device_supporting_CD_and_Non_CD_Optical);
+        if(page.SML) sb.AppendLine("\t" + Localization.Device_is_a_dual_device_supporting_CD_and_Non_CD_Optical);
 
-        if(page.TLUN > 0)
-            sb.AppendFormat("\t" + Localization.Drive_supports_0_LUNs, page.TLUN).AppendLine();
+        if(page.TLUN > 0) sb.AppendFormat("\t" + Localization.Drive_supports_0_LUNs, page.TLUN).AppendLine();
 
         return sb.ToString();
     }

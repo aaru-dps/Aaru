@@ -53,19 +53,25 @@ sealed class MediaScanCommand : Command
     public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
         Add(new Option<string>(new[]
-        {
-            "--mhdd-log", "-m"
-        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
+                               {
+                                   "--mhdd-log", "-m"
+                               },
+                               () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
         Add(new Option<string>(new[]
-        {
-            "--ibg-log", "-b"
-        }, () => null, UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
+                               {
+                                   "--ibg-log", "-b"
+                               },
+                               () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
         Add(new Option<bool>(new[]
-        {
-            "--use-buffered-reads"
-        }, () => true, UI.OS_buffered_reads_help));
+                             {
+                                 "--use-buffered-reads"
+                             },
+                             () => true,
+                             UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {
@@ -139,8 +145,10 @@ sealed class MediaScanCommand : Command
 
                 return (int)devErrno;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -158,11 +166,11 @@ sealed class MediaScanCommand : Command
         var         scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
         ScanResults results = new();
 
-        AnsiConsole.Progress().
-                    AutoClear(true).
-                    HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                    Start(ctx =>
+        AnsiConsole.Progress()
+                   .AutoClear(true)
+                   .HideCompleted(true)
+                   .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                   .Start(ctx =>
                     {
                         scanner.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
@@ -253,9 +261,12 @@ sealed class MediaScanCommand : Command
         if(results.SeekTotal > 0 || results.SeekMin < double.MaxValue || results.SeekMax > double.MinValue)
 
         {
-            AaruConsole.
-                WriteLine(Localization.Core.Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average,
-                          results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
+            AaruConsole.WriteLine(Localization.Core
+                                              .Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average,
+                                  results.SeekTimes,
+                                  results.SeekMax,
+                                  results.SeekMin,
+                                  results.SeekTotal / 1000);
         }
 
         dev.Close();

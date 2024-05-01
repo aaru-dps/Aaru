@@ -75,7 +75,8 @@ public static class ImageInfo
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Version))
         {
-            AaruConsole.WriteLine(Localization.Core.Format_0_version_1_WithMarkup, Markup.Escape(imageFormat.Format),
+            AaruConsole.WriteLine(Localization.Core.Format_0_version_1_WithMarkup,
+                                  Markup.Escape(imageFormat.Format),
                                   Markup.Escape(imageFormat.Info.Version));
         }
         else
@@ -99,7 +100,8 @@ public static class ImageInfo
         AaruConsole.WriteLine(Localization.Core.Image_without_headers_is_0_bytes_long, imageFormat.Info.ImageSize);
 
         AaruConsole.WriteLine(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
-                              imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
+                              imageFormat.Info.Sectors,
+                              imageFormat.Info.SectorSize,
                               ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize).Humanize());
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
@@ -112,7 +114,8 @@ public static class ImageInfo
             AaruConsole.WriteLine(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
 
         AaruConsole.WriteLine(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1_WithMarkup,
-                              imageFormat.Info.MediaType, imageFormat.Info.MetadataMediaType);
+                              imageFormat.Info.MediaType,
+                              imageFormat.Info.MetadataMediaType);
 
         AaruConsole.WriteLine(imageFormat.Info.HasPartitions
                                   ? Localization.Core.Has_partitions
@@ -128,7 +131,8 @@ public static class ImageInfo
         if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
         {
             AaruConsole.WriteLine(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
-                                  imageFormat.Info.MediaSequence, imageFormat.Info.LastMediaSequence);
+                                  imageFormat.Info.MediaSequence,
+                                  imageFormat.Info.LastMediaSequence);
         }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
@@ -197,7 +201,9 @@ public static class ImageInfo
            imageFormat is not ITapeImage { IsTape: true })
         {
             AaruConsole.WriteLine(Localization.Core.Media_geometry_0_cylinders_1_heads_2_sectors_per_track_WithMarkup,
-                                  imageFormat.Info.Cylinders, imageFormat.Info.Heads, imageFormat.Info.SectorsPerTrack);
+                                  imageFormat.Info.Cylinders,
+                                  imageFormat.Info.Heads,
+                                  imageFormat.Info.SectorsPerTrack);
         }
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
@@ -229,8 +235,7 @@ public static class ImageInfo
         else
             PrintBlockImageInfo(imageFormat as IMediaImage);
 
-        if(imageFormat.DumpHardware == null)
-            return;
+        if(imageFormat.DumpHardware == null) return;
 
         int manufacturerLen = Localization.Core.Title_Manufacturer.Length;
         int modelLen        = Localization.Core.Title_Model.Length;
@@ -242,31 +247,23 @@ public static class ImageInfo
 
         foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
-            if(dump.Manufacturer?.Length > manufacturerLen)
-                manufacturerLen = dump.Manufacturer.Length;
+            if(dump.Manufacturer?.Length > manufacturerLen) manufacturerLen = dump.Manufacturer.Length;
 
-            if(dump.Model?.Length > modelLen)
-                modelLen = dump.Model.Length;
+            if(dump.Model?.Length > modelLen) modelLen = dump.Model.Length;
 
-            if(dump.Serial?.Length > serialLen)
-                serialLen = dump.Serial.Length;
+            if(dump.Serial?.Length > serialLen) serialLen = dump.Serial.Length;
 
-            if(dump.Software?.Name?.Length > softwareLen)
-                softwareLen = dump.Software.Name.Length;
+            if(dump.Software?.Name?.Length > softwareLen) softwareLen = dump.Software.Name.Length;
 
-            if(dump.Software?.Version?.Length > versionLen)
-                versionLen = dump.Software.Version.Length;
+            if(dump.Software?.Version?.Length > versionLen) versionLen = dump.Software.Version.Length;
 
-            if(dump.Software?.OperatingSystem?.Length > osLen)
-                osLen = dump.Software.OperatingSystem.Length;
+            if(dump.Software?.OperatingSystem?.Length > osLen) osLen = dump.Software.OperatingSystem.Length;
 
             foreach(Extent extent in dump.Extents)
             {
-                if($"{extent.Start}".Length > sectorLen)
-                    sectorLen = $"{extent.Start}".Length;
+                if($"{extent.Start}".Length > sectorLen) sectorLen = $"{extent.Start}".Length;
 
-                if($"{extent.End}".Length > sectorLen)
-                    sectorLen = $"{extent.End}".Length;
+                if($"{extent.End}".Length > sectorLen) sectorLen = $"{extent.End}".Length;
             }
         }
 
@@ -288,10 +285,13 @@ public static class ImageInfo
         {
             foreach(Extent extent in dump.Extents)
             {
-                table.AddRow(Markup.Escape(dump.Manufacturer ?? ""), Markup.Escape(dump.Model ?? ""),
-                             Markup.Escape(dump.Serial ?? ""), Markup.Escape(dump.Software.Name ?? ""),
-                             Markup.Escape(dump.Software.Version ?? ""),
-                             Markup.Escape(dump.Software.OperatingSystem ?? ""), extent.Start.ToString(),
+                table.AddRow(Markup.Escape(dump.Manufacturer             ?? ""),
+                             Markup.Escape(dump.Model                    ?? ""),
+                             Markup.Escape(dump.Serial                   ?? ""),
+                             Markup.Escape(dump.Software.Name            ?? ""),
+                             Markup.Escape(dump.Software.Version         ?? ""),
+                             Markup.Escape(dump.Software.OperatingSystem ?? ""),
+                             extent.Start.ToString(),
                              extent.End.ToString());
             }
         }
@@ -303,20 +303,22 @@ public static class ImageInfo
     {
         ErrorNumber errno = imageFormat.GetMappings(out LinearMemoryMap mappings);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         AaruConsole.WriteLine(Localization.Core.Mapping_WithMarkup);
 
-        AaruConsole.WriteLine("{0}", Markup.Escape(JsonSerializer.Serialize(mappings, new JsonSerializerOptions
-        {
-            WriteIndented          = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Converters =
-            {
-                new JsonStringEnumConverter()
-            }
-        })));
+        AaruConsole.WriteLine("{0}",
+                              Markup.Escape(JsonSerializer.Serialize(mappings,
+                                                                     new JsonSerializerOptions
+                                                                     {
+                                                                         WriteIndented = true,
+                                                                         DefaultIgnoreCondition =
+                                                                             JsonIgnoreCondition.WhenWritingNull,
+                                                                         Converters =
+                                                                         {
+                                                                             new JsonStringEnumConverter()
+                                                                         }
+                                                                     })));
     }
 
     static void PrintBlockImageInfo(IMediaImage imageFormat)
@@ -455,8 +457,8 @@ public static class ImageInfo
                     pma    = tmp;
                 }
 
-                AaruConsole.WriteLine(Localization.Core.
-                                                   CompactDisc_Power_Management_Area_contained_in_image_WithMarkup);
+                AaruConsole.WriteLine(Localization.Core
+                                                  .CompactDisc_Power_Management_Area_contained_in_image_WithMarkup);
 
                 AaruConsole.Write("{0}", PMA.Prettify(pma));
                 AaruConsole.WriteLine();
@@ -482,8 +484,8 @@ public static class ImageInfo
                     atip   = tmp;
                 }
 
-                AaruConsole.WriteLine(Localization.Core.
-                                                   CompactDisc_Absolute_Time_In_Pregroove_ATIP_contained_in_image_WithMarkup);
+                AaruConsole.WriteLine(Localization.Core
+                                                  .CompactDisc_Absolute_Time_In_Pregroove_ATIP_contained_in_image_WithMarkup);
 
                 AaruConsole.Write("{0}", ATIP.Prettify(atip));
                 AaruConsole.WriteLine();
@@ -521,9 +523,9 @@ public static class ImageInfo
 
             if(errno == ErrorNumber.NoError)
             {
-                AaruConsole.
-                    WriteLine(Localization.Core.CompactDisc_Media_Catalogue_Number_contained_in_image_0_WithMarkup,
-                              Encoding.UTF8.GetString(mcn));
+                AaruConsole.WriteLine(Localization.Core
+                                                  .CompactDisc_Media_Catalogue_Number_contained_in_image_0_WithMarkup,
+                                      Encoding.UTF8.GetString(mcn));
 
                 AaruConsole.WriteLine();
             }
@@ -559,8 +561,8 @@ public static class ImageInfo
 
             if(errno == ErrorNumber.NoError)
             {
-                AaruConsole.WriteLine(Localization.Core.
-                                                   DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup);
+                AaruConsole.WriteLine(Localization.Core
+                                                  .DVD_RAM_Disc_Definition_Structure_contained_in_image_WithMarkup);
 
                 AaruConsole.Write("{0}", DDS.Prettify(dds));
                 AaruConsole.WriteLine();
@@ -573,8 +575,8 @@ public static class ImageInfo
 
             if(errno == ErrorNumber.NoError)
             {
-                AaruConsole.WriteLine(Localization.Core.
-                                                   DVD_R_Physical_Format_Information_contained_in_image_WithMarkup);
+                AaruConsole.WriteLine(Localization.Core
+                                                  .DVD_R_Physical_Format_Information_contained_in_image_WithMarkup);
 
                 AaruConsole.Write("{0}", PFI.Prettify(pfi, imageFormat.Info.MediaType));
                 AaruConsole.WriteLine();
@@ -676,7 +678,8 @@ public static class ImageInfo
 
                                 break;
                             default:
-                                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_unknown_tuple_ID_0,
+                                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                           Localization.Core.Found_unknown_tuple_ID_0,
                                                            (byte)tuple.Code);
 
                                 break;
@@ -840,11 +843,9 @@ public static class ImageInfo
             }
         }
 
-        if(imageFormat is IFluxImage fluxImage)
-            AaruConsole.WriteLine(Localization.Core.Image_flux_captures);
+        if(imageFormat is IFluxImage fluxImage) AaruConsole.WriteLine(Localization.Core.Image_flux_captures);
 
-        if(imageFormat is not IOpticalMediaImage opticalImage)
-            return;
+        if(imageFormat is not IOpticalMediaImage opticalImage) return;
 
         try
         {
@@ -863,8 +864,10 @@ public static class ImageInfo
 
                 foreach(Session session in opticalImage.Sessions)
                 {
-                    table.AddRow(session.Sequence.ToString(), session.StartTrack.ToString(),
-                                 session.EndTrack.ToString(), session.StartSector.ToString(),
+                    table.AddRow(session.Sequence.ToString(),
+                                 session.StartTrack.ToString(),
+                                 session.EndTrack.ToString(),
+                                 session.StartSector.ToString(),
                                  session.EndSector.ToString());
                 }
 
@@ -879,8 +882,7 @@ public static class ImageInfo
 
         try
         {
-            if(opticalImage.Tracks is not { Count: > 0 })
-                return;
+            if(opticalImage.Tracks is not { Count: > 0 }) return;
 
             var table = new Table
             {
@@ -898,15 +900,19 @@ public static class ImageInfo
 
             foreach(Track track in opticalImage.Tracks)
             {
-                table.AddRow(track.Sequence.ToString(), track.Type.ToString(), track.BytesPerSector.ToString(),
-                             track.RawBytesPerSector.ToString(), track.SubchannelType.ToString(),
-                             track.Pregap.ToString(), track.StartSector.ToString(), track.EndSector.ToString());
+                table.AddRow(track.Sequence.ToString(),
+                             track.Type.ToString(),
+                             track.BytesPerSector.ToString(),
+                             track.RawBytesPerSector.ToString(),
+                             track.SubchannelType.ToString(),
+                             track.Pregap.ToString(),
+                             track.StartSector.ToString(),
+                             track.EndSector.ToString());
             }
 
             AnsiConsole.Write(table);
 
-            if(!opticalImage.Tracks.Any(t => t.Indexes.Any()))
-                return;
+            if(!opticalImage.Tracks.Any(t => t.Indexes.Any())) return;
 
             AaruConsole.WriteLine();
 
@@ -920,8 +926,10 @@ public static class ImageInfo
             table.AddColumn(Localization.Core.Title_Start);
 
             foreach(Track track in opticalImage.Tracks)
-            foreach(KeyValuePair<ushort, int> index in track.Indexes)
-                table.AddRow(track.Sequence.ToString(), index.Key.ToString(), index.Value.ToString());
+            {
+                foreach(KeyValuePair<ushort, int> index in track.Indexes)
+                    table.AddRow(track.Sequence.ToString(), index.Key.ToString(), index.Value.ToString());
+            }
 
             AnsiConsole.Write(table);
         }

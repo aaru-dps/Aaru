@@ -48,8 +48,7 @@ public static class PrintScsiModePages
     {
         AaruConsole.WriteLine(Modes.PrettifyModeHeader(decMode.Header, devType));
 
-        if(decMode.Pages == null)
-            return;
+        if(decMode.Pages == null) return;
 
         foreach(Modes.ModePage page in decMode.Pages)
 
@@ -66,7 +65,8 @@ public static class PrintScsiModePages
                         if(page.Subpage != 0)
                         {
                             AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0_subpage_1,
-                                                  page.Page, page.Subpage);
+                                                  page.Page,
+                                                  page.Subpage);
                         }
                         else
                             AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0, page.Page);
@@ -376,7 +376,8 @@ public static class PrintScsiModePages
                 {
                     if(page.Subpage != 0)
                     {
-                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0_subpage_1, page.Page,
+                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0_subpage_1,
+                                              page.Page,
                                               page.Subpage);
                     }
                     else

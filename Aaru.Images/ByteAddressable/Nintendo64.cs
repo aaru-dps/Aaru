@@ -71,12 +71,17 @@ public class Nintendo64 : IByteAddressableImage
     public List<DumpHardware> DumpHardware => null;
 
     /// <inheritdoc />
-    public string Format => !_opened ? "Nintendo 64 cartridge dump" : _interleaved ? "Doctor V64" : "Mr. Backup Z64";
+    public string Format => !_opened
+                                ? "Nintendo 64 cartridge dump"
+                                : _interleaved
+                                    ? "Doctor V64"
+                                    : "Mr. Backup Z64";
 
     /// <inheritdoc />
     public Guid Id => new("EF1B4319-48A0-4EEC-B8E8-D0EA36F8CC92");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -86,14 +91,12 @@ public class Nintendo64 : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length % 512 != 0)
-            return false;
+        if(stream.Length % 512 != 0) return false;
 
         stream.Position = 0;
         var magicBytes = new byte[4];
@@ -119,14 +122,12 @@ public class Nintendo64 : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 512 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0;
         var magicBytes = new byte[4];
@@ -265,8 +266,7 @@ public class Nintendo64 : IByteAddressableImage
 
         string extension = Path.GetExtension(path).ToLowerInvariant();
 
-        if(extension == ".v64")
-            _interleaved = true;
+        if(extension == ".v64") _interleaved = true;
 
         try
         {
@@ -573,8 +573,7 @@ public class Nintendo64 : IByteAddressableImage
             Length = (ulong)_data.Length
         };
 
-        if(saveLength <= 0)
-            return ErrorNumber.NoError;
+        if(saveLength <= 0) return ErrorNumber.NoError;
 
         mappings.Devices[1].Type = saveType;
 
@@ -611,8 +610,7 @@ public class Nintendo64 : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -648,16 +646,13 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -737,8 +732,7 @@ public class Nintendo64 : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -782,16 +776,13 @@ public class Nintendo64 : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 

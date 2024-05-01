@@ -103,9 +103,11 @@ public sealed class Entropy
                     Entropy = 0
                 };
 
-                UpdateProgressEvent?.
-                    Invoke(string.Format(Localization.Core.Entropying_track_0_of_1, currentTrack.Sequence, inputTracks.Max(t => t.Sequence)),
-                           currentTrack.Sequence, inputTracks.Max(t => t.Sequence));
+                UpdateProgressEvent?.Invoke(string.Format(Localization.Core.Entropying_track_0_of_1,
+                                                          currentTrack.Sequence,
+                                                          inputTracks.Max(t => t.Sequence)),
+                                            currentTrack.Sequence,
+                                            inputTracks.Max(t => t.Sequence));
 
                 var          entTable              = new ulong[256];
                 ulong        trackSize             = 0;
@@ -113,24 +115,28 @@ public sealed class Entropy
 
                 trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
-                AaruConsole.VerboseWriteLine(Localization.Core.Track_0_has_1_sectors, currentTrack.Sequence,
+                AaruConsole.VerboseWriteLine(Localization.Core.Track_0_has_1_sectors,
+                                             currentTrack.Sequence,
                                              trackEntropy.Sectors);
 
                 InitProgress2Event?.Invoke();
 
                 for(ulong i = 0; i < trackEntropy.Sectors; i++)
                 {
-                    UpdateProgress2Event?.
-                        Invoke(string.Format(Localization.Core.Entropying_sector_0_of_track_1, i + 1, currentTrack.Sequence),
-                               (long)(i + 1), (long)currentTrack.EndSector);
+                    UpdateProgress2Event?.Invoke(string.Format(Localization.Core.Entropying_sector_0_of_track_1,
+                                                               i + 1,
+                                                               currentTrack.Sequence),
+                                                 (long)(i + 1),
+                                                 (long)currentTrack.EndSector);
 
                     ErrorNumber errno = opticalMediaImage.ReadSector(i, currentTrack.Sequence, out byte[] sector);
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        AaruConsole.
-                            ErrorWriteLine(string.Format(Localization.Core.Error_0_while_reading_sector_1_continuing,
-                                                         errno, i));
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Core
+                                                                             .Error_0_while_reading_sector_1_continuing,
+                                                                 errno,
+                                                                 i));
 
                         continue;
                     }
@@ -139,24 +145,21 @@ public sealed class Entropy
                     {
                         string sectorHash = Sha1Context.Data(sector, out _);
 
-                        if(!uniqueSectorsPerTrack.Contains(sectorHash))
-                            uniqueSectorsPerTrack.Add(sectorHash);
+                        if(!uniqueSectorsPerTrack.Contains(sectorHash)) uniqueSectorsPerTrack.Add(sectorHash);
                     }
 
-                    foreach(byte b in sector)
-                        entTable[b]++;
+                    foreach(byte b in sector) entTable[b]++;
 
                     trackSize += (ulong)sector.LongLength;
                 }
 
                 EndProgress2Event?.Invoke();
 
-                trackEntropy.Entropy += entTable.Select(l => l / (double)trackSize).
-                                                 Select(frequency => -(frequency * Math.Log(frequency, 2))).
-                                                 Sum();
+                trackEntropy.Entropy += entTable.Select(l => l / (double)trackSize)
+                                                .Select(frequency => -(frequency * Math.Log(frequency, 2)))
+                                                .Sum();
 
-                if(duplicatedSectors)
-                    trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
+                if(duplicatedSectors) trackEntropy.UniqueSectors = uniqueSectorsPerTrack.Count;
 
                 entropyResults.Add(trackEntropy);
             }
@@ -172,8 +175,8 @@ public sealed class Entropy
             }
             else
             {
-                AaruConsole.ErrorWriteLine(Localization.Core.
-                                                        Unable_to_get_separate_tracks_not_calculating_their_entropy);
+                AaruConsole.ErrorWriteLine(Localization.Core
+                                                       .Unable_to_get_separate_tracks_not_calculating_their_entropy);
             }
         }
 
@@ -190,8 +193,7 @@ public sealed class Entropy
             Entropy = 0
         };
 
-        if(_inputFormat is not IMediaImage mediaImage)
-            return entropy;
+        if(_inputFormat is not IMediaImage mediaImage) return entropy;
 
         var          entTable      = new ulong[256];
         ulong        diskSize      = 0;
@@ -203,7 +205,8 @@ public sealed class Entropy
 
         for(ulong i = 0; i < entropy.Sectors; i++)
         {
-            UpdateProgressEvent?.Invoke(string.Format(Localization.Core.Entropying_sector_0, i + 1), (long)(i + 1),
+            UpdateProgressEvent?.Invoke(string.Format(Localization.Core.Entropying_sector_0, i + 1),
+                                        (long)(i + 1),
                                         (long)entropy.Sectors);
 
             ErrorNumber errno = mediaImage.ReadSector(i, out byte[] sector);
@@ -211,7 +214,8 @@ public sealed class Entropy
             if(errno != ErrorNumber.NoError)
             {
                 AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_while_reading_sector_1_continuing,
-                                                         errno, i));
+                                                         errno,
+                                                         i));
 
                 continue;
             }
@@ -220,24 +224,21 @@ public sealed class Entropy
             {
                 string sectorHash = Sha1Context.Data(sector, out _);
 
-                if(!uniqueSectors.Contains(sectorHash))
-                    uniqueSectors.Add(sectorHash);
+                if(!uniqueSectors.Contains(sectorHash)) uniqueSectors.Add(sectorHash);
             }
 
-            foreach(byte b in sector)
-                entTable[b]++;
+            foreach(byte b in sector) entTable[b]++;
 
             diskSize += (ulong)sector.LongLength;
         }
 
         EndProgressEvent?.Invoke();
 
-        entropy.Entropy += entTable.Select(l => l / (double)diskSize).
-                                    Select(frequency => -(frequency * Math.Log(frequency, 2))).
-                                    Sum();
+        entropy.Entropy += entTable.Select(l => l / (double)diskSize)
+                                   .Select(frequency => -(frequency * Math.Log(frequency, 2)))
+                                   .Sum();
 
-        if(duplicatedSectors)
-            entropy.UniqueSectors = uniqueSectors.Count;
+        if(duplicatedSectors) entropy.UniqueSectors = uniqueSectors.Count;
 
         return entropy;
     }
@@ -251,8 +252,7 @@ public sealed class Entropy
             Entropy = 0
         };
 
-        if(_inputFormat is not IByteAddressableImage byteAddressableImage)
-            return entropy;
+        if(_inputFormat is not IByteAddressableImage byteAddressableImage) return entropy;
 
         var entTable = new ulong[256];
         var data     = new byte[byteAddressableImage.Info.Sectors];
@@ -278,14 +278,13 @@ public sealed class Entropy
             data = tmp;
         }
 
-        foreach(byte b in data)
-            entTable[b]++;
+        foreach(byte b in data) entTable[b]++;
 
         EndProgressEvent?.Invoke();
 
-        entropy.Entropy += entTable.Select(l => l / (double)data.Length).
-                                    Select(frequency => -(frequency * Math.Log(frequency, 2))).
-                                    Sum();
+        entropy.Entropy += entTable.Select(l => l / (double)data.Length)
+                                   .Select(frequency => -(frequency * Math.Log(frequency, 2)))
+                                   .Sum();
 
         return entropy;
     }

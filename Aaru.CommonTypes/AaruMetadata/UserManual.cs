@@ -55,8 +55,7 @@ public class UserManual
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator UserManual(UserManualType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var manual = new UserManual
         {
@@ -65,13 +64,11 @@ public class UserManual
             Scan     = cicm.Scan
         };
 
-        if(cicm.Language is null)
-            return manual;
+        if(cicm.Language is null) return manual;
 
         manual.Language = new List<Language>();
 
-        foreach(LanguagesTypeLanguage lng in cicm.Language)
-            manual.Language.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Language) manual.Language.Add((Language)lng);
 
         return manual;
     }

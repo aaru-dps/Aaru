@@ -48,16 +48,15 @@ public sealed partial class AppleMFS
     {
         xattrs = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
@@ -77,11 +76,9 @@ public sealed partial class AppleMFS
             }
         }
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         if(entry.flRLgLen > 0)
         {
@@ -104,16 +101,15 @@ public sealed partial class AppleMFS
     /// <inheritdoc />
     public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
@@ -166,11 +162,9 @@ public sealed partial class AppleMFS
 
         ErrorNumber error;
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         switch(entry.flRLgLen)
         {

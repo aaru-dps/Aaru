@@ -99,11 +99,9 @@ public sealed partial class CBM : IReadOnlyFilesystem
 
     ulong CbmChsToLba(byte track, byte sector, bool is1581)
     {
-        if(track == 0 || track > 40)
-            return 0;
+        if(track == 0 || track > 40) return 0;
 
-        if(is1581)
-            return (ulong)((track - 1) * 40 + sector - 1);
+        if(is1581) return (ulong)((track - 1) * 40 + sector - 1);
 
         return trackStartingLbas[track - 1] + sector;
     }

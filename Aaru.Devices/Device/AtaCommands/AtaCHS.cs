@@ -83,8 +83,15 @@ public partial class Device
             SectorCount = 1
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,              out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -133,8 +140,15 @@ public partial class Device
             Command      = retry ? (byte)AtaCommands.ReadDmaRetry : (byte)AtaCommands.ReadDma
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,            out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.Dma,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -171,8 +185,15 @@ public partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,              out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -221,8 +242,15 @@ public partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,              out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -271,8 +299,15 @@ public partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout,             true,              out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -303,8 +338,15 @@ public partial class Device
             Sector       = sector
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             true,                out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -349,8 +391,15 @@ public partial class Device
             Feature      = (byte)feature
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             true,                out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -373,8 +422,15 @@ public partial class Device
             Command = (byte)AtaCommands.DoorLock
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             true,                out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -397,8 +453,15 @@ public partial class Device
             Command = (byte)AtaCommands.DoorUnLock
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             true,                out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -421,8 +484,15 @@ public partial class Device
             Command = (byte)AtaCommands.MediaEject
         };
 
-        LastError = SendAtaCommand(registers,  out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout,             true,                out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 

@@ -45,8 +45,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter.DataForkLength <= 16)
-            return false;
+        if(imageFilter.DataForkLength <= 16) return false;
 
         var header = new byte[16];
 
@@ -59,19 +58,15 @@ public sealed partial class CopyTape
         var   blockRx = new Regex(BLOCK_REGEX);
         Match blockMt = blockRx.Match(mark);
 
-        if(!blockMt.Success)
-            return false;
+        if(!blockMt.Success) return false;
 
         string blkSize = blockMt.Groups["blockSize"].Value;
 
-        if(string.IsNullOrWhiteSpace(blkSize))
-            return false;
+        if(string.IsNullOrWhiteSpace(blkSize)) return false;
 
-        if(!uint.TryParse(blkSize, out uint blockSize))
-            return false;
+        if(!uint.TryParse(blkSize, out uint blockSize)) return false;
 
-        if(blockSize == 0 || blockSize + 17 >= imageFilter.DataForkLength)
-            return false;
+        if(blockSize == 0 || blockSize + 17 >= imageFilter.DataForkLength) return false;
 
         strm.Position += blockSize;
 

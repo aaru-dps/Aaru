@@ -59,11 +59,9 @@ public static class Hybrid
 {
     public static RecognizedFormatLayers? DecodeFormatLayers(byte[] FormatLayersResponse)
     {
-        if(FormatLayersResponse == null)
-            return null;
+        if(FormatLayersResponse == null) return null;
 
-        if(FormatLayersResponse.Length < 8)
-            return null;
+        if(FormatLayersResponse.Length < 8) return null;
 
         var decoded = new RecognizedFormatLayers
         {
@@ -86,8 +84,7 @@ public static class Hybrid
 
     public static string PrettifyFormatLayers(RecognizedFormatLayers? FormatLayersResponse)
     {
-        if(FormatLayersResponse == null)
-            return null;
+        if(FormatLayersResponse == null) return null;
 
         RecognizedFormatLayers response = FormatLayersResponse.Value;
 
@@ -103,11 +100,9 @@ public static class Hybrid
                 {
                     sb.AppendFormat(Localization.Layer_0_is_of_type_Blu_ray, i).AppendLine();
 
-                    if(response.DefaultFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_default_layer);
+                    if(response.DefaultFormatLayer == i) sb.AppendLine(Localization.This_is_the_default_layer);
 
-                    if(response.OnlineFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
+                    if(response.OnlineFormatLayer == i) sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
@@ -116,11 +111,9 @@ public static class Hybrid
                 {
                     sb.AppendFormat(Localization.Layer_0_is_of_type_CD, i).AppendLine();
 
-                    if(response.DefaultFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_default_layer);
+                    if(response.DefaultFormatLayer == i) sb.AppendLine(Localization.This_is_the_default_layer);
 
-                    if(response.OnlineFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
+                    if(response.OnlineFormatLayer == i) sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
@@ -129,11 +122,9 @@ public static class Hybrid
                 {
                     sb.AppendFormat(Localization.Layer_0_is_of_type_DVD, i).AppendLine();
 
-                    if(response.DefaultFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_default_layer);
+                    if(response.DefaultFormatLayer == i) sb.AppendLine(Localization.This_is_the_default_layer);
 
-                    if(response.OnlineFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
+                    if(response.OnlineFormatLayer == i) sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
@@ -142,25 +133,21 @@ public static class Hybrid
                 {
                     sb.AppendFormat(Localization.Layer_0_is_of_type_HD_DVD, i).AppendLine();
 
-                    if(response.DefaultFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_default_layer);
+                    if(response.DefaultFormatLayer == i) sb.AppendLine(Localization.This_is_the_default_layer);
 
-                    if(response.OnlineFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
+                    if(response.OnlineFormatLayer == i) sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }
 
                 default:
                 {
-                    sb.AppendFormat(Localization.Layer_0_is_of_unknown_type_1, i, response.FormatLayers[i]).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Layer_0_is_of_unknown_type_1, i, response.FormatLayers[i])
+                      .AppendLine();
 
-                    if(response.DefaultFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_default_layer);
+                    if(response.DefaultFormatLayer == i) sb.AppendLine(Localization.This_is_the_default_layer);
 
-                    if(response.OnlineFormatLayer == i)
-                        sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
+                    if(response.OnlineFormatLayer == i) sb.AppendLine(Localization.This_is_the_layer_actually_in_use);
 
                     break;
                 }

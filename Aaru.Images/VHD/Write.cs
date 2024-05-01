@@ -104,7 +104,9 @@ public sealed partial class Vhd
 
         _imageInfo = new ImageInfo
         {
-            MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            MediaType  = mediaType,
+            SectorSize = sectorSize,
+            Sectors    = sectors
         };
 
         try
@@ -145,17 +147,16 @@ public sealed partial class Vhd
 
         SetChsInFooter();
 
-        if(!_dynamic)
-            return true;
+        if(!_dynamic) return true;
 
         ulong numberOfBlocks = _thisFooter.CurrentSize / _blockSize;
 
-        if(_thisFooter.CurrentSize % _blockSize != 0)
-            numberOfBlocks++;
+        if(_thisFooter.CurrentSize % _blockSize != 0) numberOfBlocks++;
 
         if(numberOfBlocks > uint.MaxValue)
         {
             ErrorMessage = Localization.Block_size_too_small_for_number_of_sectors;
+
             return false;
         }
 
@@ -170,8 +171,7 @@ public sealed partial class Vhd
         };
 
         _blockAllocationTable = new uint[numberOfBlocks];
-        for(uint i = 0; i < numberOfBlocks; i++)
-            _blockAllocationTable[i] = 0xFFFFFFFF;
+        for(uint i = 0; i < numberOfBlocks; i++) _blockAllocationTable[i] = 0xFFFFFFFF;
 
         _bitmapSize = (uint)Math.Ceiling((double)_thisDynamic.BlockSize /
                                          512
@@ -185,8 +185,7 @@ public sealed partial class Vhd
                                          512);
 
         _currentFooterPosition = (long)(512 + 1024 + sizeof(uint) * numberOfBlocks);
-        if(_currentFooterPosition % 512 != 0)
-            _currentFooterPosition += 512 - _currentFooterPosition % 512;
+        if(_currentFooterPosition % 512 != 0) _currentFooterPosition += 512 - _currentFooterPosition % 512;
 
         // Write empty image
         Flush();
@@ -240,8 +239,7 @@ public sealed partial class Vhd
         var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
 
         // If there's a cached block and it's the one we're looking for, flush cached data (clears cache)
-        if(_blockInCache && _cachedBlockNumber != blockNumber)
-            Flush();
+        if(_blockInCache && _cachedBlockNumber != blockNumber) Flush();
 
         // If there is no block in cache, load or create it
         if(!_blockInCache)
@@ -252,8 +250,7 @@ public sealed partial class Vhd
             if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
             {
                 // If there's no data in sector, bail out happily writing nothing
-                if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-                    return true;
+                if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
                 _blockAllocationTable[blockNumber] =  Swapping.Swap((uint)_currentFooterPosition / 512);
                 _cachedBlockPosition               =  _currentFooterPosition;
@@ -282,8 +279,7 @@ public sealed partial class Vhd
         if(ArrayHelpers.ArrayIsNullOrEmpty(data))
         {
             // ...but there's in the image
-            if(!dirty)
-                return true;
+            if(!dirty) return true;
 
             // Clear bitmap
             _cachedBlock[bitmapByte] &= (byte)~mask;
@@ -296,6 +292,7 @@ public sealed partial class Vhd
 
             Array.Copy(data, 0, _cachedBlock, (int)(_bitmapSize * 512 + sectorInBlock * 512), 512);
         }
+
         // Set bitmap bit and data
         else
         {
@@ -319,8 +316,7 @@ public sealed partial class Vhd
                     var blockNumber = (uint)Math.Floor(sectorAddress / (_thisDynamic.BlockSize / 512.0));
 
                     // Block not allocated, bail out
-                    if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF)
-                        continue;
+                    if(_blockAllocationTable[blockNumber] == 0xFFFFFFFF) continue;
 
                     if(_blockInCache && _cachedBlockNumber != blockNumber)
                     {
@@ -340,8 +336,7 @@ public sealed partial class Vhd
                     var  mask          = (byte)(1 << 7 - bitmapBit);
                     bool dirty         = (_cachedBlock[bitmapByte] & mask) == mask;
 
-                    if(!dirty)
-                        continue;
+                    if(!dirty) continue;
 
                     //Clear bitmap
                     _cachedBlock[bitmapByte] &= (byte)~mask;
@@ -358,8 +353,7 @@ public sealed partial class Vhd
 
             for(var i = 0; i < length; i++)
             {
-                if(!WriteSector(data[(i * 512)..(i * 512 + 512)], sectorAddress + (ulong)i))
-                    return false;
+                if(!WriteSector(data[(i * 512)..(i * 512 + 512)], sectorAddress + (ulong)i)) return false;
             }
 
             return true;
@@ -517,8 +511,7 @@ public sealed partial class Vhd
 
                 _imageInfo.Heads = (uint)((cylinderTimesHeads + 1023) / 1024);
 
-                if(_imageInfo.Heads < 4)
-                    _imageInfo.Heads = 4;
+                if(_imageInfo.Heads < 4) _imageInfo.Heads = 4;
 
                 if(cylinderTimesHeads >= _imageInfo.Heads * 1024 || _imageInfo.Heads > 16)
                 {
@@ -571,6 +564,7 @@ public sealed partial class Vhd
             _writingStream.Write(footerBytes, 0, 512);
 
             _writingStream.Flush();
+
             return;
         }
 
@@ -584,8 +578,10 @@ public sealed partial class Vhd
 
         _writingStream.Position = (long)_thisDynamic.TableOffset;
         ReadOnlySpan<uint> span = _blockAllocationTable;
-        byte[] bat = MemoryMarshal.Cast<uint, byte>(span)[..(int)(_thisDynamic.MaxTableEntries * sizeof(uint))].
-                                   ToArray();
+
+        byte[] bat = MemoryMarshal.Cast<uint, byte>(span)[..(int)(_thisDynamic.MaxTableEntries * sizeof(uint))]
+                                  .ToArray();
+
         _writingStream.Write(bat, 0, bat.Length);
 
         var dynamicBytes = new byte[1024];

@@ -28,9 +28,6 @@
 
 using System;
 using Aaru.CommonTypes.Interfaces;
-using hammer_crc_t = uint;
-using hammer_off_t = ulong;
-using hammer_tid_t = ulong;
 
 #pragma warning disable 169
 

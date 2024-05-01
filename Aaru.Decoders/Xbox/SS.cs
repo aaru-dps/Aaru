@@ -45,11 +45,9 @@ public static class SS
 {
     public static SecuritySector? Decode(byte[] response)
     {
-        if(response == null)
-            return null;
+        if(response == null) return null;
 
-        if(response.Length < 2048)
-            return null;
+        if(response.Length < 2048) return null;
 
         var ss = new SecuritySector
         {
@@ -95,10 +93,11 @@ public static class SS
             {
                 Level       = response[770 + i * 11 + 0],
                 ChallengeId = response[770 + i * 11 + 1],
-                ChallengeValue = (uint)((response[770 + i * 11 + 2] << 24) +
-                                        (response[770 + i * 11 + 3] << 16) +
-                                        (response[770 + i * 11 + 4] << 8)  +
-                                        response[770 + i * 11 + 5]),
+                ChallengeValue =
+                    (uint)((response[770 + i * 11 + 2] << 24) +
+                           (response[770 + i * 11 + 3] << 16) +
+                           (response[770 + i * 11 + 4] << 8)  +
+                           response[770 + i * 11 + 5]),
                 ResponseModifier = response[770 + i * 11 + 6],
                 ResponseValue = (uint)((response[770 + i * 11 + 7] << 24) +
                                        (response[770 + i * 11 + 8] << 16) +
@@ -117,9 +116,10 @@ public static class SS
         {
             ss.Extents[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1633 + i * 9 + 0] << 16) +
-                                 (response[1633 + i * 9 + 1] << 8)  +
-                                 response[1633 + i * 9 + 2]),
+                Unknown =
+                    (uint)((response[1633 + i * 9 + 0] << 16) +
+                           (response[1633 + i * 9 + 1] << 8)  +
+                           response[1633 + i * 9 + 2]),
                 StartPSN = (uint)((response[1633 + i * 9 + 3] << 16) +
                                   (response[1633 + i * 9 + 4] << 8)  +
                                   response[1633 + i * 9 + 5]),
@@ -133,9 +133,10 @@ public static class SS
         {
             ss.ExtentsCopy[i] = new SecuritySectorExtent
             {
-                Unknown = (uint)((response[1840 + i * 9 + 0] << 16) +
-                                 (response[1840 + i * 9 + 1] << 8)  +
-                                 response[1840 + i * 9 + 2]),
+                Unknown =
+                    (uint)((response[1840 + i * 9 + 0] << 16) +
+                           (response[1840 + i * 9 + 1] << 8)  +
+                           response[1840 + i * 9 + 2]),
                 StartPSN = (uint)((response[1840 + i * 9 + 3] << 16) +
                                   (response[1840 + i * 9 + 4] << 8)  +
                                   response[1840 + i * 9 + 5]),
@@ -150,8 +151,7 @@ public static class SS
 
     public static string Prettify(SecuritySector? ss)
     {
-        if(ss == null)
-            return null;
+        if(ss == null) return null;
 
         SecuritySector decoded = ss.Value;
         var            sb      = new StringBuilder();
@@ -168,18 +168,18 @@ public static class SS
         switch(decoded.DiskCategory)
         {
             case DiskCategory.DVDPRWDL:
-                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_Game_Disc, decoded.PartVersion).
-                   AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_Game_Disc, decoded.PartVersion)
+                  .AppendLine();
 
                 break;
             case DiskCategory.DVDPRDL:
-                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_360_Game_Disc, decoded.PartVersion).
-                   AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.Xbox_360_Game_Disc, decoded.PartVersion)
+                  .AppendLine();
 
                 break;
             default:
-                sb.AppendFormat(categorySentence, sizeString, Localization.unknown_disc_type, decoded.PartVersion).
-                   AppendLine();
+                sb.AppendFormat(categorySentence, sizeString, Localization.unknown_disc_type, decoded.PartVersion)
+                  .AppendLine();
 
                 break;
         }
@@ -212,8 +212,8 @@ public static class SS
                 break;
             default:
                 sb.AppendFormat(Localization.Disc_maximum_transfer_rate_is_specified_by_unknown_key_0,
-                                decoded.MaximumRate).
-                   AppendLine();
+                                decoded.MaximumRate)
+                  .AppendLine();
 
                 break;
         }
@@ -325,9 +325,10 @@ public static class SS
 
         for(var i = 0; i < 16; i++)
         {
-            sb.AppendFormat(Localization.Extent_starts_at_PSN_0_and_ends_at_PSN_1, decoded.Extents[i].StartPSN,
-                            decoded.Extents[i].EndPSN).
-               AppendLine();
+            sb.AppendFormat(Localization.Extent_starts_at_PSN_0_and_ends_at_PSN_1,
+                            decoded.Extents[i].StartPSN,
+                            decoded.Extents[i].EndPSN)
+              .AppendLine();
         }
 
         return sb.ToString();

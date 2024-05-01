@@ -60,8 +60,7 @@ sealed class MhddLog
     internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead, bool @private,
                      uint   mediaGraphDimensions = 0)
     {
-        if(dev == null || string.IsNullOrEmpty(outputFile))
-            return;
+        if(dev == null || string.IsNullOrEmpty(outputFile)) return;
 
         if(mediaGraphDimensions > 0)
             _mediaGraph = new BlockMap((int)mediaGraphDimensions, (int)mediaGraphDimensions, blocks);
@@ -158,8 +157,7 @@ sealed class MhddLog
     /// <param name="length">How many sectors where read at once</param>
     internal void Write(ulong sector, double duration, uint length = 1)
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
 
         byte[] sectorBytes   = BitConverter.GetBytes(sector);
         byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
@@ -199,8 +197,7 @@ sealed class MhddLog
     /// <summary>Closes and writes to file the MHDD log</summary>
     internal void Close()
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
 
         var fs = new FileStream(_logFile, FileMode.Create);
         _mhddFs.WriteTo(fs);

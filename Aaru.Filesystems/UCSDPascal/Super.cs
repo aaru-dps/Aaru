@@ -57,19 +57,16 @@ public sealed partial class PascalPlugin
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
-        if(_device.Info.Sectors < 3)
-            return ErrorNumber.InvalidArgument;
+        if(_device.Info.Sectors < 3) return ErrorNumber.InvalidArgument;
 
         _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno = _device.ReadSectors(_multiplier * 2, _multiplier, out _catalogBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         // On Apple //, it's little endian
         // TODO: Fix
@@ -101,8 +98,7 @@ public sealed partial class PascalPlugin
                                     (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) * _multiplier,
                                     out _catalogBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         var offset = 26;
 
@@ -122,16 +118,14 @@ public sealed partial class PascalPlugin
 
             Array.Copy(_catalogBlocks, offset + 0x06, entry.Filename, 0, 16);
 
-            if(entry.Filename[0] <= 15 && entry.Filename[0] > 0)
-                _fileEntries.Add(entry);
+            if(entry.Filename[0] <= 15 && entry.Filename[0] > 0) _fileEntries.Add(entry);
 
             offset += 26;
         }
 
         errno = _device.ReadSectors(0, 2 * _multiplier, out _bootBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         Metadata = new FileSystem
         {
@@ -172,8 +166,7 @@ public sealed partial class PascalPlugin
 
         stat.FreeBlocks = (ulong)(_mountedVolEntry.Blocks - (_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock));
 
-        foreach(PascalFileEntry entry in _fileEntries)
-            stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
+        foreach(PascalFileEntry entry in _fileEntries) stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
 
         return ErrorNumber.NotImplemented;
     }

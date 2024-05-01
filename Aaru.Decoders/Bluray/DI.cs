@@ -115,12 +115,12 @@ public static class DI
 
     public static DiscInformation? Decode(byte[] DIResponse)
     {
-        if(DIResponse == null)
-            return null;
+        if(DIResponse == null) return null;
 
         if(DIResponse.Length != 4100)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Found_incorrect_Blu_ray_Disc_Information_size_0_bytes,
                                        DIResponse.Length);
 
             return null;
@@ -138,16 +138,14 @@ public static class DI
 
         while(true)
         {
-            if(offset >= 4100)
-                break;
+            if(offset >= 4100) break;
 
             var unit = new DiscInformationUnits
             {
                 Signature = BigEndianBitConverter.ToUInt16(DIResponse, 0 + offset)
             };
 
-            if(unit.Signature != DIUIdentifier)
-                break;
+            if(unit.Signature != DIUIdentifier) break;
 
             unit.Format             = DIResponse[2 + offset];
             unit.UnitsPerBlock      = (byte)((DIResponse[3 + offset] & 0xF8) >> 3);
@@ -216,7 +214,8 @@ public static class DI
 
                 default:
                 {
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_unknown_disc_type_identifier_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Found_unknown_disc_type_identifier_0,
                                                Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 
                     break;
@@ -228,21 +227,18 @@ public static class DI
             offset += unit.Length;
         }
 
-        if(units.Count <= 0)
-            return decoded;
+        if(units.Count <= 0) return decoded;
 
         decoded.Units = new DiscInformationUnits[units.Count];
 
-        for(var i = 0; i < units.Count; i++)
-            decoded.Units[i] = units[i];
+        for(var i = 0; i < units.Count; i++) decoded.Units[i] = units[i];
 
         return decoded;
     }
 
     public static string Prettify(DiscInformation? DIResponse)
     {
-        if(DIResponse == null)
-            return null;
+        if(DIResponse == null) return null;
 
         DiscInformation response = DIResponse.Value;
 
@@ -264,8 +260,8 @@ public static class DI
 
             sb.AppendFormat(Localization.DI_Unit_is_0_bytes, unit.Length).AppendLine();
 
-            sb.AppendFormat(Localization.Disc_type_identifier_0, Encoding.ASCII.GetString(unit.DiscTypeIdentifier)).
-               AppendLine();
+            sb.AppendFormat(Localization.Disc_type_identifier_0, Encoding.ASCII.GetString(unit.DiscTypeIdentifier))
+              .AppendLine();
 
             switch(unit.DiscSize)
             {
@@ -338,9 +334,8 @@ public static class DI
 
                     break;
                 default:
-                    sb.AppendFormat(Localization.Disc_uses_unknown_channel_length_with_code_0,
-                                    (byte)unit.ChannelLength).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Disc_uses_unknown_channel_length_with_code_0, (byte)unit.ChannelLength)
+                      .AppendLine();
 
                     break;
             }
@@ -366,19 +361,19 @@ public static class DI
                 switch(unit.RecordedPolarity)
                 {
                     case 0:
-                        sb.AppendLine(Localization.
-                                          Recorded_marks_have_a_lower_reflectivity_than_unrecorded_ones_HTL_disc);
+                        sb.AppendLine(Localization
+                                         .Recorded_marks_have_a_lower_reflectivity_than_unrecorded_ones_HTL_disc);
 
                         break;
                     case 1:
-                        sb.AppendLine(Localization.
-                                          Recorded_marks_have_a_higher_reflectivity_than_unrecorded_ones_LTH_disc);
+                        sb.AppendLine(Localization
+                                         .Recorded_marks_have_a_higher_reflectivity_than_unrecorded_ones_LTH_disc);
 
                         break;
                     default:
                         sb.AppendFormat(Localization.Disc_uses_unknown_recorded_reflectivity_polarity_with_code_0,
-                                        unit.RecordedPolarity).
-                           AppendLine();
+                                        unit.RecordedPolarity)
+                          .AppendLine();
 
                         break;
                 }
@@ -402,28 +397,28 @@ public static class DI
 
             if(unit.MaxTransfer > 0)
             {
-                sb.AppendFormat(Localization.Disc_has_a_maximum_transfer_rate_of_0_Mbit_sec, unit.MaxTransfer).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_has_a_maximum_transfer_rate_of_0_Mbit_sec, unit.MaxTransfer)
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Disc_does_not_specify_a_maximum_transfer_rate);
 
             sb.AppendFormat(Localization.Last_user_data_PSN_for_disc_0, unit.LastPsn).AppendLine();
 
-            sb.AppendFormat(Localization.First_address_unit_number_of_data_zone_in_this_layer_0, unit.FirstAun).
-               AppendLine();
+            sb.AppendFormat(Localization.First_address_unit_number_of_data_zone_in_this_layer_0, unit.FirstAun)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Last_address_unit_number_of_data_zone_in_this_layer_0, unit.LastAun).
-               AppendLine();
+            sb.AppendFormat(Localization.Last_address_unit_number_of_data_zone_in_this_layer_0, unit.LastAun)
+              .AppendLine();
 
             if(Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDR ||
                Encoding.ASCII.GetString(unit.DiscTypeIdentifier) == DiscTypeBDRE)
             {
-                sb.AppendFormat(Localization.Disc_manufacturer_ID_0, Encoding.ASCII.GetString(unit.ManufacturerID)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_manufacturer_ID_0, Encoding.ASCII.GetString(unit.ManufacturerID))
+                  .AppendLine();
 
-                sb.AppendFormat(Localization.Disc_media_type_ID_0, Encoding.ASCII.GetString(unit.MediaTypeID)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_media_type_ID_0, Encoding.ASCII.GetString(unit.MediaTypeID))
+                  .AppendLine();
 
                 sb.AppendFormat(Localization.Disc_timestamp_0,               unit.TimeStamp).AppendLine();
                 sb.AppendFormat(Localization.Disc_product_revision_number_0, unit.ProductRevisionNumber).AppendLine();

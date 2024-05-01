@@ -46,13 +46,11 @@ public sealed partial class AppleMFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] mdbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
@@ -73,18 +71,15 @@ public sealed partial class AppleMFS
 
         ErrorNumber errno = imagePlugin.ReadSector(2 + partition.Start, out byte[] mdbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         mdb.drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
-        if(mdb.drSigWord != MFS_MAGIC)
-            return;
+        if(mdb.drSigWord != MFS_MAGIC) return;
 
         mdb.drCrDate   = BigEndianBitConverter.ToUInt32(mdbSector, 0x002);
         mdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(mdbSector, 0x006);
@@ -160,15 +155,13 @@ public sealed partial class AppleMFS
 
         metadata = new FileSystem();
 
-        if(mdb.drLsBkUp > 0)
-            metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
+        if(mdb.drLsBkUp > 0) metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drLsBkUp);
 
         metadata.Bootable    = bootBlockInfo != null;
         metadata.Clusters    = mdb.drNmAlBlks;
         metadata.ClusterSize = mdb.drAlBlkSiz;
 
-        if(mdb.drCrDate > 0)
-            metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
+        if(mdb.drCrDate > 0) metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
 
         metadata.Files        = mdb.drNmFls;
         metadata.FreeClusters = mdb.drFreeBks;

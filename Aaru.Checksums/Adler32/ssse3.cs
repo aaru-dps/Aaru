@@ -70,13 +70,12 @@ static class Ssse3
         {
             uint n = Adler32Context.NMAX / blockSize; /* The NMAX constraint. */
 
-            if(n > blocks)
-                n = blocks;
+            if(n > blocks) n = blocks;
 
             blocks -= n;
 
-            Vector128<byte> tap1 = Vector128.Create(32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17).
-                                             AsByte();
+            Vector128<byte> tap1 = Vector128.Create(32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17)
+                                            .AsByte();
 
             Vector128<byte> tap2 = Vector128.Create(16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1).AsByte();
             Vector128<byte> zero = Vector128.Create(0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0).AsByte();
@@ -173,11 +172,9 @@ static class Ssse3
                 len -= 16;
             }
 
-            while(len-- != 0)
-                s2 += s1 += buf[bufPos++];
+            while(len-- != 0) s2 += s1 += buf[bufPos++];
 
-            if(s1 >= Adler32Context.ADLER_MODULE)
-                s1 -= Adler32Context.ADLER_MODULE;
+            if(s1 >= Adler32Context.ADLER_MODULE) s1 -= Adler32Context.ADLER_MODULE;
 
             s2 %= Adler32Context.ADLER_MODULE;
         }

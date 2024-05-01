@@ -34,8 +34,7 @@ public sealed partial class RBF
 {
     static uint LSNToUInt32(byte[] lsn)
     {
-        if(lsn is not { Length: 3 })
-            return 0;
+        if(lsn is not { Length: 3 }) return 0;
 
         return (uint)((lsn[0] << 16) + (lsn[1] << 8) + lsn[2]);
     }

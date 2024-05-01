@@ -209,34 +209,66 @@ partial class Dump
 
         if(sense || _dev.Error)
         {
-            sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x00, _dev.Timeout,
+            sense = _dev.ModeSense6(out cmdBuf,
+                                    out _,
+                                    false,
+                                    ScsiModeSensePageControl.Current,
+                                    0x00,
+                                    _dev.Timeout,
                                     out _);
 
-            if(!sense && !_dev.Error)
-                decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
+            if(!sense && !_dev.Error) decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
         }
         else
             decMode = Modes.DecodeMode6(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
 
         if(decMode is null)
         {
-            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                     _dev.Timeout, out _);
+            sense = _dev.ModeSense10(out cmdBuf,
+                                     out _,
+                                     false,
+                                     true,
+                                     ScsiModeSensePageControl.Current,
+                                     0x3F,
+                                     0x00,
+                                     _dev.Timeout,
+                                     out _);
 
             if(sense || _dev.Error)
             {
-                sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                         _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out cmdBuf,
+                                         out _,
+                                         false,
+                                         false,
+                                         ScsiModeSensePageControl.Current,
+                                         0x3F,
+                                         0x00,
+                                         _dev.Timeout,
+                                         out _);
 
                 if(sense || _dev.Error)
                 {
-                    sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x00,
-                                             0x00, _dev.Timeout, out _);
+                    sense = _dev.ModeSense10(out cmdBuf,
+                                             out _,
+                                             false,
+                                             true,
+                                             ScsiModeSensePageControl.Current,
+                                             0x00,
+                                             0x00,
+                                             _dev.Timeout,
+                                             out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense10(out cmdBuf, out _, false, false, ScsiModeSensePageControl.Current,
-                                                 0x00, 0x00, _dev.Timeout, out _);
+                        sense = _dev.ModeSense10(out cmdBuf,
+                                                 out _,
+                                                 false,
+                                                 false,
+                                                 ScsiModeSensePageControl.Current,
+                                                 0x00,
+                                                 0x00,
+                                                 _dev.Timeout,
+                                                 out _);
 
                         if(!sense && !_dev.Error)
                             decMode = Modes.DecodeMode10(cmdBuf, PeripheralDeviceTypes.MultiMediaDevice);
@@ -254,8 +286,9 @@ partial class Dump
         if(decMode.HasValue  &&
            _dev.IsUsb        &&
            !gotConfiguration &&
-           decMode.Value.Header.MediumType is MediumTypes.UnknownBlockDevice or MediumTypes.ReadOnlyBlockDevice
-            or MediumTypes.ReadWriteBlockDevice)
+           decMode.Value.Header.MediumType is MediumTypes.UnknownBlockDevice
+                                           or MediumTypes.ReadOnlyBlockDevice
+                                           or MediumTypes.ReadWriteBlockDevice)
         {
             _speedMultiplier = -1;
             Sbc(null, MediaType.Unknown, false);
@@ -290,15 +323,22 @@ partial class Dump
                       };
         }
 
-    #region Nintendo
+#region Nintendo
 
         switch(dskType)
         {
             case MediaType.Unknown when blocks > 0:
                 _dumpLog.WriteLine(Localization.Core.Reading_Physical_Format_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.PhysicalInformation,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -306,11 +346,11 @@ partial class Dump
 
                     if(nintendoPfi is { DiskCategory: DiskCategory.Nintendo, PartVersion: 15 })
                     {
-                        _dumpLog.WriteLine(Localization.Core.
-                                                        Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
+                        _dumpLog.WriteLine(Localization.Core
+                                                       .Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
 
-                        StoppingErrorMessage?.Invoke(Localization.Core.
-                                                                  Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
+                        StoppingErrorMessage?.Invoke(Localization.Core
+                                                                 .Dumping_Nintendo_GameCube_or_Wii_discs_is_not_yet_implemented);
 
                         return;
                     }
@@ -336,8 +376,15 @@ partial class Dump
             case MediaType.HDDVDRWDL:
                 _dumpLog.WriteLine(Localization.Core.Reading_Physical_Format_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.PhysicalInformation, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.PhysicalInformation,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -379,8 +426,14 @@ partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Manufacturing_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DiscManufacturingInformation, 0, _dev.Timeout,
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DiscManufacturingInformation,
+                                               0,
+                                               _dev.Timeout,
                                                out _);
 
                 if(!sense)
@@ -406,22 +459,21 @@ partial class Dump
 
                         if(sense || Inquiry.Decode(inqBuf)?.KreonPresent != true)
                         {
-                            _dumpLog.WriteLine(Localization.Core.
-                                                            Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
+                            _dumpLog.WriteLine(Localization.Core
+                                                           .Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
 
-                            StoppingErrorMessage?.Invoke(Localization.Core.
-                                                                      Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
+                            StoppingErrorMessage?.Invoke(Localization.Core
+                                                                     .Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware);
 
-                            if(!_force)
-                                return;
+                            if(!_force) return;
 
                             isXbox = false;
                         }
 
                         if(_dumpRaw && !_force)
                         {
-                            StoppingErrorMessage?.Invoke(Localization.Core.
-                                                                      If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_force_option);
+                            StoppingErrorMessage?.Invoke(Localization.Core
+                                                                     .If_you_want_to_continue_reading_cooked_data_when_raw_is_not_available_use_the_force_option);
 
                             // TODO: Exit more gracefully
                             return;
@@ -439,20 +491,27 @@ partial class Dump
                 break;
         }
 
-    #endregion Nintendo
+#endregion Nintendo
 
-    #region All DVD and HD DVD types
+#region All DVD and HD DVD types
 
-    #endregion All DVD and HD DVD types
+#endregion All DVD and HD DVD types
 
-    #region DVD-ROM
+#region DVD-ROM
 
         if(dskType is MediaType.DVDDownload or MediaType.DVDROM)
         {
             _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
 
-            sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                           MmcDiscStructureFormat.CopyrightInformation, 0, _dev.Timeout, out _);
+            sense = _dev.ReadDiscStructure(out cmdBuf,
+                                           out _,
+                                           MmcDiscStructureMediaType.Dvd,
+                                           0,
+                                           0,
+                                           MmcDiscStructureFormat.CopyrightInformation,
+                                           0,
+                                           _dev.Timeout,
+                                           out _);
 
             if(!sense)
             {
@@ -470,8 +529,8 @@ partial class Dump
                     {
                         if(!Settings.Settings.Current.EnableDecryption)
                         {
-                            UpdateStatus?.Invoke(Localization.Core.
-                                                              Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled);
+                            UpdateStatus?.Invoke(Localization.Core
+                                                             .Drive_reports_the_disc_uses_copy_protection_The_dump_will_be_incorrect_unless_decryption_is_enabled);
                         }
                         else
                         {
@@ -481,9 +540,12 @@ partial class Dump
 
                                 dvdDecrypt = new DVDDecryption(_dev);
 
-                                sense = dvdDecrypt.ReadBusKey(out cmdBuf, out _,
+                                sense = dvdDecrypt.ReadBusKey(out cmdBuf,
+                                                              out _,
                                                               CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
-                                                              CopyrightType.NoProtection, _dev.Timeout, out _);
+                                                              CopyrightType.NoProtection,
+                                                              _dev.Timeout,
+                                                              out _);
 
                                 if(!sense)
                                 {
@@ -496,19 +558,24 @@ partial class Dump
                                     {
                                         CSS_CPRM.DiscKey? decodedDiscKey = CSS.DecodeDiscKey(cmdBuf, busKey);
 
-                                        sense = dvdDecrypt.ReadAsf(out cmdBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
-                                                                   _dev.Timeout, out _);
+                                        sense = dvdDecrypt.ReadAsf(out cmdBuf,
+                                                                   out _,
+                                                                   DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                                   _dev.Timeout,
+                                                                   out _);
 
                                         if(!sense)
                                         {
                                             if(cmdBuf[7] == 1)
                                             {
-                                                UpdateStatus?.Invoke(Localization.Core.
-                                                                         Disc_and_drive_authentication_succeeded);
+                                                UpdateStatus?.Invoke(Localization.Core
+                                                                        .Disc_and_drive_authentication_succeeded);
 
-                                                sense = dvdDecrypt.ReadRpc(out cmdBuf, out _,
+                                                sense = dvdDecrypt.ReadRpc(out cmdBuf,
+                                                                           out _,
                                                                            DvdCssKeyClass.DvdCssCppmOrCprm,
-                                                                           _dev.Timeout, out _);
+                                                                           _dev.Timeout,
+                                                                           out _);
 
                                                 if(!sense)
                                                 {
@@ -518,10 +585,10 @@ partial class Dump
                                                     if(rpc.HasValue)
                                                     {
                                                         UpdateStatus?.Invoke(CSS.CheckRegion(rpc.Value, cmi.Value)
-                                                                                 ? Localization.Core.
-                                                                                     Disc_and_drive_regions_match
-                                                                                 : Localization.Core.
-                                                                                     Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect);
+                                                                                 ? Localization.Core
+                                                                                    .Disc_and_drive_regions_match
+                                                                                 : Localization.Core
+                                                                                    .Disc_and_drive_regions_do_not_match_The_dump_will_be_incorrect);
                                                     }
                                                 }
 
@@ -535,15 +602,15 @@ partial class Dump
 
                                                     if(discKey != null)
                                                     {
-                                                        UpdateStatus?.Invoke(Localization.Core.
-                                                                                 Decryption_of_disc_key_succeeded);
+                                                        UpdateStatus?.Invoke(Localization.Core
+                                                                                .Decryption_of_disc_key_succeeded);
 
                                                         mediaTags.Add(MediaTagType.DVD_DiscKey_Decrypted, discKey);
                                                     }
                                                     else
                                                     {
-                                                        UpdateStatus?.Invoke(Localization.Core.
-                                                                                 Decryption_of_disc_key_failed);
+                                                        UpdateStatus?.Invoke(Localization.Core
+                                                                                .Decryption_of_disc_key_failed);
                                                     }
                                                 }
                                             }
@@ -553,11 +620,11 @@ partial class Dump
                             }
                             else
                             {
-                                UpdateStatus?.
-                                    Invoke(string.
-                                               Format(Localization.Core.Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
-                                                      (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)?.CopyrightType ??
-                                                       CopyrightType.NoProtection).ToString()));
+                                UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                                      .Drive_reports_0_copy_protection_not_yet_supported_dump_incorrect,
+                                                                   (CSS_CPRM.DecodeLeadInCopyright(cmdBuf)
+                                                                           ?.CopyrightType ??
+                                                                    CopyrightType.NoProtection).ToString()));
                             }
                         }
                     }
@@ -565,19 +632,26 @@ partial class Dump
             }
         }
 
-    #endregion DVD-ROM
+#endregion DVD-ROM
 
         switch(dskType)
         {
-        #region DVD-ROM and HD DVD-ROM
+#region DVD-ROM and HD DVD-ROM
 
             case MediaType.DVDDownload:
             case MediaType.DVDROM:
             case MediaType.HDDVDROM:
                 _dumpLog.WriteLine(Localization.Core.Reading_Burst_Cutting_Area);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.BurstCuttingArea, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.BurstCuttingArea,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -588,16 +662,23 @@ partial class Dump
 
                 break;
 
-        #endregion DVD-ROM and HD DVD-ROM
+#endregion DVD-ROM and HD DVD-ROM
 
-        #region DVD-RAM and HD DVD-RAM
+#region DVD-RAM and HD DVD-RAM
 
             case MediaType.DVDRAM:
             case MediaType.HDDVDRAM:
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Description_Structure);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DvdramDds,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -611,8 +692,14 @@ partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Spare_Area_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, _dev.Timeout,
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DvdramSpareAreaInformation,
+                                               0,
+                                               _dev.Timeout,
                                                out _);
 
                 if(!sense)
@@ -627,16 +714,23 @@ partial class Dump
 
                 break;
 
-        #endregion DVD-RAM and HD DVD-RAM
+#endregion DVD-RAM and HD DVD-RAM
 
-        #region DVD-R and DVD-RW
+#region DVD-R and DVD-RW
 
             case MediaType.DVDR:
             case MediaType.DVDRW:
                 _dumpLog.WriteLine(Localization.Core.Reading_Pre_Recorded_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.PreRecordedInfo,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -647,20 +741,27 @@ partial class Dump
 
                 break;
 
-        #endregion DVD-R and DVD-RW
+#endregion DVD-R and DVD-RW
         }
 
         switch(dskType)
         {
-        #region DVD-R, DVD-RW and HD DVD-R
+#region DVD-R, DVD-RW and HD DVD-R
 
             case MediaType.DVDR:
             case MediaType.DVDRW:
             case MediaType.HDDVDR:
                 _dumpLog.WriteLine(Localization.Core.Reading_Media_Identifier);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdrMediaIdentifier, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DvdrMediaIdentifier,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -671,8 +772,15 @@ partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Recordable_Physical_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdrPhysicalInformation, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DvdrPhysicalInformation,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -683,9 +791,9 @@ partial class Dump
 
                 break;
 
-        #endregion DVD-R, DVD-RW and HD DVD-R
+#endregion DVD-R, DVD-RW and HD DVD-R
 
-        #region All DVD+
+#region All DVD+
 
             case MediaType.DVDPR:
             case MediaType.DVDPRDL:
@@ -693,8 +801,15 @@ partial class Dump
             case MediaType.DVDPRWDL:
                 _dumpLog.WriteLine(Localization.Core.Reading_ADdress_In_Pregroove);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.Adip,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -705,8 +820,15 @@ partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Control_Blocks);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.Dcb,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -717,15 +839,21 @@ partial class Dump
 
                 break;
 
-        #endregion All DVD+
+#endregion All DVD+
 
-        #region HD DVD-ROM
+#region HD DVD-ROM
 
             case MediaType.HDDVDROM:
                 _dumpLog.WriteLine(Localization.Core.Reading_Lead_in_Copyright_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.HddvdCopyrightInformation, 0, _dev.Timeout,
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Dvd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.HddvdCopyrightInformation,
+                                               0,
+                                               _dev.Timeout,
                                                out _);
 
                 if(!sense)
@@ -737,9 +865,9 @@ partial class Dump
 
                 break;
 
-        #endregion HD DVD-ROM
+#endregion HD DVD-ROM
 
-        #region All Blu-ray
+#region All Blu-ray
 
             case MediaType.BDR:
             case MediaType.BDRE:
@@ -749,8 +877,15 @@ partial class Dump
             case MediaType.UHDBD:
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                               MmcDiscStructureFormat.DiscInformation, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Bd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.DiscInformation,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -775,19 +910,26 @@ partial class Dump
                 }*/
                 break;
 
-        #endregion All Blu-ray
+#endregion All Blu-ray
         }
 
         switch(dskType)
         {
-        #region BD-ROM only
+#region BD-ROM only
 
             case MediaType.BDROM:
             case MediaType.UHDBD:
                 _dumpLog.WriteLine(Localization.Core.Reading_Burst_Cutting_Area);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                               MmcDiscStructureFormat.BdBurstCuttingArea, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Bd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.BdBurstCuttingArea,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -798,9 +940,9 @@ partial class Dump
 
                 break;
 
-        #endregion BD-ROM only
+#endregion BD-ROM only
 
-        #region Writable Blu-ray only
+#region Writable Blu-ray only
 
             case MediaType.BDR:
             case MediaType.BDRE:
@@ -808,8 +950,15 @@ partial class Dump
             case MediaType.BDREXL:
                 _dumpLog.WriteLine(Localization.Core.Reading_Disc_Definition_Structure);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                               MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Bd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.BdDds,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -820,8 +969,15 @@ partial class Dump
 
                 _dumpLog.WriteLine(Localization.Core.Reading_Spare_Area_Information);
 
-                sense = _dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                               MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
+                sense = _dev.ReadDiscStructure(out cmdBuf,
+                                               out _,
+                                               MmcDiscStructureMediaType.Bd,
+                                               0,
+                                               0,
+                                               MmcDiscStructureFormat.BdSpareAreaInformation,
+                                               0,
+                                               _dev.Timeout,
+                                               out _);
 
                 if(!sense)
                 {
@@ -832,7 +988,7 @@ partial class Dump
 
                 break;
 
-        #endregion Writable Blu-ray only
+#endregion Writable Blu-ray only
         }
 
         if(isXbox)

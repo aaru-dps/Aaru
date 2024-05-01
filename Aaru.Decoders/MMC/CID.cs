@@ -61,8 +61,7 @@ public static partial class Decoders
 {
     public static CID DecodeCID(uint[] response)
     {
-        if(response?.Length != 4)
-            return null;
+        if(response?.Length != 4) return null;
 
         var data = new byte[16];
 
@@ -80,8 +79,7 @@ public static partial class Decoders
 
     public static CID DecodeCID(byte[] response)
     {
-        if(response?.Length != 16)
-            return null;
+        if(response?.Length != 16) return null;
 
         var cid = new CID
         {
@@ -102,8 +100,7 @@ public static partial class Decoders
 
     public static string PrettifyCID(CID cid)
     {
-        if(cid == null)
-            return null;
+        if(cid == null) return null;
 
         var sb = new StringBuilder();
 
@@ -129,9 +126,10 @@ public static partial class Decoders
         sb.AppendFormat("\t" + Localization.Application_ID_0, cid.ApplicationID).AppendLine();
         sb.AppendFormat("\t" + Localization.Product_name_0,   cid.ProductName).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Product_revision_0_1, (cid.ProductRevision & 0xF0) >> 4,
-                        cid.ProductRevision & 0x0F).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Product_revision_0_1,
+                        (cid.ProductRevision & 0xF0) >> 4,
+                        cid.ProductRevision & 0x0F)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Product_serial_number_0, cid.ProductSerialNumber).AppendLine();
 
@@ -156,9 +154,8 @@ public static partial class Decoders
                           _  => ""
                       };
 
-        sb.AppendFormat("\t" + Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF0) >> 4,
-                        year).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Device_manufactured_month_0_of_1, (cid.ManufacturingDate & 0xF0) >> 4, year)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.CID_CRC_0, cid.CRC).AppendLine();
 

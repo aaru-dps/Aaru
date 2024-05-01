@@ -81,22 +81,24 @@ public sealed class VTOC : IPartition
         ErrorNumber errno;
 
         foreach(ulong i in new ulong[]
-            {
-                0, 1, 8, 29
-            }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+                {
+                    0, 1, 8, 29
+                }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out pdsector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             magic = BitConverter.ToUInt32(pdsector, 4);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.sanity_at_0_is_1_X8_should_be_2_X8_or_3_X8,
-                                       i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.sanity_at_0_is_1_X8_should_be_2_X8_or_3_X8,
+                                       i + sectorOffset,
+                                       magic,
+                                       PD_MAGIC,
+                                       PD_CIGAM);
 
-            if(magic != PD_MAGIC && magic != PD_CIGAM)
-                continue;
+            if(magic != PD_MAGIC && magic != PD_CIGAM) continue;
 
             magicFound = true;
             pdloc      = i;
@@ -104,8 +106,7 @@ public sealed class VTOC : IPartition
             break;
         }
 
-        if(!magicFound)
-            return false;
+        if(!magicFound) return false;
 
         PDInfo    pd;
         PDInfoOld pdold;
@@ -169,8 +170,7 @@ public sealed class VTOC : IPartition
         var useOld = false;
         errno = imagePlugin.ReadSector(pdloc + sectorOffset + 1, out byte[] vtocsector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var vtoc    = new Vtoc();
         var vtocOld = new VTocOld();
@@ -233,12 +233,13 @@ public sealed class VTOC : IPartition
             uint  relSecOff = pd.vtoc_ptr               % imagePlugin.Info.SectorSize;
             uint  secCount  = (relSecOff + pd.vtoc_len) / imagePlugin.Info.SectorSize;
 
-            if((relSecOff + pd.vtoc_len) % imagePlugin.Info.SectorSize > 0)
-                secCount++;
+            if((relSecOff + pd.vtoc_len) % imagePlugin.Info.SectorSize > 0) secCount++;
 
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        Localization.Going_to_read_0_sectors_from_sector_1_getting_VTOC_from_byte_2,
-                                       secCount, relSecPtr + sectorOffset, relSecOff);
+                                       secCount,
+                                       relSecPtr + sectorOffset,
+                                       relSecOff);
 
             if(relSecPtr + sectorOffset + secCount >= imagePlugin.Info.Sectors)
             {
@@ -249,8 +250,7 @@ public sealed class VTOC : IPartition
 
             errno = imagePlugin.ReadSectors(relSecPtr + sectorOffset, secCount, out byte[] tmp);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             vtocsector = new byte[pd.vtoc_len];
             Array.Copy(tmp, relSecOff, vtocsector, 0, pd.vtoc_len);
@@ -288,12 +288,15 @@ public sealed class VTOC : IPartition
 
         if(useOld)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
-                                       vtocOld.v_sanity, VTOC_SANE);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
+                                       vtocOld.v_sanity,
+                                       VTOC_SANE);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_version = {0}", vtocOld.v_version);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_volume = \"{0}\"",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "vtocOld.v_volume = \"{0}\"",
                                        StringHandlers.CToString(vtocOld.v_volume));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
@@ -301,25 +304,39 @@ public sealed class VTOC : IPartition
 
             for(var i = 0; i < V_NUMPAR; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
-                                           vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtocOld.v_part[{0}].p_tag = {1} ({2})",
+                                           i,
+                                           vtocOld.v_part[i].p_tag,
+                                           (ushort)vtocOld.v_part[i].p_tag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_part[{0}].p_flag = {1} ({2})", i,
-                                           vtocOld.v_part[i].p_flag, (ushort)vtocOld.v_part[i].p_flag);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtocOld.v_part[{0}].p_flag = {1} ({2})",
+                                           i,
+                                           vtocOld.v_part[i].p_flag,
+                                           (ushort)vtocOld.v_part[i].p_flag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_part[{0}].p_start = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtocOld.v_part[{0}].p_start = {1}",
+                                           i,
                                            vtocOld.v_part[i].p_start);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.v_part[{0}].p_size = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtocOld.v_part[{0}].p_size = {1}",
+                                           i,
                                            vtocOld.v_part[i].p_size);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtocOld.timestamp[{0}] = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtocOld.timestamp[{0}] = {1}",
+                                           i,
                                            DateHandlers.UnixToDateTime(vtocOld.timestamp[i]));
             }
         }
         else
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
+                                       vtoc.v_sanity,
                                        VTOC_SANE);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_version = {0}", vtoc.v_version);
@@ -331,17 +348,25 @@ public sealed class VTOC : IPartition
 
             for(var i = 0; i < V_NUMPAR; i++)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_tag = {1} ({2})", i, vtoc.v_part[i].p_tag,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtoc.v_part[{0}].p_tag = {1} ({2})",
+                                           i,
+                                           vtoc.v_part[i].p_tag,
                                            (ushort)vtoc.v_part[i].p_tag);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_flag = {1} ({2})", i, vtoc.v_part[i].p_flag,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtoc.v_part[{0}].p_flag = {1} ({2})",
+                                           i,
+                                           vtoc.v_part[i].p_flag,
                                            (ushort)vtoc.v_part[i].p_flag);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_start = {1}", i, vtoc.v_part[i].p_start);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "vtoc.timestamp[{0}] = {1}", i,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "vtoc.timestamp[{0}] = {1}",
+                                           i,
                                            DateHandlers.UnixToDateTime(vtoc.timestamp[i]));
             }
         }
@@ -367,8 +392,7 @@ public sealed class VTOC : IPartition
         // This means partition starts are absolute, not relative, to the VTOC position
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag != pTag.V_BACKUP || (ulong)parts[i].p_start != sectorOffset)
-                continue;
+            if(parts[i].p_tag != pTag.V_BACKUP || (ulong)parts[i].p_start != sectorOffset) continue;
 
             absolute = true;
 
@@ -377,8 +401,7 @@ public sealed class VTOC : IPartition
 
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag == pTag.V_UNUSED)
-                continue;
+            if(parts[i].p_tag == pTag.V_UNUSED) continue;
 
             var part = new Partition
             {
@@ -400,28 +423,22 @@ public sealed class VTOC : IPartition
                 part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
             }
 
-            if(parts[i].p_flag.HasFlag(pFlag.V_VALID))
-                info += Localization.valid;
+            if(parts[i].p_flag.HasFlag(pFlag.V_VALID)) info += Localization.valid;
 
-            if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT))
-                info += Localization._unmountable_;
+            if(parts[i].p_flag.HasFlag(pFlag.V_UNMNT)) info += Localization._unmountable_;
 
-            if(parts[i].p_flag.HasFlag(pFlag.V_OPEN))
-                info += Localization.open;
+            if(parts[i].p_flag.HasFlag(pFlag.V_OPEN)) info += Localization.open;
 
-            if(parts[i].p_flag.HasFlag(pFlag.V_REMAP))
-                info += Localization.alternate_sector_mapping;
+            if(parts[i].p_flag.HasFlag(pFlag.V_REMAP)) info += Localization.alternate_sector_mapping;
 
-            if(parts[i].p_flag.HasFlag(pFlag.V_RONLY))
-                info += Localization._read_only_;
+            if(parts[i].p_flag.HasFlag(pFlag.V_RONLY)) info += Localization._read_only_;
 
             if(timestamps[i] != 0)
                 info += string.Format(Localization.created_on_0, DateHandlers.UnixToDateTime(timestamps[i]));
 
             part.Description = "UNIX slice" + info + ".";
 
-            if(part.End < imagePlugin.Info.Sectors)
-                partitions.Add(part);
+            if(part.End < imagePlugin.Info.Sectors) partitions.Add(part);
         }
 
         return partitions.Count > 0;
@@ -452,10 +469,10 @@ public sealed class VTOC : IPartition
                                                                   isNew ? Localization.Reserved : "/home",
                                                               pTag.V_DUMP    => Localization.dump,
                                                               pTag.V_ALTSCTR => Localization.Alternate_sector_track,
-                                                              pTag.V_VMPUBLIC => Localization.
-                                                                  volume_mgt_public_partition,
-                                                              pTag.V_VMPRIVATE => Localization.
-                                                                  volume_mgt_private_partition,
+                                                              pTag.V_VMPUBLIC => Localization
+                                                                 .volume_mgt_public_partition,
+                                                              pTag.V_VMPRIVATE => Localization
+                                                                 .volume_mgt_private_partition,
                                                               _ => string.Format(Localization.Unknown_TAG_0, type)
                                                           };
 

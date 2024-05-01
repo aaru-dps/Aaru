@@ -81,13 +81,11 @@ public sealed class Xbox : IPartition
         partitions = new List<Partition>();
 
         // Xbox partitions always start on 0
-        if(sectorOffset != 0)
-            return false;
+        if(sectorOffset != 0) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Xbox360DevKitPartitionTable table = Marshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
@@ -165,19 +163,16 @@ public sealed class Xbox : IPartition
             }
         }
 
-        if(imagePlugin.Info.Sectors <= (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize))
-            return false;
+        if(imagePlugin.Info.Sectors <= (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize)) return false;
 
         {
             errno = imagePlugin.ReadSector((ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize), out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             temp = BitConverter.ToUInt32(sector, 0);
 
-            if(temp != XBOX_CIGAM)
-                return false;
+            if(temp != XBOX_CIGAM) return false;
 
             var securityPart = new Partition
             {

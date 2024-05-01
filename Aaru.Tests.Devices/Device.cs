@@ -107,8 +107,7 @@ static partial class MainClass
                     AaruConsole.WriteLine(Localization.Device_0, devPath);
                     AaruConsole.WriteLine(Localization.USB_descriptors);
 
-                    if(dev.UsbDescriptors != null)
-                        PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
+                    if(dev.UsbDescriptors != null) PrintHex.PrintHexArray(dev.UsbDescriptors, 64);
 
                     AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                     System.Console.ReadKey();
@@ -119,8 +118,7 @@ static partial class MainClass
                     AaruConsole.WriteLine(Localization.Device_0, devPath);
                     AaruConsole.WriteLine(Localization.PCMCIA_CIS);
 
-                    if(dev.Cis != null)
-                        PrintHex.PrintHexArray(dev.Cis, 64);
+                    if(dev.Cis != null) PrintHex.PrintHexArray(dev.Cis, 64);
 
                     AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                     System.Console.ReadKey();

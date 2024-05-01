@@ -73,7 +73,8 @@ public class Adler32
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -95,7 +96,8 @@ public class Adler32
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -112,7 +114,8 @@ public class Adler32
     {
         var data = new byte[15];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 15);
@@ -129,7 +132,8 @@ public class Adler32
     {
         var data = new byte[2352];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 2352);
@@ -146,7 +150,8 @@ public class Adler32
     {
         var data = new byte[31];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 31);
@@ -163,7 +168,8 @@ public class Adler32
     {
         var data = new byte[63];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 63);
@@ -180,7 +186,8 @@ public class Adler32
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -202,7 +209,8 @@ public class Adler32
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);

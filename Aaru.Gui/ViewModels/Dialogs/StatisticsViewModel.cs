@@ -132,9 +132,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "fs-info"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "fs-info" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "fs-info" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "fs-info" && !c.Synchronized);
 
@@ -144,9 +144,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "checksum"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "checksum" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "checksum" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "checksum" && !c.Synchronized);
 
@@ -156,9 +156,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "compare"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "compare" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "compare" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "compare" && !c.Synchronized);
 
@@ -168,9 +168,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "convert-image"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "convert-image" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "convert-image" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "convert-image" && !c.Synchronized);
 
@@ -180,9 +180,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "create-sidecar"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "create-sidecar" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "create-sidecar" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "create-sidecar" && !c.Synchronized);
 
@@ -192,9 +192,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "decode"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "decode" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "decode" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "decode" && !c.Synchronized);
 
@@ -204,9 +204,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "device-info"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "device-info" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "device-info" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-info" && !c.Synchronized);
 
@@ -216,9 +216,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "device-report"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "device-report" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "device-report" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-report" && !c.Synchronized);
 
@@ -228,9 +228,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "dump-media"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "dump-media" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "dump-media" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "dump-media" && !c.Synchronized);
 
@@ -240,9 +240,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "entropy"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "entropy" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "entropy" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "entropy" && !c.Synchronized);
 
@@ -252,9 +252,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "formats"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "formats" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "formats" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "formats" && !c.Synchronized);
 
@@ -264,9 +264,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "image-info"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "image-info" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "image-info" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "image-info" && !c.Synchronized);
 
@@ -276,9 +276,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "media-info"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "media-info" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "media-info" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-info" && !c.Synchronized);
 
@@ -288,9 +288,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "media-scan"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "media-scan" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "media-scan" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-scan" && !c.Synchronized);
 
@@ -300,9 +300,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "printhex"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "printhex" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "printhex" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "printhex" && !c.Synchronized);
 
@@ -312,9 +312,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             if(ctx.Commands.Any(c => c.Name == "verify"))
             {
-                ulong count = ctx.Commands.Where(c => c.Name == "verify" && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Commands.Where(c => c.Name == "verify" && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Commands.LongCount(c => c.Name == "verify" && !c.Synchronized);
 
@@ -346,9 +346,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             foreach(string nvs in ctx.Filters.Select(n => n.Name).Distinct())
             {
-                ulong count = ctx.Filters.Where(c => c.Name == nvs && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Filters.Where(c => c.Name == nvs && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Filters.LongCount(c => c.Name == nvs && !c.Synchronized);
 
@@ -366,9 +366,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             foreach(string nvs in ctx.MediaFormats.Select(n => n.Name).Distinct())
             {
-                ulong count = ctx.MediaFormats.Where(c => c.Name == nvs && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.MediaFormats.Where(c => c.Name == nvs && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.MediaFormats.LongCount(c => c.Name == nvs && !c.Synchronized);
 
@@ -386,9 +386,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             foreach(string nvs in ctx.Partitions.Select(n => n.Name).Distinct())
             {
-                ulong count = ctx.Partitions.Where(c => c.Name == nvs && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Partitions.Where(c => c.Name == nvs && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Partitions.LongCount(c => c.Name == nvs && !c.Synchronized);
 
@@ -406,9 +406,9 @@ public sealed class StatisticsViewModel : ViewModelBase
 
             foreach(string nvs in ctx.Filesystems.Select(n => n.Name).Distinct())
             {
-                ulong count = ctx.Filesystems.Where(c => c.Name == nvs && c.Synchronized).
-                                  Select(c => c.Count).
-                                  FirstOrDefault();
+                ulong count = ctx.Filesystems.Where(c => c.Name == nvs && c.Synchronized)
+                                 .Select(c => c.Count)
+                                 .FirstOrDefault();
 
                 count += (ulong)ctx.Filesystems.LongCount(c => c.Name == nvs && !c.Synchronized);
 
@@ -424,10 +424,10 @@ public sealed class StatisticsViewModel : ViewModelBase
         {
             DevicesVisible = true;
 
-            foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer).
-                                         ThenBy(n => n.Manufacturer).
-                                         ThenBy(n => n.Revision).
-                                         ThenBy(n => n.Bus))
+            foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer)
+                                        .ThenBy(n => n.Manufacturer)
+                                        .ThenBy(n => n.Revision)
+                                        .ThenBy(n => n.Bus))
             {
                 Devices.Add(new DeviceStatsModel
                 {
@@ -439,16 +439,15 @@ public sealed class StatisticsViewModel : ViewModelBase
             }
         }
 
-        if(!ctx.Medias.Any())
-            return;
+        if(!ctx.Medias.Any()) return;
 
         MediasVisible = true;
 
         foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
         {
-            ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
-                              Select(c => c.Count).
-                              FirstOrDefault();
+            ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real)
+                             .Select(c => c.Count)
+                             .FirstOrDefault();
 
             count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
@@ -462,14 +461,13 @@ public sealed class StatisticsViewModel : ViewModelBase
                 });
             }
 
-            count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).
-                        Select(c => c.Count).
-                        FirstOrDefault();
+            count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real)
+                       .Select(c => c.Count)
+                       .FirstOrDefault();
 
             count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 
-            if(count == 0)
-                continue;
+            if(count == 0) continue;
 
             Medias.Add(new MediaStatsModel
             {

@@ -54,8 +54,7 @@ public sealed partial class Vdi
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var vHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
@@ -107,7 +106,8 @@ public sealed partial class Vdi
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
         blockMapStopwatch.Stop();
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Image_Block_Map_took_0_ms,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Reading_Image_Block_Map_took_0_ms,
                                    blockMapStopwatch.Elapsed.TotalMilliseconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
@@ -171,8 +171,7 @@ public sealed partial class Vdi
             _imageInfo.SectorsPerTrack = _vHdr.spt;
         }
 
-        if(_imageInfo.Cylinders != 0)
-            return ErrorNumber.InvalidArgument;
+        if(_imageInfo.Cylinders != 0) return ErrorNumber.InvalidArgument;
 
         // Same calculation as done by VirtualBox
         _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
@@ -191,8 +190,7 @@ public sealed partial class Vdi
 
             _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-            if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 })
-                break;
+            if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
         }
 
         return ErrorNumber.NoError;
@@ -203,11 +201,9 @@ public sealed partial class Vdi
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
         ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
@@ -229,8 +225,7 @@ public sealed partial class Vdi
         buffer = new byte[_vHdr.sectorSize];
         Array.Copy(cluster, (int)secOff, buffer, 0, _vHdr.sectorSize);
 
-        if(_sectorCache.Count > MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -242,11 +237,9 @@ public sealed partial class Vdi
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -254,8 +247,7 @@ public sealed partial class Vdi
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

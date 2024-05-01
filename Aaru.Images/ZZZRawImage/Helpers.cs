@@ -123,8 +123,7 @@ public sealed partial class ZZZRawImage
             case 737280:
                 return MediaType.DOS_35_DS_DD_9;
             case 819200:
-                if(_imageInfo.SectorSize == 256)
-                    return MediaType.CBM_35_DD;
+                if(_imageInfo.SectorSize == 256) return MediaType.CBM_35_DD;
 
                 return _extension switch
                        {
@@ -213,7 +212,7 @@ public sealed partial class ZZZRawImage
             case 1070617600:
                 return MediaType.Jaz;
 
-        #region Commodore
+#region Commodore
 
             case 174848:
             case 175531:
@@ -225,7 +224,7 @@ public sealed partial class ZZZRawImage
             case 351062:
                 return MediaType.CBM_1571;
 
-        #endregion Commodore
+#endregion Commodore
 
             default:
                 return MediaType.GENERIC_HDD;

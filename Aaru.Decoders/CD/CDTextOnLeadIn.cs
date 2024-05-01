@@ -103,8 +103,7 @@ public static class CDTextOnLeadIn
 
     public static CDText? Decode(byte[] CDTextResponse)
     {
-        if(CDTextResponse is not { Length: > 4 })
-            return null;
+        if(CDTextResponse is not { Length: > 4 }) return null;
 
         var decoded = new CDText
         {
@@ -115,15 +114,15 @@ public static class CDTextOnLeadIn
 
         decoded.DataPacks = new CDTextPack[(decoded.DataLength - 2) / 18];
 
-        if(decoded.DataLength == 2)
-            return null;
+        if(decoded.DataLength == 2) return null;
 
         if(decoded.DataLength + 2 != CDTextResponse.Length)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           Expected_CD_TEXT_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
-                                       decoded.DataLength + 2, CDTextResponse.Length);
+                                       Localization
+                                          .Expected_CD_TEXT_size_0_bytes_is_not_received_size_1_bytes_not_decoding,
+                                       decoded.DataLength + 2,
+                                       CDTextResponse.Length);
 
             return null;
         }
@@ -146,19 +145,18 @@ public static class CDTextOnLeadIn
 
     public static string Prettify(CDText? CDTextResponse)
     {
-        if(CDTextResponse == null)
-            return null;
+        if(CDTextResponse == null) return null;
 
         CDText response = CDTextResponse.Value;
         var    sb       = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
 
         foreach(CDTextPack descriptor in response.DataPacks)
         {
@@ -167,8 +165,8 @@ public static class CDTextOnLeadIn
                 // Ignore NOPs
                 if((descriptor.HeaderID1 & 0x80) != 0)
                 {
-                    sb.AppendFormat(Localization.Incorrect_CD_Text_pack_type_0_not_decoding, descriptor.HeaderID1).
-                       AppendLine();
+                    sb.AppendFormat(Localization.Incorrect_CD_Text_pack_type_0_not_decoding, descriptor.HeaderID1)
+                      .AppendLine();
                 }
             }
             else
@@ -181,8 +179,8 @@ public static class CDTextOnLeadIn
                             sb.AppendLine(Localization.CD_Text_pack_contains_title_for_album);
                         else
                         {
-                            sb.AppendFormat(Localization.CD_Text_pack_contains_title_for_track_0, descriptor.HeaderID2).
-                               AppendLine();
+                            sb.AppendFormat(Localization.CD_Text_pack_contains_title_for_track_0, descriptor.HeaderID2)
+                              .AppendLine();
                         }
 
                         break;
@@ -195,8 +193,8 @@ public static class CDTextOnLeadIn
                         else
                         {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_performer_for_track_0,
-                                            descriptor.HeaderID2).
-                               AppendLine();
+                                            descriptor.HeaderID2)
+                              .AppendLine();
                         }
 
                         break;
@@ -209,8 +207,8 @@ public static class CDTextOnLeadIn
                         else
                         {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_songwriter_for_track_0,
-                                            descriptor.HeaderID2).
-                               AppendLine();
+                                            descriptor.HeaderID2)
+                              .AppendLine();
                         }
 
                         break;
@@ -233,8 +231,8 @@ public static class CDTextOnLeadIn
                         else
                         {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_arranger_for_track_0,
-                                            descriptor.HeaderID2).
-                               AppendLine();
+                                            descriptor.HeaderID2)
+                              .AppendLine();
                         }
 
                         break;
@@ -247,8 +245,8 @@ public static class CDTextOnLeadIn
                         else
                         {
                             sb.AppendFormat(Localization.CD_Text_pack_contains_content_provider_message_for_track_0,
-                                            descriptor.HeaderID2).
-                               AppendLine();
+                                            descriptor.HeaderID2)
+                              .AppendLine();
                         }
 
                         break;
@@ -328,16 +326,15 @@ public static class CDTextOnLeadIn
                     case 0x87:
                     case 0x8E:
                     {
-                        if(descriptor.DBCC)
-                            sb.AppendLine(Localization.Double_Byte_Character_Code_is_used);
+                        if(descriptor.DBCC) sb.AppendLine(Localization.Double_Byte_Character_Code_is_used);
 
                         sb.AppendFormat(Localization.Block_number_0,       descriptor.BlockNumber).AppendLine();
                         sb.AppendFormat(Localization.Character_position_0, descriptor.CharacterPosition).AppendLine();
 
                         sb.AppendFormat(Localization.Text_field_0,
                                         StringHandlers.CToString(descriptor.TextDataField,
-                                                                 Encoding.GetEncoding("iso-8859-1"))).
-                           AppendLine();
+                                                                 Encoding.GetEncoding("iso-8859-1")))
+                          .AppendLine();
 
                         break;
                     }
@@ -345,8 +342,8 @@ public static class CDTextOnLeadIn
                     default:
                     {
                         sb.AppendFormat(Localization.Binary_contents_0,
-                                        PrintHex.ByteArrayToHexArrayString(descriptor.TextDataField, 28)).
-                           AppendLine();
+                                        PrintHex.ByteArrayToHexArrayString(descriptor.TextDataField, 28))
+                          .AppendLine();
 
                         break;
                     }

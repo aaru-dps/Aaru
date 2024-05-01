@@ -230,8 +230,7 @@ public sealed partial class Udif
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -265,16 +264,16 @@ public sealed partial class Udif
             return false;
         }
 
-        if(_currentChunk.type != CHUNK_TYPE_NOCOPY)
-            _currentChunk.length = _currentChunk.sectors * 512;
+        if(_currentChunk.type != CHUNK_TYPE_NOCOPY) _currentChunk.length = _currentChunk.sectors * 512;
 
         _chunks.Add(_currentChunk.sector, _currentChunk);
 
-        _chunks.Add(_imageInfo.Sectors, new BlockChunk
-        {
-            type   = CHUNK_TYPE_END,
-            sector = _imageInfo.Sectors
-        });
+        _chunks.Add(_imageInfo.Sectors,
+                    new BlockChunk
+                    {
+                        type   = CHUNK_TYPE_END,
+                        sector = _imageInfo.Sectors
+                    });
 
         var bHdr = new BlockHeader
         {

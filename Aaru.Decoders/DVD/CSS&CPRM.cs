@@ -60,8 +60,7 @@ public static class CSS_CPRM
 {
     public static LeadInCopyright? DecodeLeadInCopyright(byte[] response)
     {
-        if(response?.Length != 8)
-            return null;
+        if(response?.Length != 8) return null;
 
         return new LeadInCopyright
         {
@@ -77,8 +76,7 @@ public static class CSS_CPRM
 
     public static RegionalPlaybackControlState? DecodeRegionalPlaybackControlState(byte[] response)
     {
-        if(response?.Length != 8)
-            return null;
+        if(response?.Length != 8) return null;
 
         return new RegionalPlaybackControlState
         {
@@ -94,8 +92,7 @@ public static class CSS_CPRM
 
     public static string PrettifyRegionalPlaybackControlState(RegionalPlaybackControlState? rpc)
     {
-        if(rpc == null)
-            return null;
+        if(rpc == null) return null;
 
         RegionalPlaybackControlState decoded = rpc.Value;
         var                          sb      = new StringBuilder();
@@ -121,8 +118,8 @@ public static class CSS_CPRM
 
                 break;
             case TypeCode.Perm:
-                sb.AppendLine(Localization.
-                                  Drive_region_has_been_set_permanently_but_may_be_reset_by_the_vendor_if_necessary);
+                sb.AppendLine(Localization
+                                 .Drive_region_has_been_set_permanently_but_may_be_reset_by_the_vendor_if_necessary);
 
                 break;
         }
@@ -144,29 +141,21 @@ public static class CSS_CPRM
             {
                 sb.Append(Localization.Drive_has_the_following_regions_set);
 
-                if((decoded.RegionMask & 0x01) != 0x01)
-                    sb.Append(" 1");
+                if((decoded.RegionMask & 0x01) != 0x01) sb.Append(" 1");
 
-                if((decoded.RegionMask & 0x02) != 0x02)
-                    sb.Append(" 2");
+                if((decoded.RegionMask & 0x02) != 0x02) sb.Append(" 2");
 
-                if((decoded.RegionMask & 0x04) != 0x04)
-                    sb.Append(" 3");
+                if((decoded.RegionMask & 0x04) != 0x04) sb.Append(" 3");
 
-                if((decoded.RegionMask & 0x08) != 0x08)
-                    sb.Append(" 4");
+                if((decoded.RegionMask & 0x08) != 0x08) sb.Append(" 4");
 
-                if((decoded.RegionMask & 0x10) != 0x10)
-                    sb.Append(" 5");
+                if((decoded.RegionMask & 0x10) != 0x10) sb.Append(" 5");
 
-                if((decoded.RegionMask & 0x20) != 0x20)
-                    sb.Append(" 6");
+                if((decoded.RegionMask & 0x20) != 0x20) sb.Append(" 6");
 
-                if((decoded.RegionMask & 0x40) != 0x40)
-                    sb.Append(" 7");
+                if((decoded.RegionMask & 0x40) != 0x40) sb.Append(" 7");
 
-                if((decoded.RegionMask & 0x80) != 0x80)
-                    sb.Append(" 8");
+                if((decoded.RegionMask & 0x80) != 0x80) sb.Append(" 8");
 
                 break;
             }
@@ -181,8 +170,8 @@ public static class CSS_CPRM
 
                 break;
             case 0x01:
-                sb.AppendLine(Localization.
-                                  The_Logical_Unit_shall_adhere_to_the_specification_and_all_requirements_of_the_CSS_license_agreement_concerning_RPC);
+                sb.AppendLine(Localization
+                                 .The_Logical_Unit_shall_adhere_to_the_specification_and_all_requirements_of_the_CSS_license_agreement_concerning_RPC);
 
                 break;
             default:
@@ -199,8 +188,7 @@ public static class CSS_CPRM
 
     public static string PrettifyLeadInCopyright(LeadInCopyright? cmi)
     {
-        if(cmi == null)
-            return null;
+        if(cmi == null) return null;
 
         LeadInCopyright decoded = cmi.Value;
         var             sb      = new StringBuilder();
@@ -230,8 +218,7 @@ public static class CSS_CPRM
                 break;
         }
 
-        if(decoded.CopyrightType == 0)
-            return sb.ToString();
+        if(decoded.CopyrightType == 0) return sb.ToString();
 
         switch(decoded.RegionInformation)
         {
@@ -247,29 +234,21 @@ public static class CSS_CPRM
             {
                 sb.Append(Localization.Disc_can_be_played_in_the_following_regions);
 
-                if((decoded.RegionInformation & 0x01) != 0x01)
-                    sb.Append(" 1");
+                if((decoded.RegionInformation & 0x01) != 0x01) sb.Append(" 1");
 
-                if((decoded.RegionInformation & 0x02) != 0x02)
-                    sb.Append(" 2");
+                if((decoded.RegionInformation & 0x02) != 0x02) sb.Append(" 2");
 
-                if((decoded.RegionInformation & 0x04) != 0x04)
-                    sb.Append(" 3");
+                if((decoded.RegionInformation & 0x04) != 0x04) sb.Append(" 3");
 
-                if((decoded.RegionInformation & 0x08) != 0x08)
-                    sb.Append(" 4");
+                if((decoded.RegionInformation & 0x08) != 0x08) sb.Append(" 4");
 
-                if((decoded.RegionInformation & 0x10) != 0x10)
-                    sb.Append(" 5");
+                if((decoded.RegionInformation & 0x10) != 0x10) sb.Append(" 5");
 
-                if((decoded.RegionInformation & 0x20) != 0x20)
-                    sb.Append(" 6");
+                if((decoded.RegionInformation & 0x20) != 0x20) sb.Append(" 6");
 
-                if((decoded.RegionInformation & 0x40) != 0x40)
-                    sb.Append(" 7");
+                if((decoded.RegionInformation & 0x40) != 0x40) sb.Append(" 7");
 
-                if((decoded.RegionInformation & 0x80) != 0x80)
-                    sb.Append(" 8");
+                if((decoded.RegionInformation & 0x80) != 0x80) sb.Append(" 8");
 
                 break;
             }

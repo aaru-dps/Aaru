@@ -45,6 +45,7 @@ public sealed partial class Chd
 #region IOpticalMediaImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -71,8 +72,7 @@ public sealed partial class Chd
     {
         get
         {
-            if(_isHdd)
-                return null;
+            if(_isHdd) return null;
 
             // TODO: Implement
             return null;

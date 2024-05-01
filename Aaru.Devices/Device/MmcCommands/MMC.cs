@@ -51,9 +51,18 @@ public partial class Device
     {
         buffer = new byte[16];
 
-        LastError = SendMmcCommand(MmcCommands.SendCsd, false, false,
-                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SendCsd,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc,
+                                   0,
+                                   16,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -72,9 +81,18 @@ public partial class Device
     {
         buffer = new byte[16];
 
-        LastError = SendMmcCommand(MmcCommands.SendCid, false, false,
-                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16, 1,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SendCid,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc,
+                                   0,
+                                   16,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -93,9 +111,18 @@ public partial class Device
     {
         buffer = new byte[4];
 
-        LastError = SendMmcCommand(MmcCommands.SendOpCond, false, true,
-                                   MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0, 4, 1,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SendOpCond,
+                                   false,
+                                   true,
+                                   MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr,
+                                   0,
+                                   4,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -114,9 +141,18 @@ public partial class Device
     {
         buffer = new byte[512];
 
-        LastError = SendMmcCommand(MmcCommands.SendExtCsd, false, false,
-                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0, 512, 1,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SendExtCsd,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                                   0,
+                                   512,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -135,9 +171,18 @@ public partial class Device
     {
         byte[] buffer = Array.Empty<byte>();
 
-        LastError = SendMmcCommand(MmcCommands.SetBlocklen, false, false,
-                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, length, 0, 0,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SetBlocklen,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
+                                   length,
+                                   0,
+                                   0,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -169,14 +214,26 @@ public partial class Device
 
         if(!ReadMultipleBlockCannotSetBlockCount)
         {
-            sense = ReadMultipleBlock(out buffer, out response, lba, blockSize, transferLength, byteAddressed, timeout,
+            sense = ReadMultipleBlock(out buffer,
+                                      out response,
+                                      lba,
+                                      blockSize,
+                                      transferLength,
+                                      byteAddressed,
+                                      timeout,
                                       out duration);
         }
 
         if(ReadMultipleBlockCannotSetBlockCount)
         {
-            return ReadMultipleUsingSingle(out buffer, out response, lba, blockSize, transferLength, byteAddressed,
-                                           timeout,    out duration);
+            return ReadMultipleUsingSingle(out buffer,
+                                           out response,
+                                           lba,
+                                           blockSize,
+                                           transferLength,
+                                           byteAddressed,
+                                           timeout,
+                                           out duration);
         }
 
         return sense;
@@ -203,9 +260,18 @@ public partial class Device
         else
             address = lba;
 
-        LastError = SendMmcCommand(MmcCommands.ReadSingleBlock, false, false,
-                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                   blockSize, 1, ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.ReadSingleBlock,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                                   address,
+                                   blockSize,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 
@@ -236,9 +302,17 @@ public partial class Device
         else
             address = lba;
 
-        LastError = SendMmcCommand(MmcCommands.ReadMultipleBlock, false, false,
-                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                   blockSize, transferLength, ref buffer, out response, out duration, out bool sense,
+        LastError = SendMmcCommand(MmcCommands.ReadMultipleBlock,
+                                   false,
+                                   false,
+                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                                   address,
+                                   blockSize,
+                                   transferLength,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
                                    timeout);
 
         Error = LastError != 0;
@@ -246,7 +320,8 @@ public partial class Device
         AaruConsole.DebugWriteLine(MMC_MODULE_NAME,
                                    transferLength > 1
                                        ? Localization.READ_MULTIPLE_BLOCK_took_0_ms
-                                       : Localization.READ_SINGLE_BLOCK_took_0_ms, duration);
+                                       : Localization.READ_SINGLE_BLOCK_took_0_ms,
+                                   duration);
 
         return sense;
     }
@@ -279,17 +354,24 @@ public partial class Device
             else
                 address = lba + i;
 
-            LastError = SendMmcCommand(MmcCommands.ReadSingleBlock, false, false,
-                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, address,
-                                       blockSize, 1, ref blockBuffer, out response, out double blockDuration, out sense,
+            LastError = SendMmcCommand(MmcCommands.ReadSingleBlock,
+                                       false,
+                                       false,
+                                       MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                                       address,
+                                       blockSize,
+                                       1,
+                                       ref blockBuffer,
+                                       out response,
+                                       out double blockDuration,
+                                       out sense,
                                        timeout);
 
             Error = LastError != 0;
 
             duration += blockDuration;
 
-            if(Error || sense)
-                break;
+            if(Error || sense) break;
 
             Array.Copy(blockBuffer, 0, buffer, i * blockSize, blockSize);
         }
@@ -309,9 +391,18 @@ public partial class Device
     {
         buffer = new byte[4];
 
-        LastError = SendMmcCommand(MmcCommands.SendStatus, false, true,
-                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc, 0, 4, 1,
-                                   ref buffer, out response, out duration, out bool sense, timeout);
+        LastError = SendMmcCommand(MmcCommands.SendStatus,
+                                   false,
+                                   true,
+                                   MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
+                                   0,
+                                   4,
+                                   1,
+                                   ref buffer,
+                                   out response,
+                                   out duration,
+                                   out bool sense,
+                                   timeout);
 
         Error = LastError != 0;
 

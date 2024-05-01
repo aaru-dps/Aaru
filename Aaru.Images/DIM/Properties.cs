@@ -50,6 +50,7 @@ public sealed partial class Dim
     public Guid Id => new("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

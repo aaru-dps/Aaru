@@ -41,8 +41,8 @@ static partial class ScsiMmc
             AaruConsole.WriteLine(Localization.Device_0, devPath);
             AaruConsole.WriteLine(Localization.Send_a_special_SCSI_MultiMedia_command_to_the_device);
 
-            AaruConsole.WriteLine(Localization.
-                                      Try_to_read_the_cache_data_from_a_device_with_a_MediaTek_chipset_F1h_command_06h_subcommand);
+            AaruConsole.WriteLine(Localization
+                                     .Try_to_read_the_cache_data_from_a_device_with_a_MediaTek_chipset_F1h_command_06h_subcommand);
 
             AaruConsole.WriteLine(Localization.Try_to_read_a_GD_ROM_using_a_trap_disc);
             AaruConsole.WriteLine(Localization.Try_to_read_Lead_Out_using_a_trap_disc);

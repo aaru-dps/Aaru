@@ -61,8 +61,7 @@ public class Book
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Book(BookType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var book = new Book
         {
@@ -80,17 +79,14 @@ public class Book
         {
             book.Barcodes = new List<Barcode>();
 
-            foreach(Schemas.BarcodeType code in cicm.Barcodes)
-                book.Barcodes.Add(code);
+            foreach(Schemas.BarcodeType code in cicm.Barcodes) book.Barcodes.Add(code);
         }
 
-        if(cicm.Language is null)
-            return book;
+        if(cicm.Language is null) return book;
 
         book.Languages = new List<Language>();
 
-        foreach(LanguagesTypeLanguage lng in cicm.Language)
-            book.Languages.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Language) book.Languages.Add((Language)lng);
 
         return book;
     }

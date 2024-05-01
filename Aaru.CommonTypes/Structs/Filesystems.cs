@@ -164,49 +164,49 @@ public class FileEntryInfo
 {
     /// <summary>File attributes</summary>
     public FileAttributes Attributes { get; set; }
-    
+
     /// <summary>File length in blocks</summary>
     public long Blocks { get; set; }
-    
+
     /// <summary>File block size in bytes</summary>
     public long BlockSize { get; set; }
-    
+
     /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
     public ulong? DeviceNo { get; set; }
-    
+
     /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
     public ulong? GID { get; set; }
-    
+
     /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
     public ulong Inode { get; set; }
-    
+
     /// <summary>File length in bytes</summary>
     public long Length { get; set; }
-    
+
     /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
     public ulong Links { get; set; }
-    
+
     /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
     public uint? Mode { get; set; }
-    
+
     /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
     public ulong? UID { get; set; }
-    
+
     /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? CreationTimeUtc { get; set; }
-    
+
     /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? AccessTimeUtc { get; set; }
-    
+
     /// <summary>File attributes change date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? StatusChangeTimeUtc { get; set; }
-    
+
     /// <summary>File last backup date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? BackupTimeUtc { get; set; }
-    
+
     /// <summary>File last modification date in UTC. Null if the underlying filesystem does not support them.</summary>
     public DateTime? LastWriteTimeUtc { get; set; }
-    
+
     /// <summary>File creation date. Null if the underlying filesystem does not support them.</summary>
     [JsonIgnore]
     public DateTime? CreationTime
@@ -214,7 +214,7 @@ public class FileEntryInfo
         get => CreationTimeUtc?.ToLocalTime();
         set => CreationTimeUtc = value?.ToUniversalTime();
     }
-    
+
     /// <summary>File last access date. Null if the underlying filesystem does not support them.</summary>
     [JsonIgnore]
     public DateTime? AccessTime
@@ -222,7 +222,7 @@ public class FileEntryInfo
         get => AccessTimeUtc?.ToLocalTime();
         set => AccessTimeUtc = value?.ToUniversalTime();
     }
-    
+
     /// <summary>File attributes change date. Null if the underlying filesystem does not support them.</summary>
     [JsonIgnore]
     public DateTime? StatusChangeTime
@@ -230,7 +230,7 @@ public class FileEntryInfo
         get => StatusChangeTimeUtc?.ToLocalTime();
         set => StatusChangeTimeUtc = value?.ToUniversalTime();
     }
-    
+
     /// <summary>File last backup date. Null if the underlying filesystem does not support them.</summary>
     [JsonIgnore]
     public DateTime? BackupTime
@@ -238,7 +238,7 @@ public class FileEntryInfo
         get => BackupTimeUtc?.ToLocalTime();
         set => BackupTimeUtc = value?.ToUniversalTime();
     }
-    
+
     /// <summary>File last modification date. Null if the underlying filesystem does not support them.</summary>
     [JsonIgnore]
     public DateTime? LastWriteTime
@@ -268,10 +268,10 @@ public class FileSystemInfo
     public Guid PluginId;
     /// <summary>Filesystem type</summary>
     public string Type;
-    
+
     /// <summary>Initializes an empty instance of this structure</summary>
     public FileSystemInfo() => Id = new FileSystemId();
-    
+
     /// <summary>Gets a clone of this structure</summary>
     /// <returns>Clone of this structure</returns>
     public FileSystemInfo ShallowCopy() => (FileSystemInfo)MemberwiseClone();
@@ -290,7 +290,7 @@ public struct FileSystemId
     /// <summary>Set to <c>true</c> if the identifier is a GUID</summary>
     [FieldOffset(2)]
     public bool IsGuid;
-    
+
     /// <summary>Identifier as a 32-bit integer</summary>
     [FieldOffset(3)]
     public uint Serial32;

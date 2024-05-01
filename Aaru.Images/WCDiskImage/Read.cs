@@ -63,7 +63,9 @@ public sealed partial class WCDiskImage
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.Detected_WC_DISK_IMAGE_with_0_heads_1_tracks_and_2_sectors_per_track,
-                                   fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
+                                   fheader.heads,
+                                   fheader.cylinders,
+                                   fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = fheader.cylinders;
         _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
@@ -89,8 +91,7 @@ public sealed partial class WCDiskImage
             {
                 ErrorNumber errno = ReadTrack(stream, cyl, head);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
             }
         }
 
@@ -120,11 +121,9 @@ public sealed partial class WCDiskImage
         }
 
         /* adjust number of cylinders */
-        if(fheader.extraTracks[0] == 1 || fheader.extraTracks[1] == 1)
-            _imageInfo.Cylinders++;
+        if(fheader.extraTracks[0] == 1 || fheader.extraTracks[1] == 1) _imageInfo.Cylinders++;
 
-        if(fheader.extraTracks[2] == 1 || fheader.extraTracks[3] == 1)
-            _imageInfo.Cylinders++;
+        if(fheader.extraTracks[2] == 1 || fheader.extraTracks[3] == 1) _imageInfo.Cylinders++;
 
         /* read the comment and directory data if present */
         if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
@@ -169,8 +168,7 @@ public sealed partial class WCDiskImage
             comments += Encoding.ASCII.GetString(dir);
         }
 
-        if(comments.Length > 0)
-            _imageInfo.Comments = comments;
+        if(comments.Length > 0) _imageInfo.Comments = comments;
 
         // save some variables for later use
         _fileHeader    = fheader;
@@ -189,8 +187,12 @@ public sealed partial class WCDiskImage
 
         if(_badSectors[(cylinderNumber, headNumber, sectorNumber)])
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.reading_bad_sector_0_1_2_3, sectorAddress,
-                                       cylinderNumber, headNumber, sectorNumber);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.reading_bad_sector_0_1_2_3,
+                                       sectorAddress,
+                                       cylinderNumber,
+                                       headNumber,
+                                       sectorNumber);
 
             /* if we have sector data, return that */
             if(_sectorCache.ContainsKey((cylinderNumber, headNumber, sectorNumber)))
@@ -216,11 +218,9 @@ public sealed partial class WCDiskImage
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -228,8 +228,7 @@ public sealed partial class WCDiskImage
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -258,9 +257,14 @@ public sealed partial class WCDiskImage
             /* validate the sector header */
             if(sheader.cylinder != cyl || sheader.head != head || sheader.sector != sect)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(Localization.Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5,
-                                                 sheader.cylinder, sheader.head, sheader.sector, cyl, head, sect));
+                AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                            .Unexpected_sector_encountered_Found_CHS_0_1_2_but_expected_3_4_5,
+                                                         sheader.cylinder,
+                                                         sheader.head,
+                                                         sheader.sector,
+                                                         cyl,
+                                                         head,
+                                                         sect));
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -284,9 +288,13 @@ public sealed partial class WCDiskImage
                     if(calculatedCRC != sheader.crc)
                     {
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.
-                                                       CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4, cyl,
-                                                   head, sect, sheader.crc, calculatedCRC);
+                                                   Localization
+                                                      .CHS_0_1_2_CRC_mismatch_stored_CRC_3_X4_calculated_CRC_4_X4,
+                                                   cyl,
+                                                   head,
+                                                   sect,
+                                                   sheader.crc,
+                                                   calculatedCRC);
                     }
 
                     break;
@@ -303,8 +311,7 @@ public sealed partial class WCDiskImage
                     AaruConsole.DebugWriteLine(MODULE_NAME, "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
                         cyl, head, sect, sheader.crc & 0xff);
                      */
-                    for(var i = 0; i < 512; i++)
-                        sectorData[i] = (byte)(sheader.crc & 0xff);
+                    for(var i = 0; i < 512; i++) sectorData[i] = (byte)(sheader.crc & 0xff);
 
                     _sectorCache[(cyl, head, sect)] = sectorData;
                     _badSectors[(cyl, head, sect)]  = false;

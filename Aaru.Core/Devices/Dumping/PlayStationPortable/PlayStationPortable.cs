@@ -52,11 +52,11 @@ public partial class Dump
            !_outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickProDuo) &&
            !_outputPlugin.SupportedMediaTypes.Contains(MediaType.UMD))
         {
-            _dumpLog.WriteLine(Localization.Core.
-                                            Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
+            _dumpLog.WriteLine(Localization.Core
+                                           .Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
-            StoppingErrorMessage?.Invoke(Localization.Core.
-                                                      Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
+            StoppingErrorMessage?.Invoke(Localization.Core
+                                                     .Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
             return;
         }
@@ -64,7 +64,12 @@ public partial class Dump
         UpdateStatus?.Invoke(Localization.Core.Checking_if_media_is_UMD_or_MemoryStick);
         _dumpLog.WriteLine(Localization.Core.Checking_if_media_is_UMD_or_MemoryStick);
 
-        bool sense = _dev.ModeSense6(out byte[] buffer, out _, false, ScsiModeSensePageControl.Current, 0, _dev.Timeout,
+        bool sense = _dev.ModeSense6(out byte[] buffer,
+                                     out _,
+                                     false,
+                                     ScsiModeSensePageControl.Current,
+                                     0,
+                                     _dev.Timeout,
                                      out _);
 
         if(sense)
@@ -122,7 +127,19 @@ public partial class Dump
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
         _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
 
-        sense = _dev.Read12(out buffer, out _, 0, false, true, false, false, rootStart, 512, 0, 1, false, _dev.Timeout,
+        sense = _dev.Read12(out buffer,
+                            out _,
+                            0,
+                            false,
+                            true,
+                            false,
+                            false,
+                            rootStart,
+                            512,
+                            0,
+                            1,
+                            false,
+                            _dev.Timeout,
                             out _);
 
         if(sense)
@@ -143,7 +160,8 @@ public partial class Dump
             return;
         }
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.FAT_starts_at_sector_0_and_runs_for_1_sectors, fatStart,
+        UpdateStatus?.Invoke(string.Format(Localization.Core.FAT_starts_at_sector_0_and_runs_for_1_sectors,
+                                           fatStart,
                                            sectorsPerFat));
 
         _dumpLog.WriteLine(Localization.Core.FAT_starts_at_sector_0_and_runs_for_1_sectors, fatStart, sectorsPerFat);
@@ -159,11 +177,22 @@ public partial class Dump
         {
             uint transfer = 64;
 
-            if(transfer + position > sectorsPerFat)
-                transfer = sectorsPerFat - position;
+            if(transfer + position > sectorsPerFat) transfer = sectorsPerFat - position;
 
-            sense = _dev.Read12(out buffer, out _, 0, false, true, false, false, position + fatStart, 512, 0, transfer,
-                                false, _dev.Timeout, out _);
+            sense = _dev.Read12(out buffer,
+                                out _,
+                                0,
+                                false,
+                                true,
+                                false,
+                                false,
+                                position + fatStart,
+                                512,
+                                0,
+                                transfer,
+                                false,
+                                _dev.Timeout,
+                                out _);
 
             if(sense)
             {
@@ -194,8 +223,7 @@ public partial class Dump
                 continue;
             }
 
-            if(nextCluster == 0xFFFF)
-                break;
+            if(nextCluster == 0xFFFF) break;
 
             DumpMs();
 

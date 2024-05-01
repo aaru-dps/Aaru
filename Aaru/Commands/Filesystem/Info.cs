@@ -54,19 +54,25 @@ sealed class FilesystemInfoCommand : Command
     public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-        {
-            "--filesystems", "-f"
-        }, () => true, UI.Searches_and_prints_information_about_filesystems));
+                             {
+                                 "--filesystems", "-f"
+                             },
+                             () => true,
+                             UI.Searches_and_prints_information_about_filesystems));
 
         Add(new Option<bool>(new[]
-        {
-            "--partitions", "-p"
-        }, () => true, UI.Searches_and_interprets_partitions));
+                             {
+                                 "--partitions", "-p"
+                             },
+                             () => true,
+                             UI.Searches_and_interprets_partitions));
 
         AddArgument(new Argument<string>
         {
@@ -144,8 +150,7 @@ sealed class FilesystemInfoCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -277,11 +282,13 @@ sealed class FilesystemInfoCommand : Command
                         table.AddRow(UI.Title_Type, Markup.Escape(partitionsList[i].Type ?? ""));
 
                         table.AddRow(Localization.Core.Title_Start,
-                                     string.Format(UI.sector_0_byte_1, partitionsList[i].Start,
+                                     string.Format(UI.sector_0_byte_1,
+                                                   partitionsList[i].Start,
                                                    partitionsList[i].Offset));
 
                         table.AddRow(UI.Title_Length,
-                                     string.Format(UI._0_sectors_1_bytes, partitionsList[i].Length,
+                                     string.Format(UI._0_sectors_1_bytes,
+                                                   partitionsList[i].Length,
                                                    partitionsList[i].Size));
 
                         table.AddRow(UI.Title_Scheme,      Markup.Escape(partitionsList[i].Scheme      ?? ""));
@@ -289,8 +296,7 @@ sealed class FilesystemInfoCommand : Command
 
                         AnsiConsole.Write(table);
 
-                        if(!filesystems)
-                            continue;
+                        if(!filesystems) continue;
 
                         Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
@@ -311,15 +317,16 @@ sealed class FilesystemInfoCommand : Command
 
                                 foreach(string pluginName in idPlugins)
                                 {
-                                    if(!plugins.Filesystems.TryGetValue(pluginName, out fs))
-                                        continue;
-                                    if(fs is null)
-                                        continue;
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out fs)) continue;
+                                    if(fs is null) continue;
 
                                     AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
                                     }[/]");
 
-                                    fs.GetInformation(imageFormat, partitionsList[i], encodingClass, out information,
+                                    fs.GetInformation(imageFormat,
+                                                      partitionsList[i],
+                                                      encodingClass,
+                                                      out information,
                                                       out FileSystem fsMetadata);
 
                                     AaruConsole.Write(information);
@@ -332,12 +339,14 @@ sealed class FilesystemInfoCommand : Command
                             {
                                 plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
 
-                                if(fs is null)
-                                    continue;
+                                if(fs is null) continue;
 
                                 AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
-                                fs.GetInformation(imageFormat, partitionsList[i], encodingClass, out information,
+                                fs.GetInformation(imageFormat,
+                                                  partitionsList[i],
+                                                  encodingClass,
+                                                  out information,
                                                   out FileSystem fsMetadata);
 
                                 AaruConsole.Write("{0}", information);
@@ -380,14 +389,15 @@ sealed class FilesystemInfoCommand : Command
 
                         foreach(string pluginName in idPlugins)
                         {
-                            if(!plugins.Filesystems.TryGetValue(pluginName, out fs))
-                                continue;
-                            if(fs is null)
-                                continue;
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out fs)) continue;
+                            if(fs is null) continue;
 
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
 
-                            fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
+                            fs.GetInformation(imageFormat,
+                                              wholePart,
+                                              encodingClass,
+                                              out information,
                                               out FileSystem fsMetadata);
 
                             AaruConsole.Write(information);
@@ -400,12 +410,14 @@ sealed class FilesystemInfoCommand : Command
                     {
                         plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
 
-                        if(fs is null)
-                            break;
+                        if(fs is null) break;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
-                        fs.GetInformation(imageFormat, wholePart, encodingClass, out information,
+                        fs.GetInformation(imageFormat,
+                                          wholePart,
+                                          encodingClass,
+                                          out information,
                                           out FileSystem fsMetadata);
 
                         AaruConsole.Write(information);

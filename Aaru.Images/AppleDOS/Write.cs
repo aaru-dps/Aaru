@@ -189,12 +189,17 @@ public sealed partial class AppleDos
 
             tmp = new byte[_deinterleaved.Length];
 
-            int[] offsets = _extension == ".do" ? isDos ? _deinterleave : _interleave :
-                            isDos               ? _interleave : _deinterleave;
+            int[] offsets = _extension == ".do"
+                                ? isDos ? _deinterleave : _interleave
+                                : isDos
+                                    ? _interleave
+                                    : _deinterleave;
 
             for(var t = 0; t < 35; t++)
-            for(var s = 0; s < 16; s++)
-                Array.Copy(_deinterleaved, t * 16 * 256 + offsets[s] * 256, tmp, t * 16 * 256 + s * 256, 256);
+            {
+                for(var s = 0; s < 16; s++)
+                    Array.Copy(_deinterleaved, t * 16 * 256 + offsets[s] * 256, tmp, t * 16 * 256 + s * 256, 256);
+            }
         }
 
         _writingStream.Seek(0, SeekOrigin.Begin);

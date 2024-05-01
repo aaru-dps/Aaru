@@ -652,16 +652,13 @@ public sealed partial class FAT
         public override string ToString()
         {
             // This ensures UMSDOS takes preference when present
-            if(!string.IsNullOrEmpty(LinuxName))
-                return LinuxName;
+            if(!string.IsNullOrEmpty(LinuxName)) return LinuxName;
 
             // This ensures LFN takes preference when eCS is in use
-            if(!string.IsNullOrEmpty(Lfn))
-                return Lfn;
+            if(!string.IsNullOrEmpty(Lfn)) return Lfn;
 
             // This ensures Humans takes preference when present
-            if(!string.IsNullOrEmpty(HumanName))
-                return HumanName;
+            if(!string.IsNullOrEmpty(HumanName)) return HumanName;
 
             return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
         }
@@ -863,12 +860,12 @@ public sealed partial class FAT
         internal CompleteDirectoryEntry[] Entries;
         internal int                      Position;
 
-    #region IDirNode Members
+#region IDirNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
 
-    #endregion
+#endregion
     }
 
 #endregion
@@ -879,7 +876,7 @@ public sealed partial class FAT
     {
         internal uint[] Clusters;
 
-    #region IFileNode Members
+#region IFileNode Members
 
         /// <inheritdoc />
         public string Path { get; init; }
@@ -890,7 +887,7 @@ public sealed partial class FAT
         /// <inheritdoc />
         public long Offset { get; set; }
 
-    #endregion
+#endregion
     }
 
 #endregion

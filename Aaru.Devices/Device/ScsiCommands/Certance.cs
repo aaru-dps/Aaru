@@ -66,10 +66,14 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
 
-        if(park)
-            cdb[4] = 1;
+        if(park) cdb[4] = 1;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

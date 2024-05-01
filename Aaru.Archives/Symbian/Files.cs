@@ -54,11 +54,9 @@ public sealed partial class Symbian
     {
         fileName = null;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         fileName = _files[entryNumber].destinationName;
 
@@ -70,11 +68,9 @@ public sealed partial class Symbian
     {
         entryNumber = -1;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(string.IsNullOrEmpty(fileName))
-            return ErrorNumber.InvalidArgument;
+        if(string.IsNullOrEmpty(fileName)) return ErrorNumber.InvalidArgument;
 
         entryNumber = _files.FindIndex(x => caseInsensitiveMatch
                                                 ? x.destinationName.Equals(fileName,
@@ -88,11 +84,10 @@ public sealed partial class Symbian
     public ErrorNumber GetCompressedSize(int entryNumber, out long length)
     {
         length = -1;
-        if(!Opened)
-            return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(!Opened) return ErrorNumber.NotOpened;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         length = _files[entryNumber].length;
 
@@ -103,11 +98,10 @@ public sealed partial class Symbian
     public ErrorNumber GetUncompressedSize(int entryNumber, out long length)
     {
         length = -1;
-        if(!Opened)
-            return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(!Opened) return ErrorNumber.NotOpened;
+
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         length = _compressed ? _files[entryNumber].originalLength : _files[entryNumber].length;
 
@@ -119,11 +113,9 @@ public sealed partial class Symbian
     {
         attributes = FileAttributes.None;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         attributes = FileAttributes.Normal;
 
@@ -135,11 +127,9 @@ public sealed partial class Symbian
     {
         stat = null;
 
-        if(!Opened)
-            return ErrorNumber.NotOpened;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
         stat = new FileEntryInfo
         {
@@ -155,23 +145,25 @@ public sealed partial class Symbian
     public ErrorNumber GetEntry(int entryNumber, out IFilter filter)
     {
         filter = null;
-        if(!Opened)
-            return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count)
-            return ErrorNumber.OutOfRange;
+        if(!Opened) return ErrorNumber.NotOpened;
 
-        Stream stream = new OffsetStream(new NonClosableStream(_stream), _files[entryNumber].pointer,
+        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
+
+        Stream stream = new OffsetStream(new NonClosableStream(_stream),
+                                         _files[entryNumber].pointer,
                                          _files[entryNumber].pointer + _files[entryNumber].length);
 
         ErrorNumber errno;
+
         if(_compressed)
         {
             if(_files[entryNumber].originalLength == 0)
                 stream = new MemoryStream(Array.Empty<byte>());
             else
             {
-                stream = new ForcedSeekStream<ZLibStream>(_files[entryNumber].originalLength, stream,
+                stream = new ForcedSeekStream<ZLibStream>(_files[entryNumber].originalLength,
+                                                          stream,
                                                           CompressionMode.Decompress);
             }
         }
@@ -179,10 +171,10 @@ public sealed partial class Symbian
         filter = new ZZZNoFilter();
         errno  = filter.Open(stream);
 
-        if(errno == ErrorNumber.NoError)
-            return ErrorNumber.NoError;
+        if(errno == ErrorNumber.NoError) return ErrorNumber.NoError;
 
         stream.Close();
+
         return errno;
     }
 

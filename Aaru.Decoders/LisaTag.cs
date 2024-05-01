@@ -48,8 +48,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Sony's format</returns>
     public static SonyTag? DecodeSonyTag(byte[] tag)
     {
-        if(tag is not { Length: 12 })
-            return null;
+        if(tag is not { Length: 12 }) return null;
 
         var snTag = new SonyTag
         {
@@ -74,8 +73,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Profile's format</returns>
     public static ProfileTag? DecodeProfileTag(byte[] tag)
     {
-        if(tag is not { Length: 20 })
-            return null;
+        if(tag is not { Length: 20 }) return null;
 
         var phTag = new ProfileTag();
 
@@ -121,8 +119,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Priam's format</returns>
     public static PriamTag? DecodePriamTag(byte[] tag)
     {
-        if(tag is not { Length: 24 })
-            return null;
+        if(tag is not { Length: 24 }) return null;
 
         var pmTag = new PriamTag();
 
@@ -170,8 +167,7 @@ public static class LisaTag
     /// <returns>Decoded tag in Priam's format</returns>
     public static PriamTag? DecodeTag(byte[] tag)
     {
-        if(tag == null)
-            return null;
+        if(tag == null) return null;
 
         PriamTag pmTag;
 
@@ -180,8 +176,7 @@ public static class LisaTag
             case 12:
                 SonyTag? snTag = DecodeSonyTag(tag);
 
-                if(snTag == null)
-                    return null;
+                if(snTag == null) return null;
 
                 pmTag = new PriamTag
                 {
@@ -206,8 +201,7 @@ public static class LisaTag
             case 20:
                 ProfileTag? phTag = DecodeProfileTag(tag);
 
-                if(phTag == null)
-                    return null;
+                if(phTag == null) return null;
 
                 pmTag = new PriamTag
                 {
@@ -319,8 +313,7 @@ public static class LisaTag
             tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
             Array.Copy(tmp, 0, tagBytes, 6, 2);
 
-            if(ValidChk)
-                tagBytes[6] += 0x80;
+            if(ValidChk) tagBytes[6] += 0x80;
 
             tmp = BigEndianBitConverter.GetBytes(AbsPage);
             Array.Copy(tmp, 1, tagBytes, 8, 3);
@@ -421,8 +414,7 @@ public static class LisaTag
             tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
             Array.Copy(tmp, 0, tagBytes, 6, 2);
 
-            if(ValidChk)
-                tagBytes[6] += 0x80;
+            if(ValidChk) tagBytes[6] += 0x80;
 
             tmp = BigEndianBitConverter.GetBytes(AbsPage);
             Array.Copy(tmp, 1, tagBytes, 8, 3);

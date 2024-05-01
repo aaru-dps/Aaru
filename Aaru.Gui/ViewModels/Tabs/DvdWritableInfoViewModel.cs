@@ -169,14 +169,11 @@ public sealed class DvdWritableInfoViewModel
         }
         */
 
-        if(dds != null)
-            DvdRamDdsText = DDS.Prettify(dds);
+        if(dds != null) DvdRamDdsText = DDS.Prettify(dds);
 
-        if(cartridgeStatus != null)
-            DvdRamCartridgeStatusText = Cartridge.Prettify(cartridgeStatus);
+        if(cartridgeStatus != null) DvdRamCartridgeStatusText = Cartridge.Prettify(cartridgeStatus);
 
-        if(spareArea != null)
-            DvdRamSpareAreaInformationText = Spare.Prettify(spareArea);
+        if(spareArea != null) DvdRamSpareAreaInformationText = Spare.Prettify(spareArea);
 
         SaveDvdRamDdsVisible                     = dds                     != null;
         SaveDvdRamCartridgeStatusVisible         = cartridgeStatus         != null;
@@ -267,8 +264,7 @@ public sealed class DvdWritableInfoViewModel
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(data, 0, data.Length);

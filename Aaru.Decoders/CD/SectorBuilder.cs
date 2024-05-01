@@ -50,8 +50,7 @@ public class SectorBuilder
             _eccFTable[i]     = (byte)j;
             _eccBTable[i ^ j] = (byte)i;
 
-            for(j = 0; j < 8; j++)
-                edc = edc >> 1 ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
+            for(j = 0; j < 8; j++) edc = edc >> 1 ^ ((edc & 1) > 0 ? 0xD8018001 : 0);
 
             _edcTable[i] = edc;
         }
@@ -120,8 +119,7 @@ public class SectorBuilder
     {
         int pos = srcOffset;
 
-        for(; size > 0; size--)
-            edc = edc >> 8 ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
+        for(; size > 0; size--) edc = edc >> 8 ^ _edcTable[(edc ^ src[pos++]) & 0xFF];
 
         return edc;
     }
@@ -223,8 +221,7 @@ public class SectorBuilder
                 byte temp = idx < 4 ? address[idx + addressOffset] : data[idx + dataOffset - 4];
                 idx += minorInc;
 
-                if(idx >= size)
-                    idx -= size;
+                if(idx >= size) idx -= size;
 
                 eccA ^= temp;
                 eccB ^= temp;

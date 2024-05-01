@@ -31,49 +31,70 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.XboxInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.XboxInfo">
     <Design.DataContext>
         <tabs:XboxInfoViewModel />
     </Design.DataContext>
     <StackPanel>
         <StackPanel IsVisible="{Binding XboxInformationVisible}">
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL0VideoText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxL0VideoText}">
                 <TextBlock Text="{Binding XboxL0VideoLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxL0VideoText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxL0VideoText}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxL1VideoText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxL1VideoText}">
                 <TextBlock Text="{Binding XboxL1VideoLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxL1VideoText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxL1VideoText}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxMiddleZoneText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxMiddleZoneText}">
                 <TextBlock Text="{Binding XboxMiddleZoneLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxMiddleZoneText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxMiddleZoneText}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxGameSizeText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxGameSizeText}">
                 <TextBlock Text="{Binding XboxGameSizeLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxGameSizeText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxGameSizeText}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxTotalSizeText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxTotalSizeText}">
                 <TextBlock Text="{Binding XboxTotalSizeLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxTotalSizeText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxTotalSizeText}" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !!XboxRealBreakText}">
+            <StackPanel Orientation="Horizontal"
+                        IsVisible="{Binding !!XboxRealBreakText}">
                 <TextBlock Text="{Binding XboxRealBreakLabel}" />
-                <TextBox IsReadOnly="True" Text="{Binding XboxRealBreakText}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxRealBreakText}" />
             </StackPanel>
         </StackPanel>
         <StackPanel>
             <StackPanel IsVisible="{Binding !!XboxDmiText}">
-                <TextBlock Text="{Binding XboxDmiLabel}" /> <TextBox IsReadOnly="True" Text="{Binding XboxDmiText}" />
+                <TextBlock Text="{Binding XboxDmiLabel}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxDmiText}" />
             </StackPanel>
             <StackPanel IsVisible="{Binding !!XboxSsText}">
-                <TextBlock Text="{Binding XboxSsLabel}" /> <TextBox IsReadOnly="True" Text="{Binding XboxSsText}" />
+                <TextBlock Text="{Binding XboxSsLabel}" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding XboxSsText}" />
             </StackPanel>
-            <Button HorizontalAlignment="Right" IsVisible="{Binding SaveXboxSsVisible}"
+            <Button HorizontalAlignment="Right"
+                    IsVisible="{Binding SaveXboxSsVisible}"
                     Command="{Binding SaveXboxSsCommand}">
                 <TextBlock Text="{Binding SaveXboxSsLabel}" />
             </Button>

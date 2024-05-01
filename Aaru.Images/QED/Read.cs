@@ -53,8 +53,7 @@ public sealed partial class Qed
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var qHdrB = new byte[68];
         stream.EnsureRead(qHdrB, 0, 68);
@@ -144,8 +143,7 @@ public sealed partial class Qed
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -153,8 +151,7 @@ public sealed partial class Qed
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _clusterBits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _clusterBits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.clusterBits = {0}",  _clusterBits);
         AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.l1Mask = {0:X}",     _l1Mask);
@@ -192,12 +189,10 @@ public sealed partial class Qed
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         // Check cache
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -207,7 +202,8 @@ public sealed partial class Qed
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
                                        string.Format(Localization.Trying_to_read_past_L1_table_position_0_of_a_max_1,
-                                                     l1Off, _l1Table.LongLength));
+                                                     l1Off,
+                                                     _l1Table.LongLength));
 
             return ErrorNumber.InvalidArgument;
         }
@@ -228,8 +224,7 @@ public sealed partial class Qed
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_L2_table_0, l1Off);
             l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
-            if(_l2TableCache.Count >= _maxL2TableCache)
-                _l2TableCache.Clear();
+            if(_l2TableCache.Count >= _maxL2TableCache) _l2TableCache.Clear();
 
             _l2TableCache.Add(l1Off, l2Table);
         }
@@ -248,8 +243,7 @@ public sealed partial class Qed
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
                 _imageStream.EnsureRead(cluster, 0, (int)_qHdr.cluster_size);
 
-                if(_clusterCache.Count >= _maxClusterCache)
-                    _clusterCache.Clear();
+                if(_clusterCache.Count >= _maxClusterCache) _clusterCache.Clear();
 
                 _clusterCache.Add(offset, cluster);
             }
@@ -257,8 +251,7 @@ public sealed partial class Qed
             Array.Copy(cluster, (int)(byteAddress & _sectorMask), buffer, 0, 512);
         }
 
-        if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -270,11 +263,9 @@ public sealed partial class Qed
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -282,8 +273,7 @@ public sealed partial class Qed
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

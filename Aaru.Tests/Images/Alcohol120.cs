@@ -1838,7 +1838,7 @@ public class Alcohol120 : OpticalMediaImageTest
             }
         },
 
-    #region These test images violate the specifications and are not expected to work yet
+#region These test images violate the specifications and are not expected to work yet
 
         /*
         new OpticalImageTestExpected
@@ -2242,6 +2242,6 @@ public class Alcohol120 : OpticalMediaImageTest
             }
         },*/
 
-    #endregion
+#endregion
     };
 }

@@ -69,34 +69,33 @@ public sealed class XENIX : IPartition
     {
         partitions = new List<CommonTypes.Partition>();
 
-        if(42 + sectorOffset >= imagePlugin.Info.Sectors)
-            return false;
+        if(42 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(42 + sectorOffset, out byte[] tblsector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})",
+                                   xnxtbl.p_magic,
                                    PAMAGIC);
 
-        if(xnxtbl.p_magic != PAMAGIC)
-            return false;
+        if(xnxtbl.p_magic != PAMAGIC) return false;
 
         for(var i = 0; i < MAXPARTS; i++)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p[{0}].p_off = {1}",  i, xnxtbl.p[i].p_off);
             AaruConsole.DebugWriteLine(MODULE_NAME, "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
 
-            if(xnxtbl.p[i].p_size <= 0)
-                continue;
+            if(xnxtbl.p[i].p_size <= 0) continue;
 
             var part = new CommonTypes.Partition
             {
-                Start = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
-                        sectorOffset,
+                Start =
+                    (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) / imagePlugin.Info.SectorSize +
+                    sectorOffset,
                 Length = (ulong)(xnxtbl.p[i].p_size * XENIX_BSIZE) / imagePlugin.Info.SectorSize,
                 Offset = (ulong)((xnxtbl.p[i].p_off + XENIX_OFFSET) * XENIX_BSIZE) +
                          imagePlugin.Info.SectorSize * sectorOffset,
@@ -106,8 +105,7 @@ public sealed class XENIX : IPartition
                 Scheme   = Name
             };
 
-            if(part.End < imagePlugin.Info.Sectors)
-                partitions.Add(part);
+            if(part.End < imagePlugin.Info.Sectors) partitions.Add(part);
         }
 
         return partitions.Count > 0;

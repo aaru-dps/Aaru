@@ -45,24 +45,20 @@ public sealed partial class LisaFS
         file = new ExtentFile();
         ErrorNumber errno;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(fileId < 4 || fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
-        if(_extentCache.TryGetValue(fileId, out file))
-            return ErrorNumber.NoError;
+        if(_extentCache.TryGetValue(fileId, out file)) return ErrorNumber.NoError;
 
         // A file ID that cannot be stored in the S-Records File
-        if(fileId >= _srecords.Length)
-            return ErrorNumber.InvalidArgument;
+        if(fileId >= _srecords.Length) return ErrorNumber.InvalidArgument;
 
         ulong ptr = _srecords[fileId].extent_ptr;
 
         // An invalid pointer denotes file does not exist
-        if(ptr is 0xFFFFFFFF or 0x00000000)
-            return ErrorNumber.NoSuchFile;
+        if(ptr is 0xFFFFFFFF or 0x00000000) return ErrorNumber.NoSuchFile;
 
         // Pointers are relative to MDDF
         ptr += _mddf.mddf_block + _volumePrefix;
@@ -81,13 +77,11 @@ public sealed partial class LisaFS
             {
                 errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out tag);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
                 DecodeTag(tag, out extTag);
 
-                if(extTag.FileId != fileId * -1)
-                    continue;
+                if(extTag.FileId != fileId * -1) continue;
 
                 ptr   = i;
                 found = true;
@@ -95,30 +89,25 @@ public sealed partial class LisaFS
                 break;
             }
 
-            if(!found)
-                return ErrorNumber.InvalidArgument;
+            if(!found) return ErrorNumber.InvalidArgument;
         }
 
         // Checks that the sector tag indicates its the Extents File we are searching for
         errno = _device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag, out tag);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         DecodeTag(tag, out extTag);
 
-        if(extTag.FileId != (short)(-1 * fileId))
-            return ErrorNumber.NoSuchFile;
+        if(extTag.FileId != (short)(-1 * fileId)) return ErrorNumber.NoSuchFile;
 
         errno = _mddf.fsversion == LISA_V1
                     ? _device.ReadSectors(ptr, 2, out byte[] sector)
                     : _device.ReadSector(ptr, out sector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        if(sector[0] >= 32 || sector[0] == 0)
-            return ErrorNumber.InvalidArgument;
+        if(sector[0] >= 32 || sector[0] == 0) return ErrorNumber.InvalidArgument;
 
         file.filenameLen = sector[0];
         file.filename    = new byte[file.filenameLen];
@@ -179,8 +168,7 @@ public sealed partial class LisaFS
 
         for(var j = 0; j < 41; j++)
         {
-            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)
-                break;
+            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0) break;
 
             extentsCount++;
         }
@@ -198,15 +186,15 @@ public sealed partial class LisaFS
 
         _extentCache.Add(fileId, file);
 
-        if(!_debug)
-            return ErrorNumber.NoError;
+        if(!_debug) return ErrorNumber.NoError;
 
-        if(_printedExtents.Contains(fileId))
-            return ErrorNumber.NoError;
+        if(_printedExtents.Contains(fileId)) return ErrorNumber.NoError;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filename = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].filename = {1}",
+                                   fileId,
                                    StringHandlers.CToString(file.filename, _encoding));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown1 = 0x{1:X4}",  fileId, file.unknown1);
@@ -231,9 +219,19 @@ public sealed partial class LisaFS
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                   "{10:X2}{11:X2}", fileId, file.unknown5[0], file.unknown5[1], file.unknown5[2],
-                                   file.unknown5[3], file.unknown5[4], file.unknown5[5], file.unknown5[6],
-                                   file.unknown5[7], file.unknown5[8], file.unknown5[9], file.unknown5[10]);
+                                   "{10:X2}{11:X2}",
+                                   fileId,
+                                   file.unknown5[0],
+                                   file.unknown5[1],
+                                   file.unknown5[2],
+                                   file.unknown5[3],
+                                   file.unknown5[4],
+                                   file.unknown5[5],
+                                   file.unknown5[6],
+                                   file.unknown5[7],
+                                   file.unknown5[8],
+                                   file.unknown5[9],
+                                   file.unknown5[10]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].release = {1}", fileId, file.release);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].build = {1}",   fileId, file.build);
@@ -243,34 +241,61 @@ public sealed partial class LisaFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].revision = {1}",      fileId, file.revision);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].password_valid = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].password_valid = {1}",
+                                   fileId,
                                    file.password_valid > 0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].password = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].password = {1}",
+                                   fileId,
                                    _encoding.GetString(file.password));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
-                                   file.unknown7[0], file.unknown7[1], file.unknown7[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}",
+                                   fileId,
+                                   file.unknown7[0],
+                                   file.unknown7[1],
+                                   file.unknown7[2]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown8 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                   "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}", fileId, file.unknown8[0],
-                                   file.unknown8[1], file.unknown8[2], file.unknown8[3], file.unknown8[4],
-                                   file.unknown8[5], file.unknown8[6], file.unknown8[7], file.unknown8[8],
-                                   file.unknown8[9], file.unknown8[10], file.unknown8[11], file.unknown8[12],
-                                   file.unknown8[13], file.unknown8[14], file.unknown8[15]);
+                                   "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}",
+                                   fileId,
+                                   file.unknown8[0],
+                                   file.unknown8[1],
+                                   file.unknown8[2],
+                                   file.unknown8[3],
+                                   file.unknown8[4],
+                                   file.unknown8[5],
+                                   file.unknown8[6],
+                                   file.unknown8[7],
+                                   file.unknown8[8],
+                                   file.unknown8[9],
+                                   file.unknown8[10],
+                                   file.unknown8[11],
+                                   file.unknown8[12],
+                                   file.unknown8[13],
+                                   file.unknown8[14],
+                                   file.unknown8[15]);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].length = {1}",        fileId, file.length);
         AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
 
         for(var ext = 0; ext < file.extents.Length; ext++)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "ExtentFile[{0}].extents[{1}].start = {2}",
+                                       fileId,
+                                       ext,
                                        file.extents[ext].start);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].extents[{1}].length = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "ExtentFile[{0}].extents[{1}].length = {2}",
+                                       fileId,
+                                       ext,
                                        file.extents[ext].length);
         }
 
@@ -284,15 +309,14 @@ public sealed partial class LisaFS
     /// <summary>Reads all the S-Records and caches it</summary>
     ErrorNumber ReadSRecords()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         // Searches the S-Records place using MDDF pointers
-        ErrorNumber errno = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len,
+        ErrorNumber errno = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix,
+                                                _mddf.srec_len,
                                                 out byte[] sectors);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         // Each entry takes 14 bytes
         _srecords = new SRecord[sectors.Length / 14];

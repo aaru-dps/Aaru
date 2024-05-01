@@ -199,9 +199,15 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         {
             ScsiInfo = new ScsiInfo
             {
-                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData, devInfo.ScsiInquiry, devInfo.ScsiEvpdPages,
-                                                    devInfo.ScsiMode, devInfo.ScsiType, devInfo.ScsiModeSense6,
-                                                    devInfo.ScsiModeSense10, devInfo.MmcConfiguration, _view)
+                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData,
+                                                    devInfo.ScsiInquiry,
+                                                    devInfo.ScsiEvpdPages,
+                                                    devInfo.ScsiMode,
+                                                    devInfo.ScsiType,
+                                                    devInfo.ScsiModeSense6,
+                                                    devInfo.ScsiModeSense10,
+                                                    devInfo.MmcConfiguration,
+                                                    _view)
             };
 
             if(devInfo.PlextorFeatures != null)
@@ -221,11 +227,11 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                     {
                         PlextorDvdTimesVisible = true;
 
-                        PlextorDvdReadTime = devInfo.PlextorFeatures.DvdReadTime.Seconds().
-                                                     Humanize(minUnit: TimeUnit.Second);
+                        PlextorDvdReadTime = devInfo.PlextorFeatures.DvdReadTime.Seconds()
+                                                    .Humanize(minUnit: TimeUnit.Second);
 
-                        PlextorDvdWriteTime = devInfo.PlextorFeatures.DvdWriteTime.Seconds().
-                                                      Humanize(minUnit: TimeUnit.Second);
+                        PlextorDvdWriteTime = devInfo.PlextorFeatures.DvdWriteTime.Seconds()
+                                                     .Humanize(minUnit: TimeUnit.Second);
                     }
                 }
 
@@ -307,8 +313,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 PlextorSecuRec   = devInfo.PlextorFeatures.SecuRec;
                 PlextorSpeedRead = devInfo.PlextorFeatures.SpeedRead;
 
-                if(devInfo.PlextorFeatures.SpeedRead)
-                    PlextorSpeedEnabled = devInfo.PlextorFeatures.SpeedReadEnabled;
+                if(devInfo.PlextorFeatures.SpeedRead) PlextorSpeedEnabled = devInfo.PlextorFeatures.SpeedReadEnabled;
 
                 PlextorHiding = devInfo.PlextorFeatures.Hiding;
 
@@ -397,8 +402,12 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
         SdMmcInfo = new SdMmcInfo
         {
-            DataContext = new SdMmcInfoViewModel(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR,
-                                                 devInfo.ExtendedCSD, devInfo.SCR)
+            DataContext = new SdMmcInfoViewModel(devInfo.Type,
+                                                 devInfo.CID,
+                                                 devInfo.CSD,
+                                                 devInfo.OCR,
+                                                 devInfo.ExtendedCSD,
+                                                 devInfo.SCR)
         };
     }
 
@@ -1023,8 +1032,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_devInfo.UsbDescriptors, 0, _devInfo.UsbDescriptors.Length);

@@ -59,16 +59,14 @@ public static class DDS
 {
     public static DiscDefinitionStructure? Decode(byte[] response)
     {
-        if(response?.Length != 2052)
-            return null;
+        if(response?.Length != 2052) return null;
 
         var dds = new DiscDefinitionStructure
         {
             Identifier = (ushort)((response[4] << 8) + response[5])
         };
 
-        if(dds.Identifier != 0x0A0A)
-            return null;
+        if(dds.Identifier != 0x0A0A) return null;
 
         // Common to both DVD-RAM versions
         dds.DataLength                =  (ushort)((response[0] << 8) + response[1]);
@@ -104,8 +102,7 @@ public static class DDS
         }
 
         // ECMA-330
-        if(dds.Groups != 1)
-            return dds;
+        if(dds.Groups != 1) return dds;
 
         {
             dds.Reserved4 = (byte)((response[7] & 0x7C) >> 2);
@@ -130,8 +127,7 @@ public static class DDS
 
     public static string Prettify(DiscDefinitionStructure? dds)
     {
-        if(dds == null)
-            return null;
+        if(dds == null) return null;
 
         DiscDefinitionStructure decoded = dds.Value;
         var                     sb      = new StringBuilder();
@@ -145,16 +141,13 @@ public static class DDS
                 if(decoded.PartialCertification)
                     sb.AppendLine(Localization.Formatting_is_only_using_partial_certification);
 
-                if(decoded.FormattingOnlyAGroup)
-                    sb.AppendLine(Localization.Only_a_group_is_being_formatted);
+                if(decoded.FormattingOnlyAGroup) sb.AppendLine(Localization.Only_a_group_is_being_formatted);
             }
         }
 
-        if(decoded.UserCertification)
-            sb.AppendLine(Localization.Disc_has_been_certified_by_a_user);
+        if(decoded.UserCertification) sb.AppendLine(Localization.Disc_has_been_certified_by_a_user);
 
-        if(decoded.ManufacturerCertification)
-            sb.AppendLine(Localization.Disc_has_been_certified_by_a_manufacturer);
+        if(decoded.ManufacturerCertification) sb.AppendLine(Localization.Disc_has_been_certified_by_a_manufacturer);
 
         sb.AppendFormat(Localization.DDS_has_been_updated_0_times, decoded.UpdateCount).AppendLine();
 
@@ -175,15 +168,15 @@ public static class DDS
             }
         }
 
-        if(decoded.Groups != 1)
-            return sb.ToString();
+        if(decoded.Groups != 1) return sb.ToString();
 
         {
             sb.AppendFormat(Localization.Disc_has_0_zones, decoded.Zones).AppendLine();
 
             sb.AppendFormat(Localization.Primary_Spare_Area_stats_at_PSN_0_and_ends_at_PSN_1_inclusively,
-                            decoded.SpareAreaFirstPSN, decoded.SpareAreaLastPSN).
-               AppendLine();
+                            decoded.SpareAreaFirstPSN,
+                            decoded.SpareAreaLastPSN)
+              .AppendLine();
 
             sb.AppendFormat(Localization.LSN_zero_is_at_PSN_0, decoded.LSN0Location).AppendLine();
 

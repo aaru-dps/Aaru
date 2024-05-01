@@ -49,19 +49,16 @@ public sealed partial class BTRFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start >= partition.End)
-            return false;
+        if(partition.Start >= partition.End) return false;
 
         ulong sbSectorOff  = 0x10000 / imagePlugin.Info.SectorSize;
         uint  sbSectorSize = 0x1000  / imagePlugin.Info.SectorSize;
 
-        if(sbSectorOff + partition.Start >= partition.End)
-            return false;
+        if(sbSectorOff + partition.Start >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         SuperBlock btrfsSb;
 
@@ -95,8 +92,7 @@ public sealed partial class BTRFS
 
         ErrorNumber errno = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
@@ -163,9 +159,10 @@ public sealed partial class BTRFS
         sbInformation.AppendFormat(Localization.Chunk_tree_starts_at_LBA_0, btrfsSb.chunk_lba).AppendLine();
         sbInformation.AppendFormat(Localization.Log_tree_starts_at_LBA_0, btrfsSb.log_lba).AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_spanned_in_1_devices, btrfsSb.total_bytes,
-                                   btrfsSb.num_devices).
-                      AppendLine();
+        sbInformation.AppendFormat(Localization.Volume_has_0_bytes_spanned_in_1_devices,
+                                   btrfsSb.total_bytes,
+                                   btrfsSb.num_devices)
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_bytes_used,      btrfsSb.bytes_used).AppendLine();
         sbInformation.AppendFormat(Localization._0_bytes_sector,              btrfsSb.sectorsize).AppendLine();

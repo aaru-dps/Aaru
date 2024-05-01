@@ -46,8 +46,8 @@ public sealed partial class NintendoPlugin
                                                            "L" => Localization.Master_System_Virtual_Console,
                                                            "M" => Localization.Megadrive_Virtual_Console,
                                                            "N" => Localization.Nintendo_64_Virtual_Console,
-                                                           "P" => Localization.
-                                                               Promotional_or_TurboGrafx_Virtual_Console,
+                                                           "P" => Localization
+                                                              .Promotional_or_TurboGrafx_Virtual_Console,
                                                            "Q" => Localization.TurboGrafx_CD_Virtual_Console,
                                                            "R" => Localization.Wii,
                                                            "S" => Localization.Wii,
@@ -63,41 +63,41 @@ public sealed partial class NintendoPlugin
 
     static string RegionCodeToString(string regionCode) => regionCode switch
                                                            {
-                                                               "A" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_any_region,
-                                                               "D" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Germany,
-                                                               "N" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_USA,
-                                                               "E" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_USA,
-                                                               "F" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_France,
-                                                               "I" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Italy,
-                                                               "J" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Japan,
-                                                               "K" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Korea,
-                                                               "Q" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Korea,
-                                                               "L" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_PAL,
-                                                               "M" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_PAL,
-                                                               "P" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_PAL,
-                                                               "R" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Russia,
-                                                               "S" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Spain,
-                                                               "T" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Taiwan,
-                                                               "U" => Localization.
-                                                                   NintendoPlugin_RegionCodeToString_Australia,
-                                                               _ => string.
-                                                                   Format(Localization.NintendoPlugin_RegionCodeToString_unknown_region_code_0,
-                                                                          regionCode)
+                                                               "A" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_any_region,
+                                                               "D" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Germany,
+                                                               "N" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_USA,
+                                                               "E" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_USA,
+                                                               "F" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_France,
+                                                               "I" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Italy,
+                                                               "J" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Japan,
+                                                               "K" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Korea,
+                                                               "Q" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Korea,
+                                                               "L" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_PAL,
+                                                               "M" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_PAL,
+                                                               "P" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_PAL,
+                                                               "R" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Russia,
+                                                               "S" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Spain,
+                                                               "T" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Taiwan,
+                                                               "U" => Localization
+                                                                  .NintendoPlugin_RegionCodeToString_Australia,
+                                                               _ => string.Format(Localization
+                                                                      .NintendoPlugin_RegionCodeToString_unknown_region_code_0,
+                                                                   regionCode)
                                                            };
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
@@ -124,9 +124,9 @@ public sealed partial class NintendoPlugin
                                                                      "4Q" => "Disney Interactive",
                                                                      "GD" => "Square Enix",
                                                                      "7D" => "Sierra",
-                                                                     _ => string.
-                                                                         Format(Localization.Unknown_publisher_0,
-                                                                                    publisherCode)
+                                                                     _ => string.Format(Localization
+                                                                            .Unknown_publisher_0,
+                                                                         publisherCode)
                                                                  };
 
     static string PartitionTypeToString(uint type) => type switch

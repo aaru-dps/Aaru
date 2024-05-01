@@ -33,7 +33,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Interfaces;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 

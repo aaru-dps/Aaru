@@ -58,8 +58,7 @@ public sealed partial class Imd
         {
             var b = (byte)stream.ReadByte();
 
-            if(b == 0x1A)
-                break;
+            if(b == 0x1A) break;
 
             cmt.WriteByte(b);
         }
@@ -92,33 +91,28 @@ public sealed partial class Imd
                 _imageInfo.Cylinders++;
             }
 
-            if((head & 1) == 1)
-                _imageInfo.Heads = 2;
+            if((head & 1) == 1) _imageInfo.Heads = 2;
 
             stream.EnsureRead(idmap, 0, idmap.Length);
 
             if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK)
                 stream.EnsureRead(cylmap, 0, cylmap.Length);
 
-            if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK)
-                stream.EnsureRead(headmap, 0, headmap.Length);
+            if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK) stream.EnsureRead(headmap, 0, headmap.Length);
 
             if(n == 0xFF)
             {
                 var bpsbytes = new byte[spt * 2];
                 stream.EnsureRead(bpsbytes, 0, bpsbytes.Length);
 
-                for(var i = 0; i < spt; i++)
-                    bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
+                for(var i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
             }
             else
             {
-                for(var i = 0; i < spt; i++)
-                    bps[i] = (ushort)(128 << n);
+                for(var i = 0; i < spt; i++) bps[i] = (ushort)(128 << n);
             }
 
-            if(spt > _imageInfo.SectorsPerTrack)
-                _imageInfo.SectorsPerTrack = spt;
+            if(spt > _imageInfo.SectorsPerTrack) _imageInfo.SectorsPerTrack = spt;
 
             SortedDictionary<byte, byte[]> track = new();
 
@@ -128,14 +122,12 @@ public sealed partial class Imd
                 var data = new byte[bps[i]];
 
                 // TODO; Handle disks with different bps in track 0
-                if(bps[i] > _imageInfo.SectorSize)
-                    _imageInfo.SectorSize = bps[i];
+                if(bps[i] > _imageInfo.SectorSize) _imageInfo.SectorSize = bps[i];
 
                 switch(type)
                 {
                     case SectorType.Unavailable:
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         break;
                     case SectorType.Normal:
@@ -144,8 +136,7 @@ public sealed partial class Imd
                     case SectorType.DeletedError:
                         stream.EnsureRead(data, 0, data.Length);
 
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         _imageInfo.ImageSize += (ulong)data.Length;
 
@@ -157,8 +148,7 @@ public sealed partial class Imd
                         var filling = (byte)stream.ReadByte();
                         ArrayHelpers.ArrayFill(data, filling);
 
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         break;
                     default:
@@ -228,11 +218,9 @@ public sealed partial class Imd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 

@@ -45,15 +45,13 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0)
-            return false;
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0) return false;
 
         try
         {
             var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
-            if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                return false;
+            if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return false;
 
             Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
@@ -61,11 +59,9 @@ public sealed partial class Ndif
             var    udifMagic = new byte[4];
             dataFork.EnsureRead(udifMagic, 0, 4);
 
-            if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)
-                return false;
+            if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B) return false;
 
-            if(rsrc.ContainsId(NDIF_RESOURCEID))
-                return true;
+            if(rsrc.ContainsId(NDIF_RESOURCEID)) return true;
         }
         catch(InvalidCastException)
         {

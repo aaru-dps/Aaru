@@ -57,8 +57,7 @@ public sealed partial class AppleDOS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
@@ -89,17 +88,13 @@ public sealed partial class AppleDOS
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not AppleDosDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleDosDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode.Position >= mynode.Contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
 
         filename = mynode.Contents[mynode.Position++];
 
@@ -109,8 +104,7 @@ public sealed partial class AppleDOS
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not AppleDosDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleDosDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Position = -1;
         mynode.Contents = null;
@@ -129,21 +123,18 @@ public sealed partial class AppleDOS
         _fileTypeCache    = new Dictionary<string, byte>();
         _lockedFiles      = new List<string>();
 
-        if(lba == 0 || lba > _device.Info.Sectors)
-            return ErrorNumber.InvalidArgument;
+        if(lba == 0 || lba > _device.Info.Sectors) return ErrorNumber.InvalidArgument;
 
         while(lba != 0)
         {
             _usedSectors++;
             ErrorNumber errno = _device.ReadSector(lba, out byte[] catSectorB);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             _totalFileEntries += 7;
 
-            if(_debug)
-                catalogMs.Write(catSectorB, 0, catSectorB.Length);
+            if(_debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
             // Read the catalog sector
             CatalogSector catSector = Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
@@ -157,26 +148,22 @@ public sealed partial class AppleDOS
                 var ts        = (ushort)(entry.extentTrack << 8 | entry.extentSector);
 
                 // Apple DOS has high byte set over ASCII.
-                for(var i = 0; i < 30; i++)
-                    filenameB[i] = (byte)(entry.filename[i] & 0x7F);
+                for(var i = 0; i < 30; i++) filenameB[i] = (byte)(entry.filename[i] & 0x7F);
 
                 string filename = StringHandlers.SpacePaddedToString(filenameB, _encoding);
 
                 _catalogCache.TryAdd(filename, ts);
                 _fileTypeCache.TryAdd(filename, (byte)(entry.typeAndFlags & 0x7F));
 
-                if((entry.typeAndFlags & 0x80) == 0x80 && !_lockedFiles.Contains(filename))
-                    _lockedFiles.Add(filename);
+                if((entry.typeAndFlags & 0x80) == 0x80 && !_lockedFiles.Contains(filename)) _lockedFiles.Add(filename);
             }
 
             lba = (ulong)(catSector.trackOfNext * _sectorsPerTrack + catSector.sectorOfNext);
 
-            if(lba > _device.Info.Sectors)
-                break;
+            if(lba > _device.Info.Sectors) break;
         }
 
-        if(_debug)
-            _catalogBlocks = catalogMs.ToArray();
+        if(_debug) _catalogBlocks = catalogMs.ToArray();
 
         return ErrorNumber.NoError;
     }

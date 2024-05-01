@@ -57,25 +57,21 @@ public sealed partial class ext2FS
         ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
         uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
 
-        if(sbSectorOff + partition.Start >= partition.End)
-            return false;
+        if(sbSectorOff + partition.Start >= partition.End) return false;
 
         int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
         var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
-        if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
-            sbSizeInSectors++;
+        if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
         ErrorNumber errno =
             imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var sb = new byte[sbSizeInBytes];
 
-        if(sbOff + sbSizeInBytes > sbSector.Length)
-            return false;
+        if(sbOff + sbSizeInBytes > sbSector.Length) return false;
 
         Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
@@ -101,8 +97,7 @@ public sealed partial class ext2FS
         int sbSizeInBytes   = Marshal.SizeOf<SuperBlock>();
         var sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
 
-        if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0)
-            sbSizeInSectors++;
+        if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
         ulong sbSectorOff = SB_POS / imagePlugin.Info.SectorSize;
         uint  sbOff       = SB_POS % imagePlugin.Info.SectorSize;
@@ -110,8 +105,7 @@ public sealed partial class ext2FS
         ErrorNumber errno =
             imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         var sblock = new byte[sbSizeInBytes];
         Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
@@ -187,8 +181,9 @@ public sealed partial class ext2FS
         if(supblk.mkfs_t > 0)
         {
             sb.AppendFormat(Localization.Volume_was_created_on_0_for_1,
-                            DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t), extOs).
-               AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t),
+                            extOs)
+              .AppendLine();
 
             metadata.CreationDate = DateHandlers.UnixUnsignedToDateTime(supblk.mkfs_t);
         }
@@ -246,9 +241,11 @@ public sealed partial class ext2FS
         if(supblk.block_size == 0) // Then it is 1024 bytes
             supblk.block_size = 1024;
 
-        sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_for_a_total_of_2_bytes, blocks,
-                        1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_for_a_total_of_2_bytes,
+                        blocks,
+                        1024 << (int)supblk.block_size,
+                        blocks * (ulong)(1024 << (int)supblk.block_size))
+          .AppendLine();
 
         metadata.Clusters    = blocks;
         metadata.ClusterSize = (uint)(1024 << (int)supblk.block_size);
@@ -257,36 +254,37 @@ public sealed partial class ext2FS
         {
             if(supblk.mount_t > 0)
             {
-                sb.AppendFormat(Localization.Last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.mount_t)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.mount_t))
+                  .AppendLine();
             }
 
             if(supblk.max_mount_c != -1)
             {
                 sb.AppendFormat(Localization.Volume_has_been_mounted_0_times_of_a_maximum_of_1_mounts_before_checking,
-                                supblk.mount_c, supblk.max_mount_c).
-                   AppendLine();
+                                supblk.mount_c,
+                                supblk.max_mount_c)
+                  .AppendLine();
             }
             else
             {
-                sb.
-                    AppendFormat(Localization.Volume_has_been_mounted_0_times_with_no_maximum_no_of_mounts_before_checking,
-                                 supblk.mount_c).
-                    AppendLine();
+                sb.AppendFormat(Localization
+                                   .Volume_has_been_mounted_0_times_with_no_maximum_no_of_mounts_before_checking,
+                                supblk.mount_c)
+                  .AppendLine();
             }
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.last_mount_dir, encoding)))
             {
                 sb.AppendFormat(Localization.Last_mounted_at_0,
-                                StringHandlers.CToString(supblk.last_mount_dir, encoding)).
-                   AppendLine();
+                                StringHandlers.CToString(supblk.last_mount_dir, encoding))
+                  .AppendLine();
             }
 
             if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.mount_options, encoding)))
             {
                 sb.AppendFormat(Localization.Last_used_mount_options_were_0,
-                                StringHandlers.CToString(supblk.mount_options, encoding)).
-                   AppendLine();
+                                StringHandlers.CToString(supblk.mount_options, encoding))
+                  .AppendLine();
             }
         }
         else
@@ -295,8 +293,8 @@ public sealed partial class ext2FS
 
             if(supblk.max_mount_c != -1)
             {
-                sb.AppendFormat(Localization.Volume_can_be_mounted_0_times_before_checking, supblk.max_mount_c).
-                   AppendLine();
+                sb.AppendFormat(Localization.Volume_can_be_mounted_0_times_before_checking, supblk.max_mount_c)
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Volume_has_no_maximum_no_of_mounts_before_checking);
@@ -307,21 +305,22 @@ public sealed partial class ext2FS
             if(supblk.check_inv > 0)
             {
                 sb.AppendFormat(Localization.Last_checked_on_0_should_check_every_1_seconds,
-                                DateHandlers.UnixUnsignedToDateTime(supblk.check_t), supblk.check_inv).
-                   AppendLine();
+                                DateHandlers.UnixUnsignedToDateTime(supblk.check_t),
+                                supblk.check_inv)
+                  .AppendLine();
             }
             else
             {
-                sb.AppendFormat(Localization.Last_checked_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.check_t)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Last_checked_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.check_t))
+                  .AppendLine();
             }
         }
         else
         {
             if(supblk.check_inv > 0)
             {
-                sb.AppendFormat(Localization.Volume_has_never_been_checked_should_check_every_0_, supblk.check_inv).
-                   AppendLine();
+                sb.AppendFormat(Localization.Volume_has_never_been_checked_should_check_every_0_, supblk.check_inv)
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Volume_has_never_been_checked);
@@ -329,8 +328,8 @@ public sealed partial class ext2FS
 
         if(supblk.write_t > 0)
         {
-            sb.AppendFormat(Localization.Last_written_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.write_t)).
-               AppendLine();
+            sb.AppendFormat(Localization.Last_written_on_0, DateHandlers.UnixUnsignedToDateTime(supblk.write_t))
+              .AppendLine();
 
             metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(supblk.write_t);
         }
@@ -362,8 +361,8 @@ public sealed partial class ext2FS
 
         if(!string.IsNullOrEmpty(StringHandlers.CToString(supblk.volume_name, encoding)))
         {
-            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(supblk.volume_name, encoding)).
-               AppendLine();
+            sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(supblk.volume_name, encoding))
+              .AppendLine();
 
             metadata.VolumeName = StringHandlers.CToString(supblk.volume_name, encoding);
         }
@@ -383,8 +382,8 @@ public sealed partial class ext2FS
 
                 break;
             default:
-                sb.AppendFormat(Localization.On_errors_filesystem_will_do_an_unknown_thing_0, supblk.err_behaviour).
-                   AppendLine();
+                sb.AppendFormat(Localization.On_errors_filesystem_will_do_an_unknown_thing_0, supblk.err_behaviour)
+                  .AppendLine();
 
                 break;
         }
@@ -404,21 +403,23 @@ public sealed partial class ext2FS
         sb.AppendFormat(Localization._0_reserved_and_1_free_blocks, reserved, free).AppendLine();
         metadata.FreeClusters = free;
 
-        sb.AppendFormat(Localization._0_inodes_with_1_free_inodes_2, supblk.inodes, supblk.free_inodes,
-                        supblk.free_inodes * 100 / supblk.inodes).
-           AppendLine();
+        sb.AppendFormat(Localization._0_inodes_with_1_free_inodes_2,
+                        supblk.inodes,
+                        supblk.free_inodes,
+                        supblk.free_inodes * 100 / supblk.inodes)
+          .AppendLine();
 
-        if(supblk.first_inode > 0)
-            sb.AppendFormat(Localization.First_inode_is_0, supblk.first_inode).AppendLine();
+        if(supblk.first_inode > 0) sb.AppendFormat(Localization.First_inode_is_0, supblk.first_inode).AppendLine();
 
-        if(supblk.frag_size > 0)
-            sb.AppendFormat(Localization._0_bytes_per_fragment, supblk.frag_size).AppendLine();
+        if(supblk.frag_size > 0) sb.AppendFormat(Localization._0_bytes_per_fragment, supblk.frag_size).AppendLine();
 
         if(supblk.blocks_per_grp > 0 && supblk is { flags_per_grp: > 0, inodes_per_grp: > 0 })
         {
-            sb.AppendFormat(Localization._0_blocks_1_flags_and_2_inodes_per_group, supblk.blocks_per_grp,
-                            supblk.flags_per_grp, supblk.inodes_per_grp).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_1_flags_and_2_inodes_per_group,
+                            supblk.blocks_per_grp,
+                            supblk.flags_per_grp,
+                            supblk.inodes_per_grp)
+              .AppendLine();
         }
 
         if(supblk.first_block > 0)
@@ -435,17 +436,17 @@ public sealed partial class ext2FS
         if(supblk.first_meta_bg > 0)
             sb.AppendFormat(Localization.First_metablock_group_is_0, supblk.first_meta_bg).AppendLine();
 
-        if(supblk.raid_stride > 0)
-            sb.AppendFormat(Localization.RAID_stride_0, supblk.raid_stride).AppendLine();
+        if(supblk.raid_stride > 0) sb.AppendFormat(Localization.RAID_stride_0, supblk.raid_stride).AppendLine();
 
         if(supblk.raid_stripe_width > 0)
             sb.AppendFormat(Localization._0_blocks_on_all_data_disks, supblk.raid_stripe_width).AppendLine();
 
         if(supblk is { mmp_interval: > 0, mmp_block: > 0 })
         {
-            sb.AppendFormat(Localization._0_seconds_for_multi_mount_protection_wait_on_block_1, supblk.mmp_interval,
-                            supblk.mmp_block).
-               AppendLine();
+            sb.AppendFormat(Localization._0_seconds_for_multi_mount_protection_wait_on_block_1,
+                            supblk.mmp_interval,
+                            supblk.mmp_block)
+              .AppendLine();
         }
 
         if(supblk.flex_bg_grp_size > 0)
@@ -453,9 +454,13 @@ public sealed partial class ext2FS
 
         if(supblk is { hash_seed_1: > 0, hash_seed_2: > 0 } and { hash_seed_3: > 0, hash_seed_4: > 0 })
         {
-            sb.AppendFormat(Localization.Hash_seed_0_1_2_3_version_4, supblk.hash_seed_1, supblk.hash_seed_2,
-                            supblk.hash_seed_3, supblk.hash_seed_4, supblk.hash_version).
-               AppendLine();
+            sb.AppendFormat(Localization.Hash_seed_0_1_2_3_version_4,
+                            supblk.hash_seed_1,
+                            supblk.hash_seed_2,
+                            supblk.hash_seed_3,
+                            supblk.hash_seed_4,
+                            supblk.hash_version)
+              .AppendLine();
         }
 
         if((supblk.ftr_compat   & EXT3_FEATURE_COMPAT_HAS_JOURNAL)   == EXT3_FEATURE_COMPAT_HAS_JOURNAL ||
@@ -485,11 +490,13 @@ public sealed partial class ext2FS
         {
             if(supblk.snapshot_id > 0)
             {
-                sb.
-                    AppendFormat(Localization.Active_snapshot_has_ID_0_on_inode_1_with_2_blocks_reserved_list_starting_on_block_3,
-                                 supblk.snapshot_id, supblk.snapshot_inum, supblk.snapshot_blocks,
-                                 supblk.snapshot_list).
-                    AppendLine();
+                sb.AppendFormat(Localization
+                                   .Active_snapshot_has_ID_0_on_inode_1_with_2_blocks_reserved_list_starting_on_block_3,
+                                supblk.snapshot_id,
+                                supblk.snapshot_inum,
+                                supblk.snapshot_blocks,
+                                supblk.snapshot_list)
+                  .AppendLine();
             }
 
             if(supblk.error_count > 0)
@@ -498,20 +505,23 @@ public sealed partial class ext2FS
 
                 sb.AppendFormat(Localization.First_error_occurred_on_0_last_on_1,
                                 DateHandlers.UnixUnsignedToDateTime(supblk.first_error_t),
-                                DateHandlers.UnixUnsignedToDateTime(supblk.last_error_t)).
-                   AppendLine();
+                                DateHandlers.UnixUnsignedToDateTime(supblk.last_error_t))
+                  .AppendLine();
 
-                sb.AppendFormat(Localization.First_error_inode_is_0_last_is_1, supblk.first_error_inode,
-                                supblk.last_error_inode).
-                   AppendLine();
+                sb.AppendFormat(Localization.First_error_inode_is_0_last_is_1,
+                                supblk.first_error_inode,
+                                supblk.last_error_inode)
+                  .AppendLine();
 
-                sb.AppendFormat(Localization.First_error_block_is_0_last_is_1, supblk.first_error_block,
-                                supblk.last_error_block).
-                   AppendLine();
+                sb.AppendFormat(Localization.First_error_block_is_0_last_is_1,
+                                supblk.first_error_block,
+                                supblk.last_error_block)
+                  .AppendLine();
 
-                sb.AppendFormat(Localization.First_error_function_is_0_last_is_1, supblk.first_error_func,
-                                supblk.last_error_func).
-                   AppendLine();
+                sb.AppendFormat(Localization.First_error_function_is_0_last_is_1,
+                                supblk.first_error_func,
+                                supblk.last_error_func)
+                  .AppendLine();
             }
         }
 
@@ -526,8 +536,7 @@ public sealed partial class ext2FS
         if((supblk.flags & EXT2_FLAGS_TEST_FILESYS) == EXT2_FLAGS_TEST_FILESYS)
             sb.AppendLine(Localization.Volume_is_testing_development_code);
 
-        if((supblk.flags & 0xFFFFFFF8) != 0)
-            sb.AppendFormat(Localization.Unknown_set_flags_0, supblk.flags);
+        if((supblk.flags & 0xFFFFFFF8) != 0) sb.AppendFormat(Localization.Unknown_set_flags_0, supblk.flags);
 
         sb.AppendLine();
 

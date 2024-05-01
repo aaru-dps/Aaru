@@ -61,8 +61,7 @@ sealed partial class Reader
 
     void GetDeviceChs()
     {
-        if(_dev.Type != DeviceType.ATA)
-            return;
+        if(_dev.Type != DeviceType.ATA) return;
 
         if(_ataId.CurrentCylinders > 0 && _ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
         {
@@ -94,8 +93,7 @@ sealed partial class Reader
             IsLba  = true;
         }
 
-        if(!_ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
-            return Blocks;
+        if(!_ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48)) return Blocks;
 
         Blocks = _ataId.LBA48Sectors;
         IsLba  = true;
@@ -105,8 +103,7 @@ sealed partial class Reader
 
     bool AtaFindReadCommand()
     {
-        if(Blocks == 0)
-            GetDeviceBlocks();
+        if(Blocks == 0) GetDeviceBlocks();
 
         bool                   sense;
         var                    tries  = 0;
@@ -311,15 +308,12 @@ sealed partial class Reader
                 }
             }
 
-            if(error)
-                BlocksToRead /= 2;
+            if(error) BlocksToRead /= 2;
 
-            if(!error || BlocksToRead == 1)
-                break;
+            if(!error || BlocksToRead == 1) break;
         }
 
-        if(!error || !IsLba)
-            return false;
+        if(!error || !IsLba) return false;
 
         BlocksToRead = 1;
 
@@ -347,8 +341,7 @@ sealed partial class Reader
             status    = errorLba48.Status;
             errorByte = errorLba48.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
         }
         else if(_ataReadLba48)
         {
@@ -357,8 +350,7 @@ sealed partial class Reader
             status    = errorLba48.Status;
             errorByte = errorLba48.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba48);
         }
         else if(_ataReadDmaRetryLba)
         {
@@ -368,8 +360,7 @@ sealed partial class Reader
             status    = errorLba.Status;
             errorByte = errorLba.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
         }
         else if(_ataReadDmaLba)
         {
@@ -379,8 +370,7 @@ sealed partial class Reader
             status    = errorLba.Status;
             errorByte = errorLba.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
         }
         else if(_ataReadRetryLba)
         {
@@ -389,8 +379,7 @@ sealed partial class Reader
             status    = errorLba.Status;
             errorByte = errorLba.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
         }
         else if(_ataReadLba)
         {
@@ -399,15 +388,12 @@ sealed partial class Reader
             status    = errorLba.Status;
             errorByte = errorLba.Error;
 
-            if(error)
-                _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
+            if(error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, errorLba);
         }
 
-        if(!error)
-            return false;
+        if(!error) return false;
 
-        if((status & 0x04) == 0x04)
-            recoveredError = true;
+        if((status & 0x04) == 0x04) recoveredError = true;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.ATA_ERROR_0_STATUS_1, errorByte, status);
 
@@ -433,8 +419,7 @@ sealed partial class Reader
             status    = errorChs.Status;
             errorByte = errorChs.Error;
 
-            if(error)
-                _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
+            if(error) _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
         }
         else if(_ataReadDma)
         {
@@ -444,8 +429,7 @@ sealed partial class Reader
             status    = errorChs.Status;
             errorByte = errorChs.Error;
 
-            if(error)
-                _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
+            if(error) _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
         }
         else if(_ataReadRetry)
         {
@@ -454,8 +438,7 @@ sealed partial class Reader
             status    = errorChs.Status;
             errorByte = errorChs.Error;
 
-            if(error)
-                _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
+            if(error) _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
         }
         else if(_ataRead)
         {
@@ -464,15 +447,12 @@ sealed partial class Reader
             status    = errorChs.Status;
             errorByte = errorChs.Error;
 
-            if(error)
-                _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
+            if(error) _errorLog?.WriteLine(cylinder, head, sector, _dev.Error, _dev.LastError, errorChs);
         }
 
-        if(!error)
-            return false;
+        if(!error) return false;
 
-        if((status & 0x04) == 0x04)
-            recoveredError = true;
+        if((status & 0x04) == 0x04) recoveredError = true;
 
         AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.Core.ATA_ERROR_0_STATUS_1, errorByte, status);
 

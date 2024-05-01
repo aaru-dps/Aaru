@@ -31,42 +31,53 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.BlurayInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.BlurayInfo">
     <Design.DataContext>
         <tabs:BlurayInfoViewModel />
     </Design.DataContext>
     <StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayDiscInformationText}">
             <TextBlock Text="{Binding DiscInformationLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayDiscInformationText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayDiscInformationText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayBurstCuttingAreaText}">
             <TextBlock Text="{Binding BurstCuttingAreaLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayBurstCuttingAreaText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayBurstCuttingAreaText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayDdsText}">
             <TextBlock Text="{Binding DiscDefinitionStructureLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayDdsText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayDdsText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayCartridgeStatusText}">
             <TextBlock Text="{Binding CartridgeStatusLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayCartridgeStatusText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayCartridgeStatusText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BluraySpareAreaInformationText}">
             <TextBlock Text="{Binding SpareAreaInformationLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BluraySpareAreaInformationText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BluraySpareAreaInformationText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayPowResourcesText}">
             <TextBlock Text="{Binding PseudoOverWriteResourcesLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayPowResourcesText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayPowResourcesText}" />
         </StackPanel>
         <StackPanel IsVisible="{Binding !!BlurayTrackResourcesText}">
             <TextBlock Text="{Binding TrackResourcesLabel}" />
-            <TextBox IsReadOnly="True" Text="{Binding BlurayTrackResourcesText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding BlurayTrackResourcesText}" />
         </StackPanel>
         <Button Command="{Binding SaveBlurayDiscInformationCommand}"
                 IsVisible="{Binding SaveBlurayDiscInformationVisible}">
@@ -76,7 +87,8 @@
                 IsVisible="{Binding SaveBlurayBurstCuttingAreaVisible}">
             <TextBlock Text="{Binding SaveBlurayBurstCuttingAreaLabel}" />
         </Button>
-        <Button Command="{Binding SaveBlurayDdsCommand}" IsVisible="{Binding SaveBlurayDdsVisible}">
+        <Button Command="{Binding SaveBlurayDdsCommand}"
+                IsVisible="{Binding SaveBlurayDdsVisible}">
             <TextBlock Text="{Binding SaveBlurayDdsLabel}" />
         </Button>
         <Button Command="{Binding SaveBlurayCartridgeStatusCommand}"
@@ -87,17 +99,20 @@
                 IsVisible="{Binding SaveBluraySpareAreaInformationVisible}">
             <TextBlock Text="{Binding SaveBluraySpareAreaInformationLabel}" />
         </Button>
-        <Button Command="{Binding SaveBlurayPowResourcesCommand}" IsVisible="{Binding SaveBlurayPowResourcesVisible}">
+        <Button Command="{Binding SaveBlurayPowResourcesCommand}"
+                IsVisible="{Binding SaveBlurayPowResourcesVisible}">
             <TextBlock Text="{Binding SaveBlurayPowResourcesLabel}" />
         </Button>
         <Button Command="{Binding SaveBlurayTrackResourcesCommand}"
                 IsVisible="{Binding SaveBlurayTrackResourcesVisible}">
             <TextBlock Text="{Binding SaveBlurayTrackResourcesLabel}" />
         </Button>
-        <Button Command="{Binding SaveBlurayRawDflCommand}" IsVisible="{Binding SaveBlurayRawDflVisible}">
+        <Button Command="{Binding SaveBlurayRawDflCommand}"
+                IsVisible="{Binding SaveBlurayRawDflVisible}">
             <TextBlock Text="{Binding SaveBlurayRawDflLabel}" />
         </Button>
-        <Button Command="{Binding SaveBlurayPacCommand}" IsVisible="{Binding SaveBlurayPacVisible}">
+        <Button Command="{Binding SaveBlurayPacCommand}"
+                IsVisible="{Binding SaveBlurayPacVisible}">
             <TextBlock Text="{Binding SaveBlurayPacLabel}" />
         </Button>
     </StackPanel>

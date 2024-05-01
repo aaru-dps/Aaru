@@ -62,8 +62,7 @@ sealed class UpdateCommand : Command
 
     int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
     {
-        if(_mainDbUpdate)
-            return (int)ErrorNumber.NoError;
+        if(_mainDbUpdate) return (int)ErrorNumber.NoError;
 
         MainClass.PrintCopyright();
 
@@ -111,8 +110,7 @@ sealed class UpdateCommand : Command
             }
             catch(Exception)
             {
-                if(Debugger.IsAttached)
-                    throw;
+                if(Debugger.IsAttached) throw;
 
                 AaruConsole.ErrorWriteLine(UI.Could_not_remove_local_database);
 
@@ -128,8 +126,7 @@ sealed class UpdateCommand : Command
             }
             catch(Exception)
             {
-                if(Debugger.IsAttached)
-                    throw;
+                if(Debugger.IsAttached) throw;
 
                 AaruConsole.ErrorWriteLine(UI.Could_not_remove_main_database);
 

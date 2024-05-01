@@ -58,28 +58,38 @@ sealed class ExtractFilesCommand : Command
     public ExtractFilesCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
     {
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<string>(new[]
-        {
-            "--options", "-O"
-        }, () => null, UI.Comma_separated_name_value_pairs_of_filesystem_options));
+                               {
+                                   "--options", "-O"
+                               },
+                               () => null,
+                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
         Add(new Option<bool>(new[]
-        {
-            "--xattrs", "-x"
-        }, () => false, UI.Extract_extended_attributes_if_present));
+                             {
+                                 "--xattrs", "-x"
+                             },
+                             () => false,
+                             UI.Extract_extended_attributes_if_present));
 
         Add(new Option<string>(new[]
-        {
-            "--namespace", "-n"
-        }, () => null, UI.Namespace_to_use_for_filenames));
+                               {
+                                   "--namespace", "-n"
+                               },
+                               () => null,
+                               UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
-            Arity = ArgumentArity.ExactlyOne, Description = UI.Disc_image_path, Name = "image-path"
+            Arity       = ArgumentArity.ExactlyOne,
+            Description = UI.Disc_image_path,
+            Name        = "image-path"
         });
 
         AddArgument(new Argument<string>
@@ -167,8 +177,7 @@ sealed class ExtractFilesCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -247,12 +256,14 @@ sealed class ExtractFilesCommand : Command
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_without_headers_is_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_without_headers_is_0_bytes,
                                            imageFormat.Info.ImageSize);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_identifies_media_type_as_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);
@@ -324,8 +335,7 @@ sealed class ExtractFilesCommand : Command
                             if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                                 continue;
 
-                            if(fs is null)
-                                continue;
+                            if(fs is null) continue;
 
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
                             }[/]");
@@ -355,8 +365,7 @@ sealed class ExtractFilesCommand : Command
                     {
                         plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                        if(fs is null)
-                            continue;
+                        if(fs is null) continue;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
@@ -396,8 +405,7 @@ sealed class ExtractFilesCommand : Command
     static void ExtractFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, string volumeName, string outputDir,
                                   bool   doXattrs)
     {
-        if(path.StartsWith('/'))
-            path = path[1..];
+        if(path.StartsWith('/')) path = path[1..];
 
         ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
@@ -416,6 +424,7 @@ sealed class ExtractFilesCommand : Command
             //  {
             //    ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
             error = fs.Stat(path + "/" + entry, out stat);
+
             // });
 
             if(error == ErrorNumber.NoError)
@@ -428,14 +437,14 @@ sealed class ExtractFilesCommand : Command
 
                     if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        outputPath = outputPath.Replace('<', '\uFF1C').
-                                                Replace('>',  '\uFF1E').
-                                                Replace(':',  '\uFF1A').
-                                                Replace('\"', '\uFF02').
-                                                Replace('|',  '\uFF5C').
-                                                Replace('?',  '\uFF1F').
-                                                Replace('*',  '\uFF0A').
-                                                Replace('/',  '\\');
+                        outputPath = outputPath.Replace('<', '\uFF1C')
+                                               .Replace('>',  '\uFF1E')
+                                               .Replace(':',  '\uFF1A')
+                                               .Replace('\"', '\uFF02')
+                                               .Replace('|',  '\uFF5C')
+                                               .Replace('?',  '\uFF1F')
+                                               .Replace('*',  '\uFF0A')
+                                               .Replace('/',  '\\');
                     }
 
                     Directory.CreateDirectory(outputPath);
@@ -446,11 +455,10 @@ sealed class ExtractFilesCommand : Command
 
                     var di = new DirectoryInfo(outputPath);
 
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
-                        if(stat.CreationTimeUtc.HasValue)
-                            di.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                        if(stat.CreationTimeUtc.HasValue) di.CreationTimeUtc = stat.CreationTimeUtc.Value;
                     }
                     catch
                     {
@@ -459,8 +467,7 @@ sealed class ExtractFilesCommand : Command
 
                     try
                     {
-                        if(stat.LastWriteTimeUtc.HasValue)
-                            di.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                        if(stat.LastWriteTimeUtc.HasValue) di.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
                     }
                     catch
                     {
@@ -469,14 +476,13 @@ sealed class ExtractFilesCommand : Command
 
                     try
                     {
-                        if(stat.AccessTimeUtc.HasValue)
-                            di.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                        if(stat.AccessTimeUtc.HasValue) di.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
                     }
                     catch
                     {
                         // ignored
                     }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
 
                     continue;
                 }
@@ -491,6 +497,7 @@ sealed class ExtractFilesCommand : Command
                     //        {
                     //          ctx.AddTask(UI.Listing_extended_attributes).IsIndeterminate();
                     error = fs.ListXAttr(path + "/" + entry, out xattrs);
+
                     //    });
 
                     if(error == ErrorNumber.NoError)
@@ -505,21 +512,20 @@ sealed class ExtractFilesCommand : Command
                                 error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
                             });
 
-                            if(error != ErrorNumber.NoError)
-                                continue;
+                            if(error != ErrorNumber.NoError) continue;
 
                             outputPath = Path.Combine(outputDir, fs.Metadata.Type, volumeName, ".xattrs", path, xattr);
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
-                                outputPath = outputPath.Replace('<', '\uFF1C').
-                                                        Replace('>',  '\uFF1E').
-                                                        Replace(':',  '\uFF1A').
-                                                        Replace('\"', '\uFF02').
-                                                        Replace('|',  '\uFF5C').
-                                                        Replace('?',  '\uFF1F').
-                                                        Replace('*',  '\uFF0A').
-                                                        Replace('/',  '\\');
+                                outputPath = outputPath.Replace('<', '\uFF1C')
+                                                       .Replace('>',  '\uFF1E')
+                                                       .Replace(':',  '\uFF1A')
+                                                       .Replace('\"', '\uFF02')
+                                                       .Replace('|',  '\uFF5C')
+                                                       .Replace('?',  '\uFF1F')
+                                                       .Replace('*',  '\uFF0A')
+                                                       .Replace('/',  '\\');
                             }
 
                             Directory.CreateDirectory(outputPath);
@@ -531,14 +537,14 @@ sealed class ExtractFilesCommand : Command
 
                             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                             {
-                                outputPath = outputPath.Replace('<', '\uFF1C').
-                                                        Replace('>',  '\uFF1E').
-                                                        Replace(':',  '\uFF1A').
-                                                        Replace('\"', '\uFF02').
-                                                        Replace('|',  '\uFF5C').
-                                                        Replace('?',  '\uFF1F').
-                                                        Replace('*',  '\uFF0A').
-                                                        Replace('/',  '\\');
+                                outputPath = outputPath.Replace('<', '\uFF1C')
+                                                       .Replace('>',  '\uFF1E')
+                                                       .Replace(':',  '\uFF1A')
+                                                       .Replace('\"', '\uFF02')
+                                                       .Replace('|',  '\uFF5C')
+                                                       .Replace('?',  '\uFF1F')
+                                                       .Replace('*',  '\uFF0A')
+                                                       .Replace('/',  '\\');
                             }
 
                             if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
@@ -547,7 +553,9 @@ sealed class ExtractFilesCommand : Command
                                 {
                                     ctx.AddTask(UI.Writing_extended_attribute).IsIndeterminate();
 
-                                    outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite,
+                                    outputFile = new FileStream(outputPath,
+                                                                FileMode.CreateNew,
+                                                                FileAccess.ReadWrite,
                                                                 FileShare.None);
 
                                     outputFile.Write(xattrBuf, 0, xattrBuf.Length);
@@ -555,11 +563,10 @@ sealed class ExtractFilesCommand : Command
                                 });
 
                                 var fi = new FileInfo(outputPath);
-                            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                                 try
                                 {
-                                    if(stat.CreationTimeUtc.HasValue)
-                                        fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                                    if(stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
                                 }
                                 catch
                                 {
@@ -578,16 +585,18 @@ sealed class ExtractFilesCommand : Command
 
                                 try
                                 {
-                                    if(stat.AccessTimeUtc.HasValue)
-                                        fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                                    if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
                                 }
                                 catch
                                 {
                                     // ignored
                                 }
-                            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                                AaruConsole.WriteLine(UI.Written_0_bytes_of_xattr_1_from_file_2_to_3, xattrBuf.Length,
-                                                      xattr, entry, outputPath);
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                                AaruConsole.WriteLine(UI.Written_0_bytes_of_xattr_1_from_file_2_to_3,
+                                                      xattrBuf.Length,
+                                                      xattr,
+                                                      entry,
+                                                      outputPath);
                             }
                             else
                                 AaruConsole.ErrorWriteLine(UI.Cannot_write_xattr_0_for_1_output_exists, xattr, entry);
@@ -599,14 +608,14 @@ sealed class ExtractFilesCommand : Command
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    outputPath = outputPath.Replace('<', '\uFF1C').
-                                            Replace('>',  '\uFF1E').
-                                            Replace(':',  '\uFF1A').
-                                            Replace('\"', '\uFF02').
-                                            Replace('|',  '\uFF5C').
-                                            Replace('?',  '\uFF1F').
-                                            Replace('*',  '\uFF0A').
-                                            Replace('/',  '\\');
+                    outputPath = outputPath.Replace('<', '\uFF1C')
+                                           .Replace('>',  '\uFF1E')
+                                           .Replace(':',  '\uFF1A')
+                                           .Replace('\"', '\uFF02')
+                                           .Replace('|',  '\uFF5C')
+                                           .Replace('?',  '\uFF1F')
+                                           .Replace('*',  '\uFF0A')
+                                           .Replace('/',  '\\');
                 }
 
                 Directory.CreateDirectory(outputPath);
@@ -617,14 +626,14 @@ sealed class ExtractFilesCommand : Command
 
                 if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    outputPath = outputPath.Replace('<', '\uFF1C').
-                                            Replace('>',  '\uFF1E').
-                                            Replace(':',  '\uFF1A').
-                                            Replace('\"', '\uFF02').
-                                            Replace('|',  '\uFF5C').
-                                            Replace('?',  '\uFF1F').
-                                            Replace('*',  '\uFF0A').
-                                            Replace('/',  '\\');
+                    outputPath = outputPath.Replace('<', '\uFF1C')
+                                           .Replace('>',  '\uFF1E')
+                                           .Replace(':',  '\uFF1A')
+                                           .Replace('\"', '\uFF02')
+                                           .Replace('|',  '\uFF5C')
+                                           .Replace('?',  '\uFF1F')
+                                           .Replace('*',  '\uFF0A')
+                                           .Replace('/',  '\\');
                 }
 
                 if(!File.Exists(outputPath) && !Directory.Exists(outputPath))
@@ -633,11 +642,11 @@ sealed class ExtractFilesCommand : Command
 
                     outputFile = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 
-                    AnsiConsole.Progress().
-                                AutoClear(true).
-                                HideCompleted(true).
-                                Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                                Start(ctx =>
+                    AnsiConsole.Progress()
+                               .AutoClear(true)
+                               .HideCompleted(true)
+                               .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                               .Start(ctx =>
                                 {
                                     ProgressTask task =
                                         ctx.AddTask(string.Format(UI.Reading_file_0, Markup.Escape(entry)));
@@ -681,11 +690,10 @@ sealed class ExtractFilesCommand : Command
                     outputFile.Close();
 
                     var fi = new FileInfo(outputPath);
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     try
                     {
-                        if(stat.CreationTimeUtc.HasValue)
-                            fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                        if(stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
                     }
                     catch
                     {
@@ -694,8 +702,7 @@ sealed class ExtractFilesCommand : Command
 
                     try
                     {
-                        if(stat.LastWriteTimeUtc.HasValue)
-                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                        if(stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
                     }
                     catch
                     {
@@ -704,15 +711,16 @@ sealed class ExtractFilesCommand : Command
 
                     try
                     {
-                        if(stat.AccessTimeUtc.HasValue)
-                            fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                        if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
                     }
                     catch
                     {
                         // ignored
                     }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2, position, Markup.Escape(entry),
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+                    AaruConsole.WriteLine(UI.Written_0_bytes_of_file_1_to_2,
+                                          position,
+                                          Markup.Escape(entry),
                                           Markup.Escape(outputPath));
                 }
                 else

@@ -64,8 +64,7 @@ public sealed partial class Sidecar
     void OpticalDisc(IOpticalMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
                      List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         sidecar.OpticalDiscs = new List<OpticalDisc>
         {
@@ -104,13 +103,11 @@ public sealed partial class Sidecar
 
         foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
         {
-            if(_aborted)
-                return;
+            if(_aborted) return;
 
             errno = image.ReadMediaTag(tagType, out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             Dump.AddMediaTagToSidecar(imagePath, tagType, tag, ref sidecar);
 
@@ -182,11 +179,9 @@ public sealed partial class Sidecar
                                           _                     => dskType
                                       };
 
-                            if(dskType == MediaType.DVDR && pfi.Value.PartVersion >= 6)
-                                dskType = MediaType.DVDRDL;
+                            if(dskType == MediaType.DVDR && pfi.Value.PartVersion >= 6) dskType = MediaType.DVDRDL;
 
-                            if(dskType == MediaType.DVDRW && pfi.Value.PartVersion >= 15)
-                                dskType = MediaType.DVDRWDL;
+                            if(dskType == MediaType.DVDRW && pfi.Value.PartVersion >= 15) dskType = MediaType.DVDRWDL;
 
                             if(dskType == MediaType.GOD && pfi.Value.DiscSize == DVDSize.OneTwenty)
                                 dskType = MediaType.WOD;
@@ -245,8 +240,7 @@ public sealed partial class Sidecar
         if(sidecar.OpticalDiscs[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
             sidecar.OpticalDiscs[0].Dimensions = Dimensions.FromMediaType(image.Info.MediaType);
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         InitProgress();
 
@@ -294,8 +288,7 @@ public sealed partial class Sidecar
             xmlTrk.StartSector = trk.StartSector;
             xmlTrk.EndSector   = trk.EndSector;
 
-            if(trk.Indexes?.TryGetValue(0, out int idx0) == true && idx0 >= 0)
-                xmlTrk.StartSector = (ulong)idx0;
+            if(trk.Indexes?.TryGetValue(0, out int idx0) == true && idx0 >= 0) xmlTrk.StartSector = (ulong)idx0;
 
             switch(sidecar.OpticalDiscs[0].DiscType)
             {
@@ -318,8 +311,7 @@ public sealed partial class Sidecar
                 Format = trk.FileType
             };
 
-            if(trk.FileOffset > 0)
-                xmlTrk.Image.Offset = trk.FileOffset;
+            if(trk.FileOffset > 0) xmlTrk.Image.Offset = trk.FileOffset;
 
             xmlTrk.Size = (xmlTrk.EndSector - xmlTrk.StartSector + 1) * (ulong)trk.RawBytesPerSector;
 
@@ -365,7 +357,8 @@ public sealed partial class Sidecar
                     {
                         errno = image.ReadSectorsLong(doneSectors, sectorsToRead, xmlTrk.Sequence.Number, out sector);
 
-                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1,
+                                        (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
@@ -380,10 +373,13 @@ public sealed partial class Sidecar
                     }
                     else
                     {
-                        errno = image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                      xmlTrk.Sequence.Number, out sector);
+                        errno = image.ReadSectorsLong(doneSectors,
+                                                      (uint)(sectors - doneSectors),
+                                                      xmlTrk.Sequence.Number,
+                                                      out sector);
 
-                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_sector_0_of_1,
+                                        (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
@@ -437,8 +433,7 @@ public sealed partial class Sidecar
                         break;
                 }
 
-                if(trk.FileOffset > 0)
-                    xmlTrk.SubChannel.Image.Offset = trk.SubchannelOffset;
+                if(trk.FileOffset > 0) xmlTrk.SubChannel.Image.Offset = trk.SubchannelOffset;
 
                 var subChkWorker = new Checksum();
 
@@ -461,10 +456,14 @@ public sealed partial class Sidecar
 
                     if(sectors - doneSectors >= sectorsToRead)
                     {
-                        errno = image.ReadSectorsTag(doneSectors, sectorsToRead, xmlTrk.Sequence.Number,
-                                                     SectorTagType.CdSectorSubchannel, out sector);
+                        errno = image.ReadSectorsTag(doneSectors,
+                                                     sectorsToRead,
+                                                     xmlTrk.Sequence.Number,
+                                                     SectorTagType.CdSectorSubchannel,
+                                                     out sector);
 
-                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1,
+                                        (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
@@ -479,10 +478,14 @@ public sealed partial class Sidecar
                     }
                     else
                     {
-                        errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors), xmlTrk.Sequence.Number,
-                                                     SectorTagType.CdSectorSubchannel, out sector);
+                        errno = image.ReadSectorsTag(doneSectors,
+                                                     (uint)(sectors - doneSectors),
+                                                     xmlTrk.Sequence.Number,
+                                                     SectorTagType.CdSectorSubchannel,
+                                                     out sector);
 
-                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1, (long)doneSectors,
+                        UpdateProgress2(Localization.Core.Hashing_subchannel_sector_0_of_1,
+                                        (long)doneSectors,
                                         (long)(trk.EndSector - trk.StartSector + 1));
 
                         if(errno != ErrorNumber.NoError)
@@ -538,11 +541,9 @@ public sealed partial class Sidecar
                                 return;
                             }
 
-                            if(fs is null)
-                                continue;
+                            if(fs is null) continue;
 
-                            if(!fs.Identify(image, partition))
-                                continue;
+                            if(!fs.Identify(image, partition)) continue;
 
                             fs.GetInformation(image, partition, encoding, out _, out FileSystem fsMetadata);
                             lstFs.Add(fsMetadata);
@@ -557,16 +558,15 @@ public sealed partial class Sidecar
                                           _                              => dskType
                                       };
                         }
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                         catch
-                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         {
                             //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                         }
                     }
 
-                    if(lstFs.Count > 0)
-                        metadataPartition.FileSystems = lstFs;
+                    if(lstFs.Count > 0) metadataPartition.FileSystems = lstFs;
 
                     xmlTrk.FileSystemInformation.Add(metadataPartition);
                 }
@@ -601,11 +601,9 @@ public sealed partial class Sidecar
                             return;
                         }
 
-                        if(fs is null)
-                            continue;
+                        if(fs is null) continue;
 
-                        if(!fs.Identify(image, xmlPart))
-                            continue;
+                        if(!fs.Identify(image, xmlPart)) continue;
 
                         fs.GetInformation(image, xmlPart, encoding, out _, out FileSystem fsMetadata);
                         lstFs.Add(fsMetadata);
@@ -620,24 +618,22 @@ public sealed partial class Sidecar
                                       _                              => dskType
                                   };
                     }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
                         //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                     }
                 }
 
-                if(lstFs.Count > 0)
-                    metadataPartition.FileSystems = lstFs;
+                if(lstFs.Count > 0) metadataPartition.FileSystems = lstFs;
 
                 xmlTrk.FileSystemInformation.Add(metadataPartition);
             }
 
             errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackIsrc, out byte[] isrcData);
 
-            if(errno == ErrorNumber.NoError)
-                xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
+            if(errno == ErrorNumber.NoError) xmlTrk.ISRC = Encoding.UTF8.GetString(isrcData);
 
             errno = image.ReadSectorTag(trk.Sequence, SectorTagType.CdTrackFlags, out byte[] flagsData);
 
@@ -656,13 +652,13 @@ public sealed partial class Sidecar
 
             if(trk.Indexes?.Count > 0)
             {
-                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key).
-                                     Select(i => new TrackIndex
+                xmlTrk.Indexes = trk.Indexes?.OrderBy(i => i.Key)
+                                    .Select(i => new TrackIndex
                                      {
                                          Index = i.Key,
                                          Value = i.Value
-                                     }).
-                                     ToList();
+                                     })
+                                    .ToList();
             }
 
             trksLst.Add(xmlTrk);
@@ -670,8 +666,7 @@ public sealed partial class Sidecar
 
         EndProgress();
 
-        if(trksLst != null)
-            sidecar.OpticalDiscs[0].Track = trksLst;
+        if(trksLst != null) sidecar.OpticalDiscs[0].Track = trksLst;
 
         // All XGD3 all have the same number of blocks
         if(dskType == MediaType.XGD2 && sidecar.OpticalDiscs[0].Track.Count == 1)

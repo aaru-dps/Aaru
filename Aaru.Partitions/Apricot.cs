@@ -103,13 +103,11 @@ public sealed class Apricot : IPartition
         partitions = new List<Partition>();
 
         // I think Apricot can't chain partitions so.
-        if(sectorOffset != 0)
-            return false;
+        if(sectorOffset != 0) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError || sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Label label = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
@@ -126,7 +124,9 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.version = \"{0}\"", StringHandlers.CToString(label.version));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.operatingSystem = {0} ({1})", label.operatingSystem,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.operatingSystem = {0} ({1})",
+                                   label.operatingSystem,
                                    label.operatingSystem < _operatingSystemCodes.Length
                                        ? _operatingSystemCodes[label.operatingSystem]
                                        : Localization.Unknown_operating_system);
@@ -134,7 +134,9 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.writeProtected = {0}", label.writeProtected);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.copyProtected = {0}",  label.copyProtected);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.bootType = {0} ({1})", label.bootType,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.bootType = {0} ({1})",
+                                   label.bootType,
                                    label.bootType < _bootTypeCodes.Length
                                        ? _bootTypeCodes[label.bootType]
                                        : Localization.Unknown_boot_type);
@@ -151,7 +153,9 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.bootSize = {0}",         label.bootSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.bootAddress = 0x{0:X8}", label.bootAddress);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.bootOffset:label.bootSegment = {0:X4}:{1:X4}", label.bootOffset,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.bootOffset:label.bootSegment = {0:X4}:{1:X4}",
+                                   label.bootOffset,
                                    label.bootSegment);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.firstDataBlock = {0}", label.firstDataBlock);
@@ -159,10 +163,12 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.copyCount = {0}",      label.copyCount);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.maxCopies = {0}",      label.maxCopies);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.serialNumber = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.serialNumber = \"{0}\"",
                                    StringHandlers.CToString(label.serialNumber));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.partNumber = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.partNumber = \"{0}\"",
                                    StringHandlers.CToString(label.partNumber));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.copyright = \"{0}\"", StringHandlers.CToString(label.copyright));
@@ -176,7 +182,9 @@ public sealed class Apricot : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.mainBPB.media = {0}",    label.mainBPB.media);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.mainBPB.spfat = {0}",    label.mainBPB.spfat);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.mainBPB.diskType = {0} ({1})", label.mainBPB.diskType,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.mainBPB.diskType = {0} ({1})",
+                                   label.mainBPB.diskType,
                                    label.mainBPB.diskType < _diskTypeCodes.Length
                                        ? _diskTypeCodes[label.mainBPB.diskType]
                                        : Localization.Unknown_disk_type);
@@ -185,14 +193,17 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.fontName = \"{0}\"", StringHandlers.CToString(label.fontName));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.keyboardName = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.keyboardName = \"{0}\"",
                                    StringHandlers.CToString(label.keyboardName));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.biosMajorVersion = {0}", label.biosMajorVersion);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.biosMinorVersion = {0}", label.biosMinorVersion);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.diagnosticsFlag = {0}",  label.diagnosticsFlag);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.prnDevice = {0} ({1})", label.prnDevice,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.prnDevice = {0} ({1})",
+                                   label.prnDevice,
                                    label.prnDevice < _printDevices.Length
                                        ? _printDevices[label.prnDevice]
                                        : Localization.Unknown_print_device);
@@ -214,35 +225,49 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.microscreenMode = {0}", label.microscreenMode);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareKeyboard is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareKeyboard is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareKeyboard));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.lineMode = {0} ({1} lines)", label.lineMode,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.lineMode = {0} ({1} lines)",
+                                   label.lineMode,
                                    label.lineMode < _lineModes.Length ? _lineModes[label.lineMode] : 0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.lineWidth = {0} ({1} columns)", label.lineWidth,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.lineWidth = {0} ({1} columns)",
+                                   label.lineWidth,
                                    label.lineWidth < _lineWidths.Length ? _lineWidths[label.lineWidth] : 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.imageOff = {0}", label.imageOff);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareScreen is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareScreen is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareScreen));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.txBaudRate = {0} ({1} bps)", label.txBaudRate,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.txBaudRate = {0} ({1} bps)",
+                                   label.txBaudRate,
                                    label.txBaudRate < _baudRates.Length ? _baudRates[label.txBaudRate] : 0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.rxBaudRate = {0} ({1} bps)", label.rxBaudRate,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.rxBaudRate = {0} ({1} bps)",
+                                   label.rxBaudRate,
                                    label.rxBaudRate < _baudRates.Length ? _baudRates[label.rxBaudRate] : 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.txBits = {0}", label.txBits);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.rxBits = {0}", label.rxBits);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.stopBits = {0} ({1} bits)", label.stopBits,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.stopBits = {0} ({1} bits)",
+                                   label.stopBits,
                                    label.stopBits < _stopBits.Length ? _stopBits[label.stopBits] : 0);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.parityCheck = {0}", label.parityCheck);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.parityType = {0} ({1})", label.parityType,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.parityType = {0} ({1})",
+                                   label.parityType,
                                    label.parityType < _parityTypes.Length
                                        ? _parityTypes[label.parityType]
                                        : Localization.Unknown_parity_type);
@@ -260,7 +285,8 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.biosErrorReportSerial = {0}", label.biosErrorReportSerial);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareSerial is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareSerial is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareSerial));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.lfAfterCrParallel = {0}", label.lfAfterCrParallel);
@@ -270,16 +296,19 @@ public sealed class Apricot : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.biosErrorReportParallel = {0}", label.biosErrorReportParallel);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareParallel is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareParallel is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareParallel));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareWinchester is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareWinchester is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareWinchester));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.parkingEnabled = {0}",   label.parkingEnabled);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.formatProtection = {0}", label.formatProtection);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spareRamDisk is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spareRamDisk is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spareRamDisk));
 
         for(var i = 0; i < 32; i++)
@@ -291,40 +320,52 @@ public sealed class Apricot : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].spc = {0}", label.partitions[i].spc, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].rsectors = {0}",
-                                       label.partitions[i].rsectors, i);
-
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].fats_no = {0}", label.partitions[i].fats_no,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].rsectors = {0}",
+                                       label.partitions[i].rsectors,
                                        i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].root_ent = {0}",
-                                       label.partitions[i].root_ent, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].fats_no = {0}",
+                                       label.partitions[i].fats_no,
+                                       i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].sectors = {0}", label.partitions[i].sectors,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].root_ent = {0}",
+                                       label.partitions[i].root_ent,
+                                       i);
+
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].sectors = {0}",
+                                       label.partitions[i].sectors,
                                        i);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].media = {0}", label.partitions[i].media, i);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].spfat = {0}", label.partitions[i].spfat, i);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].diskType = {0} ({2})",
-                                       label.partitions[i].diskType, i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].diskType = {0} ({2})",
+                                       label.partitions[i].diskType,
+                                       i,
                                        label.partitions[i].diskType < _diskTypeCodes.Length
                                            ? _diskTypeCodes[label.partitions[i].diskType]
                                            : Localization.Unknown_disk_type);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.partitions[{1}].startSector = {0}",
-                                       label.partitions[i].startSector, i);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.partitions[{1}].startSector = {0}",
+                                       label.partitions[i].startSector,
+                                       i);
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.spare is null? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.spare is null? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(label.spare));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.cpmDoubleSided = {0}", label.cpmDoubleSided);
 
         // Only hard disks can contain partitions
-        if(!label.winchester)
-            return false;
+        if(!label.winchester) return false;
 
         for(byte i = 0; i < label.partitionCount; i++)
         {
@@ -339,8 +380,7 @@ public sealed class Apricot : IPartition
                 Offset   = (ulong)(label.partitions[i].startSector * label.sectorSize)
             };
 
-            if(part.Start < deviceSectors && part.End < deviceSectors)
-                partitions.Add(part);
+            if(part.Start < deviceSectors && part.End < deviceSectors) partitions.Add(part);
         }
 
         return partitions.Count > 0;

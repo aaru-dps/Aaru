@@ -173,8 +173,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.INQUIRY_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -187,8 +186,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.INQUIRY_decoded_response);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.SCSI.Inquiry.Prettify(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.SCSI.Inquiry.Prettify(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -201,8 +199,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.INQUIRY_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -336,8 +333,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.INQUIRY_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -350,8 +346,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.INQUIRY_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -440,8 +435,10 @@ static class Spc
 
                     AaruConsole.WriteLine(Localization.Page_control);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, ScsiModeSensePageControl.Changeable,
-                                          ScsiModeSensePageControl.Current, ScsiModeSensePageControl.Default,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          ScsiModeSensePageControl.Changeable,
+                                          ScsiModeSensePageControl.Current,
+                                          ScsiModeSensePageControl.Default,
                                           ScsiModeSensePageControl.Saved);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -487,8 +484,14 @@ static class Spc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ModeSense6(out byte[] buffer, out byte[] senseBuffer, dbd, pageControl, page, subpage,
-                                    dev.Timeout, out double duration);
+        bool sense = dev.ModeSense6(out byte[] buffer,
+                                    out byte[] senseBuffer,
+                                    dbd,
+                                    pageControl,
+                                    page,
+                                    subpage,
+                                    dev.Timeout,
+                                    out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -537,8 +540,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_6_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -551,8 +553,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_6_decoded_response);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader6(buffer, dev.ScsiType));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -565,8 +566,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -669,8 +669,10 @@ static class Spc
 
                     AaruConsole.WriteLine(Localization.Page_control);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, ScsiModeSensePageControl.Changeable,
-                                          ScsiModeSensePageControl.Current, ScsiModeSensePageControl.Default,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          ScsiModeSensePageControl.Changeable,
+                                          ScsiModeSensePageControl.Current,
+                                          ScsiModeSensePageControl.Default,
                                           ScsiModeSensePageControl.Saved);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -716,8 +718,15 @@ static class Spc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ModeSense10(out byte[] buffer, out byte[] senseBuffer, llba, dbd, pageControl, page, subpage,
-                                     dev.Timeout, out double duration);
+        bool sense = dev.ModeSense10(out byte[] buffer,
+                                     out byte[] senseBuffer,
+                                     llba,
+                                     dbd,
+                                     pageControl,
+                                     page,
+                                     subpage,
+                                     dev.Timeout,
+                                     out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -766,8 +775,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_10_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -780,8 +788,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_10_decoded_response);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Modes.PrettifyModeHeader10(buffer, dev.ScsiType));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -794,8 +801,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MODE_SENSE_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -866,8 +872,10 @@ static class Spc
                 case 1:
                     AaruConsole.WriteLine(Localization.Mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3, ScsiPreventAllowMode.Allow,
-                                          ScsiPreventAllowMode.Prevent, ScsiPreventAllowMode.PreventAll,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          ScsiPreventAllowMode.Allow,
+                                          ScsiPreventAllowMode.Prevent,
+                                          ScsiPreventAllowMode.PreventAll,
                                           ScsiPreventAllowMode.PreventChanger);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -1019,8 +1027,13 @@ static class Spc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, relative, address, partial,
-                                      dev.Timeout, out double duration);
+        bool sense = dev.ReadCapacity(out byte[] buffer,
+                                      out byte[] senseBuffer,
+                                      relative,
+                                      address,
+                                      partial,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1068,8 +1081,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CAPACITY_10_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1082,8 +1094,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CAPACITY_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1185,7 +1196,11 @@ static class Spc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, address, partial, dev.Timeout,
+        bool sense = dev.ReadCapacity16(out byte[] buffer,
+                                        out byte[] senseBuffer,
+                                        address,
+                                        partial,
+                                        dev.Timeout,
                                         out double duration);
 
     menu:
@@ -1234,8 +1249,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CAPACITY_16_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1248,8 +1262,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_CAPACITY_16_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1286,8 +1299,8 @@ static class Spc
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, dev.Timeout,
-                                               out double duration);
+        bool sense =
+            dev.ReadMediaSerialNumber(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -1334,8 +1347,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_MEDIA_SERIAL_NUMBER_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1348,8 +1360,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_MEDIA_SERIAL_NUMBER_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1480,8 +1491,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.REQUEST_SENSE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -1551,8 +1561,7 @@ static class Spc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.TEST_UNIT_READY_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

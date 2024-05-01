@@ -215,6 +215,7 @@ public class ModePage_2A
     /// <summary>Database ID</summary>
     [JsonIgnore]
     [Key]
+
     // ReSharper disable once UnusedMember.Global
     public int Id { get; set; }
 
@@ -223,17 +224,13 @@ public class ModePage_2A
     /// <returns>Decoded page 2Ah</returns>
     public static ModePage_2A Decode(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x2A)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x2A) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_2A();
 
@@ -266,8 +263,7 @@ public class ModePage_2A
         decoded.BufferSize            = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
         decoded.CurrentSpeed          = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
 
-        if(pageResponse.Length < 20)
-            return decoded;
+        if(pageResponse.Length < 20) return decoded;
 
         decoded.Method2  |= (pageResponse[2] & 0x04) == 0x04;
         decoded.ReadCDRW |= (pageResponse[2] & 0x02) == 0x02;
@@ -288,8 +284,7 @@ public class ModePage_2A
         decoded.RCK    |= (pageResponse[17] & 0x04) == 0x04;
         decoded.BCK    |= (pageResponse[17] & 0x02) == 0x02;
 
-        if(pageResponse.Length < 22)
-            return decoded;
+        if(pageResponse.Length < 22) return decoded;
 
         decoded.TestWrite         |= (pageResponse[3] & 0x04) == 0x04;
         decoded.MaxWriteSpeed     =  (ushort)((pageResponse[18] << 8) + pageResponse[19]);
@@ -297,8 +292,7 @@ public class ModePage_2A
 
         decoded.ReadBarcode |= (pageResponse[5] & 0x80) == 0x80;
 
-        if(pageResponse.Length < 26)
-            return decoded;
+        if(pageResponse.Length < 26) return decoded;
 
         decoded.ReadDVDRAM |= (pageResponse[2] & 0x20) == 0x20;
         decoded.ReadDVDR   |= (pageResponse[2] & 0x10) == 0x10;
@@ -312,8 +306,7 @@ public class ModePage_2A
 
         decoded.CMRSupported = (ushort)((pageResponse[22] << 8) + pageResponse[23]);
 
-        if(pageResponse.Length < 32)
-            return decoded;
+        if(pageResponse.Length < 32) return decoded;
 
         decoded.BUF                       |= (pageResponse[4]        & 0x80) == 0x80;
         decoded.RotationControlSelected   =  (byte)(pageResponse[27] & 0x03);
@@ -344,61 +337,43 @@ public class ModePage_2A
 
         pageResponse[0] = 0x2A;
 
-        if(decoded.PS)
-            pageResponse[0] += 0x80;
+        if(decoded.PS) pageResponse[0] += 0x80;
 
-        if(decoded.AudioPlay)
-            pageResponse[4] += 0x01;
+        if(decoded.AudioPlay) pageResponse[4] += 0x01;
 
-        if(decoded.Mode2Form1)
-            pageResponse[4] += 0x10;
+        if(decoded.Mode2Form1) pageResponse[4] += 0x10;
 
-        if(decoded.Mode2Form2)
-            pageResponse[4] += 0x20;
+        if(decoded.Mode2Form2) pageResponse[4] += 0x20;
 
-        if(decoded.MultiSession)
-            pageResponse[4] += 0x40;
+        if(decoded.MultiSession) pageResponse[4] += 0x40;
 
-        if(decoded.CDDACommand)
-            pageResponse[5] += 0x01;
+        if(decoded.CDDACommand) pageResponse[5] += 0x01;
 
-        if(decoded.AccurateCDDA)
-            pageResponse[5] += 0x02;
+        if(decoded.AccurateCDDA) pageResponse[5] += 0x02;
 
-        if(decoded.Subchannel)
-            pageResponse[5] += 0x04;
+        if(decoded.Subchannel) pageResponse[5] += 0x04;
 
-        if(decoded.DeinterlaveSubchannel)
-            pageResponse[5] += 0x08;
+        if(decoded.DeinterlaveSubchannel) pageResponse[5] += 0x08;
 
-        if(decoded.C2Pointer)
-            pageResponse[5] += 0x10;
+        if(decoded.C2Pointer) pageResponse[5] += 0x10;
 
-        if(decoded.UPC)
-            pageResponse[5] += 0x20;
+        if(decoded.UPC) pageResponse[5] += 0x20;
 
-        if(decoded.ISRC)
-            pageResponse[5] += 0x40;
+        if(decoded.ISRC) pageResponse[5] += 0x40;
 
         decoded.LoadingMechanism = (byte)((pageResponse[6] & 0xE0) >> 5);
 
-        if(decoded.Lock)
-            pageResponse[6] += 0x01;
+        if(decoded.Lock) pageResponse[6] += 0x01;
 
-        if(decoded.LockState)
-            pageResponse[6] += 0x02;
+        if(decoded.LockState) pageResponse[6] += 0x02;
 
-        if(decoded.PreventJumper)
-            pageResponse[6] += 0x04;
+        if(decoded.PreventJumper) pageResponse[6] += 0x04;
 
-        if(decoded.Eject)
-            pageResponse[6] += 0x08;
+        if(decoded.Eject) pageResponse[6] += 0x08;
 
-        if(decoded.SeparateChannelVolume)
-            pageResponse[7] += 0x01;
+        if(decoded.SeparateChannelVolume) pageResponse[7] += 0x01;
 
-        if(decoded.SeparateChannelMute)
-            pageResponse[7] += 0x02;
+        if(decoded.SeparateChannelMute) pageResponse[7] += 0x02;
 
         decoded.MaximumSpeed          = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
         decoded.SupportedVolumeLevels = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
@@ -422,62 +397,47 @@ public class ModePage_2A
         {
             length = 20;
 
-            if(decoded.Method2)
-                pageResponse[2] += 0x04;
+            if(decoded.Method2) pageResponse[2] += 0x04;
 
-            if(decoded.ReadCDRW)
-                pageResponse[2] += 0x02;
+            if(decoded.ReadCDRW) pageResponse[2] += 0x02;
 
-            if(decoded.ReadCDR)
-                pageResponse[2] += 0x01;
+            if(decoded.ReadCDR) pageResponse[2] += 0x01;
 
-            if(decoded.WriteCDRW)
-                pageResponse[3] += 0x02;
+            if(decoded.WriteCDRW) pageResponse[3] += 0x02;
 
-            if(decoded.WriteCDR)
-                pageResponse[3] += 0x01;
+            if(decoded.WriteCDR) pageResponse[3] += 0x01;
 
-            if(decoded.Composite)
-                pageResponse[4] += 0x02;
+            if(decoded.Composite) pageResponse[4] += 0x02;
 
-            if(decoded.DigitalPort1)
-                pageResponse[4] += 0x04;
+            if(decoded.DigitalPort1) pageResponse[4] += 0x04;
 
-            if(decoded.DigitalPort2)
-                pageResponse[4] += 0x08;
+            if(decoded.DigitalPort2) pageResponse[4] += 0x08;
 
-            if(decoded.SDP)
-                pageResponse[7] += 0x04;
+            if(decoded.SDP) pageResponse[7] += 0x04;
 
-            if(decoded.SSS)
-                pageResponse[7] += 0x08;
+            if(decoded.SSS) pageResponse[7] += 0x08;
 
             pageResponse[17] = (byte)(decoded.Length << 4);
 
-            if(decoded.LSBF)
-                pageResponse[17] += 0x08;
+            if(decoded.LSBF) pageResponse[17] += 0x08;
 
-            if(decoded.RCK)
-                pageResponse[17] += 0x04;
+            if(decoded.RCK) pageResponse[17] += 0x04;
 
-            if(decoded.BCK)
-                pageResponse[17] += 0x02;
+            if(decoded.BCK) pageResponse[17] += 0x02;
         }
 
         if(decoded.TestWrite || decoded.MaxWriteSpeed > 0 || decoded.CurrentWriteSpeed > 0 || decoded.ReadBarcode)
         {
             length = 22;
 
-            if(decoded.TestWrite)
-                pageResponse[3] += 0x04;
+            if(decoded.TestWrite) pageResponse[3] += 0x04;
 
             pageResponse[18] = (byte)((decoded.MaxWriteSpeed & 0xFF00) >> 8);
             pageResponse[19] = (byte)(decoded.MaxWriteSpeed & 0xFF);
             pageResponse[20] = (byte)((decoded.CurrentWriteSpeed & 0xFF00) >> 8);
             pageResponse[21] = (byte)(decoded.CurrentWriteSpeed & 0xFF);
 
-            if(decoded.ReadBarcode)
-                pageResponse[5] += 0x80;
+            if(decoded.ReadBarcode) pageResponse[5] += 0x80;
         }
 
         if(decoded.ReadDVDRAM  ||
@@ -492,26 +452,19 @@ public class ModePage_2A
         {
             length = 26;
 
-            if(decoded.ReadDVDRAM)
-                pageResponse[2] += 0x20;
+            if(decoded.ReadDVDRAM) pageResponse[2] += 0x20;
 
-            if(decoded.ReadDVDR)
-                pageResponse[2] += 0x10;
+            if(decoded.ReadDVDR) pageResponse[2] += 0x10;
 
-            if(decoded.ReadDVDROM)
-                pageResponse[2] += 0x08;
+            if(decoded.ReadDVDROM) pageResponse[2] += 0x08;
 
-            if(decoded.WriteDVDRAM)
-                pageResponse[3] += 0x20;
+            if(decoded.WriteDVDRAM) pageResponse[3] += 0x20;
 
-            if(decoded.WriteDVDR)
-                pageResponse[3] += 0x10;
+            if(decoded.WriteDVDR) pageResponse[3] += 0x10;
 
-            if(decoded.LeadInPW)
-                pageResponse[3] += 0x20;
+            if(decoded.LeadInPW) pageResponse[3] += 0x20;
 
-            if(decoded.SCC)
-                pageResponse[3] += 0x10;
+            if(decoded.SCC) pageResponse[3] += 0x10;
 
             pageResponse[22] = (byte)((decoded.CMRSupported & 0xFF00) >> 8);
             pageResponse[23] = (byte)(decoded.CMRSupported & 0xFF);
@@ -521,8 +474,7 @@ public class ModePage_2A
         {
             length = 32;
 
-            if(decoded.BUF)
-                pageResponse[4] += 0x80;
+            if(decoded.BUF) pageResponse[4] += 0x80;
 
             pageResponse[27] += decoded.RotationControlSelected;
             pageResponse[28] =  (byte)((decoded.CurrentWriteSpeedSelected & 0xFF00) >> 8);

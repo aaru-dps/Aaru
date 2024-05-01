@@ -110,7 +110,9 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.GetNativeMaxAddressExt(out ulong lba, out AtaErrorRegistersLba48 errorRegisters, dev.Timeout,
+        bool sense = dev.GetNativeMaxAddressExt(out ulong lba,
+                                                out AtaErrorRegistersLba48 errorRegisters,
+                                                dev.Timeout,
                                                 out double duration);
 
     menu:
@@ -218,9 +220,9 @@ static class Ata48
 
                     if(lba > 0xFFFFFFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFFFFFFF);
 
                         lba = 0xFFFFFFFFFFFF;
                     }
@@ -244,7 +246,11 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadDma(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count, dev.Timeout,
+        bool sense = dev.ReadDma(out byte[] buffer,
+                                 out AtaErrorRegistersLba48 errorRegisters,
+                                 lba,
+                                 count,
+                                 dev.Timeout,
                                  out double duration);
 
     menu:
@@ -285,8 +291,7 @@ static class Ata48
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DMA_EXT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -402,8 +407,13 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLog(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, address, page, count,
-                                 dev.Timeout, out double duration);
+        bool sense = dev.ReadLog(out byte[] buffer,
+                                 out AtaErrorRegistersLba48 errorRegisters,
+                                 address,
+                                 page,
+                                 count,
+                                 dev.Timeout,
+                                 out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -443,8 +453,7 @@ static class Ata48
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LOG_EXT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -560,8 +569,13 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadLogDma(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, address, page, count,
-                                    dev.Timeout, out double duration);
+        bool sense = dev.ReadLogDma(out byte[] buffer,
+                                    out AtaErrorRegistersLba48 errorRegisters,
+                                    address,
+                                    page,
+                                    count,
+                                    dev.Timeout,
+                                    out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -601,8 +615,7 @@ static class Ata48
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LOG_DMA_EXT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -687,9 +700,9 @@ static class Ata48
 
                     if(lba > 0xFFFFFFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFFFFFFF);
 
                         lba = 0xFFFFFFFFFFFF;
                     }
@@ -713,8 +726,12 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count,
-                                      dev.Timeout, out double duration);
+        bool sense = dev.ReadMultiple(out byte[] buffer,
+                                      out AtaErrorRegistersLba48 errorRegisters,
+                                      lba,
+                                      count,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -754,8 +771,7 @@ static class Ata48
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_MULTIPLE_EXT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -792,7 +808,9 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.ReadNativeMaxAddress(out ulong lba, out AtaErrorRegistersLba48 errorRegisters, dev.Timeout,
+        bool sense = dev.ReadNativeMaxAddress(out ulong lba,
+                                              out AtaErrorRegistersLba48 errorRegisters,
+                                              dev.Timeout,
                                               out double duration);
 
     menu:
@@ -900,9 +918,9 @@ static class Ata48
 
                     if(lba > 0xFFFFFFFFFFFF)
                     {
-                        AaruConsole.
-                            WriteLine(Localization.Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
-                                      0xFFFFFFFFFFFF);
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
+                                              0xFFFFFFFFFFFF);
 
                         lba = 0xFFFFFFFFFFFF;
                     }
@@ -926,7 +944,11 @@ static class Ata48
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read(out byte[] buffer, out AtaErrorRegistersLba48 errorRegisters, lba, count, dev.Timeout,
+        bool sense = dev.Read(out byte[] buffer,
+                              out AtaErrorRegistersLba48 errorRegisters,
+                              lba,
+                              count,
+                              dev.Timeout,
                               out double duration);
 
     menu:
@@ -967,8 +989,7 @@ static class Ata48
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_SECTORS_EXT_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

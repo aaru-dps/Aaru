@@ -63,8 +63,7 @@ public class Advertisement
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Advertisement(AdvertisementType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var adv = new Advertisement
         {
@@ -82,34 +81,29 @@ public class Advertisement
         {
             adv.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                adv.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) adv.Checksums.Add(chk);
         }
 
         if(cicm.AudioTrack is not null)
         {
             adv.AudioTracks = new List<AudioTrack>();
 
-            foreach(AudioTracksType trk in cicm.AudioTrack)
-                adv.AudioTracks.Add(trk);
+            foreach(AudioTracksType trk in cicm.AudioTrack) adv.AudioTracks.Add(trk);
         }
 
         if(cicm.VideoTrack is not null)
         {
             adv.VideoTracks = new List<VideoTrack>();
 
-            foreach(VideoTracksType trk in cicm.VideoTrack)
-                adv.VideoTracks.Add(trk);
+            foreach(VideoTracksType trk in cicm.VideoTrack) adv.VideoTracks.Add(trk);
         }
 
-        if(cicm.SubtitleTrack is null)
-            return adv;
+        if(cicm.SubtitleTrack is null) return adv;
 
         {
             adv.SubtitleTracks = new List<SubtitleTrack>();
 
-            foreach(SubtitleTracksType trk in cicm.SubtitleTrack)
-                adv.SubtitleTracks.Add(trk);
+            foreach(SubtitleTracksType trk in cicm.SubtitleTrack) adv.SubtitleTracks.Add(trk);
         }
 
         return adv;

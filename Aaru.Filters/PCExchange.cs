@@ -118,18 +118,17 @@ public sealed class PcExchange : IFilter
 
         parentFolder ??= "";
 
-        if(!File.Exists(System.IO.Path.Combine(parentFolder, FINDER_INFO)))
-            return false;
+        if(!File.Exists(System.IO.Path.Combine(parentFolder, FINDER_INFO))) return false;
 
-        if(!Directory.Exists(System.IO.Path.Combine(parentFolder, RESOURCES)))
-            return false;
+        if(!Directory.Exists(System.IO.Path.Combine(parentFolder, RESOURCES))) return false;
 
         string baseFilename = System.IO.Path.GetFileName(path);
 
         var dataFound = false;
         var rsrcFound = false;
 
-        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO),
+                                             FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
@@ -153,8 +152,7 @@ public sealed class PcExchange : IFilter
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow)
-                continue;
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
             dataFound |=
                 File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
@@ -186,7 +184,8 @@ public sealed class PcExchange : IFilter
 
         parentFolder ??= "";
 
-        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO),
+                                             FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
@@ -209,8 +208,7 @@ public sealed class PcExchange : IFilter
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow)
-                continue;
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
             if(File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
                 _dataPath = System.IO.Path.Combine(parentFolder, macName);

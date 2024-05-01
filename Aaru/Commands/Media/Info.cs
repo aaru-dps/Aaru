@@ -70,9 +70,11 @@ sealed class MediaInfoCommand : Command
     public MediaInfoCommand() : base("info", UI.Media_Info_Command_Description)
     {
         Add(new Option<string>(new[]
-        {
-            "--output-prefix", "-w"
-        }, () => null, UI.Prefix_for_saving_binary_information));
+                               {
+                                   "--output-prefix", "-w"
+                               },
+                               () => null,
+                               UI.Prefix_for_saving_binary_information));
 
         AddArgument(new Argument<string>
         {
@@ -143,8 +145,10 @@ sealed class MediaInfoCommand : Command
 
                 return (int)devErrno;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -191,6 +195,7 @@ sealed class MediaInfoCommand : Command
     // ReSharper disable UnusedParameter.Local
     static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
         throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
+
     // ReSharper restore UnusedParameter.Local
 
     static void DoSdMediaInfo() => AaruConsole.ErrorWriteLine(UI.Please_use_device_info_command_for_MMC_SD_devices);
@@ -205,18 +210,23 @@ sealed class MediaInfoCommand : Command
             scsiInfo = new ScsiInfo(dev);
         });
 
-        if(!scsiInfo.MediaInserted)
-            return;
+        if(!scsiInfo.MediaInserted) return;
 
         if(scsiInfo.DeviceInfo.ScsiModeSense6 != null)
         {
-            DataFile.WriteTo(MODULE_NAME, outputPrefix, "_scsi_modesense6.bin", "SCSI MODE SENSE (6)",
+            DataFile.WriteTo(MODULE_NAME,
+                             outputPrefix,
+                             "_scsi_modesense6.bin",
+                             "SCSI MODE SENSE (6)",
                              scsiInfo.DeviceInfo.ScsiModeSense6);
         }
 
         if(scsiInfo.DeviceInfo.ScsiModeSense10 != null)
         {
-            DataFile.WriteTo(MODULE_NAME, outputPrefix, "_scsi_modesense10.bin", "SCSI MODE SENSE (10)",
+            DataFile.WriteTo(MODULE_NAME,
+                             outputPrefix,
+                             "_scsi_modesense10.bin",
+                             "SCSI MODE SENSE (10)",
                              scsiInfo.DeviceInfo.ScsiModeSense10);
         }
 
@@ -232,20 +242,27 @@ sealed class MediaInfoCommand : Command
                                                              dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                 if(scsiInfo.ReadCapacity != null)
                 {
-                    DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readcapacity.bin", "SCSI READ CAPACITY",
+                    DataFile.WriteTo(MODULE_NAME,
+                                     outputPrefix,
+                                     "_readcapacity.bin",
+                                     "SCSI READ CAPACITY",
                                      scsiInfo.ReadCapacity);
                 }
 
                 if(scsiInfo.ReadCapacity16 != null)
                 {
-                    DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readcapacity16.bin", "SCSI READ CAPACITY(16)",
+                    DataFile.WriteTo(MODULE_NAME,
+                                     outputPrefix,
+                                     "_readcapacity16.bin",
+                                     "SCSI READ CAPACITY(16)",
                                      scsiInfo.ReadCapacity16);
                 }
 
                 if(scsiInfo.Blocks != 0 && scsiInfo.BlockSize != 0)
                 {
                     AaruConsole.WriteLine(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
-                                          scsiInfo.Blocks, scsiInfo.BlockSize,
+                                          scsiInfo.Blocks,
+                                          scsiInfo.BlockSize,
                                           ByteSize.FromBytes(scsiInfo.Blocks * scsiInfo.BlockSize).ToString("0.000"));
                 }
 
@@ -253,8 +270,11 @@ sealed class MediaInfoCommand : Command
             case PeripheralDeviceTypes.SequentialAccess:
                 if(scsiInfo.DensitySupport != null)
                 {
-                    DataFile.WriteTo(MODULE_NAME, outputPrefix, "_ssc_reportdensitysupport_media.bin",
-                                     "SSC REPORT DENSITY SUPPORT (MEDIA)", scsiInfo.DensitySupport);
+                    DataFile.WriteTo(MODULE_NAME,
+                                     outputPrefix,
+                                     "_ssc_reportdensitysupport_media.bin",
+                                     "SSC REPORT DENSITY SUPPORT (MEDIA)",
+                                     scsiInfo.DensitySupport);
 
                     if(scsiInfo.DensitySupportHeader.HasValue)
                     {
@@ -265,8 +285,11 @@ sealed class MediaInfoCommand : Command
 
                 if(scsiInfo.MediaTypeSupport != null)
                 {
-                    DataFile.WriteTo(MODULE_NAME, outputPrefix, "_ssc_reportdensitysupport_medium_media.bin",
-                                     "SSC REPORT DENSITY SUPPORT (MEDIUM & MEDIA)", scsiInfo.MediaTypeSupport);
+                    DataFile.WriteTo(MODULE_NAME,
+                                     outputPrefix,
+                                     "_ssc_reportdensitysupport_medium_media.bin",
+                                     "SSC REPORT DENSITY SUPPORT (MEDIUM & MEDIA)",
+                                     scsiInfo.MediaTypeSupport);
 
                     if(scsiInfo.MediaTypeSupportHeader.HasValue)
                     {
@@ -284,35 +307,49 @@ sealed class MediaInfoCommand : Command
         {
             if(scsiInfo.MmcConfiguration != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_getconfiguration_current.bin", "SCSI GET CONFIGURATION",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_getconfiguration_current.bin",
+                                 "SCSI GET CONFIGURATION",
                                  scsiInfo.MmcConfiguration);
             }
 
             if(scsiInfo.RecognizedFormatLayers != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_formatlayers.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.RecognizedFormatLayers);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_formatlayers.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.RecognizedFormatLayers);
             }
 
             if(scsiInfo.WriteProtectionStatus != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_writeprotection.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.WriteProtectionStatus);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_writeprotection.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.WriteProtectionStatus);
             }
 
             if(scsiInfo.DvdPfi != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_pfi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdPfi);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_pfi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdPfi);
 
-                if(scsiInfo.DecodedPfi.HasValue)
-                    AaruConsole.WriteLine("PFI:\n{0}", PFI.Prettify(scsiInfo.DecodedPfi));
+                if(scsiInfo.DecodedPfi.HasValue) AaruConsole.WriteLine("PFI:\n{0}", PFI.Prettify(scsiInfo.DecodedPfi));
             }
 
             if(scsiInfo.DvdDmi != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_dmi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdDmi);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_dmi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdDmi);
 
                 if(DMI.IsXbox(scsiInfo.DvdDmi))
                 {
@@ -328,8 +365,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdCmi != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_cmi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdCmi);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_cmi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdCmi);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Lead_In_CMI}:[/]",
                                       $"\n{Markup.Escape(CSS_CPRM.PrettifyLeadInCopyright(scsiInfo.DvdCmi))}");
@@ -337,32 +377,47 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdDiscKey != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_disckey.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdDiscKey);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_disckey.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdDiscKey);
             }
 
             if(scsiInfo.DvdSectorCmi != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_sectorcmi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdSectorCmi);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_sectorcmi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdSectorCmi);
             }
 
             if(scsiInfo.DvdBca != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_bca.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdBca);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_bca.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdBca);
             }
 
             if(scsiInfo.DvdAacs != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_aacs.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdAacs);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_aacs.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdAacs);
             }
 
             if(scsiInfo.DvdRamDds != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdram_dds.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamDds);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdram_dds.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdRamDds);
 
                 AaruConsole.WriteLine($"[bold]{UI.Disc_Definition_Structure}:[/]",
                                       $"\n{Markup.Escape(DDS.Prettify(scsiInfo.DvdRamDds))}");
@@ -370,8 +425,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdRamCartridgeStatus != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdram_status.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamCartridgeStatus);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdram_status.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdRamCartridgeStatus);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Medium_Status}:[/]",
                                       $"\n{Markup.Escape(Cartridge.Prettify(scsiInfo.DvdRamCartridgeStatus))}");
@@ -379,8 +437,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdRamSpareArea != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdram_spare.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdRamSpareArea);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdram_spare.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdRamSpareArea);
 
                 AaruConsole.WriteLine($"[bold]{UI.Spare_Area_Information}:[/]",
                                       $"\n{Markup.Escape(Spare.Prettify(scsiInfo.DvdRamSpareArea))}");
@@ -388,14 +449,20 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.LastBorderOutRmd != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_lastrmd.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.LastBorderOutRmd);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_lastrmd.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.LastBorderOutRmd);
             }
 
             if(scsiInfo.DvdPreRecordedInfo != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_pri.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdPreRecordedInfo);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_pri.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdPreRecordedInfo);
 
                 if(scsiInfo.DecodedDvdPrePitInformation.HasValue)
                 {
@@ -406,14 +473,20 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdrMediaIdentifier != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdr_mediaid.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrMediaIdentifier);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdr_mediaid.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrMediaIdentifier);
             }
 
             if(scsiInfo.DvdrPhysicalInformation != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdr_pfi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrPhysicalInformation);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdr_pfi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrPhysicalInformation);
 
                 if(scsiInfo.DecodedDvdrPfi.HasValue)
                 {
@@ -424,67 +497,100 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DvdPlusAdip != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd+_adip.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdPlusAdip);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd+_adip.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdPlusAdip);
             }
 
             if(scsiInfo.DvdPlusDcb != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd+_dcb.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdPlusDcb);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd+_dcb.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdPlusDcb);
             }
 
             if(scsiInfo.HddvdCopyrightInformation != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_hddvd_cmi.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.HddvdCopyrightInformation);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_hddvd_cmi.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.HddvdCopyrightInformation);
             }
 
             if(scsiInfo.HddvdrMediumStatus != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_hddvdr_status.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.HddvdrMediumStatus);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_hddvdr_status.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.HddvdrMediumStatus);
             }
 
             if(scsiInfo.HddvdrLastRmd != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_hddvdr_lastrmd.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.HddvdrLastRmd);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_hddvdr_lastrmd.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.HddvdrLastRmd);
             }
 
             if(scsiInfo.DvdrLayerCapacity != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvdr_layercap.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrLayerCapacity);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvdr_layercap.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrLayerCapacity);
             }
 
             if(scsiInfo.DvdrDlMiddleZoneStart != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_mzs.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrDlMiddleZoneStart);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_mzs.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrDlMiddleZoneStart);
             }
 
             if(scsiInfo.DvdrDlJumpIntervalSize != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_jis.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrDlJumpIntervalSize);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_jis.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrDlJumpIntervalSize);
             }
 
             if(scsiInfo.DvdrDlManualLayerJumpStartLba != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_manuallj.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrDlManualLayerJumpStartLba);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_manuallj.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrDlManualLayerJumpStartLba);
             }
 
             if(scsiInfo.DvdrDlRemapAnchorPoint != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_dvd_remapanchor.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.DvdrDlRemapAnchorPoint);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_dvd_remapanchor.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.DvdrDlRemapAnchorPoint);
             }
 
             if(scsiInfo.BlurayDiscInformation != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_di.bin", "SCSI READ DISC STRUCTURE",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_di.bin",
+                                 "SCSI READ DISC STRUCTURE",
                                  scsiInfo.BlurayDiscInformation);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Disc_Information}:[/]",
@@ -493,13 +599,19 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.BlurayPac != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_pac.bin", "SCSI READ DISC STRUCTURE",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_pac.bin",
+                                 "SCSI READ DISC STRUCTURE",
                                  scsiInfo.BlurayPac);
             }
 
             if(scsiInfo.BlurayBurstCuttingArea != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_bca.bin", "SCSI READ DISC STRUCTURE",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_bca.bin",
+                                 "SCSI READ DISC STRUCTURE",
                                  scsiInfo.BlurayBurstCuttingArea);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Burst_Cutting_Area}:[/]",
@@ -508,7 +620,10 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.BlurayDds != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_dds.bin", "SCSI READ DISC STRUCTURE",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_dds.bin",
+                                 "SCSI READ DISC STRUCTURE",
                                  scsiInfo.BlurayDds);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Disc_Definition_Structure}:[/]",
@@ -517,8 +632,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.BlurayCartridgeStatus != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_cartstatus.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.BlurayCartridgeStatus);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_cartstatus.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.BlurayCartridgeStatus);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Cartridge_Status}:[/]",
                                       $"\n{Markup.Escape(Decoders.Bluray.Cartridge.Prettify(scsiInfo.
@@ -527,8 +645,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.BluraySpareAreaInformation != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_spare.bin",
-                                 "SCSI READ DISC STRUCTURE", scsiInfo.BluraySpareAreaInformation);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_spare.bin",
+                                 "SCSI READ DISC STRUCTURE",
+                                 scsiInfo.BluraySpareAreaInformation);
 
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Bluray_Spare_Area_Information}:[/]",
                                       $"\n{Markup.Escape(Decoders.Bluray.Spare.Prettify(scsiInfo.
@@ -537,7 +658,10 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.BlurayRawDfl != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscstructure_bd_dfl.bin", "SCSI READ DISC STRUCTURE",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscstructure_bd_dfl.bin",
+                                 "SCSI READ DISC STRUCTURE",
                                  scsiInfo.BlurayRawDfl);
             }
 
@@ -546,8 +670,11 @@ sealed class MediaInfoCommand : Command
                 AaruConsole.WriteLine($"[bold]{Localization.Core.Track_Resources_Information}:[/]",
                                       $"\n{Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayTrackResources))}");
 
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscinformation_001b.bin",
-                                 "SCSI READ DISC INFORMATION", scsiInfo.BlurayTrackResources);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscinformation_001b.bin",
+                                 "SCSI READ DISC INFORMATION",
+                                 scsiInfo.BlurayTrackResources);
             }
 
             if(scsiInfo.BlurayPowResources != null)
@@ -555,8 +682,11 @@ sealed class MediaInfoCommand : Command
                 AaruConsole.WriteLine($"[bold]{Localization.Core.POW_Resources_Information}:[/]",
                                       $"\n{Markup.Escape(DiscInformation.Prettify(scsiInfo.BlurayPowResources))}");
 
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscinformation_010b.bin",
-                                 "SCSI READ DISC INFORMATION", scsiInfo.BlurayPowResources);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscinformation_010b.bin",
+                                 "SCSI READ DISC INFORMATION",
+                                 scsiInfo.BlurayPowResources);
             }
 
             if(scsiInfo.Toc != null)
@@ -583,8 +713,11 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.DiscInformation != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_readdiscinformation_000b.bin",
-                                 "SCSI READ DISC INFORMATION", scsiInfo.DiscInformation);
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_readdiscinformation_000b.bin",
+                                 "SCSI READ DISC INFORMATION",
+                                 scsiInfo.DiscInformation);
 
                 if(scsiInfo.DecodedDiscInformation.HasValue)
                 {
@@ -626,7 +759,10 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.CdTextLeadIn != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_cdtext.bin", "SCSI READ TOC/PMA/ATIP",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_cdtext.bin",
+                                 "SCSI READ TOC/PMA/ATIP",
                                  scsiInfo.CdTextLeadIn);
 
                 if(scsiInfo.DecodedCdTextLeadIn.HasValue)
@@ -650,7 +786,10 @@ sealed class MediaInfoCommand : Command
 
             if(scsiInfo.XboxSecuritySector != null)
             {
-                DataFile.WriteTo(MODULE_NAME, outputPrefix, "_xbox_ss.bin", "KREON EXTRACT SS",
+                DataFile.WriteTo(MODULE_NAME,
+                                 outputPrefix,
+                                 "_xbox_ss.bin",
+                                 "KREON EXTRACT SS",
                                  scsiInfo.XboxSecuritySector);
             }
 
@@ -685,7 +824,10 @@ sealed class MediaInfoCommand : Command
 
         if(scsiInfo.MediaSerialNumber != null)
         {
-            DataFile.WriteTo(MODULE_NAME, outputPrefix, "_mediaserialnumber.bin", "SCSI READ MEDIA SERIAL NUMBER",
+            DataFile.WriteTo(MODULE_NAME,
+                             outputPrefix,
+                             "_mediaserialnumber.bin",
+                             "SCSI READ MEDIA SERIAL NUMBER",
                              scsiInfo.MediaSerialNumber);
 
             AaruConsole.Write($"[bold]{Localization.Core.Media_Serial_Number}:[/] ");
@@ -720,11 +862,17 @@ sealed class MediaInfoCommand : Command
                                                     d.Model        == dev.Model        &&
                                                     d.Revision     == dev.FirmwareRevision);
 
-                Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
-                                       out bool inexactPositioning, false);
+                Dump.SolveTrackPregaps(dev,
+                                       null,
+                                       null,
+                                       tracks,
+                                       supportsPqSubchannel,
+                                       supportsRwSubchannel,
+                                       dbDev,
+                                       out bool inexactPositioning,
+                                       false);
 
-                for(var t = 1; t < tracks.Length; t++)
-                    tracks[t - 1].EndSector = tracks[t].StartSector - 1;
+                for(var t = 1; t < tracks.Length; t++) tracks[t - 1].EndSector = tracks[t].StartSector - 1;
 
                 tracks[^1].EndSector = (ulong)lastSector;
 
@@ -738,14 +886,17 @@ sealed class MediaInfoCommand : Command
                     }[/]");
                 }
 
-                if(firstLba > 0)
-                    AaruConsole.WriteLine(UI.Hidden_track_starts_at_LBA_0_ends_at_LBA_1, 0, firstLba - 1);
+                if(firstLba > 0) AaruConsole.WriteLine(UI.Hidden_track_starts_at_LBA_0_ends_at_LBA_1, 0, firstLba - 1);
 
                 foreach(Track track in tracks)
                 {
-                    AaruConsole.
-                        WriteLine(UI.Track_0_starts_at_LBA_1_ends_at_LBA_2_has_a_pregap_of_3_sectors_and_is_of_type_4,
-                                  track.Sequence, track.StartSector, track.EndSector, track.Pregap, track.Type);
+                    AaruConsole.WriteLine(UI
+                                             .Track_0_starts_at_LBA_1_ends_at_LBA_2_has_a_pregap_of_3_sectors_and_is_of_type_4,
+                                          track.Sequence,
+                                          track.StartSector,
+                                          track.EndSector,
+                                          track.Pregap,
+                                          track.Type);
                 }
 
                 AaruConsole.WriteLine();
@@ -757,8 +908,17 @@ sealed class MediaInfoCommand : Command
                                                        d.Manufacturer == dev.Manufacturer.Replace('/', '-')) &&
                                                       (d.Model == dev.Model || d.Model == dev.Model.Replace('/', '-')));
 
-                CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
-                                      out int? driveOffset, out int? combinedOffset, out _);
+                CompactDisc.GetOffset(cdOffset,
+                                      dbDev,
+                                      debug,
+                                      dev,
+                                      scsiInfo.MediaType,
+                                      null,
+                                      tracks,
+                                      null,
+                                      out int? driveOffset,
+                                      out int? combinedOffset,
+                                      out _);
 
                 if(combinedOffset is null)
                 {
@@ -772,7 +932,8 @@ sealed class MediaInfoCommand : Command
                     else
                     {
                         AaruConsole.WriteLine(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
-                                                            driveOffset, driveOffset / 4));
+                                                            driveOffset,
+                                                            driveOffset / 4));
 
                         AaruConsole.WriteLine($"[red]{Localization.Core.Disc_write_offset_is_unknown}[/]");
                     }
@@ -786,23 +947,26 @@ sealed class MediaInfoCommand : Command
                         AaruConsole.WriteLine($"[red]{Localization.Core.Drive_reading_offset_not_found_in_database
                         }[/]");
 
-                        AaruConsole.
-                            WriteLine(string.
-                                          Format(Localization.Core.Combined_disc_and_drive_offset_are_0_bytes_1_samples,
-                                                 offsetBytes, offsetBytes / 4));
+                        AaruConsole.WriteLine(string.Format(Localization.Core
+                                                                        .Combined_disc_and_drive_offset_are_0_bytes_1_samples,
+                                                            offsetBytes,
+                                                            offsetBytes / 4));
                     }
                     else
                     {
                         AaruConsole.WriteLine(string.Format(Localization.Core.Drive_reading_offset_is_0_bytes_1_samples,
-                                                            driveOffset, driveOffset / 4));
+                                                            driveOffset,
+                                                            driveOffset / 4));
 
                         AaruConsole.WriteLine(string.Format(Localization.Core.Combined_offset_is_0_bytes_1_samples,
-                                                            offsetBytes, offsetBytes / 4));
+                                                            offsetBytes,
+                                                            offsetBytes / 4));
 
                         int? discOffset = offsetBytes - driveOffset;
 
                         AaruConsole.WriteLine(string.Format(Localization.Core.Disc_offset_is_0_bytes_1_samples,
-                                                            discOffset, discOffset / 4));
+                                                            discOffset,
+                                                            discOffset / 4));
                     }
                 }
             }

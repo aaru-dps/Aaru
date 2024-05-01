@@ -30,25 +30,18 @@
 
 using System;
 using Aaru.CommonTypes.Interfaces;
-using commitcnt_t = int;
 
 // Disk address
-using daddr_t = int;
 
 // Fstore
-using fstore_t = int;
 
 // Global File System number
-using gfs_t = int;
 
 // Inode number
-using ino_t = int;
 
 // Filesystem pack number
-using pckno_t = short;
 
 // Timestamp
-using time_t = int;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedType.Local

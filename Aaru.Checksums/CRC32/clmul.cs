@@ -120,27 +120,31 @@ static class Clmul
 
         while((len -= 64) >= 0)
         {
-            var xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            var xmmT0 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                         BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8),
+                                         BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            var xmmT1 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                         BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8),
+                                         BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            var xmmT2 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                         BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8),
+                                         BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 
-            var xmmT3 = Vector128.Create(BitConverter.ToUInt32(src, bufPos), BitConverter.ToUInt32(src, bufPos + 4),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 8),
-                                         BitConverter.ToUInt32(src, bufPos                                     + 12));
+            var xmmT3 = Vector128.Create(BitConverter.ToUInt32(src, bufPos),
+                                         BitConverter.ToUInt32(src, bufPos + 4),
+                                         BitConverter.ToUInt32(src, bufPos + 8),
+                                         BitConverter.ToUInt32(src, bufPos + 12));
 
             bufPos += 16;
 

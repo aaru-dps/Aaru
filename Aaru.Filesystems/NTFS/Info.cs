@@ -47,31 +47,26 @@ public sealed partial class NTFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         var eigthBytes = new byte[8];
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Array.Copy(ntfsBpb, 0x003, eigthBytes, 0, 8);
         string oemName = StringHandlers.CToString(eigthBytes);
 
-        if(oemName != "NTFS    ")
-            return false;
+        if(oemName != "NTFS    ") return false;
 
         byte fatsNo    = ntfsBpb[0x010];
         var  spFat     = BitConverter.ToUInt16(ntfsBpb, 0x016);
         var  signature = BitConverter.ToUInt16(ntfsBpb, 0x1FE);
 
-        if(fatsNo != 0)
-            return false;
+        if(fatsNo != 0) return false;
 
-        if(spFat != 0)
-            return false;
+        if(spFat != 0) return false;
 
         return signature == 0xAA55;
     }
@@ -87,8 +82,7 @@ public sealed partial class NTFS
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] ntfsBpb);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         BiosParameterBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(ntfsBpb);
 
@@ -111,26 +105,28 @@ public sealed partial class NTFS
 
         //          sb.AppendFormat("NT flags: 0x{0:X2}", ntfs_bb.nt_flags).AppendLine();
         //          sb.AppendFormat("Signature 1: 0x{0:X2}", ntfs_bb.signature1).AppendLine();
-        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_on_volume_1_bytes, ntfsBb.sectors, ntfsBb.sectors * ntfsBb.bps)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Cluster_where_MFT_starts_0,     ntfsBb.mft_lsn).AppendLine();
         sb.AppendFormat(Localization.Cluster_where_MFTMirr_starts_0, ntfsBb.mftmirror_lsn).AppendLine();
 
         if(ntfsBb.mft_rc_clusters > 0)
         {
-            sb.AppendFormat(Localization._0_clusters_per_MFT_record_1_bytes, ntfsBb.mft_rc_clusters,
-                            ntfsBb.mft_rc_clusters * ntfsBb.bps * ntfsBb.spc).
-               AppendLine();
+            sb.AppendFormat(Localization._0_clusters_per_MFT_record_1_bytes,
+                            ntfsBb.mft_rc_clusters,
+                            ntfsBb.mft_rc_clusters * ntfsBb.bps * ntfsBb.spc)
+              .AppendLine();
         }
         else
             sb.AppendFormat(Localization._0_bytes_per_MFT_record, 1 << -ntfsBb.mft_rc_clusters).AppendLine();
 
         if(ntfsBb.index_blk_cts > 0)
         {
-            sb.AppendFormat(Localization._0_clusters_per_Index_block_1_bytes, ntfsBb.index_blk_cts,
-                            ntfsBb.index_blk_cts * ntfsBb.bps * ntfsBb.spc).
-               AppendLine();
+            sb.AppendFormat(Localization._0_clusters_per_Index_block_1_bytes,
+                            ntfsBb.index_blk_cts,
+                            ntfsBb.index_blk_cts * ntfsBb.bps * ntfsBb.spc)
+              .AppendLine();
         }
         else
             sb.AppendFormat(Localization._0_bytes_per_Index_block, 1 << -ntfsBb.index_blk_cts).AppendLine();

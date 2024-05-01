@@ -82,36 +82,35 @@ public sealed class BSD : IPartition
         partitions = new List<Partition>();
         uint run = (MAX_LABEL_SIZE + _labelOffsets.Last()) / imagePlugin.Info.SectorSize;
 
-        if((MAX_LABEL_SIZE + _labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0)
-            run++;
+        if((MAX_LABEL_SIZE + _labelOffsets.Last()) % imagePlugin.Info.SectorSize > 0) run++;
 
         var dl    = new DiskLabel();
         var found = false;
 
         foreach(ulong location in _labelLocations)
         {
-            if(location + run + sectorOffset >= imagePlugin.Info.Sectors)
-                return false;
+            if(location + run + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
             ErrorNumber errno = imagePlugin.ReadSectors(location + sectorOffset, run, out byte[] tmp);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             foreach(uint offset in _labelOffsets)
             {
                 var sector = new byte[MAX_LABEL_SIZE];
 
-                if(offset + MAX_LABEL_SIZE > tmp.Length)
-                    break;
+                if(offset + MAX_LABEL_SIZE > tmp.Length) break;
 
                 Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
                 dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME,
-                                           Localization.
-                                               BSD_GetInformation_dl_magic_on_sector_0_at_offset_1_equals_2_X8_expected_3_X8,
-                                           location + sectorOffset, offset, dl.d_magic, DISK_MAGIC);
+                                           Localization
+                                              .BSD_GetInformation_dl_magic_on_sector_0_at_offset_1_equals_2_X8_expected_3_X8,
+                                           location + sectorOffset,
+                                           offset,
+                                           dl.d_magic,
+                                           DISK_MAGIC);
 
                 if((dl.d_magic != DISK_MAGIC || dl.d_magic2 != DISK_MAGIC) &&
                    (dl.d_magic != DISK_CIGAM || dl.d_magic2 != DISK_CIGAM))
@@ -122,15 +121,12 @@ public sealed class BSD : IPartition
                 break;
             }
 
-            if(found)
-                break;
+            if(found) break;
         }
 
-        if(!found)
-            return false;
+        if(!found) return false;
 
-        if(dl is { d_magic: DISK_CIGAM, d_magic2: DISK_CIGAM })
-            dl = SwapDiskLabel(dl);
+        if(dl is { d_magic: DISK_CIGAM, d_magic2: DISK_CIGAM }) dl = SwapDiskLabel(dl);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_type = {0}",           dl.d_type);
         AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_subtype = {0}",        dl.d_subtype);
@@ -177,8 +173,10 @@ public sealed class BSD : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dl.d_partitions[i].p_fstype = {0} ({1})",
-                                       dl.d_partitions[i].p_fstype, FSTypeToString(dl.d_partitions[i].p_fstype));
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dl.d_partitions[i].p_fstype = {0} ({1})",
+                                       dl.d_partitions[i].p_fstype,
+                                       FSTypeToString(dl.d_partitions[i].p_fstype));
 
             var part = new Partition
             {
@@ -191,12 +189,10 @@ public sealed class BSD : IPartition
                 Scheme   = Name
             };
 
-            if(dl.d_partitions[i].p_fstype == fsType.Unused)
-                continue;
+            if(dl.d_partitions[i].p_fstype == fsType.Unused) continue;
 
             // Crude and dirty way to know if the disklabel is relative to its parent partition...
-            if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset)
-                addSectorOffset = true;
+            if(dl.d_partitions[i].p_offset < sectorOffset && !addSectorOffset) addSectorOffset = true;
 
             if(addSectorOffset)
             {
@@ -285,11 +281,9 @@ public sealed class BSD : IPartition
     {
         dl = (DiskLabel)Marshal.SwapStructureMembersEndian(dl);
 
-        for(var i = 0; i < dl.d_drivedata.Length; i++)
-            dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
+        for(var i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
 
-        for(var i = 0; i < dl.d_spare.Length; i++)
-            dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
+        for(var i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i] = Swapping.Swap(dl.d_spare[i]);
 
         for(var i = 0; i < dl.d_partitions.Length; i++)
             dl.d_partitions[i] = (BSDPartition)Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);

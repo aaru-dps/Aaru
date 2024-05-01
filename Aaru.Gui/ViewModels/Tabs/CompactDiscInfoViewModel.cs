@@ -82,23 +82,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         if(decodedCompactDiscInformation.HasValue)
             CdInformationText = DiscInformation.Prettify000b(decodedCompactDiscInformation);
 
-        if(decodedToc.HasValue)
-            CdTocText = TOC.Prettify(decodedToc);
+        if(decodedToc.HasValue) CdTocText = TOC.Prettify(decodedToc);
 
-        if(fullToc.HasValue)
-            CdFullTocText = FullTOC.Prettify(fullToc);
+        if(fullToc.HasValue) CdFullTocText = FullTOC.Prettify(fullToc);
 
-        if(decodedSession.HasValue)
-            CdSessionText = Session.Prettify(decodedSession);
+        if(decodedSession.HasValue) CdSessionText = Session.Prettify(decodedSession);
 
-        if(decodedCdTextLeadIn.HasValue)
-            CdTextText = CDTextOnLeadIn.Prettify(decodedCdTextLeadIn);
+        if(decodedCdTextLeadIn.HasValue) CdTextText = CDTextOnLeadIn.Prettify(decodedCdTextLeadIn);
 
-        if(decodedAtip != null)
-            CdAtipText = ATIP.Prettify(atip);
+        if(decodedAtip != null) CdAtipText = ATIP.Prettify(atip);
 
-        if(!string.IsNullOrEmpty(mcn))
-            McnText = mcn;
+        if(!string.IsNullOrEmpty(mcn)) McnText = mcn;
 
         if(isrcs is { Count: > 0 })
         {
@@ -168,8 +162,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_compactDiscInformationData, 0, _compactDiscInformationData.Length);
@@ -192,8 +185,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_tocData, 0, _tocData.Length);
@@ -216,8 +208,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_rawTocData, 0, _rawTocData.Length);
@@ -240,8 +231,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_sessionData, 0, _sessionData.Length);
@@ -264,8 +254,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_cdTextLeadInData, 0, _cdTextLeadInData.Length);
@@ -288,8 +277,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_atipData, 0, _atipData.Length);
@@ -312,8 +300,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_pmaData, 0, _pmaData.Length);

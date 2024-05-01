@@ -31,11 +31,15 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.DeviceInfo">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.DeviceInfo">
     <Design.DataContext>
         <panels:DeviceInfoViewModel />
     </Design.DataContext>
@@ -49,31 +53,40 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding DeviceTypeLabel}" />
-                        <TextBox Text="{Binding DeviceType}" IsReadOnly="True" />
+                        <TextBox Text="{Binding DeviceType}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ManufacturerLabel}" />
-                        <TextBox Text="{Binding Manufacturer}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Manufacturer}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding ModelLabel}" /> <TextBox Text="{Binding Model}" IsReadOnly="True" />
+                        <TextBlock Text="{Binding ModelLabel}" />
+                        <TextBox Text="{Binding Model}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding RevisionLabel}" />
-                        <TextBox Text="{Binding Revision}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Revision}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding SerialNumberLabel}" />
-                        <TextBox Text="{Binding Serial}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Serial}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ScsiTypeLabel}" />
-                        <TextBox Text="{Binding ScsiType}" IsReadOnly="True" />
+                        <TextBox Text="{Binding ScsiType}"
+                                 IsReadOnly="True" />
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding RemovableChecked}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding RemovableChecked}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding RemovableMediaLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding UsbConnected}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding UsbConnected}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding UsbConnectedLabel}" />
                     </CheckBox>
                 </StackPanel>
@@ -85,23 +98,28 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding VendorIDLabel}" />
-                        <TextBox Text="{Binding UsbVendorId}" IsReadOnly="True" />
+                        <TextBox Text="{Binding UsbVendorId}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ProductIDLabel}" />
-                        <TextBox Text="{Binding UsbProductId}" IsReadOnly="True" />
+                        <TextBox Text="{Binding UsbProductId}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ManufacturerLabel}" />
-                        <TextBox Text="{Binding UsbManufacturer}" IsReadOnly="True" />
+                        <TextBox Text="{Binding UsbManufacturer}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ProductLabel}" />
-                        <TextBox Text="{Binding UsbProduct}" IsReadOnly="True" />
+                        <TextBox Text="{Binding UsbProduct}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding SerialNumberLabel}" />
-                        <TextBox Text="{Binding UsbSerial}" IsReadOnly="True" />
+                        <TextBox Text="{Binding UsbSerial}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <Button Command="{Binding SaveUsbDescriptorsCommand}"
                             IsVisible="{Binding SaveUsbDescriptorsEnabled}">
@@ -116,23 +134,28 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding VendorIDLabel}" />
-                        <TextBox Text="{Binding FirewireVendorId}" IsReadOnly="True" />
+                        <TextBox Text="{Binding FirewireVendorId}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ModelIDLabel}" />
-                        <TextBox Text="{Binding FirewireModelId}" IsReadOnly="True" />
+                        <TextBox Text="{Binding FirewireModelId}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ManufacturerLabel}" />
-                        <TextBox Text="{Binding FirewireManufacturer}" IsReadOnly="True" />
+                        <TextBox Text="{Binding FirewireManufacturer}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding ModelLabel}" />
-                        <TextBox Text="{Binding FirewireModel}" IsReadOnly="True" />
+                        <TextBox Text="{Binding FirewireModel}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding GuidLabel}" />
-                        <TextBox Text="{Binding FirewireGuid}" IsReadOnly="True" />
+                        <TextBox Text="{Binding FirewireGuid}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -141,125 +164,163 @@
                     <TextBlock Text="{Binding PlextorLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorEepromVisible}">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding PlextorEepromVisible}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding PlextorDiscsLabel}" />
-                            <TextBox Text="{Binding PlextorDiscs}" IsReadOnly="True" />
+                            <TextBox Text="{Binding PlextorDiscs}"
+                                     IsReadOnly="True" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding PlextorCdReadTimeLabel}" />
-                            <TextBox Text="{Binding PlextorCdReadTime}" IsReadOnly="True" />
+                            <TextBox Text="{Binding PlextorCdReadTime}"
+                                     IsReadOnly="True" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding PlextorCdWriteTimeLabel}" />
-                            <TextBox Text="{Binding PlextorCdWriteTime}" IsReadOnly="True" />
+                            <TextBox Text="{Binding PlextorCdWriteTime}"
+                                     IsReadOnly="True" />
                         </StackPanel>
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorDvdTimesVisible}">
+                        <StackPanel Orientation="Vertical"
+                                    IsVisible="{Binding PlextorDvdTimesVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorDvdReadTimeLabel}" />
-                                <TextBox Text="{Binding PlextorDvdReadTime}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorDvdReadTime}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorDvdWriteTimeLabel}" />
-                                <TextBox Text="{Binding PlextorDvdWriteTime}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorDvdWriteTime}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding PlextorPoweRec}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorPoweRec}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorPoweRecLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorPoweRecEnabled}" IsEnabled="False"
+                    <CheckBox IsChecked="{Binding PlextorPoweRecEnabled}"
+                              IsEnabled="False"
                               IsVisible="{Binding PlextorPoweRec}">
                         <TextBlock Text="{Binding PlextorPoweRecEnabledLabel}" />
                     </CheckBox>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorPoweRecEnabled}">
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorPoweRecRecommendedVisible}">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding PlextorPoweRecEnabled}">
+                        <StackPanel Orientation="Vertical"
+                                    IsVisible="{Binding PlextorPoweRecRecommendedVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorPoweRecRecommendedLabel}" />
-                                <TextBox Text="{Binding PlextorPoweRecRecommended}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorPoweRecRecommended}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorPoweRecSelectedVisible}">
+                        <StackPanel Orientation="Vertical"
+                                    IsVisible="{Binding PlextorPoweRecSelectedVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorPoweRecSelectedLabel}" />
-                                <TextBox Text="{Binding PlextorPoweRecSelected}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorPoweRecSelected}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorPoweRecMaxVisible}">
+                        <StackPanel Orientation="Vertical"
+                                    IsVisible="{Binding PlextorPoweRecMaxVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorPoweRecMaxLabel}" />
-                                <TextBox Text="{Binding PlextorPoweRecMax}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorPoweRecMax}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorPoweRecLastVisible}">
+                        <StackPanel Orientation="Vertical"
+                                    IsVisible="{Binding PlextorPoweRecLastVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorPoweRecLastLabel}" />
-                                <TextBox Text="{Binding PlextorPoweRecLast}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorPoweRecLast}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding PlextorSilentMode}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorSilentMode}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorSilentModeLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorSilentModeEnabled}" IsEnabled="False"
+                    <CheckBox IsChecked="{Binding PlextorSilentModeEnabled}"
+                              IsEnabled="False"
                               IsVisible="{Binding PlextorSilentMode}">
                         <TextBlock Text="{Binding PlextorSilentModeEnabledLabel}" />
                     </CheckBox>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorSilentModeEnabled}">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding PlextorSilentModeEnabled}">
                         <TextBlock Text="{Binding PlextorSilentModeAccessTime}" />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding PlextorSilentModeCdReadSpeedLimitLabel}" />
-                            <TextBox Text="{Binding PlextorSilentModeCdReadSpeedLimit}" IsReadOnly="True" />
+                            <TextBox Text="{Binding PlextorSilentModeCdReadSpeedLimit}"
+                                     IsReadOnly="True" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding PlextorSilentModeCdWriteSpeedLimitLabel}" />
-                            <TextBox Text="{Binding PlextorSilentModeCdWriteSpeedLimit}" IsReadOnly="True" />
+                            <TextBox Text="{Binding PlextorSilentModeCdWriteSpeedLimit}"
+                                     IsReadOnly="True" />
                         </StackPanel>
                         <StackPanel Orientation="Vertical"
                                     IsVisible="{Binding PlextorSilentModeDvdReadSpeedLimitVisible}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding PlextorSilentModeDvdReadSpeedLimitLabel}" />
-                                <TextBox Text="{Binding PlextorSilentModeDvdReadSpeedLimit}" IsReadOnly="True" />
+                                <TextBox Text="{Binding PlextorSilentModeDvdReadSpeedLimit}"
+                                         IsReadOnly="True" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding PlextorGigaRec}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorGigaRec}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorGigaRecLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorSecuRec}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorSecuRec}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorSecuRecLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorSpeedRead}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorSpeedRead}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorSpeedReadLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorSpeedEnabled}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorSpeedEnabled}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorSpeedEnabledLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding PlextorHiding}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorHiding}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorHidingLabel}" />
                     </CheckBox>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorHiding}">
-                        <CheckBox IsChecked="{Binding PlextorHidesRecordables}" IsEnabled="False">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding PlextorHiding}">
+                        <CheckBox IsChecked="{Binding PlextorHidesRecordables}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorHidesRecordablesLabel}" />
                         </CheckBox>
-                        <CheckBox IsChecked="{Binding PlextorHidesSessions}" IsEnabled="False">
+                        <CheckBox IsChecked="{Binding PlextorHidesSessions}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorHidesSessionsLabel}" />
                         </CheckBox>
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding PlextorVariRec}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding PlextorVariRec}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding PlextorVariRecLabel}" />
                     </CheckBox>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding PlextorDvd}">
-                        <CheckBox IsChecked="{Binding PlextorVariRecDvd}" IsEnabled="False">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding PlextorDvd}">
+                        <CheckBox IsChecked="{Binding PlextorVariRecDvd}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorVariRecDvdLabel}" />
                         </CheckBox>
-                        <CheckBox IsChecked="{Binding PlextorBitSetting}" IsEnabled="False">
+                        <CheckBox IsChecked="{Binding PlextorBitSetting}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorBitSettingLabel}" />
                         </CheckBox>
-                        <CheckBox IsChecked="{Binding PlextorBitSettingDl}" IsEnabled="False">
+                        <CheckBox IsChecked="{Binding PlextorBitSettingDl}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorBitSettingDlLabel}" />
                         </CheckBox>
-                        <CheckBox IsChecked="{Binding PlextorDvdPlusWriteTest}" IsEnabled="False">
+                        <CheckBox IsChecked="{Binding PlextorDvdPlusWriteTest}"
+                                  IsEnabled="False">
                             <TextBlock Text="{Binding PlextorDvdPlusWriteTestLabel}" />
                         </CheckBox>
                     </StackPanel>
@@ -270,34 +331,44 @@
                     <TextBlock Text="{Binding KreonLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <CheckBox IsChecked="{Binding KreonChallengeResponse}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonChallengeResponse}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonChallengeResponseLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonDecryptSs}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonDecryptSs}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonDecryptSsLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonXtremeUnlock}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonXtremeUnlock}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonXtremeUnlockLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonWxripperUnlock}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonWxripperUnlock}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonWxripperUnlockLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonChallengeResponse360}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonChallengeResponse360}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonChallengeResponse360Label}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonDecryptSs360}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonDecryptSs360}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonDecryptSs360Label}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonXtremeUnlock360}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonXtremeUnlock360}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonXtremeUnlock360Label}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonWxripperUnlock360}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonWxripperUnlock360}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonWxripperUnlock360Label}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonLock}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonLock}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonSetLockedLabel}" />
                     </CheckBox>
-                    <CheckBox IsChecked="{Binding KreonErrorSkipping}" IsEnabled="False">
+                    <CheckBox IsChecked="{Binding KreonErrorSkipping}"
+                              IsEnabled="False">
                         <TextBlock Text="{Binding KreonErrorSkippingLabel}" />
                     </CheckBox>
                 </StackPanel>
@@ -307,20 +378,30 @@
                     <TextBlock Text="{Binding SSCLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding BlockLimits}">
-                        <TextBlock Text="{Binding MinBlockSize}" IsVisible="{Binding !!MinBlockSize}" />
-                        <TextBlock Text="{Binding MaxBlockSize}" IsVisible="{Binding !!MaxBlockSize}" />
-                        <TextBlock Text="{Binding BlockSizeGranularity}" IsVisible="{Binding !!BlockSizeGranularity}" />
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding BlockLimits}">
+                        <TextBlock Text="{Binding MinBlockSize}"
+                                   IsVisible="{Binding !!MinBlockSize}" />
+                        <TextBlock Text="{Binding MaxBlockSize}"
+                                   IsVisible="{Binding !!MaxBlockSize}" />
+                        <TextBlock Text="{Binding BlockSizeGranularity}"
+                                   IsVisible="{Binding !!BlockSizeGranularity}" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding !!Densities}">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding !!Densities}">
                         <TextBlock Text="{Binding DensitiesSupportedByDeviceLabel}" />
-                        <TextBox Text="{Binding Densities}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Densities}"
+                                 IsReadOnly="True" />
                     </StackPanel>
-                    <StackPanel Orientation="Vertical" IsVisible="{Binding !!MediumTypes}">
+                    <StackPanel Orientation="Vertical"
+                                IsVisible="{Binding !!MediumTypes}">
                         <TextBlock Text="{Binding MediumTypesSupportedByDeviceLabel}" />
-                        <TextBox Text="{Binding MediumTypes}" IsReadOnly="True" />
+                        <TextBox Text="{Binding MediumTypes}"
+                                 IsReadOnly="True" />
                     </StackPanel>
-                    <TextBox Text="{Binding MediumDensity}" IsReadOnly="True" IsVisible="{Binding !!MediumDensity}" />
+                    <TextBox Text="{Binding MediumDensity}"
+                             IsReadOnly="True"
+                             IsVisible="{Binding !!MediumDensity}" />
                 </StackPanel>
             </TabItem>
             <TabItem IsVisible="{Binding SecureDigital}">
@@ -332,31 +413,36 @@
                         <TabItem.Header>
                             <TextBlock Text="{Binding CIDLabel}" />
                         </TabItem.Header>
-                        <TextBox Text="{Binding Cid}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Cid}"
+                                 IsReadOnly="True" />
                     </TabItem>
                     <TabItem IsVisible="{Binding !!Csd}">
                         <TabItem.Header>
                             <TextBlock Text="{Binding CSDLabel}" />
                         </TabItem.Header>
-                        <TextBox Text="{Binding Csd}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Csd}"
+                                 IsReadOnly="True" />
                     </TabItem>
                     <TabItem IsVisible="{Binding !!Ocr}">
                         <TabItem.Header>
                             <TextBlock Text="{Binding OCRLabel}" />
                         </TabItem.Header>
-                        <TextBox Text="{Binding Ocr}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Ocr}"
+                                 IsReadOnly="True" />
                     </TabItem>
                     <TabItem IsVisible="{Binding !!ExtendedCsd}">
                         <TabItem.Header>
                             <TextBlock Text="{Binding ExtendedCSDLabel}" />
                         </TabItem.Header>
-                        <TextBox Text="{Binding ExtendedCsd}" IsReadOnly="True" />
+                        <TextBox Text="{Binding ExtendedCsd}"
+                                 IsReadOnly="True" />
                     </TabItem>
                     <TabItem IsVisible="{Binding !!Scr}">
                         <TabItem.Header>
                             <TextBlock Text="{Binding SCRLabel}" />
                         </TabItem.Header>
-                        <TextBox Text="{Binding Scr}" IsReadOnly="True" />
+                        <TextBox Text="{Binding Scr}"
+                                 IsReadOnly="True" />
                     </TabItem>
                 </TabControl>
             </TabItem>

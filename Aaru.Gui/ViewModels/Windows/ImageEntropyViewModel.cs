@@ -333,15 +333,15 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
                     if(trackEntropy.UniqueSectors != null)
                     {
-                        AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2, trackEntropy.Track,
+                        AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2,
+                                              trackEntropy.Track,
                                               trackEntropy.UniqueSectors,
                                               (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                     }
                 }
             }
 
-            if(WholeDiscChecked != true)
-                return;
+            if(WholeDiscChecked != true) return;
 
             _entropy = entropyCalculator.CalculateMediaEntropy(DuplicatedSectorsChecked);
 
@@ -374,16 +374,15 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             }
         }
 
-        if(WholeDiscChecked != true)
-            return;
+        if(WholeDiscChecked != true) return;
 
         MediaEntropyText    = string.Format(UI.Entropy_for_disk_is_0, _entropy.Entropy);
         MediaEntropyVisible = true;
 
-        if(_entropy.UniqueSectors == null)
-            return;
+        if(_entropy.UniqueSectors == null) return;
 
-        MediaUniqueSectorsText = string.Format(UI.Disk_has_0_unique_sectors_1, _entropy.UniqueSectors,
+        MediaUniqueSectorsText = string.Format(UI.Disk_has_0_unique_sectors_1,
+                                               _entropy.UniqueSectors,
                                                (double)_entropy.UniqueSectors / _entropy.Sectors);
 
         MediaUniqueSectorsVisible = true;
@@ -413,8 +412,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             return;
         }
 
-        if(ProgressIndeterminate)
-            ProgressIndeterminate = false;
+        if(ProgressIndeterminate) ProgressIndeterminate = false;
 
         ProgressMax   = maximum;
         ProgressValue = current;
@@ -432,8 +430,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             return;
         }
 
-        if(Progress2Indeterminate)
-            Progress2Indeterminate = false;
+        if(Progress2Indeterminate) Progress2Indeterminate = false;
 
         Progress2Max   = maximum;
         Progress2Value = current;

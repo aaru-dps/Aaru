@@ -131,8 +131,7 @@ public static class DDS
 
     public static DiscDefinitionStructure? Decode(byte[] DDSResponse)
     {
-        if(DDSResponse == null)
-            return null;
+        if(DDSResponse == null) return null;
 
         var decoded = new DiscDefinitionStructure
         {
@@ -178,8 +177,7 @@ public static class DDS
 
     public static string Prettify(DiscDefinitionStructure? DDSResponse)
     {
-        if(DDSResponse == null)
-            return null;
+        if(DDSResponse == null) return null;
 
         DiscDefinitionStructure response = DDSResponse.Value;
 
@@ -202,7 +200,7 @@ public static class DDS
         sb.AppendFormat(Localization.Blu_ray_DDS_Disc_Type_Specific_Data_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DiscTypeSpecificData, 80));
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
@@ -229,7 +227,7 @@ public static class DDS
 
         if(response.Reserved9 != 0)
             sb.AppendFormat(Localization.Reserved9_equals_0_X8, response.Reserved9).AppendLine();
-    #endif
+#endif
 
         return sb.ToString();
     }

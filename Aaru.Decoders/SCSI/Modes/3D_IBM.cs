@@ -51,17 +51,13 @@ public static partial class Modes
 
     public static IBM_ModePage_3D? DecodeIBMModePage_3D(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x3D)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x3D) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 5)
-            return null;
+        if(pageResponse.Length != 5) return null;
 
         var decoded = new IBM_ModePage_3D();
 
@@ -76,16 +72,14 @@ public static partial class Modes
 
     public static string PrettifyIBMModePage_3D(IBM_ModePage_3D? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         IBM_ModePage_3D page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.IBM_LEOT_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization._0_wraps, page.NumberOfWraps).AppendLine();
 

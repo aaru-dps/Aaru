@@ -41,6 +41,7 @@ public class GameBoy : IByteAddressableImage
     public Guid Id => new("04AFDB93-587E-413B-9B52-10D4A92966CF");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -50,14 +51,12 @@ public class GameBoy : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return false;
+        if(stream.Length % 32768 != 0) return false;
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
@@ -70,22 +69,19 @@ public class GameBoy : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 512 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
         stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
-        if(magic != 0x0B000DCC6666EDCE)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x0B000DCC6666EDCE) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
@@ -117,15 +113,13 @@ public class GameBoy : IByteAddressableImage
             sb.AppendLine(Localization.Requires_Game_Boy_Color);
         else
         {
-            if((header.Name[^1] & 0xC0) == 0xC0)
-                sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
+            if((header.Name[^1] & 0xC0) == 0xC0) sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
 
-            if(header.Sgb == 0x03)
-                sb.AppendLine(Localization.Contains_features_for_Super_Game_Boy);
+            if(header.Sgb == 0x03) sb.AppendLine(Localization.Contains_features_for_Super_Game_Boy);
         }
 
-        sb.AppendFormat(Localization.Region_0, header.Country == 0 ? Localization.Japan : Localization.World).
-           AppendLine();
+        sb.AppendFormat(Localization.Region_0, header.Country == 0 ? Localization.Japan : Localization.World)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Cartridge_type_0, DecodeCartridgeType(header.RomType)).AppendLine();
         sb.AppendFormat(Localization.ROM_size_0_bytes, DecodeRomSize(header.RomSize)).AppendLine();
@@ -490,16 +484,13 @@ public class GameBoy : IByteAddressableImage
 
         mappings = new LinearMemoryMap();
 
-        if(header.SramSize > 0)
-            hasSaveRam = true;
+        if(header.SramSize > 0) hasSaveRam = true;
 
         var devices = 1;
 
-        if(hasSaveRam)
-            devices++;
+        if(hasSaveRam) devices++;
 
-        if(hasMapper)
-            devices++;
+        if(hasMapper) devices++;
 
         mappings.Devices = new LinearMemoryDevice[devices];
 
@@ -561,8 +552,7 @@ public class GameBoy : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -598,16 +588,13 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -690,8 +677,7 @@ public class GameBoy : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -735,16 +721,13 @@ public class GameBoy : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
@@ -1032,11 +1015,11 @@ public class GameBoy : IByteAddressableImage
                                                                  0x1B => Localization.ROM_MBC5_RAM_and_battery,
                                                                  0x1C => Localization.ROM_MBC5_and_vibration_motor,
                                                                  0x1D => Localization.ROM_MBC5_RAM_and_vibration_motor,
-                                                                 0x1E => Localization.
-                                                                     ROM_MBC5_RAM_battery_and_vibration_motor,
+                                                                 0x1E => Localization
+                                                                    .ROM_MBC5_RAM_battery_and_vibration_motor,
                                                                  0x20 => Localization.ROM_and_MBC6,
-                                                                 0x22 => Localization.
-                                                                     ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor,
+                                                                 0x22 => Localization
+                                                                    .ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor,
                                                                  0xFC => Localization.Pocket_Camera,
                                                                  0xFD => Localization.ROM_and_TAMA5,
                                                                  0xFE => Localization.ROM_and_HuC_3,

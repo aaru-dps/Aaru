@@ -50,6 +50,7 @@ public sealed partial class SaveDskF
     public Guid Id => new("288CE058-1A51-4034-8C45-5A256CAE1461");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

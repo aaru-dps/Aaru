@@ -54,8 +54,7 @@ public class FilesystemContents
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator FilesystemContents(FilesystemContentsType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var fs = new FilesystemContents
         {
@@ -66,17 +65,14 @@ public class FilesystemContents
         {
             fs.Files = new List<ContentsFile>();
 
-            foreach(ContentsFileType file in cicm.File)
-                fs.Files.Add(file);
+            foreach(ContentsFileType file in cicm.File) fs.Files.Add(file);
         }
 
-        if(cicm.Directory is null)
-            return fs;
+        if(cicm.Directory is null) return fs;
 
         fs.Directories = new List<Directory>();
 
-        foreach(DirectoryType dir in cicm.Directory)
-            fs.Directories.Add(dir);
+        foreach(DirectoryType dir in cicm.Directory) fs.Directories.Add(dir);
 
         return fs;
     }
@@ -104,8 +100,7 @@ public class ContentsFile
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator ContentsFile(ContentsFileType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var file = new ContentsFile
         {
@@ -129,17 +124,14 @@ public class ContentsFile
         {
             file.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                file.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) file.Checksums.Add(chk);
         }
 
-        if(cicm.ExtendedAttributes is null)
-            return file;
+        if(cicm.ExtendedAttributes is null) return file;
 
         file.ExtendedAttributes = new List<ExtendedAttribute>();
 
-        foreach(ExtendedAttributeType xa in cicm.ExtendedAttributes)
-            file.ExtendedAttributes.Add(xa);
+        foreach(ExtendedAttributeType xa in cicm.ExtendedAttributes) file.ExtendedAttributes.Add(xa);
 
         return file;
     }
@@ -154,8 +146,7 @@ public class ExtendedAttribute
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator ExtendedAttribute(ExtendedAttributeType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var xa = new ExtendedAttribute
         {
@@ -163,13 +154,11 @@ public class ExtendedAttribute
             Length = cicm.length
         };
 
-        if(cicm.Checksums is null)
-            return xa;
+        if(cicm.Checksums is null) return xa;
 
         xa.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            xa.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) xa.Checksums.Add(chk);
 
         return xa;
     }
@@ -196,8 +185,7 @@ public class Directory
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Directory(DirectoryType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var dir = new Directory
         {
@@ -220,17 +208,14 @@ public class Directory
         {
             dir.Directories = new List<Directory>();
 
-            foreach(DirectoryType d in cicm.Directory)
-                dir.Directories.Add(d);
+            foreach(DirectoryType d in cicm.Directory) dir.Directories.Add(d);
         }
 
-        if(cicm.File is null)
-            return dir;
+        if(cicm.File is null) return dir;
 
         dir.Files = new List<ContentsFile>();
 
-        foreach(ContentsFileType file in cicm.File)
-            dir.Files.Add(file);
+        foreach(ContentsFileType file in cicm.File) dir.Files.Add(file);
 
         return dir;
     }

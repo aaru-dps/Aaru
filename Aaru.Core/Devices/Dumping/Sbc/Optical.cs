@@ -62,8 +62,19 @@ partial class Dump
         {
             blankExtents = new ExtentsULong();
 
-            written = _dev.MediumScan(out buffer, true, false, false, false, false, 0, 1, 1, out _, out _,
-                                      uint.MaxValue, out _);
+            written = _dev.MediumScan(out buffer,
+                                      true,
+                                      false,
+                                      false,
+                                      false,
+                                      false,
+                                      0,
+                                      1,
+                                      1,
+                                      out _,
+                                      out _,
+                                      uint.MaxValue,
+                                      out _);
 
             DecodedSense? decodedSense = Sense.Decode(buffer);
 
@@ -84,8 +95,7 @@ partial class Dump
 
             for(uint b = 0; b < blocks; b += c)
             {
-                if(!canMediumScan)
-                    break;
+                if(!canMediumScan) break;
 
                 if(_aborted)
                 {
@@ -109,15 +119,33 @@ partial class Dump
                     changingCounter =  false;
                 }
 
-                if(b + c >= blocks)
-                    c = (uint)(blocks - b);
+                if(b + c >= blocks) c = (uint)(blocks - b);
 
-                UpdateProgress?.
-                    Invoke(written ? string.Format(Localization.Core.Scanning_for_0_written_blocks_starting_in_block_1, c, b) : string.Format(Localization.Core.Scanning_for_0_blank_blocks_starting_in_block_1, c, b),
-                           b, (long)blocks);
+                UpdateProgress?.Invoke(written
+                                           ? string.Format(Localization.Core
+                                                                       .Scanning_for_0_written_blocks_starting_in_block_1,
+                                                           c,
+                                                           b)
+                                           : string.Format(Localization.Core
+                                                                       .Scanning_for_0_blank_blocks_starting_in_block_1,
+                                                           c,
+                                                           b),
+                                       b,
+                                       (long)blocks);
 
-                conditionMet = _dev.MediumScan(out _, written, false, false, false, false, b, c, c, out _, out _,
-                                               uint.MaxValue, out _);
+                conditionMet = _dev.MediumScan(out _,
+                                               written,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               b,
+                                               c,
+                                               c,
+                                               out _,
+                                               out _,
+                                               uint.MaxValue,
+                                               out _);
 
                 if(conditionMet)
                 {
@@ -126,8 +154,7 @@ partial class Dump
                     else
                         blankExtents.Add(b, c, true);
 
-                    if(c < maxBlocks)
-                        changingWritten = true;
+                    if(c < maxBlocks) changingWritten = true;
                 }
                 else
                 {
@@ -138,8 +165,7 @@ partial class Dump
 
                     changingCounter = true;
 
-                    if(c != 0)
-                        continue;
+                    if(c != 0) continue;
 
                     written = !written;
                     c       = maxBlocks;
@@ -157,8 +183,7 @@ partial class Dump
 
             foreach(Tuple<ulong, ulong> blank in blankExtents.ToArray())
             {
-                for(ulong b = blank.Item1; b <= blank.Item2; b++)
-                    writtenExtents.Remove(b);
+                for(ulong b = blank.Item1; b <= blank.Item2; b++) writtenExtents.Remove(b);
             }
         }
 
@@ -176,13 +201,11 @@ partial class Dump
 
         foreach(Tuple<ulong, ulong> extent in extentsToDump)
         {
-            if(extent.Item2 < _resume.NextBlock)
-                continue; // Skip this extent
+            if(extent.Item2 < _resume.NextBlock) continue; // Skip this extent
 
             ulong nextBlock = extent.Item1;
 
-            if(extent.Item1 < _resume.NextBlock)
-                nextBlock = (uint)_resume.NextBlock;
+            if(extent.Item1 < _resume.NextBlock) nextBlock = (uint)_resume.NextBlock;
 
             _speedStopwatch.Restart();
 
@@ -197,18 +220,18 @@ partial class Dump
                     break;
                 }
 
-                if(extent.Item2 + 1 - i < blocksToRead)
-                    blocksToRead = (uint)(extent.Item2 + 1 - i);
+                if(extent.Item2 + 1 - i < blocksToRead) blocksToRead = (uint)(extent.Item2 + 1 - i);
 
-                if(currentSpeed > maxSpeed && currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed && currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                UpdateProgress?.
-                    Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                           (long)i, (long)blocks);
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                     i,
+                                                     blocks,
+                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                       (long)i,
+                                       (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
@@ -225,19 +248,16 @@ partial class Dump
                 else
                 {
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
-                    if(i + _skip > extent.Item2 + 1)
-                        _skip = (uint)(extent.Item2 + 1 - i);
+                    if(i + _skip > extent.Item2 + 1) _skip = (uint)(extent.Item2 + 1 - i);
 
                     // Write empty data
                     _writeStopwatch.Restart();
                     outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                    for(ulong b = i; b < i + _skip; b++)
-                        _resume.BadBlocks.Add(b);
+                    for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
@@ -253,8 +273,7 @@ partial class Dump
 
                 double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                if(elapsed <= 0)
-                    continue;
+                if(elapsed <= 0) continue;
 
                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;

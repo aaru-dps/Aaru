@@ -31,11 +31,15 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.SdMmcInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.SdMmcInfo">
     <Design.DataContext>
         <tabs:SdMmcInfoViewModel />
     </Design.DataContext>
@@ -44,31 +48,36 @@
             <TabItem.Header>
                 <TextBlock Text="{Binding CidLabel}" />
             </TabItem.Header>
-            <TextBox IsReadOnly="True" Text="{Binding CidText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding CidText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!CsdText}">
             <TabItem.Header>
                 <TextBlock Text="{Binding CsdLabel}" />
             </TabItem.Header>
-            <TextBox IsReadOnly="True" Text="{Binding CsdText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding CsdText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!OcrText}">
             <TabItem.Header>
                 <TextBlock Text="{Binding OcrLabel}" />
             </TabItem.Header>
-            <TextBox IsReadOnly="True" Text="{Binding OcrText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding OcrText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!ExtendedCsdText}">
             <TabItem.Header>
                 <TextBlock Text="{Binding ExtendedCsdLabel}" />
             </TabItem.Header>
-            <TextBox IsReadOnly="True" Text="{Binding ExtendedCsdText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding ExtendedCsdText}" />
         </TabItem>
         <TabItem IsVisible="{Binding !!ScrText}">
             <TabItem.Header>
                 <TextBlock Text="{Binding ScrLabel}" />
             </TabItem.Header>
-            <TextBox IsReadOnly="True" Text="{Binding ScrText}" />
+            <TextBox IsReadOnly="True"
+                     Text="{Binding ScrText}" />
         </TabItem>
     </TabControl>
 </UserControl>

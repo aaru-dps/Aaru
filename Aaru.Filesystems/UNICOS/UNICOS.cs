@@ -30,12 +30,6 @@
 
 using System;
 using Aaru.CommonTypes.Interfaces;
-using blkno_t = long;
-using daddr_t = long;
-using dev_t = long;
-using extent_t = long;
-using ino_t = long;
-using time_t = long;
 
 namespace Aaru.Filesystems;
 

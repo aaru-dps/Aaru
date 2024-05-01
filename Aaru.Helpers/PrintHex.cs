@@ -51,8 +51,7 @@ public static class PrintHex
     /// <returns>String containing hexadecimal values</returns>
     public static string ByteArrayToHexArrayString(byte[] array, int width = 16, bool color = false)
     {
-        if(array is null)
-            return null;
+        if(array is null) return null;
 
         // TODO: Color list
         // TODO: Allow to change width
@@ -74,23 +73,18 @@ public static class PrintHex
                 break;
         }
 
-        if(offsetLength < str.Length)
-            offsetLength = str.Length;
+        if(offsetLength < str.Length) offsetLength = str.Length;
 
-        while(str.Length < offsetLength)
-            str += ' ';
+        while(str.Length < offsetLength) str += ' ';
 
-        if(color)
-            sb.Append("\u001b[36m");
+        if(color) sb.Append("\u001b[36m");
 
         sb.Append(str);
         sb.Append("  ");
 
-        for(var i = 0; i < width; i++)
-            sb.Append($" {i:X2}");
+        for(var i = 0; i < width; i++) sb.Append($" {i:X2}");
 
-        if(color)
-            sb.Append("\u001b[0m");
+        if(color) sb.Append("\u001b[0m");
 
         sb.AppendLine();
 
@@ -100,13 +94,11 @@ public static class PrintHex
 
         for(var i = 0; i < rows; i++)
         {
-            if(color)
-                sb.Append("\u001b[36m");
+            if(color) sb.Append("\u001b[36m");
 
             sb.AppendFormat(format, b);
 
-            if(color)
-                sb.Append("\u001b[0m");
+            if(color) sb.Append("\u001b[0m");
 
             sb.Append("  ");
             int lastBytes  = i == rows - 1 ? last : width;
@@ -118,8 +110,7 @@ public static class PrintHex
                 b++;
             }
 
-            for(var j = 0; j < lastSpaces; j++)
-                sb.Append("   ");
+            for(var j = 0; j < lastSpaces; j++) sb.Append("   ");
 
             b -= lastBytes;
             sb.Append("   ");

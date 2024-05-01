@@ -47,21 +47,17 @@ public sealed partial class QNX6
         uint sectors     = QNX6_SUPER_BLOCK_SIZE / imagePlugin.Info.SectorSize;
         uint bootSectors = QNX6_BOOT_BLOCKS_SIZE / imagePlugin.Info.SectorSize;
 
-        if(partition.Start + bootSectors + sectors >= partition.End)
-            return false;
+        if(partition.Start + bootSectors + sectors >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectors, out byte[] audiSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         errno = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
-            return false;
+        if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return false;
 
         AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<AudiSuperBlock>(audiSector);
 
@@ -82,16 +78,13 @@ public sealed partial class QNX6
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sectors, out byte[] audiSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < QNX6_SUPER_BLOCK_SIZE)
-            return;
+        if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return;
 
         AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<AudiSuperBlock>(audiSector);
 
@@ -107,10 +100,12 @@ public sealed partial class QNX6
             sb.AppendFormat(Localization._0_bytes_per_block,  audiSb.blockSize).AppendLine();
             sb.AppendFormat(Localization._0_inodes_free_of_1, audiSb.freeInodes, audiSb.numInodes).AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, audiSb.freeBlocks,
-                            audiSb.freeBlocks * audiSb.blockSize, audiSb.numBlocks,
-                            audiSb.numBlocks  * audiSb.blockSize).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes,
+                            audiSb.freeBlocks,
+                            audiSb.freeBlocks * audiSb.blockSize,
+                            audiSb.numBlocks,
+                            audiSb.numBlocks * audiSb.blockSize)
+              .AppendLine();
 
             metadata = new FileSystem
             {
@@ -143,9 +138,12 @@ public sealed partial class QNX6
         sb.AppendFormat(Localization._0_bytes_per_block,  qnxSb.blockSize).AppendLine();
         sb.AppendFormat(Localization._0_inodes_free_of_1, qnxSb.freeInodes, qnxSb.numInodes).AppendLine();
 
-        sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes, qnxSb.freeBlocks,
-                        qnxSb.freeBlocks * qnxSb.blockSize, qnxSb.numBlocks, qnxSb.numBlocks * qnxSb.blockSize).
-           AppendLine();
+        sb.AppendFormat(Localization._0_blocks_1_bytes_free_of_2_3_bytes,
+                        qnxSb.freeBlocks,
+                        qnxSb.freeBlocks * qnxSb.blockSize,
+                        qnxSb.numBlocks,
+                        qnxSb.numBlocks * qnxSb.blockSize)
+          .AppendLine();
 
         metadata = new FileSystem
         {

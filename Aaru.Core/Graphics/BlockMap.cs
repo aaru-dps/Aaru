@@ -90,21 +90,32 @@ public class BlockMap : IMediaGraph
         _canvas = new SKCanvas(_bitmap);
 
         // Paint background white
-        _canvas.DrawRect(0, 0, w, h, new SKPaint
-        {
-            Style = SKPaintStyle.StrokeAndFill,
-            Color = SKColors.White
-        });
+        _canvas.DrawRect(0,
+                         0,
+                         w,
+                         h,
+                         new SKPaint
+                         {
+                             Style = SKPaintStyle.StrokeAndFill,
+                             Color = SKColors.White
+                         });
 
         // Paint undumped sectors
-        _canvas.DrawRect(0, 0, w, h - removeRows * (_squareSize + 1) - _squareSize - 2, new SKPaint
-        {
-            Style = SKPaintStyle.StrokeAndFill,
-            Color = SKColors.Gray
-        });
+        _canvas.DrawRect(0,
+                         0,
+                         w,
+                         h - removeRows * (_squareSize + 1) - _squareSize - 2,
+                         new SKPaint
+                         {
+                             Style = SKPaintStyle.StrokeAndFill,
+                             Color = SKColors.Gray
+                         });
 
-        _canvas.DrawRect(0, h - removeRows * (_squareSize + 1) - _squareSize - 2,
-                         (_columns - removeSquaresAtLastRow) * (_squareSize + 1), _squareSize + 2, new SKPaint
+        _canvas.DrawRect(0,
+                         h - removeRows * (_squareSize + 1) - _squareSize - 2,
+                         (_columns - removeSquaresAtLastRow) * (_squareSize + 1),
+                         _squareSize + 2,
+                         new SKPaint
                          {
                              Style = SKPaintStyle.StrokeAndFill,
                              Color = SKColors.Gray
@@ -117,19 +128,27 @@ public class BlockMap : IMediaGraph
             {
                 int cw = _columns - removeSquaresAtLastRow;
 
-                _canvas.DrawLine(0f, y, cw * (_squareSize + 1), y, new SKPaint
-                {
-                    StrokeWidth = 1f,
-                    Color       = SKColors.Black
-                });
+                _canvas.DrawLine(0f,
+                                 y,
+                                 cw * (_squareSize + 1),
+                                 y,
+                                 new SKPaint
+                                 {
+                                     StrokeWidth = 1f,
+                                     Color       = SKColors.Black
+                                 });
             }
             else
             {
-                _canvas.DrawLine(0f, y, w, y, new SKPaint
-                {
-                    StrokeWidth = 1f,
-                    Color       = SKColors.Black
-                });
+                _canvas.DrawLine(0f,
+                                 y,
+                                 w,
+                                 y,
+                                 new SKPaint
+                                 {
+                                     StrokeWidth = 1f,
+                                     Color       = SKColors.Black
+                                 });
             }
         }
 
@@ -139,19 +158,27 @@ public class BlockMap : IMediaGraph
 
             if(_columns - currentColumn + 1 > removeSquaresAtLastRow)
             {
-                _canvas.DrawLine(x, 0, x, h - removeRows * (_squareSize + 1), new SKPaint
-                {
-                    StrokeWidth = 1f,
-                    Color       = SKColors.Black
-                });
+                _canvas.DrawLine(x,
+                                 0,
+                                 x,
+                                 h - removeRows * (_squareSize + 1),
+                                 new SKPaint
+                                 {
+                                     StrokeWidth = 1f,
+                                     Color       = SKColors.Black
+                                 });
             }
             else
             {
-                _canvas.DrawLine(x, 0, x, h - removeRows * (_squareSize + 1) - _squareSize - 2, new SKPaint
-                {
-                    StrokeWidth = 1f,
-                    Color       = SKColors.Black
-                });
+                _canvas.DrawLine(x,
+                                 0,
+                                 x,
+                                 h - removeRows * (_squareSize + 1) - _squareSize - 2,
+                                 new SKPaint
+                                 {
+                                     StrokeWidth = 1f,
+                                     Color       = SKColors.Black
+                                 });
             }
         }
     }
@@ -239,11 +266,12 @@ public class BlockMap : IMediaGraph
         SKRect rect =
             GetSquareRectangle(_sectorsPerSquare == 0 ? (int)sector : (int)(sector / (ulong)_sectorsPerSquare));
 
-        _canvas.DrawRect(rect, new SKPaint
-        {
-            Style = SKPaintStyle.StrokeAndFill,
-            Color = color
-        });
+        _canvas.DrawRect(rect,
+                         new SKPaint
+                         {
+                             Style = SKPaintStyle.StrokeAndFill,
+                             Color = color
+                         });
     }
 
     void PaintSectors(ulong startingSector, uint length, SKColor color)
@@ -253,11 +281,12 @@ public class BlockMap : IMediaGraph
             SKRect rect =
                 GetSquareRectangle(_sectorsPerSquare == 0 ? (int)sector : (int)(sector / (ulong)_sectorsPerSquare));
 
-            _canvas.DrawRect(rect, new SKPaint
-            {
-                Style = SKPaintStyle.StrokeAndFill,
-                Color = color
-            });
+            _canvas.DrawRect(rect,
+                             new SKPaint
+                             {
+                                 Style = SKPaintStyle.StrokeAndFill,
+                                 Color = color
+                             });
         }
     }
 
@@ -268,11 +297,12 @@ public class BlockMap : IMediaGraph
                                                                                : (int)(sector /
                                                                                            (ulong)_sectorsPerSquare))))
         {
-            _canvas.DrawRect(rect, new SKPaint
-            {
-                Style = SKPaintStyle.StrokeAndFill,
-                Color = color
-            });
+            _canvas.DrawRect(rect,
+                             new SKPaint
+                             {
+                                 Style = SKPaintStyle.StrokeAndFill,
+                                 Color = color
+                             });
         }
     }
 

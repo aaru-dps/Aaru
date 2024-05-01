@@ -53,8 +53,7 @@ public static class StringHandlers
     /// <param name="start">Start decoding at this position</param>
     public static string CToString(byte[] cString, Encoding encoding, bool twoBytes = false, int start = 0)
     {
-        if(cString == null)
-            return null;
+        if(cString == null) return null;
 
         var len = 0;
 
@@ -78,8 +77,7 @@ public static class StringHandlers
             len++;
         }
 
-        if(twoBytes && len % 2 > 0)
-            len--;
+        if(twoBytes && len % 2 > 0) len--;
 
         var dest = new byte[len];
         Array.Copy(cString, start, dest, 0, len);
@@ -99,16 +97,14 @@ public static class StringHandlers
     /// <param name="start">Start decoding at this position</param>
     public static string PascalToString(byte[] pascalString, Encoding encoding, int start = 0)
     {
-        if(pascalString == null)
-            return null;
+        if(pascalString == null) return null;
 
         byte length = pascalString[start];
         var  len    = 0;
 
         for(int i = start + 1; i < length + 1 && i < pascalString.Length; i++)
         {
-            if(pascalString[i] == 0)
-                break;
+            if(pascalString[i] == 0) break;
 
             len++;
         }
@@ -132,18 +128,15 @@ public static class StringHandlers
     /// <param name="start">Start decoding at this position</param>
     public static string SpacePaddedToString(byte[] spacePaddedString, Encoding encoding, int start = 0)
     {
-        if(spacePaddedString == null)
-            return null;
+        if(spacePaddedString == null) return null;
 
         int len = start;
 
         for(int i = spacePaddedString.Length; i >= start; i--)
         {
-            if(i == start)
-                return "";
+            if(i == start) return "";
 
-            if(spacePaddedString[i - 1] == 0x20)
-                continue;
+            if(spacePaddedString[i - 1] == 0x20) continue;
 
             len = i;
 
@@ -161,8 +154,7 @@ public static class StringHandlers
         byte compId = dstring[0];
         var  temp   = "";
 
-        if(compId != 8 && compId != 16)
-            return null;
+        if(compId != 8 && compId != 16) return null;
 
         for(var byteIndex = 1; byteIndex < dstring.Length;)
         {
@@ -173,11 +165,9 @@ public static class StringHandlers
             else
                 unicode = 0;
 
-            if(byteIndex < dstring.Length)
-                unicode |= dstring[byteIndex++];
+            if(byteIndex < dstring.Length) unicode |= dstring[byteIndex++];
 
-            if(unicode == 0)
-                break;
+            if(unicode == 0) break;
 
             temp += Encoding.Unicode.GetString(BitConverter.GetBytes(unicode));
         }

@@ -63,17 +63,13 @@ public static partial class Modes
 
     public static Certance_ModePage_22? DecodeCertanceModePage_22(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x22)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x22) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 16)
-            return null;
+        if(pageResponse.Length != 16) return null;
 
         var decoded = new Certance_ModePage_22();
 
@@ -98,16 +94,14 @@ public static partial class Modes
 
     public static string PrettifyCertanceModePage_22(Certance_ModePage_22? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Certance_ModePage_22 page = modePage.Value;
         var                  sb   = new StringBuilder();
 
         sb.AppendLine(Localization.Certance_Interface_Control_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.BaudRate)
         {
@@ -134,8 +128,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_library_interface_baud_rate_code_0, page.BaudRate).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_library_interface_baud_rate_code_0, page.BaudRate)
+                  .AppendLine();
 
                 break;
         }
@@ -171,8 +165,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_port_A_transport_type_code_0, page.PortATransportType).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_port_A_transport_type_code_0, page.PortATransportType)
+                  .AppendLine();
 
                 break;
         }
@@ -180,8 +174,8 @@ public static partial class Modes
         if(page.PortATransportType > 0)
             sb.AppendFormat("\t" + Localization.Drive_responds_to_SCSI_ID_0, page.PortAPresentSelectionID).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Drive_will_respond_to_SCSI_ID_0_on_Port_A_enabling, page.NextSelectionID).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Drive_will_respond_to_SCSI_ID_0_on_Port_A_enabling, page.NextSelectionID)
+          .AppendLine();
 
         sb.AppendFormat("\t" + Localization.Drive_jumpers_choose_SCSI_ID_0, page.JumperedSelectionID).AppendLine();
 

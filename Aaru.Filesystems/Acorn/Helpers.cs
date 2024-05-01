@@ -39,8 +39,7 @@ public sealed partial class AcornADFS
         var sum   = 0;
         var carry = 0;
 
-        if(length > data.Length)
-            length = data.Length;
+        if(length > data.Length) length = data.Length;
 
         // ADC r0, r0, r1
         // MOVS r0, r0, LSL #24
@@ -97,8 +96,7 @@ public sealed partial class AcornADFS
     {
         uint sum = 0;
 
-        if(length > data.Count)
-            length = data.Count;
+        if(length > data.Count) length = data.Count;
 
         // EOR r0, r1, r0, ROR #13
         for(var i = 0; i < length; i++)

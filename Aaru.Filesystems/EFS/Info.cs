@@ -46,24 +46,20 @@ public sealed partial class EFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         // Misaligned
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
 
-            if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if((Marshal.SizeOf<Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return false;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
@@ -71,34 +67,37 @@ public sealed partial class EFS
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 0x200,
-                                       sb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.magic_at_0_equals_1_expected_2_or_3,
+                                       0x200,
+                                       sb.sb_magic,
+                                       EFS_MAGIC,
+                                       EFS_MAGIC_NEW);
 
-            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
-                return true;
+            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW) return true;
         }
         else
         {
             var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return false;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1, sb.sb_magic,
-                                       EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.magic_at_0_equals_1_expected_2_or_3,
+                                       1,
+                                       sb.sb_magic,
+                                       EFS_MAGIC,
+                                       EFS_MAGIC_NEW);
 
-            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW)
-                return true;
+            if(sb.sb_magic is EFS_MAGIC or EFS_MAGIC_NEW) return true;
         }
 
         return false;
@@ -112,8 +111,7 @@ public sealed partial class EFS
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         Superblock efsSb;
 
@@ -122,16 +120,13 @@ public sealed partial class EFS
         {
             var sbSize = (uint)((Marshal.SizeOf<Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
 
-            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if((Marshal.SizeOf<Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
             var sbpiece = new byte[Marshal.SizeOf<Superblock>()];
 
@@ -139,39 +134,42 @@ public sealed partial class EFS
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sbpiece);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_X3_equals_1_expected_2_or_3, 0x200,
-                                       efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.magic_at_0_X3_equals_1_expected_2_or_3,
+                                       0x200,
+                                       efsSb.sb_magic,
+                                       EFS_MAGIC,
+                                       EFS_MAGIC_NEW);
         }
         else
         {
             var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-                sbSize++;
+            if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + 1, sbSize, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
-            if(sector.Length < Marshal.SizeOf<Superblock>())
-                return;
+            if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
             efsSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_at_0_equals_1_expected_2_or_3, 1, efsSb.sb_magic,
-                                       EFS_MAGIC, EFS_MAGIC_NEW);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.magic_at_0_equals_1_expected_2_or_3,
+                                       1,
+                                       efsSb.sb_magic,
+                                       EFS_MAGIC,
+                                       EFS_MAGIC_NEW);
         }
 
-        if(efsSb.sb_magic != EFS_MAGIC && efsSb.sb_magic != EFS_MAGIC_NEW)
-            return;
+        if(efsSb.sb_magic != EFS_MAGIC && efsSb.sb_magic != EFS_MAGIC_NEW) return;
 
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.SGI_extent_filesystem);
 
-        if(efsSb.sb_magic == EFS_MAGIC_NEW)
-            sb.AppendLine(Localization.New_version);
+        if(efsSb.sb_magic == EFS_MAGIC_NEW) sb.AppendLine(Localization.New_version);
 
         sb.AppendFormat(Localization.Filesystem_size_0_basic_blocks, efsSb.sb_size).AppendLine();
         sb.AppendFormat(Localization.First_cylinder_group_starts_at_block_0, efsSb.sb_firstcg).AppendLine();
@@ -185,8 +183,7 @@ public sealed partial class EFS
         sb.AppendFormat(Localization._0_free_blocks, efsSb.sb_tfree).AppendLine();
         sb.AppendFormat(Localization._0_free_inodes, efsSb.sb_tinode).AppendLine();
 
-        if(efsSb.sb_bmblock > 0)
-            sb.AppendFormat(Localization.Bitmap_resides_at_block_0, efsSb.sb_bmblock).AppendLine();
+        if(efsSb.sb_bmblock > 0) sb.AppendFormat(Localization.Bitmap_resides_at_block_0, efsSb.sb_bmblock).AppendLine();
 
         if(efsSb.sb_replsb > 0)
             sb.AppendFormat(Localization.Replacement_superblock_resides_at_block_0, efsSb.sb_replsb).AppendLine();
@@ -194,8 +191,7 @@ public sealed partial class EFS
         if(efsSb.sb_lastinode > 0)
             sb.AppendFormat(Localization.Last_inode_allocated_0, efsSb.sb_lastinode).AppendLine();
 
-        if(efsSb.sb_dirty > 0)
-            sb.AppendLine(Localization.Volume_is_dirty);
+        if(efsSb.sb_dirty > 0) sb.AppendLine(Localization.Volume_is_dirty);
 
         sb.AppendFormat(Localization.Checksum_0_X8, efsSb.sb_checksum).AppendLine();
         sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(efsSb.sb_fname, encoding)).AppendLine();

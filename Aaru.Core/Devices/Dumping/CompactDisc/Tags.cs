@@ -84,7 +84,10 @@ partial class Dump
         _dumpLog.WriteLine(Localization.Core.Reading_Disc_Information);
         UpdateStatus?.Invoke(Localization.Core.Reading_Disc_Information);
 
-        sense = _dev.ReadDiscInformation(out cmdBuf, out _, MmcDiscInformationDataTypes.DiscInformation, _dev.Timeout,
+        sense = _dev.ReadDiscInformation(out cmdBuf,
+                                         out _,
+                                         MmcDiscInformationDataTypes.DiscInformation,
+                                         _dev.Timeout,
                                          out _);
 
         if(!sense)
@@ -133,8 +136,7 @@ partial class Dump
         UpdateStatus?.Invoke(Localization.Core.Reading_CD_Text_from_Lead_In);
         sense = _dev.ReadCdText(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(sense || !CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-            return;
+        if(sense || !CDTextOnLeadIn.Decode(cmdBuf).HasValue) return;
 
         tmpBuf = new byte[cmdBuf.Length - 4];
         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);

@@ -55,18 +55,20 @@ public sealed partial class SuperCardPro
 
         _scpFilter = imageFilter;
 
-        if(_scpStream.Length < Marshal.SizeOf<ScpHeader>())
-            return ErrorNumber.InvalidArgument;
+        if(_scpStream.Length < Marshal.SizeOf<ScpHeader>()) return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[Marshal.SizeOf<ScpHeader>()];
         _scpStream.EnsureRead(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
         Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.signature = \"{0}\"",
                                    StringHandlers.CToString(Header.signature));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.version = {0}.{1}",
+                                   (Header.version & 0xF0) >> 4,
                                    Header.version & 0xF);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.type = {0}",            Header.type);
@@ -78,13 +80,16 @@ public sealed partial class SuperCardPro
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.resolution = {0}",      Header.resolution);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.checksum = 0x{0:X8}",   Header.checksum);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.StartsAtIndex = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.flags.StartsAtIndex = {0}",
                                    Header.flags == ScpFlags.StartsAtIndex);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.Tpi = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.flags.Tpi = {0}",
                                    Header.flags == ScpFlags.Tpi ? "96tpi" : "48tpi");
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.Rpm = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.flags.Rpm = {0}",
                                    Header.flags == ScpFlags.Rpm ? "360rpm" : "300rpm");
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.Normalized = {0}", Header.flags == ScpFlags.Normalized);
@@ -95,18 +100,17 @@ public sealed partial class SuperCardPro
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.NotFloppy = {0}", Header.flags == ScpFlags.NotFloppy);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "header.flags.CreatedByOtherDevice = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "header.flags.CreatedByOtherDevice = {0}",
                                    Header.flags == ScpFlags.CreatedByOtherDevice);
 
-        if(!_scpSignature.SequenceEqual(Header.signature))
-            return ErrorNumber.InvalidArgument;
+        if(!_scpSignature.SequenceEqual(Header.signature)) return ErrorNumber.InvalidArgument;
 
         ScpTracks = new Dictionary<byte, TrackHeader>();
 
         for(byte t = Header.start; t <= Header.end; t++)
         {
-            if(t >= Header.offsets.Length)
-                break;
+            if(t >= Header.offsets.Length) break;
 
             _scpStream.Position = Header.offsets[t];
 
@@ -121,7 +125,8 @@ public sealed partial class SuperCardPro
 
             if(!trk.Signature.SequenceEqual(_trkSignature))
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_header_at_0_contains_incorrect_signature,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Track_header_at_0_contains_incorrect_signature,
                                            Header.offsets[t]);
 
                 continue;
@@ -129,8 +134,11 @@ public sealed partial class SuperCardPro
 
             if(trk.TrackNumber != t)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_number_at_0_should_be_1_but_is_2,
-                                           Header.offsets[t], t, trk.TrackNumber);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Track_number_at_0_should_be_1_but_is_2,
+                                           Header.offsets[t],
+                                           t,
+                                           trk.TrackNumber);
 
                 continue;
             }
@@ -335,7 +343,8 @@ public sealed partial class SuperCardPro
 
                     Footer footer = Marshal.ByteArrayToStructureLittleEndian<Footer>(ftr);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.manufacturerOffset = 0x{0:X8}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.manufacturerOffset = 0x{0:X8}",
                                                footer.manufacturerOffset);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "footer.modelOffset = 0x{0:X8}", footer.modelOffset);
@@ -344,7 +353,8 @@ public sealed partial class SuperCardPro
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "footer.creatorOffset = 0x{0:X8}", footer.creatorOffset);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.applicationOffset = 0x{0:X8}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.applicationOffset = 0x{0:X8}",
                                                footer.applicationOffset);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "footer.commentsOffset = 0x{0:X8}", footer.commentsOffset);
@@ -353,20 +363,28 @@ public sealed partial class SuperCardPro
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "footer.modificationTime = {0}", footer.modificationTime);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.applicationVersion = {0}.{1}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.applicationVersion = {0}.{1}",
                                                (footer.applicationVersion & 0xF0) >> 4,
                                                footer.applicationVersion & 0xF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.hardwareVersion = {0}.{1}",
-                                               (footer.hardwareVersion & 0xF0) >> 4, footer.hardwareVersion & 0xF);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.hardwareVersion = {0}.{1}",
+                                               (footer.hardwareVersion & 0xF0) >> 4,
+                                               footer.hardwareVersion & 0xF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.firmwareVersion = {0}.{1}",
-                                               (footer.firmwareVersion & 0xF0) >> 4, footer.firmwareVersion & 0xF);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.firmwareVersion = {0}.{1}",
+                                               (footer.firmwareVersion & 0xF0) >> 4,
+                                               footer.firmwareVersion & 0xF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.imageVersion = {0}.{1}",
-                                               (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.imageVersion = {0}.{1}",
+                                               (footer.imageVersion & 0xF0) >> 4,
+                                               footer.imageVersion & 0xF);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "footer.signature = \"{0}\"",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "footer.signature = \"{0}\"",
                                                StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
                     _imageInfo.DriveManufacturer = ReadPStringUtf8(_scpStream, footer.manufacturerOffset);
@@ -376,17 +394,20 @@ public sealed partial class SuperCardPro
                     _imageInfo.Application       = ReadPStringUtf8(_scpStream, footer.applicationOffset);
                     _imageInfo.Comments          = ReadPStringUtf8(_scpStream, footer.commentsOffset);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.driveManufacturer = \"{0}\"",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "ImageInfo.driveManufacturer = \"{0}\"",
                                                _imageInfo.DriveManufacturer);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.driveModel = \"{0}\"", _imageInfo.DriveModel);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.driveSerialNumber = \"{0}\"",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "ImageInfo.driveSerialNumber = \"{0}\"",
                                                _imageInfo.DriveSerialNumber);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.imageCreator = \"{0}\"", _imageInfo.Creator);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.imageApplication = \"{0}\"",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "ImageInfo.imageApplication = \"{0}\"",
                                                _imageInfo.Application);
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.imageComments = \"{0}\"", _imageInfo.Comments);
@@ -399,10 +420,12 @@ public sealed partial class SuperCardPro
                                                           ? DateHandlers.UnixToDateTime(footer.modificationTime)
                                                           : imageFilter.LastWriteTime;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.imageCreationTime = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "ImageInfo.imageCreationTime = {0}",
                                                _imageInfo.CreationTime);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.imageLastModificationTime = {0}",
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "ImageInfo.imageLastModificationTime = {0}",
                                                _imageInfo.LastModificationTime);
 
                     _imageInfo.ApplicationVersion =
@@ -468,8 +491,7 @@ public sealed partial class SuperCardPro
 
         ErrorNumber indexError = ReadFluxIndexResolution(head, track, subTrack, captureIndex, out indexResolution);
 
-        if(indexError != ErrorNumber.NoError)
-            return indexError;
+        if(indexError != ErrorNumber.NoError) return indexError;
 
         ErrorNumber dataError = ReadFluxDataResolution(head, track, subTrack, captureIndex, out dataResolution);
 
@@ -481,16 +503,13 @@ public sealed partial class SuperCardPro
     {
         buffer = null;
 
-        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
-            return ErrorNumber.NotImplemented;
+        if(Header.flags.HasFlag(ScpFlags.NotFloppy)) return ErrorNumber.NotImplemented;
 
-        if(captureIndex > 0)
-            return ErrorNumber.OutOfRange;
+        if(captureIndex > 0) return ErrorNumber.OutOfRange;
 
         List<byte> tmpBuffer = new();
 
-        if(Header.flags.HasFlag(ScpFlags.StartsAtIndex))
-            tmpBuffer.Add(0);
+        if(Header.flags.HasFlag(ScpFlags.StartsAtIndex)) tmpBuffer.Add(0);
 
         TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
 
@@ -506,17 +525,13 @@ public sealed partial class SuperCardPro
     {
         buffer = null;
 
-        if(Header.flags.HasFlag(ScpFlags.NotFloppy))
-            return ErrorNumber.NotImplemented;
+        if(Header.flags.HasFlag(ScpFlags.NotFloppy)) return ErrorNumber.NotImplemented;
 
-        if(HeadTrackSubToScpTrack(head, track, subTrack) > Header.end)
-            return ErrorNumber.OutOfRange;
+        if(HeadTrackSubToScpTrack(head, track, subTrack) > Header.end) return ErrorNumber.OutOfRange;
 
-        if(captureIndex > 0)
-            return ErrorNumber.OutOfRange;
+        if(captureIndex > 0) return ErrorNumber.OutOfRange;
 
-        if(Header.bitCellEncoding != 0 && Header.bitCellEncoding != 16)
-            return ErrorNumber.NotImplemented;
+        if(Header.bitCellEncoding != 0 && Header.bitCellEncoding != 16) return ErrorNumber.NotImplemented;
 
         TrackHeader scpTrack = ScpTracks[(byte)HeadTrackSubToScpTrack(head, track, subTrack)];
 
@@ -548,13 +563,11 @@ public sealed partial class SuperCardPro
         ErrorNumber error =
             ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution, out dataResolution);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         error = ReadFluxDataCapture(head, track, subTrack, captureIndex, out dataBuffer);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         ErrorNumber indexCapture = ReadFluxIndexCapture(head, track, subTrack, captureIndex, out indexBuffer);
 

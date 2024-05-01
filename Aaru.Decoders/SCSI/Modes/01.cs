@@ -47,32 +47,23 @@ public static partial class Modes
         pg[0] = 0x01;
         pg[1] = 6;
 
-        if(page.PS)
-            pg[0] += 0x80;
+        if(page.PS) pg[0] += 0x80;
 
-        if(page.AWRE)
-            pg[2] += 0x80;
+        if(page.AWRE) pg[2] += 0x80;
 
-        if(page.ARRE)
-            pg[2] += 0x40;
+        if(page.ARRE) pg[2] += 0x40;
 
-        if(page.TB)
-            pg[2] += 0x20;
+        if(page.TB) pg[2] += 0x20;
 
-        if(page.RC)
-            pg[2] += 0x10;
+        if(page.RC) pg[2] += 0x10;
 
-        if(page.EER)
-            pg[2] += 0x08;
+        if(page.EER) pg[2] += 0x08;
 
-        if(page.PER)
-            pg[2] += 0x04;
+        if(page.PER) pg[2] += 0x04;
 
-        if(page.DTE)
-            pg[2] += 0x02;
+        if(page.DTE) pg[2] += 0x02;
 
-        if(page.DCR)
-            pg[2] += 0x01;
+        if(page.DCR) pg[2] += 0x01;
 
         pg[3] = page.ReadRetryCount;
         pg[4] = page.CorrectionSpan;
@@ -132,17 +123,13 @@ public static partial class Modes
 
     public static ModePage_01? DecodeModePage_01(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x01)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x01) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         var decoded = new ModePage_01();
 
@@ -161,8 +148,7 @@ public static partial class Modes
         decoded.HeadOffsetCount       = (sbyte)pageResponse[5];
         decoded.DataStrobeOffsetCount = (sbyte)pageResponse[6];
 
-        if(pageResponse.Length < 12)
-            return decoded;
+        if(pageResponse.Length < 12) return decoded;
 
         decoded.WriteRetryCount   =  pageResponse[8];
         decoded.RecoveryTimeLimit =  (ushort)((pageResponse[10] << 8) + pageResponse[11]);
@@ -176,70 +162,61 @@ public static partial class Modes
 
     public static string PrettifyModePage_01(ModePage_01? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_01 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Read_write_error_recovery_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.AWRE)
-            sb.AppendLine("\t" + Localization.Automatic_write_reallocation_is_enabled);
+        if(page.AWRE) sb.AppendLine("\t" + Localization.Automatic_write_reallocation_is_enabled);
 
-        if(page.ARRE)
-            sb.AppendLine("\t" + Localization.Automatic_read_reallocation_is_enabled);
+        if(page.ARRE) sb.AppendLine("\t" + Localization.Automatic_read_reallocation_is_enabled);
 
         if(page.TB)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Data_not_recovered_within_limits_shall_be_transferred_back_before_a_CHECK_CONDITION);
+                          Localization
+                             .Data_not_recovered_within_limits_shall_be_transferred_back_before_a_CHECK_CONDITION);
         }
 
         if(page.RC)
         {
             sb.AppendLine("\t" +
-                          Localization.
-                              Drive_will_transfer_the_entire_requested_length_without_delaying_to_perform_error_recovery);
+                          Localization
+                             .Drive_will_transfer_the_entire_requested_length_without_delaying_to_perform_error_recovery);
         }
 
-        if(page.EER)
-            sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
+        if(page.EER) sb.AppendLine("\t" + Localization.Drive_will_use_the_most_expedient_form_of_error_recovery_first);
 
-        if(page.PER)
-            sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
+        if(page.PER) sb.AppendLine("\t" + Localization.Drive_shall_report_recovered_errors);
 
-        if(page.DTE)
-            sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
+        if(page.DTE) sb.AppendLine("\t" + Localization.Transfer_will_be_terminated_upon_error_detection);
 
-        if(page.DCR)
-            sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
+        if(page.DCR) sb.AppendLine("\t" + Localization.Error_correction_is_disabled);
 
         if(page.ReadRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_read_operations_0_times, page.ReadRetryCount)
+              .AppendLine();
         }
 
         if(page.WriteRetryCount > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_will_repeat_write_operations_0_times, page.WriteRetryCount)
+              .AppendLine();
         }
 
         if(page.RecoveryTimeLimit > 0)
         {
             sb.AppendFormat("\t" + Localization.Drive_will_employ_a_maximum_of_0_ms_to_recover_data,
-                            page.RecoveryTimeLimit).
-               AppendLine();
+                            page.RecoveryTimeLimit)
+              .AppendLine();
         }
 
-        if(page.LBPERE)
-            sb.AppendLine(Localization.Logical_block_provisioning_error_reporting_is_enabled);
+        if(page.LBPERE) sb.AppendLine(Localization.Logical_block_provisioning_error_reporting_is_enabled);
 
         return sb.ToString();
     }

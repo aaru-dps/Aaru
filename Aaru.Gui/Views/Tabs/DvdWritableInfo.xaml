@@ -31,31 +31,42 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.DvdWritableInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.DvdWritableInfo">
     <Design.DataContext>
         <tabs:DvdWritableInfoViewModel />
     </Design.DataContext>
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock IsVisible="{Binding !!DvdRamDdsText}" Text="{Binding DvdRamDdsLabel}" />
-            <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamDdsText}" Text="{Binding DvdRamDdsText}" />
+            <TextBlock IsVisible="{Binding !!DvdRamDdsText}"
+                       Text="{Binding DvdRamDdsLabel}" />
+            <TextBox IsReadOnly="True"
+                     IsVisible="{Binding !!DvdRamDdsText}"
+                     Text="{Binding DvdRamDdsText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock IsVisible="{Binding !!DvdRamCartridgeStatusText}" Text="{Binding DvdRamCartridgeStatusLabel}" />
-            <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamCartridgeStatusText}"
+            <TextBlock IsVisible="{Binding !!DvdRamCartridgeStatusText}"
+                       Text="{Binding DvdRamCartridgeStatusLabel}" />
+            <TextBox IsReadOnly="True"
+                     IsVisible="{Binding !!DvdRamCartridgeStatusText}"
                      Text="{Binding DvdRamCartridgeStatusText}" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock IsVisible="{Binding !!DvdRamSpareAreaInformationText}"
                        Text="{Binding DvdRamSpareAreaInformationLabel}" />
-            <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdRamSpareAreaInformationText}"
+            <TextBox IsReadOnly="True"
+                     IsVisible="{Binding !!DvdRamSpareAreaInformationText}"
                      Text="{Binding DvdRamSpareAreaInformationText}" />
         </StackPanel>
-        <Button Command="{Binding SaveDvdRamDdsCommand}" IsVisible="{Binding SaveDvdRamDdsVisible}">
+        <Button Command="{Binding SaveDvdRamDdsCommand}"
+                IsVisible="{Binding SaveDvdRamDdsVisible}">
             <TextBlock Text="{Binding SaveDvdRamDdsLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdRamCartridgeStatusCommand}"
@@ -66,26 +77,32 @@
                 IsVisible="{Binding SaveDvdRamSpareAreaInformationVisible}">
             <TextBlock Text="{Binding SaveDvdRamSpareAreaInformationLabel}" />
         </Button>
-        <Button Command="{Binding SaveLastBorderOutRmdCommand}" IsVisible="{Binding SaveLastBorderOutRmdVisible}">
+        <Button Command="{Binding SaveLastBorderOutRmdCommand}"
+                IsVisible="{Binding SaveLastBorderOutRmdVisible}">
             <TextBlock Text="{Binding SaveLastBorderOutRmdLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdPreRecordedInfoCommand}" IsVisible="{Binding SaveDvdPreRecordedInfoVisible}">
+        <Button Command="{Binding SaveDvdPreRecordedInfoCommand}"
+                IsVisible="{Binding SaveDvdPreRecordedInfoVisible}">
             <TextBlock Text="{Binding SaveDvdPreRecordedInfoLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdrMediaIdentifierCommand}" IsVisible="{Binding SaveDvdrMediaIdentifierVisible}">
+        <Button Command="{Binding SaveDvdrMediaIdentifierCommand}"
+                IsVisible="{Binding SaveDvdrMediaIdentifierVisible}">
             <TextBlock Text="{Binding SaveDvdrMediaIdentifierLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrPhysicalInformationCommand}"
                 IsVisible="{Binding SaveDvdrPhysicalInformationVisible}">
             <TextBlock Text="{Binding SaveDvdrPhysicalInformationLabel}" />
         </Button>
-        <Button Command="{Binding SaveHddvdrMediumStatusCommand}" IsVisible="{Binding SaveHddvdrMediumStatusVisible}">
+        <Button Command="{Binding SaveHddvdrMediumStatusCommand}"
+                IsVisible="{Binding SaveHddvdrMediumStatusVisible}">
             <TextBlock Text="{Binding SaveHddvdrMediumStatusLabel}" />
         </Button>
-        <Button Command="{Binding SaveHddvdrLastRmdCommand}" IsVisible="{Binding SaveHddvdrLastRmdVisible}">
+        <Button Command="{Binding SaveHddvdrLastRmdCommand}"
+                IsVisible="{Binding SaveHddvdrLastRmdVisible}">
             <TextBlock Text="{Binding SaveHddvdrLastRmdLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdrLayerCapacityCommand}" IsVisible="{Binding SaveDvdrLayerCapacityVisible}">
+        <Button Command="{Binding SaveDvdrLayerCapacityCommand}"
+                IsVisible="{Binding SaveDvdrLayerCapacityVisible}">
             <TextBlock Text="{Binding SaveDvdrLayerCapacityLabel}" />
         </Button>
         <Button Command="{Binding SaveDvdrDlMiddleZoneStartCommand}"
@@ -104,10 +121,12 @@
                 IsVisible="{Binding SaveDvdrDlRemapAnchorPointVisible}">
             <TextBlock Text="{Binding SaveDvdrDlRemapAnchorPointLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdPlusAdipCommand}" IsVisible="{Binding SaveDvdPlusAdipVisible}">
+        <Button Command="{Binding SaveDvdPlusAdipCommand}"
+                IsVisible="{Binding SaveDvdPlusAdipVisible}">
             <TextBlock Text="{Binding SaveDvdPlusAdipLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdPlusDcbCommand}" IsVisible="{Binding SaveDvdPlusDcbVisible}">
+        <Button Command="{Binding SaveDvdPlusDcbCommand}"
+                IsVisible="{Binding SaveDvdPlusDcbVisible}">
             <TextBlock Text="{Binding SaveDvdPlusDcbLabel}" />
         </Button>
     </StackPanel>

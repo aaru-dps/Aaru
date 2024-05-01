@@ -62,13 +62,12 @@ public sealed partial class Symbian : IArchive
     public Guid   Id   => new("0EC84EC7-EAE6-4196-83FE-943B3FE48DBD");
 
     /// <inheritdoc />
-    public ArchiveSupportedFeature ArchiveFeatures =>
-        !Opened
-            ? ArchiveSupportedFeature.SupportsFilenames      |
-              ArchiveSupportedFeature.SupportsCompression    |
-              ArchiveSupportedFeature.SupportsSubdirectories |
-              ArchiveSupportedFeature.SupportsXAttrs
-            : _features;
+    public ArchiveSupportedFeature ArchiveFeatures => !Opened
+                                                          ? ArchiveSupportedFeature.SupportsFilenames      |
+                                                            ArchiveSupportedFeature.SupportsCompression    |
+                                                            ArchiveSupportedFeature.SupportsSubdirectories |
+                                                            ArchiveSupportedFeature.SupportsXAttrs
+                                                          : _features;
 
 #endregion
 }

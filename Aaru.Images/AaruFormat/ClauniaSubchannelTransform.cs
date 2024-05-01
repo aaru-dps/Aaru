@@ -40,8 +40,7 @@ public sealed partial class AaruFormat
 {
     static byte[] ClauniaSubchannelTransform(byte[] interleaved)
     {
-        if(interleaved == null)
-            return null;
+        if(interleaved == null) return null;
 
         var p = new int[interleaved.Length / 8];
         var q = new int[interleaved.Length / 8];
@@ -159,13 +158,16 @@ public sealed partial class AaruFormat
         stopwatch.Stop();
         TimeSpan sequentialize = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_deinterleave_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_deinterleave_subchannel,
                                    deinterleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_sequentialize_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_sequentialize_subchannel,
                                    sequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_transform_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_transform_subchannel,
                                    deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
         return sequential;
@@ -173,8 +175,7 @@ public sealed partial class AaruFormat
 
     static byte[] ClauniaSubchannelUntransform(byte[] sequential)
     {
-        if(sequential == null)
-            return null;
+        if(sequential == null) return null;
 
         var p = new int[sequential.Length / 8];
         var q = new int[sequential.Length / 8];
@@ -292,13 +293,16 @@ public sealed partial class AaruFormat
         stopwatch.Stop();
         TimeSpan interleave = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_desequentialize_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_desequentialize_subchannel,
                                    desequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_interleave_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_interleave_subchannel,
                                    interleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Took_0_ms_to_untransform_subchannel,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_untransform_subchannel,
                                    interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
         return interleaved;

@@ -89,11 +89,9 @@ public sealed class DvdInfoViewModel
         }
         */
 
-        if(decodedPfi.HasValue)
-            DvdPfiText = PFI.Prettify(decodedPfi);
+        if(decodedPfi.HasValue) DvdPfiText = PFI.Prettify(decodedPfi);
 
-        if(cmi != null)
-            DvdCmiText = CSS_CPRM.PrettifyLeadInCopyright(cmi);
+        if(cmi != null) DvdCmiText = CSS_CPRM.PrettifyLeadInCopyright(cmi);
 
         SaveDvdPfiVisible   = pfi                    != null;
         SaveDvdDmiVisible   = dmi                    != null;
@@ -140,8 +138,7 @@ public sealed class DvdInfoViewModel
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(data, 0, data.Length);

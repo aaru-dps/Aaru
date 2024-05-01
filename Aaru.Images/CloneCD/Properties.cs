@@ -61,6 +61,7 @@ public sealed partial class CloneCd
                                                            OpticalImageCapabilities.CanStoreMultipleTracks;
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

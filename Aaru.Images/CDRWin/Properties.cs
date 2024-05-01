@@ -62,6 +62,7 @@ public sealed partial class CdrWin
                                                            OpticalImageCapabilities.CanStoreIndexes;
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -131,8 +132,7 @@ public sealed partial class CdrWin
                 else
                     aaruTrack.StartSector += previousStartSector;
 
-                foreach((ushort index, int position) in cdrTrack.Indexes)
-                    aaruTrack.Indexes[index] = position;
+                foreach((ushort index, int position) in cdrTrack.Indexes) aaruTrack.Indexes[index] = position;
 
                 previousTrackFile = cdrTrack.TrackFile.DataFilter.Filename;
 

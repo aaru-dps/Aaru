@@ -60,8 +60,7 @@ public static class CPRM
 {
     public static CPRMMediaKeyBlock? DecodeCPRMMediaKeyBlock(byte[] CPRMMKBResponse)
     {
-        if(CPRMMKBResponse == null)
-            return null;
+        if(CPRMMKBResponse == null) return null;
 
         var decoded = new CPRMMediaKeyBlock
         {
@@ -78,20 +77,17 @@ public static class CPRM
 
     public static string PrettifyCPRMMediaKeyBlock(CPRMMediaKeyBlock? CPRMMKBResponse)
     {
-        if(CPRMMKBResponse == null)
-            return null;
+        if(CPRMMKBResponse == null) return null;
 
         CPRMMediaKeyBlock response = CPRMMKBResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
-        if(response.Reserved != 0)
-            sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
-    #endif
-        sb.AppendFormat(Localization.Total_number_of_CPRM_Media_Key_Blocks_available_to_transfer_0,
-                        response.TotalPacks).
-           AppendLine();
+#if DEBUG
+        if(response.Reserved != 0) sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
+#endif
+        sb.AppendFormat(Localization.Total_number_of_CPRM_Media_Key_Blocks_available_to_transfer_0, response.TotalPacks)
+          .AppendLine();
 
         sb.AppendFormat(Localization.CPRM_Media_Key_Blocks_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MKBPackData, 80));

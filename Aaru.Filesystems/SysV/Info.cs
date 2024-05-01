@@ -53,8 +53,7 @@ public sealed partial class SysVfs
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         byte sb_size_in_sectors;
 
@@ -88,23 +87,19 @@ public sealed partial class SysVfs
             ErrorNumber errno =
                 imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out byte[] sb_sector);
 
-            if(errno != ErrorNumber.NoError || sb_sector.Length < 0x400)
-                continue;
+            if(errno != ErrorNumber.NoError || sb_sector.Length < 0x400) continue;
 
             var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
-            if(magic is XENIX_MAGIC or XENIX_CIGAM or SYSV_MAGIC or SYSV_CIGAM)
-                return true;
+            if(magic is XENIX_MAGIC or XENIX_CIGAM or SYSV_MAGIC or SYSV_CIGAM) return true;
 
             magic = BitConverter.ToUInt32(sb_sector, 0x1F8); // System V magic location
 
-            if(magic is SYSV_MAGIC or SYSV_CIGAM)
-                return true;
+            if(magic is SYSV_MAGIC or SYSV_CIGAM) return true;
 
             magic = BitConverter.ToUInt32(sb_sector, 0x1F0); // XENIX 3 magic location
 
-            if(magic is XENIX_MAGIC or XENIX_CIGAM)
-                return true;
+            if(magic is XENIX_MAGIC or XENIX_CIGAM) return true;
 
             var coherent_string = new byte[6];
             Array.Copy(sb_sector, 0x1E4, coherent_string, 0, 6); // Coherent UNIX s_fname location
@@ -137,11 +132,9 @@ public sealed partial class SysVfs
                 s_ninode = (ushort)(s_ninode >> 8);
             }
 
-            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00)
-                continue;
+            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00) continue;
 
-            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD)
-                continue;
+            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
 
             if(s_fsize * 1024 == (partition.End - partition.Start) * imagePlugin.Info.SectorSize ||
                s_fsize * 512  == (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
@@ -195,8 +188,7 @@ public sealed partial class SysVfs
         {
             errno = imagePlugin.ReadSectors((ulong)i + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             var magic = BitConverter.ToUInt32(sb_sector, 0x3F8);
 
@@ -306,11 +298,9 @@ public sealed partial class SysVfs
                 s_ninode = (ushort)(s_ninode >> 8);
             }
 
-            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00)
-                continue;
+            if((s_fsize & 0xFF000000) != 0x00 || (s_nfree & 0xFF00) != 0x00 || (s_ninode & 0xFF00) != 0x00) continue;
 
-            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD)
-                continue;
+            if(s_fsize >= V7_MAXSIZE || s_nfree >= V7_NICFREE || s_ninode >= V7_NICINOD) continue;
 
             if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.Info.SectorSize &&
                s_fsize * 512  != (partition.End - partition.Start) * imagePlugin.Info.SectorSize)
@@ -322,8 +312,7 @@ public sealed partial class SysVfs
             break;
         }
 
-        if(!sys7th && !sysv && !coherent && !xenix && !xenix3)
-            return;
+        if(!sys7th && !sysv && !coherent && !xenix && !xenix3) return;
 
         metadata = new FileSystem();
 
@@ -333,8 +322,7 @@ public sealed partial class SysVfs
             var xnx_sb        = new XenixSuperBlock();
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             if(xenix3)
             {
@@ -437,58 +425,55 @@ public sealed partial class SysVfs
             {
                 if(bs != 2048)
                 {
-                    sb.
-                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                     bs, 2048).
-                        AppendLine();
+                    sb.AppendFormat(Localization
+                                       .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                    bs,
+                                    2048)
+                      .AppendLine();
                 }
             }
             else
             {
                 if(bs != imagePlugin.Info.SectorSize)
                 {
-                    sb.
-                        AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                     bs, imagePlugin.Info.SectorSize).
-                        AppendLine();
+                    sb.AppendFormat(Localization
+                                       .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                    bs,
+                                    imagePlugin.Info.SectorSize)
+                      .AppendLine();
                 }
             }
 
             sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, xnx_sb.s_fsize, xnx_sb.s_fsize * bs).AppendLine();
 
-            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, xnx_sb.s_tfree, xnx_sb.s_tfree * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, xnx_sb.s_tfree, xnx_sb.s_tfree * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, xnx_sb.s_nfree, xnx_sb.s_nfree * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, xnx_sb.s_nfree, xnx_sb.s_nfree * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, xnx_sb.s_cylblks, xnx_sb.s_cylblks * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, xnx_sb.s_gapblks, xnx_sb.s_gapblks * bs)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0,        xnx_sb.s_isize).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_volume, xnx_sb.s_tinode).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_list,   xnx_sb.s_ninode).AppendLine();
 
-            if(xnx_sb.s_flock > 0)
-                sb.AppendLine(Localization.Free_block_list_is_locked);
+            if(xnx_sb.s_flock > 0) sb.AppendLine(Localization.Free_block_list_is_locked);
 
-            if(xnx_sb.s_ilock > 0)
-                sb.AppendLine(Localization.inode_cache_is_locked);
+            if(xnx_sb.s_ilock > 0) sb.AppendLine(Localization.inode_cache_is_locked);
 
-            if(xnx_sb.s_fmod > 0)
-                sb.AppendLine(Localization.Superblock_is_being_modified);
+            if(xnx_sb.s_fmod > 0) sb.AppendLine(Localization.Superblock_is_being_modified);
 
-            if(xnx_sb.s_ronly > 0)
-                sb.AppendLine(Localization.Volume_is_mounted_read_only);
+            if(xnx_sb.s_ronly > 0) sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
-            sb.AppendFormat(Localization.Superblock_last_updated_on_0, DateHandlers.UnixToDateTime(xnx_sb.s_time)).
-               AppendLine();
+            sb.AppendFormat(Localization.Superblock_last_updated_on_0, DateHandlers.UnixToDateTime(xnx_sb.s_time))
+              .AppendLine();
 
-            if(xnx_sb.s_time != 0)
-                metadata.ModificationDate = DateHandlers.UnixToDateTime(xnx_sb.s_time);
+            if(xnx_sb.s_time != 0) metadata.ModificationDate = DateHandlers.UnixToDateTime(xnx_sb.s_time);
 
             sb.AppendFormat(Localization.Volume_name_0, xnx_sb.s_fname).AppendLine();
             metadata.VolumeName = xnx_sb.s_fname;
@@ -507,8 +492,7 @@ public sealed partial class SysVfs
         {
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             var sysv_strings = new byte[6];
 
@@ -517,8 +501,7 @@ public sealed partial class SysVfs
                 s_type = BitConverter.ToUInt32(sb_sector, 0x1FC + offset)
             };
 
-            if(bigEndian)
-                sysv_sb.s_type = Swapping.Swap(sysv_sb.s_type);
+            if(bigEndian) sysv_sb.s_type = Swapping.Swap(sysv_sb.s_type);
 
             uint bs = 512;
 
@@ -546,8 +529,7 @@ public sealed partial class SysVfs
 
             sysv_sb.s_fsize = BitConverter.ToUInt32(sb_sector, 0x002 + offset);
 
-            if(bigEndian)
-                sysv_sb.s_fsize = Swapping.Swap(sysv_sb.s_fsize);
+            if(bigEndian) sysv_sb.s_fsize = Swapping.Swap(sysv_sb.s_fsize);
 
             bool sysvr4 = sysv_sb.s_fsize * bs <= 0 || sysv_sb.s_fsize * bs != partition.Size;
 
@@ -625,43 +607,38 @@ public sealed partial class SysVfs
 
             metadata.Clusters = sysv_sb.s_fsize;
 
-            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, sysv_sb.s_fsize, sysv_sb.s_fsize * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, sysv_sb.s_tfree, sysv_sb.s_tfree * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, sysv_sb.s_tfree, sysv_sb.s_tfree * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, sysv_sb.s_nfree, sysv_sb.s_nfree * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, sysv_sb.s_nfree, sysv_sb.s_nfree * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_cylinder_1_bytes, sysv_sb.s_cylblks, sysv_sb.s_cylblks * bs)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_per_gap_1_bytes, sysv_sb.s_gapblks, sysv_sb.s_gapblks * bs)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0,        sysv_sb.s_isize).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_volume, sysv_sb.s_tinode).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_list,   sysv_sb.s_ninode).AppendLine();
 
-            if(sysv_sb.s_flock > 0)
-                sb.AppendLine(Localization.Free_block_list_is_locked);
+            if(sysv_sb.s_flock > 0) sb.AppendLine(Localization.Free_block_list_is_locked);
 
-            if(sysv_sb.s_ilock > 0)
-                sb.AppendLine(Localization.inode_cache_is_locked);
+            if(sysv_sb.s_ilock > 0) sb.AppendLine(Localization.inode_cache_is_locked);
 
-            if(sysv_sb.s_fmod > 0)
-                sb.AppendLine(Localization.Superblock_is_being_modified);
+            if(sysv_sb.s_fmod > 0) sb.AppendLine(Localization.Superblock_is_being_modified);
 
-            if(sysv_sb.s_ronly > 0)
-                sb.AppendLine(Localization.Volume_is_mounted_read_only);
+            if(sysv_sb.s_ronly > 0) sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time)).
-               AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time))
+              .AppendLine();
 
-            if(sysv_sb.s_time != 0)
-                metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
+            if(sysv_sb.s_time != 0) metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(sysv_sb.s_time);
 
             sb.AppendFormat(Localization.Volume_name_0, sysv_sb.s_fname).AppendLine();
             metadata.VolumeName = sysv_sb.s_fname;
@@ -680,8 +657,7 @@ public sealed partial class SysVfs
         {
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             var coh_sb      = new CoherentSuperBlock();
             var coh_strings = new byte[6];
@@ -712,42 +688,38 @@ public sealed partial class SysVfs
 
             if(imagePlugin.Info.SectorSize != 512)
             {
-                sb.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                 512, 2048).
-                    AppendLine();
+                sb.AppendFormat(Localization
+                                   .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                512,
+                                2048)
+                  .AppendLine();
             }
 
             sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, coh_sb.s_fsize, coh_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, coh_sb.s_tfree, coh_sb.s_tfree * 512).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, coh_sb.s_tfree, coh_sb.s_tfree * 512)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, coh_sb.s_nfree, coh_sb.s_nfree * 512).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, coh_sb.s_nfree, coh_sb.s_nfree * 512)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0,        coh_sb.s_isize).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_volume, coh_sb.s_tinode).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_list,   coh_sb.s_ninode).AppendLine();
 
-            if(coh_sb.s_flock > 0)
-                sb.AppendLine(Localization.Free_block_list_is_locked);
+            if(coh_sb.s_flock > 0) sb.AppendLine(Localization.Free_block_list_is_locked);
 
-            if(coh_sb.s_ilock > 0)
-                sb.AppendLine(Localization.inode_cache_is_locked);
+            if(coh_sb.s_ilock > 0) sb.AppendLine(Localization.inode_cache_is_locked);
 
-            if(coh_sb.s_fmod > 0)
-                sb.AppendLine(Localization.Superblock_is_being_modified);
+            if(coh_sb.s_fmod > 0) sb.AppendLine(Localization.Superblock_is_being_modified);
 
-            if(coh_sb.s_ronly > 0)
-                sb.AppendLine(Localization.Volume_is_mounted_read_only);
+            if(coh_sb.s_ronly > 0) sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time)).
-               AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time))
+              .AppendLine();
 
-            if(coh_sb.s_time != 0)
-                metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
+            if(coh_sb.s_time != 0) metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(coh_sb.s_time);
 
             sb.AppendFormat(Localization.Volume_name_0, coh_sb.s_fname).AppendLine();
             metadata.VolumeName = coh_sb.s_fname;
@@ -758,8 +730,7 @@ public sealed partial class SysVfs
         {
             errno = imagePlugin.ReadSectors((ulong)start + partition.Start, sb_size_in_sectors, out sb_sector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             var v7_sb        = new UNIX7thEditionSuperBlock();
             var sys7_strings = new byte[6];
@@ -789,42 +760,38 @@ public sealed partial class SysVfs
 
             if(imagePlugin.Info.SectorSize != 512)
             {
-                sb.
-                    AppendFormat(Localization.WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
-                                 512, 2048).
-                    AppendLine();
+                sb.AppendFormat(Localization
+                                   .WARNING_Filesystem_indicates_0_bytes_block_while_device_indicates_1_bytes_block,
+                                512,
+                                2048)
+                  .AppendLine();
             }
 
             sb.AppendFormat(Localization._0_zones_in_volume_1_bytes, v7_sb.s_fsize, v7_sb.s_fsize * 512).AppendLine();
 
-            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, v7_sb.s_tfree, v7_sb.s_tfree * 512).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_zones_on_volume_1_bytes, v7_sb.s_tfree, v7_sb.s_tfree * 512)
+              .AppendLine();
 
-            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, v7_sb.s_nfree, v7_sb.s_nfree * 512).
-               AppendLine();
+            sb.AppendFormat(Localization._0_free_blocks_on_list_1_bytes, v7_sb.s_nfree, v7_sb.s_nfree * 512)
+              .AppendLine();
 
             sb.AppendFormat(Localization.First_data_zone_0,        v7_sb.s_isize).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_volume, v7_sb.s_tinode).AppendLine();
             sb.AppendFormat(Localization._0_free_inodes_on_list,   v7_sb.s_ninode).AppendLine();
 
-            if(v7_sb.s_flock > 0)
-                sb.AppendLine(Localization.Free_block_list_is_locked);
+            if(v7_sb.s_flock > 0) sb.AppendLine(Localization.Free_block_list_is_locked);
 
-            if(v7_sb.s_ilock > 0)
-                sb.AppendLine(Localization.inode_cache_is_locked);
+            if(v7_sb.s_ilock > 0) sb.AppendLine(Localization.inode_cache_is_locked);
 
-            if(v7_sb.s_fmod > 0)
-                sb.AppendLine(Localization.Superblock_is_being_modified);
+            if(v7_sb.s_fmod > 0) sb.AppendLine(Localization.Superblock_is_being_modified);
 
-            if(v7_sb.s_ronly > 0)
-                sb.AppendLine(Localization.Volume_is_mounted_read_only);
+            if(v7_sb.s_ronly > 0) sb.AppendLine(Localization.Volume_is_mounted_read_only);
 
             sb.AppendFormat(Localization.Superblock_last_updated_on_0,
-                            DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time)).
-               AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time))
+              .AppendLine();
 
-            if(v7_sb.s_time != 0)
-                metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
+            if(v7_sb.s_time != 0) metadata.ModificationDate = DateHandlers.UnixUnsignedToDateTime(v7_sb.s_time);
 
             sb.AppendFormat(Localization.Volume_name_0, v7_sb.s_fname).AppendLine();
             metadata.VolumeName = v7_sb.s_fname;

@@ -203,8 +203,15 @@ static class SyQuest
     start:
         System.Console.Clear();
 
-        bool sense = dev.SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma, readlong,
-                                      dev.Timeout, out double duration);
+        bool sense = dev.SyQuestRead6(out byte[] buffer,
+                                      out byte[] senseBuffer,
+                                      lba,
+                                      blockSize,
+                                      count,
+                                      noDma,
+                                      readlong,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -256,8 +263,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(readlong ? Localization.READ_LONG_6_response : Localization.READ_6_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -270,8 +276,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(readlong ? Localization.READ_LONG_6_sense : Localization.READ_6_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -409,8 +414,15 @@ static class SyQuest
     start:
         System.Console.Clear();
 
-        bool sense = dev.SyQuestRead10(out byte[] buffer, out byte[] senseBuffer, lba, blockSize, count, noDma,
-                                       readlong, dev.Timeout, out double duration);
+        bool sense = dev.SyQuestRead10(out byte[] buffer,
+                                       out byte[] senseBuffer,
+                                       lba,
+                                       blockSize,
+                                       count,
+                                       noDma,
+                                       readlong,
+                                       dev.Timeout,
+                                       out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -462,8 +474,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(readlong ? Localization.READ_LONG_10_response : Localization.READ_10_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -476,8 +487,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(readlong ? Localization.READ_LONG_10_sense : Localization.READ_10_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -566,8 +576,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_RESET_USAGE_COUNTER_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -580,8 +589,7 @@ static class SyQuest
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_RESET_USAGE_COUNTER_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

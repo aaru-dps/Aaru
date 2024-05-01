@@ -49,8 +49,7 @@ public sealed partial class Blu
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 0x200)
-            return false;
+        if(stream.Length < 0x200) return false;
 
         var header = new byte[0x17];
         stream.EnsureRead(header, 0, 0x17);
@@ -67,8 +66,7 @@ public sealed partial class Blu
 
         for(var i = 0; i < 0xD; i++)
         {
-            if(tmpHdr.DeviceName[i] < 0x20)
-                return false;
+            if(tmpHdr.DeviceName[i] < 0x20) return false;
         }
 
         return (tmpHdr.BytesPerBlock & 0xFE00) == 0x200;

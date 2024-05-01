@@ -57,24 +57,32 @@ sealed class LsCommand : Command
         AddAlias("ls");
 
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-        {
-            "--long-format", "-l"
-        }, () => true, UI.Use_long_format));
+                             {
+                                 "--long-format", "-l"
+                             },
+                             () => true,
+                             UI.Use_long_format));
 
         Add(new Option<string>(new[]
-        {
-            "--options", "-O"
-        }, () => null, UI.Comma_separated_name_value_pairs_of_filesystem_options));
+                               {
+                                   "--options", "-O"
+                               },
+                               () => null,
+                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
         Add(new Option<string>(new[]
-        {
-            "--namespace", "-n"
-        }, () => null, UI.Namespace_to_use_for_filenames));
+                               {
+                                   "--namespace", "-n"
+                               },
+                               () => null,
+                               UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -158,8 +166,7 @@ sealed class LsCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -222,12 +229,14 @@ sealed class LsCommand : Command
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_without_headers_is_0_bytes,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_without_headers_is_0_bytes,
                                            imageFormat.Info.ImageSize);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_identifies_media_type_as_0,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);
@@ -298,8 +307,8 @@ sealed class LsCommand : Command
                         {
                             if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
                                 continue;
-                            if(fs is null)
-                                continue;
+
+                            if(fs is null) continue;
 
                             AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
 
@@ -324,8 +333,7 @@ sealed class LsCommand : Command
                     {
                         plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                        if(fs is null)
-                            continue;
+                        if(fs is null) continue;
 
                         AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
@@ -363,8 +371,7 @@ sealed class LsCommand : Command
         ErrorNumber error = ErrorNumber.InvalidArgument;
         IDirNode    node  = null;
 
-        if(path.StartsWith('/'))
-            path = path[1..];
+        if(path.StartsWith('/')) path = path[1..];
 
         AaruConsole.WriteLine(string.IsNullOrEmpty(path)
                                   ? UI.Root_directory
@@ -400,7 +407,7 @@ sealed class LsCommand : Command
         });
 
         foreach(KeyValuePair<string, FileEntryInfo> entry in
-            stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
+                stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
         {
             if(longFormat)
             {
@@ -408,19 +415,23 @@ sealed class LsCommand : Command
                 {
                     if(entry.Value.Attributes.HasFlag(FileAttributes.Directory))
                     {
-                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}", entry.Value.CreationTimeUtc,
-                                              UI.Directory_abbreviation, Markup.Escape(entry.Key));
+                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}",
+                                              entry.Value.CreationTimeUtc,
+                                              UI.Directory_abbreviation,
+                                              Markup.Escape(entry.Key));
                     }
                     else
                     {
-                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:N0}  {3}", entry.Value.CreationTimeUtc,
-                                              entry.Value.Inode, entry.Value.Length, Markup.Escape(entry.Key));
+                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:N0}  {3}",
+                                              entry.Value.CreationTimeUtc,
+                                              entry.Value.Inode,
+                                              entry.Value.Length,
+                                              Markup.Escape(entry.Key));
                     }
 
                     error = fs.ListXAttr(path + "/" + entry.Key, out List<string> xattrs);
 
-                    if(error != ErrorNumber.NoError)
-                        continue;
+                    if(error != ErrorNumber.NoError) continue;
 
                     foreach(string xattr in xattrs)
                     {
@@ -436,16 +447,17 @@ sealed class LsCommand : Command
             }
             else
             {
-                AaruConsole.
-                    WriteLine(entry.Value?.Attributes.HasFlag(FileAttributes.Directory) == true ? "{0}/" : "{0}",
-                              entry.Key);
+                AaruConsole.WriteLine(entry.Value?.Attributes.HasFlag(FileAttributes.Directory) == true
+                                          ? "{0}/"
+                                          : "{0}",
+                                      entry.Key);
             }
         }
 
         AaruConsole.WriteLine();
 
         foreach(KeyValuePair<string, FileEntryInfo> subdirectory in
-            stats.Where(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == true))
+                stats.Where(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == true))
             ListFilesInDir(path + "/" + subdirectory.Key, fs, longFormat);
     }
 }

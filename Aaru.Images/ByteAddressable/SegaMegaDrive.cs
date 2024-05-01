@@ -71,14 +71,19 @@ public class SegaMegaDrive : IByteAddressableImage
     public List<DumpHardware> DumpHardware => null;
 
     /// <inheritdoc />
-    public string Format => !_opened     ? "Mega Drive cartridge dump" :
-                            _smd         ? "Super Magic Drive" :
-                            _interleaved ? "Multi Game Doctor 2" : "Magicom";
+    public string Format => !_opened
+                                ? "Mega Drive cartridge dump"
+                                : _smd
+                                    ? "Super Magic Drive"
+                                    : _interleaved
+                                        ? "Multi Game Doctor 2"
+                                        : "Magicom";
 
     /// <inheritdoc />
     public Guid Id => new("7B1CE2E7-3BC4-4283-BFA4-F292D646DF15");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
@@ -88,14 +93,12 @@ public class SegaMegaDrive : IByteAddressableImage
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
         stream.Position = 0;
 
-        if(stream.Length % 512 != 0)
-            return false;
+        if(stream.Length % 512 != 0) return false;
 
         var buffer = new byte[4];
 
@@ -103,8 +106,7 @@ public class SegaMegaDrive : IByteAddressableImage
         stream.EnsureRead(buffer, 0, 4);
 
         // SEGA
-        if(buffer[0] == 0x53 && buffer[1] == 0x45 && buffer[2] == 0x47 && buffer[3] == 0x41)
-            return true;
+        if(buffer[0] == 0x53 && buffer[1] == 0x45 && buffer[2] == 0x47 && buffer[3] == 0x41) return true;
 
         // EA
         if(buffer[0] == 0x45 && buffer[1] == 0x41)
@@ -113,16 +115,14 @@ public class SegaMegaDrive : IByteAddressableImage
             stream.EnsureRead(buffer, 0, 2);
 
             // SG
-            if(buffer[0] == 0x53 && buffer[1] == 0x47)
-                return true;
+            if(buffer[0] == 0x53 && buffer[1] == 0x47) return true;
         }
 
         stream.Position = 512 + 128;
         stream.EnsureRead(buffer, 0, 4);
 
         // EA
-        if(buffer[0] != 0x45 || buffer[1] != 0x41)
-            return false;
+        if(buffer[0] != 0x45 || buffer[1] != 0x41) return false;
 
         stream.Position = 8832;
         stream.EnsureRead(buffer, 0, 2);
@@ -134,14 +134,12 @@ public class SegaMegaDrive : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
         stream.Position = 0;
 
-        if(stream.Length % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 512 != 0) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[4];
 
@@ -182,8 +180,7 @@ public class SegaMegaDrive : IByteAddressableImage
             }
         }
 
-        if(!found)
-            return ErrorNumber.InvalidArgument;
+        if(!found) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[_smd ? stream.Length - 512 : stream.Length];
         stream.Position = _smd ? 512 : 0;
@@ -241,38 +238,40 @@ public class SegaMegaDrive : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat(Localization.System_type_0, StringHandlers.SpacePaddedToString(header.SystemType, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.System_type_0, StringHandlers.SpacePaddedToString(header.SystemType, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Copyright_string_0,
-                        StringHandlers.SpacePaddedToString(header.Copyright, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Copyright_string_0, StringHandlers.SpacePaddedToString(header.Copyright, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Domestic_title_0,
-                        StringHandlers.SpacePaddedToString(header.DomesticTitle, encoding)).
-           AppendLine();
+                        StringHandlers.SpacePaddedToString(header.DomesticTitle, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Overseas_title_0,
-                        StringHandlers.SpacePaddedToString(header.OverseasTitle, encoding)).
-           AppendLine();
+                        StringHandlers.SpacePaddedToString(header.OverseasTitle, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Serial_number_0,
-                        StringHandlers.SpacePaddedToString(header.SerialNumber, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Serial_number_0, StringHandlers.SpacePaddedToString(header.SerialNumber, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
 
         sb.AppendFormat(Localization.Devices_supported_0,
-                        StringHandlers.SpacePaddedToString(header.DeviceSupport, encoding)).
-           AppendLine();
+                        StringHandlers.SpacePaddedToString(header.DeviceSupport, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.ROM_starts_at_0_and_ends_at_1_2_bytes, header.RomStart, header.RomEnd,
-                        header.RomEnd - header.RomStart + 1).
-           AppendLine();
+        sb.AppendFormat(Localization.ROM_starts_at_0_and_ends_at_1_2_bytes,
+                        header.RomStart,
+                        header.RomEnd,
+                        header.RomEnd - header.RomStart + 1)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.RAM_starts_at_0_and_ends_at_1_2_bytes, header.RamStart, header.RamEnd,
-                        header.RamEnd - header.RamStart + 1).
-           AppendLine();
+        sb.AppendFormat(Localization.RAM_starts_at_0_and_ends_at_1_2_bytes,
+                        header.RamStart,
+                        header.RamEnd,
+                        header.RamEnd - header.RamStart + 1)
+          .AppendLine();
 
         if(header.ExtraRamPresent[0] == 0x52 && header.ExtraRamPresent[1] == 0x41)
         {
@@ -297,8 +296,8 @@ public class SegaMegaDrive : IByteAddressableImage
 
                     break;
                 case 0xF0:
-                    sb.AppendLine(Localization.
-                                      Extra_RAM_uses_8_bit_access_even_addresses_and_persists_when_powered_off);
+                    sb.AppendLine(Localization
+                                     .Extra_RAM_uses_8_bit_access_even_addresses_and_persists_when_powered_off);
 
                     break;
                 case 0xF8:
@@ -311,12 +310,13 @@ public class SegaMegaDrive : IByteAddressableImage
                     break;
             }
 
-            sb.AppendFormat(Localization.Extra_RAM_starts_at_0_and_ends_at_1_2_bytes, header.ExtraRamStart,
+            sb.AppendFormat(Localization.Extra_RAM_starts_at_0_and_ends_at_1_2_bytes,
+                            header.ExtraRamStart,
                             header.ExtraRamEnd,
                             (header.ExtraRamType & 0x10) == 0x10
                                 ? (header.ExtraRamEnd - header.ExtraRamStart + 2) / 2
-                                : header.ExtraRamEnd - header.ExtraRamStart + 1).
-               AppendLine();
+                                : header.ExtraRamEnd - header.ExtraRamStart + 1)
+              .AppendLine();
         }
         else
             sb.AppendLine(Localization.Extra_RAM_not_present);
@@ -326,8 +326,8 @@ public class SegaMegaDrive : IByteAddressableImage
         if(!string.IsNullOrWhiteSpace(modemSupport))
             sb.AppendFormat(Localization.Modem_support_0, modemSupport).AppendLine();
 
-        sb.AppendFormat(Localization.Region_support_0, StringHandlers.SpacePaddedToString(header.Region, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Region_support_0, StringHandlers.SpacePaddedToString(header.Region, encoding))
+          .AppendLine();
 
         _imageInfo.ImageSize            = (ulong)stream.Length;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
@@ -560,8 +560,7 @@ public class SegaMegaDrive : IByteAddressableImage
             Length = header.RomEnd - header.RomStart + 1
         };
 
-        if(!extraRam)
-            return ErrorNumber.NoError;
+        if(!extraRam) return ErrorNumber.NoError;
 
         mappings.Devices[1].PhysicalAddress = new LinearMemoryAddressing
         {
@@ -665,8 +664,7 @@ public class SegaMegaDrive : IByteAddressableImage
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -702,16 +700,13 @@ public class SegaMegaDrive : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -789,8 +784,7 @@ public class SegaMegaDrive : IByteAddressableImage
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -834,16 +828,13 @@ public class SegaMegaDrive : IByteAddressableImage
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 

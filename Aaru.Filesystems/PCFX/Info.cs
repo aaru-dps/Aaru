@@ -55,8 +55,7 @@ public sealed partial class PCFX
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var encoding = Encoding.GetEncoding("shift_jis");
 
@@ -74,8 +73,7 @@ public sealed partial class PCFX
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(sector);
 
@@ -106,8 +104,7 @@ public sealed partial class PCFX
         sb.AppendFormat(Localization.Country_code_0, header.country).AppendLine();
         sb.AppendFormat(Localization.Version_0_1, header.minorVersion, header.majorVersion).AppendLine();
 
-        if(date != null)
-            sb.AppendFormat(Localization.Dated_0, dateTime).AppendLine();
+        if(date != null) sb.AppendFormat(Localization.Dated_0, dateTime).AppendLine();
 
         sb.AppendFormat(Localization.Load_0_sectors_from_sector_1, header.loadCount, header.loadOffset).AppendLine();
 

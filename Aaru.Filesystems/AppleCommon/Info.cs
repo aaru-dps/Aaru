@@ -37,13 +37,11 @@ static partial class AppleCommon
 {
     internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
     {
-        if(bbSector is null || bbSector.Length < 0x100)
-            return null;
+        if(bbSector is null || bbSector.Length < 0x100) return null;
 
         BootBlock bb = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bbSector);
 
-        if(bb.bbID != BB_MAGIC)
-            return null;
+        if(bb.bbID != BB_MAGIC) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.Boot_Block);
@@ -58,15 +56,15 @@ static partial class AppleCommon
 
                 if((bb.bbVersion & 0x2000) > 0)
                 {
-                    sb.
-                        AppendFormat(Localization.System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
-                                     bb.bbSysHeapExtra, bb.bbSysHeapFract).
-                        AppendLine();
+                    sb.AppendFormat(Localization
+                                       .System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
+                                    bb.bbSysHeapExtra,
+                                    bb.bbSysHeapFract)
+                      .AppendLine();
                 }
             }
         }
-        else if((bb.bbVersion & 0xFF) == 0x0D)
-            sb.AppendLine(Localization.Boot_block_should_be_executed);
+        else if((bb.bbVersion & 0xFF) == 0x0D) sb.AppendLine(Localization.Boot_block_should_be_executed);
 
         switch(bb.bbPageFlags)
         {
@@ -80,28 +78,28 @@ static partial class AppleCommon
                 break;
         }
 
-        sb.AppendFormat(Localization.System_filename_0, StringHandlers.PascalToString(bb.bbSysName, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.System_filename_0, StringHandlers.PascalToString(bb.bbSysName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Finder_filename_0, StringHandlers.PascalToString(bb.bbShellName, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Finder_filename_0, StringHandlers.PascalToString(bb.bbShellName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Debugger_filename_0, StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Debugger_filename_0, StringHandlers.PascalToString(bb.bbDbg1Name, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Disassembler_filename_0, StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Disassembler_filename_0, StringHandlers.PascalToString(bb.bbDbg2Name, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Startup_screen_filename_0,
-                        StringHandlers.PascalToString(bb.bbScreenName, encoding)).
-           AppendLine();
+                        StringHandlers.PascalToString(bb.bbScreenName, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.First_program_to_execute_at_boot_0,
-                        StringHandlers.PascalToString(bb.bbHelloName, encoding)).
-           AppendLine();
+                        StringHandlers.PascalToString(bb.bbHelloName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Clipboard_filename_0, StringHandlers.PascalToString(bb.bbScrapName, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Clipboard_filename_0, StringHandlers.PascalToString(bb.bbScrapName, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Maximum_opened_files_0,                       bb.bbCntFCBs * 4).AppendLine();
         sb.AppendFormat(Localization.Event_queue_size_0,                           bb.bbCntEvts).AppendLine();

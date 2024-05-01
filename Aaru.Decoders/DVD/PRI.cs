@@ -58,11 +58,9 @@ public static class PRI
 {
     public static PreRecordedInformation? Decode(byte[] response)
     {
-        if(response == null)
-            return null;
+        if(response == null) return null;
 
-        if(response.Length < 67)
-            return null;
+        if(response.Length < 67) return null;
 
         var pri = new PreRecordedInformation
         {
@@ -126,8 +124,7 @@ public static class PRI
 
     public static string Prettify(PreRecordedInformation? pri)
     {
-        if(pri == null)
-            return null;
+        if(pri == null) return null;
 
         PreRecordedInformation decoded = pri.Value;
         var                    sb      = new StringBuilder();
@@ -138,8 +135,8 @@ public static class PRI
 
             if((decoded.DiscApplicationCode & 0x3F) > 0)
             {
-                sb.AppendFormat(Localization.Invalid_purpose_field_with_value_0, decoded.DiscApplicationCode & 0x3F).
-                   AppendLine();
+                sb.AppendFormat(Localization.Invalid_purpose_field_with_value_0, decoded.DiscApplicationCode & 0x3F)
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.Consumer_purpose_disc_for_use_in_consumer_purpose_drives);
@@ -151,8 +148,8 @@ public static class PRI
             if((decoded.DiscApplicationCode & 0x3F) > 0)
             {
                 sb.AppendFormat(Localization.Disc_for_use_in_special_drives_according_with_purpose_value_0,
-                                decoded.DiscApplicationCode & 0x3F).
-                   AppendLine();
+                                decoded.DiscApplicationCode & 0x3F)
+                  .AppendLine();
             }
             else
                 sb.AppendLine(Localization.General_purpose_disc_for_use_in_general_purpose_drives);
@@ -186,11 +183,10 @@ public static class PRI
                           ? Localization.Wavelength_is_650nm
                           : Localization.Unknown_wavelength);
 
-        sb.AppendFormat(Localization.Last_writable_ECC_block_address_0_X6_, decoded.LastAddressOfDataRecordableArea).
-           AppendLine();
+        sb.AppendFormat(Localization.Last_writable_ECC_block_address_0_X6_, decoded.LastAddressOfDataRecordableArea)
+          .AppendLine();
 
-        if(decoded.PartVersion > 0)
-            sb.AppendFormat(Localization.Part_version_0, decoded.PartVersion).AppendLine();
+        if(decoded.PartVersion > 0) sb.AppendFormat(Localization.Part_version_0, decoded.PartVersion).AppendLine();
 
         bool rw = (decoded.DiscPhysicalCode & 0x02) > 0;
 
@@ -302,8 +298,8 @@ public static class PRI
             }
         }
 
-        sb.AppendFormat(Localization.Disc_manufacturer_is_0, ManufacturerFromPrePit(decoded.ManufacturerId)).
-           AppendLine();
+        sb.AppendFormat(Localization.Disc_manufacturer_is_0, ManufacturerFromPrePit(decoded.ManufacturerId))
+          .AppendLine();
 
         return sb.ToString();
     }
@@ -387,9 +383,8 @@ public static class PRI
             manufacturer = "Megan Media Holdings Berhad";
         else if(manufacturerId.StartsWith("DKM",  StringComparison.Ordinal) ||
                 manufacturerId.StartsWith("EDMA", StringComparison.Ordinal))
-            manufacturer = "E-TOP Mediatek Inc.";
-        else if(manufacturerId.StartsWith("BeAll", StringComparison.Ordinal))
-            manufacturer = "BeALL Developers, Inc.";
+            manufacturer                                                                   = "E-TOP Mediatek Inc.";
+        else if(manufacturerId.StartsWith("BeAll", StringComparison.Ordinal)) manufacturer = "BeALL Developers, Inc.";
 
         return manufacturer != "" ? $"{manufacturer} (\"{manufacturerId}\")" : $"\"{manufacturerId}\"";
     }

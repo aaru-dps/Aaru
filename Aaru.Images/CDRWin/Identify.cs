@@ -61,13 +61,11 @@ public sealed partial class CdrWin
 
             for(var i = 0; i < 512; i++)
             {
-                if(i >= imageFilter.GetDataForkStream().Length)
-                    break;
+                if(i >= imageFilter.GetDataForkStream().Length) break;
 
                 if(testArray[i] == 0)
                 {
-                    if(twoConsecutiveNulls)
-                        return false;
+                    if(twoConsecutiveNulls) return false;
 
                     twoConsecutiveNulls = true;
                 }

@@ -294,8 +294,7 @@ public sealed class Crc64Context : IChecksum
         _finalSeed = CRC64_ECMA_SEED;
         _useEcma   = true;
 
-        if(!Native.IsSupported)
-            return;
+        if(!Native.IsSupported) return;
 
         _nativeContext = crc64_init();
         _useNative     = _nativeContext != IntPtr.Zero;
@@ -346,8 +345,7 @@ public sealed class Crc64Context : IChecksum
     {
         ulong crc = _hashInt ^ _finalSeed;
 
-        if(!_useNative || !_useEcma)
-            return BigEndianBitConverter.GetBytes(crc);
+        if(!_useNative || !_useEcma) return BigEndianBitConverter.GetBytes(crc);
 
         crc64_final(_nativeContext, ref crc);
         crc64_free(_nativeContext);
@@ -393,8 +391,7 @@ public sealed class Crc64Context : IChecksum
     {
         var table = new ulong[8][];
 
-        for(var i = 0; i < 8; i++)
-            table[i] = new ulong[256];
+        for(var i = 0; i < 8; i++) table[i] = new ulong[256];
 
         for(var i = 0; i < 256; i++)
         {
@@ -412,8 +409,10 @@ public sealed class Crc64Context : IChecksum
         }
 
         for(var slice = 1; slice < 4; slice++)
-        for(var i = 0; i < 256; i++)
-            table[slice][i] = table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF];
+        {
+            for(var i = 0; i < 256; i++)
+                table[slice][i] = table[slice - 1][i] >> 8 ^ table[0][table[slice - 1][i] & 0xFF];
+        }
 
         return table;
     }
@@ -443,8 +442,7 @@ public sealed class Crc64Context : IChecksum
                 len     -= blocks * 32;
             }
 
-            if(len == 0)
-                return;
+            if(len == 0) return;
         }
 
         // Unroll according to Intel slicing by uint8_t
@@ -471,14 +469,14 @@ public sealed class Crc64Context : IChecksum
             }
         }
 
-        while(len-- != 0)
-            crc = table[0][data[dataOff++] ^ crc & 0xFF] ^ crc >> 8;
+        while(len-- != 0) crc = table[0][data[dataOff++] ^ crc & 0xFF] ^ crc >> 8;
 
         previousCrc = crc;
     }
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {
@@ -538,8 +536,7 @@ public sealed class Crc64Context : IChecksum
 
         var crc64Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc64Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -589,8 +586,7 @@ public sealed class Crc64Context : IChecksum
 
         var crc64Output = new StringBuilder();
 
-        foreach(byte h in hash)
-            crc64Output.Append(h.ToString("x2"));
+        foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
 
         return crc64Output.ToString();
     }

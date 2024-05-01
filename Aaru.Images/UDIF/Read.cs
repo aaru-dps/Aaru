@@ -59,8 +59,7 @@ public sealed partial class Udif
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         stream.Seek(-Marshal.SizeOf<Footer>(), SeekOrigin.End);
         var footerB = new byte[Marshal.SizeOf<Footer>()];
@@ -109,16 +108,20 @@ public sealed partial class Udif
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.imageVariant = {0}",       _footer.imageVariant);
         AaruConsole.DebugWriteLine(MODULE_NAME, "footer.sectorCount = {0}",        _footer.sectorCount);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved1 is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "footer.reserved1 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved1));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved2 is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "footer.reserved2 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved2));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved3 is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "footer.reserved3 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved3));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "footer.reserved4 is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "footer.reserved4 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved4));
 
         // Block chunks and headers
@@ -163,8 +166,7 @@ public sealed partial class Udif
 
             Resource versRez = rsrc.GetResource(0x76657273);
 
-            if(versRez != null)
-                vers = versRez.GetResource(versRez.GetIds()[0]);
+            if(versRez != null) vers = versRez.GetResource(versRez.GetIds()[0]);
         }
         else if(_footer.plistLen != 0)
         {
@@ -224,8 +226,7 @@ public sealed partial class Udif
             {
                 NSObject[] versArray = ((NSArray)versObj).GetArray();
 
-                if(versArray.Length >= 1)
-                    vers = ((NSData)versArray[0]).Bytes;
+                if(versArray.Length >= 1) vers = ((NSData)versArray[0]).Bytes;
             }
         }
         else
@@ -273,8 +274,7 @@ public sealed partial class Udif
 
             Resource versRez = rsrc.GetResource(0x76657273);
 
-            if(versRez != null)
-                vers = versRez.GetResource(versRez.GetIds()[0]);
+            if(versRez != null) vers = versRez.GetResource(versRez.GetIds()[0]);
         }
 
         if(vers != null)
@@ -287,8 +287,7 @@ public sealed partial class Udif
             var major = $"{version.MajorVersion}";
             var minor = $".{version.MinorVersion / 10}";
 
-            if(version.MinorVersion % 10 > 0)
-                release = $".{version.MinorVersion % 10}";
+            if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
             string dev = version.DevStage switch
                          {
@@ -298,11 +297,9 @@ public sealed partial class Udif
                              _                                 => null
                          };
 
-            if(dev == null && version.PreReleaseVersion > 0)
-                dev = "f";
+            if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-            if(dev != null)
-                pre = $"{version.PreReleaseVersion}";
+            if(dev != null) pre = $"{version.PreReleaseVersion}";
 
             _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
             _imageInfo.Application        = version.VersionString;
@@ -318,7 +315,9 @@ public sealed partial class Udif
         else
             _imageInfo.Application = "DiskCopy";
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _imageInfo.Sectors = 0;
@@ -356,17 +355,20 @@ public sealed partial class Udif
             AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.checksum = 0x{0:X8}",   bHdr.checksum);
             AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunks = {0}",          bHdr.chunks);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.reservedChk is empty? = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "bHdr.reservedChk is empty? = {0}",
                                        ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
-            if(bHdr.buffers > _buffersize)
-                _buffersize = bHdr.buffers * SECTOR_SIZE;
+            if(bHdr.buffers > _buffersize) _buffersize = bHdr.buffers * SECTOR_SIZE;
 
             for(var i = 0; i < bHdr.chunks; i++)
             {
                 var bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
 
-                Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + Marshal.SizeOf<BlockChunk>() * i, bChnkB, 0,
+                Array.Copy(blkxBytes,
+                           Marshal.SizeOf<BlockHeader>() + Marshal.SizeOf<BlockChunk>() * i,
+                           bChnkB,
+                           0,
                            Marshal.SizeOf<BlockChunk>());
 
                 BlockChunk bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
@@ -378,8 +380,7 @@ public sealed partial class Udif
                 AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
-                if(bChnk.type == CHUNK_TYPE_END)
-                    break;
+                if(bChnk.type == CHUNK_TYPE_END) break;
 
                 _imageInfo.Sectors += bChnk.sectors;
 
@@ -415,8 +416,7 @@ public sealed partial class Udif
                     return ErrorNumber.InvalidArgument;
                 }
 
-                if(bChnk.sectors > 0)
-                    _chunks.Add(bChnk.sector, bChnk);
+                if(bChnk.sectors > 0) _chunks.Add(bChnk.sector, bChnk);
             }
         }
 
@@ -446,11 +446,9 @@ public sealed partial class Udif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         var   readChunk        = new BlockChunk();
         var   chunkFound       = false;
@@ -465,11 +463,9 @@ public sealed partial class Udif
 
         long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 
-        if(relOff < 0)
-            return ErrorNumber.InvalidArgument;
+        if(relOff < 0) return ErrorNumber.InvalidArgument;
 
-        if(!chunkFound)
-            return ErrorNumber.SectorNotFound;
+        if(!chunkFound) return ErrorNumber.SectorNotFound;
 
         if((readChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
         {
@@ -501,10 +497,10 @@ public sealed partial class Udif
                         return ErrorNumber.NotImplemented;
                 }
 
-            #if DEBUG
+#if DEBUG
                 try
                 {
-                #endif
+#endif
                     byte[] tmpBuffer;
                     var    realSize = 0;
 
@@ -557,7 +553,7 @@ public sealed partial class Udif
                     _chunkCache.Add(chunkStartSector, data);
                     _currentChunkCacheSize += (uint)realSize;
 
-                #if DEBUG
+#if DEBUG
                 }
                 catch(ZlibException)
                 {
@@ -565,19 +561,17 @@ public sealed partial class Udif
 
                     throw;
                 }
-            #endif
+#endif
             }
 
             buffer = new byte[SECTOR_SIZE];
 
             // Shall not happen
-            if(data is null)
-                return ErrorNumber.InvalidArgument;
+            if(data is null) return ErrorNumber.InvalidArgument;
 
             Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
 
-            if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, buffer);
 
@@ -590,8 +584,7 @@ public sealed partial class Udif
             case CHUNK_TYPE_ZERO:
                 buffer = new byte[SECTOR_SIZE];
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -601,8 +594,7 @@ public sealed partial class Udif
                 buffer = new byte[SECTOR_SIZE];
                 _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -617,11 +609,9 @@ public sealed partial class Udif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -629,8 +619,7 @@ public sealed partial class Udif
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

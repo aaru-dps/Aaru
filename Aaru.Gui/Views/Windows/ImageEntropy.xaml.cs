@@ -42,9 +42,9 @@ public sealed class ImageEntropy : Window
     public ImageEntropy()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

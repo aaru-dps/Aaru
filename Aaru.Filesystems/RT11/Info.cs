@@ -52,17 +52,14 @@ public sealed partial class RT11
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(1 + partition.Start >= partition.End)
-            return false;
+        if(1 + partition.Start >= partition.End) return false;
 
         var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(hbSector.Length < 512)
-            return false;
+        if(hbSector.Length < 512) return false;
 
         Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
         string magic = Encoding.ASCII.GetString(magicB);
@@ -82,8 +79,7 @@ public sealed partial class RT11
 
         ErrorNumber errno = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
@@ -98,15 +94,14 @@ public sealed partial class RT11
          */
         ushort check = 0;
 
-        for(var i = 0; i < 512; i += 2)
-            check += BitConverter.ToUInt16(hbSector, i);
+        for(var i = 0; i < 512; i += 2) check += BitConverter.ToUInt16(hbSector, i);
 
         sb.AppendFormat(Localization.Volume_format_is_0,
-                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII)).
-           AppendLine();
+                        StringHandlers.SpacePaddedToString(homeblock.format, Encoding.ASCII))
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512)
+          .AppendLine();
 
         sb.AppendFormat(Localization.First_directory_segment_starts_at_block_0, homeblock.rootBlock).AppendLine();
         sb.AppendFormat(Localization.Volume_owner_is_0, encoding.GetString(homeblock.ownername).TrimEnd()).AppendLine();

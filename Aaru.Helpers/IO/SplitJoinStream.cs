@@ -44,8 +44,7 @@ public class SplitJoinStream : Stream
 
         set
         {
-            if(value >= _streamLength)
-                throw new IOException(Localization.Cannot_set_position_past_stream_end);
+            if(value >= _streamLength) throw new IOException(Localization.Cannot_set_position_past_stream_end);
 
             _position = value;
         }
@@ -56,11 +55,9 @@ public class SplitJoinStream : Stream
     /// <exception cref="ArgumentException">The specified stream is non-readable or non-seekable</exception>
     public void Add(Stream stream)
     {
-        if(!stream.CanSeek)
-            throw new ArgumentException(Localization.Non_seekable_streams_are_not_supported);
+        if(!stream.CanSeek) throw new ArgumentException(Localization.Non_seekable_streams_are_not_supported);
 
-        if(!stream.CanRead)
-            throw new ArgumentException(Localization.Non_readable_streams_are_not_supported);
+        if(!stream.CanRead) throw new ArgumentException(Localization.Non_readable_streams_are_not_supported);
 
         _baseStreams[_streamLength] =  stream;
         _streamLength               += stream.Length;
@@ -232,8 +229,7 @@ public class SplitJoinStream : Stream
         {
             string filePath = Path.Combine(basePath, string.Format(counterFormat, counterStart));
 
-            if(!File.Exists(filePath))
-                break;
+            if(!File.Exists(filePath)) break;
 
             Add(filePath, FileMode.Open, access);
 
@@ -266,8 +262,7 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override void Close()
     {
-        foreach(Stream stream in _baseStreams.Values)
-            stream.Close();
+        foreach(Stream stream in _baseStreams.Values) stream.Close();
 
         _baseStreams.Clear();
         _position = 0;
@@ -284,13 +279,11 @@ public class SplitJoinStream : Stream
     /// <inheritdoc />
     public override int ReadByte()
     {
-        if(_position >= _streamLength)
-            return -1;
+        if(_position >= _streamLength) return -1;
 
         KeyValuePair<long, Stream> baseStream = _baseStreams.FirstOrDefault(s => s.Key >= _position);
 
-        if(baseStream.Value == null)
-            return -1;
+        if(baseStream.Value == null) return -1;
 
         baseStream.Value.Position = _position - baseStream.Key;
         _position++;
@@ -313,8 +306,7 @@ public class SplitJoinStream : Stream
         {
             KeyValuePair<long, Stream> baseStream = _baseStreams.LastOrDefault(s => s.Key <= _position);
 
-            if(baseStream.Value == null)
-                break;
+            if(baseStream.Value == null) break;
 
             baseStream.Value.Position = _position - baseStream.Key;
 
@@ -338,15 +330,13 @@ public class SplitJoinStream : Stream
         switch(origin)
         {
             case SeekOrigin.Begin:
-                if(offset >= _streamLength)
-                    throw new IOException(Localization.Cannot_seek_after_stream_end);
+                if(offset >= _streamLength) throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                 _position = offset;
 
                 break;
             case SeekOrigin.End:
-                if(_position - offset < 0)
-                    throw new IOException(Localization.Cannot_seek_before_stream_start);
+                if(_position - offset < 0) throw new IOException(Localization.Cannot_seek_before_stream_start);
 
                 _position -= offset;
 

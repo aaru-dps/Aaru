@@ -63,17 +63,13 @@ public static partial class Modes
 
     public static ModePage_0F? DecodeModePage_0F(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x0F)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x0F) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 16)
-            return null;
+        if(pageResponse.Length < 16) return null;
 
         var decoded = new ModePage_0F();
 
@@ -100,16 +96,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_0F(ModePage_0F? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_0F page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Data_compression_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.DCC)
         {
@@ -189,8 +183,8 @@ public static partial class Modes
 
                             break;
                         default:
-                            sb.AppendFormat(Localization.an_unknown_algorithm_coded_0, page.CompressionAlgo).
-                               AppendLine();
+                            sb.AppendFormat(Localization.an_unknown_algorithm_coded_0, page.CompressionAlgo)
+                              .AppendLine();
 
                             break;
                     }

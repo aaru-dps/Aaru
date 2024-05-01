@@ -61,13 +61,11 @@ public sealed partial class DeviceReport
 
         var report = new Scsi();
 
-        if(sense)
-            return null;
+        if(sense) return null;
 
         Inquiry? decodedNullable = Inquiry.Decode(buffer);
 
-        if(!decodedNullable.HasValue)
-            return null;
+        if(!decodedNullable.HasValue) return null;
 
         report.InquiryData = ClearInquiry(buffer);
 
@@ -78,8 +76,7 @@ public sealed partial class DeviceReport
     {
         Inquiry? decodedNullable = Inquiry.Decode(inquiry);
 
-        if(!decodedNullable.HasValue)
-            return inquiry;
+        if(!decodedNullable.HasValue) return inquiry;
 
         Inquiry decoded = decodedNullable.Value;
 
@@ -88,8 +85,7 @@ public sealed partial class DeviceReport
             return inquiry;
 
         // Clear Seagate serial number
-        for(var i = 36; i <= 43; i++)
-            inquiry[i] = 0;
+        for(var i = 36; i <= 43; i++) inquiry[i] = 0;
 
         return inquiry;
     }
@@ -108,21 +104,19 @@ public sealed partial class DeviceReport
             sense = _dev.ScsiInquiry(out buffer, out _, 0x00);
         });
 
-        if(sense)
-            return null;
+        if(sense) return null;
 
         byte[] evpdPages = EVPD.DecodePage00(buffer);
 
-        if(evpdPages is not { Length: > 0 })
-            return null;
+        if(evpdPages is not { Length: > 0 }) return null;
 
         List<ScsiPage> evpds = new();
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
             ProgressTask task = ctx.AddTask(Localization.Core.Querying_SCSI_EVPD_pages,
-                                            maxValue: evpdPages.Count(page => page != 0x80)).
-                                    IsIndeterminate();
+                                            maxValue: evpdPages.Count(page => page != 0x80))
+                                   .IsIndeterminate();
 
             foreach(byte page in evpdPages.Where(page => page != 0x80))
             {
@@ -130,8 +124,7 @@ public sealed partial class DeviceReport
                 task.Increment(1);
                 sense = _dev.ScsiInquiry(out buffer, out _, page);
 
-                if(sense)
-                    continue;
+                if(sense) continue;
 
                 byte[] empty;
 
@@ -185,14 +178,11 @@ public sealed partial class DeviceReport
 
     static byte[] ClearPage83(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x83)
-            return null;
+        if(pageResponse?[1] != 0x83) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length)
-            return null;
+        if(pageResponse[3] + 4 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 6)
-            return null;
+        if(pageResponse.Length < 6) return null;
 
         var position = 4;
 
@@ -200,8 +190,7 @@ public sealed partial class DeviceReport
         {
             byte length = pageResponse[position + 3];
 
-            if(length + position + 4 >= pageResponse.Length)
-                length = (byte)(pageResponse.Length - position - 4);
+            if(length + position + 4 >= pageResponse.Length) length = (byte)(pageResponse.Length - position - 4);
 
             var empty = new byte[length];
             Array.Copy(empty, 0, pageResponse, position + 4, length);
@@ -228,34 +217,62 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10).
-                IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_10)
+               .IsIndeterminate();
 
             foreach(ScsiModeSensePageControl pageControl in new[]
-                {
-                    ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
-                    ScsiModeSensePageControl.Changeable
-                })
+                    {
+                        ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
+                        ScsiModeSensePageControl.Changeable
+                    })
             {
                 var saveBuffer = false;
 
-                sense = _dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, pageControl, 0x3F, 0xFF,
-                                         _dev.Timeout, out _);
+                sense = _dev.ModeSense10(out byte[] mode10Buffer,
+                                         out _,
+                                         false,
+                                         true,
+                                         pageControl,
+                                         0x3F,
+                                         0xFF,
+                                         _dev.Timeout,
+                                         out _);
 
                 if(sense || _dev.Error)
                 {
-                    sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0xFF,
-                                             _dev.Timeout, out _);
+                    sense = _dev.ModeSense10(out mode10Buffer,
+                                             out _,
+                                             false,
+                                             false,
+                                             pageControl,
+                                             0x3F,
+                                             0xFF,
+                                             _dev.Timeout,
+                                             out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, pageControl, 0x3F, 0x00,
-                                                 _dev.Timeout, out _);
+                        sense = _dev.ModeSense10(out mode10Buffer,
+                                                 out _,
+                                                 false,
+                                                 true,
+                                                 pageControl,
+                                                 0x3F,
+                                                 0x00,
+                                                 _dev.Timeout,
+                                                 out _);
 
                         if(sense || _dev.Error)
                         {
-                            sense = _dev.ModeSense10(out mode10Buffer, out _, false, false, pageControl, 0x3F, 0x00,
-                                                     _dev.Timeout, out _);
+                            sense = _dev.ModeSense10(out mode10Buffer,
+                                                     out _,
+                                                     false,
+                                                     false,
+                                                     pageControl,
+                                                     0x3F,
+                                                     0x00,
+                                                     _dev.Timeout,
+                                                     out _);
 
                             if(!sense && !_dev.Error)
                             {
@@ -287,8 +304,7 @@ public sealed partial class DeviceReport
                     saveBuffer                   =   true;
                 }
 
-                if(!saveBuffer)
-                    continue;
+                if(!saveBuffer) continue;
 
                 switch(pageControl)
                 {
@@ -310,44 +326,80 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6).
-                IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_all_mode_pages_and_subpages_using_SCSI_MODE_SENSE_6)
+               .IsIndeterminate();
 
             foreach(ScsiModeSensePageControl pageControl in new[]
-                {
-                    ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
-                    ScsiModeSensePageControl.Changeable
-                })
+                    {
+                        ScsiModeSensePageControl.Default, ScsiModeSensePageControl.Current,
+                        ScsiModeSensePageControl.Changeable
+                    })
             {
                 var saveBuffer = false;
 
-                sense = _dev.ModeSense6(out byte[] mode6Buffer, out _, true, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                sense = _dev.ModeSense6(out byte[] mode6Buffer,
+                                        out _,
+                                        true,
+                                        pageControl,
+                                        0x3F,
+                                        0xFF,
+                                        _dev.Timeout,
                                         out _);
 
                 if(sense || _dev.Error)
                 {
-                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0xFF, _dev.Timeout,
+                    sense = _dev.ModeSense6(out mode6Buffer,
+                                            out _,
+                                            false,
+                                            pageControl,
+                                            0x3F,
+                                            0xFF,
+                                            _dev.Timeout,
                                             out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x3F, 0x00, _dev.Timeout,
+                        sense = _dev.ModeSense6(out mode6Buffer,
+                                                out _,
+                                                true,
+                                                pageControl,
+                                                0x3F,
+                                                0x00,
+                                                _dev.Timeout,
                                                 out _);
 
                         if(sense || _dev.Error)
                         {
-                            sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x3F, 0x00,
-                                                    _dev.Timeout, out _);
+                            sense = _dev.ModeSense6(out mode6Buffer,
+                                                    out _,
+                                                    false,
+                                                    pageControl,
+                                                    0x3F,
+                                                    0x00,
+                                                    _dev.Timeout,
+                                                    out _);
 
                             if(sense || _dev.Error)
                             {
-                                sense = _dev.ModeSense6(out mode6Buffer, out _, true, pageControl, 0x00, 0x00,
-                                                        _dev.Timeout, out _);
+                                sense = _dev.ModeSense6(out mode6Buffer,
+                                                        out _,
+                                                        true,
+                                                        pageControl,
+                                                        0x00,
+                                                        0x00,
+                                                        _dev.Timeout,
+                                                        out _);
 
                                 if(sense || _dev.Error)
                                 {
-                                    sense = _dev.ModeSense6(out mode6Buffer, out _, false, pageControl, 0x00, 0x00,
-                                                            _dev.Timeout, out _);
+                                    sense = _dev.ModeSense6(out mode6Buffer,
+                                                            out _,
+                                                            false,
+                                                            pageControl,
+                                                            0x00,
+                                                            0x00,
+                                                            _dev.Timeout,
+                                                            out _);
 
                                     if(!sense && !_dev.Error)
                                     {
@@ -393,8 +445,7 @@ public sealed partial class DeviceReport
                     saveBuffer                   =   true;
                 }
 
-                if(!saveBuffer)
-                    continue;
+                if(!saveBuffer) continue;
 
                 switch(pageControl)
                 {
@@ -418,8 +469,7 @@ public sealed partial class DeviceReport
 
         cdromMode = null;
 
-        if(decMode == null)
-            return;
+        if(decMode == null) return;
 
         mediumType = decMode.Value.Header.MediumType;
 
@@ -433,11 +483,9 @@ public sealed partial class DeviceReport
         if(decMode.Value.Header.BufferedMode > 0)
             report.SCSI.ModeSense.BufferedMode = decMode.Value.Header.BufferedMode;
 
-        if(decMode.Value.Header.Speed > 0)
-            report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
+        if(decMode.Value.Header.Speed > 0) report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
 
-        if(decMode.Value.Pages == null)
-            return;
+        if(decMode.Value.Pages == null) return;
 
         List<ScsiPage> modePages = new();
 
@@ -452,12 +500,10 @@ public sealed partial class DeviceReport
 
             modePages.Add(modePage);
 
-            if(modePage.page == 0x2A && modePage.subpage == 0x00)
-                cdromMode = page.PageResponse;
+            if(modePage.page == 0x2A && modePage.subpage == 0x00) cdromMode = page.PageResponse;
         }
 
-        if(modePages.Count > 0)
-            report.SCSI.ModeSense.ModePages = modePages;
+        if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages;
     }
 
     /// <summary>Creates a report for media inserted into a SCSI device</summary>
@@ -508,8 +554,15 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
-            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                     0x00, _dev.Timeout, out _);
+            sense = _dev.ModeSense10(out buffer,
+                                     out senseBuffer,
+                                     false,
+                                     true,
+                                     ScsiModeSensePageControl.Current,
+                                     0x3F,
+                                     0x00,
+                                     _dev.Timeout,
+                                     out _);
         });
 
         if(!sense && !_dev.Error)
@@ -543,8 +596,8 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_6).IsIndeterminate();
 
-            mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize ?? 512,
-                                                  _dev.Timeout, out _);
+            mediaTest.SupportsRead6 =
+                !_dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize ?? 512, _dev.Timeout, out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead6);
@@ -554,8 +607,19 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_10).IsIndeterminate();
 
-            mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                    mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
+            mediaTest.SupportsRead10 = !_dev.Read10(out buffer,
+                                                    out senseBuffer,
+                                                    0,
+                                                    false,
+                                                    false,
+                                                    false,
+                                                    false,
+                                                    0,
+                                                    mediaTest.BlockSize ?? 512,
+                                                    0,
+                                                    1,
+                                                    _dev.Timeout,
+                                                    out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead10);
@@ -565,8 +629,20 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_12).IsIndeterminate();
 
-            mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                    mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+            mediaTest.SupportsRead12 = !_dev.Read12(out buffer,
+                                                    out senseBuffer,
+                                                    0,
+                                                    false,
+                                                    false,
+                                                    false,
+                                                    false,
+                                                    0,
+                                                    mediaTest.BlockSize ?? 512,
+                                                    0,
+                                                    1,
+                                                    false,
+                                                    _dev.Timeout,
+                                                    out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead12);
@@ -576,8 +652,19 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_16).IsIndeterminate();
 
-            mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
-                                                    mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+            mediaTest.SupportsRead16 = !_dev.Read16(out buffer,
+                                                    out senseBuffer,
+                                                    0,
+                                                    false,
+                                                    false,
+                                                    false,
+                                                    0,
+                                                    mediaTest.BlockSize ?? 512,
+                                                    0,
+                                                    1,
+                                                    false,
+                                                    _dev.Timeout,
+                                                    out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsRead16);
@@ -611,8 +698,7 @@ public sealed partial class DeviceReport
                     information = (uint)Sense.DecodeDescriptor00(desc00);
                 }
 
-                if(valid && ili)
-                    mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                if(valid && ili) mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
             }
         }
 
@@ -641,8 +727,7 @@ public sealed partial class DeviceReport
                         information = (uint)Sense.DecodeDescriptor00(desc00);
                     }
 
-                    if(valid && ili)
-                        mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                    if(valid && ili) mediaTest.LongBlockSize = 0xFFFF - (information & 0xFFFF);
                 }
             }
 
@@ -655,25 +740,35 @@ public sealed partial class DeviceReport
                 case 512:
                 {
                     foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            514,
+                            {
+                                // Long sector sizes for floppies
+                                514,
 
-                            // Long sector sizes for SuperDisk
-                            536, 558,
+                                // Long sector sizes for SuperDisk
+                                536, 558,
 
-                            // Long sector sizes for 512-byte magneto-opticals
-                            600, 610, 630
-                        })
+                                // Long sector sizes for 512-byte magneto-opticals
+                                600, 610, 630
+                            })
                     {
                         sense = mediaTest.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                    ? _dev.ReadLong16(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
                                                       out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                      _dev.Timeout, out _);
+                                    : _dev.ReadLong10(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
+                                                      out _);
 
-                        if(sense || _dev.Error)
-                            continue;
+                        if(sense || _dev.Error) continue;
 
                         mediaTest.LongBlockSize = testSize;
 
@@ -685,22 +780,32 @@ public sealed partial class DeviceReport
                 case 1024:
                 {
                     foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            1026,
+                            {
+                                // Long sector sizes for floppies
+                                1026,
 
-                            // Long sector sizes for 1024-byte magneto-opticals
-                            1200
-                        })
+                                // Long sector sizes for 1024-byte magneto-opticals
+                                1200
+                            })
                     {
                         sense = mediaTest.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                    ? _dev.ReadLong16(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
                                                       out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                      _dev.Timeout, out _);
+                                    : _dev.ReadLong10(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
+                                                      out _);
 
-                        if(sense || _dev.Error)
-                            continue;
+                        if(sense || _dev.Error) continue;
 
                         mediaTest.LongBlockSize = testSize;
 
@@ -713,11 +818,16 @@ public sealed partial class DeviceReport
                 {
                     sense = mediaTest.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  2380,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error)
-                        mediaTest.LongBlockSize = 2380;
+                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 2380;
 
                     break;
                 }
@@ -725,11 +835,16 @@ public sealed partial class DeviceReport
                 {
                     sense = mediaTest.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  4760,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error)
-                        mediaTest.LongBlockSize = 4760;
+                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 4760;
 
                     break;
                 }
@@ -737,11 +852,16 @@ public sealed partial class DeviceReport
                 {
                     sense = mediaTest.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  9424,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error)
-                        mediaTest.LongBlockSize = 9424;
+                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 9424;
 
                     break;
                 }
@@ -811,8 +931,15 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
-            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                     0x00, _dev.Timeout, out _);
+            sense = _dev.ModeSense10(out buffer,
+                                     out senseBuffer,
+                                     false,
+                                     true,
+                                     ScsiModeSensePageControl.Current,
+                                     0x3F,
+                                     0x00,
+                                     _dev.Timeout,
+                                     out _);
         });
 
         if(!sense && !_dev.Error)
@@ -846,8 +973,12 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_6).IsIndeterminate();
 
-            capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
-                                                     _dev.Timeout, out _);
+            capabilities.SupportsRead6 = !_dev.Read6(out buffer,
+                                                     out senseBuffer,
+                                                     0,
+                                                     capabilities.BlockSize ?? 512,
+                                                     _dev.Timeout,
+                                                     out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead6);
@@ -857,8 +988,19 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_10).IsIndeterminate();
 
-            capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                       capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
+            capabilities.SupportsRead10 = !_dev.Read10(out buffer,
+                                                       out senseBuffer,
+                                                       0,
+                                                       false,
+                                                       false,
+                                                       false,
+                                                       false,
+                                                       0,
+                                                       capabilities.BlockSize ?? 512,
+                                                       0,
+                                                       1,
+                                                       _dev.Timeout,
+                                                       out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead10);
@@ -868,8 +1010,20 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_12).IsIndeterminate();
 
-            capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, false, false, false, 0,
-                                                       capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+            capabilities.SupportsRead12 = !_dev.Read12(out buffer,
+                                                       out senseBuffer,
+                                                       0,
+                                                       false,
+                                                       false,
+                                                       false,
+                                                       false,
+                                                       0,
+                                                       capabilities.BlockSize ?? 512,
+                                                       0,
+                                                       1,
+                                                       false,
+                                                       _dev.Timeout,
+                                                       out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead12);
@@ -879,8 +1033,19 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(Localization.Core.Trying_SCSI_READ_16).IsIndeterminate();
 
-            capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, false, false, 0,
-                                                       capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
+            capabilities.SupportsRead16 = !_dev.Read16(out buffer,
+                                                       out senseBuffer,
+                                                       0,
+                                                       false,
+                                                       false,
+                                                       false,
+                                                       0,
+                                                       capabilities.BlockSize ?? 512,
+                                                       0,
+                                                       1,
+                                                       false,
+                                                       _dev.Timeout,
+                                                       out _);
         });
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !capabilities.SupportsRead16);
@@ -914,8 +1079,7 @@ public sealed partial class DeviceReport
                     information = (uint)Sense.DecodeDescriptor00(desc00);
                 }
 
-                if(valid && ili)
-                    capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                if(valid && ili) capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
             }
         }
 
@@ -946,8 +1110,7 @@ public sealed partial class DeviceReport
                     information = (uint)Sense.DecodeDescriptor00(desc00);
                 }
 
-                if(valid && ili)
-                    capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
+                if(valid && ili) capabilities.LongBlockSize = 0xFFFF - (information & 0xFFFF);
             }
         }
 
@@ -959,33 +1122,43 @@ public sealed partial class DeviceReport
         {
             ctx.AddTask(capabilities.SupportsReadLong16 == true
                             ? Localization.Core.Trying_SCSI_READ_LONG_16
-                            : Localization.Core.Trying_SCSI_READ_LONG_10).
-                IsIndeterminate();
+                            : Localization.Core.Trying_SCSI_READ_LONG_10)
+               .IsIndeterminate();
 
             switch(capabilities.BlockSize)
             {
                 case 512:
                 {
                     foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            514,
+                            {
+                                // Long sector sizes for floppies
+                                514,
 
-                            // Long sector sizes for SuperDisk
-                            536, 558,
+                                // Long sector sizes for SuperDisk
+                                536, 558,
 
-                            // Long sector sizes for 512-byte magneto-opticals
-                            600, 610, 630
-                        })
+                                // Long sector sizes for 512-byte magneto-opticals
+                                600, 610, 630
+                            })
                     {
                         sense = capabilities.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                    ? _dev.ReadLong16(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
                                                       out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                      _dev.Timeout, out _);
+                                    : _dev.ReadLong10(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
+                                                      out _);
 
-                        if(sense || _dev.Error)
-                            continue;
+                        if(sense || _dev.Error) continue;
 
                         capabilities.SupportsReadLong = true;
                         capabilities.LongBlockSize    = testSize;
@@ -998,22 +1171,32 @@ public sealed partial class DeviceReport
                 case 1024:
                 {
                     foreach(ushort testSize in new ushort[]
-                        {
-                            // Long sector sizes for floppies
-                            1026,
+                            {
+                                // Long sector sizes for floppies
+                                1026,
 
-                            // Long sector sizes for 1024-byte magneto-opticals
-                            1200
-                        })
+                                // Long sector sizes for 1024-byte magneto-opticals
+                                1200
+                            })
                     {
                         sense = capabilities.SupportsReadLong16 == true
-                                    ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, testSize, _dev.Timeout,
+                                    ? _dev.ReadLong16(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
                                                       out _)
-                                    : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize,
-                                                      _dev.Timeout, out _);
+                                    : _dev.ReadLong10(out buffer,
+                                                      out senseBuffer,
+                                                      false,
+                                                      false,
+                                                      0,
+                                                      testSize,
+                                                      _dev.Timeout,
+                                                      out _);
 
-                        if(sense || _dev.Error)
-                            continue;
+                        if(sense || _dev.Error) continue;
 
                         capabilities.SupportsReadLong = true;
                         capabilities.LongBlockSize    = testSize;
@@ -1027,11 +1210,16 @@ public sealed partial class DeviceReport
                 {
                     sense = capabilities.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 2380, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  2380,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(sense || _dev.Error)
-                        return;
+                    if(sense || _dev.Error) return;
 
                     capabilities.SupportsReadLong = true;
                     capabilities.LongBlockSize    = 2380;
@@ -1042,11 +1230,16 @@ public sealed partial class DeviceReport
                 {
                     sense = capabilities.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 4760, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  4760,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(sense || _dev.Error)
-                        return;
+                    if(sense || _dev.Error) return;
 
                     capabilities.SupportsReadLong = true;
                     capabilities.LongBlockSize    = 4760;
@@ -1057,11 +1250,16 @@ public sealed partial class DeviceReport
                 {
                     sense = capabilities.SupportsReadLong16 == true
                                 ? _dev.ReadLong16(out buffer, out senseBuffer, false, 0, 9424, _dev.Timeout, out _)
-                                : _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout,
+                                : _dev.ReadLong10(out buffer,
+                                                  out senseBuffer,
+                                                  false,
+                                                  false,
+                                                  0,
+                                                  9424,
+                                                  _dev.Timeout,
                                                   out _);
 
-                    if(sense || _dev.Error)
-                        return;
+                    if(sense || _dev.Error) return;
 
                     capabilities.SupportsReadLong = true;
                     capabilities.LongBlockSize    = 9424;

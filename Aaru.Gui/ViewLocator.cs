@@ -50,13 +50,11 @@ public sealed class ViewLocator : DataTemplate
     {
         string name = data.GetType().FullName?.Replace("ViewModel", "View");
 
-        if(name is null)
-            return null;
+        if(name is null) return null;
 
         var type = Type.GetType(name);
 
-        if(type != null)
-            return (Control)Activator.CreateInstance(type);
+        if(type != null) return (Control)Activator.CreateInstance(type);
 
         return new TextBlock
         {

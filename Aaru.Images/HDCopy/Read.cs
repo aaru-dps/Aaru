@@ -55,12 +55,12 @@ public sealed partial class HdCopy
         // the start offset of the track data
         long currentOffset = 0;
 
-        if(!TryReadHeader(stream, ref fheader, ref currentOffset))
-            return ErrorNumber.InvalidArgument;
+        if(!TryReadHeader(stream, ref fheader, ref currentOffset)) return ErrorNumber.InvalidArgument;
 
         AaruConsole.DebugWriteLine(MODULE_NAME,
                                    Localization.Detected_HD_Copy_image_with_0_tracks_and_1_sectors_per_track,
-                                   fheader.lastCylinder + 1, fheader.sectorsPerTrack);
+                                   fheader.lastCylinder + 1,
+                                   fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
         _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
@@ -87,18 +87,19 @@ public sealed partial class HdCopy
             else
             {
                 // track is present, read the block header
-                if(currentOffset + 3 >= stream.Length)
-                    return ErrorNumber.InvalidArgument;
+                if(currentOffset + 3 >= stream.Length) return ErrorNumber.InvalidArgument;
 
                 var blkHeader = new byte[2];
                 stream.EnsureRead(blkHeader, 0, 2);
                 var blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                 // assume block sizes are positive
-                if(blkLength < 0)
-                    return ErrorNumber.InvalidArgument;
+                if(blkLength < 0) return ErrorNumber.InvalidArgument;
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_0_offset_1_size_equals_2, i, currentOffset,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Track_0_offset_1_size_equals_2,
+                                           i,
+                                           currentOffset,
                                            blkLength);
 
                 _trackOffset[i] = currentOffset;
@@ -111,8 +112,7 @@ public sealed partial class HdCopy
         }
 
         // ensure that the last track is present completely
-        if(currentOffset > stream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(currentOffset > stream.Length) return ErrorNumber.InvalidArgument;
 
         // save some variables for later use
         _fileHeader      = fheader;
@@ -128,11 +128,9 @@ public sealed partial class HdCopy
         var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
         var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(trackNum > 2 * _imageInfo.Cylinders)
-            return ErrorNumber.SectorNotFound;
+        if(trackNum > 2 * _imageInfo.Cylinders) return ErrorNumber.SectorNotFound;
 
         buffer = new byte[_imageInfo.SectorSize];
 
@@ -145,8 +143,7 @@ public sealed partial class HdCopy
             {
                 ErrorNumber errno = ReadTrackIntoCache(_hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
             }
 
             Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, buffer, 0, _imageInfo.SectorSize);
@@ -160,11 +157,9 @@ public sealed partial class HdCopy
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -172,8 +167,7 @@ public sealed partial class HdCopy
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

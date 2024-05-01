@@ -37,8 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Hpfs() : FilesystemTest("hpfs")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
-                                                      "High Performance File System");
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance File System");
 
     public override IFilesystem Plugin     => new HPFS();
     public override bool        Partitions => true;

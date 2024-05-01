@@ -58,7 +58,8 @@ public class Sha512
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -80,7 +81,8 @@ public class Sha512
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -97,7 +99,8 @@ public class Sha512
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);
@@ -119,7 +122,8 @@ public class Sha512
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
         fs.EnsureRead(data, 0, 1048576);

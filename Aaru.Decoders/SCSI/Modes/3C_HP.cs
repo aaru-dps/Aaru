@@ -64,17 +64,13 @@ public static partial class Modes
 
     public static HP_ModePage_3C? DecodeHPModePage_3C(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x3C)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x3C) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 36)
-            return null;
+        if(pageResponse.Length != 36) return null;
 
         var decoded = new HP_ModePage_3C();
 
@@ -114,49 +110,49 @@ public static partial class Modes
 
     public static string PrettifyHPModePage_3C(HP_ModePage_3C? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         HP_ModePage_3C page = modePage.Value;
         var            sb   = new StringBuilder();
 
         sb.AppendLine(Localization.HP_Device_Time_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.PT)
         {
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_0_times, page.CurrentPowerOn);
 
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_since_0_seconds_ago_this_time,
-                            TimeSpan.FromSeconds(page.PowerOnTime)).
-               AppendLine();
+                            TimeSpan.FromSeconds(page.PowerOnTime))
+              .AppendLine();
 
             sb.AppendFormat("\t" + Localization.Drive_has_been_powered_up_a_total_of_0_seconds,
-                            TimeSpan.FromSeconds(page.CumulativePowerOn)).
-               AppendLine();
+                            TimeSpan.FromSeconds(page.CumulativePowerOn))
+              .AppendLine();
         }
 
         if(page.WT)
         {
             sb.AppendFormat("\t" + Localization.Drive_date_time_is_0,
-                            DateHandlers.UnixUnsignedToDateTime(page.WorldTime)).
-               AppendLine();
+                            DateHandlers.UnixUnsignedToDateTime(page.WorldTime))
+              .AppendLine();
 
-            if(page.UTC)
-                sb.AppendLine("\t" + Localization.Drive_time_is_UTC);
+            if(page.UTC) sb.AppendLine("\t" + Localization.Drive_time_is_UTC);
 
-            if(page.NTP)
-                sb.AppendLine("\t" + Localization.Drive_time_is_synchronized_with_a_NTP_source);
+            if(page.NTP) sb.AppendLine("\t" + Localization.Drive_time_is_synchronized_with_a_NTP_source);
         }
 
         if(page.LT)
         {
             sb.AppendFormat("\t" + Localization.Library_time_is_0,
-                            new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, page.LibraryHours,
-                                         page.LibraryMinutes, page.LibrarySeconds)).
-               AppendLine();
+                            new DateTime(DateTime.Now.Year,
+                                         DateTime.Now.Month,
+                                         DateTime.Now.Day,
+                                         page.LibraryHours,
+                                         page.LibraryMinutes,
+                                         page.LibrarySeconds))
+              .AppendLine();
         }
 
         return sb.ToString();

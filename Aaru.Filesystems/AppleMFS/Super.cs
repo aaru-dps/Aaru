@@ -55,25 +55,21 @@ public sealed partial class AppleMFS
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         _volMdb = new MasterDirectoryBlock();
 
         ErrorNumber errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         errno = _device.ReadSector(0 + _partitionStart, out _bootBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _volMdb.drSigWord = BigEndianBitConverter.ToUInt16(_mdbBlocks, 0x000);
 
-        if(_volMdb.drSigWord != MFS_MAGIC)
-            return ErrorNumber.InvalidArgument;
+        if(_volMdb.drSigWord != MFS_MAGIC) return ErrorNumber.InvalidArgument;
 
         _volMdb.drCrDate   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x002);
         _volMdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x006);
@@ -94,8 +90,7 @@ public sealed partial class AppleMFS
 
         errno = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, out _directoryBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         int bytesInBlockMap = _volMdb.drNmAlBlks * 12 / 8 + _volMdb.drNmAlBlks * 12 % 8;
         int bytesInWholeMdb = bytesInBlockMap             + BYTES_BEFORE_BLOCK_MAP;
@@ -105,8 +100,7 @@ public sealed partial class AppleMFS
 
         errno = _device.ReadSectors(_partitionStart + 2, (uint)sectorsInWholeMdb, out byte[] wholeMdb);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _blockMapBytes = new byte[bytesInBlockMap];
         Array.Copy(wholeMdb, BYTES_BEFORE_BLOCK_MAP, _blockMapBytes, 0, _blockMapBytes.Length);
@@ -120,8 +114,7 @@ public sealed partial class AppleMFS
             uint tmp2 = 0;
             uint tmp3 = 0;
 
-            if(offset + 4 <= _blockMapBytes.Length)
-                tmp1 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset);
+            if(offset + 4 <= _blockMapBytes.Length) tmp1 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset);
 
             if(offset + 4 + 4 <= _blockMapBytes.Length)
                 tmp2 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset + 4);
@@ -129,29 +122,21 @@ public sealed partial class AppleMFS
             if(offset + 8 + 4 <= _blockMapBytes.Length)
                 tmp3 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset + 8);
 
-            if(i < _blockMap.Length)
-                _blockMap[i] = (tmp1 & 0xFFF00000) >> 20;
+            if(i < _blockMap.Length) _blockMap[i] = (tmp1 & 0xFFF00000) >> 20;
 
-            if(i + 2 < _blockMap.Length)
-                _blockMap[i + 1] = (tmp1 & 0xFFF00) >> 8;
+            if(i + 2 < _blockMap.Length) _blockMap[i + 1] = (tmp1 & 0xFFF00) >> 8;
 
-            if(i + 3 < _blockMap.Length)
-                _blockMap[i + 2] = ((tmp1 & 0xFF) << 4) + ((tmp2 & 0xF0000000) >> 28);
+            if(i + 3 < _blockMap.Length) _blockMap[i + 2] = ((tmp1 & 0xFF) << 4) + ((tmp2 & 0xF0000000) >> 28);
 
-            if(i + 4 < _blockMap.Length)
-                _blockMap[i + 3] = (tmp2 & 0xFFF0000) >> 16;
+            if(i + 4 < _blockMap.Length) _blockMap[i + 3] = (tmp2 & 0xFFF0000) >> 16;
 
-            if(i + 5 < _blockMap.Length)
-                _blockMap[i + 4] = (tmp2 & 0xFFF0) >> 4;
+            if(i + 5 < _blockMap.Length) _blockMap[i + 4] = (tmp2 & 0xFFF0) >> 4;
 
-            if(i + 6 < _blockMap.Length)
-                _blockMap[i + 5] = ((tmp2 & 0xF) << 8) + ((tmp3 & 0xFF000000) >> 24);
+            if(i + 6 < _blockMap.Length) _blockMap[i + 5] = ((tmp2 & 0xF) << 8) + ((tmp3 & 0xFF000000) >> 24);
 
-            if(i + 7 < _blockMap.Length)
-                _blockMap[i + 6] = (tmp3 & 0xFFF000) >> 12;
+            if(i + 7 < _blockMap.Length) _blockMap[i + 6] = (tmp3 & 0xFFF000) >> 12;
 
-            if(i + 8 < _blockMap.Length)
-                _blockMap[i + 7] = tmp3 & 0xFFF;
+            if(i + 8 < _blockMap.Length) _blockMap[i + 7] = tmp3 & 0xFFF;
 
             offset += 12;
         }
@@ -161,36 +146,36 @@ public sealed partial class AppleMFS
             _device.ReadSectorTag(2 + _partitionStart, SectorTagType.AppleSectorTag, out _mdbTags);
             _device.ReadSectorTag(0 + _partitionStart, SectorTagType.AppleSectorTag, out _bootTags);
 
-            _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, SectorTagType.AppleSectorTag,
+            _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart,
+                                   _volMdb.drBlLen,
+                                   SectorTagType.AppleSectorTag,
                                    out _directoryTags);
 
-            _device.ReadSectorsTag(_partitionStart + 2, (uint)sectorsInWholeMdb, SectorTagType.AppleSectorTag,
+            _device.ReadSectorsTag(_partitionStart + 2,
+                                   (uint)sectorsInWholeMdb,
+                                   SectorTagType.AppleSectorTag,
                                    out _bitmapTags);
         }
 
         _sectorsPerBlock = (int)(_volMdb.drAlBlkSiz / _device.Info.SectorSize);
 
-        if(!FillDirectory())
-            return ErrorNumber.InvalidArgument;
+        if(!FillDirectory()) return ErrorNumber.InvalidArgument;
 
         _mounted = true;
 
         var bbSig = BigEndianBitConverter.ToUInt16(_bootBlocks, 0x000);
 
-        if(bbSig != AppleCommon.BB_MAGIC)
-            _bootBlocks = null;
+        if(bbSig != AppleCommon.BB_MAGIC) _bootBlocks = null;
 
         Metadata = new FileSystem();
 
-        if(_volMdb.drLsBkUp > 0)
-            Metadata.BackupDate = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
+        if(_volMdb.drLsBkUp > 0) Metadata.BackupDate = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
 
         Metadata.Bootable    = bbSig == AppleCommon.BB_MAGIC;
         Metadata.Clusters    = _volMdb.drNmAlBlks;
         Metadata.ClusterSize = _volMdb.drAlBlkSiz;
 
-        if(_volMdb.drCrDate > 0)
-            Metadata.CreationDate = DateHandlers.MacToDateTime(_volMdb.drCrDate);
+        if(_volMdb.drCrDate > 0) Metadata.CreationDate = DateHandlers.MacToDateTime(_volMdb.drCrDate);
 
         Metadata.Files        = _volMdb.drNmFls;
         Metadata.FreeClusters = _volMdb.drFreeBks;

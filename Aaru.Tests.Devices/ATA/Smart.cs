@@ -116,7 +116,8 @@ static class Smart
         System.Console.Clear();
 
         bool sense =
-            dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+            dev.SmartDisableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters,
+                                              dev.Timeout,
                                               out double duration);
 
     menu:
@@ -213,7 +214,8 @@ static class Smart
         System.Console.Clear();
 
         bool sense =
-            dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+            dev.SmartEnableAttributeAutosave(out AtaErrorRegistersLba28 errorRegisters,
+                                             dev.Timeout,
                                              out double duration);
 
     menu:
@@ -360,8 +362,10 @@ static class Smart
     start:
         System.Console.Clear();
 
-        bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 errorRegisters, subcommand,
-                                                      dev.Timeout, out double duration);
+        bool sense = dev.SmartExecuteOffLineImmediate(out AtaErrorRegistersLba28 errorRegisters,
+                                                      subcommand,
+                                                      dev.Timeout,
+                                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -412,7 +416,9 @@ static class Smart
     start:
         System.Console.Clear();
 
-        bool sense = dev.SmartReadData(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, dev.Timeout,
+        bool sense = dev.SmartReadData(out byte[] buffer,
+                                       out AtaErrorRegistersLba28 errorRegisters,
+                                       dev.Timeout,
                                        out double duration);
 
     menu:
@@ -452,8 +458,7 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_DATA_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -539,8 +544,11 @@ static class Smart
     start:
         System.Console.Clear();
 
-        bool sense = dev.SmartReadLog(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, address,
-                                      dev.Timeout, out double duration);
+        bool sense = dev.SmartReadLog(out byte[] buffer,
+                                      out AtaErrorRegistersLba28 errorRegisters,
+                                      address,
+                                      dev.Timeout,
+                                      out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -580,8 +588,7 @@ static class Smart
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.READ_LOG_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

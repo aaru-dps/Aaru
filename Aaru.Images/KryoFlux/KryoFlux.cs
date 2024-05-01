@@ -44,6 +44,7 @@ namespace Aaru.Images;
 public sealed partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
 {
     const string MODULE_NAME = "KryoFlux plugin";
+
     // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
     public SortedDictionary<byte, IFilter> tracks;
 

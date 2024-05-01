@@ -73,8 +73,11 @@ public sealed class SubdirectoryViewModel
         {
             MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
                                                     string.Format(UI.Error_0_trying_to_read_1_of_chosen_filesystem,
-                                                                  errno, model.Path), ButtonEnum.Ok, Icon.Error).
-                              ShowWindowDialogAsync(view);
+                                                                  errno,
+                                                                  model.Path),
+                                                    ButtonEnum.Ok,
+                                                    Icon.Error)
+                             .ShowWindowDialogAsync(view);
 
             return;
         }
@@ -85,9 +88,10 @@ public sealed class SubdirectoryViewModel
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruConsole.
-                    ErrorWriteLine(string.Format(UI.Error_0_trying_to_get_information_about_filesystem_entry_named_1,
-                                                 errno, dirent));
+                AaruConsole
+                   .ErrorWriteLine(string.Format(UI.Error_0_trying_to_get_information_about_filesystem_entry_named_1,
+                                                 errno,
+                                                 dirent));
 
                 continue;
             }
@@ -135,8 +139,7 @@ public sealed class SubdirectoryViewModel
 
     async Task ExecuteExtractFilesCommand()
     {
-        if(SelectedEntries.Count == 0)
-            return;
+        if(SelectedEntries.Count == 0) return;
 
         var saveFilesFolderDialog = new OpenFolderDialog
         {
@@ -145,8 +148,7 @@ public sealed class SubdirectoryViewModel
 
         string result = await saveFilesFolderDialog.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         Statistics.AddCommand("extract-files");
 
@@ -268,11 +270,14 @@ public sealed class SubdirectoryViewModel
                     string corrected = new(chars);
 
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Unsupported_filename,
-                                                                               string.
-                                                                                   Format(UI.Filename_0_not_supported_want_to_rename_to_1,
-                                                                                       filename, corrected),
-                                                                               ButtonEnum.YesNoCancel, Icon.Warning).
-                                                         ShowWindowDialogAsync(_view);
+                                                                               string
+                                                                                  .Format(UI
+                                                                                          .Filename_0_not_supported_want_to_rename_to_1,
+                                                                                       filename,
+                                                                                       corrected),
+                                                                               ButtonEnum.YesNoCancel,
+                                                                               Icon.Warning)
+                                                        .ShowWindowDialogAsync(_view);
 
                     switch(mboxResult)
                     {
@@ -293,11 +298,12 @@ public sealed class SubdirectoryViewModel
             if(File.Exists(outputPath))
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Existing_file,
-                                                                           string.
-                                                                               Format(UI.File_named_0_exists_overwrite_Q,
+                                                                           string
+                                                                              .Format(UI.File_named_0_exists_overwrite_Q,
                                                                                    filename),
-                                                                           ButtonEnum.YesNoCancel, Icon.Warning).
-                                                     ShowWindowDialogAsync(_view);
+                                                                           ButtonEnum.YesNoCancel,
+                                                                           Icon.Warning)
+                                                    .ShowWindowDialogAsync(_view);
 
                 switch(mboxResult)
                 {
@@ -315,11 +321,10 @@ public sealed class SubdirectoryViewModel
                             mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Cannot_delete,
                                                                      UI.Could_note_delete_existe_file_continue_Q,
                                                                      ButtonEnum.YesNo,
-                                                                     Icon.Error).
-                                                                 ShowWindowDialogAsync(_view);
+                                                                     Icon.Error)
+                                                                .ShowWindowDialogAsync(_view);
 
-                            if(mboxResult == ButtonResult.No)
-                                return;
+                            if(mboxResult == ButtonResult.No) return;
                         }
 
                         break;
@@ -341,14 +346,15 @@ public sealed class SubdirectoryViewModel
                 if(error != ErrorNumber.NoError)
                 {
                     mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Error_reading_file,
-                                                                               string.
-                                                                                   Format(UI.Error_0_reading_file_continue_Q,
-                                                                                       error), ButtonEnum.YesNo,
-                                                                               Icon.Error).
-                                                         ShowWindowDialogAsync(_view);
+                                                                               string
+                                                                                  .Format(UI
+                                                                                          .Error_0_reading_file_continue_Q,
+                                                                                       error),
+                                                                               ButtonEnum.YesNo,
+                                                                               Icon.Error)
+                                                        .ShowWindowDialogAsync(_view);
 
-                    if(mboxResult == ButtonResult.No)
-                        return;
+                    if(mboxResult == ButtonResult.No) return;
 
                     continue;
                 }
@@ -358,11 +364,10 @@ public sealed class SubdirectoryViewModel
                 fs.Write(outBuf, 0, outBuf.Length);
                 fs.Close();
                 var fi = new FileInfo(outputPath);
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 try
                 {
-                    if(file.Stat.CreationTimeUtc.HasValue)
-                        fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
+                    if(file.Stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
                 }
                 catch
                 {
@@ -371,8 +376,7 @@ public sealed class SubdirectoryViewModel
 
                 try
                 {
-                    if(file.Stat.LastWriteTimeUtc.HasValue)
-                        fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
+                    if(file.Stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
                 }
                 catch
                 {
@@ -381,25 +385,24 @@ public sealed class SubdirectoryViewModel
 
                 try
                 {
-                    if(file.Stat.AccessTimeUtc.HasValue)
-                        fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
+                    if(file.Stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
                 }
                 catch
                 {
                     // ignored
                 }
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             catch(IOException)
             {
                 mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Cannot_create_file,
-                                                                           UI.
-                                                                               Could_not_create_destination_file_continue_Q,
-                                                                           ButtonEnum.YesNo, Icon.Error).
-                                                     ShowWindowDialogAsync(_view);
+                                                                           UI
+                                                                              .Could_not_create_destination_file_continue_Q,
+                                                                           ButtonEnum.YesNo,
+                                                                           Icon.Error)
+                                                    .ShowWindowDialogAsync(_view);
 
-                if(mboxResult == ButtonResult.No)
-                    return;
+                if(mboxResult == ButtonResult.No) return;
             }
         }
     }

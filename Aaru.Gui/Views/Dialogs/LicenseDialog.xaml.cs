@@ -41,9 +41,9 @@ public sealed class LicenseDialog : Window
     public LicenseDialog()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

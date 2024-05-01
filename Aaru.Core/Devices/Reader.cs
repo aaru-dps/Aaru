@@ -62,8 +62,7 @@ sealed partial class Reader
             case DeviceType.ATA:
                 Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
 
-                if(ataIdNullable.HasValue)
-                    _ataId = ataIdNullable.Value;
+                if(ataIdNullable.HasValue) _ataId = ataIdNullable.Value;
 
                 break;
             case DeviceType.NVMe:

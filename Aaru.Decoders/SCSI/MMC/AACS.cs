@@ -60,8 +60,7 @@ public static class AACS
 {
     public static AACSVolumeIdentifier? DecodeAACSVolumeIdentifier(byte[] AACSVIResponse)
     {
-        if(AACSVIResponse == null)
-            return null;
+        if(AACSVIResponse == null) return null;
 
         var decoded = new AACSVolumeIdentifier
         {
@@ -78,20 +77,19 @@ public static class AACS
 
     public static string PrettifyAACSVolumeIdentifier(AACSVolumeIdentifier? AACSVIResponse)
     {
-        if(AACSVIResponse == null)
-            return null;
+        if(AACSVIResponse == null) return null;
 
         AACSVolumeIdentifier response = AACSVIResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
         sb.AppendFormat(Localization.AACS_Volume_Identifier_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VolumeIdentifier, 80));
 
@@ -107,8 +105,7 @@ public static class AACS
 
     public static AACSMediaSerialNumber? DecodeAACSMediaSerialNumber(byte[] AACSMSNResponse)
     {
-        if(AACSMSNResponse == null)
-            return null;
+        if(AACSMSNResponse == null) return null;
 
         var decoded = new AACSMediaSerialNumber
         {
@@ -125,20 +122,19 @@ public static class AACS
 
     public static string PrettifyAACSMediaSerialNumber(AACSMediaSerialNumber? AACSMSNResponse)
     {
-        if(AACSMSNResponse == null)
-            return null;
+        if(AACSMSNResponse == null) return null;
 
         AACSMediaSerialNumber response = AACSMSNResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
         sb.AppendFormat(Localization.AACS_Media_Serial_Number_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaSerialNumber, 80));
 
@@ -154,8 +150,7 @@ public static class AACS
 
     public static AACSMediaIdentifier? DecodeAACSMediaIdentifier(byte[] AACSMIResponse)
     {
-        if(AACSMIResponse == null)
-            return null;
+        if(AACSMIResponse == null) return null;
 
         var decoded = new AACSMediaIdentifier
         {
@@ -172,20 +167,19 @@ public static class AACS
 
     public static string PrettifyAACSMediaIdentifier(AACSMediaIdentifier? AACSMIResponse)
     {
-        if(AACSMIResponse == null)
-            return null;
+        if(AACSMIResponse == null) return null;
 
         AACSMediaIdentifier response = AACSMIResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
         sb.AppendFormat(Localization.AACS_Media_Identifier_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaIdentifier, 80));
 
@@ -201,8 +195,7 @@ public static class AACS
 
     public static AACSMediaKeyBlock? DecodeAACSMediaKeyBlock(byte[] AACSMKBResponse)
     {
-        if(AACSMKBResponse == null)
-            return null;
+        if(AACSMKBResponse == null) return null;
 
         var decoded = new AACSMediaKeyBlock
         {
@@ -219,19 +212,17 @@ public static class AACS
 
     public static string PrettifyAACSMediaKeyBlock(AACSMediaKeyBlock? AACSMKBResponse)
     {
-        if(AACSMKBResponse == null)
-            return null;
+        if(AACSMKBResponse == null) return null;
 
         AACSMediaKeyBlock response = AACSMKBResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
-        if(response.Reserved != 0)
-            sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
-    #endif
-        sb.AppendFormat(Localization.Total_number_of_media_key_blocks_available_to_transfer_0, response.TotalPacks).
-           AppendLine();
+#if DEBUG
+        if(response.Reserved != 0) sb.AppendFormat(Localization.Reserved_equals_0_X2, response.Reserved).AppendLine();
+#endif
+        sb.AppendFormat(Localization.Total_number_of_media_key_blocks_available_to_transfer_0, response.TotalPacks)
+          .AppendLine();
 
         sb.AppendFormat(Localization.AACS_Media_Key_Blocks_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.MediaKeyBlockPacks, 80));
@@ -248,8 +239,7 @@ public static class AACS
 
     public static AACSDataKeys? DecodeAACSDataKeys(byte[] AACSDKResponse)
     {
-        if(AACSDKResponse == null)
-            return null;
+        if(AACSDKResponse == null) return null;
 
         var decoded = new AACSDataKeys
         {
@@ -266,20 +256,19 @@ public static class AACS
 
     public static string PrettifyAACSDataKeys(AACSDataKeys? AACSDKResponse)
     {
-        if(AACSDKResponse == null)
-            return null;
+        if(AACSDKResponse == null) return null;
 
         AACSDataKeys response = AACSDKResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
         if(response.Reserved2 != 0)
             sb.AppendFormat(Localization.Reserved2_equals_0_X8, response.Reserved2).AppendLine();
-    #endif
+#endif
         sb.AppendFormat(Localization.AACS_Data_Keys_in_hex_follows);
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.DataKeys, 80));
 
@@ -295,8 +284,7 @@ public static class AACS
 
     public static AACSLBAExtentsResponse? DecodeAACSLBAExtents(byte[] AACSLBAExtsResponse)
     {
-        if(AACSLBAExtsResponse == null)
-            return null;
+        if(AACSLBAExtsResponse == null) return null;
 
         var decoded = new AACSLBAExtentsResponse
         {
@@ -305,8 +293,7 @@ public static class AACS
             MaxLBAExtents = AACSLBAExtsResponse[3]
         };
 
-        if((AACSLBAExtsResponse.Length - 4) % 16 != 0)
-            return decoded;
+        if((AACSLBAExtsResponse.Length - 4) % 16 != 0) return decoded;
 
         decoded.Extents = new AACSLBAExtent[(AACSLBAExtsResponse.Length - 4) / 16];
 
@@ -323,8 +310,7 @@ public static class AACS
 
     public static string PrettifyAACSLBAExtents(AACSLBAExtentsResponse? AACSLBAExtsResponse)
     {
-        if(AACSLBAExtsResponse == null)
-            return null;
+        if(AACSLBAExtsResponse == null) return null;
 
         AACSLBAExtentsResponse response = AACSLBAExtsResponse.Value;
 
@@ -341,8 +327,10 @@ public static class AACS
 
         for(var i = 0; i < response.Extents.Length; i++)
         {
-            sb.AppendFormat(Localization.LBA_Extent_0_starts_at_LBA_1_and_goes_for_2_sectors, i,
-                            response.Extents[i].StartLBA, response.Extents[i].LBACount);
+            sb.AppendFormat(Localization.LBA_Extent_0_starts_at_LBA_1_and_goes_for_2_sectors,
+                            i,
+                            response.Extents[i].StartLBA,
+                            response.Extents[i].LBACount);
         }
 
         return sb.ToString();

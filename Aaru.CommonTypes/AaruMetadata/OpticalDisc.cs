@@ -99,8 +99,7 @@ public class OpticalDisc
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator OpticalDisc(OpticalDiscType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var disc = new OpticalDisc
         {
@@ -145,89 +144,77 @@ public class OpticalDisc
         {
             disc.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                disc.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) disc.Checksums.Add(chk);
         }
 
         if(cicm.RingCode is not null)
         {
             disc.RingCode = new List<LayeredText>();
 
-            foreach(LayeredTextType lt in cicm.RingCode)
-                disc.RingCode.Add(lt);
+            foreach(LayeredTextType lt in cicm.RingCode) disc.RingCode.Add(lt);
         }
 
         if(cicm.MasteringSID is not null)
         {
             disc.MasteringSid = new List<LayeredText>();
 
-            foreach(LayeredTextType lt in cicm.MasteringSID)
-                disc.MasteringSid.Add(lt);
+            foreach(LayeredTextType lt in cicm.MasteringSID) disc.MasteringSid.Add(lt);
         }
 
         if(cicm.Toolstamp is not null)
         {
             disc.Toolstamp = new List<LayeredText>();
 
-            foreach(LayeredTextType lt in cicm.Toolstamp)
-                disc.Toolstamp.Add(lt);
+            foreach(LayeredTextType lt in cicm.Toolstamp) disc.Toolstamp.Add(lt);
         }
 
         if(cicm.MouldSID is not null)
         {
             disc.MouldSid = new List<LayeredText>();
 
-            foreach(LayeredTextType lt in cicm.MouldSID)
-                disc.MouldSid.Add(lt);
+            foreach(LayeredTextType lt in cicm.MouldSID) disc.MouldSid.Add(lt);
         }
 
         if(cicm.MouldText is not null)
         {
             disc.MouldText = new List<LayeredText>();
 
-            foreach(LayeredTextType lt in cicm.MouldText)
-                disc.MouldText.Add(lt);
+            foreach(LayeredTextType lt in cicm.MouldText) disc.MouldText.Add(lt);
         }
 
         if(cicm.FirstTrackPregrap is not null)
         {
             disc.FirstTrackPregrap = new List<Border>();
 
-            foreach(BorderType lt in cicm.FirstTrackPregrap)
-                disc.FirstTrackPregrap.Add(lt);
+            foreach(BorderType lt in cicm.FirstTrackPregrap) disc.FirstTrackPregrap.Add(lt);
         }
 
         if(cicm.LeadIn is not null)
         {
             disc.LeadIn = new List<Border>();
 
-            foreach(BorderType lt in cicm.LeadIn)
-                disc.LeadIn.Add(lt);
+            foreach(BorderType lt in cicm.LeadIn) disc.LeadIn.Add(lt);
         }
 
         if(cicm.LeadOut is not null)
         {
             disc.LeadOut = new List<Border>();
 
-            foreach(BorderType lt in cicm.LeadOut)
-                disc.LeadOut.Add(lt);
+            foreach(BorderType lt in cicm.LeadOut) disc.LeadOut.Add(lt);
         }
 
         if(cicm.Track is not null)
         {
             disc.Track = new List<Track>();
 
-            foreach(Schemas.TrackType lt in cicm.Track)
-                disc.Track.Add(lt);
+            foreach(Schemas.TrackType lt in cicm.Track) disc.Track.Add(lt);
         }
 
-        if(cicm.DumpHardwareArray is null)
-            return disc;
+        if(cicm.DumpHardwareArray is null) return disc;
 
         disc.DumpHardware = new List<DumpHardware>();
 
-        foreach(DumpHardwareType hw in cicm.DumpHardwareArray)
-            disc.DumpHardware.Add(hw);
+        foreach(DumpHardwareType hw in cicm.DumpHardwareArray) disc.DumpHardware.Add(hw);
 
         return disc;
     }
@@ -255,8 +242,7 @@ public class Track
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Track(Schemas.TrackType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var trk = new Track
         {
@@ -279,25 +265,21 @@ public class Track
         {
             trk.Indexes = new List<TrackIndex>();
 
-            foreach(TrackIndexType idx in cicm.Indexes)
-                trk.Indexes.Add(idx);
+            foreach(TrackIndexType idx in cicm.Indexes) trk.Indexes.Add(idx);
         }
 
         if(cicm.Checksums is not null)
         {
             trk.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                trk.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) trk.Checksums.Add(chk);
         }
 
-        if(cicm.FileSystemInformation is null)
-            return trk;
+        if(cicm.FileSystemInformation is null) return trk;
 
         trk.FileSystemInformation = new List<Partition>();
 
-        foreach(PartitionType fs in cicm.FileSystemInformation)
-            trk.FileSystemInformation.Add(fs);
+        foreach(PartitionType fs in cicm.FileSystemInformation) trk.FileSystemInformation.Add(fs);
 
         return trk;
     }
@@ -376,8 +358,7 @@ public class SubChannel
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator SubChannel(SubChannelType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var subchannel = new SubChannel
         {
@@ -385,13 +366,11 @@ public class SubChannel
             Size  = cicm.Size
         };
 
-        if(cicm.Checksums is null)
-            return subchannel;
+        if(cicm.Checksums is null) return subchannel;
 
         subchannel.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            subchannel.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) subchannel.Checksums.Add(chk);
 
         return subchannel;
     }

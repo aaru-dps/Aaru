@@ -79,8 +79,7 @@ public static partial class Decoders
 {
     public static CSD DecodeCSD(uint[] response)
     {
-        if(response?.Length != 4)
-            return null;
+        if(response?.Length != 4) return null;
 
         var data = new byte[16];
 
@@ -98,8 +97,7 @@ public static partial class Decoders
 
     public static CSD DecodeCSD(byte[] response)
     {
-        if(response?.Length != 16)
-            return null;
+        if(response?.Length != 16) return null;
 
         var csd = new CSD
         {
@@ -146,8 +144,7 @@ public static partial class Decoders
 
     public static string PrettifyCSD(CSD csd)
     {
-        if(csd == null)
-            return null;
+        if(csd == null) return null;
 
         double unitFactor = 0;
         double multiplier = 0;
@@ -236,8 +233,8 @@ public static partial class Decoders
         double result = unitFactor * multiplier;
         sb.AppendFormat("\t" + Localization.Asynchronous_data_access_time_is_0_1, result, unit).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Clock_dependent_part_of_data_access_is_0_clock_cycles, csd.NSAC * 100).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Clock_dependent_part_of_data_access_is_0_clock_cycles, csd.NSAC * 100)
+          .AppendLine();
 
         unit = Localization.MBit_s;
 
@@ -294,26 +291,21 @@ public static partial class Decoders
 
         for(int cl = 0, mask = 1; cl <= 11; cl++, mask <<= 1)
         {
-            if((csd.Classes & mask) == mask)
-                unit += $" {cl}";
+            if((csd.Classes & mask) == mask) unit += $" {cl}";
         }
 
         sb.AppendFormat("\t" + Localization.Device_support_command_classes_0, unit).AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Read_block_length_is_0_bytes, Math.Pow(2, csd.ReadBlockLength)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Read_block_length_is_0_bytes, Math.Pow(2, csd.ReadBlockLength))
+          .AppendLine();
 
-        if(csd.ReadsPartialBlocks)
-            sb.AppendLine("\t" + Localization.Device_allows_reading_partial_blocks);
+        if(csd.ReadsPartialBlocks) sb.AppendLine("\t" + Localization.Device_allows_reading_partial_blocks);
 
-        if(csd.WriteMisalignment)
-            sb.AppendLine("\t" + Localization.Write_commands_can_cross_physical_block_boundaries);
+        if(csd.WriteMisalignment) sb.AppendLine("\t" + Localization.Write_commands_can_cross_physical_block_boundaries);
 
-        if(csd.ReadMisalignment)
-            sb.AppendLine("\t" + Localization.Read_commands_can_cross_physical_block_boundaries);
+        if(csd.ReadMisalignment) sb.AppendLine("\t" + Localization.Read_commands_can_cross_physical_block_boundaries);
 
-        if(csd.DSRImplemented)
-            sb.AppendLine("\t" + Localization.Device_implements_configurable_driver_stage);
+        if(csd.DSRImplemented) sb.AppendLine("\t" + Localization.Device_implements_configurable_driver_stage);
 
         if(csd.Structure == 0)
         {
@@ -518,13 +510,12 @@ public static partial class Decoders
                     break;
             }
 
-            if(csd.EraseBlockEnable)
-                sb.AppendLine("\t" + Localization.Device_can_erase_multiple_blocks);
+            if(csd.EraseBlockEnable) sb.AppendLine("\t" + Localization.Device_can_erase_multiple_blocks);
 
             // TODO: Check specification
             sb.AppendFormat("\t" + Localization.Device_must_erase_a_minimum_of_0_blocks_at_a_time,
-                            Convert.ToUInt32(csd.EraseSectorSize) + 1).
-               AppendLine();
+                            Convert.ToUInt32(csd.EraseSectorSize) + 1)
+              .AppendLine();
 
             if(csd.WriteProtectGroupEnable)
             {
@@ -534,30 +525,26 @@ public static partial class Decoders
                 // unitFactor = Convert.ToDouble(csd.WriteProtectGroupSize);
 
                 sb.AppendFormat("\t" + Localization.Device_can_write_protect_a_minimum_of_0_blocks_at_a_time,
-                                (int)(result + 1)).
-                   AppendLine();
+                                (int)(result + 1))
+                  .AppendLine();
             }
             else
                 sb.AppendLine("\t" + Localization.Device_cant_write_protect_regions);
         }
 
-        sb.AppendFormat("\t" + Localization.Writing_is_0_times_slower_than_reading, Math.Pow(2, csd.WriteSpeedFactor)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Writing_is_0_times_slower_than_reading, Math.Pow(2, csd.WriteSpeedFactor))
+          .AppendLine();
 
-        sb.AppendFormat("\t" + Localization.Write_block_length_is_0_bytes, Math.Pow(2, csd.WriteBlockLength)).
-           AppendLine();
+        sb.AppendFormat("\t" + Localization.Write_block_length_is_0_bytes, Math.Pow(2, csd.WriteBlockLength))
+          .AppendLine();
 
-        if(csd.WritesPartialBlocks)
-            sb.AppendLine("\t" + Localization.Device_allows_writing_partial_blocks);
+        if(csd.WritesPartialBlocks) sb.AppendLine("\t" + Localization.Device_allows_writing_partial_blocks);
 
-        if(!csd.Copy)
-            sb.AppendLine("\t" + Localization.Device_contents_are_original);
+        if(!csd.Copy) sb.AppendLine("\t" + Localization.Device_contents_are_original);
 
-        if(csd.PermanentWriteProtect)
-            sb.AppendLine("\t" + Localization.Device_is_permanently_write_protected);
+        if(csd.PermanentWriteProtect) sb.AppendLine("\t" + Localization.Device_is_permanently_write_protected);
 
-        if(csd.TemporaryWriteProtect)
-            sb.AppendLine("\t" + Localization.Device_is_temporarily_write_protected);
+        if(csd.TemporaryWriteProtect) sb.AppendLine("\t" + Localization.Device_is_temporarily_write_protected);
 
         if(!csd.FileFormatGroup)
         {
@@ -576,8 +563,8 @@ public static partial class Decoders
 
                     break;
                 default:
-                    sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0, csd.FileFormat).
-                       AppendLine();
+                    sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0, csd.FileFormat)
+                      .AppendLine();
 
                     break;
             }
@@ -585,8 +572,8 @@ public static partial class Decoders
         else
         {
             sb.AppendFormat("\t" + Localization.Device_uses_unknown_file_format_code_0_and_file_format_group_1,
-                            csd.FileFormat).
-               AppendLine();
+                            csd.FileFormat)
+              .AppendLine();
         }
 
         sb.AppendFormat("\t" + Localization.CSD_CRC_0, csd.CRC).AppendLine();

@@ -55,6 +55,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IByteAddressableImage> byteAddressableImages = new();
+
             foreach(IByteAddressableImage plugin in _serviceProvider.GetServices<IByteAddressableImage>())
                 byteAddressableImages[plugin.Name.ToLower()] = plugin;
 
@@ -68,6 +69,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IBaseWritableImage> mediaImages = new();
+
             foreach(IBaseWritableImage plugin in _serviceProvider.GetServices<IBaseWritableImage>())
                 mediaImages[plugin.Name.ToLower()] = plugin;
 
@@ -81,6 +83,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IWritableFloppyImage> floppyImages = new();
+
             foreach(IWritableFloppyImage plugin in _serviceProvider.GetServices<IWritableFloppyImage>())
                 floppyImages[plugin.Name.ToLower()] = plugin;
 
@@ -94,6 +97,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IFloppyImage> floppyImages = new();
+
             foreach(IFloppyImage plugin in _serviceProvider.GetServices<IFloppyImage>())
                 floppyImages[plugin.Name.ToLower()] = plugin;
 
@@ -107,6 +111,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IMediaImage> mediaImages = new();
+
             foreach(IMediaImage plugin in _serviceProvider.GetServices<IMediaImage>())
                 mediaImages[plugin.Name.ToLower()] = plugin;
 
@@ -120,6 +125,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IReadOnlyFilesystem> readOnlyFilesystems = new();
+
             foreach(IReadOnlyFilesystem plugin in _serviceProvider.GetServices<IReadOnlyFilesystem>())
                 readOnlyFilesystems[plugin.Name.ToLower()] = plugin;
 
@@ -133,6 +139,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IFilesystem> filesystems = new();
+
             foreach(IFilesystem plugin in _serviceProvider.GetServices<IFilesystem>())
                 filesystems[plugin.Name.ToLower()] = plugin;
 
@@ -146,6 +153,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IArchive> archives = new();
+
             foreach(IArchive plugin in _serviceProvider.GetServices<IArchive>())
                 archives[plugin.Name.ToLower()] = plugin;
 
@@ -159,6 +167,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IPartition> partitions = new();
+
             foreach(IPartition plugin in _serviceProvider.GetServices<IPartition>())
                 partitions[plugin.Name.ToLower()] = plugin;
 
@@ -172,8 +181,8 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IFilter> filters = new();
-            foreach(IFilter plugin in _serviceProvider.GetServices<IFilter>())
-                filters[plugin.Name.ToLower()] = plugin;
+
+            foreach(IFilter plugin in _serviceProvider.GetServices<IFilter>()) filters[plugin.Name.ToLower()] = plugin;
 
             return filters;
         }
@@ -185,6 +194,7 @@ public class PluginRegister
         get
         {
             SortedDictionary<string, IChecksum> checksums = new();
+
             foreach(IChecksum plugin in _serviceProvider.GetServices<IChecksum>())
                 checksums[plugin.Name.ToLower()] = plugin;
 
@@ -197,8 +207,7 @@ public class PluginRegister
     {
         get
         {
-            if(_instance != null)
-                return _instance;
+            if(_instance != null) return _instance;
 
             _instance = new PluginRegister
             {
@@ -220,8 +229,7 @@ public class PluginRegister
     {
         _services = new ServiceCollection();
 
-        foreach(IPluginRegister registrator in registrators)
-            AddPlugins(registrator);
+        foreach(IPluginRegister registrator in registrators) AddPlugins(registrator);
 
         _instance._serviceProvider = _instance._services.BuildServiceProvider();
     }
@@ -256,14 +264,12 @@ public class PluginRegister
             {
                 if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                 {
-                    if(!filter.Identify(path))
-                        continue;
+                    if(!filter.Identify(path)) continue;
 
                     var foundFilter =
                         (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
 
-                    if(foundFilter?.Open(path) == ErrorNumber.NoError)
-                        return foundFilter;
+                    if(foundFilter?.Open(path) == ErrorNumber.NoError) return foundFilter;
                 }
                 else
                     noFilter = filter;
@@ -274,8 +280,7 @@ public class PluginRegister
             }
         }
 
-        if(!noFilter?.Identify(path) == true)
-            return null;
+        if(!noFilter?.Identify(path) == true) return null;
 
         noFilter?.Open(path);
 

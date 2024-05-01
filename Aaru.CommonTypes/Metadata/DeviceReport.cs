@@ -59,7 +59,8 @@ using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 namespace Aaru.CommonTypes.Metadata;
 
 // ReSharper disable once PartialTypeWithSinglePart
-[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+[JsonSourceGenerationOptions(WriteIndented = true,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                              IncludeFields = true)]
 [JsonSerializable(typeof(DeviceReport))]
 public partial class DeviceReportContext : JsonSerializerContext;
@@ -1269,11 +1270,9 @@ public class DensityCode : IEquatable<DensityCode>
 
     public bool Equals(DensityCode other)
     {
-        if(ReferenceEquals(null, other))
-            return false;
+        if(ReferenceEquals(null, other)) return false;
 
-        if(ReferenceEquals(this, other))
-            return true;
+        if(ReferenceEquals(this, other)) return true;
 
         return Code == other.Code;
     }
@@ -1282,11 +1281,9 @@ public class DensityCode : IEquatable<DensityCode>
 
     public override bool Equals(object obj)
     {
-        if(ReferenceEquals(null, obj))
-            return false;
+        if(ReferenceEquals(null, obj)) return false;
 
-        if(ReferenceEquals(this, obj))
-            return true;
+        if(ReferenceEquals(this, obj)) return true;
 
         return obj.GetType() == GetType() && Equals((DensityCode)obj);
     }

@@ -60,7 +60,10 @@ public class ZSTD
     /// <returns>Length of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int compressionLevel) =>
         (int)(Native.IsSupported
-                  ? AARU_zstd_encode_buffer(destination, (nuint)destination.Length, source, (nuint)source.Length,
+                  ? AARU_zstd_encode_buffer(destination,
+                                            (nuint)destination.Length,
+                                            source,
+                                            (nuint)source.Length,
                                             compressionLevel)
                   : 0);
 }

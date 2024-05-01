@@ -47,8 +47,7 @@ public sealed partial class MaxiDisk
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 8)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 8) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
@@ -62,16 +61,13 @@ public sealed partial class MaxiDisk
         //    return false;
 
         // Only floppies supported
-        if(tmpHeader.heads is 0 or > 2)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.heads is 0 or > 2) return ErrorNumber.InvalidArgument;
 
         // No floppies with more than this?
-        if(tmpHeader.cylinders > 90)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.cylinders > 90) return ErrorNumber.InvalidArgument;
 
         // Maximum supported bps is 16384
-        if(tmpHeader.bytesPerSector > 7)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.bytesPerSector > 7) return ErrorNumber.InvalidArgument;
 
         int expectedFileSize = tmpHeader.heads           *
                                tmpHeader.cylinders       *
@@ -79,8 +75,7 @@ public sealed partial class MaxiDisk
                                (128 << tmpHeader.bytesPerSector) +
                                8;
 
-        if(expectedFileSize != stream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(expectedFileSize != stream.Length) return ErrorNumber.InvalidArgument;
 
         _imageInfo.Cylinders       = tmpHeader.cylinders;
         _imageInfo.Heads           = tmpHeader.heads;
@@ -111,11 +106,9 @@ public sealed partial class MaxiDisk
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

@@ -31,12 +31,20 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="550" Height="320" x:Class="Aaru.Gui.Views.Dialogs.StatisticsDialog"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="550"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Dialogs.StatisticsDialog"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <dialogs:StatisticsViewModel />
     </Design.DataContext>
@@ -45,41 +53,65 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TabControl Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabControl Grid.Row="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
                 <TabItem IsVisible="{Binding CommandsVisible}">
                     <TabItem.Header>
                         <TextBlock Text="{Binding CommandsLabel}" />
                     </TabItem.Header>
-                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch">
-                        <TextBlock Text="{Binding FsInfoText}" IsVisible="{Binding FsInfoVisible}" />
-                        <TextBlock Text="{Binding ChecksumText}" IsVisible="{Binding ChecksumVisible}" />
-                        <TextBlock Text="{Binding CompareText}" IsVisible="{Binding CompareVisible}" />
-                        <TextBlock Text="{Binding ConvertImageText}" IsVisible="{Binding ConvertImageVisible}" />
-                        <TextBlock Text="{Binding CreateSidecarText}" IsVisible="{Binding CreateSidecarVisible}" />
-                        <TextBlock Text="{Binding DecodeText}" IsVisible="{Binding DecodeVisible}" />
-                        <TextBlock Text="{Binding DeviceInfoText}" IsVisible="{Binding DeviceInfoVisible}" />
-                        <TextBlock Text="{Binding DeviceReportText}" IsVisible="{Binding DeviceReportVisible}" />
-                        <TextBlock Text="{Binding DumpMediaText}" IsVisible="{Binding DumpMediaVisible}" />
-                        <TextBlock Text="{Binding EntropyText}" IsVisible="{Binding EntropyVisible}" />
-                        <TextBlock Text="{Binding FormatsCommandText}" IsVisible="{Binding FormatsCommandVisible}" />
-                        <TextBlock Text="{Binding ImageInfoText}" IsVisible="{Binding ImageInfoVisible}" />
-                        <TextBlock Text="{Binding MediaInfoText}" IsVisible="{Binding MediaInfoVisible}" />
-                        <TextBlock Text="{Binding MediaScanText}" IsVisible="{Binding MediaScanVisible}" />
-                        <TextBlock Text="{Binding PrintHexText}" IsVisible="{Binding PrintHexVisible}" />
-                        <TextBlock Text="{Binding VerifyText}" IsVisible="{Binding VerifyVisible}" />
+                    <StackPanel VerticalAlignment="Top"
+                                HorizontalAlignment="Stretch">
+                        <TextBlock Text="{Binding FsInfoText}"
+                                   IsVisible="{Binding FsInfoVisible}" />
+                        <TextBlock Text="{Binding ChecksumText}"
+                                   IsVisible="{Binding ChecksumVisible}" />
+                        <TextBlock Text="{Binding CompareText}"
+                                   IsVisible="{Binding CompareVisible}" />
+                        <TextBlock Text="{Binding ConvertImageText}"
+                                   IsVisible="{Binding ConvertImageVisible}" />
+                        <TextBlock Text="{Binding CreateSidecarText}"
+                                   IsVisible="{Binding CreateSidecarVisible}" />
+                        <TextBlock Text="{Binding DecodeText}"
+                                   IsVisible="{Binding DecodeVisible}" />
+                        <TextBlock Text="{Binding DeviceInfoText}"
+                                   IsVisible="{Binding DeviceInfoVisible}" />
+                        <TextBlock Text="{Binding DeviceReportText}"
+                                   IsVisible="{Binding DeviceReportVisible}" />
+                        <TextBlock Text="{Binding DumpMediaText}"
+                                   IsVisible="{Binding DumpMediaVisible}" />
+                        <TextBlock Text="{Binding EntropyText}"
+                                   IsVisible="{Binding EntropyVisible}" />
+                        <TextBlock Text="{Binding FormatsCommandText}"
+                                   IsVisible="{Binding FormatsCommandVisible}" />
+                        <TextBlock Text="{Binding ImageInfoText}"
+                                   IsVisible="{Binding ImageInfoVisible}" />
+                        <TextBlock Text="{Binding MediaInfoText}"
+                                   IsVisible="{Binding MediaInfoVisible}" />
+                        <TextBlock Text="{Binding MediaScanText}"
+                                   IsVisible="{Binding MediaScanVisible}" />
+                        <TextBlock Text="{Binding PrintHexText}"
+                                   IsVisible="{Binding PrintHexVisible}" />
+                        <TextBlock Text="{Binding VerifyText}"
+                                   IsVisible="{Binding VerifyVisible}" />
                     </StackPanel>
                 </TabItem>
                 <TabItem IsVisible="{Binding FiltersVisible}">
                     <TabItem.Header>
                         <TextBlock Text="{Binding FiltersLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Filters}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Filters}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding FilterLabel}" Binding="{Binding Name}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding FilterLabel}"
+                                                Binding="{Binding Name}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
-                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}"
+                                                Binding="{Binding Count}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -87,13 +119,18 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding FormatsLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Formats}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Formats}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding FormatLabel}" Binding="{Binding Name}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding FormatLabel}"
+                                                Binding="{Binding Name}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
-                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}"
+                                                Binding="{Binding Count}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -101,13 +138,18 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding PartitionsLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Partitions}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Partitions}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding PartitionLabel}" Binding="{Binding Name}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding PartitionLabel}"
+                                                Binding="{Binding Name}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
-                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}"
+                                                Binding="{Binding Count}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -115,13 +157,18 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding FilesystemsLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Filesystems}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Filesystems}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding FilesystemLabel}" Binding="{Binding Name}"
-                                                Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
-                                                Width="Auto" IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding FilesystemLabel}"
+                                                Binding="{Binding Name}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}"
+                                                Binding="{Binding Count}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
@@ -129,16 +176,25 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding DevicesLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Devices}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Devices}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding DeviceLabel}" Binding="{Binding Model}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding DeviceLabel}"
+                                                Binding="{Binding Model}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding ManufacturerLabel}" Binding="{Binding Manufacturer}"
-                                                Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding RevisionLabel}" Binding="{Binding Revision}"
-                                                Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding BusLabel}" Binding="{Binding Bus}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding ManufacturerLabel}"
+                                                Binding="{Binding Manufacturer}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding RevisionLabel}"
+                                                Binding="{Binding Revision}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding BusLabel}"
+                                                Binding="{Binding Bus}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
@@ -147,21 +203,31 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding MediasLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Medias}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Medias}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
                             <!-- TODO: Bind header -->
-                            <DataGridTextColumn Header="{Binding MediaLabel}" Binding="{Binding Name}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding MediaLabel}"
+                                                Binding="{Binding Name}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TimesFoundLabel}" Binding="{Binding Count}"
-                                                Width="Auto" IsReadOnly="True" />
-                            <DataGridTextColumn Header="{Binding TypeLabel}" Binding="{Binding Type}" Width="Auto"
+                            <DataGridTextColumn Header="{Binding TimesFoundLabel}"
+                                                Binding="{Binding Count}"
+                                                Width="Auto"
+                                                IsReadOnly="True" />
+                            <DataGridTextColumn Header="{Binding TypeLabel}"
+                                                Binding="{Binding Type}"
+                                                Width="Auto"
                                                 IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
             </TabControl>
-            <Button Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Command="{Binding CloseCommand}" Padding="10">
+            <Button Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Command="{Binding CloseCommand}"
+                    Padding="10">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>
         </Grid>

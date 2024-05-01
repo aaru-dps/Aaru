@@ -95,13 +95,11 @@ sealed class ListOptionsCommand : Command
 
         foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
-            if(fs is null)
-                continue;
+            if(fs is null) continue;
 
             var options = fs.SupportedOptions.ToList();
 
-            if(options.Count == 0)
-                continue;
+            if(options.Count == 0) continue;
 
             var table = new Table
             {
@@ -114,7 +112,8 @@ sealed class ListOptionsCommand : Command
 
             foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
             {
-                table.AddRow(Markup.Escape(option.name), $"[italic]{TypeToString(option.type)}[/]",
+                table.AddRow(Markup.Escape(option.name),
+                             $"[italic]{TypeToString(option.type)}[/]",
                              Markup.Escape(option.description));
             }
 
@@ -128,8 +127,7 @@ sealed class ListOptionsCommand : Command
     [NotNull]
     static string TypeToString([NotNull] Type type)
     {
-        if(type == typeof(bool))
-            return UI.TypeToString_boolean;
+        if(type == typeof(bool)) return UI.TypeToString_boolean;
 
         if(type == typeof(sbyte) || type == typeof(short) || type == typeof(int) || type == typeof(long))
             return UI.TypeToString_signed_number;
@@ -137,11 +135,9 @@ sealed class ListOptionsCommand : Command
         if(type == typeof(byte) || type == typeof(ushort) || type == typeof(uint) || type == typeof(ulong))
             return UI.TypeToString_number;
 
-        if(type == typeof(float) || type == typeof(double))
-            return UI.TypeToString_float_number;
+        if(type == typeof(float) || type == typeof(double)) return UI.TypeToString_float_number;
 
-        if(type == typeof(Guid))
-            return UI.TypeToString_uuid;
+        if(type == typeof(Guid)) return UI.TypeToString_uuid;
 
         return type == typeof(string) ? UI.TypeToString_string : type.ToString();
     }

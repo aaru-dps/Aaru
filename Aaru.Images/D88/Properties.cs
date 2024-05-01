@@ -48,6 +48,7 @@ public sealed partial class D88
     public Guid Id => new("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

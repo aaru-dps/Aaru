@@ -37,8 +37,8 @@ namespace Aaru.Tests.Filesystems;
 [TestFixture]
 public class Hpofs() : FilesystemTest("hpofs")
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems",
-                                                      "High Performance Optical File System");
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance Optical File System");
 
     public override IFilesystem Plugin     => new HPOFS();
     public override bool        Partitions => false;

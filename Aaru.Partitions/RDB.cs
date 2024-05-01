@@ -199,11 +199,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(rdbBlock < 16)
         {
-            if(imagePlugin.Info.Sectors <= rdbBlock)
-                return false;
+            if(imagePlugin.Info.Sectors <= rdbBlock) return false;
 
-            if(rdbBlock + sectorOffset >= imagePlugin.Info.Sectors)
-                break;
+            if(rdbBlock + sectorOffset >= imagePlugin.Info.Sectors) break;
 
             errno = imagePlugin.ReadSector(rdbBlock + sectorOffset, out byte[] tmpSector);
 
@@ -230,8 +228,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
             rdbBlock++;
         }
 
-        if(!foundRdb)
-            return false;
+        if(!foundRdb) return false;
 
         rdbBlock += sectorOffset;
 
@@ -239,8 +236,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         errno = imagePlugin.ReadSector(rdbBlock, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         rdb.Magic           = BigEndianBitConverter.ToUInt32(sector, 0x00);
         rdb.Size            = BigEndianBitConverter.ToUInt32(sector, 0x04);
@@ -376,18 +372,17 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Going_to_block_0_in_search_of_a_BadBlock_block,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Going_to_block_0_in_search_of_a_BadBlock_block,
                                        nextBlock);
 
             errno = imagePlugin.ReadSector(nextBlock, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-            if(magic != BAD_BLOCK_LIST_MAGIC)
-                break;
+            if(magic != BAD_BLOCK_LIST_MAGIC) break;
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_BadBlock_block);
 
@@ -406,7 +401,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.size = {0} longs, {1} bytes", chainEntry.Size,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "chainEntry.size = {0} longs, {1} bytes",
+                                       chainEntry.Size,
                                        chainEntry.Size * 4);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "chainEntry.checksum = 0x{0:X8}", chainEntry.Checksum);
@@ -420,8 +417,10 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
                 chainEntry.BlockPairs[i].GoodBlock = BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Bad_block_at_0_replaced_with_good_block_at_1,
-                                           chainEntry.BlockPairs[i].BadBlock, chainEntry.BlockPairs[i].GoodBlock);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Bad_block_at_0_replaced_with_good_block_at_1,
+                                           chainEntry.BlockPairs[i].BadBlock,
+                                           chainEntry.BlockPairs[i].GoodBlock);
             }
 
             badBlockChain.Add(chainEntry);
@@ -434,18 +433,17 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Going_to_block_0_in_search_of_a_PartitionEntry_block,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Going_to_block_0_in_search_of_a_PartitionEntry_block,
                                        nextBlock + sectorOffset);
 
             errno = imagePlugin.ReadSector(nextBlock + sectorOffset, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-            if(magic != PARTITION_BLOCK_MAGIC)
-                break;
+            if(magic != PARTITION_BLOCK_MAGIC) break;
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_PartitionEntry_block);
 
@@ -507,7 +505,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.magic = 0x{0:X8}", partEntry.Magic);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.size = {0} longs, {1} bytes", partEntry.Size,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.size = {0} longs, {1} bytes",
+                                       partEntry.Size,
                                        partEntry.Size * 4);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.checksum = 0x{0:X8}",   partEntry.Checksum);
@@ -535,13 +535,18 @@ public sealed class AmigaRigidDiskBlock : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved16 = 0x{0:X8}", partEntry.Reserved16);
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.reserved17 = 0x{0:X8}", partEntry.Reserved17);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.size = {0} longs, {1} bytes",
-                                       partEntry.DosEnvVec.Size, partEntry.DosEnvVec.Size * 4);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.size = {0} longs, {1} bytes",
+                                       partEntry.DosEnvVec.Size,
+                                       partEntry.DosEnvVec.Size * 4);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.block_size = {0} longs, {1} bytes",
-                                       partEntry.DosEnvVec.BlockSize, partEntry.DosEnvVec.BlockSize * 4);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.block_size = {0} longs, {1} bytes",
+                                       partEntry.DosEnvVec.BlockSize,
+                                       partEntry.DosEnvVec.BlockSize * 4);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.sec_org = 0x{0:X8}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.sec_org = 0x{0:X8}",
                                        partEntry.DosEnvVec.SecOrg);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.surfaces = {0}", partEntry.DosEnvVec.Surfaces);
@@ -550,43 +555,54 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.bpt = {0}", partEntry.DosEnvVec.Bpt);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.reservedblocks = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.reservedblocks = {0}",
                                        partEntry.DosEnvVec.Reservedblocks);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.prealloc = {0}", partEntry.DosEnvVec.Prealloc);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.interleave = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.interleave = {0}",
                                        partEntry.DosEnvVec.Interleave);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.lowCylinder = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.lowCylinder = {0}",
                                        partEntry.DosEnvVec.LowCylinder);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.highCylinder = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.highCylinder = {0}",
                                        partEntry.DosEnvVec.HighCylinder);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.numBuffer = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.numBuffer = {0}",
                                        partEntry.DosEnvVec.NumBuffer);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.bufMemType = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.bufMemType = {0}",
                                        partEntry.DosEnvVec.BufMemType);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.maxTransfer = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.maxTransfer = {0}",
                                        partEntry.DosEnvVec.MaxTransfer);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.Mask = 0x{0:X8}", partEntry.DosEnvVec.Mask);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.bootPriority = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.bootPriority = {0}",
                                        partEntry.DosEnvVec.BootPriority);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.dosType = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.dosType = {0}",
                                        AmigaDosTypeToString(partEntry.DosEnvVec.DosType));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.baud = {0}", partEntry.DosEnvVec.Baud);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.control = 0x{0:X8}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.control = 0x{0:X8}",
                                        partEntry.DosEnvVec.Control);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "partEntry.dosEnvVec.bootBlocks = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "partEntry.dosEnvVec.bootBlocks = {0}",
                                        partEntry.DosEnvVec.BootBlocks);
 
             partitionEntries.Add(partEntry);
@@ -600,18 +616,17 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
         while(nextBlock != 0xFFFFFFFF)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Going_to_block_0_in_search_of_a_FileSystemHeader_block,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Going_to_block_0_in_search_of_a_FileSystemHeader_block,
                                        nextBlock);
 
             errno = imagePlugin.ReadSector(nextBlock, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             var magic = BigEndianBitConverter.ToUInt32(sector, 0);
 
-            if(magic != FILESYSTEM_HEADER_MAGIC)
-                break;
+            if(magic != FILESYSTEM_HEADER_MAGIC) break;
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_FileSystemHeader_block);
 
@@ -655,8 +670,11 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.dosType = {0}", AmigaDosTypeToString(fshd.DosType));
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.version = {0:D2}.{1:D2} (0x{2:X8})",
-                                       (fshd.Version & 0xFFFF0000) >> 16, fshd.Version & 0xFFFF, fshd.Version);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "FSHD.version = {0:D2}.{1:D2} (0x{2:X8})",
+                                       (fshd.Version & 0xFFFF0000) >> 16,
+                                       fshd.Version & 0xFFFF,
+                                       fshd.Version);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "FSHD.patchFlags = 0x{0:X8}", fshd.PatchFlags);
 
@@ -677,18 +695,17 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
             while(nextBlock != 0xFFFFFFFF)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Going_to_block_0_in_search_of_a_LoadSegment_block,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Going_to_block_0_in_search_of_a_LoadSegment_block,
                                            nextBlock);
 
                 errno = imagePlugin.ReadSector(nextBlock, out sector);
 
-                if(errno != ErrorNumber.NoError)
-                    break;
+                if(errno != ErrorNumber.NoError) break;
 
                 var magicSeg = BigEndianBitConverter.ToUInt32(sector, 0);
 
-                if(magicSeg != LOAD_SEG_MAGIC)
-                    break;
+                if(magicSeg != LOAD_SEG_MAGIC) break;
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_LoadSegment_block);
 
@@ -708,7 +725,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.size = {0} longs, {1} bytes", loadSeg.Size,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "loadSeg.size = {0} longs, {1} bytes",
+                                           loadSeg.Size,
                                            loadSeg.Size * 4);
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, "loadSeg.checksum = 0x{0:X8}", loadSeg.Checksum);
@@ -734,25 +753,27 @@ public sealed class AmigaRigidDiskBlock : IPartition
         ulong sequence = 0;
 
         foreach(Partition entry in partitionEntries.Select(rdbEntry => new Partition
-            {
-                Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
-                Name        = rdbEntry.DriveName,
-                Sequence    = sequence,
-                Length = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                         rdbEntry.DosEnvVec.Surfaces                                            *
-                         rdbEntry.DosEnvVec.Bpt,
-                Start = rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                {
+                    Description = AmigaDosTypeToDescriptionString(rdbEntry.DosEnvVec.DosType),
+                    Name        = rdbEntry.DriveName,
+                    Sequence    = sequence,
+                    Length =
+                        (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                        rdbEntry.DosEnvVec.Surfaces                                            *
+                        rdbEntry.DosEnvVec.Bpt,
+                    Start =
+                        rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
                         sectorOffset,
-                Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
-                Scheme = Name,
-                Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
-                          sectorOffset) *
-                         rdb.BlockSize,
-                Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                       rdbEntry.DosEnvVec.Surfaces                                            *
-                       rdbEntry.DosEnvVec.Bpt                                                 *
-                       rdb.BlockSize
-            }))
+                    Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
+                    Scheme = Name,
+                    Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                              sectorOffset) *
+                             rdb.BlockSize,
+                    Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                           rdbEntry.DosEnvVec.Surfaces                                            *
+                           rdbEntry.DosEnvVec.Bpt                                                 *
+                           rdb.BlockSize
+                }))
         {
             partitions.Add(entry);
             sequence++;

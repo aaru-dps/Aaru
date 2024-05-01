@@ -49,14 +49,12 @@ public sealed partial class Symbian
     public ErrorNumber Open(IFilter filter, Encoding encoding)
     {
         // Already opened!
-        if(Opened)
-            return ErrorNumber.InvalidArgument;
+        if(Opened) return ErrorNumber.InvalidArgument;
 
         var languages = new List<string>();
         _stream = filter.GetDataForkStream();
 
-        if(_stream.Length < Marshal.SizeOf<SymbianHeader>())
-            return ErrorNumber.InvalidArgument;
+        if(_stream.Length < Marshal.SizeOf<SymbianHeader>()) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[Marshal.SizeOf<SymbianHeader>()];
 
@@ -99,6 +97,7 @@ public sealed partial class Symbian
         if(sh.uid1 == SYMBIAN9_MAGIC)
         {
             AaruConsole.ErrorWriteLine("Symbian Installation Files from Symbian OS 9 or later are not yet supported.");
+
             return ErrorNumber.NotSupported;
         }
 
@@ -110,6 +109,7 @@ public sealed partial class Symbian
                     break;
                 case EPOC6_MAGIC:
                     _release6 = true;
+
                     break;
             }
         }
@@ -123,8 +123,7 @@ public sealed partial class Symbian
 
         // Go to enumerate languages
         br.BaseStream.Seek(sh.lang_ptr, SeekOrigin.Begin);
-        for(var i = 0; i < sh.languages; i++)
-            languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
+        for(var i = 0; i < sh.languages; i++) languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
 
         _files      = new List<DecodedFileRecord>();
         _conditions = new List<string>();
@@ -144,6 +143,7 @@ public sealed partial class Symbian
         offset         = sh.files_ptr;
         currentFile    = 0;
         conditionLevel = 0;
+
         do
         {
             Parse(br, ref offset, ref currentFile, sh.files, languages, ref conditionLevel, false);
@@ -163,8 +163,7 @@ public sealed partial class Symbian
 
             file.destinationName = file.destinationName.Replace('\\', '/');
 
-            if(file.language != null)
-                file.destinationName = $"{file.language}/{file.destinationName}";
+            if(file.language != null) file.destinationName = $"{file.language}/{file.destinationName}";
 
             filesWithFixedFilenames.Add(file);
         }
@@ -179,8 +178,7 @@ public sealed partial class Symbian
             _compressed =  true;
         }
 
-        if(_files.Any(t => t.mime is not null))
-            _features |= ArchiveSupportedFeature.SupportsXAttrs;
+        if(_files.Any(t => t.mime is not null)) _features |= ArchiveSupportedFeature.SupportsXAttrs;
 
         Opened = true;
 
@@ -191,8 +189,7 @@ public sealed partial class Symbian
     public void Close()
     {
         // Already closed
-        if(!Opened)
-            return;
+        if(!Opened) return;
 
         _stream?.Close();
 

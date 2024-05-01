@@ -55,8 +55,7 @@ public class PcmciaInfoViewModel : ViewModelBase
 
     internal PcmciaInfoViewModel([CanBeNull] byte[] pcmciaCis, Window view)
     {
-        if(pcmciaCis == null)
-            return;
+        if(pcmciaCis == null) return;
 
         _cis                 = pcmciaCis;
         CisList              = new ObservableCollection<PcmciaCisModel>();
@@ -166,8 +165,7 @@ public class PcmciaInfoViewModel : ViewModelBase
         get => _selectedCis;
         set
         {
-            if(_selectedCis == value)
-                return;
+            if(_selectedCis == value) return;
 
             PcmciaCisText = value?.Description;
             this.RaiseAndSetIfChanged(ref _selectedCis, value);
@@ -191,8 +189,7 @@ public class PcmciaInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_cis, 0, _cis.Length);

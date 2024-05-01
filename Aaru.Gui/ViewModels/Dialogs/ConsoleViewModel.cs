@@ -108,8 +108,7 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         string result = await dlgSave.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         try
         {
@@ -128,7 +127,9 @@ public sealed class ConsoleViewModel : ViewModelBase
 
             logSw.WriteLine(Localization.Core.System_information);
 
-            logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
+            logSw.WriteLine("{0} {1} ({2}-bit)",
+                            DetectOS.GetPlatformName(platId, platVer),
+                            platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
 
             logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
@@ -138,9 +139,9 @@ public sealed class ConsoleViewModel : ViewModelBase
             logSw.WriteLine(Localization.Core.Program_information);
             logSw.WriteLine("Aaru {0}",                         assemblyVersion?.InformationalVersion);
             logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
-        #if DEBUG
+#if DEBUG
             logSw.WriteLine(Localization.Core.DEBUG_version);
-        #endif
+#endif
             logSw.WriteLine(Localization.Core.Command_line_0, Environment.CommandLine);
             logSw.WriteLine();
 
@@ -160,10 +161,13 @@ public sealed class ConsoleViewModel : ViewModelBase
         catch(Exception exception)
         {
             await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
-                                                          string.
-                                                              Format(UI.Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
-                                                                     exception.Message), ButtonEnum.Ok, Icon.Error).
-                                    ShowWindowDialogAsync(_view);
+                                                          string
+                                                             .Format(UI
+                                                                        .Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
+                                                                     exception.Message),
+                                                          ButtonEnum.Ok,
+                                                          Icon.Error)
+                                   .ShowWindowDialogAsync(_view);
 
             AaruConsole.WriteException(exception);
         }

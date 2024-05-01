@@ -49,18 +49,15 @@ public sealed partial class HPOFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(16 + partition.Start >= partition.End)
-            return false;
+        if(16 + partition.Start >= partition.End) return false;
 
         ErrorNumber errno =
             imagePlugin.ReadSector(0 + partition.Start,
                                    out byte[] hpofsBpbSector); // Seek to BIOS parameter block, on logical sector 0
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(hpofsBpbSector.Length < 512)
-            return false;
+        if(hpofsBpbSector.Length < 512) return false;
 
         BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
 
@@ -81,20 +78,17 @@ public sealed partial class HPOFS
             imagePlugin.ReadSector(0 + partition.Start,
                                    out byte[] hpofsBpbSector); // Seek to BIOS parameter block, on logical sector 0
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSector(13 + partition.Start,
                                        out byte[] medInfoSector); // Seek to media information block, on logical sector 13
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         errno = imagePlugin.ReadSector(14 + partition.Start,
                                        out byte[] volInfoSector); // Seek to volume information block, on logical sector 14
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         BiosParameterBlock     bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
         MediaInformationBlock  mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
@@ -119,12 +113,14 @@ public sealed partial class HPOFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.signature = 0x{0:X2}", bpb.signature);
         AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.serial_no = 0x{0:X8}", bpb.serial_no);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.volume_label = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "bpb.volume_label = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(bpb.volume_label));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.fs_type = \"{0}\"", StringHandlers.CToString(bpb.fs_type));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.boot_code is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "bpb.boot_code is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(bpb.boot_code));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.unknown = {0}",     bpb.unknown);
@@ -132,15 +128,18 @@ public sealed partial class HPOFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "bpb.signature2 = {0}",  bpb.signature2);
         AaruConsole.DebugWriteLine(MODULE_NAME, "mib.blockId = \"{0}\"", StringHandlers.CToString(mib.blockId));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "mib.volumeLabel = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "mib.volumeLabel = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(mib.volumeLabel));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "mib.comment = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "mib.comment = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(mib.comment));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "mib.serial = 0x{0:X8}", mib.serial);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "mib.creationTimestamp = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "mib.creationTimestamp = {0}",
                                    DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "mib.codepageType = {0}", mib.codepageType);
@@ -157,29 +156,34 @@ public sealed partial class HPOFS
         AaruConsole.DebugWriteLine(MODULE_NAME, "mib.unknown5 = {0}",     mib.unknown5);
         AaruConsole.DebugWriteLine(MODULE_NAME, "mib.unknown6 = {0}",     mib.unknown6);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "mib.filler is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "mib.filler is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(mib.filler));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.blockId = \"{0}\"", StringHandlers.CToString(vib.blockId));
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown = {0}",     vib.unknown);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown2 = {0}",    vib.unknown2);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown3 is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "vib.unknown3 is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vib.unknown3));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown4 = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "vib.unknown4 = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(vib.unknown4));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.owner = \"{0}\"", StringHandlers.SpacePaddedToString(vib.owner));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown5 = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "vib.unknown5 = \"{0}\"",
                                    StringHandlers.SpacePaddedToString(vib.unknown5));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown6 = {0}",    vib.unknown6);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.percentFull = {0}", vib.percentFull);
         AaruConsole.DebugWriteLine(MODULE_NAME, "vib.unknown7 = {0}",    vib.unknown7);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "vib.filler is empty? = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "vib.filler is empty? = {0}",
                                    ArrayHelpers.ArrayIsNullOrEmpty(vib.filler));
 
         sb.AppendLine(Localization.HPOFS_Name);
@@ -194,24 +198,25 @@ public sealed partial class HPOFS
         sb.AppendFormat(Localization.BIOS_drive_number_0, bpb.drive_no).AppendLine();
         sb.AppendFormat(Localization.Serial_number_0, mib.serial).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(mib.volumeLabel, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_comment_0, StringHandlers.SpacePaddedToString(mib.comment, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_owner_0, StringHandlers.SpacePaddedToString(vib.owner, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Volume_created_on_0,
-                        DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime)).
-           AppendLine();
+                        DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Volume_uses_0_codepage_1,
                         mib.codepageType is > 0 and < 3
                             ? mib.codepageType == 2 ? Localization.EBCDIC : Localization.ASCII
-                            : Localization.Unknown_codepage, mib.codepage).
-           AppendLine();
+                            : Localization.Unknown_codepage,
+                        mib.codepage)
+          .AppendLine();
 
         sb.AppendFormat(Localization.RPS_level_0,                  mib.rps).AppendLine();
         sb.AppendFormat(Localization.Filesystem_version_0_1,       mib.major, mib.minor).AppendLine();

@@ -129,8 +129,7 @@ public sealed class DataFile
     public static void WriteTo(string who, string filename, byte[] data, string whatWriting = null,
                                bool   overwrite = false)
     {
-        if(string.IsNullOrEmpty(filename))
-            return;
+        if(string.IsNullOrEmpty(filename)) return;
 
         if(File.Exists(filename))
         {

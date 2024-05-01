@@ -38,29 +38,21 @@ static partial class MainClass
     {
         var ret = "";
 
-        if((status & 0x80) == 0x80)
-            ret += "BSY ";
+        if((status & 0x80) == 0x80) ret += "BSY ";
 
-        if((status & 0x40) == 0x40)
-            ret += "DRDY ";
+        if((status & 0x40) == 0x40) ret += "DRDY ";
 
-        if((status & 0x20) == 0x20)
-            ret += "DWF ";
+        if((status & 0x20) == 0x20) ret += "DWF ";
 
-        if((status & 0x10) == 0x10)
-            ret += "DSC ";
+        if((status & 0x10) == 0x10) ret += "DSC ";
 
-        if((status & 0x8) == 0x8)
-            ret += "DRQ ";
+        if((status & 0x8) == 0x8) ret += "DRQ ";
 
-        if((status & 0x4) == 0x4)
-            ret += "CORR ";
+        if((status & 0x4) == 0x4) ret += "CORR ";
 
-        if((status & 0x2) == 0x2)
-            ret += "IDX ";
+        if((status & 0x2) == 0x2) ret += "IDX ";
 
-        if((status & 0x1) == 0x1)
-            ret += "ERR ";
+        if((status & 0x1) == 0x1) ret += "ERR ";
 
         return ret;
     }
@@ -69,29 +61,21 @@ static partial class MainClass
     {
         var ret = "";
 
-        if((error & 0x80) == 0x80)
-            ret += "BBK ";
+        if((error & 0x80) == 0x80) ret += "BBK ";
 
-        if((error & 0x40) == 0x40)
-            ret += "UNC ";
+        if((error & 0x40) == 0x40) ret += "UNC ";
 
-        if((error & 0x20) == 0x20)
-            ret += "MC ";
+        if((error & 0x20) == 0x20) ret += "MC ";
 
-        if((error & 0x10) == 0x10)
-            ret += "IDNF ";
+        if((error & 0x10) == 0x10) ret += "IDNF ";
 
-        if((error & 0x8) == 0x8)
-            ret += "MCR ";
+        if((error & 0x8) == 0x8) ret += "MCR ";
 
-        if((error & 0x4) == 0x4)
-            ret += "ABRT ";
+        if((error & 0x4) == 0x4) ret += "ABRT ";
 
-        if((error & 0x2) == 0x2)
-            ret += "TK0NF ";
+        if((error & 0x2) == 0x2) ret += "TK0NF ";
 
-        if((error & 0x1) == 0x1)
-            ret += "AMNF ";
+        if((error & 0x1) == 0x1) ret += "AMNF ";
 
         return ret;
     }

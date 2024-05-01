@@ -49,8 +49,7 @@ public sealed partial class Cpcdsk
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var headerB = new byte[256];
         stream.EnsureRead(headerB, 0, 256);
@@ -59,12 +58,10 @@ public sealed partial class Cpcdsk
 
         for(pos = 0; pos < 254; pos++)
         {
-            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A)
-                break;
+            if(headerB[pos] == 0x0D && headerB[pos + 1] == 0x0A) break;
         }
 
-        if(pos >= 254)
-            return false;
+        if(pos >= 254) return false;
 
         string magic = Encoding.ASCII.GetString(headerB, 0, pos);
 

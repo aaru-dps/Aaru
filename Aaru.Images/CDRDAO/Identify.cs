@@ -58,13 +58,11 @@ public sealed partial class Cdrdao
 
             for(var i = 0; i < 512; i++)
             {
-                if(i >= imageFilter.GetDataForkStream().Length)
-                    break;
+                if(i >= imageFilter.GetDataForkStream().Length) break;
 
                 if(testArray[i] == 0)
                 {
-                    if(twoConsecutiveNulls)
-                        return false;
+                    if(twoConsecutiveNulls) return false;
 
                     twoConsecutiveNulls = true;
                 }
@@ -88,8 +86,7 @@ public sealed partial class Cdrdao
                 Match cm = cr.Match(line ?? "");
 
                 // Skip comments at start of file
-                if(cm.Success)
-                    continue;
+                if(cm.Success) continue;
 
                 return dm.Success;
             }

@@ -31,8 +31,10 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:gui="clr-namespace:Aaru.Gui" x:Class="Aaru.Gui.App">
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:gui="clr-namespace:Aaru.Gui"
+             x:Class="Aaru.Gui.App">
     <Application.DataTemplates>
         <gui:ViewLocator />
     </Application.DataTemplates>
@@ -44,9 +46,12 @@
     </Application.Styles>
     <NativeMenu.Menu>
         <NativeMenu>
-            <NativeMenuItem Header="_About" Click="OnAboutClicked" />
-            <NativeMenuItem Header="_Preferences" Click="OnPreferencesClicked" />
-            <NativeMenuItem Header="_Quit" Click="OnQuitClicked" />
+            <NativeMenuItem Header="_About"
+                            Click="OnAboutClicked" />
+            <NativeMenuItem Header="_Preferences"
+                            Click="OnPreferencesClicked" />
+            <NativeMenuItem Header="_Quit"
+                            Click="OnQuitClicked" />
         </NativeMenu>
     </NativeMenu.Menu>
 </Application>

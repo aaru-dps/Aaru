@@ -34,7 +34,6 @@ using Aaru.Core.Logging;
 using Aaru.Decryption.DVD;
 using Humanizer;
 using Humanizer.Bytes;
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -77,11 +76,12 @@ partial class Dump
         InitProgress?.Invoke();
 
         if(scsiReader.HldtstReadRaw && _resume.NextBlock > 0)
+
             // The HL-DT-ST buffer is stored and read in 96-sector chunks. If we start to read at an LBA which is
             // not modulo 96, the data will not be correctly fetched. Therefore, we begin every resume read with
             // filling the buffer at a known offset.
             // TODO: This is very ugly and there probably exist a more elegant way to solve this issue.
-            scsiReader.ReadBlock(out _, _resume.NextBlock - (_resume.NextBlock % 96) + 1, out _, out _, out _);
+            scsiReader.ReadBlock(out _, _resume.NextBlock - _resume.NextBlock % 96 + 1, out _, out _, out _);
 
         for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
         {
@@ -94,18 +94,18 @@ partial class Dump
                 break;
             }
 
-            if(blocks - i < blocksToRead)
-                blocksToRead = (uint)(blocks - i);
+            if(blocks - i < blocksToRead) blocksToRead = (uint)(blocks - i);
 
-            if(currentSpeed > maxSpeed && currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed && currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)blocks);
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                 i,
+                                                 blocks,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i,
+                                   (long)blocks);
 
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
             totalDuration += cmdDuration;
@@ -118,18 +118,20 @@ partial class Dump
                 _writeStopwatch.Restart();
 
                 byte[] tmpBuf;
-                byte[] cmi = new byte[blocksToRead];
+                var    cmi = new byte[blocksToRead];
 
                 for(uint j = 0; j < blocksToRead; j++)
                 {
-                    byte[] key = buffer.Skip((int)((2064 * j) + 7)).Take(5).ToArray();
+                    byte[] key = buffer.Skip((int)(2064 * j + 7)).Take(5).ToArray();
 
                     if(key.All(static k => k == 0))
                     {
                         outputFormat.WriteSectorTag(new byte[]
-                        {
-                            0, 0, 0, 0, 0
-                        }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                                                    {
+                                                        0, 0, 0, 0, 0
+                                                    },
+                                                    i + j,
+                                                    SectorTagType.DvdTitleKeyDecrypted);
 
                         _resume.MissingTitleKeys?.Remove(i + j);
 
@@ -140,8 +142,7 @@ partial class Dump
                     outputFormat.WriteSectorTag(tmpBuf, i + j, SectorTagType.DvdTitleKeyDecrypted);
                     _resume.MissingTitleKeys?.Remove(i    + j);
 
-                    if(_storeEncrypted)
-                        continue;
+                    if(_storeEncrypted) continue;
 
                     cmi[j] = buffer[2064 * j + 6];
                 }
@@ -150,12 +151,16 @@ partial class Dump
                 if(!_storeEncrypted)
                 {
                     ErrorNumber errno =
-                        outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdTitleKeyDecrypted,
+                        outputFormat.ReadSectorsTag(i,
+                                                    blocksToRead,
+                                                    SectorTagType.DvdTitleKeyDecrypted,
                                                     out byte[] titleKey);
 
                     if(errno != ErrorNumber.NoError)
+                    {
                         ErrorMessage?.Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0,
                                                            i));
+                    }
                     else
                         buffer = CSS.DecryptSectorLong(buffer, titleKey, cmi, blocksToRead);
                 }
@@ -169,19 +174,16 @@ partial class Dump
             else
             {
                 // TODO: Reset device after X errors
-                if(_stopOnError)
-                    return; // TODO: Return more cleanly
+                if(_stopOnError) return; // TODO: Return more cleanly
 
-                if(i + _skip > blocks)
-                    _skip = (uint)(blocks - i);
+                if(i + _skip > blocks) _skip = (uint)(blocks - i);
 
                 // Write empty data
                 _writeStopwatch.Restart();
                 outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                for(ulong b = i; b < i + _skip; b++)
-                    _resume.BadBlocks.Add(b);
+                for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
@@ -197,8 +199,7 @@ partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
-                continue;
+            if(elapsed <= 0) continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;

@@ -81,44 +81,36 @@ public sealed partial class CisCopy
 
         var cmpr = (Compression)stream.ReadByte();
 
-        if(cmpr != Compression.None && cmpr != Compression.Normal && cmpr != Compression.High)
-            return false;
+        if(cmpr != Compression.None && cmpr != Compression.Normal && cmpr != Compression.High) return false;
 
         switch(type)
         {
             case DiskType.MD1DD8:
-                if(stream.Length > 40 * 1 * 8 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 1 * 8 * 512 + 82) return false;
 
                 break;
             case DiskType.MD1DD:
-                if(stream.Length > 40 * 1 * 9 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 1 * 9 * 512 + 82) return false;
 
                 break;
             case DiskType.MD2DD8:
-                if(stream.Length > 40 * 2 * 8 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 2 * 8 * 512 + 82) return false;
 
                 break;
             case DiskType.MD2DD:
-                if(stream.Length > 40 * 2 * 9 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 2 * 9 * 512 + 82) return false;
 
                 break;
             case DiskType.MF2DD:
-                if(stream.Length > 80 * 2 * 9 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 9 * 512 + 162) return false;
 
                 break;
             case DiskType.MD2HD:
-                if(stream.Length > 80 * 2 * 15 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 15 * 512 + 162) return false;
 
                 break;
             case DiskType.MF2HD:
-                if(stream.Length > 80 * 2 * 18 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 18 * 512 + 162) return false;
 
                 break;
         }

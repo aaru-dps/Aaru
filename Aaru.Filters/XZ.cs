@@ -97,8 +97,7 @@ public sealed class XZ : IFilter
         var buffer = new byte[6];
         var footer = new byte[2];
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 6);
@@ -119,15 +118,13 @@ public sealed class XZ : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[6];
         var footer = new byte[2];
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         stream.Seek(0, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, 6);
@@ -206,8 +203,7 @@ public sealed class XZ : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath[..^3];
+            if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^3];
 
             return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
                        ? BasePath[..^5]
@@ -266,8 +262,7 @@ public sealed class XZ : IFilter
 
         while((buf[i++] & 0x80) == 0x80)
         {
-            if(i >= sizeMax || buf[i] == 0x00)
-                return 0;
+            if(i >= sizeMax || buf[i] == 0x00) return 0;
 
             num |= (ulong)(buf[i] & 0x7F) << i * 7;
         }

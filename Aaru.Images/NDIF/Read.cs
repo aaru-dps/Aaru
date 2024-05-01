@@ -53,8 +53,7 @@ public sealed partial class Ndif
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0)
-            return ErrorNumber.InvalidArgument;
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0) return ErrorNumber.InvalidArgument;
 
         ResourceFork rsrcFork;
         Resource     rsrc;
@@ -64,15 +63,13 @@ public sealed partial class Ndif
         {
             rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
-            if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                return ErrorNumber.InvalidArgument;
+            if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return ErrorNumber.InvalidArgument;
 
             rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
             bcems = rsrc.GetIds();
 
-            if(bcems == null || bcems.Length == 0)
-                return ErrorNumber.InvalidArgument;
+            if(bcems == null || bcems.Length == 0) return ErrorNumber.InvalidArgument;
         }
         catch(InvalidCastException ex)
         {
@@ -86,15 +83,15 @@ public sealed partial class Ndif
 
         foreach(byte[] bcem in bcems.Select(_ => rsrc.GetResource(NDIF_RESOURCEID)))
         {
-            if(bcem.Length < 128)
-                return ErrorNumber.InvalidArgument;
+            if(bcem.Length < 128) return ErrorNumber.InvalidArgument;
 
             _header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "footer.type = {0}",   _header.version);
             AaruConsole.DebugWriteLine(MODULE_NAME, "footer.driver = {0}", _header.driver);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.name = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "footer.name = {0}",
                                        StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh")));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "footer.sectors = {0}", _header.sectors);
@@ -135,8 +132,7 @@ public sealed partial class Ndif
                 AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
-                if(bChnk.type == CHUNK_TYPE_END)
-                    break;
+                if(bChnk.type == CHUNK_TYPE_END) break;
 
                 bChnk.offset += _header.dataOffset;
                 bChnk.sector += (uint)_imageInfo.Sectors;
@@ -159,9 +155,10 @@ public sealed partial class Ndif
                 }
 
                 // TODO: Handle compressed chunks
-                if(bChnk.type is > CHUNK_TYPE_COPY and < CHUNK_TYPE_KENCODE or > CHUNK_TYPE_ADC and < CHUNK_TYPE_STUFFIT
-                                                                            or > CHUNK_TYPE_STUFFIT and < CHUNK_TYPE_END
-                                                                            or 1)
+                if(bChnk.type is > CHUNK_TYPE_COPY and < CHUNK_TYPE_KENCODE
+                              or > CHUNK_TYPE_ADC and < CHUNK_TYPE_STUFFIT
+                              or > CHUNK_TYPE_STUFFIT and < CHUNK_TYPE_END
+                              or 1)
                 {
                     AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_chunk_type_0_found, bChnk.type));
 
@@ -213,8 +210,7 @@ public sealed partial class Ndif
                 var major = $"{version.MajorVersion}";
                 var minor = $".{version.MinorVersion / 10}";
 
-                if(version.MinorVersion % 10 > 0)
-                    release = $".{version.MinorVersion % 10}";
+                if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
                 string dev = version.DevStage switch
                              {
@@ -224,11 +220,9 @@ public sealed partial class Ndif
                                  _                                 => null
                              };
 
-                if(dev == null && version.PreReleaseVersion > 0)
-                    dev = "f";
+                if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                if(dev != null)
-                    pre = $"{version.PreReleaseVersion}";
+                if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                 _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                 _imageInfo.Application        = version.VersionString;
@@ -243,7 +237,9 @@ public sealed partial class Ndif
             }
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _sectorCache           = new Dictionary<ulong, byte[]>();
@@ -306,11 +302,9 @@ public sealed partial class Ndif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         var   currentChunk     = new BlockChunk();
         var   chunkFound       = false;
@@ -325,11 +319,9 @@ public sealed partial class Ndif
 
         long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 
-        if(relOff < 0)
-            return ErrorNumber.InvalidArgument;
+        if(relOff < 0) return ErrorNumber.InvalidArgument;
 
-        if(!chunkFound)
-            return ErrorNumber.SectorNotFound;
+        if(!chunkFound) return ErrorNumber.SectorNotFound;
 
         if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
         {
@@ -379,8 +371,7 @@ public sealed partial class Ndif
             buffer = new byte[SECTOR_SIZE];
             Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
 
-            if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, buffer);
 
@@ -392,8 +383,7 @@ public sealed partial class Ndif
             case CHUNK_TYPE_NOCOPY:
                 buffer = new byte[SECTOR_SIZE];
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -403,8 +393,7 @@ public sealed partial class Ndif
                 buffer = new byte[SECTOR_SIZE];
                 _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -419,11 +408,9 @@ public sealed partial class Ndif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -431,8 +418,7 @@ public sealed partial class Ndif
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

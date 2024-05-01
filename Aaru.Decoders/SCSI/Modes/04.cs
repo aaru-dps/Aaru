@@ -69,17 +69,13 @@ public static partial class Modes
 
     public static ModePage_04? DecodeModePage_04(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x04)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x04) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 20)
-            return null;
+        if(pageResponse.Length < 20) return null;
 
         var decoded = new ModePage_04();
 
@@ -96,8 +92,7 @@ public static partial class Modes
         decoded.RPL              = (byte)(pageResponse[17] & 0x03);
         decoded.RotationalOffset = pageResponse[18];
 
-        if(pageResponse.Length >= 22)
-            decoded.MediumRotationRate = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
+        if(pageResponse.Length >= 22) decoded.MediumRotationRate = (ushort)((pageResponse[20] << 8) + pageResponse[21]);
 
         return decoded;
     }
@@ -107,30 +102,28 @@ public static partial class Modes
 
     public static string PrettifyModePage_04(ModePage_04? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_04 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Rigid_disk_drive_geometry_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization._0_heads,     page.Heads).AppendLine();
         sb.AppendFormat("\t" + Localization._0_cylinders, page.Cylinders).AppendLine();
 
         if(page.WritePrecompCylinder < page.Cylinders)
         {
-            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_pre_compensation_starts_at_cylinder_0, page.WritePrecompCylinder)
+              .AppendLine();
         }
 
         if(page.WriteReduceCylinder < page.Cylinders)
         {
-            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Write_current_reduction_starts_at_cylinder_0, page.WriteReduceCylinder)
+              .AppendLine();
         }
 
         if(page.DriveStepRate > 0)

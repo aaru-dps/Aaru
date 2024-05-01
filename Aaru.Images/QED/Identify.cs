@@ -46,8 +46,7 @@ public sealed partial class Qed
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var qHdrB = new byte[68];
         stream.EnsureRead(qHdrB, 0, 68);

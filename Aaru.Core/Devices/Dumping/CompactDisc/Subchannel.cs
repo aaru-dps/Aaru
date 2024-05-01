@@ -53,8 +53,21 @@ partial class Dump
         dumpLog?.WriteLine(Localization.Core.Checking_if_drive_supports_full_raw_subchannel_reading);
         updateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_full_raw_subchannel_reading);
 
-        return !dev.ReadCd(out _, out _, lba, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+        return !dev.ReadCd(out _,
+                           out _,
+                           lba,
+                           2352 + 96,
+                           1,
+                           MmcSectorTypes.AllTypes,
+                           false,
+                           false,
+                           true,
+                           MmcHeaderCodes.AllHeaders,
+                           true,
+                           true,
+                           MmcErrorField.None,
+                           MmcSubchannel.Raw,
+                           dev.Timeout,
                            out _);
     }
 
@@ -69,8 +82,21 @@ partial class Dump
         dumpLog?.WriteLine(Localization.Core.Checking_if_drive_supports_PQ_subchannel_reading);
         updateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_PQ_subchannel_reading);
 
-        return !dev.ReadCd(out _, out _, lba, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
+        return !dev.ReadCd(out _,
+                           out _,
+                           lba,
+                           2352 + 16,
+                           1,
+                           MmcSectorTypes.AllTypes,
+                           false,
+                           false,
+                           true,
+                           MmcHeaderCodes.AllHeaders,
+                           true,
+                           true,
+                           MmcErrorField.None,
+                           MmcSubchannel.Q16,
+                           dev.Timeout,
                            out _);
     }
 }

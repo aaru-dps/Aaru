@@ -61,17 +61,13 @@ public static partial class Modes
 
     public static ModePage_10? DecodeModePage_10(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x10)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x10) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 24)
-            return null;
+        if(pageResponse.Length < 24) return null;
 
         var decoded = new ModePage_10();
 
@@ -102,16 +98,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_10(ModePage_10? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_10 page = modePage.Value;
         var         sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_XOR_control_mode_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         if(page.XORDIS)
             sb.AppendLine("\t" + Localization.XOR_operations_are_disabled);
@@ -120,30 +114,30 @@ public static partial class Modes
             if(page.MaxXorWrite > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_single_XOR_WRITE_command,
-                                page.MaxXorWrite).
-                   AppendLine();
+                                page.MaxXorWrite)
+                  .AppendLine();
             }
 
             if(page.MaxRegenSize > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_REGENERATE_command,
-                                page.MaxRegenSize).
-                   AppendLine();
+                                page.MaxRegenSize)
+                  .AppendLine();
             }
 
             if(page.MaxRebuildRead > 0)
             {
-                sb.
-                    AppendFormat("\t" + Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
-                                 page.MaxRebuildRead).
-                    AppendLine();
+                sb.AppendFormat("\t" +
+                                Localization.Drive_accepts_a_maximum_of_0_blocks_in_a_READ_command_during_rebuild,
+                                page.MaxRebuildRead)
+                  .AppendLine();
             }
 
             if(page.RebuildDelay > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_needs_a_minimum_of_0_ms_between_READ_commands_during_rebuild,
-                                page.RebuildDelay).
-                   AppendLine();
+                                page.RebuildDelay)
+                  .AppendLine();
             }
         }
 

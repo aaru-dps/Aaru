@@ -74,8 +74,7 @@ public static class AppleSony
             byte w1 = nib_data[j++];
             byte w2 = nib_data[j++];
 
-            if(i != 174)
-                w3 = nib_data[j++];
+            if(i != 174) w3 = nib_data[j++];
 
             bf1[i] = (byte)((w1 & 0x3F | w4 << 2 & 0xC0) & 0x0F);
             bf2[i] = (byte)((w2 & 0x3F | w4 << 4 & 0xC0) & 0x0F);
@@ -91,8 +90,7 @@ public static class AppleSony
         {
             ck1 = (ck1 & 0xFF) << 1;
 
-            if((ck1 & 0x0100) > 0)
-                ck1++;
+            if((ck1 & 0x0100) > 0) ck1++;
 
             var carry = (byte)((bf1[j] ^ ck1) & 0xFF);
             ck3 += carry;
@@ -116,8 +114,7 @@ public static class AppleSony
 
             ms.WriteByte(carry);
 
-            if(ms.Length == 524)
-                break;
+            if(ms.Length == 524) break;
 
             carry =  (byte)((bf3[j] ^ ck2) & 0xFF);
             ck1   += carry;
@@ -144,8 +141,7 @@ public static class AppleSony
         endOffset = offset;
 
         // Not an Apple ][ GCR sector
-        if(data == null || data.Length < 363)
-            return null;
+        if(data == null || data.Length < 363) return null;
 
         int position = offset;
 
@@ -157,8 +153,7 @@ public static class AppleSony
                 if(data[position] == 0xD5 && data[position + 1] == 0xAA && data[position + 2] == 0x96)
                 {
                     // Epilogue not in correct position
-                    if(data[position + 8] != 0xDE || data[position + 9] != 0xAA)
-                        return null;
+                    if(data[position + 8] != 0xDE || data[position + 9] != 0xAA) return null;
 
                     var sector = new RawSector
                     {
@@ -194,12 +189,10 @@ public static class AppleSony
                     }
 
                     // Lost sync
-                    if(!onSync)
-                        return null;
+                    if(!onSync) return null;
 
                     // Prologue not found
-                    if(data[position] != 0xDE || data[position + 1] != 0xAA || data[position + 2] != 0xAD)
-                        return null;
+                    if(data[position] != 0xDE || data[position + 1] != 0xAA || data[position + 2] != 0xAD) return null;
 
                     sector.innerGap = gaps.ToArray();
 
@@ -223,8 +216,7 @@ public static class AppleSony
                         position++;
 
                         // No space left for epilogue
-                        if(position + 7 > data.Length)
-                            return null;
+                        if(position + 7 > data.Length) return null;
                     }
 
                     sector.dataField.data        = gaps.ToArray();
@@ -280,8 +272,7 @@ public static class AppleSony
 
     public static byte[] MarshalAddressField(RawAddressField addressField)
     {
-        if(addressField == null)
-            return null;
+        if(addressField == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(addressField.prologue, 0, addressField.prologue.Length);
@@ -296,8 +287,7 @@ public static class AppleSony
 
     public static byte[] MarshalSector(RawSector sector)
     {
-        if(sector == null)
-            return null;
+        if(sector == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(sector.addressField.prologue, 0, sector.addressField.prologue.Length);
@@ -339,19 +329,16 @@ public static class AppleSony
             onSync = count >= 5;
         }
 
-        if(position >= data.Length)
-            return null;
+        if(position >= data.Length) return null;
 
-        if(!onSync)
-            return null;
+        if(!onSync) return null;
 
         while(position < data.Length)
         {
             int       oldPosition = position;
             RawSector sector      = MarshalSector(data, out position, position);
 
-            if(sector == null)
-                break;
+            if(sector == null) break;
 
             if(firstSector)
             {
@@ -370,8 +357,7 @@ public static class AppleSony
             sectors.Add(sector);
         }
 
-        if(sectors.Count == 0)
-            return null;
+        if(sectors.Count == 0) return null;
 
         var track = new RawTrack
         {
@@ -386,14 +372,12 @@ public static class AppleSony
 
     public static byte[] MarshalTrack(RawTrack track)
     {
-        if(track == null)
-            return null;
+        if(track == null) return null;
 
         var raw = new MemoryStream();
         raw.Write(track.gap, 0, track.gap.Length);
 
-        foreach(byte[] rawSector in track.sectors.Select(MarshalSector))
-            raw.Write(rawSector, 0, rawSector.Length);
+        foreach(byte[] rawSector in track.sectors.Select(MarshalSector)) raw.Write(rawSector, 0, rawSector.Length);
 
         return raw.ToArray();
     }
@@ -414,8 +398,7 @@ public static class AppleSony
             track = MarshalTrack(data, out position, position);
         }
 
-        if(tracks.Count == 0)
-            return null;
+        if(tracks.Count == 0) return null;
 
         endOffset = position;
 
@@ -426,13 +409,11 @@ public static class AppleSony
 
     public static byte[] MarshalDisk(RawTrack[] disk)
     {
-        if(disk == null)
-            return null;
+        if(disk == null) return null;
 
         var raw = new MemoryStream();
 
-        foreach(byte[] rawTrack in disk.Select(MarshalTrack))
-            raw.Write(rawTrack, 0, rawTrack.Length);
+        foreach(byte[] rawTrack in disk.Select(MarshalTrack)) raw.Write(rawTrack, 0, rawTrack.Length);
 
         return raw.ToArray();
     }

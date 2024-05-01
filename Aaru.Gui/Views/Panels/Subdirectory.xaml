@@ -31,15 +31,21 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.Subdirectory">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.Subdirectory">
     <Design.DataContext>
         <panels:SubdirectoryViewModel />
     </Design.DataContext>
-    <DataGrid ItemsSource="{Binding Entries}" IsReadOnly="True" SelectionMode="Extended"> <!-- TODO: SelectedItemsSource="{Binding SelectedEntries}" -->
+    <DataGrid ItemsSource="{Binding Entries}"
+              IsReadOnly="True"
+              SelectionMode="Extended"> <!-- TODO: SelectedItemsSource="{Binding SelectedEntries}" -->
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <Button Command="{Binding ExtractFilesCommand}">
@@ -48,25 +54,58 @@
             </ContextMenu>
         </DataGrid.ContextMenu>
         <DataGrid.Columns>
-            <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding LengthLabel}" Binding="{Binding Size}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding CreationLabel}" Binding="{Binding CreationTime}" Width="Auto"
+            <DataGridTextColumn Header="{Binding NameLabel}"
+                                Binding="{Binding Name}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding LastAccessLabel}" Binding="{Binding LastAccessTime}" Width="Auto"
+            <DataGridTextColumn Header="{Binding LengthLabel}"
+                                Binding="{Binding Size}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding ChangedLabel}" Binding="{Binding ChangedTime}" Width="Auto"
+            <DataGridTextColumn Header="{Binding CreationLabel}"
+                                Binding="{Binding CreationTime}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding LastBackupLabel}" Binding="{Binding LastBackupTime}" Width="Auto"
+            <DataGridTextColumn Header="{Binding LastAccessLabel}"
+                                Binding="{Binding LastAccessTime}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding LastWriteLabel}" Binding="{Binding LastWriteTime}" Width="Auto"
+            <DataGridTextColumn Header="{Binding ChangedLabel}"
+                                Binding="{Binding ChangedTime}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding AttributesLabel}" Binding="{Binding Attributes}" Width="Auto"
+            <DataGridTextColumn Header="{Binding LastBackupLabel}"
+                                Binding="{Binding LastBackupTime}"
+                                Width="Auto"
                                 IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding GIDLabel}" Binding="{Binding Gid}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding UIDLabel}" Binding="{Binding Uid}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding InodeLabel}" Binding="{Binding Inode}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding LinksLabel}" Binding="{Binding Links}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="{Binding ModeLabel}" Binding="{Binding Mode}" Width="Auto" IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LastWriteLabel}"
+                                Binding="{Binding LastWriteTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding AttributesLabel}"
+                                Binding="{Binding Attributes}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding GIDLabel}"
+                                Binding="{Binding Gid}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding UIDLabel}"
+                                Binding="{Binding Uid}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding InodeLabel}"
+                                Binding="{Binding Inode}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LinksLabel}"
+                                Binding="{Binding Links}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding ModeLabel}"
+                                Binding="{Binding Mode}"
+                                Width="Auto"
+                                IsReadOnly="True" />
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

@@ -341,41 +341,29 @@ public sealed class Checksum
               _f16Thread.IsAlive     ||
               _f32Thread.IsAlive) {}
 
-        if(_enabled.HasFlag(EnableChecksum.Adler32))
-            _adlerThread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Adler32)) _adlerThread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc16))
-            _crc16Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc16Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc32))
-            _crc32Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc32)) _crc32Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc16))
-            _crc64Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc64Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Md5))
-            _md5Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Md5)) _md5Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha1))
-            _sha1Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha1)) _sha1Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha256))
-            _sha256Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha256)) _sha256Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha384))
-            _sha384Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha384)) _sha384Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha512))
-            _sha512Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha512)) _sha512Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.SpamSum))
-            _spamsumThread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.SpamSum)) _spamsumThread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Fletcher16))
-            _f16Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Fletcher16)) _f16Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Fletcher32))
-            _f32Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Fletcher32)) _f32Thread = new Thread(UpdateHash);
     }
 
     /// <summary>Finishes the checksums</summary>
@@ -483,8 +471,7 @@ public sealed class Checksum
             });
         }
 
-        if(!_enabled.HasFlag(EnableChecksum.Fletcher32))
-            return chks;
+        if(!_enabled.HasFlag(EnableChecksum.Fletcher32)) return chks;
 
         chks.Add(new CommonTypes.AaruMetadata.Checksum
         {
@@ -794,8 +781,7 @@ public sealed class Checksum
             });
         }
 
-        if(!enabled.HasFlag(EnableChecksum.Fletcher32))
-            return dataChecksums;
+        if(!enabled.HasFlag(EnableChecksum.Fletcher32)) return dataChecksums;
 
         dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
         {

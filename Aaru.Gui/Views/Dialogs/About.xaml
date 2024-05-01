@@ -31,12 +31,20 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Dialogs.About"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="480"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Dialogs.About"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <dialogs:AboutViewModel />
     </Design.DataContext>
@@ -49,20 +57,33 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" BorderThickness="5">
-                    <Image Source="/Assets/aaru-logo.png" Width="48" Height="48" />
+                <Border Grid.Column="0"
+                        BorderThickness="5">
+                    <Image Source="/Assets/aaru-logo.png"
+                           Width="48"
+                           Height="48" />
                 </Border>
-                <Grid Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Grid Grid.Column="1"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Text="{Binding SoftwareName}" HorizontalAlignment="Left"
-                               VerticalAlignment="Center" FontSize="16" FontWeight="Bold" />
-                    <TextBlock Grid.Row="1" Text="{Binding VersionText}" HorizontalAlignment="Left"
+                    <TextBlock Grid.Row="0"
+                               Text="{Binding SoftwareName}"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               FontWeight="Bold" />
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding VersionText}"
+                               HorizontalAlignment="Left"
                                VerticalAlignment="Center" />
                 </Grid>
             </Grid>
-            <TabControl Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <TabControl Grid.Row="1"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
                 <TabItem>
                     <TabItem.Header>
                         <TextBlock Text="{Binding AboutLabel}" />
@@ -74,17 +95,31 @@
                             <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="{Binding SuiteName}" />
-                        <TextBlock Grid.Row="2" Text="{Binding Copyright}" />
-                        <Button Grid.Row="4" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left"
-                                VerticalAlignment="Center" Padding="0" Command="{Binding WebsiteCommand}">
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding SuiteName}" />
+                        <TextBlock Grid.Row="2"
+                                   Text="{Binding Copyright}" />
+                        <Button Grid.Row="4"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Padding="0"
+                                Command="{Binding WebsiteCommand}">
                             <!-- TODO: TextDecorations="Underline" in next Avalonia UI version -->
-                            <TextBlock Text="{Binding Website}" Foreground="Blue" />
+                            <TextBlock Text="{Binding Website}"
+                                       Foreground="Blue" />
                         </Button>
-                        <Button Grid.Row="5" BorderThickness="0" Background="Transparent" HorizontalAlignment="Left"
-                                VerticalAlignment="Center" Padding="0" Command="{Binding LicenseCommand}">
+                        <Button Grid.Row="5"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Padding="0"
+                                Command="{Binding LicenseCommand}">
                             <!-- TODO: TextDecorations="Underline" in next Avalonia UI version -->
-                            <TextBlock Text="{Binding License}" Foreground="Blue" />
+                            <TextBlock Text="{Binding License}"
+                                       Foreground="Blue" />
                         </Button>
                     </Grid>
                 </TabItem>
@@ -92,14 +127,19 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding LibrariesLabel}" />
                     </TabItem.Header>
-                    <DataGrid ItemsSource="{Binding Assemblies}" HorizontalScrollBarVisibility="Visible">
+                    <DataGrid ItemsSource="{Binding Assemblies}"
+                              HorizontalScrollBarVisibility="Visible">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Binding="{Binding Name}" Width="Auto" IsReadOnly="True">
+                            <DataGridTextColumn Binding="{Binding Name}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
                                 <DataGridTextColumn.Header>
                                     <TextBlock Text="{Binding AssembliesLibraryText}" />
                                 </DataGridTextColumn.Header>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Binding="{Binding Version}" Width="Auto" IsReadOnly="True">
+                            <DataGridTextColumn Binding="{Binding Version}"
+                                                Width="Auto"
+                                                IsReadOnly="True">
                                 <DataGridTextColumn.Header>
                                     <TextBlock Text="{Binding AssembliesVersionText}" />
                                 </DataGridTextColumn.Header>
@@ -111,10 +151,13 @@
                     <TabItem.Header>
                         <TextBlock Text="{Binding AuthorsLabel}" />
                     </TabItem.Header>
-                    <TextBox IsReadOnly="True" Text="{Binding Authors}" />
+                    <TextBox IsReadOnly="True"
+                             Text="{Binding Authors}" />
                 </TabItem>
             </TabControl>
-            <Button Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+            <Button Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
                     Command="{Binding CloseCommand}">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>

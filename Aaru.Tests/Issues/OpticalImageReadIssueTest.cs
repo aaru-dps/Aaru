@@ -68,7 +68,9 @@ public abstract class OpticalImageReadIssueTest
                 }
                 else
                 {
-                    errno = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors), currentTrack.Sequence,
+                    errno = opticalInput.ReadSectors(doneSectors,
+                                                     (uint)(sectors - doneSectors),
+                                                     currentTrack.Sequence,
                                                      out sector);
 
                     doneSectors += sectors - doneSectors;

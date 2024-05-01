@@ -49,8 +49,7 @@ public sealed partial class DriDiskCopy
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if((stream.Length - Marshal.SizeOf<Footer>()) % 512 != 0) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[Marshal.SizeOf<Footer>()];
         stream.Seek(-buffer.Length, SeekOrigin.End);
@@ -63,8 +62,7 @@ public sealed partial class DriDiskCopy
         var   regexSignature = new Regex(REGEX_DRI);
         Match matchSignature = regexSignature.Match(sig);
 
-        if(!matchSignature.Success)
-            return ErrorNumber.InvalidArgument;
+        if(!matchSignature.Success) return ErrorNumber.InvalidArgument;
 
         if(_footer.bpb.sptrack * _footer.bpb.cylinders * _footer.bpb.heads != _footer.bpb.sectors)
             return ErrorNumber.InvalidArgument;
@@ -85,7 +83,9 @@ public sealed partial class DriDiskCopy
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_application_0_version_1, _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         // Correct some incorrect data in images of NEC 2HD disks
@@ -132,11 +132,9 @@ public sealed partial class DriDiskCopy
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

@@ -45,28 +45,23 @@ public static class DMI
 {
     public static bool IsXbox(byte[] dmi)
     {
-        if(dmi?.Length != 2052)
-            return false;
+        if(dmi?.Length != 2052) return false;
 
         // Version is 1
-        if(BitConverter.ToUInt32(dmi, 4) != 1)
-            return false;
+        if(BitConverter.ToUInt32(dmi, 4) != 1) return false;
 
         // Catalogue number is two letters, five numbers, one letter
         for(var i = 12; i < 14; i++)
         {
-            if(dmi[i] < 0x41 || dmi[i] > 0x5A)
-                return false;
+            if(dmi[i] < 0x41 || dmi[i] > 0x5A) return false;
         }
 
         for(var i = 14; i < 19; i++)
         {
-            if(dmi[i] < 0x30 || dmi[i] > 0x39)
-                return false;
+            if(dmi[i] < 0x30 || dmi[i] > 0x39) return false;
         }
 
-        if(dmi[19] < 0x41 || dmi[19] > 0x5A)
-            return false;
+        if(dmi[19] < 0x41 || dmi[19] > 0x5A) return false;
 
         var timestamp = BitConverter.ToInt64(dmi, 20);
 
@@ -76,8 +71,7 @@ public static class DMI
 
     public static bool IsXbox360(byte[] dmi)
     {
-        if(dmi?.Length != 2052)
-            return false;
+        if(dmi?.Length != 2052) return false;
 
         var signature = BitConverter.ToUInt32(dmi, 0x7EC);
 
@@ -89,8 +83,7 @@ public static class DMI
     {
         bool isXbox = IsXbox(response);
 
-        if(!isXbox)
-            return null;
+        if(!isXbox) return null;
 
         var dmi = new XboxDMI
         {
@@ -112,8 +105,7 @@ public static class DMI
     {
         bool isX360 = IsXbox360(response);
 
-        if(!isX360)
-            return null;
+        if(!isX360) return null;
 
         var dmi = new Xbox360DMI
         {
@@ -135,21 +127,18 @@ public static class DMI
 
     public static string PrettifyXbox(XboxDMI? dmi)
     {
-        if(dmi == null)
-            return null;
+        if(dmi == null) return null;
 
         XboxDMI decoded = dmi.Value;
         var     sb      = new StringBuilder();
 
         sb.Append(Localization.Catalogue_number);
 
-        for(var i = 0; i < 2; i++)
-            sb.Append($"{decoded.CatalogNumber[i]}");
+        for(var i = 0; i < 2; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
-        for(var i = 2; i < 7; i++)
-            sb.Append($"{decoded.CatalogNumber[i]}");
+        for(var i = 2; i < 7; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
         sb.Append($"{decoded.CatalogNumber[7]}");
@@ -162,54 +151,45 @@ public static class DMI
 
     public static string PrettifyXbox360(Xbox360DMI? dmi)
     {
-        if(dmi == null)
-            return null;
+        if(dmi == null) return null;
 
         Xbox360DMI decoded = dmi.Value;
         var        sb      = new StringBuilder();
 
         sb.Append(Localization.Catalogue_number);
 
-        for(var i = 0; i < 2; i++)
-            sb.Append($"{decoded.CatalogNumber[i]}");
+        for(var i = 0; i < 2; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
-        for(var i = 2; i < 6; i++)
-            sb.Append($"{decoded.CatalogNumber[i]}");
+        for(var i = 2; i < 6; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
-        for(var i = 6; i < 8; i++)
-            sb.Append($"{decoded.CatalogNumber[i]}");
+        for(var i = 6; i < 8; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
         sb.Append("-");
 
         switch(decoded.CatalogNumber.Length)
         {
             case 13:
-                for(var i = 8; i < 10; i++)
-                    sb.Append($"{decoded.CatalogNumber[i]}");
+                for(var i = 8; i < 10; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
-                for(var i = 10; i < 13; i++)
-                    sb.Append($"{decoded.CatalogNumber[i]}");
+                for(var i = 10; i < 13; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
                 break;
             case 14:
-                for(var i = 8; i < 11; i++)
-                    sb.Append($"{decoded.CatalogNumber[i]}");
+                for(var i = 8; i < 11; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
-                for(var i = 11; i < 14; i++)
-                    sb.Append($"{decoded.CatalogNumber[i]}");
+                for(var i = 11; i < 14; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
                 break;
             default:
-                for(var i = 8; i < decoded.CatalogNumber.Length - 3; i++)
-                    sb.Append($"{decoded.CatalogNumber[i]}");
+                for(var i = 8; i < decoded.CatalogNumber.Length - 3; i++) sb.Append($"{decoded.CatalogNumber[i]}");
 
                 sb.Append("-");
 
@@ -223,13 +203,11 @@ public static class DMI
 
         sb.Append(Localization.Media_ID);
 
-        for(var i = 0; i < 12; i++)
-            sb.Append($"{decoded.MediaID[i]:X2}");
+        for(var i = 0; i < 12; i++) sb.Append($"{decoded.MediaID[i]:X2}");
 
         sb.Append("-");
 
-        for(var i = 12; i < 16; i++)
-            sb.Append($"{decoded.MediaID[i]:X2}");
+        for(var i = 12; i < 16; i++) sb.Append($"{decoded.MediaID[i]:X2}");
 
         sb.AppendLine();
 

@@ -58,16 +58,13 @@ public static class CIS
                 Code = (TupleCodes)data[position]
             };
 
-            if(tuple.Code == TupleCodes.CISTPL_NULL)
-                continue;
+            if(tuple.Code == TupleCodes.CISTPL_NULL) continue;
 
-            if(tuple.Code == TupleCodes.CISTPL_END)
-                break;
+            if(tuple.Code == TupleCodes.CISTPL_END) break;
 
             tuple.Link = data[position + 1];
 
-            if(position + 2 + tuple.Link > data.Length)
-                break;
+            if(position + 2 + tuple.Link > data.Length) break;
 
             tuple.Data = new byte[tuple.Link + 2];
             Array.Copy(data, position, tuple.Data, 0, tuple.Link + 2);
@@ -81,19 +78,16 @@ public static class CIS
 
     public static DeviceGeometryTuple DecodeDeviceGeometryTuple(Tuple tuple)
     {
-        if(tuple == null)
-            return null;
+        if(tuple == null) return null;
 
-        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
-            return null;
+        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A) return null;
 
         return tuple.Data == null ? null : DecodeDeviceGeometryTuple(tuple.Data);
     }
 
     public static DeviceGeometryTuple DecodeDeviceGeometryTuple(byte[] data)
     {
-        if((data?.Length - 2) % 6 != 0)
-            return null;
+        if((data?.Length - 2) % 6 != 0) return null;
 
         var                  tuple      = new DeviceGeometryTuple();
         List<DeviceGeometry> geometries = new();
@@ -122,11 +116,9 @@ public static class CIS
 
     public static string PrettifyDeviceGeometryTuple(DeviceGeometryTuple tuple)
     {
-        if(tuple == null)
-            return null;
+        if(tuple == null) return null;
 
-        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A)
-            return null;
+        if(tuple.Code != TupleCodes.CISTPL_DEVICEGEO && tuple.Code != TupleCodes.CISTPL_DEVICEGEO_A) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.PCMCIA_Device_Geometry_Tuples);
@@ -135,26 +127,26 @@ public static class CIS
         {
             sb.AppendLine("\t" + Localization.Geometry);
 
-            sb.AppendFormat("\t\t" + Localization.Device_width_0_bits, (1 << geometry.CardInterface - 1) * 8).
-               AppendLine();
+            sb.AppendFormat("\t\t" + Localization.Device_width_0_bits, (1 << geometry.CardInterface - 1) * 8)
+              .AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Erase_block_0_bytes,
-                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1)).
-               AppendLine();
+                            (1 << geometry.EraseBlockSize - 1) * (1 << geometry.Interleaving - 1))
+              .AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Read_block_0_bytes,
-                            (1 << geometry.ReadBlockSize - 1) * (1 << geometry.Interleaving - 1)).
-               AppendLine();
+                            (1 << geometry.ReadBlockSize - 1) * (1 << geometry.Interleaving - 1))
+              .AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Write_block_0_bytes,
-                            (1 << geometry.WriteBlockSize - 1) * (1 << geometry.Interleaving - 1)).
-               AppendLine();
+                            (1 << geometry.WriteBlockSize - 1) * (1 << geometry.Interleaving - 1))
+              .AppendLine();
 
             sb.AppendFormat("\t\t" + Localization.Partition_alignment_0_bytes,
                             (1 << geometry.EraseBlockSize - 1) *
                             (1 << geometry.Interleaving   - 1) *
-                            (1 << geometry.Partitions     - 1)).
-               AppendLine();
+                            (1 << geometry.Partitions     - 1))
+              .AppendLine();
         }
 
         return sb.ToString();
@@ -168,19 +160,16 @@ public static class CIS
 
     public static ManufacturerIdentificationTuple DecodeManufacturerIdentificationTuple(Tuple tuple)
     {
-        if(tuple?.Code != TupleCodes.CISTPL_MANFID)
-            return null;
+        if(tuple?.Code != TupleCodes.CISTPL_MANFID) return null;
 
         return tuple.Data == null ? null : DecodeManufacturerIdentificationTuple(tuple.Data);
     }
 
     public static ManufacturerIdentificationTuple DecodeManufacturerIdentificationTuple(byte[] data)
     {
-        if(data == null)
-            return null;
+        if(data == null) return null;
 
-        if(data.Length < 6)
-            return null;
+        if(data.Length < 6) return null;
 
         return new ManufacturerIdentificationTuple
         {
@@ -193,8 +182,7 @@ public static class CIS
 
     public static string PrettifyManufacturerIdentificationTuple(ManufacturerIdentificationTuple tuple)
     {
-        if(tuple?.Code != TupleCodes.CISTPL_MANFID)
-            return null;
+        if(tuple?.Code != TupleCodes.CISTPL_MANFID) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.Manufacturer_Identification_Tuple);
@@ -212,19 +200,16 @@ public static class CIS
 
     public static Level1VersionTuple DecodeLevel1VersionTuple(Tuple tuple)
     {
-        if(tuple?.Code != TupleCodes.CISTPL_VERS_1)
-            return null;
+        if(tuple?.Code != TupleCodes.CISTPL_VERS_1) return null;
 
         return tuple.Data == null ? null : DecodeLevel1VersionTuple(tuple.Data);
     }
 
     public static Level1VersionTuple DecodeLevel1VersionTuple(byte[] data)
     {
-        if(data == null)
-            return null;
+        if(data == null) return null;
 
-        if(data.Length < 4)
-            return null;
+        if(data.Length < 4) return null;
 
         List<byte>   buffer       = new();
         List<string> strings      = null;
@@ -241,13 +226,11 @@ public static class CIS
 
         for(var position = 4; position < data.Length; position++)
         {
-            if(data[position] == 0xFF)
-                break;
+            if(data[position] == 0xFF) break;
 
             buffer.Add(data[position]);
 
-            if(data[position] != 0x00)
-                continue;
+            if(data[position] != 0x00) continue;
 
             if(!firstString)
             {
@@ -268,30 +251,28 @@ public static class CIS
                 continue;
             }
 
-            if(strings == null)
-                strings = new List<string>();
+            if(strings == null) strings = new List<string>();
 
             strings.Add(StringHandlers.CToString(buffer.ToArray()));
             buffer = new List<byte>();
         }
 
-        if(strings != null)
-            tuple.AdditionalInformation = strings.ToArray();
+        if(strings != null) tuple.AdditionalInformation = strings.ToArray();
 
         return tuple;
     }
 
     public static string PrettifyLevel1VersionTuple(Level1VersionTuple tuple)
     {
-        if(tuple?.Code != TupleCodes.CISTPL_VERS_1)
-            return null;
+        if(tuple?.Code != TupleCodes.CISTPL_VERS_1) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.PCMCIA_Level_1_Version_Product_Information_Tuple);
 
         sb.AppendFormat("\t" + Localization.Card_indicates_compliance_with_PC_Card_Standard_Release_0_1,
-                        tuple.MajorVersion, tuple.MinorVersion).
-           AppendLine();
+                        tuple.MajorVersion,
+                        tuple.MinorVersion)
+          .AppendLine();
 
         if(string.IsNullOrEmpty(tuple.Manufacturer))
             sb.AppendLine("\t" + Localization.No_manufacturer_information_string);

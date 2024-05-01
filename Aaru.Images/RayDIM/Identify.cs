@@ -47,8 +47,7 @@ public sealed partial class RayDim
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<Header>()) return false;
 
         var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);

@@ -187,25 +187,20 @@ public static class Sector
 
     public static byte[] Scramble(byte[] sector)
     {
-        if(sector == null || sector.Length < 2352)
-            return sector;
+        if(sector == null || sector.Length < 2352) return sector;
 
         var sync = new byte[12];
         Array.Copy(sector, 0, sync, 0, 12);
 
-        if(!SyncMark.SequenceEqual(sync))
-            return sector;
+        if(!SyncMark.SequenceEqual(sync)) return sector;
 
         var scrambled = new byte[sector.Length];
 
-        for(var i = 0; i < 2352; i++)
-            scrambled[i] = (byte)(sector[i] ^ ScrambleTable[i]);
+        for(var i = 0; i < 2352; i++) scrambled[i] = (byte)(sector[i] ^ ScrambleTable[i]);
 
-        if(sector.Length <= 2352)
-            return scrambled;
+        if(sector.Length <= 2352) return scrambled;
 
-        for(var i = 2352; i < sector.Length; i++)
-            scrambled[i] = sector[i];
+        for(var i = 2352; i < sector.Length; i++) scrambled[i] = sector[i];
 
         return scrambled;
     }
@@ -253,8 +248,7 @@ public static class Sector
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetUserDataFromMode2(byte[] data, bool interleaved = false, byte fileNumber = 0)
     {
-        if(data.Length != 2352 && data.Length != 2336)
-            return data;
+        if(data.Length != 2352 && data.Length != 2336) return data;
 
         var pos = 0;
 
@@ -279,8 +273,7 @@ public static class Sector
         }
 
         // This is not the sector you are looking for
-        if(interleaved && data[pos] != fileNumber)
-            return null;
+        if(interleaved && data[pos] != fileNumber) return null;
 
         int len = (data[pos + 2] & 0x20) == 0x20 ? 2324 : 2048;
         pos += 8;
@@ -293,8 +286,7 @@ public static class Sector
 
     public static string Prettify(byte[] buffer)
     {
-        if(buffer is null || buffer.Length <= 0)
-            return null;
+        if(buffer is null || buffer.Length <= 0) return null;
 
         if(buffer[0]  != 0x00 ||
            buffer[1]  != 0xFF ||
@@ -332,8 +324,7 @@ public static class Sector
         lba += (frame >> 4) * 10 + (frame & 0x0F);
         lba -= 150;
 
-        if(moreThan90)
-            min += 0x90;
+        if(moreThan90) min += 0x90;
 
         sb.AppendFormat(Localization.Position_0_1_2_LBA_3, min, sec, frame, lba).AppendLine();
 
@@ -403,8 +394,7 @@ public static class Sector
 
                 for(var i = 16; i < 2352; i++)
                 {
-                    if(buffer[i] == 0x00)
-                        continue;
+                    if(buffer[i] == 0x00) continue;
 
                     empty = false;
 
@@ -421,8 +411,7 @@ public static class Sector
 
                 for(var i = 2068; i < 2076; i++)
                 {
-                    if(buffer[i] == 0x00)
-                        continue;
+                    if(buffer[i] == 0x00) continue;
 
                     empty = false;
 
@@ -450,28 +439,21 @@ public static class Sector
                 sb.AppendFormat(Localization.Channel_number_0,            buffer[17]).AppendLine();
                 sb.AppendFormat(Localization.Coding_information_number_0, buffer[19]).AppendLine();
 
-                if((buffer[18] & 0x80) == 0x80)
-                    sb.AppendLine(Localization.End_of_file);
+                if((buffer[18] & 0x80) == 0x80) sb.AppendLine(Localization.End_of_file);
 
-                if((buffer[18] & 0x40) == 0x40)
-                    sb.AppendLine(Localization.Real_time_block);
+                if((buffer[18] & 0x40) == 0x40) sb.AppendLine(Localization.Real_time_block);
 
                 sb.AppendLine((buffer[18] & 0x20) == 0x20 ? Localization.Form_2 : Localization.Form_1);
 
-                if((buffer[18] & 0x10) == 0x10)
-                    sb.AppendLine(Localization.Trigger_block);
+                if((buffer[18] & 0x10) == 0x10) sb.AppendLine(Localization.Trigger_block);
 
-                if((buffer[18] & 0x08) == 0x08)
-                    sb.AppendLine(Localization.Data_block);
+                if((buffer[18] & 0x08) == 0x08) sb.AppendLine(Localization.Data_block);
 
-                if((buffer[18] & 0x04) == 0x04)
-                    sb.AppendLine(Localization.Audio_block);
+                if((buffer[18] & 0x04) == 0x04) sb.AppendLine(Localization.Audio_block);
 
-                if((buffer[18] & 0x02) == 0x02)
-                    sb.AppendLine(Localization.Video_block);
+                if((buffer[18] & 0x02) == 0x02) sb.AppendLine(Localization.Video_block);
 
-                if((buffer[18] & 0x01) == 0x01)
-                    sb.AppendLine(Localization.End_of_record);
+                if((buffer[18] & 0x01) == 0x01) sb.AppendLine(Localization.End_of_record);
 
                 if((buffer[18] & 0x20) != 0x20)
                 {

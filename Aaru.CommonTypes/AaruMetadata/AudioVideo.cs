@@ -60,8 +60,7 @@ public class AudioTrack
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator AudioTrack(AudioTracksType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var trk = new AudioTrack
         {
@@ -73,13 +72,11 @@ public class AudioTrack
             MeanBitrate = cicm.MeanBitrate
         };
 
-        if(cicm.Languages is null)
-            return trk;
+        if(cicm.Languages is null) return trk;
 
         trk.Languages = new List<Language>();
 
-        foreach(LanguagesTypeLanguage lng in cicm.Languages)
-            trk.Languages.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Languages) trk.Languages.Add((Language)lng);
 
         return trk;
     }
@@ -100,8 +97,7 @@ public class VideoTrack
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator VideoTrack(VideoTracksType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var trk = new VideoTrack
         {
@@ -113,13 +109,11 @@ public class VideoTrack
             ThreeD      = cicm.ThreeD
         };
 
-        if(cicm.Languages is null)
-            return trk;
+        if(cicm.Languages is null) return trk;
 
         trk.Languages = new List<Language>();
 
-        foreach(LanguagesTypeLanguage lng in cicm.Languages)
-            trk.Languages.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Languages) trk.Languages.Add((Language)lng);
 
         return trk;
     }
@@ -134,8 +128,7 @@ public class SubtitleTrack
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator SubtitleTrack(SubtitleTracksType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var sub = new SubtitleTrack
         {
@@ -143,13 +136,11 @@ public class SubtitleTrack
             Codec  = cicm.Codec
         };
 
-        if(cicm.Languages is null)
-            return sub;
+        if(cicm.Languages is null) return sub;
 
         sub.Languages = new List<Language>();
 
-        foreach(LanguagesTypeLanguage lng in cicm.Languages)
-            sub.Languages.Add((Language)lng);
+        foreach(LanguagesTypeLanguage lng in cicm.Languages) sub.Languages.Add((Language)lng);
 
         return sub;
     }
@@ -167,8 +158,7 @@ public class Recording
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Recording(RecordingType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var recording = new Recording
         {
@@ -179,13 +169,11 @@ public class Recording
             Coordinates       = cicm.Coordinates
         };
 
-        if(cicm.Software is null)
-            return recording;
+        if(cicm.Software is null) return recording;
 
         recording.Software = new List<Software>();
 
-        foreach(SoftwareType sw in cicm.Software)
-            recording.Software.Add(sw);
+        foreach(SoftwareType sw in cicm.Software) recording.Software.Add(sw);
 
         return recording;
     }

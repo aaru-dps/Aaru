@@ -77,8 +77,7 @@ public sealed partial class AppleDOS
         // Read the VTOC
         ErrorNumber error = _device.ReadSector((ulong)(17 * _sectorsPerTrack), out _vtocBlocks);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
 
@@ -120,8 +119,7 @@ public sealed partial class AppleDOS
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         _mounted = true;
 

@@ -52,8 +52,7 @@ public sealed partial class UkvFdi
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -105,8 +104,7 @@ public sealed partial class UkvFdi
                 sectorsOff[cyl][head]   = new uint[sectors];
                 _sectorsData[cyl][head] = new byte[sectors][];
 
-                if(sectors < spt && sectors > 0)
-                    spt = sectors;
+                if(sectors < spt && sectors > 0) spt = sectors;
 
                 for(ushort sec = 0; sec < sectors; sec++)
                 {
@@ -125,15 +123,16 @@ public sealed partial class UkvFdi
                     AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.n = {0} ({1})", n, 128 << n);
                     AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.f = {0}",       f);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, "sechdr.off = {0} ({1})", secOff,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               "sechdr.off = {0} ({1})",
+                                               secOff,
                                                secOff + trkOff + hdr.dataOff);
 
                     // TODO: This assumes sequential sectors.
                     sectorsOff[cyl][head][sec]   = secOff + trkOff + hdr.dataOff;
                     _sectorsData[cyl][head][sec] = new byte[128 << n];
 
-                    if(128 << n > _imageInfo.SectorSize)
-                        _imageInfo.SectorSize = (uint)(128 << n);
+                    if(128 << n > _imageInfo.SectorSize) _imageInfo.SectorSize = (uint)(128 << n);
                 }
             }
         }
@@ -152,8 +151,7 @@ public sealed partial class UkvFdi
                 }
 
                 // For empty cylinders
-                if(sectorsOff[cyl][head].Length != 0)
-                    continue;
+                if(sectorsOff[cyl][head].Length != 0) continue;
 
                 if(cyl + 1 == hdr.cylinders ||
 
@@ -166,13 +164,11 @@ public sealed partial class UkvFdi
                 {
                     _sectorsData[cyl][head] = new byte[spt][];
 
-                    for(var i = 0; i < spt; i++)
-                        _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
+                    for(var i = 0; i < spt; i++) _sectorsData[cyl][head][i] = new byte[_imageInfo.SectorSize];
                 }
             }
 
-            if(emptyCyl)
-                _imageInfo.Cylinders--;
+            if(emptyCyl) _imageInfo.Cylinders--;
         }
 
         // TODO: What about double sided, half track pitch compact floppies?
@@ -194,14 +190,11 @@ public sealed partial class UkvFdi
         buffer                                    = null;
         (ushort cylinder, byte head, byte sector) = LbaToChs(sectorAddress);
 
-        if(cylinder >= _sectorsData.Length)
-            return ErrorNumber.SectorNotFound;
+        if(cylinder >= _sectorsData.Length) return ErrorNumber.SectorNotFound;
 
-        if(head >= _sectorsData[cylinder].Length)
-            return ErrorNumber.SectorNotFound;
+        if(head >= _sectorsData[cylinder].Length) return ErrorNumber.SectorNotFound;
 
-        if(sector > _sectorsData[cylinder][head].Length)
-            return ErrorNumber.SectorNotFound;
+        if(sector > _sectorsData[cylinder][head].Length) return ErrorNumber.SectorNotFound;
 
         buffer = _sectorsData[cylinder][head][sector - 1];
 
@@ -213,11 +206,9 @@ public sealed partial class UkvFdi
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -225,8 +216,7 @@ public sealed partial class UkvFdi
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

@@ -59,8 +59,7 @@ static partial class Usb
     {
         var devList = new List<UsbDevice>();
 
-        foreach(UsbController controller in GetHostControllers())
-            ListHub(controller.GetRootHub(), devList);
+        foreach(UsbController controller in GetHostControllers()) ListHub(controller.GetRootHub(), devList);
 
         return devList;
     }
@@ -76,8 +75,7 @@ static partial class Usb
                 ListHub(port.GetHub(), devList);
             else
             {
-                if(port.IsDeviceConnected)
-                    devList.Add(port.GetDevice());
+                if(port.IsDeviceConnected) devList.Add(port.GetDevice());
             }
         }
     }
@@ -93,8 +91,7 @@ static partial class Usb
         {
             SearchHubDriverKeyName(controller.GetRootHub(), ref foundDevice, driverKeyName);
 
-            if(foundDevice != null)
-                break;
+            if(foundDevice != null) break;
         }
 
         return foundDevice;
@@ -112,13 +109,11 @@ static partial class Usb
                 SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
             else
             {
-                if(!port.IsDeviceConnected)
-                    continue;
+                if(!port.IsDeviceConnected) continue;
 
                 UsbDevice device = port.GetDevice();
 
-                if(device.DeviceDriverKey != driverKeyName)
-                    continue;
+                if(device.DeviceDriverKey != driverKeyName) continue;
 
                 foundDevice = device;
 
@@ -138,8 +133,7 @@ static partial class Usb
         {
             SearchHubInstanceId(controller.GetRootHub(), ref foundDevice, instanceId);
 
-            if(foundDevice != null)
-                break;
+            if(foundDevice != null) break;
         }
 
         return foundDevice;
@@ -157,13 +151,11 @@ static partial class Usb
                 SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
             else
             {
-                if(!port.IsDeviceConnected)
-                    continue;
+                if(!port.IsDeviceConnected) continue;
 
                 UsbDevice device = port.GetDevice();
 
-                if(device.InstanceId != instanceId)
-                    continue;
+                if(device.InstanceId != instanceId) continue;
 
                 foundDevice = device;
 
@@ -293,8 +285,7 @@ static partial class Usb
 
         IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         var    sdn    = new StorageDeviceNumber();
         int    nBytes = Marshal.SizeOf(sdn);

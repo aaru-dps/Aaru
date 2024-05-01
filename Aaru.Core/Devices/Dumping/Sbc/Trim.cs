@@ -84,8 +84,7 @@ partial class Dump
                 continue;
             }
 
-            if((sense || _dev.Error) && !recoveredError)
-                continue;
+            if((sense || _dev.Error) && !recoveredError) continue;
 
             _resume.BadBlocks.Remove(badSector);
             extents.Add(badSector);
@@ -93,7 +92,6 @@ partial class Dump
             _mediaGraph?.PaintSectorGood(badSector);
         }
 
-        if(newBlank)
-            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
+        if(newBlank) _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
     }
 }

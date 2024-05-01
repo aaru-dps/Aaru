@@ -111,69 +111,75 @@ public static class DateHandlers
         fourCharValue[2] = vdDateTime[2];
         fourCharValue[3] = vdDateTime[3];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "year = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "year = \"{0}\"",
                                    StringHandlers.CToString(fourCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII), out int year))
-            year = 0;
+        if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII), out int year)) year = 0;
 
         twoCharValue[0] = vdDateTime[4];
         twoCharValue[1] = vdDateTime[5];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "month = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "month = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int month))
-            month = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int month)) month = 0;
 
         twoCharValue[0] = vdDateTime[6];
         twoCharValue[1] = vdDateTime[7];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "day = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "day = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int day))
-            day = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int day)) day = 0;
 
         twoCharValue[0] = vdDateTime[8];
         twoCharValue[1] = vdDateTime[9];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "hour = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "hour = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hour))
-            hour = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hour)) hour = 0;
 
         twoCharValue[0] = vdDateTime[10];
         twoCharValue[1] = vdDateTime[11];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "minute = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "minute = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int minute))
-            minute = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int minute)) minute = 0;
 
         twoCharValue[0] = vdDateTime[12];
         twoCharValue[1] = vdDateTime[13];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "second = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "second = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int second))
-            second = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int second)) second = 0;
 
         twoCharValue[0] = vdDateTime[14];
         twoCharValue[1] = vdDateTime[15];
 
-        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME, "hundredths = \"{0}\"",
+        AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
+                                   "hundredths = \"{0}\"",
                                    StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hundredths))
-            hundredths = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hundredths)) hundredths = 0;
 
         AaruConsole.DebugWriteLine(ISO9660_MODULE_NAME,
                                    "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
-                                   year, month, day, hour, minute, second, hundredths * 10);
+                                   year,
+                                   month,
+                                   day,
+                                   hour,
+                                   minute,
+                                   second,
+                                   hundredths * 10);
 
         var difference = (sbyte)vdDateTime[16];
 
@@ -215,8 +221,12 @@ public static class DateHandlers
         int day   = (dateRecord & 0x01F0) >> 4;
         int month = dateRecord & 0x000F;
 
-        AaruConsole.DebugWriteLine(PASCAL_MODULE_NAME, "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
-                                   dateRecord, year, month, day);
+        AaruConsole.DebugWriteLine(PASCAL_MODULE_NAME,
+                                   "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
+                                   dateRecord,
+                                   year,
+                                   month,
+                                   day);
 
         return new DateTime(year, month, day);
     }
@@ -234,11 +244,19 @@ public static class DateHandlers
         int minute = (time & 0x7E0)  >> 5;
         int second = (time & 0x1F) * 2;
 
-        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}", date, year,
-                                   month, day);
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME,
+                                   "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
+                                   date,
+                                   year,
+                                   month,
+                                   day);
 
-        AaruConsole.DebugWriteLine(DOS_MODULE_NAME, "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time,
-                                   hour, minute, second);
+        AaruConsole.DebugWriteLine(DOS_MODULE_NAME,
+                                   "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}",
+                                   time,
+                                   hour,
+                                   minute,
+                                   second);
 
         DateTime dosDate;
 
@@ -311,8 +329,8 @@ public static class DateHandlers
                 break;
         }
 
-        return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks).
-            DateTime;
+        return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks)
+           .DateTime;
     }
 
     /// <summary>Converts a Solaris high resolution timestamp to .NET DateTime</summary>
@@ -325,8 +343,7 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime Os9ToDateTime(byte[] date)
     {
-        if(date == null || date.Length != 3 && date.Length != 5)
-            return DateTime.MinValue;
+        if(date == null || date.Length != 3 && date.Length != 5) return DateTime.MinValue;
 
         DateTime os9Date;
 
@@ -349,8 +366,12 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime LifToDateTime(byte[] date) => date is not { Length: 6 }
                                                              ? new DateTime(1970, 1, 1, 0, 0, 0)
-                                                             : LifToDateTime(date[0], date[1], date[2], date[3],
-                                                                             date[4], date[5]);
+                                                             : LifToDateTime(date[0],
+                                                                             date[1],
+                                                                             date[2],
+                                                                             date[3],
+                                                                             date[4],
+                                                                             date[5]);
 
     /// <summary>Converts a LIF timestamp to .NET DateTime</summary>
     /// <param name="year">Yer</param>

@@ -50,16 +50,13 @@ public sealed partial class MicroDOS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(1 + partition.Start >= partition.End)
-            return false;
+        if(1 + partition.Start >= partition.End) return false;
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bk0);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
@@ -77,16 +74,15 @@ public sealed partial class MicroDOS
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] bk0);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         Block0 block0 = Marshal.ByteArrayToStructureLittleEndian<Block0>(bk0);
 
         sb.AppendLine(Localization.MicroDOS_filesystem);
         sb.AppendFormat(Localization.Volume_has_0_blocks_1_bytes, block0.blocks, block0.blocks * 512).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_has_0_blocks_used_1_bytes, block0.usedBlocks, block0.usedBlocks * 512).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks_used_1_bytes, block0.usedBlocks, block0.usedBlocks * 512)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Volume_contains_0_files, block0.files).AppendLine();
         sb.AppendFormat(Localization.First_used_block_is_0,   block0.firstUsedBlock).AppendLine();

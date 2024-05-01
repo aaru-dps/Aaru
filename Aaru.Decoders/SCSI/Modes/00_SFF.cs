@@ -59,17 +59,13 @@ public static partial class Modes
 
     public static ModePage_00_SFF? DecodeModePage_00_SFF(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x00)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x00) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 4)
-            return null;
+        if(pageResponse.Length < 4) return null;
 
         var decoded = new ModePage_00_SFF();
 
@@ -89,25 +85,20 @@ public static partial class Modes
 
     public static string PrettifyModePage_00_SFF(ModePage_00_SFF? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_00_SFF page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_Drive_Operation_Mode_page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.DVW)
-            sb.AppendLine("\t" + Localization.Verifying_after_writing_is_disabled);
+        if(page.DVW) sb.AppendLine("\t" + Localization.Verifying_after_writing_is_disabled);
 
-        if(page.DDE)
-            sb.AppendLine("\t" + Localization.Drive_will_abort_when_a_writing_error_is_detected);
+        if(page.DDE) sb.AppendLine("\t" + Localization.Drive_will_abort_when_a_writing_error_is_detected);
 
-        if(!page.SLM)
-            return sb.ToString();
+        if(!page.SLM) return sb.ToString();
 
         sb.Append("\t" + Localization.Drive_has_two_LUNs_with_rewritable_being);
         sb.AppendLine(page.SLR ? "LUN 1" : "LUN 0");

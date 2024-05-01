@@ -130,8 +130,11 @@ static class Fujitsu
 
                     AaruConsole.WriteLine(Localization.Display_mode);
 
-                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4, FujitsuDisplayModes.Cancel,
-                                          FujitsuDisplayModes.Cart, FujitsuDisplayModes.Half, FujitsuDisplayModes.Idle,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4,
+                                          FujitsuDisplayModes.Cancel,
+                                          FujitsuDisplayModes.Cart,
+                                          FujitsuDisplayModes.Half,
+                                          FujitsuDisplayModes.Idle,
                                           FujitsuDisplayModes.Ready);
 
                     AaruConsole.Write(Localization.Choose_Q);
@@ -160,7 +163,12 @@ static class Fujitsu
     start:
         System.Console.Clear();
 
-        bool sense = dev.FujitsuDisplay(out byte[] senseBuffer, flash, mode, firstHalf, secondHalf, dev.Timeout,
+        bool sense = dev.FujitsuDisplay(out byte[] senseBuffer,
+                                        flash,
+                                        mode,
+                                        firstHalf,
+                                        secondHalf,
+                                        dev.Timeout,
                                         out double duration);
 
     menu:
@@ -207,8 +215,7 @@ static class Fujitsu
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.DISPLAY_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

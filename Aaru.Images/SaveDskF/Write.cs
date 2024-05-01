@@ -151,7 +151,8 @@ public sealed partial class SaveDskF
             _header.commentOffset = (ushort)Marshal.SizeOf<Header>();
             _writingStream.Seek(_header.commentOffset, SeekOrigin.Begin);
 
-            _writingStream.Write(commentsBytes, 0,
+            _writingStream.Write(commentsBytes,
+                                 0,
                                  commentsBytes.Length >= 512 - _header.commentOffset
                                      ? 512 - _header.commentOffset
                                      : commentsBytes.Length);
@@ -175,8 +176,7 @@ public sealed partial class SaveDskF
         {
             b = _writingStream.ReadByte();
 
-            if(b >= 0)
-                _header.checksum += (uint)b;
+            if(b >= 0) _header.checksum += (uint)b;
         } while(b >= 0);
 
         hdr    = new byte[Marshal.SizeOf<Header>()];

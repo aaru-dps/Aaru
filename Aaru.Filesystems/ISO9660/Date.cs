@@ -36,8 +36,8 @@ public sealed partial class ISO9660
 {
     static DateTime? DecodeIsoDateTime(byte[] timestamp) => timestamp?.Length switch
                                                             {
-                                                                7 => DecodeIsoDateTime(Marshal.
-                                                                    ByteArrayToStructureLittleEndian<
+                                                                7 => DecodeIsoDateTime(Marshal
+                                                                   .ByteArrayToStructureLittleEndian<
                                                                         IsoTimestamp>(timestamp)),
                                                                 17 => DateHandlers.Iso9660ToDateTime(timestamp),
                                                                 _  => null
@@ -47,8 +47,13 @@ public sealed partial class ISO9660
     {
         try
         {
-            var date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
-                                    timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
+            var date = new DateTime(timestamp.Years + 1900,
+                                    timestamp.Month,
+                                    timestamp.Day,
+                                    timestamp.Hour,
+                                    timestamp.Minute,
+                                    timestamp.Second,
+                                    DateTimeKind.Unspecified);
 
             date = date.AddMinutes(timestamp.GmtOffset * 15);
 
@@ -65,8 +70,13 @@ public sealed partial class ISO9660
     {
         try
         {
-            var date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
-                                    timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
+            var date = new DateTime(timestamp.Years + 1900,
+                                    timestamp.Month,
+                                    timestamp.Day,
+                                    timestamp.Hour,
+                                    timestamp.Minute,
+                                    timestamp.Second,
+                                    DateTimeKind.Unspecified);
 
             return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
         }

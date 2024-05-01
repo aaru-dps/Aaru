@@ -77,7 +77,11 @@ public abstract class OpticalImageConvertIssueTest
         Assert.IsNotNull(outputOptical,       Localization.Could_not_treat_new_image_as_optical_disc);
         Assert.IsNotNull(inputOptical.Tracks, Localization.Existing_image_contains_no_tracks);
 
-        Assert.IsTrue(outputOptical.Create(outputPath, inputFormat.Info.MediaType, ParsedOptions, inputFormat.Info.Sectors, inputFormat.Info.SectorSize),
+        Assert.IsTrue(outputOptical.Create(outputPath,
+                                           inputFormat.Info.MediaType,
+                                           ParsedOptions,
+                                           inputFormat.Info.Sectors,
+                                           inputFormat.Info.SectorSize),
                       string.Format(Localization.Error_0_creating_output_image, outputOptical.ErrorMessage));
 
         var metadata = new ImageInfo
@@ -107,7 +111,7 @@ public abstract class OpticalImageConvertIssueTest
         List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-            outputOptical.SupportedMediaTags.Contains(mediaTag)))
+                    outputOptical.SupportedMediaTags.Contains(mediaTag)))
         {
             AaruConsole.WriteLine(Localization.Converting_media_tag_0, mediaTag);
             errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
@@ -152,14 +156,14 @@ public abstract class OpticalImageConvertIssueTest
                     {
                         result = sectorsToDo == 1
                                      ? outputOptical.WriteSectorLong(sector, doneSectors + track.StartSector)
-                                     : outputOptical.WriteSectorsLong(sector, doneSectors + track.StartSector,
+                                     : outputOptical.WriteSectorsLong(sector,
+                                                                      doneSectors + track.StartSector,
                                                                       sectorsToDo);
                     }
                     else
                         result = true;
 
-                    if(!result && sector.Length % 2352 != 0)
-                        useNotLong = true;
+                    if(!result && sector.Length % 2352 != 0) useNotLong = true;
                 }
 
                 if(!UseLong || useNotLong)
@@ -177,7 +181,8 @@ public abstract class OpticalImageConvertIssueTest
 
                 Assert.IsTrue(result,
                               string.Format(Localization.Error_0_writing_sector_1_not_continuing,
-                                            outputOptical.ErrorMessage, doneSectors + track.StartSector));
+                                            outputOptical.ErrorMessage,
+                                            doneSectors + track.StartSector));
 
                 doneSectors += sectorsToDo;
             }
@@ -211,29 +216,27 @@ public abstract class OpticalImageConvertIssueTest
                 tracks[i].Indexes[idx.Key] = idx.Value;
         }
 
-        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc).
-                                                 OrderBy(t => t))
+        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc)
+                                                .OrderBy(t => t))
         {
             foreach(Track track in tracks)
             {
                 errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
                 isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
             }
         }
 
-        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackFlags).
-                                                 OrderBy(t => t))
+        foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackFlags)
+                                                .OrderBy(t => t))
         {
             foreach(Track track in tracks)
             {
                 errno = inputFormat.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
                 trackFlags[(byte)track.Sequence] = flags[0];
             }
@@ -241,8 +244,7 @@ public abstract class OpticalImageConvertIssueTest
 
         for(ulong s = 0; s < inputFormat.Info.Sectors; s++)
         {
-            if(s > int.MaxValue)
-                break;
+            if(s > int.MaxValue) break;
 
             subchannelExtents.Add((int)s);
         }
@@ -263,8 +265,7 @@ public abstract class OpticalImageConvertIssueTest
                     continue;
             }
 
-            if(!outputOptical.SupportedSectorTags.Contains(tag))
-                continue;
+            if(!outputOptical.SupportedSectorTags.Contains(tag)) continue;
 
             foreach(Track track in inputOptical.Tracks)
             {
@@ -279,10 +280,10 @@ public abstract class OpticalImageConvertIssueTest
                     case SectorTagType.CdTrackIsrc:
                         errno = inputFormat.ReadSectorTag(track.Sequence, tag, out sector);
 
-                        if(errno == ErrorNumber.NoData)
-                            continue;
+                        if(errno == ErrorNumber.NoData) continue;
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
+                        Assert.AreEqual(ErrorNumber.NoError,
+                                        errno,
                                         string.Format(Localization.Error_0_reading_tag_not_continuing, errno));
 
                         result = outputOptical.WriteSectorTag(sector, track.Sequence, tag);
@@ -307,18 +308,34 @@ public abstract class OpticalImageConvertIssueTest
                     {
                         errno = inputFormat.ReadSectorTag(doneSectors + track.StartSector, tag, out sector);
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
+                        Assert.AreEqual(ErrorNumber.NoError,
+                                        errno,
                                         string.Format(Localization.Error_0_reading_tag_not_continuing, errno));
 
                         if(tag == SectorTagType.CdSectorSubchannel)
                         {
                             bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                MmcSubchannel.Raw, sector, doneSectors + track.StartSector, 1, null, isrcs,
-                                (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true, outputOptical,
-                                true, true, null, null, smallestPregapLbaPerTrack, false, out _);
+                                MmcSubchannel.Raw,
+                                sector,
+                                doneSectors + track.StartSector,
+                                1,
+                                null,
+                                isrcs,
+                                (byte)track.Sequence,
+                                ref mcn,
+                                tracks,
+                                subchannelExtents,
+                                true,
+                                outputOptical,
+                                true,
+                                true,
+                                null,
+                                null,
+                                smallestPregapLbaPerTrack,
+                                false,
+                                out _);
 
-                            if(indexesChanged)
-                                outputOptical.SetTracks(tracks.ToList());
+                            if(indexesChanged) outputOptical.SetTracks(tracks.ToList());
 
                             result = true;
                         }
@@ -327,34 +344,55 @@ public abstract class OpticalImageConvertIssueTest
                     }
                     else
                     {
-                        errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector, sectorsToDo, tag,
+                        errno = inputFormat.ReadSectorsTag(doneSectors + track.StartSector,
+                                                           sectorsToDo,
+                                                           tag,
                                                            out sector);
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno,
+                        Assert.AreEqual(ErrorNumber.NoError,
+                                        errno,
                                         string.Format(Localization.Error_0_reading_tag_not_continuing, errno));
 
                         if(tag == SectorTagType.CdSectorSubchannel)
                         {
                             bool indexesChanged = CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
-                                MmcSubchannel.Raw, sector, doneSectors + track.StartSector, sectorsToDo, null,
-                                isrcs, (byte)track.Sequence, ref mcn, tracks, subchannelExtents, true,
-                                outputOptical, true, true, null, null, smallestPregapLbaPerTrack, false, out _);
+                                MmcSubchannel.Raw,
+                                sector,
+                                doneSectors + track.StartSector,
+                                sectorsToDo,
+                                null,
+                                isrcs,
+                                (byte)track.Sequence,
+                                ref mcn,
+                                tracks,
+                                subchannelExtents,
+                                true,
+                                outputOptical,
+                                true,
+                                true,
+                                null,
+                                null,
+                                smallestPregapLbaPerTrack,
+                                false,
+                                out _);
 
-                            if(indexesChanged)
-                                outputOptical.SetTracks(tracks.ToList());
+                            if(indexesChanged) outputOptical.SetTracks(tracks.ToList());
 
                             result = true;
                         }
                         else
                         {
-                            result = outputOptical.WriteSectorsTag(sector, doneSectors + track.StartSector, sectorsToDo,
+                            result = outputOptical.WriteSectorsTag(sector,
+                                                                   doneSectors + track.StartSector,
+                                                                   sectorsToDo,
                                                                    tag);
                         }
                     }
 
                     Assert.IsTrue(result,
                                   string.Format(Localization.Error_0_writing_tag_for_sector_1_not_continuing,
-                                                outputOptical.ErrorMessage, doneSectors + track.StartSector));
+                                                outputOptical.ErrorMessage,
+                                                doneSectors + track.StartSector));
 
                     doneSectors += sectorsToDo;
                 }
@@ -372,29 +410,28 @@ public abstract class OpticalImageConvertIssueTest
             foreach((byte track, byte flags) in trackFlags)
             {
                 outputOptical.WriteSectorTag(new[]
-                {
-                    flags
-                }, track, SectorTagType.CdTrackFlags);
+                                             {
+                                                 flags
+                                             },
+                                             track,
+                                             SectorTagType.CdTrackFlags);
             }
         }
 
-        if(mcn != null)
-            outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
+        if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
         if(resume != null || dumpHardware != null)
         {
             if(resume != null)
                 outputOptical.SetDumpHardware(resume.Tries);
-            else if(dumpHardware != null)
-                outputOptical.SetDumpHardware(dumpHardware);
+            else if(dumpHardware != null) outputOptical.SetDumpHardware(dumpHardware);
         }
 
         if(sidecar != null || aaruMetadata != null)
         {
             if(sidecar != null)
                 outputOptical.SetMetadata(sidecar);
-            else if(aaruMetadata != null)
-                outputOptical.SetMetadata(aaruMetadata);
+            else if(aaruMetadata != null) outputOptical.SetMetadata(aaruMetadata);
         }
 
         Assert.True(outputOptical.Close(),

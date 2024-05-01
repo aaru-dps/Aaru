@@ -46,8 +46,7 @@ public sealed partial class AppleMFS
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
@@ -60,8 +59,7 @@ public sealed partial class AppleMFS
             contents.Add("$Bitmap");
             contents.Add("$MDB");
 
-            if(_bootBlocks != null)
-                contents.Add("$Boot");
+            if(_bootBlocks != null) contents.Add("$Boot");
         }
 
         contents.Sort();
@@ -81,17 +79,13 @@ public sealed partial class AppleMFS
     {
         filename = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not AppleMfsDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleMfsDirNode mynode) return ErrorNumber.InvalidArgument;
 
-        if(mynode._position < 0)
-            return ErrorNumber.InvalidArgument;
+        if(mynode._position < 0) return ErrorNumber.InvalidArgument;
 
-        if(mynode._position >= mynode._contents.Length)
-            return ErrorNumber.NoError;
+        if(mynode._position >= mynode._contents.Length) return ErrorNumber.NoError;
 
         filename = mynode._contents[mynode._position++];
 
@@ -101,8 +95,7 @@ public sealed partial class AppleMFS
     /// <inheritdoc />
     public ErrorNumber CloseDir(IDirNode node)
     {
-        if(node is not AppleMfsDirNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not AppleMfsDirNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode._position = -1;
         mynode._contents = null;
@@ -127,8 +120,7 @@ public sealed partial class AppleMFS
                 flFlags = (FileFlags)_directoryBlocks[offset + 0]
             };
 
-            if(!entry.flFlags.HasFlag(FileFlags.Used))
-                break;
+            if(!entry.flFlags.HasFlag(FileFlags.Used)) break;
 
             entry.flTyp = _directoryBlocks[offset + 1];
 
@@ -146,9 +138,9 @@ public sealed partial class AppleMFS
             entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
             Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
-            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding).
-                                                  ToLowerInvariant().
-                                                  Replace('/', ':');
+            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding)
+                                                 .ToLowerInvariant()
+                                                 .Replace('/', ':');
 
             if(entry.flFlags.HasFlag(FileFlags.Used)     &&
                !_idToFilename.ContainsKey(entry.flFlNum) &&
@@ -173,21 +165,23 @@ public sealed partial class AppleMFS
                 AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRLgLen = {0}", entry.flRLgLen);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRPyLen = {0}", entry.flRPyLen);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flCrDat = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flCrDat = {0}",
                                            DateHandlers.MacToDateTime(entry.flCrDat));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flMdDat = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flMdDat = {0}",
                                            DateHandlers.MacToDateTime(entry.flMdDat));
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flNam0 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flNam0 = {0}",
                                            StringHandlers.PascalToString(entry.flNam, _encoding));
             }
 
             offset += 50 + entry.flNam.Length;
 
             // "Entries are always an integral number of words"
-            if(offset % 2 != 0)
-                offset++;
+            if(offset % 2 != 0) offset++;
 
             // TODO: "Entries don't cross logical block boundaries"
         }

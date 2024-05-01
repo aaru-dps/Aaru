@@ -76,15 +76,13 @@ public static class Remote
 
                     httpClient.BaseAddress = new Uri("https://www.aaru.app");
 
-                    HttpResponseMessage response = httpClient.
-                                                   PostAsync("/api/uploadreportv2",
-                                                             new StringContent(json, Encoding.UTF8,
-                                                                               "application/json")).
-                                                   GetAwaiter().
-                                                   GetResult();
+                    HttpResponseMessage response = httpClient
+                                                  .PostAsync("/api/uploadreportv2",
+                                                             new StringContent(json, Encoding.UTF8, "application/json"))
+                                                  .GetAwaiter()
+                                                  .GetResult();
 
-                    if(!response.IsSuccessStatusCode)
-                        return;
+                    if(!response.IsSuccessStatusCode) return;
 
                     Stream data   = response.Content.ReadAsStream();
                     var    reader = new StreamReader(data);
@@ -100,10 +98,9 @@ public static class Remote
                 // ReSharper disable once RedundantCatchClause
                 catch
                 {
-                #if DEBUG
-                    if(Debugger.IsAttached)
-                        throw;
-                #endif
+#if DEBUG
+                    if(Debugger.IsAttached) throw;
+#endif
                 }
             });
         });
@@ -121,14 +118,14 @@ public static class Remote
         {
             mctx.Database.EnsureCreated();
 
-            mctx.Database.
-                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+            mctx.Database
+                .ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
             foreach(string migration in mctx.Database.GetPendingMigrations())
             {
-                mctx.Database.
-                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
-                         migration}', '0.0.0')");
+                mctx.Database
+                    .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                        migration}', '0.0.0')");
             }
         }
         else
@@ -145,17 +142,13 @@ public static class Remote
             {
                 List<DateTime> latestAll = new();
 
-                if(mctx.UsbVendors.Any())
-                    latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
+                if(mctx.UsbVendors.Any()) latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
 
-                if(mctx.UsbProducts.Any())
-                    latestAll.Add(mctx.UsbProducts.Max(p => p.ModifiedWhen));
+                if(mctx.UsbProducts.Any()) latestAll.Add(mctx.UsbProducts.Max(p => p.ModifiedWhen));
 
-                if(mctx.CdOffsets.Any())
-                    latestAll.Add(mctx.CdOffsets.Max(o => o.ModifiedWhen));
+                if(mctx.CdOffsets.Any()) latestAll.Add(mctx.CdOffsets.Max(o => o.ModifiedWhen));
 
-                if(mctx.Devices.Any())
-                    latestAll.Add(mctx.Devices.Max(d => d.LastSynchronized));
+                if(mctx.Devices.Any()) latestAll.Add(mctx.Devices.Max(d => d.LastSynchronized));
 
                 if(latestAll.Any())
                 {
@@ -198,11 +191,11 @@ public static class Remote
 
             if(create)
             {
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_vendors);
                                 task.MaxValue = sync.UsbVendors.Count;
@@ -216,11 +209,11 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, sync.UsbVendors.Count);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_products);
                                 task.MaxValue = sync.UsbProducts.Count;
@@ -229,18 +222,19 @@ public static class Remote
                                 {
                                     task.Increment(1);
 
-                                    mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
+                                    mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
+                                                                        product.ProductId,
                                                                         product.Product));
                                 }
                             });
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, sync.UsbProducts.Count);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
                                 task.MaxValue = sync.Offsets.Count;
@@ -258,11 +252,11 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, sync.Offsets.Count);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_devices);
                                 task.MaxValue = sync.Devices.Count;
@@ -281,11 +275,11 @@ public static class Remote
 
                 AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, sync.Devices.Count);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.NesHeaders?.Count ?? 0;
@@ -331,11 +325,11 @@ public static class Remote
                 long modifiedDevices    = 0;
                 long modifiedNesHeaders = 0;
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_vendors);
                                 task.MaxValue = sync.UsbVendors.Count;
@@ -364,11 +358,11 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors,    addedVendors);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_vendors, modifiedVendors);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_products);
                                 task.MaxValue = sync.UsbVendors.Count;
@@ -392,7 +386,8 @@ public static class Remote
                                     {
                                         addedProducts++;
 
-                                        mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
+                                        mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
+                                                                            product.ProductId,
                                                                             product.Product));
                                     }
                                 }
@@ -401,11 +396,11 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_usb_products,    addedProducts);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_USB_products, modifiedProducts);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_CompactDisc_read_offsets);
                                 task.MaxValue = sync.Offsets.Count;
@@ -441,11 +436,11 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets,    addedOffsets);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_CompactDisc_read_offsets, modifiedOffsets);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_devices);
                                 task.MaxValue = sync.Offsets.Count;
@@ -487,11 +482,11 @@ public static class Remote
                 AaruConsole.WriteLine(Localization.Core.Added_0_known_devices,    addedDevices);
                 AaruConsole.WriteLine(Localization.Core.Modified_0_known_devices, modifiedDevices);
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.Offsets.Count;

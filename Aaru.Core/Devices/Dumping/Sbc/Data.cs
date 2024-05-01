@@ -89,18 +89,18 @@ partial class Dump
                 break;
             }
 
-            if(blocks - i < blocksToRead)
-                blocksToRead = (uint)(blocks - i);
+            if(blocks - i < blocksToRead) blocksToRead = (uint)(blocks - i);
 
-            if(currentSpeed > maxSpeed && currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed && currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.
-                Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                       (long)i, (long)blocks);
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                 i,
+                                                 blocks,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i,
+                                   (long)blocks);
 
             _speedStopwatch.Start();
             sense         =  scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
@@ -113,8 +113,7 @@ partial class Dump
                 {
                     for(ulong j = 0; j < blocksToRead; j++)
                     {
-                        if(_aborted)
-                            break;
+                        if(_aborted) break;
 
                         if(!_resume.MissingTitleKeys.Contains(i + j))
 
@@ -123,20 +122,25 @@ partial class Dump
 
                         byte[] tmpBuf;
 
-                        bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf, out _, DvdCssKeyClass.DvdCssCppmOrCprm,
-                                                                i + j, _dev.Timeout, out _);
+                        bool tmpSense = dvdDecrypt.ReadTitleKey(out tmpBuf,
+                                                                out _,
+                                                                DvdCssKeyClass.DvdCssCppmOrCprm,
+                                                                i + j,
+                                                                _dev.Timeout,
+                                                                out _);
 
-                        if(tmpSense)
-                            continue;
+                        if(tmpSense) continue;
 
                         CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(tmpBuf, dvdDecrypt.BusKey);
 
                         if(titleKey.HasValue)
                         {
                             outputFormat.WriteSectorTag(new[]
-                            {
-                                titleKey.Value.CMI
-                            }, i + j, SectorTagType.DvdSectorCmi);
+                                                        {
+                                                            titleKey.Value.CMI
+                                                        },
+                                                        i + j,
+                                                        SectorTagType.DvdSectorCmi);
                         }
                         else
                             continue;
@@ -146,14 +150,18 @@ partial class Dump
                         if(titleKey.Value.Key.All(static k => k == 0))
                         {
                             outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdSectorTitleKey);
+                                                        {
+                                                            0, 0, 0, 0, 0
+                                                        },
+                                                        i + j,
+                                                        SectorTagType.DvdSectorTitleKey);
 
                             outputFormat.WriteSectorTag(new byte[]
-                            {
-                                0, 0, 0, 0, 0
-                            }, i + j, SectorTagType.DvdTitleKeyDecrypted);
+                                                        {
+                                                            0, 0, 0, 0, 0
+                                                        },
+                                                        i + j,
+                                                        SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 
@@ -178,13 +186,16 @@ partial class Dump
                             ErrorMessage?.Invoke(string.Format(Localization.Core.Error_retrieving_CMI_for_sector_0, i));
                         else
                         {
-                            errno = outputFormat.ReadSectorsTag(i, blocksToRead, SectorTagType.DvdTitleKeyDecrypted,
+                            errno = outputFormat.ReadSectorsTag(i,
+                                                                blocksToRead,
+                                                                SectorTagType.DvdTitleKeyDecrypted,
                                                                 out byte[] titleKey);
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                ErrorMessage?.
-                                    Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0, i));
+                                ErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                      .Error_retrieving_title_key_for_sector_0,
+                                                                   i));
                             }
                             else
                                 buffer = CSS.DecryptSector(buffer, titleKey, cmi, blocksToRead, blockSize);
@@ -209,29 +220,26 @@ partial class Dump
                     _resume.NextBlock++;
                     _aborted = true;
 
-                    _dumpLog?.WriteLine(Localization.Core.
-                                                     INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
+                    _dumpLog?.WriteLine(Localization.Core
+                                                    .INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
 
-                    UpdateStatus?.Invoke(Localization.Core.
-                                                      INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
+                    UpdateStatus?.Invoke(Localization.Core
+                                                     .INSITE_floptical_drives_get_crazy_on_the_SCSI_bus_when_an_error_is_found);
 
                     continue;
                 }
 
                 // TODO: Reset device after X errors
-                if(_stopOnError)
-                    return; // TODO: Return more cleanly
+                if(_stopOnError) return; // TODO: Return more cleanly
 
-                if(i + _skip > blocks)
-                    _skip = (uint)(blocks - i);
+                if(i + _skip > blocks) _skip = (uint)(blocks - i);
 
                 // Write empty data
                 _writeStopwatch.Restart();
                 outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                for(ulong b = i; b < i + _skip; b++)
-                    _resume.BadBlocks.Add(b);
+                for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
@@ -247,8 +255,7 @@ partial class Dump
 
             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288)
-                continue;
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;

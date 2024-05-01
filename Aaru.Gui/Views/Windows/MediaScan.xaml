@@ -31,12 +31,17 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
         d:DesignHeight="450"
-        x:Class="Aaru.Gui.Views.Windows.MediaScan" Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
+        x:Class="Aaru.Gui.Views.Windows.MediaScan"
+        Icon="/Assets/aaru-logo.png"
+        Title="{Binding Title}">
     <Design.DataContext>
         <windows:MediaScanViewModel />
     </Design.DataContext>
@@ -49,11 +54,16 @@
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="{Binding A}" /> <TextBlock Text="{Binding B}" /> <TextBlock Text="{Binding C}" />
                     <TextBlock Text="{Binding D}" /> <TextBlock Text="{Binding E}" /> <TextBlock Text="{Binding F}" />
-                    <TextBlock Text="{Binding UnreadableSectors}" IsVisible="{Binding !!UnreadableSectors}" />
-                    <TextBlock Text="{Binding TotalTime}" IsVisible="{Binding !!TotalTime}" />
-                    <TextBlock Text="{Binding AvgSpeed}" IsVisible="{Binding !!AvgSpeed}" />
-                    <TextBlock Text="{Binding MaxSpeed}" IsVisible="{Binding !!MaxSpeed}" />
-                    <TextBlock Text="{Binding MinSpeed}" IsVisible="{Binding !!MinSpeed}" />
+                    <TextBlock Text="{Binding UnreadableSectors}"
+                               IsVisible="{Binding !!UnreadableSectors}" />
+                    <TextBlock Text="{Binding TotalTime}"
+                               IsVisible="{Binding !!TotalTime}" />
+                    <TextBlock Text="{Binding AvgSpeed}"
+                               IsVisible="{Binding !!AvgSpeed}" />
+                    <TextBlock Text="{Binding MaxSpeed}"
+                               IsVisible="{Binding !!MaxSpeed}" />
+                    <TextBlock Text="{Binding MinSpeed}"
+                               IsVisible="{Binding !!MinSpeed}" />
                 </StackPanel>
             </TabItem>
             <TabItem>
@@ -85,21 +95,28 @@
                 -->
             </TabItem>
         </TabControl>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMaxValue}" IsIndeterminate="{Binding ProgressIndeterminate}"
+                <ProgressBar Maximum="{Binding ProgressMaxValue}"
+                             IsIndeterminate="{Binding ProgressIndeterminate}"
                              Value="{Binding ProgressValue}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
                 <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
+            <Button Command="{Binding StopCommand}"
+                    IsVisible="{Binding StopVisible}"
+                    IsEnabled="{Binding StopEnabled}">
                 <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>

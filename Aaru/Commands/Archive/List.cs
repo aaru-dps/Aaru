@@ -54,14 +54,18 @@ sealed class ArchiveListCommand : Command
         AddAlias("l");
 
         Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, UI.Name_of_character_encoding_to_use));
+                               {
+                                   "--encoding", "-e"
+                               },
+                               () => null,
+                               UI.Name_of_character_encoding_to_use));
 
         Add(new Option<bool>(new[]
-        {
-            "--long-format", "-l"
-        }, () => false, UI.Use_long_format));
+                             {
+                                 "--long-format", "-l"
+                             },
+                             () => false,
+                             UI.Use_long_format));
 
         AddArgument(new Argument<string>
         {
@@ -136,8 +140,7 @@ sealed class ArchiveListCommand : Command
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
@@ -214,6 +217,7 @@ sealed class ArchiveListCommand : Command
                     if(errno != ErrorNumber.NoError)
                     {
                         AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno, i);
+
                         continue;
                     }
 
@@ -229,8 +233,8 @@ sealed class ArchiveListCommand : Command
             long totalSize         = 0;
             long totalUncompressed = 0;
 
-            AnsiConsole.Live(table).
-                        Start(ctx =>
+            AnsiConsole.Live(table)
+                       .Start(ctx =>
                         {
                             table.HideFooters();
 
@@ -239,6 +243,7 @@ sealed class ArchiveListCommand : Command
                                 NoWrap    = true,
                                 Alignment = Justify.Center
                             });
+
                             ctx.Refresh();
 
                             table.AddColumn(new TableColumn(UI.Title_Time)
@@ -246,6 +251,7 @@ sealed class ArchiveListCommand : Command
                                 NoWrap    = true,
                                 Alignment = Justify.Center
                             });
+
                             ctx.Refresh();
 
                             table.AddColumn(new TableColumn(UI.Title_Attributes_ABBREVIATED)
@@ -253,6 +259,7 @@ sealed class ArchiveListCommand : Command
                                 NoWrap    = true,
                                 Alignment = Justify.Right
                             });
+
                             ctx.Refresh();
 
                             table.AddColumn(new TableColumn(UI.Title_Size)
@@ -260,6 +267,7 @@ sealed class ArchiveListCommand : Command
                                 NoWrap    = true,
                                 Alignment = Justify.Right
                             });
+
                             ctx.Refresh();
 
                             if(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.SupportsCompression))
@@ -277,6 +285,7 @@ sealed class ArchiveListCommand : Command
                             {
                                 Alignment = Justify.Left
                             });
+
                             ctx.Refresh();
 
                             for(var i = 0; i < archive.NumberOfEntries; i++)
@@ -285,16 +294,21 @@ sealed class ArchiveListCommand : Command
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1, errno,
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_getting_filename_for_archive_entry_1,
+                                                               errno,
                                                                i);
+
                                     continue;
                                 }
 
                                 errno = archive.Stat(i, out FileEntryInfo stat);
+
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.ErrorWriteLine(UI.Error_0_retrieving_stat_for_archive_entry_1, errno,
+                                    AaruConsole.ErrorWriteLine(UI.Error_0_retrieving_stat_for_archive_entry_1,
+                                                               errno,
                                                                i);
+
                                     continue;
                                 }
 
@@ -314,48 +328,65 @@ sealed class ArchiveListCommand : Command
                                 {
                                     attr[0] = stat.Attributes.HasFlag(FileAttributes.Alias)   ||
                                               stat.Attributes.HasFlag(FileAttributes.Symlink) ||
-                                              stat.Attributes.HasFlag(FileAttributes.Shadow) ? 'L' :
-                                              stat.Attributes.HasFlag(FileAttributes.Device) ? 'V' :
-                                              stat.Attributes.HasFlag(FileAttributes.Pipe)   ? 'P' : '.';
+                                              stat.Attributes.HasFlag(FileAttributes.Shadow)
+                                                  ? 'L'
+                                                  : stat.Attributes.HasFlag(FileAttributes.Device)
+                                                      ? 'V'
+                                                      : stat.Attributes.HasFlag(FileAttributes.Pipe)
+                                                          ? 'P'
+                                                          : '.';
                                 }
 
                                 attr[1] = stat.Attributes.HasFlag(FileAttributes.Archive) ? 'A' : '.';
+
                                 attr[2] = stat.Attributes.HasFlag(FileAttributes.Immutable) ||
                                           stat.Attributes.HasFlag(FileAttributes.ReadOnly)
                                               ? 'R'
                                               : '.';
+
                                 attr[3] = stat.Attributes.HasFlag(FileAttributes.System) ? 'S' : '.';
                                 attr[4] = stat.Attributes.HasFlag(FileAttributes.Hidden) ? 'H' : '.';
 
                                 errno = archive.GetCompressedSize(i, out long compressedSize);
+
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                UI.Error_0_getting_compressed_size_for_archive_entry_1,
-                                                               errno, i);
+                                                               errno,
+                                                               i);
+
                                     continue;
                                 }
 
                                 errno = archive.GetUncompressedSize(i, out long uncompressedSize);
+
                                 if(errno != ErrorNumber.NoError)
                                 {
                                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                UI.Error_0_getting_uncompressed_size_for_archive_entry_1,
-                                                               errno, i);
+                                                               errno,
+                                                               i);
+
                                     continue;
                                 }
 
                                 if(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.SupportsCompression))
                                 {
                                     table.AddRow(stat.CreationTime?.ToShortDateString() ?? "",
-                                                 stat.CreationTime?.ToLongTimeString()  ?? "", new string(attr),
-                                                 uncompressedSize.ToString(), compressedSize.ToString(), fileName);
+                                                 stat.CreationTime?.ToLongTimeString()  ?? "",
+                                                 new string(attr),
+                                                 uncompressedSize.ToString(),
+                                                 compressedSize.ToString(),
+                                                 fileName);
                                 }
                                 else
                                 {
                                     table.AddRow(stat.CreationTime?.ToShortDateString() ?? "",
-                                                 stat.CreationTime?.ToLongTimeString()  ?? "", new string(attr),
-                                                 uncompressedSize.ToString(), fileName);
+                                                 stat.CreationTime?.ToLongTimeString()  ?? "",
+                                                 new string(attr),
+                                                 uncompressedSize.ToString(),
+                                                 fileName);
                                 }
 
                                 totalSize         += compressedSize;
@@ -372,17 +403,18 @@ sealed class ArchiveListCommand : Command
                             if(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.SupportsCompression))
                             {
                                 table.Columns[4].Footer(totalSize.ToString());
-                                table.Columns[5].
-                                      Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.
-                                                                                 HasExplicitDirectories)
+
+                                table.Columns[5]
+                                     .Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature
+                                                                                .HasExplicitDirectories)
                                                  ? string.Format(UI._0_files_1_folders, files, folders)
                                                  : string.Format(UI._0_files,           files));
                             }
                             else
                             {
-                                table.Columns[4].
-                                      Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature.
-                                                                                 HasExplicitDirectories)
+                                table.Columns[4]
+                                     .Footer(archive.ArchiveFeatures.HasFlag(ArchiveSupportedFeature
+                                                                                .HasExplicitDirectories)
                                                  ? string.Format(UI._0_files_1_folders, files, folders)
                                                  : string.Format(UI._0_files,           files));
                             }

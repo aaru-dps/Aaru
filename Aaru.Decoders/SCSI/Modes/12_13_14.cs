@@ -53,20 +53,16 @@ public static partial class Modes
 
     public static ModePage_12_13_14? DecodeModePage_12_13_14(byte[] pageResponse)
     {
-        if(pageResponse == null)
-            return null;
+        if(pageResponse == null) return null;
 
-        if((pageResponse[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse[0] & 0x40) == 0x40) return null;
 
         if((pageResponse[0] & 0x3F) != 0x12 && (pageResponse[0] & 0x3F) != 0x13 && (pageResponse[0] & 0x3F) != 0x14)
             return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 2)
-            return null;
+        if(pageResponse.Length < 2) return null;
 
         var decoded = new ModePage_12_13_14();
 
@@ -88,16 +84,14 @@ public static partial class Modes
 
     public static string PrettifyModePage_12_13_14(ModePage_12_13_14? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         ModePage_12_13_14 page = modePage.Value;
         var               sb   = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_medium_partition_page_extra);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendFormat("\t" + Localization.Medium_has_defined_0_partitions, page.PartitionSizes.Length).AppendLine();
 

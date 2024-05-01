@@ -48,6 +48,7 @@ namespace Aaru.CommonTypes.AaruMetadata;
 
 [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
 [JsonSerializable(typeof(MetadataJson))]
+
 // ReSharper disable once PartialTypeWithSinglePart
 public partial class MetadataJsonContext : JsonSerializerContext;
 
@@ -89,8 +90,7 @@ public class Metadata
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Metadata(CICMMetadataType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var metadata = new Metadata
         {
@@ -114,32 +114,28 @@ public class Metadata
         {
             metadata.Barcodes = new List<Barcode>();
 
-            foreach(Schemas.BarcodeType code in cicm.Barcodes)
-                metadata.Barcodes.Add(code);
+            foreach(Schemas.BarcodeType code in cicm.Barcodes) metadata.Barcodes.Add(code);
         }
 
         if(cicm.Magazine is not null)
         {
             metadata.Magazines = new List<Magazine>();
 
-            foreach(MagazineType magazine in cicm.Magazine)
-                metadata.Magazines.Add(magazine);
+            foreach(MagazineType magazine in cicm.Magazine) metadata.Magazines.Add(magazine);
         }
 
         if(cicm.Book is not null)
         {
             metadata.Books = new List<Book>();
 
-            foreach(BookType book in cicm.Book)
-                metadata.Books.Add(book);
+            foreach(BookType book in cicm.Book) metadata.Books.Add(book);
         }
 
         if(cicm.Languages is not null)
         {
             metadata.Languages = new List<Language>();
 
-            foreach(LanguagesTypeLanguage lng in cicm.Languages)
-                metadata.Languages.Add((Language)lng);
+            foreach(LanguagesTypeLanguage lng in cicm.Languages) metadata.Languages.Add((Language)lng);
         }
 
         if(cicm.Architectures is not null)
@@ -162,57 +158,49 @@ public class Metadata
         {
             metadata.UserManuals = new List<UserManual>();
 
-            foreach(UserManualType manual in cicm.UserManual)
-                metadata.UserManuals.Add(manual);
+            foreach(UserManualType manual in cicm.UserManual) metadata.UserManuals.Add(manual);
         }
 
         if(cicm.OpticalDisc is not null)
         {
             metadata.OpticalDiscs = new List<OpticalDisc>();
 
-            foreach(OpticalDiscType disc in cicm.OpticalDisc)
-                metadata.OpticalDiscs.Add(disc);
+            foreach(OpticalDiscType disc in cicm.OpticalDisc) metadata.OpticalDiscs.Add(disc);
         }
 
         if(cicm.Advertisement is not null)
         {
             metadata.Advertisements = new List<Advertisement>();
 
-            foreach(AdvertisementType adv in cicm.Advertisement)
-                metadata.Advertisements.Add(adv);
+            foreach(AdvertisementType adv in cicm.Advertisement) metadata.Advertisements.Add(adv);
         }
 
         if(cicm.LinearMedia is not null)
         {
             metadata.LinearMedias = new List<LinearMedia>();
 
-            foreach(LinearMediaType media in cicm.LinearMedia)
-                metadata.LinearMedias.Add(media);
+            foreach(LinearMediaType media in cicm.LinearMedia) metadata.LinearMedias.Add(media);
         }
 
         if(cicm.PCICard is not null)
         {
             metadata.PciCards = new List<Pci>();
 
-            foreach(PCIType pci in cicm.PCICard)
-                metadata.PciCards.Add(pci);
+            foreach(PCIType pci in cicm.PCICard) metadata.PciCards.Add(pci);
         }
 
         if(cicm.BlockMedia is not null)
         {
             metadata.BlockMedias = new List<BlockMedia>();
 
-            foreach(BlockMediaType media in cicm.BlockMedia)
-                metadata.BlockMedias.Add(media);
+            foreach(BlockMediaType media in cicm.BlockMedia) metadata.BlockMedias.Add(media);
         }
 
-        if(cicm.AudioMedia is null)
-            return metadata;
+        if(cicm.AudioMedia is null) return metadata;
 
         metadata.AudioMedias = new List<AudioMedia>();
 
-        foreach(AudioMediaType media in cicm.AudioMedia)
-            metadata.AudioMedias.Add(media);
+        foreach(AudioMediaType media in cicm.AudioMedia) metadata.AudioMedias.Add(media);
 
         return metadata;
     }

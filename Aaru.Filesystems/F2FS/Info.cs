@@ -46,29 +46,23 @@ public sealed partial class F2FS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR)
-            return false;
+        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR) return false;
 
         uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbAddr + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
         Superblock sb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -82,32 +76,26 @@ public sealed partial class F2FS
         information = "";
         metadata    = new FileSystem();
 
-        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR)
-            return;
+        if(imagePlugin.Info.SectorSize is < F2FS_MIN_SECTOR or > F2FS_MAX_SECTOR) return;
 
         uint sbAddr = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
         // ReSharper disable once InconsistentNaming
         Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-        if(f2fsSb.magic != F2FS_MAGIC)
-            return;
+        if(f2fsSb.magic != F2FS_MAGIC) return;
 
         var sb = new StringBuilder();
 
@@ -115,9 +103,10 @@ public sealed partial class F2FS
         sb.AppendFormat(Localization.Version_0_1,         f2fsSb.major_ver, f2fsSb.minor_ver).AppendLine();
         sb.AppendFormat(Localization._0_bytes_per_sector, 1 << (int)f2fsSb.log_sectorsize).AppendLine();
 
-        sb.AppendFormat(Localization._0_sectors_1_bytes_per_block, 1 << (int)f2fsSb.log_sectors_per_block,
-                        1                                            << (int)f2fsSb.log_blocksize).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_1_bytes_per_block,
+                        1 << (int)f2fsSb.log_sectors_per_block,
+                        1 << (int)f2fsSb.log_blocksize)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_blocks_per_segment,             f2fsSb.log_blocks_per_seg).AppendLine();
         sb.AppendFormat(Localization._0_blocks_in_volume,               f2fsSb.block_count).AppendLine();
@@ -129,14 +118,14 @@ public sealed partial class F2FS
         sb.AppendFormat(Localization.Volume_UUID_0,                     f2fsSb.uuid).AppendLine();
 
         sb.AppendFormat(Localization.Volume_name_0,
-                        StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true)).
-           AppendLine();
+                        StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_last_mounted_on_kernel_version_0, StringHandlers.CToString(f2fsSb.version)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_mounted_on_kernel_version_0, StringHandlers.CToString(f2fsSb.version))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_created_on_kernel_version_0, StringHandlers.CToString(f2fsSb.init_version)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_kernel_version_0, StringHandlers.CToString(f2fsSb.init_version))
+          .AppendLine();
 
         information = sb.ToString();
 

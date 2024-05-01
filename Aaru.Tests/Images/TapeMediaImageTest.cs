@@ -38,8 +38,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -50,8 +49,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 Assert.AreEqual(true, image.IsTape, string.Format(Localization.Is_tape_0, testFile));
 
@@ -59,11 +57,11 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 {
                     Assert.Multiple(() =>
                     {
-                        image.Files.Should().
-                              BeEquivalentTo(test.Files, string.Format(Localization.Tape_files_0, testFile));
+                        image.Files.Should()
+                             .BeEquivalentTo(test.Files, string.Format(Localization.Tape_files_0, testFile));
 
-                        image.TapePartitions.Should().
-                              BeEquivalentTo(test.Partitions, string.Format(Localization.Tape_partitions_0, testFile));
+                        image.TapePartitions.Should()
+                             .BeEquivalentTo(test.Partitions, string.Format(Localization.Tape_partitions_0, testFile));
                     });
                 }
             }
@@ -86,8 +84,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -98,20 +95,22 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors,
+                        Assert.AreEqual(test.Sectors,
+                                        image.Info.Sectors,
                                         string.Format(Localization.Sectors_0, testFile));
 
-                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize,
+                        Assert.AreEqual(test.SectorSize,
+                                        image.Info.SectorSize,
                                         string.Format(Localization.Sector_size_0, testFile));
 
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType,
+                        Assert.AreEqual(test.MediaType,
+                                        image.Info.MediaType,
                                         string.Format(Localization.Media_type_0, testFile));
                     });
                 }
@@ -136,8 +135,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
@@ -148,8 +146,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 ErrorNumber opened = image.Open(filter);
                 Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 ulong doneSectors = 0;
                 var   ctx         = new Md5Context();

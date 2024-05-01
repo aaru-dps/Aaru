@@ -54,8 +54,7 @@ public sealed partial class DiskCopy42
         var tags   = false;
         var macosx = false;
 
-        if(options != null && options.TryGetValue("macosx", out string tmpOption))
-            bool.TryParse(tmpOption, out macosx);
+        if(options != null && options.TryGetValue("macosx", out string tmpOption)) bool.TryParse(tmpOption, out macosx);
 
         if(sectorSize != 512)
         {
@@ -188,8 +187,7 @@ public sealed partial class DiskCopy42
         header.Valid    = 1;
         header.DataSize = (uint)(sectors * 512);
 
-        if(tags)
-            header.TagSize = (uint)(sectors * 12);
+        if(tags) header.TagSize = (uint)(sectors * 12);
 
         imageInfo = new ImageInfo
         {
@@ -386,8 +384,7 @@ public sealed partial class DiskCopy42
         }
 
         // No tags where written
-        if(writingStream.Length == 0x54 + header.DataSize)
-            header.TagSize = 0;
+        if(writingStream.Length == 0x54 + header.DataSize) header.TagSize = 0;
 
         writingStream.Seek(0x54, SeekOrigin.Begin);
         var data = new byte[header.DataSize];
@@ -400,8 +397,7 @@ public sealed partial class DiskCopy42
 
         writingStream.Seek(0, SeekOrigin.Begin);
 
-        if(header.DiskName.Length > 63)
-            header.DiskName = header.DiskName[..63];
+        if(header.DiskName.Length > 63) header.DiskName = header.DiskName[..63];
 
         writingStream.WriteByte((byte)header.DiskName.Length);
         Encoding macRoman = new MacRoman();

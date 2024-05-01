@@ -71,8 +71,7 @@ public class Dump
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Dump(DumpType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         Dump dump = new()
         {
@@ -80,13 +79,11 @@ public class Dump
             Size  = cicm.Size
         };
 
-        if(cicm.Checksums is null)
-            return dump;
+        if(cicm.Checksums is null) return dump;
 
         dump.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            dump.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) dump.Checksums.Add(chk);
 
         return dump;
     }
@@ -102,8 +99,7 @@ public class Border
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Border(BorderType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var border = new Border
         {
@@ -112,13 +108,11 @@ public class Border
             Session = cicm.sessionSpecified ? cicm.session : null
         };
 
-        if(cicm.Checksums is null)
-            return border;
+        if(cicm.Checksums is null) return border;
 
         border.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            border.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) border.Checksums.Add(chk);
 
         return border;
     }

@@ -52,21 +52,21 @@ public sealed partial class Virtual98
         // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
         var shiftjis = Encoding.GetEncoding("shift_jis");
 
-        if(stream.Length < Marshal.SizeOf<Virtual98Header>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<Virtual98Header>()) return false;
 
         var hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
-        if(!_v98Hdr.signature.SequenceEqual(_signature))
-            return false;
+        if(!_v98Hdr.signature.SequenceEqual(_signature)) return false;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.signature = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "v98hdr.signature = \"{0}\"",
                                    StringHandlers.CToString(_v98Hdr.signature, shiftjis));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.comment = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "v98hdr.comment = \"{0}\"",
                                    StringHandlers.CToString(_v98Hdr.comment, shiftjis));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "v98hdr.padding = {0}",    _v98Hdr.padding);

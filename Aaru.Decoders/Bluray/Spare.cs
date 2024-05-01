@@ -86,14 +86,13 @@ public static class Spare
 
     public static SpareAreaInformation? Decode(byte[] SAIResponse)
     {
-        if(SAIResponse == null)
-            return null;
+        if(SAIResponse == null) return null;
 
         if(SAIResponse.Length != 16)
         {
             AaruConsole.DebugWriteLine(MODULE_NAME,
-                                       Localization.
-                                           Spare_Decode_Found_incorrect_Blu_ray_Spare_Area_Information_size_0_bytes,
+                                       Localization
+                                          .Spare_Decode_Found_incorrect_Blu_ray_Spare_Area_Information_size_0_bytes,
                                        SAIResponse.Length);
 
             return null;
@@ -114,14 +113,13 @@ public static class Spare
 
     public static string Prettify(SpareAreaInformation? SAIResponse)
     {
-        if(SAIResponse == null)
-            return null;
+        if(SAIResponse == null) return null;
 
         SpareAreaInformation response = SAIResponse.Value;
 
         var sb = new StringBuilder();
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
@@ -130,7 +128,7 @@ public static class Spare
 
         if(response.Reserved3 != 0)
             sb.AppendFormat(Localization.Reserved3_equals_0_X8, response.Reserved3).AppendLine();
-    #endif
+#endif
         sb.AppendFormat(Localization._0_free_spare_blocks,      response.FreeSpareBlocks).AppendLine();
         sb.AppendFormat(Localization._0_allocated_spare_blocks, response.AllocatedSpareBlocks).AppendLine();
 

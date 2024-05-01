@@ -50,6 +50,7 @@ public sealed partial class RayDim
     public Guid Id => new("F541F4E7-C1E3-4A2D-B07F-D863E87AB961");
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

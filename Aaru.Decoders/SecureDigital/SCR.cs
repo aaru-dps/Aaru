@@ -78,8 +78,7 @@ public static partial class Decoders
 {
     public static SCR DecodeSCR(uint[] response)
     {
-        if(response?.Length != 2)
-            return null;
+        if(response?.Length != 2) return null;
 
         var data = new byte[8];
 
@@ -93,8 +92,7 @@ public static partial class Decoders
 
     public static SCR DecodeSCR(byte[] response)
     {
-        if(response?.Length != 8)
-            return null;
+        if(response?.Length != 8) return null;
 
         var scr = new SCR
         {
@@ -118,8 +116,7 @@ public static partial class Decoders
 
     public static string PrettifySCR(SCR scr)
     {
-        if(scr == null)
-            return null;
+        if(scr == null) return null;
 
         var sb = new StringBuilder();
         sb.AppendLine(Localization.SecureDigital_Device_Configuration_Register);
@@ -159,36 +156,40 @@ public static partial class Decoders
                 {
                     case 1:
                         sb.AppendLine("\t" +
-                                      Localization.
-                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_5_xx);
+                                      Localization
+                                         .Device_follows_SecureDigital_Physical_Layer_Specification_version_5_xx);
 
                         break;
                     case 2:
                         sb.AppendLine("\t" +
-                                      Localization.
-                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_6_xx);
+                                      Localization
+                                         .Device_follows_SecureDigital_Physical_Layer_Specification_version_6_xx);
 
                         break;
                     case 3:
                         sb.AppendLine("\t" +
-                                      Localization.
-                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_7_xx);
+                                      Localization
+                                         .Device_follows_SecureDigital_Physical_Layer_Specification_version_7_xx);
 
                         break;
                     case 4:
                         sb.AppendLine("\t" +
-                                      Localization.
-                                          Device_follows_SecureDigital_Physical_Layer_Specification_version_8_xx);
+                                      Localization
+                                         .Device_follows_SecureDigital_Physical_Layer_Specification_version_8_xx);
 
                         break;
                 }
 
                 break;
             default:
-                sb.
-                    AppendFormat("\t" + Localization.Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
-                                 scr.Spec, scr.Spec3, scr.Spec4, scr.SpecX).
-                    AppendLine();
+                sb.AppendFormat("\t" +
+                                Localization
+                                   .Device_follows_SecureDigital_Physical_Layer_Specification_with_unknown_version_0_1_2_3,
+                                scr.Spec,
+                                scr.Spec3,
+                                scr.Spec4,
+                                scr.SpecX)
+                  .AppendLine();
 
                 break;
         }
@@ -216,20 +217,17 @@ public static partial class Decoders
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Device_uses_unknown_CPRM_specification_with_code_0, scr.Security).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Device_uses_unknown_CPRM_specification_with_code_0, scr.Security)
+                  .AppendLine();
 
                 break;
         }
 
-        if(scr.BusWidth.HasFlag(BusWidth.OneBit))
-            sb.AppendLine("\t" + Localization.Device_supports_1_bit_data_bus);
+        if(scr.BusWidth.HasFlag(BusWidth.OneBit)) sb.AppendLine("\t" + Localization.Device_supports_1_bit_data_bus);
 
-        if(scr.BusWidth.HasFlag(BusWidth.FourBit))
-            sb.AppendLine("\t" + Localization.Device_supports_4_bit_data_bus);
+        if(scr.BusWidth.HasFlag(BusWidth.FourBit)) sb.AppendLine("\t" + Localization.Device_supports_4_bit_data_bus);
 
-        if(scr.ExtendedSecurity != 0)
-            sb.AppendLine("\t" + Localization.Device_supports_extended_security);
+        if(scr.ExtendedSecurity != 0) sb.AppendLine("\t" + Localization.Device_supports_extended_security);
 
         if(scr.CommandSupport.HasFlag(CommandSupport.ExtensionRegisterMultiBlock))
             sb.AppendLine("\t" + Localization.Device_supports_extension_register_multi_block_commands);

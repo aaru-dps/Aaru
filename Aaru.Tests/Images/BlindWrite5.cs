@@ -1063,7 +1063,7 @@ public class BlindWrite5 : OpticalMediaImageTest
             }
         },
 
-    #region These test images violate the specifications and are not expected to work yet
+#region These test images violate the specifications and are not expected to work yet
 
         /*
         new OpticalImageTestExpected
@@ -1364,6 +1364,6 @@ public class BlindWrite5 : OpticalMediaImageTest
         },
         */
 
-    #endregion
+#endregion
     };
 }

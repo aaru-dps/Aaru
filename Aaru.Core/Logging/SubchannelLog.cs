@@ -44,8 +44,7 @@ public class SubchannelLog
     /// <param name="bcd">Drive returns subchannel in BCD format</param>
     public SubchannelLog(string outputFile, bool bcd)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _bcd = bcd;
 
@@ -188,16 +187,14 @@ public class SubchannelLog
 
             for(var i = 0; i < 12; i++)
             {
-                if(p[i] == 0 || p[i] == 0xFF)
-                    continue;
+                if(p[i] == 0 || p[i] == 0xFF) continue;
 
                 corruptedPause = true;
 
                 break;
             }
 
-            if(!corruptedPause)
-                pause = p[0] == 1;
+            if(!corruptedPause) pause = p[0] == 1;
 
             var subBuf = new byte[12];
             subBuf[0]  = (byte)q[0  + block * 12];
@@ -213,13 +210,16 @@ public class SubchannelLog
             subBuf[10] = (byte)q[10 + block * 12];
             subBuf[11] = (byte)q[11 + block * 12];
 
-            string prettyQ = Subchannel.PrettifyQ(subBuf, generated || _bcd, startingLba + block, corruptedPause, pause,
+            string prettyQ = Subchannel.PrettifyQ(subBuf,
+                                                  generated || _bcd,
+                                                  startingLba + block,
+                                                  corruptedPause,
+                                                  pause,
                                                   rwEmpty);
 
             if(generated)
-                prettyQ += Localization.Core._GENERATED;
-            else if(@fixed)
-                prettyQ += Localization.Core._FIXED;
+                prettyQ             += Localization.Core._GENERATED;
+            else if(@fixed) prettyQ += Localization.Core._FIXED;
 
             _logSw.WriteLine(prettyQ);
         }

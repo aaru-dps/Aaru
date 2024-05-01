@@ -248,6 +248,7 @@ public sealed class CRC16IbmContext : Crc16Context
 
     /// <summary>Gets the hash of a file</summary>
     /// <param name="filename">File path.</param>
+
     // ReSharper disable once ReturnTypeCanBeEnumerable.Global
     public static byte[] File(string filename)
     {

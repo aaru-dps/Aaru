@@ -57,13 +57,17 @@ partial class Device : Devices.Device
 
         var dev = new Device
         {
-            PlatformId = DetectOS.GetRealPlatformID(),
-            Timeout = 15,
-            Error = false,
+            PlatformId  = DetectOS.GetRealPlatformID(),
+            Timeout     = 15,
+            Error       = false,
             IsRemovable = false,
-            _fileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                            FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
-                                            FileAttributes.Normal, IntPtr.Zero)
+            _fileHandle = Extern.CreateFile(devicePath,
+                                            FileAccess.GenericRead | FileAccess.GenericWrite,
+                                            FileShare.Read         | FileShare.Write,
+                                            IntPtr.Zero,
+                                            FileMode.OpenExisting,
+                                            FileAttributes.Normal,
+                                            IntPtr.Zero)
         };
 
         if(dev._fileHandle.IsInvalid)
@@ -103,12 +107,16 @@ partial class Device : Devices.Device
         uint returned = 0;
         var  error    = 0;
 
-        bool hasError = !Extern.DeviceIoControlStorageQuery(dev._fileHandle, WindowsIoctl.IoctlStorageQueryProperty,
-                                                            ref query, (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
-                                                            ref returned, IntPtr.Zero);
+        bool hasError = !Extern.DeviceIoControlStorageQuery(dev._fileHandle,
+                                                            WindowsIoctl.IoctlStorageQueryProperty,
+                                                            ref query,
+                                                            (uint)Marshal.SizeOf(query),
+                                                            descriptorPtr,
+                                                            1000,
+                                                            ref returned,
+                                                            IntPtr.Zero);
 
-        if(hasError)
-            error = Marshal.GetLastWin32Error();
+        if(hasError) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
@@ -197,9 +205,17 @@ partial class Device : Devices.Device
         {
             var sdBuffer = new byte[16];
 
-            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCsd, false, false,
-                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,
-                                               1, ref sdBuffer, out _, out _, out bool sense);
+            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCsd,
+                                               false,
+                                               false,
+                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc,
+                                               0,
+                                               16,
+                                               1,
+                                               ref sdBuffer,
+                                               out _,
+                                               out _,
+                                               out bool sense);
 
             if(!sense)
             {
@@ -209,9 +225,17 @@ partial class Device : Devices.Device
 
             sdBuffer = new byte[16];
 
-            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCid, false, false,
-                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc, 0, 16,
-                                               1, ref sdBuffer, out _, out _, out sense);
+            dev.LastError = dev.SendMmcCommand(MmcCommands.SendCid,
+                                               false,
+                                               false,
+                                               MmcFlags.ResponseSpiR2 | MmcFlags.ResponseR2 | MmcFlags.CommandAc,
+                                               0,
+                                               16,
+                                               1,
+                                               ref sdBuffer,
+                                               out _,
+                                               out _,
+                                               out sense);
 
             if(!sense)
             {
@@ -221,9 +245,17 @@ partial class Device : Devices.Device
 
             sdBuffer = new byte[8];
 
-            dev.LastError = dev.SendMmcCommand((MmcCommands)SecureDigitalCommands.SendScr, false, true,
-                                               MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc, 0,
-                                               8, 1, ref sdBuffer, out _, out _, out sense);
+            dev.LastError = dev.SendMmcCommand((MmcCommands)SecureDigitalCommands.SendScr,
+                                               false,
+                                               true,
+                                               MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAdtc,
+                                               0,
+                                               8,
+                                               1,
+                                               ref sdBuffer,
+                                               out _,
+                                               out _,
+                                               out sense);
 
             if(!sense)
             {
@@ -234,9 +266,19 @@ partial class Device : Devices.Device
             sdBuffer = new byte[4];
 
             dev.LastError =
-                dev.SendMmcCommand(dev.CachedScr != null ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition : MmcCommands.SendOpCond,
-                                   false, true, MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr, 0,
-                                   4, 1, ref sdBuffer, out _, out _, out sense);
+                dev.SendMmcCommand(dev.CachedScr != null
+                                       ? (MmcCommands)SecureDigitalCommands.SendOperatingCondition
+                                       : MmcCommands.SendOpCond,
+                                   false,
+                                   true,
+                                   MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr,
+                                   0,
+                                   4,
+                                   1,
+                                   ref sdBuffer,
+                                   out _,
+                                   out _,
+                                   out sense);
 
             if(!sense)
             {
@@ -245,7 +287,7 @@ partial class Device : Devices.Device
             }
         }
 
-    #region SecureDigital / MultiMediaCard
+#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -280,23 +322,22 @@ partial class Device : Devices.Device
             return dev;
         }
 
-    #endregion SecureDigital / MultiMediaCard
+#endregion SecureDigital / MultiMediaCard
 
-    #region USB
+#region USB
 
         Usb.UsbDevice usbDevice = null;
 
         // I have to search for USB disks, floppies and CD-ROMs as separate device types
         foreach(string devGuid in new[]
-            {
-                Usb.GUID_DEVINTERFACE_FLOPPY, Usb.GUID_DEVINTERFACE_CDROM, Usb.GUID_DEVINTERFACE_DISK,
-                Usb.GUID_DEVINTERFACE_TAPE
-            })
+                {
+                    Usb.GUID_DEVINTERFACE_FLOPPY, Usb.GUID_DEVINTERFACE_CDROM, Usb.GUID_DEVINTERFACE_DISK,
+                    Usb.GUID_DEVINTERFACE_TAPE
+                })
         {
             usbDevice = Usb.FindDrivePath(devicePath, devGuid);
 
-            if(usbDevice != null)
-                break;
+            if(usbDevice != null) break;
         }
 
         if(usbDevice != null)
@@ -311,21 +352,21 @@ partial class Device : Devices.Device
                 usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
         }
 
-    #endregion USB
+#endregion USB
 
-    #region FireWire
+#region FireWire
 
         // TODO: Implement
 
         dev.IsFireWire = false;
 
-    #endregion FireWire
+#endregion FireWire
 
-    #region PCMCIA
+#region PCMCIA
 
         // TODO: Implement
 
-    #endregion PCMCIA
+#endregion PCMCIA
 
         return dev;
     }
@@ -333,8 +374,7 @@ partial class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(_fileHandle == null)
-            return;
+        if(_fileHandle == null) return;
 
         _fileHandle?.Close();
 

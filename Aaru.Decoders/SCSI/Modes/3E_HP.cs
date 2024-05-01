@@ -52,17 +52,13 @@ public static partial class Modes
 
     public static HP_ModePage_3E? DecodeHPModePage_3E(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x3E)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x3E) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 4)
-            return null;
+        if(pageResponse.Length != 4) return null;
 
         var decoded = new HP_ModePage_3E();
 
@@ -78,23 +74,20 @@ public static partial class Modes
 
     public static string PrettifyHPModePage_3E(HP_ModePage_3E? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         HP_ModePage_3E page = modePage.Value;
         var            sb   = new StringBuilder();
 
         sb.AppendLine(Localization.HP_CD_ROM_Emulation_Disaster_Recovery_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         sb.AppendLine(page.CDmode
                           ? "\t" + Localization.Drive_is_emulating_a_CD_ROM_drive
                           : "\t" + Localization.Drive_is_not_emulating_a_CD_ROM_drive);
 
-        if(page.NonAuto)
-            sb.AppendLine("\t" + Localization.Drive_will_not_exit_emulation_automatically);
+        if(page.NonAuto) sb.AppendLine("\t" + Localization.Drive_will_not_exit_emulation_automatically);
 
         return sb.ToString();
     }

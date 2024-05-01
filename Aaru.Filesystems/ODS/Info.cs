@@ -59,37 +59,30 @@ public sealed partial class ODS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         var         magicB = new byte[12];
         ErrorNumber errno  = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
         string magic = Encoding.ASCII.GetString(magicB);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.magic_0, magic);
 
-        if(magic is "DECFILE11A  " or "DECFILE11B  ")
-            return true;
+        if(magic is "DECFILE11A  " or "DECFILE11B  ") return true;
 
         // Optical disc
-        if(imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc)
-            return false;
+        if(imagePlugin.Info.MetadataMediaType != MetadataMediaType.OpticalDisc) return false;
 
-        if(hbSector.Length < 0x400)
-            return false;
+        if(hbSector.Length < 0x400) return false;
 
         errno = imagePlugin.ReadSector(partition.Start, out hbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Array.Copy(hbSector, 0x3F0, magicB, 0, 12);
         magic = Encoding.ASCII.GetString(magicB);
@@ -111,8 +104,7 @@ public sealed partial class ODS
 
         ErrorNumber errno = imagePlugin.ReadSector(1 + partition.Start, out byte[] hbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<HomeBlock>(hbSector);
 
@@ -121,13 +113,11 @@ public sealed partial class ODS
            StringHandlers.CToString(homeblock.format) != "DECFILE11A  "                &&
            StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
         {
-            if(hbSector.Length < 0x400)
-                return;
+            if(hbSector.Length < 0x400) return;
 
             errno = imagePlugin.ReadSector(partition.Start, out byte[] tmp);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             hbSector = new byte[0x200];
             Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
@@ -144,77 +134,83 @@ public sealed partial class ODS
            StringHandlers.CToString(homeblock.format) != "DECFILE11B  ")
             sb.AppendLine(Localization.The_following_information_may_be_incorrect_for_this_volume);
 
-        if(homeblock.resfiles < 5 || homeblock.devtype != 0)
-            sb.AppendLine(Localization.This_volume_may_be_corrupted);
+        if(homeblock.resfiles < 5 || homeblock.devtype != 0) sb.AppendLine(Localization.This_volume_may_be_corrupted);
 
-        sb.AppendFormat(Localization.Volume_format_is_0,
-                        StringHandlers.SpacePaddedToString(homeblock.format, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_format_is_0, StringHandlers.SpacePaddedToString(homeblock.format, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_is_Level_0_revision_1, (homeblock.struclev & 0xFF00) >> 8,
-                        homeblock.struclev & 0xFF).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_is_Level_0_revision_1,
+                        (homeblock.struclev & 0xFF00) >> 8,
+                        homeblock.struclev & 0xFF)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Lowest_structure_in_the_volume_is_Level_0_revision_1,
-                        (homeblock.lowstruclev & 0xFF00) >> 8, homeblock.lowstruclev & 0xFF).
-           AppendLine();
+                        (homeblock.lowstruclev & 0xFF00) >> 8,
+                        homeblock.lowstruclev & 0xFF)
+          .AppendLine();
 
         sb.AppendFormat(Localization.Highest_structure_in_the_volume_is_Level_0_revision_1,
-                        (homeblock.highstruclev & 0xFF00) >> 8, homeblock.highstruclev & 0xFF).
-           AppendLine();
+                        (homeblock.highstruclev & 0xFF00) >> 8,
+                        homeblock.highstruclev & 0xFF)
+          .AppendLine();
 
-        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_per_cluster_1_bytes, homeblock.cluster, homeblock.cluster * 512)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.This_home_block_is_on_sector_0_VBN_1, homeblock.homelbn, homeblock.homevbn).
-           AppendLine();
+        sb.AppendFormat(Localization.This_home_block_is_on_sector_0_VBN_1, homeblock.homelbn, homeblock.homevbn)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Secondary_home_block_is_on_sector_0_VBN_1, homeblock.alhomelbn,
-                        homeblock.alhomevbn).
-           AppendLine();
+        sb.AppendFormat(Localization.Secondary_home_block_is_on_sector_0_VBN_1,
+                        homeblock.alhomelbn,
+                        homeblock.alhomevbn)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_bitmap_starts_in_sector_0_VBN_1, homeblock.ibmaplbn, homeblock.ibmapvbn).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_bitmap_starts_in_sector_0_VBN_1, homeblock.ibmaplbn, homeblock.ibmapvbn)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_bitmap_runs_for_0_sectors_1_bytes, homeblock.ibmapsize,
-                        homeblock.ibmapsize * 512).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_bitmap_runs_for_0_sectors_1_bytes,
+                        homeblock.ibmapsize,
+                        homeblock.ibmapsize * 512)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Backup_INDEXF_SYS_is_in_sector_0_VBN_1, homeblock.altidxlbn, homeblock.altidxvbn).
-           AppendLine();
+        sb.AppendFormat(Localization.Backup_INDEXF_SYS_is_in_sector_0_VBN_1, homeblock.altidxlbn, homeblock.altidxvbn)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_maximum_files_on_the_volume, homeblock.maxfiles).AppendLine();
         sb.AppendFormat(Localization._0_reserved_files,              homeblock.resfiles).AppendLine();
 
         if(homeblock is { rvn: > 0, setcount: > 0 } && StringHandlers.CToString(homeblock.strucname) != "            ")
         {
-            sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2, homeblock.rvn, homeblock.setcount,
-                            StringHandlers.SpacePaddedToString(homeblock.strucname, encoding)).
-               AppendLine();
+            sb.AppendFormat(Localization.Volume_is_0_of_1_in_set_2,
+                            homeblock.rvn,
+                            homeblock.setcount,
+                            StringHandlers.SpacePaddedToString(homeblock.strucname, encoding))
+              .AppendLine();
         }
 
         sb.AppendFormat(Localization.Volume_owner_is_0_ID_1,
-                        StringHandlers.SpacePaddedToString(homeblock.ownername, encoding), homeblock.volowner).
-           AppendLine();
+                        StringHandlers.SpacePaddedToString(homeblock.ownername, encoding),
+                        homeblock.volowner)
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(homeblock.volname, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0, StringHandlers.SpacePaddedToString(homeblock.volname, encoding))
+          .AppendLine();
 
         sb.AppendFormat(Localization.Drive_serial_number_0, homeblock.serialnum).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_was_created_on_0, DateHandlers.VmsToDateTime(homeblock.credate)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_was_created_on_0, DateHandlers.VmsToDateTime(homeblock.credate))
+          .AppendLine();
 
         if(homeblock.revdate > 0)
         {
-            sb.AppendFormat(Localization.Volume_was_last_modified_on_0, DateHandlers.VmsToDateTime(homeblock.revdate)).
-               AppendLine();
+            sb.AppendFormat(Localization.Volume_was_last_modified_on_0, DateHandlers.VmsToDateTime(homeblock.revdate))
+              .AppendLine();
         }
 
         if(homeblock.copydate > 0)
         {
-            sb.AppendFormat(Localization.Volume_copied_on_0, DateHandlers.VmsToDateTime(homeblock.copydate)).
-               AppendLine();
+            sb.AppendFormat(Localization.Volume_copied_on_0, DateHandlers.VmsToDateTime(homeblock.copydate))
+              .AppendLine();
         }
 
         sb.AppendFormat(Localization.Checksums_0_and_1, homeblock.checksum1, homeblock.checksum2).AppendLine();
@@ -223,20 +219,16 @@ public sealed partial class ODS
         sb.AppendFormat(Localization.Cached_directories_0,        homeblock.lru_lim).AppendLine();
         sb.AppendFormat(Localization.Default_allocation_0_blocks, homeblock.extend).AppendLine();
 
-        if((homeblock.volchar & 0x01) == 0x01)
-            sb.AppendLine(Localization.Readings_should_be_verified);
+        if((homeblock.volchar & 0x01) == 0x01) sb.AppendLine(Localization.Readings_should_be_verified);
 
-        if((homeblock.volchar & 0x02) == 0x02)
-            sb.AppendLine(Localization.Writings_should_be_verified);
+        if((homeblock.volchar & 0x02) == 0x02) sb.AppendLine(Localization.Writings_should_be_verified);
 
         if((homeblock.volchar & 0x04) == 0x04)
             sb.AppendLine(Localization.Files_should_be_erased_or_overwritten_when_deleted);
 
-        if((homeblock.volchar & 0x08) == 0x08)
-            sb.AppendLine(Localization.Highwater_mark_is_to_be_disabled);
+        if((homeblock.volchar & 0x08) == 0x08) sb.AppendLine(Localization.Highwater_mark_is_to_be_disabled);
 
-        if((homeblock.volchar & 0x10) == 0x10)
-            sb.AppendLine(Localization.Classification_checks_are_enabled);
+        if((homeblock.volchar & 0x10) == 0x10) sb.AppendLine(Localization.Classification_checks_are_enabled);
 
         sb.AppendLine(Localization.Volume_permissions_r_read_w_write_c_create_d_delete);
         sb.AppendLine(Localization.System_owner_group_world);
@@ -281,11 +273,9 @@ public sealed partial class ODS
             VolumeSerial = $"{homeblock.serialnum:X8}"
         };
 
-        if(homeblock.credate > 0)
-            metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
+        if(homeblock.credate > 0) metadata.CreationDate = DateHandlers.VmsToDateTime(homeblock.credate);
 
-        if(homeblock.revdate > 0)
-            metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
+        if(homeblock.revdate > 0) metadata.ModificationDate = DateHandlers.VmsToDateTime(homeblock.revdate);
 
         information = sb.ToString();
     }

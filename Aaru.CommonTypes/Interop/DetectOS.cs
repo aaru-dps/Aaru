@@ -70,8 +70,7 @@ public static class DetectOS
     {
         get
         {
-            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return Environment.UserName == "root";
+            if(!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return Environment.UserName == "root";
 
             bool            isAdmin;
             WindowsIdentity user = null;
@@ -126,11 +125,11 @@ public static class DetectOS
             // TODO: Differentiate Linux, Android, Tizen
             case "Linux":
             {
-            #if __ANDROID__
-                        return PlatformID.Android;
-            #else
+#if __ANDROID__
+                return PlatformID.Android;
+#else
                 return PlatformID.Linux;
-            #endif
+#endif
             }
 
             case "Darwin":
@@ -238,8 +237,7 @@ public static class DetectOS
         switch(GetRealPlatformID())
         {
             case PlatformID.MacOSX:
-                if(Environment.OSVersion.Version.Major >= 11)
-                    return environ;
+                if(Environment.OSVersion.Version.Major >= 11) return environ;
 
                 if(Environment.OSVersion.Version.Major != 1)
                     return $"10.{Environment.OSVersion.Version.Major - 4}.{Environment.OSVersion.Version.Minor}";
@@ -258,10 +256,10 @@ public static class DetectOS
                 if(Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor >= 2 ||
                    Environment.OSVersion.Version.Major > 6)
                 {
-                    return FileVersionInfo.
-                           GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
-                                                       "KERNEL32.DLL")).
-                           ProductVersion;
+                    return FileVersionInfo
+                          .GetVersionInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
+                                                       "KERNEL32.DLL"))
+                          .ProductVersion;
                 }
 
                 return environ;
@@ -297,26 +295,22 @@ public static class DetectOS
             case PlatformID.IRIX:
                 return "IRIX";
             case PlatformID.Linux:
-                if(!File.Exists("/proc/version"))
-                    return "Linux";
+                if(!File.Exists("/proc/version")) return "Linux";
 
                 string s = File.ReadAllText("/proc/version");
 
                 return s.Contains("Microsoft") || s.Contains("WSL") ? "Windows Subsystem for Linux" : "Linux";
 
             case PlatformID.MacOSX:
-                if(string.IsNullOrEmpty(version))
-                    return "macOS";
+                if(string.IsNullOrEmpty(version)) return "macOS";
 
                 string[] pieces = version.Split('.');
 
-                if(pieces.Length < 2 || !int.TryParse(pieces[1], out int minor))
-                    return "macOS";
+                if(pieces.Length < 2 || !int.TryParse(pieces[1], out int minor)) return "macOS";
 
                 int.TryParse(pieces[0], out int major);
 
-                if(minor >= 12 || major >= 11)
-                    return "macOS";
+                if(minor >= 12 || major >= 11) return "macOS";
 
                 return minor >= 8 ? "OS X" : "Mac OS X";
 
@@ -357,36 +351,27 @@ public static class DetectOS
             case PlatformID.WiiU:
                 return "Nintendo Wii U";
             case PlatformID.Win32NT:
-                if(string.IsNullOrEmpty(version))
-                    return "Windows NT/2000/XP/Vista/7/10";
+                if(string.IsNullOrEmpty(version)) return "Windows NT/2000/XP/Vista/7/10";
 
                 if(version.StartsWith("3.", StringComparison.Ordinal) ||
                    version.StartsWith("4.", StringComparison.Ordinal))
                     return "Windows NT";
 
-                if(version.StartsWith("5.0", StringComparison.Ordinal))
-                    return "Windows 2000";
+                if(version.StartsWith("5.0", StringComparison.Ordinal)) return "Windows 2000";
 
-                if(version.StartsWith("5.1", StringComparison.Ordinal))
-                    return "Windows XP";
+                if(version.StartsWith("5.1", StringComparison.Ordinal)) return "Windows XP";
 
-                if(version.StartsWith("5.2", StringComparison.Ordinal))
-                    return "Windows 2003";
+                if(version.StartsWith("5.2", StringComparison.Ordinal)) return "Windows 2003";
 
-                if(version.StartsWith("6.0", StringComparison.Ordinal))
-                    return "Windows Vista";
+                if(version.StartsWith("6.0", StringComparison.Ordinal)) return "Windows Vista";
 
-                if(version.StartsWith("6.1", StringComparison.Ordinal))
-                    return "Windows 7";
+                if(version.StartsWith("6.1", StringComparison.Ordinal)) return "Windows 7";
 
-                if(version.StartsWith("6.2", StringComparison.Ordinal))
-                    return "Windows 8";
+                if(version.StartsWith("6.2", StringComparison.Ordinal)) return "Windows 8";
 
-                if(version.StartsWith("6.3", StringComparison.Ordinal))
-                    return "Windows 8.1";
+                if(version.StartsWith("6.3", StringComparison.Ordinal)) return "Windows 8.1";
 
-                if(version.StartsWith("10.0", StringComparison.Ordinal))
-                    return "Windows 10";
+                if(version.StartsWith("10.0", StringComparison.Ordinal)) return "Windows 10";
 
                 return version.StartsWith("11.0", StringComparison.Ordinal)
                            ? "Windows 11"
@@ -395,17 +380,13 @@ public static class DetectOS
             case PlatformID.Win32S:
                 return "Windows 3.x with win32s";
             case PlatformID.Win32Windows:
-                if(string.IsNullOrEmpty(version))
-                    return "Windows 9x/Me";
+                if(string.IsNullOrEmpty(version)) return "Windows 9x/Me";
 
-                if(version.StartsWith("4.0", StringComparison.Ordinal))
-                    return "Windows 95";
+                if(version.StartsWith("4.0", StringComparison.Ordinal)) return "Windows 95";
 
-                if(version.StartsWith("4.10.2222", StringComparison.Ordinal))
-                    return "Windows 98 SE";
+                if(version.StartsWith("4.10.2222", StringComparison.Ordinal)) return "Windows 98 SE";
 
-                if(version.StartsWith("4.1", StringComparison.Ordinal))
-                    return "Windows 98";
+                if(version.StartsWith("4.1", StringComparison.Ordinal)) return "Windows 98";
 
                 return version.StartsWith("4.9", StringComparison.Ordinal) ? "Windows Me" : "Windows 9x/Me";
 

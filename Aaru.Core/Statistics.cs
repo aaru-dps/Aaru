@@ -67,8 +67,7 @@ public static class Statistics
         {
             using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            if(Settings.Settings.Current.Stats == null)
-                return;
+            if(Settings.Settings.Current.Stats == null) return;
 
             ctx.OperatingSystems.Add(new OperatingSystem
             {
@@ -109,8 +108,7 @@ public static class Statistics
             AaruConsole.WriteException(ex);
         }
 
-        if(Settings.Settings.Current.Stats is { ShareStats: true })
-            SubmitStats();
+        if(Settings.Settings.Current.Stats is { ShareStats: true }) SubmitStats();
     }
 
     /// <summary>Submits statistics to Aaru.Server</summary>
@@ -122,8 +120,7 @@ public static class Statistics
 
             try
             {
-                if(_submitStatsLock)
-                    return;
+                if(_submitStatsLock) return;
 
                 _submitStatsLock = true;
 
@@ -160,9 +157,9 @@ public static class Statistics
                     {
                         dto.Filesystems = new List<NameValueStats>();
 
-                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             dto.Filesystems.Add(new NameValueStats
                             {
@@ -190,9 +187,9 @@ public static class Statistics
                     {
                         dto.MediaFormats = new List<NameValueStats>();
 
-                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             dto.MediaFormats.Add(new NameValueStats
                             {
@@ -279,14 +276,14 @@ public static class Statistics
                     {
                         dto.OperatingSystems = new List<OsStats>();
 
-                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized).
-                                                     Select(c => c.Name).
-                                                     Distinct())
+                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                    .Select(c => c.Name)
+                                                    .Distinct())
                         {
-                            foreach(string osVersion in ctx.OperatingSystems.
-                                                            Where(c => !c.Synchronized && c.Name == osName).
-                                                            Select(c => c.Version).
-                                                            Distinct())
+                            foreach(string osVersion in ctx.OperatingSystems
+                                                           .Where(c => !c.Synchronized && c.Name == osName)
+                                                           .Select(c => c.Version)
+                                                           .Distinct())
                             {
                                 dto.OperatingSystems.Add(new OsStats
                                 {
@@ -304,15 +301,15 @@ public static class Statistics
                     {
                         dto.RemoteApplications = new List<OsStats>();
 
-                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized).
-                                                            Select(c => c.Name).
-                                                            Distinct())
+                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
+                                                           .Select(c => c.Name)
+                                                           .Distinct())
                         {
-                            foreach(string remoteAppVersion in ctx.RemoteApplications.
-                                                                   Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName).
-                                                                   Select(c => c.Version).
-                                                                   Distinct())
+                            foreach(string remoteAppVersion in ctx.RemoteApplications
+                                                                  .Where(c => !c.Synchronized &&
+                                                                              c.Name == remoteAppName)
+                                                                  .Select(c => c.Version)
+                                                                  .Distinct())
                             {
                                 dto.RemoteApplications.Add(new OsStats
                                 {
@@ -330,9 +327,9 @@ public static class Statistics
                     {
                         dto.RemoteArchitectures = new List<NameValueStats>();
 
-                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             dto.RemoteArchitectures.Add(new NameValueStats
                             {
@@ -346,14 +343,14 @@ public static class Statistics
                     {
                         dto.RemoteOperatingSystems = new List<OsStats>();
 
-                        foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized).
-                                                           Select(c => c.Name).
-                                                           Distinct())
+                        foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
+                                                          .Select(c => c.Name)
+                                                          .Distinct())
                         {
-                            foreach(string remoteOsVersion in ctx.RemoteOperatingSystems.
-                                                                  Where(c => !c.Synchronized && c.Name == remoteOsName).
-                                                                  Select(c => c.Version).
-                                                                  Distinct())
+                            foreach(string remoteOsVersion in ctx.RemoteOperatingSystems
+                                                                 .Where(c => !c.Synchronized && c.Name == remoteOsName)
+                                                                 .Select(c => c.Version)
+                                                                 .Distinct())
                             {
                                 dto.RemoteOperatingSystems.Add(new OsStats
                                 {
@@ -367,11 +364,11 @@ public static class Statistics
                         }
                     }
 
-                #if DEBUG
+#if DEBUG
                     System.Console.WriteLine(Localization.Core.Uploading_statistics);
-                #else
-                            Aaru.Console.AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Uploading_statistics);
-                #endif
+#else
+                    Aaru.Console.AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Uploading_statistics);
+#endif
                     string json = JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default);
 
                     byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
@@ -389,8 +386,7 @@ public static class Statistics
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
-                        return;
+                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
 
                     Stream data   = response.GetResponseStream();
                     var    reader = new StreamReader(data ?? throw new InvalidOperationException());
@@ -399,8 +395,7 @@ public static class Statistics
                     data.Close();
                     response.Close();
 
-                    if(result != "ok")
-                        return;
+                    if(result != "ok") return;
 
                     if(ctx.Commands.Any(c => !c.Synchronized))
                     {
@@ -421,9 +416,9 @@ public static class Statistics
 
                     if(ctx.Filesystems.Any(c => !c.Synchronized))
                     {
-                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             Filesystem existing =
                                 ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -460,9 +455,9 @@ public static class Statistics
 
                     if(ctx.MediaFormats.Any(c => !c.Synchronized))
                     {
-                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             MediaFormat existing =
                                 ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -540,8 +535,7 @@ public static class Statistics
                                                                              c.Real));
                             }
 
-                            if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
-                                continue;
+                            if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real)) continue;
 
                             {
                                 Database.Models.Media existing =
@@ -576,14 +570,14 @@ public static class Statistics
 
                     if(ctx.OperatingSystems.Any(c => !c.Synchronized))
                     {
-                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized).
-                                                     Select(c => c.Name).
-                                                     Distinct())
+                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                    .Select(c => c.Name)
+                                                    .Distinct())
                         {
-                            foreach(string osVersion in ctx.OperatingSystems.
-                                                            Where(c => !c.Synchronized && c.Name == osName).
-                                                            Select(c => c.Version).
-                                                            Distinct())
+                            foreach(string osVersion in ctx.OperatingSystems
+                                                           .Where(c => !c.Synchronized && c.Name == osName)
+                                                           .Select(c => c.Version)
+                                                           .Distinct())
                             {
                                 OperatingSystem existing =
                                     ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized      &&
@@ -612,15 +606,15 @@ public static class Statistics
 
                     if(ctx.RemoteApplications.Any(c => !c.Synchronized))
                     {
-                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized).
-                                                            Select(c => c.Name).
-                                                            Distinct())
+                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
+                                                           .Select(c => c.Name)
+                                                           .Distinct())
                         {
-                            foreach(string remoteAppVersion in ctx.RemoteApplications.
-                                                                   Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName).
-                                                                   Select(c => c.Version).
-                                                                   Distinct())
+                            foreach(string remoteAppVersion in ctx.RemoteApplications
+                                                                  .Where(c => !c.Synchronized &&
+                                                                              c.Name == remoteAppName)
+                                                                  .Select(c => c.Version)
+                                                                  .Distinct())
                             {
                                 RemoteApplication existing =
                                     ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
@@ -649,9 +643,9 @@ public static class Statistics
 
                     if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
                     {
-                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).
-                                                  Select(c => c.Name).
-                                                  Distinct())
+                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
+                                                 .Select(c => c.Name)
+                                                 .Distinct())
                         {
                             RemoteArchitecture existing =
                                 ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
@@ -671,14 +665,14 @@ public static class Statistics
                         }
                     }
 
-                    foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized).
-                                                       Select(c => c.Name).
-                                                       Distinct())
+                    foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
+                                                      .Select(c => c.Name)
+                                                      .Distinct())
                     {
-                        foreach(string remoteOsVersion in ctx.RemoteOperatingSystems.
-                                                              Where(c => !c.Synchronized && c.Name == remoteOsName).
-                                                              Select(c => c.Version).
-                                                              Distinct())
+                        foreach(string remoteOsVersion in ctx.RemoteOperatingSystems
+                                                             .Where(c => !c.Synchronized && c.Name == remoteOsName)
+                                                             .Select(c => c.Version)
+                                                             .Distinct())
                         {
                             RemoteOperatingSystem existing =
                                 ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
@@ -720,12 +714,11 @@ public static class Statistics
             // ReSharper disable once RedundantCatchClause
             catch
             {
-            #if DEBUG
+#if DEBUG
                 _submitStatsLock = false;
 
-                if(Debugger.IsAttached)
-                    throw;
-            #endif
+                if(Debugger.IsAttached) throw;
+#endif
             }
 
             _submitStatsLock = false;
@@ -738,11 +731,9 @@ public static class Statistics
     /// <param name="command">Command</param>
     public static void AddCommand(string command)
     {
-        if(string.IsNullOrWhiteSpace(command))
-            return;
+        if(string.IsNullOrWhiteSpace(command)) return;
 
-        if(Settings.Settings.Current.Stats is not { DeviceStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { DeviceStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -768,11 +759,9 @@ public static class Statistics
     /// <param name="filesystem">Filesystem name</param>
     public static void AddFilesystem(string filesystem)
     {
-        if(string.IsNullOrWhiteSpace(filesystem))
-            return;
+        if(string.IsNullOrWhiteSpace(filesystem)) return;
 
-        if(Settings.Settings.Current.Stats is not { FilesystemStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { FilesystemStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -798,11 +787,9 @@ public static class Statistics
     /// <param name="partition">Partition scheme name</param>
     internal static void AddPartition(string partition)
     {
-        if(string.IsNullOrWhiteSpace(partition))
-            return;
+        if(string.IsNullOrWhiteSpace(partition)) return;
 
-        if(Settings.Settings.Current.Stats is not { PartitionStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { PartitionStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -828,11 +815,9 @@ public static class Statistics
     /// <param name="filter">Filter name</param>
     public static void AddFilter(string filter)
     {
-        if(string.IsNullOrWhiteSpace(filter))
-            return;
+        if(string.IsNullOrWhiteSpace(filter)) return;
 
-        if(Settings.Settings.Current.Stats is not { FilterStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { FilterStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -858,11 +843,9 @@ public static class Statistics
     /// <param name="format">Media image name</param>
     public static void AddMediaFormat(string format)
     {
-        if(string.IsNullOrWhiteSpace(format))
-            return;
+        if(string.IsNullOrWhiteSpace(format)) return;
 
-        if(Settings.Settings.Current.Stats is not { MediaImageStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { MediaImageStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -888,8 +871,7 @@ public static class Statistics
     /// <param name="dev">Device</param>
     public static void AddDevice(Device dev)
     {
-        if(Settings.Settings.Current.Stats is not { DeviceStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { DeviceStats: true }) return;
 
         string deviceBus;
 
@@ -933,8 +915,7 @@ public static class Statistics
     /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
     public static void AddMedia(MediaType type, bool real)
     {
-        if(Settings.Settings.Current.Stats is not { MediaStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { MediaStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -961,8 +942,7 @@ public static class Statistics
     public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
                                  string serverOperatingSystemVersion, string serverArchitecture)
     {
-        if(Settings.Settings.Current.Stats is not { MediaStats: true })
-            return;
+        if(Settings.Settings.Current.Stats is not { MediaStats: true }) return;
 
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 

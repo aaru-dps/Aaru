@@ -57,8 +57,7 @@ public class Scan
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Scan(ScanType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var scan = new Scan
         {
@@ -69,33 +68,28 @@ public class Scan
         {
             scan.Checksums = new List<Checksum>();
 
-            foreach(Schemas.ChecksumType chk in cicm.Checksums)
-                scan.Checksums.Add(chk);
+            foreach(Schemas.ChecksumType chk in cicm.Checksums) scan.Checksums.Add(chk);
         }
 
         if(cicm.Scanner is not null)
         {
             scan.Scanner = new List<Scanner>();
 
-            foreach(ScannerType scanner in cicm.Scanner)
-                scan.Scanner.Add(scanner);
+            foreach(ScannerType scanner in cicm.Scanner) scan.Scanner.Add(scanner);
         }
 
         if(cicm.ScanProcessing is not null)
         {
             scan.ScanProcessing = new List<ScanProcessing>();
 
-            foreach(ScanProcessingType processing in cicm.ScanProcessing)
-                scan.ScanProcessing.Add(processing);
+            foreach(ScanProcessingType processing in cicm.ScanProcessing) scan.ScanProcessing.Add(processing);
         }
 
-        if(cicm.OCR is null)
-            return scan;
+        if(cicm.OCR is null) return scan;
 
         scan.OCR = new List<OCR>();
 
-        foreach(OCRType ocr in cicm.OCR)
-            scan.OCR.Add(ocr);
+        foreach(OCRType ocr in cicm.OCR) scan.OCR.Add(ocr);
 
         return scan;
     }
@@ -110,8 +104,7 @@ public class Cover
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator Cover(CoverType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var cover = new Cover
         {
@@ -119,13 +112,11 @@ public class Cover
             Thumbnail = cicm.Thumbnail
         };
 
-        if(cicm.Checksums is null)
-            return cover;
+        if(cicm.Checksums is null) return cover;
 
         cover.Checksums = new List<Checksum>();
 
-        foreach(Schemas.ChecksumType chk in cicm.Checksums)
-            cover.Checksums.Add(chk);
+        foreach(Schemas.ChecksumType chk in cicm.Checksums) cover.Checksums.Add(chk);
 
         return cover;
     }
@@ -203,8 +194,8 @@ public class CaseScan
                                                                        ? null
                                                                        : new CaseScan
                                                                        {
-                                                                           Element = (CaseScanElement)cicm.
-                                                                               CaseScanElement,
+                                                                           Element = (CaseScanElement)cicm
+                                                                              .CaseScanElement,
                                                                            Scan = cicm.Scan
                                                                        };
 }
@@ -233,8 +224,8 @@ public class MediaScan
                                                                          ? null
                                                                          : new MediaScan
                                                                          {
-                                                                             Element = (MediaScanElement)cicm.
-                                                                                 MediaScanElement,
+                                                                             Element = (MediaScanElement)cicm
+                                                                                .MediaScanElement,
                                                                              Scan = cicm.Scan
                                                                          };
 }
@@ -301,8 +292,7 @@ public class OCR
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator OCR(OCRType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var ocr = new OCR
         {
@@ -311,13 +301,11 @@ public class OCR
             SoftwareVersion = cicm.SoftwareVersion
         };
 
-        if(cicm.Language is null)
-            return ocr;
+        if(cicm.Language is null) return ocr;
 
         ocr.Language = new List<Language>();
 
-        foreach(Language lng in cicm.Language)
-            ocr.Language.Add(lng);
+        foreach(Language lng in cicm.Language) ocr.Language.Add(lng);
 
         return ocr;
     }

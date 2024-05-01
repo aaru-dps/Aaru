@@ -170,7 +170,8 @@ public class CSD
                     Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(response);
                     Assert.IsNotNull(csd, string.Format(Localization.Decoded_0, cards[i]));
 
-                    Assert.AreEqual(structure_versions[i], csd.Structure,
+                    Assert.AreEqual(structure_versions[i],
+                                    csd.Structure,
                                     string.Format(Localization.Version_0, cards[i]));
 
                     Assert.AreEqual(taacs[i],   csd.TAAC,    string.Format(Localization.TAAC_0,           cards[i]));
@@ -178,65 +179,84 @@ public class CSD
                     Assert.AreEqual(speeds[i],  csd.Speed,   string.Format(Localization.Transfer_speed_0, cards[i]));
                     Assert.AreEqual(classes[i], csd.Classes, string.Format(Localization.Classes_0,        cards[i]));
 
-                    Assert.AreEqual(read_block_lengths[i], csd.ReadBlockLength,
+                    Assert.AreEqual(read_block_lengths[i],
+                                    csd.ReadBlockLength,
                                     string.Format(Localization.Read_block_length_0, cards[i]));
 
-                    Assert.AreEqual(read_partial_blocks[i], csd.ReadsPartialBlocks,
+                    Assert.AreEqual(read_partial_blocks[i],
+                                    csd.ReadsPartialBlocks,
                                     string.Format(Localization.Reads_partial_blocks_0, cards[i]));
 
-                    Assert.AreEqual(write_misaligned_block[i], csd.WriteMisalignment,
+                    Assert.AreEqual(write_misaligned_block[i],
+                                    csd.WriteMisalignment,
                                     string.Format(Localization.Writes_misaligned_blocks_0, cards[i]));
 
-                    Assert.AreEqual(read_misaligned_block[i], csd.ReadMisalignment,
+                    Assert.AreEqual(read_misaligned_block[i],
+                                    csd.ReadMisalignment,
                                     string.Format(Localization.Reads_misaligned_blocks_0, cards[i]));
 
-                    Assert.AreEqual(dsr_implemented[i], csd.DSRImplemented,
+                    Assert.AreEqual(dsr_implemented[i],
+                                    csd.DSRImplemented,
                                     string.Format(Localization.DSR_implemented_0, cards[i]));
 
                     Assert.AreEqual(card_sizes[i], csd.Size, string.Format(Localization.Card_size_0, cards[i]));
 
-                    Assert.AreEqual(min_read_current[i], csd.ReadCurrentAtVddMin,
+                    Assert.AreEqual(min_read_current[i],
+                                    csd.ReadCurrentAtVddMin,
                                     string.Format(Localization.Reading_current_at_minimum_Vdd_0, cards[i]));
 
-                    Assert.AreEqual(max_read_current[i], csd.ReadCurrentAtVddMax,
+                    Assert.AreEqual(max_read_current[i],
+                                    csd.ReadCurrentAtVddMax,
                                     string.Format(Localization.Reading_current_at_maximum_Vdd_0, cards[i]));
 
-                    Assert.AreEqual(min_write_current[i], csd.WriteCurrentAtVddMin,
+                    Assert.AreEqual(min_write_current[i],
+                                    csd.WriteCurrentAtVddMin,
                                     string.Format(Localization.Writing_current_at_minimum_Vdd_0, cards[i]));
 
-                    Assert.AreEqual(max_write_current[i], csd.WriteCurrentAtVddMax,
+                    Assert.AreEqual(max_write_current[i],
+                                    csd.WriteCurrentAtVddMax,
                                     string.Format(Localization.Writing_current_at_maximum_Vdd_0, cards[i]));
 
-                    Assert.AreEqual(size_multiplier[i], csd.SizeMultiplier,
+                    Assert.AreEqual(size_multiplier[i],
+                                    csd.SizeMultiplier,
                                     string.Format(Localization.Card_size_multiplier_0, cards[i]));
 
-                    Assert.AreEqual(erase_block_enable[i], csd.EraseBlockEnable,
+                    Assert.AreEqual(erase_block_enable[i],
+                                    csd.EraseBlockEnable,
                                     string.Format(Localization.Erase_block_enable_0, cards[i]));
 
-                    Assert.AreEqual(erase_sector_sizes[i], csd.EraseSectorSize,
+                    Assert.AreEqual(erase_sector_sizes[i],
+                                    csd.EraseSectorSize,
                                     string.Format(Localization.Erase_sector_size_0, cards[i]));
 
-                    Assert.AreEqual(write_protect_group_size[i], csd.WriteProtectGroupSize,
+                    Assert.AreEqual(write_protect_group_size[i],
+                                    csd.WriteProtectGroupSize,
                                     string.Format(Localization.Write_protect_group_size_0, cards[i]));
 
-                    Assert.AreEqual(write_protect_group_enable[i], csd.WriteProtectGroupEnable,
+                    Assert.AreEqual(write_protect_group_enable[i],
+                                    csd.WriteProtectGroupEnable,
                                     string.Format(Localization.Write_protect_group_enable_0, cards[i]));
 
-                    Assert.AreEqual(r2w_factors[i], csd.WriteSpeedFactor,
+                    Assert.AreEqual(r2w_factors[i],
+                                    csd.WriteSpeedFactor,
                                     string.Format(Localization.Read_to_write_factor_0, cards[i]));
 
-                    Assert.AreEqual(file_format_group[i], csd.FileFormatGroup,
+                    Assert.AreEqual(file_format_group[i],
+                                    csd.FileFormatGroup,
                                     string.Format(Localization.File_format_group_0, cards[i]));
 
                     Assert.AreEqual(copy[i], csd.Copy, string.Format(Localization.Copy_0, cards[i]));
 
-                    Assert.AreEqual(permanent_write_protect[i], csd.PermanentWriteProtect,
+                    Assert.AreEqual(permanent_write_protect[i],
+                                    csd.PermanentWriteProtect,
                                     string.Format(Localization.Permanent_write_protect_0, cards[i]));
 
-                    Assert.AreEqual(temporary_write_protect[i], csd.TemporaryWriteProtect,
+                    Assert.AreEqual(temporary_write_protect[i],
+                                    csd.TemporaryWriteProtect,
                                     string.Format(Localization.Temporary_write_protect_0, cards[i]));
 
-                    Assert.AreEqual(file_format[i], csd.FileFormat,
+                    Assert.AreEqual(file_format[i],
+                                    csd.FileFormat,
                                     string.Format(Localization.File_format_0, cards[i]));
                 });
             }

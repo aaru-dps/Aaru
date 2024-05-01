@@ -48,14 +48,12 @@ public sealed partial class PCEnginePlugin
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         var         systemDescriptor = new byte[23];
         ErrorNumber errno            = imagePlugin.ReadSector(1 + partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Array.Copy(sector, 0x20, systemDescriptor, 0, 23);
 

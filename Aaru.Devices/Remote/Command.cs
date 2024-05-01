@@ -45,8 +45,7 @@ public partial class Device
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         return _remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, direction, out duration, out sense);
     }
@@ -57,11 +56,17 @@ public partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
-        return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer, timeout,
-                                      transferBlocks, out duration, out sense);
+        return _remote.SendAtaCommand(registers,
+                                      out errorRegisters,
+                                      protocol,
+                                      transferRegister,
+                                      ref buffer,
+                                      timeout,
+                                      transferBlocks,
+                                      out duration,
+                                      out sense);
     }
 
     /// <inheritdoc />
@@ -70,11 +75,17 @@ public partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
-        return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer, timeout,
-                                      transferBlocks, out duration, out sense);
+        return _remote.SendAtaCommand(registers,
+                                      out errorRegisters,
+                                      protocol,
+                                      transferRegister,
+                                      ref buffer,
+                                      timeout,
+                                      transferBlocks,
+                                      out duration,
+                                      out sense);
     }
 
     /// <inheritdoc />
@@ -83,11 +94,17 @@ public partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
-        return _remote.SendAtaCommand(registers, out errorRegisters, protocol, transferRegister, ref buffer, timeout,
-                                      transferBlocks, out duration, out sense);
+        return _remote.SendAtaCommand(registers,
+                                      out errorRegisters,
+                                      protocol,
+                                      transferRegister,
+                                      ref buffer,
+                                      timeout,
+                                      transferBlocks,
+                                      out duration,
+                                      out sense);
     }
 
     /// <inheritdoc />
@@ -96,8 +113,7 @@ public partial class Device
                                        out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         var cmdStopwatch = new Stopwatch();
 
@@ -154,8 +170,18 @@ public partial class Device
             }
         }
 
-        return _remote.SendMmcCommand(command, write, isApplication, flags, argument, blockSize, blocks, ref buffer,
-                                      out response, out duration, out sense, timeout);
+        return _remote.SendMmcCommand(command,
+                                      write,
+                                      isApplication,
+                                      flags,
+                                      argument,
+                                      blockSize,
+                                      blocks,
+                                      ref buffer,
+                                      out response,
+                                      out duration,
+                                      out sense,
+                                      timeout);
     }
 
     /// <inheritdoc />
@@ -163,8 +189,7 @@ public partial class Device
                                                 uint               timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         if(_remote.ServerProtocolVersion >= 2)
             return _remote.SendMultipleMmcCommands(commands, out duration, out sense, timeout);
@@ -175,18 +200,24 @@ public partial class Device
 
         foreach(MmcSingleCommand command in commands)
         {
-            int singleError = _remote.SendMmcCommand(command.command, command.write, command.isApplication,
-                                                     command.flags, command.argument, command.blockSize, command.blocks,
-                                                     ref command.buffer, out command.response, out double cmdDuration,
-                                                     out bool cmdSense, timeout);
+            int singleError = _remote.SendMmcCommand(command.command,
+                                                     command.write,
+                                                     command.isApplication,
+                                                     command.flags,
+                                                     command.argument,
+                                                     command.blockSize,
+                                                     command.blocks,
+                                                     ref command.buffer,
+                                                     out command.response,
+                                                     out double cmdDuration,
+                                                     out bool cmdSense,
+                                                     timeout);
 
-            if(error == 0 && singleError != 0)
-                error = singleError;
+            if(error == 0 && singleError != 0) error = singleError;
 
             duration += cmdDuration;
 
-            if(cmdSense)
-                sense = true;
+            if(cmdSense) sense = true;
         }
 
         return error;

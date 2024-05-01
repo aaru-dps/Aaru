@@ -57,8 +57,7 @@ public sealed partial class DiskCopy42
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_checksum_equals_0_X8, dataChk);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_data_checksum_equals_0_X8,     header.DataChecksum);
 
-        if(header.TagSize <= 0)
-            return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
+        if(header.TagSize <= 0) return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_tags);
         Stream tagStream = dc42ImageFilter.GetDataForkStream();

@@ -90,19 +90,17 @@ public sealed class NeXTDisklabel : IPartition
         ErrorNumber errno;
 
         foreach(ulong i in new ulong[]
-            {
-                0, 4, 15, 16
-            }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
+                {
+                    0, 4, 15, 16
+                }.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
         {
             errno = imagePlugin.ReadSector(i + sectorOffset, out labelSector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             var magic = BigEndianBitConverter.ToUInt32(labelSector, 0x00);
 
-            if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3)
-                continue;
+            if(magic != NEXT_MAGIC1 && magic != NEXT_MAGIC2 && magic != NEXT_MAGIC3) continue;
 
             magicFound    = true;
             labelPosition = i + sectorOffset;
@@ -110,18 +108,15 @@ public sealed class NeXTDisklabel : IPartition
             break;
         }
 
-        if(!magicFound)
-            return false;
+        if(!magicFound) return false;
 
         uint sectorsToRead = 7680 / imagePlugin.Info.SectorSize;
 
-        if(7680 % imagePlugin.Info.SectorSize > 0)
-            sectorsToRead++;
+        if(7680 % imagePlugin.Info.SectorSize > 0) sectorsToRead++;
 
         errno = imagePlugin.ReadSectors(labelPosition, sectorsToRead, out labelSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Label label    = Marshal.ByteArrayToStructureBigEndian<Label>(labelSector);
         var   disktabB = new byte[498];
@@ -138,10 +133,12 @@ public sealed class NeXTDisklabel : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_flags = {0}",    label.dl_flags);
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_tag = 0x{0:X8}", label.dl_tag);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_name = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.dl_dt.d_name = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_name));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_type = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.dl_dt.d_type = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_type));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_secsize = {0}",    label.dl_dt.d_secsize);
@@ -160,10 +157,12 @@ public sealed class NeXTDisklabel : IPartition
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_boot0_blkno[1] = {0}", label.dl_dt.d_boot0_blkno[1]);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_bootfile = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.dl_dt.d_bootfile = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_bootfile));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_hostname = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "label.dl_dt.d_hostname = \"{0}\"",
                                    StringHandlers.CToString(label.dl_dt.d_hostname));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
@@ -175,40 +174,64 @@ public sealed class NeXTDisklabel : IPartition
             Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
             label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(partB);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_base = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_base);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_size = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_size);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_bsize = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_bsize = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_bsize);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_fsize = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_fsize = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_fsize);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_opt = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_opt = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_opt);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_cpg = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_cpg = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_cpg);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_density = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_density = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_density);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_minfree = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_minfree = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_minfree);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_newfs = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_newfs = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_newfs);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_mountpt = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_mountpt = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt));
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_automnt = {1}", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_automnt = {1}",
+                                       i,
                                        label.dl_dt.d_partitions[i].p_automnt);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
 
             if(label.dl_dt.d_partitions[i].p_size  <= 0 ||
@@ -254,8 +277,8 @@ public sealed class NeXTDisklabel : IPartition
             sb.AppendFormat(Localization._0_cylinders_per_group, label.dl_dt.d_partitions[i].p_cpg).AppendLine();
             sb.AppendFormat(Localization._0_bytes_per_inode,     label.dl_dt.d_partitions[i].p_density).AppendLine();
 
-            sb.AppendFormat(Localization._0_of_space_must_be_free_at_minimum, label.dl_dt.d_partitions[i].p_minfree).
-               AppendLine();
+            sb.AppendFormat(Localization._0_of_space_must_be_free_at_minimum, label.dl_dt.d_partitions[i].p_minfree)
+              .AppendLine();
 
             if(label.dl_dt.d_partitions[i].p_newfs != 1)
                 sb.AppendLine(Localization.Filesystem_should_be_formatted_at_start);

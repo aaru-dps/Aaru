@@ -61,13 +61,11 @@ public sealed partial class Gdi
 
             for(var i = 0; i < 512; i++)
             {
-                if(i >= imageFilter.GetDataForkStream().Length)
-                    break;
+                if(i >= imageFilter.GetDataForkStream().Length) break;
 
                 if(testArray[i] == 0)
                 {
-                    if(twoConsecutiveNulls)
-                        return false;
+                    if(twoConsecutiveNulls) return false;
 
                     twoConsecutiveNulls = true;
                 }
@@ -90,8 +88,7 @@ public sealed partial class Gdi
 
                 if(lineNumber == 1)
                 {
-                    if(!int.TryParse(line, out tracks))
-                        return false;
+                    if(!int.TryParse(line, out tracks)) return false;
                 }
                 else
                 {
@@ -99,15 +96,13 @@ public sealed partial class Gdi
 
                     Match trackMatch = regexTrack.Match(line ?? "");
 
-                    if(!trackMatch.Success)
-                        return false;
+                    if(!trackMatch.Success) return false;
 
                     tracksFound++;
                 }
             }
 
-            if(tracks == 0)
-                return false;
+            if(tracks == 0) return false;
 
             return tracks == tracksFound;
         }

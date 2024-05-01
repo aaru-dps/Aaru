@@ -30,7 +30,6 @@
 // Copyright © 2011-2023 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
@@ -58,7 +57,7 @@ public partial class Device
         var cdb = new byte[12];
         buffer = new byte[2064 * transferLength];
 
-        uint cacheDataOffset = 0x80000000 + (lba % 96 * 2064);
+        uint cacheDataOffset = 0x80000000 + lba % 96 * 2064;
 
         cdb[0]  = (byte)ScsiCommands.HlDtStVendor;
         cdb[1]  = 0x48;
@@ -72,25 +71,29 @@ public partial class Device
         cdb[10] = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[11] = (byte)(buffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.HL_DT_ST_READ_DVD_RAW_took_0_ms, duration);
 
-        if(!CheckSectorNumber(buffer, lba, transferLength))
-            return true;
+        if(!CheckSectorNumber(buffer, lba, transferLength)) return true;
 
-        if(_decoding.Scramble(buffer, transferLength, out byte[] scrambledBuffer) != ErrorNumber.NoError)
-            return true;
+        if(_decoding.Scramble(buffer, transferLength, out byte[] scrambledBuffer) != ErrorNumber.NoError) return true;
 
         buffer = scrambledBuffer;
+
         return sense;
     }
 
     /// <summary>
-    /// Makes sure the data's sector number is the one expected.
+    ///     Makes sure the data's sector number is the one expected.
     /// </summary>
     /// <param name="buffer">Data buffer</param>
     /// <param name="firstLba">First consecutive LBA of the buffer</param>
@@ -98,17 +101,16 @@ public partial class Device
     /// <returns><c>false</c> if any sector is not matching expected value, else <c>true</c></returns>
     static bool CheckSectorNumber(IReadOnlyList<byte> buffer, uint firstLba, uint transferLength)
     {
-        for(int i = 0; i < transferLength; i++)
+        for(var i = 0; i < transferLength; i++)
         {
             byte[] sectorBuffer =
             {
-                0x0, buffer[1 + (2064 * i)], buffer[2 + (2064 * i)], buffer[3 + (2064 * i)]
+                0x0, buffer[1 + 2064 * i], buffer[2 + 2064 * i], buffer[3 + 2064 * i]
             };
 
-            uint sectorNumber = BigEndianBitConverter.ToUInt32(sectorBuffer, 0);
+            var sectorNumber = BigEndianBitConverter.ToUInt32(sectorBuffer, 0);
 
-            if(sectorNumber != firstLba + i + 0x30000)
-                return false;
+            if(sectorNumber != firstLba + i + 0x30000) return false;
         }
 
         return true;

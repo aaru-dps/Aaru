@@ -76,15 +76,13 @@ public sealed partial class SaveDskF
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.commentOffset = {0}",   _header.commentOffset);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataOffset = {0}",      _header.dataOffset);
 
-        if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD })
-            _header.dataOffset = 512;
+        if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD }) _header.dataOffset = 512;
 
         var cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
         stream.EnsureRead(cmt, 0, cmt.Length);
 
-        if(cmt.Length > 1)
-            _imageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
+        if(cmt.Length > 1) _imageInfo.Comments = StringHandlers.CToString(cmt, Encoding.GetEncoding("ibm437"));
 
         _calculatedChk = 0;
         stream.Seek(0, SeekOrigin.Begin);
@@ -95,11 +93,12 @@ public sealed partial class SaveDskF
         {
             b = stream.ReadByte();
 
-            if(b >= 0)
-                _calculatedChk += (uint)b;
+            if(b >= 0) _calculatedChk += (uint)b;
         } while(b >= 0);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_checksum_equals_0_X8_1, _calculatedChk,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Calculated_checksum_equals_0_X8_1,
+                                   _calculatedChk,
                                    _calculatedChk == _header.checksum);
 
         _imageInfo.Application          = "SaveDskF";
@@ -148,11 +147,9 @@ public sealed partial class SaveDskF
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

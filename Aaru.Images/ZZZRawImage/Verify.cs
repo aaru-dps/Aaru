@@ -44,8 +44,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
-        if(!_rawCompactDisc)
-            return null;
+        if(!_rawCompactDisc) return null;
 
         ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
@@ -61,8 +60,7 @@ public sealed partial class ZZZRawImage
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                unknownLbas.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -71,8 +69,7 @@ public sealed partial class ZZZRawImage
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -95,8 +92,7 @@ public sealed partial class ZZZRawImage
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -110,8 +106,7 @@ public sealed partial class ZZZRawImage
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                unknownLbas.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -120,8 +115,7 @@ public sealed partial class ZZZRawImage
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -144,8 +138,7 @@ public sealed partial class ZZZRawImage
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }

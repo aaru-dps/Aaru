@@ -68,13 +68,11 @@ public sealed class GuidPartitionTable : IPartition
     {
         partitions = new List<Partition>();
 
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] hdrBytes);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Header hdr;
 
@@ -89,8 +87,7 @@ public sealed class GuidPartitionTable : IPartition
             {
                 errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 
-                if(errno != ErrorNumber.NoError)
-                    return false;
+                if(errno != ErrorNumber.NoError) return false;
 
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
                 AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.signature @ 0x200 = 0x{0:X16}", signature);
@@ -133,11 +130,9 @@ public sealed class GuidPartitionTable : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entriesSize = {0}",     hdr.entriesSize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
-        if(hdr.signature != GPT_MAGIC)
-            return false;
+        if(hdr.signature != GPT_MAGIC) return false;
 
-        if(hdr.myLBA != 1 + sectorOffset)
-            return false;
+        if(hdr.myLBA != 1 + sectorOffset) return false;
 
         uint divisor, modulo, sectorSize;
 
@@ -156,13 +151,11 @@ public sealed class GuidPartitionTable : IPartition
 
         uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
 
-        if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0)
-            totalEntriesSectors++;
+        if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
 
         errno = imagePlugin.ReadSectors(hdr.entryLBA / divisor, totalEntriesSectors + modulo, out byte[] temp);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var entriesBytes = new byte[temp.Length - modulo * 512];
         Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
@@ -176,16 +169,15 @@ public sealed class GuidPartitionTable : IPartition
                 Array.Copy(entriesBytes, hdr.entriesSize * i, entryBytes, 0, hdr.entriesSize);
                 entries.Add(Marshal.ByteArrayToStructureLittleEndian<Entry>(entryBytes));
             }
-        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
             {
                 // ignored
             }
-        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
         }
 
-        if(entries.Count == 0)
-            return false;
+        if(entries.Count == 0) return false;
 
         ulong pSeq = 0;
 

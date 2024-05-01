@@ -51,8 +51,7 @@ public sealed partial class Blu
         failingLbas = new List<ulong>();
         unknownLbas = new List<ulong>();
 
-        for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-            unknownLbas.Add(i);
+        for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
         return null;
     }

@@ -66,8 +66,7 @@ public sealed class Adler32Context : IChecksum
         _sum1 = 1;
         _sum2 = 0;
 
-        if(!Native.IsSupported)
-            return;
+        if(!Native.IsSupported) return;
 
         _nativeContext = adler32_init();
         _useNative     = _nativeContext != IntPtr.Zero;
@@ -101,8 +100,7 @@ public sealed class Adler32Context : IChecksum
     {
         var finalSum = (uint)(_sum2 << 16 | _sum1);
 
-        if(!_useNative)
-            return BigEndianBitConverter.GetBytes(finalSum);
+        if(!_useNative) return BigEndianBitConverter.GetBytes(finalSum);
 
         adler32_final(_nativeContext, ref finalSum);
         adler32_free(_nativeContext);
@@ -179,13 +177,11 @@ public sealed class Adler32Context : IChecksum
             {
                 sum1 += data[dataOff];
 
-                if(sum1 >= ADLER_MODULE)
-                    sum1 -= ADLER_MODULE;
+                if(sum1 >= ADLER_MODULE) sum1 -= ADLER_MODULE;
 
                 sum2 += sum1;
 
-                if(sum2 >= ADLER_MODULE)
-                    sum2 -= ADLER_MODULE;
+                if(sum2 >= ADLER_MODULE) sum2 -= ADLER_MODULE;
 
                 preSum1 = (ushort)(sum1 & 0xFFFF);
                 preSum2 = (ushort)(sum2 & 0xFFFF);
@@ -201,8 +197,7 @@ public sealed class Adler32Context : IChecksum
                     sum2 += sum1;
                 }
 
-                if(sum1 >= ADLER_MODULE)
-                    sum1 -= ADLER_MODULE;
+                if(sum1 >= ADLER_MODULE) sum1 -= ADLER_MODULE;
 
                 sum2    %= ADLER_MODULE; /* only added so many ADLER_MODULE's */
                 preSum1 =  (ushort)(sum1 & 0xFFFF);
@@ -339,8 +334,7 @@ public sealed class Adler32Context : IChecksum
         {
             nativeContext = adler32_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         var fileStream = new FileStream(filename, FileMode.Open);
@@ -369,8 +363,7 @@ public sealed class Adler32Context : IChecksum
 
         var adlerOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            adlerOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
         fileStream.Close();
 
@@ -390,8 +383,7 @@ public sealed class Adler32Context : IChecksum
         {
             nativeContext = adler32_init();
 
-            if(nativeContext == IntPtr.Zero)
-                useNative = false;
+            if(nativeContext == IntPtr.Zero) useNative = false;
         }
 
         ushort localSum1 = 1;
@@ -411,8 +403,7 @@ public sealed class Adler32Context : IChecksum
 
         var adlerOutput = new StringBuilder();
 
-        foreach(byte h in hash)
-            adlerOutput.Append(h.ToString("x2"));
+        foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
 
         return adlerOutput.ToString();
     }

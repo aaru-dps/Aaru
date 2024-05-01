@@ -59,8 +59,7 @@ public sealed partial class Gdi
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -83,8 +82,7 @@ public sealed partial class Gdi
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -97,8 +95,7 @@ public sealed partial class Gdi
         unknownLbas = new List<ulong>();
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -121,8 +118,7 @@ public sealed partial class Gdi
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }

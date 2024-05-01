@@ -52,23 +52,23 @@ public sealed partial class Nhdr0
         // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
         var shiftjis = Encoding.GetEncoding("shift_jis");
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return false;
+        if(stream.Length < Marshal.SizeOf<Header>()) return false;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        if(!_nhdhdr.szFileID.SequenceEqual(_signature))
-            return false;
+        if(!_nhdhdr.szFileID.SequenceEqual(_signature)) return false;
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.szFileID = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "nhdhdr.szFileID = \"{0}\"",
                                    StringHandlers.CToString(_nhdhdr.szFileID, shiftjis));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.reserved1 = {0}", _nhdhdr.reserved1);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.szComment = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "nhdhdr.szComment = \"{0}\"",
                                    StringHandlers.CToString(_nhdhdr.szComment, shiftjis));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "nhdhdr.dwHeadSize = {0}", _nhdhdr.dwHeadSize);

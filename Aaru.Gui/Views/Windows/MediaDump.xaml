@@ -31,19 +31,26 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.MediaDump" Icon="/Assets/aaru-logo.png"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.MediaDump"
+        Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
         <windows:MediaDumpViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Vertical" IsVisible="{Binding OptionsVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding OptionsVisible}">
             <TextBlock Text="{Binding OutputFormatLabel}" />
-            <ComboBox ItemsSource="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
+            <ComboBox ItemsSource="{Binding PluginsList}"
+                      SelectedItem="{Binding SelectedPlugin}"
                       IsEnabled="{Binding FormatReadOnly}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
@@ -52,8 +59,10 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Destination}" IsReadOnly="True" />
-                <Button Command="{Binding DestinationCommand}" IsEnabled="{Binding DestinationEnabled}">
+                <TextBox Text="{Binding Destination}"
+                         IsReadOnly="True" />
+                <Button Command="{Binding DestinationCommand}"
+                        IsEnabled="{Binding DestinationEnabled}">
                     <TextBlock Text="{Binding ChooseLabel}" />
                 </Button>
             </StackPanel>
@@ -63,17 +72,24 @@
             <CheckBox IsChecked="{Binding Force}">
                 <TextBlock Text="{Binding ForceLabel}" />
             </CheckBox>
-            <NumericUpDown Text="{Binding RetriesLabel}" Value="{Binding Retries}" Increment="1" Minimum="0" />
+            <NumericUpDown Text="{Binding RetriesLabel}"
+                           Value="{Binding Retries}"
+                           Increment="1"
+                           Minimum="0" />
             <CheckBox IsChecked="{Binding Persistent}">
                 <TextBlock Text="{Binding PersistentLabel}" />
             </CheckBox>
             <CheckBox IsChecked="{Binding Resume}">
                 <TextBlock Text="{Binding ResumeLabel}" />
             </CheckBox>
-            <CheckBox IsChecked="{Binding Track1Pregap}" IsVisible="{Binding Track1PregapVisible}">
+            <CheckBox IsChecked="{Binding Track1Pregap}"
+                      IsVisible="{Binding Track1PregapVisible}">
                 <TextBlock Text="{Binding Track1PregapLabel}" />
             </CheckBox>
-            <NumericUpDown Text="{Binding SkippedLabel}" Increment="1" Minimum="1" Value="{Binding Skipped}" />
+            <NumericUpDown Text="{Binding SkippedLabel}"
+                           Increment="1"
+                           Minimum="1"
+                           Value="{Binding Skipped}" />
             <CheckBox IsChecked="{Binding Sidecar}">
                 <TextBlock Text="{Binding SidecarLabel}" />
             </CheckBox>
@@ -85,7 +101,8 @@
             </CheckBox>
             <StackPanel IsVisible="{Binding EncodingVisible}">
                 <TextBox Text="{Binding EncodingLabel}" />
-                <ComboBox ItemsSource="{Binding Encodings}" SelectedItem="{Binding SelectedEncoding}"
+                <ComboBox ItemsSource="{Binding Encodings}"
+                          SelectedItem="{Binding SelectedEncoding}"
                           IsEnabled="{Binding EncodingEnabled}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -96,30 +113,41 @@
             </StackPanel>
             <!-- TODO: Image options -->
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="{Binding DestinationLabel}" /> <TextBlock Text="{Binding Destination}" />
             </StackPanel>
-            <TextBlock Text="{Binding LogLabel}" /> <TextBox Text="{Binding Log}" IsReadOnly="True" />
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+            <TextBlock Text="{Binding LogLabel}" />
+            <TextBox Text="{Binding Log}"
+                     IsReadOnly="True" />
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBox Text="{Binding ProgressText}" />
-                <ProgressBar Value="{Binding ProgressValue}" Maximum="{Binding ProgressMaxValue}"
+                <ProgressBar Value="{Binding ProgressValue}"
+                             Maximum="{Binding ProgressMaxValue}"
                              IsIndeterminate="{Binding ProgressIndeterminate}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBox Text="{Binding Progress2Text}" />
-                <ProgressBar Value="{Binding Progress2Value}" Maximum="{Binding Progress2MaxValue}"
+                <ProgressBar Value="{Binding Progress2Value}"
+                             Maximum="{Binding Progress2MaxValue}"
                              IsIndeterminate="{Binding Progress2Indeterminate}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
                 <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
+            <Button Command="{Binding StopCommand}"
+                    IsVisible="{Binding StopVisible}"
+                    IsEnabled="{Binding StopEnabled}">
                 <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>

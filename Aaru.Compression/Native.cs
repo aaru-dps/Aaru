@@ -51,11 +51,9 @@ public static class Native
     {
         get
         {
-            if(ForceManaged)
-                return false;
+            if(ForceManaged) return false;
 
-            if(_checked)
-                return _supported;
+            if(_checked) return _supported;
 
             ulong version;
             _checked = true;

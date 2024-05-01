@@ -62,17 +62,13 @@ public static partial class Modes
 
     public static IBM_ModePage_2F? DecodeIBMModePage_2F(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x2F)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x2F) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length < 8)
-            return null;
+        if(pageResponse.Length < 8) return null;
 
         return new IBM_ModePage_2F
         {
@@ -95,16 +91,14 @@ public static partial class Modes
 
     public static string PrettifyIBMModePage_2F(IBM_ModePage_2F? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         IBM_ModePage_2F page = modePage.Value;
         var             sb   = new StringBuilder();
 
         sb.AppendLine(Localization.IBM_Behaviour_Configuration_Mode_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
         switch(page.FenceBehaviour)
         {
@@ -133,8 +127,8 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_cleaning_behaviour_code_0, page.CleanBehaviour).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_cleaning_behaviour_code_0, page.CleanBehaviour)
+                  .AppendLine();
 
                 break;
         }
@@ -166,17 +160,15 @@ public static partial class Modes
 
                 break;
             default:
-                sb.AppendFormat("\t" + Localization.Unknown_sense_data_behaviour_code_0, page.WORMEmulation).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Unknown_sense_data_behaviour_code_0, page.WORMEmulation)
+                  .AppendLine();
 
                 break;
         }
 
-        if(page.CLNCHK)
-            sb.AppendLine("\t" + Localization.Drive_will_set_Check_Condition_when_cleaning_is_needed);
+        if(page.CLNCHK) sb.AppendLine("\t" + Localization.Drive_will_set_Check_Condition_when_cleaning_is_needed);
 
-        if(page.DDEOR)
-            sb.AppendLine("\t" + Localization.No_deferred_error_will_be_reported_to_a_rewind_command);
+        if(page.DDEOR) sb.AppendLine("\t" + Localization.No_deferred_error_will_be_reported_to_a_rewind_command);
 
         if(page.CCDM)
             sb.AppendLine("\t" + Localization.Drive_will_set_Check_Condition_when_the_criteria_for_Dead_Media_is_met);
@@ -184,14 +176,11 @@ public static partial class Modes
         if(page.FirmwareUpdateBehaviour > 0)
             sb.AppendLine("\t" + Localization.Drive_will_not_accept_downlevel_firmware_via_an_FMR_tape);
 
-        if(page.UOE_C == 1)
-            sb.AppendLine("\t" + Localization.Drive_will_eject_cleaning_cartridges_on_error);
+        if(page.UOE_C == 1) sb.AppendLine("\t" + Localization.Drive_will_eject_cleaning_cartridges_on_error);
 
-        if(page.UOE_F == 1)
-            sb.AppendLine("\t" + Localization.Drive_will_eject_firmware_cartridges_on_error);
+        if(page.UOE_F == 1) sb.AppendLine("\t" + Localization.Drive_will_eject_firmware_cartridges_on_error);
 
-        if(page.UOE_D == 1)
-            sb.AppendLine("\t" + Localization.Drive_will_eject_data_cartridges_on_error);
+        if(page.UOE_D == 1) sb.AppendLine("\t" + Localization.Drive_will_eject_data_cartridges_on_error);
 
         return sb.ToString();
     }

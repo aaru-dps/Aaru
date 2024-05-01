@@ -63,8 +63,7 @@ public sealed class App : Application
 
     void OnSplashFinished(object sender, EventArgs e)
     {
-        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
-            return;
+        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
 
         // Ensure not exit
         desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;

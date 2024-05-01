@@ -47,17 +47,13 @@ public sealed class SdMmcInfoViewModel
             {
                 //Text = "MultiMediaCard";
 
-                if(cid != null)
-                    CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
+                if(cid != null) CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
 
-                if(csd != null)
-                    CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
+                if(csd != null) CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
 
-                if(ocr != null)
-                    OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
+                if(ocr != null) OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
 
-                if(extendedCsd != null)
-                    ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
+                if(extendedCsd != null) ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
             }
 
                 break;
@@ -65,17 +61,13 @@ public sealed class SdMmcInfoViewModel
             {
                 //Text = "SecureDigital";
 
-                if(cid != null)
-                    CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
+                if(cid != null) CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
 
-                if(csd != null)
-                    CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
+                if(csd != null) CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
 
-                if(ocr != null)
-                    OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
+                if(ocr != null) OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
 
-                if(scr != null)
-                    ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
+                if(scr != null) ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
             }
 
                 break;

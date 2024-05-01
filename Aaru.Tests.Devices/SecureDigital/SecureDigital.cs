@@ -132,8 +132,7 @@ static class SecureDigital
             AaruConsole.WriteLine(byteAddr ? Localization.Read_from_byte_0 : Localization.Read_from_block_0, address);
             AaruConsole.WriteLine(Localization.Expected_block_size_0_bytes,                                  blockSize);
 
-            if(multiple)
-                AaruConsole.WriteLine(Localization.Will_read_0_blocks, count);
+            if(multiple) AaruConsole.WriteLine(Localization.Will_read_0_blocks, count);
 
             AaruConsole.WriteLine();
             AaruConsole.WriteLine(Localization.Choose_what_to_do);
@@ -216,8 +215,14 @@ static class SecureDigital
     start:
         System.Console.Clear();
 
-        bool sense = dev.Read(out byte[] buffer, out uint[] response, address, blockSize, multiple ? count : (ushort)1,
-                              byteAddr, dev.Timeout, out double duration);
+        bool sense = dev.Read(out byte[] buffer,
+                              out uint[] response,
+                              address,
+                              blockSize,
+                              multiple ? count : (ushort)1,
+                              byteAddr,
+                              dev.Timeout,
+                              out double duration);
 
     menu:
         AaruConsole.WriteLine(Localization.Device_0, devPath);
@@ -265,8 +270,7 @@ static class SecureDigital
                                           ? Localization.READ_MULTIPLE_BLOCK_buffer
                                           : Localization.READ_SINGLE_BLOCK_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -284,8 +288,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -354,8 +357,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SD_SEND_OP_COND_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -368,8 +370,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SD_SEND_OP_COND_decoded_buffer);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -384,8 +385,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -451,8 +451,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SD_STATUS_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -467,8 +466,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -535,8 +533,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_CID_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -549,8 +546,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_CID_decoded_buffer);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -565,8 +561,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -633,8 +628,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_CSD_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -647,8 +641,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_CSD_decoded_buffer);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -663,8 +656,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -731,8 +723,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_SCR_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -745,8 +736,7 @@ static class SecureDigital
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.SEND_SCR_decoded_buffer);
 
-                if(buffer != null)
-                    AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(buffer));
+                if(buffer != null) AaruConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(buffer));
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -761,8 +751,7 @@ static class SecureDigital
 
                 if(response != null)
                 {
-                    foreach(uint res in response)
-                        AaruConsole.Write("0x{0:x8} ", res);
+                    foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
                     AaruConsole.WriteLine();
                 }
@@ -851,8 +840,7 @@ static class SecureDigital
 
         if(response != null)
         {
-            foreach(uint res in response)
-                AaruConsole.Write("0x{0:x8} ", res);
+            foreach(uint res in response) AaruConsole.Write("0x{0:x8} ", res);
 
             AaruConsole.WriteLine();
         }

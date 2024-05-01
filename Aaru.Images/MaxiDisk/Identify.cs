@@ -46,8 +46,7 @@ public sealed partial class MaxiDisk
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
@@ -72,16 +71,13 @@ public sealed partial class MaxiDisk
         //    return false;
 
         // Only floppies supported
-        if(tmpHeader.heads is 0 or > 2)
-            return false;
+        if(tmpHeader.heads is 0 or > 2) return false;
 
         // No floppies with more than this?
-        if(tmpHeader.cylinders > 90)
-            return false;
+        if(tmpHeader.cylinders > 90) return false;
 
         // Maximum supported bps is 16384
-        if(tmpHeader.bytesPerSector > 7)
-            return false;
+        if(tmpHeader.bytesPerSector > 7) return false;
 
         int expectedFileSize = tmpHeader.heads           *
                                tmpHeader.cylinders       *

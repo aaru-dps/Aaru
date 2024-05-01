@@ -54,18 +54,18 @@ public static class CD
     /// <returns>Decoded IP.BIN</returns>
     public static IPBin? DecodeIPBin(byte[] ipbin_sector)
     {
-        if(ipbin_sector == null)
-            return null;
+        if(ipbin_sector == null) return null;
 
-        if(ipbin_sector.Length < 512)
-            return null;
+        if(ipbin_sector.Length < 512) return null;
 
         IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.volume_name = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.volume_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.volume_name));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.system_name = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.system_name = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.system_name));
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.volume_version = \"{0:X}\"", ipbin.volume_version);
@@ -88,28 +88,36 @@ public static class CD
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.sp_work_ram_size = {0}", ipbin.sp_work_ram_size);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.release_date = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.release_date = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.release_date2 = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.release_date2 = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.release_date2));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.developer_code = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.developer_code = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.developer_code));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.domestic_title = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.domestic_title = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.domestic_title));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.overseas_title = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.overseas_title = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.overseas_title));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.product_code = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.product_code = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.product_code));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.peripherals = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.peripherals = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.peripherals));
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, "segacd_ipbin.region_codes = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "segacd_ipbin.region_codes = \"{0}\"",
                                    Encoding.ASCII.GetString(ipbin.region_codes));
 
         string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
@@ -122,8 +130,7 @@ public static class CD
     /// <returns>Description of the IP.BIN contents</returns>
     public static string Prettify(IPBin? decoded)
     {
-        if(decoded == null)
-            return null;
+        if(decoded == null) return null;
 
         IPBin ipbin = decoded.Value;
 
@@ -147,12 +154,12 @@ public static class CD
             {
                 ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM", provider);
             }
-        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
             {
                 // ignored
             }
-        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
         }
 
         /*
@@ -174,15 +181,15 @@ public static class CD
 
         //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(ipbin.volume_version)).AppendLine();
         //IPBinInformation.AppendFormat("{0}", Encoding.ASCII.GetString(ipbin.volume_type)).AppendLine();
-        IPBinInformation.AppendFormat(Localization.System_name_0, Encoding.ASCII.GetString(ipbin.system_name)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.System_name_0, Encoding.ASCII.GetString(ipbin.system_name))
+                        .AppendLine();
 
         //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(ipbin.system_version)).AppendLine();
         IPBinInformation.AppendFormat(Localization.Initial_program_address_0,   ipbin.ip_address).AppendLine();
         IPBinInformation.AppendFormat(Localization.Initial_program_load_size_0, ipbin.ip_loadsize).AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Initial_program_entry_address_0, ipbin.ip_entry_address).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Initial_program_entry_address_0, ipbin.ip_entry_address)
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Initial_program_work_RAM_0, ipbin.ip_work_ram_size).AppendLine();
         IPBinInformation.AppendFormat(Localization.System_program_address_0,   ipbin.sp_address).AppendLine();
@@ -196,20 +203,20 @@ public static class CD
             IPBinInformation.AppendFormat(Localization.Release_date_0, ipbindate).AppendLine();
 
         //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
-        IPBinInformation.AppendFormat(Localization.Hardware_ID_0, Encoding.ASCII.GetString(ipbin.hardware_id)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Hardware_ID_0, Encoding.ASCII.GetString(ipbin.hardware_id))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Developer_code_0, Encoding.ASCII.GetString(ipbin.developer_code)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Developer_code_0, Encoding.ASCII.GetString(ipbin.developer_code))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Domestic_title_0, Encoding.ASCII.GetString(ipbin.domestic_title)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Domestic_title_0, Encoding.ASCII.GetString(ipbin.domestic_title))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Overseas_title_0, Encoding.ASCII.GetString(ipbin.overseas_title)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Overseas_title_0, Encoding.ASCII.GetString(ipbin.overseas_title))
+                        .AppendLine();
 
-        IPBinInformation.AppendFormat(Localization.Product_code_0, Encoding.ASCII.GetString(ipbin.product_code)).
-                         AppendLine();
+        IPBinInformation.AppendFormat(Localization.Product_code_0, Encoding.ASCII.GetString(ipbin.product_code))
+                        .AppendLine();
 
         IPBinInformation.AppendFormat(Localization.Peripherals).AppendLine();
 
@@ -264,8 +271,8 @@ public static class CD
                 case ' ':
                     break;
                 default:
-                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral).
-                                     AppendLine();
+                    IPBinInformation.AppendFormat(Localization.Game_supports_unknown_peripheral_0, peripheral)
+                                    .AppendLine();
 
                     break;
             }

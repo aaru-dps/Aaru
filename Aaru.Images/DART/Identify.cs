@@ -45,8 +45,7 @@ public sealed partial class Dart
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 84)
-            return false;
+        if(stream.Length < 84) return false;
 
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Header>()];
@@ -54,43 +53,36 @@ public sealed partial class Dart
         stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
-        if(header.srcCmp > COMPRESS_NONE)
-            return false;
+        if(header.srcCmp > COMPRESS_NONE) return false;
 
         int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
             case DISK_MAC:
-                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC)
-                    return false;
+                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return false;
 
                 break;
             case DISK_LISA:
-                if(header.srcSize != SIZE_LISA)
-                    return false;
+                if(header.srcSize != SIZE_LISA) return false;
 
                 break;
             case DISK_APPLE2:
-                if(header.srcSize != SIZE_APPLE2)
-                    return false;
+                if(header.srcSize != SIZE_APPLE2) return false;
 
                 break;
             case DISK_MAC_HD:
-                if(header.srcSize != SIZE_MAC_HD)
-                    return false;
+                if(header.srcSize != SIZE_MAC_HD) return false;
 
                 expectedMaxSize += 64;
 
                 break;
             case DISK_DOS:
-                if(header.srcSize != SIZE_DOS)
-                    return false;
+                if(header.srcSize != SIZE_DOS) return false;
 
                 break;
             case DISK_DOS_HD:
-                if(header.srcSize != SIZE_DOS_HD)
-                    return false;
+                if(header.srcSize != SIZE_DOS_HD) return false;
 
                 expectedMaxSize += 64;
 

@@ -62,7 +62,9 @@ public sealed partial class AaruFormat
             return false;
         }
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Index_at_0_contains_1_entries, _header.indexOffset,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Index_at_0_contains_1_entries,
+                                   _header.indexOffset,
                                    idxHeader.entries);
 
         _structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
@@ -71,8 +73,10 @@ public sealed partial class AaruFormat
 
         if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
         {
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_index_CRC_0_X16_but_got_1_X16,
-                                       idxHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Expected_index_CRC_0_X16_but_got_1_X16,
+                                       idxHeader.crc64,
+                                       BitConverter.ToUInt64(verifyCrc, 0));
 
             return false;
         }
@@ -87,8 +91,11 @@ public sealed partial class AaruFormat
             _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
             IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(_structureBytes);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Block_type_0_with_data_type_1_is_indexed_to_be_at_2,
-                                       entry.blockType, entry.dataType, entry.offset);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Block_type_0_with_data_type_1_is_indexed_to_be_at_2,
+                                       entry.blockType,
+                                       entry.dataType,
+                                       entry.offset);
 
             vrIndex.Add(entry);
         }
@@ -113,8 +120,10 @@ public sealed partial class AaruFormat
                     crcVerify = new Crc64Context();
                     readBytes = 0;
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Verifying_data_block_type_0_at_position_1,
-                                               entry.dataType, entry.offset);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Verifying_data_block_type_0_at_position_1,
+                                               entry.dataType,
+                                               entry.offset);
 
                     while(readBytes + verifySize < blockHeader.cmpLength)
                     {
@@ -132,8 +141,10 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_block_CRC_0_X16_but_got_1_X16,
-                                                   blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Expected_block_CRC_0_X16_but_got_1_X16,
+                                                   blockHeader.cmpCrc64,
+                                                   BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
@@ -149,7 +160,8 @@ public sealed partial class AaruFormat
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Verifying_deduplication_table_type_0_at_position_1,
-                                               entry.dataType, entry.offset);
+                                               entry.dataType,
+                                               entry.offset);
 
                     while(readBytes + verifySize < ddtHeader.cmpLength)
                     {
@@ -167,8 +179,10 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_DDT_CRC_0_but_got_1,
-                                                   ddtHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Expected_DDT_CRC_0_but_got_1,
+                                                   ddtHeader.cmpCrc64,
+                                                   BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
@@ -179,8 +193,10 @@ public sealed partial class AaruFormat
                     _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
                     TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(_structureBytes);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_block_at_0_contains_1_entries,
-                                               _header.indexOffset, trkHeader.entries);
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Track_block_at_0_contains_1_entries,
+                                               _header.indexOffset,
+                                               trkHeader.entries);
 
                     _structureBytes = new byte[Marshal.SizeOf<TrackEntry>() * trkHeader.entries];
                     _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
@@ -188,8 +204,10 @@ public sealed partial class AaruFormat
 
                     if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
                     {
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Expected_index_CRC_0_X16_but_got_1_X16,
-                                                   trkHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Expected_index_CRC_0_X16_but_got_1_X16,
+                                                   trkHeader.crc64,
+                                                   BitConverter.ToUInt64(verifyCrc, 0));
 
                         return false;
                     }
@@ -212,8 +230,7 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
-        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
-            return null;
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
         ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
@@ -230,16 +247,14 @@ public sealed partial class AaruFormat
         // Right now only CompactDisc sectors are verifiable
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
         {
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                unknownLbas.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -264,8 +279,7 @@ public sealed partial class AaruFormat
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
@@ -280,8 +294,7 @@ public sealed partial class AaruFormat
             failingLbas = new List<ulong>();
             unknownLbas = new List<ulong>();
 
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                unknownLbas.Add(i);
+            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
@@ -291,8 +304,7 @@ public sealed partial class AaruFormat
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -315,8 +327,7 @@ public sealed partial class AaruFormat
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }

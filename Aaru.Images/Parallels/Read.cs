@@ -52,8 +52,7 @@ public sealed partial class Parallels
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
@@ -79,8 +78,7 @@ public sealed partial class Parallels
         var batB = new byte[_pHdr.bat_entries * 4];
         stream.EnsureRead(batB, 0, batB.Length);
 
-        for(var i = 0; i < _bat.Length; i++)
-            _bat[i] = BitConverter.ToUInt32(batB, i * 4);
+        for(var i = 0; i < _bat.Length; i++) _bat[i] = BitConverter.ToUInt32(batB, i * 4);
 
         _clusterBytes = _pHdr.cluster_size * 512;
 
@@ -114,8 +112,7 @@ public sealed partial class Parallels
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         if(_empty)
         {
@@ -124,8 +121,7 @@ public sealed partial class Parallels
             return ErrorNumber.NoError;
         }
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong index  = sectorAddress / _pHdr.cluster_size;
         ulong secOff = sectorAddress % _pHdr.cluster_size;
@@ -151,8 +147,7 @@ public sealed partial class Parallels
         buffer = new byte[512];
         Array.Copy(cluster, (int)(secOff * 512), buffer, 0, 512);
 
-        if(_sectorCache.Count > MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -164,11 +159,9 @@ public sealed partial class Parallels
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -176,8 +169,7 @@ public sealed partial class Parallels
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }

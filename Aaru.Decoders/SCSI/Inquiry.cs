@@ -56,23 +56,22 @@ public static class Inquiry
 {
     public static string Prettify(CommonTypes.Structs.Devices.SCSI.Inquiry? SCSIInquiryResponse)
     {
-        if(SCSIInquiryResponse == null)
-            return null;
+        if(SCSIInquiryResponse == null) return null;
 
         CommonTypes.Structs.Devices.SCSI.Inquiry response = SCSIInquiryResponse.Value;
 
         var sb = new StringBuilder();
 
         sb.AppendFormat(Localization.Device_vendor_0,
-                        VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim())).
-           AppendLine();
+                        VendorString.Prettify(StringHandlers.CToString(response.VendorIdentification).Trim()))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Device_name_0, StringHandlers.CToString(response.ProductIdentification).Trim()).
-           AppendLine();
+        sb.AppendFormat(Localization.Device_name_0, StringHandlers.CToString(response.ProductIdentification).Trim())
+          .AppendLine();
 
         sb.AppendFormat(Localization.Device_release_level_0,
-                        StringHandlers.CToString(response.ProductRevisionLevel).Trim()).
-           AppendLine();
+                        StringHandlers.CToString(response.ProductRevisionLevel).Trim())
+          .AppendLine();
 
         switch((PeripheralQualifiers)response.PeripheralQualifier)
         {
@@ -94,8 +93,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Vendor_value_0_set_in_Peripheral_Qualifier_field,
-                                response.PeripheralQualifier).
-                   AppendLine();
+                                response.PeripheralQualifier)
+                  .AppendLine();
 
                 break;
         }
@@ -195,8 +194,8 @@ public static class Inquiry
 
                 break;
             default:
-                sb.AppendFormat(Localization.Unknown_device_type_field_value_0, response.PeripheralDeviceType).
-                   AppendLine();
+                sb.AppendFormat(Localization.Unknown_device_type_field_value_0, response.PeripheralDeviceType)
+                  .AppendLine();
 
                 break;
         }
@@ -233,8 +232,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ANSI_standard_value_0,
-                                response.ANSIVersion).
-                   AppendLine();
+                                response.ANSIVersion)
+                  .AppendLine();
 
                 break;
         }
@@ -251,8 +250,8 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ECMA_standard_value_0,
-                                response.ECMAVersion).
-                   AppendLine();
+                                response.ECMAVersion)
+                  .AppendLine();
 
                 break;
         }
@@ -269,93 +268,67 @@ public static class Inquiry
                 break;
             default:
                 sb.AppendFormat(Localization.Device_claims_to_comply_with_unknown_SCSI_ISO_IEC_standard_value_0,
-                                response.ISOVersion).
-                   AppendLine();
+                                response.ISOVersion)
+                  .AppendLine();
 
                 break;
         }
 
-        if(response.RMB)
-            sb.AppendLine(Localization.Device_is_removable);
+        if(response.RMB) sb.AppendLine(Localization.Device_is_removable);
 
-        if(response.AERC)
-            sb.AppendLine(Localization.Device_supports_Asynchronous_Event_Reporting_Capability);
+        if(response.AERC) sb.AppendLine(Localization.Device_supports_Asynchronous_Event_Reporting_Capability);
 
-        if(response.TrmTsk)
-            sb.AppendLine(Localization.Device_supports_TERMINATE_TASK_command);
+        if(response.TrmTsk) sb.AppendLine(Localization.Device_supports_TERMINATE_TASK_command);
 
-        if(response.NormACA)
-            sb.AppendLine(Localization.Device_supports_setting_Normal_ACA);
+        if(response.NormACA) sb.AppendLine(Localization.Device_supports_setting_Normal_ACA);
 
-        if(response.HiSup)
-            sb.AppendLine(Localization.Device_supports_LUN_hierarchical_addressing);
+        if(response.HiSup) sb.AppendLine(Localization.Device_supports_LUN_hierarchical_addressing);
 
-        if(response.SCCS)
-            sb.AppendLine(Localization.Device_contains_an_embedded_storage_array_controller);
+        if(response.SCCS) sb.AppendLine(Localization.Device_contains_an_embedded_storage_array_controller);
 
-        if(response.ACC)
-            sb.AppendLine(Localization.Device_contains_an_Access_Control_Coordinator);
+        if(response.ACC) sb.AppendLine(Localization.Device_contains_an_Access_Control_Coordinator);
 
-        if(response.ThreePC)
-            sb.AppendLine(Localization.Device_supports_third_party_copy_commands);
+        if(response.ThreePC) sb.AppendLine(Localization.Device_supports_third_party_copy_commands);
 
-        if(response.Protect)
-            sb.AppendLine(Localization.Device_supports_protection_information);
+        if(response.Protect) sb.AppendLine(Localization.Device_supports_protection_information);
 
-        if(response.BQue)
-            sb.AppendLine(Localization.Device_supports_basic_queueing);
+        if(response.BQue) sb.AppendLine(Localization.Device_supports_basic_queueing);
 
-        if(response.EncServ)
-            sb.AppendLine(Localization.Device_contains_an_embedded_enclosure_services_component);
+        if(response.EncServ) sb.AppendLine(Localization.Device_contains_an_embedded_enclosure_services_component);
 
-        if(response.MultiP)
-            sb.AppendLine(Localization.Multi_port_device);
+        if(response.MultiP) sb.AppendLine(Localization.Multi_port_device);
 
-        if(response.MChngr)
-            sb.AppendLine(Localization.Device_contains_or_is_attached_to_a_medium_changer);
+        if(response.MChngr) sb.AppendLine(Localization.Device_contains_or_is_attached_to_a_medium_changer);
 
-        if(response.ACKREQQ)
-            sb.AppendLine(Localization.Device_supports_request_and_acknowledge_handshakes);
+        if(response.ACKREQQ) sb.AppendLine(Localization.Device_supports_request_and_acknowledge_handshakes);
 
-        if(response.Addr32)
-            sb.AppendLine(Localization.Device_supports_32_bit_wide_SCSI_addresses);
+        if(response.Addr32) sb.AppendLine(Localization.Device_supports_32_bit_wide_SCSI_addresses);
 
-        if(response.Addr16)
-            sb.AppendLine(Localization.Device_supports_16_bit_wide_SCSI_addresses);
+        if(response.Addr16) sb.AppendLine(Localization.Device_supports_16_bit_wide_SCSI_addresses);
 
-        if(response.RelAddr)
-            sb.AppendLine(Localization.Device_supports_relative_addressing);
+        if(response.RelAddr) sb.AppendLine(Localization.Device_supports_relative_addressing);
 
-        if(response.WBus32)
-            sb.AppendLine(Localization.Device_supports_32_bit_wide_data_transfers);
+        if(response.WBus32) sb.AppendLine(Localization.Device_supports_32_bit_wide_data_transfers);
 
-        if(response.WBus16)
-            sb.AppendLine(Localization.Device_supports_16_bit_wide_data_transfers);
+        if(response.WBus16) sb.AppendLine(Localization.Device_supports_16_bit_wide_data_transfers);
 
-        if(response.Sync)
-            sb.AppendLine(Localization.Device_supports_synchronous_data_transfer);
+        if(response.Sync) sb.AppendLine(Localization.Device_supports_synchronous_data_transfer);
 
-        if(response.Linked)
-            sb.AppendLine(Localization.Device_supports_linked_commands);
+        if(response.Linked) sb.AppendLine(Localization.Device_supports_linked_commands);
 
         if(response.TranDis)
             sb.AppendLine(Localization.Device_supports_CONTINUE_TASK_and_TARGET_TRANSFER_DISABLE_commands);
 
-        if(response.QAS)
-            sb.AppendLine(Localization.Device_supports_Quick_Arbitration_and_Selection);
+        if(response.QAS) sb.AppendLine(Localization.Device_supports_Quick_Arbitration_and_Selection);
 
-        if(response.CmdQue)
-            sb.AppendLine(Localization.Device_supports_TCQ_queue);
+        if(response.CmdQue) sb.AppendLine(Localization.Device_supports_TCQ_queue);
 
-        if(response.IUS)
-            sb.AppendLine(Localization.Device_supports_information_unit_transfers);
+        if(response.IUS) sb.AppendLine(Localization.Device_supports_information_unit_transfers);
 
-        if(response.SftRe)
-            sb.AppendLine(Localization.Device_implements_RESET_as_a_soft_reset);
-    #if DEBUG
-        if(response.VS1)
-            sb.AppendLine(Localization.Vendor_specific_bit_5_on_byte_6_of_INQUIRY_response_is_set);
-    #endif
+        if(response.SftRe) sb.AppendLine(Localization.Device_implements_RESET_as_a_soft_reset);
+#if DEBUG
+        if(response.VS1) sb.AppendLine(Localization.Vendor_specific_bit_5_on_byte_6_of_INQUIRY_response_is_set);
+#endif
 
         switch((TGPSValues)response.TPGS)
         {
@@ -583,13 +556,13 @@ public static class Inquiry
 
                         break;
                     case 0x01DD:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SES_T10_1212_revision_08b_Amendment_ANSI_INCITS_305_AM1_2000);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SES_T10_1212_revision_08b_Amendment_ANSI_INCITS_305_AM1_2000);
 
                         break;
                     case 0x01DE:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SES_ANSI_INCITS_305_1998_Amendment_ANSI_INCITS_305_AM1_2000);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SES_ANSI_INCITS_305_1998_Amendment_ANSI_INCITS_305_AM1_2000);
 
                         break;
                     case 0x01E0:
@@ -1037,8 +1010,8 @@ public static class Inquiry
 
                         break;
                     case 0x04E7:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_MMC_6_ANSI_INCITS_468_2010_MMC_6_AM1_ANSI_INCITS_468_2010_AM_1);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_MMC_6_ANSI_INCITS_468_2010_MMC_6_AM1_ANSI_INCITS_468_2010_AM_1);
 
                         break;
                     case 0x0500:
@@ -1284,8 +1257,8 @@ public static class Inquiry
                     case 0x097D:
                     case 0x097E:
                     case 0x097F:
-                        sb.AppendFormat(Localization.Device_complies_with_iSCSI_revision_0, VersionDescriptor & 0x1F).
-                           AppendLine();
+                        sb.AppendFormat(Localization.Device_complies_with_iSCSI_revision_0, VersionDescriptor & 0x1F)
+                          .AppendLine();
 
                         break;
                     case 0x0980:
@@ -1409,13 +1382,13 @@ public static class Inquiry
 
                         break;
                     case 0x0ABB:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SPI_T10_0855_D_revision_15a_with_SPI_Amnd_revision_3a);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SPI_T10_0855_D_revision_15a_with_SPI_Amnd_revision_3a);
 
                         break;
                     case 0x0ABC:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SPI_ANSI_INCITS_253_1995_with_SPI_Amnd_ANSI_INCITS_253_AM1_1998);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SPI_ANSI_INCITS_253_1995_with_SPI_Amnd_ANSI_INCITS_253_AM1_1998);
 
                         break;
                     case 0x0AC0:
@@ -1603,8 +1576,8 @@ public static class Inquiry
 
                         break;
                     case 0x0C4F:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SAS_2_1_ANSI_INCITS_478_2011_w__Amnd_1_ANSI_INCITS_478_AM1_2014);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SAS_2_1_ANSI_INCITS_478_2011_w__Amnd_1_ANSI_INCITS_478_AM1_2014);
 
                         break;
                     case 0x0C52:
@@ -1640,8 +1613,8 @@ public static class Inquiry
 
                         break;
                     case 0x0D3C:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_PH_ANSI_INCITS_230_1994_with_Amnd_1_ANSI_INCITS_230_AM1_1996);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_PH_ANSI_INCITS_230_1994_with_Amnd_1_ANSI_INCITS_230_AM1_1996);
 
                         break;
                     case 0x0D40:
@@ -1661,13 +1634,13 @@ public static class Inquiry
 
                         break;
                     case 0x0D63:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_AM1_2003___AM2_2006);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_AM1_2003___AM2_2006);
 
                         break;
                     case 0x0D64:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_Amnd_2_AM2_2006);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_Amnd_2_AM2_2006);
 
                         break;
                     case 0x0D65:
@@ -1679,8 +1652,8 @@ public static class Inquiry
 
                         break;
                     case 0x0D7D:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_Amnd_1_AM1_2003);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_AL_2_ANSI_INCITS_332_1999_with_Amnd_1_AM1_2003);
 
                         break;
                     case 0x0D80:
@@ -1740,8 +1713,8 @@ public static class Inquiry
 
                         break;
                     case 0x0E03:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_FS_2_ANSI_INCITS_242_2007_with_AM1_ANSI_INCITS_242_AM1_2007);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_FS_2_ANSI_INCITS_242_2007_with_AM1_ANSI_INCITS_242_AM1_2007);
 
                         break;
                     case 0x0E20:
@@ -1817,8 +1790,8 @@ public static class Inquiry
 
                         break;
                     case 0x0EA6:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_FC_10GFC_ANSI_INCITS_364_2003_with_AM1_ANSI_INCITS_364_AM1_2007);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_FC_10GFC_ANSI_INCITS_364_2003_with_AM1_ANSI_INCITS_364_AM1_2007);
 
                         break;
                     case 0x0EC0:
@@ -2058,18 +2031,18 @@ public static class Inquiry
 
                         break;
                     case 0x1621:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_ATA_ATAPI_8_ATA8_APT_Parallel_Transport_no_version_claimed);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_ATA_ATAPI_8_ATA8_APT_Parallel_Transport_no_version_claimed);
 
                         break;
                     case 0x1622:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_ATA_ATAPI_8_ATA8_AST_Serial_Transport_no_version_claimed);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_ATA_ATAPI_8_ATA8_AST_Serial_Transport_no_version_claimed);
 
                         break;
                     case 0x1623:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_ATA_ATAPI_8_ATA8_ACS_ATA_ATAPI_Command_Set_no_version_claimed);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_ATA_ATAPI_8_ATA8_ACS_ATA_ATAPI_Command_Set_no_version_claimed);
 
                         break;
                     case 0x1628:
@@ -2077,23 +2050,23 @@ public static class Inquiry
 
                         break;
                     case 0x162A:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_ATA_ATAPI_8_ATA8_ACS_ANSI_INCITS_452_2009_w__Amendment_1);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_ATA_ATAPI_8_ATA8_ACS_ANSI_INCITS_452_2009_w__Amendment_1);
 
                         break;
                     case 0x1728:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_Universal_Serial_Bus_Specification__Revision_1_1);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_Universal_Serial_Bus_Specification__Revision_1_1);
 
                         break;
                     case 0x1729:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_Universal_Serial_Bus_Specification__Revision_2_0);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_Universal_Serial_Bus_Specification__Revision_2_0);
 
                         break;
                     case 0x1730:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_USB_Mass_Storage_Class_Bulk_Only_Transport__Revision_1_0);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_USB_Mass_Storage_Class_Bulk_Only_Transport__Revision_1_0);
 
                         break;
                     case 0x1740:
@@ -2201,8 +2174,8 @@ public static class Inquiry
 
                         break;
                     case 0x20A8:
-                        sb.AppendLine(Localization.
-                                          Device_complies_with_SPL_ANSI_INCITS_476_2011_SPL_AM1_INCITS_476_AM1_2012);
+                        sb.AppendLine(Localization
+                                         .Device_complies_with_SPL_ANSI_INCITS_476_2011_SPL_AM1_INCITS_476_AM1_2012);
 
                         break;
                     case 0x20AA:
@@ -2298,15 +2271,15 @@ public static class Inquiry
 
                         break;
                     default:
-                        sb.AppendFormat(Localization.Device_complies_with_unknown_standard_code_0, VersionDescriptor).
-                           AppendLine();
+                        sb.AppendFormat(Localization.Device_complies_with_unknown_standard_code_0, VersionDescriptor)
+                          .AppendLine();
 
                         break;
                 }
             }
         }
 
-    #region Quantum vendor prettifying
+#region Quantum vendor prettifying
 
         if(response.QuantumPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "quantum")
@@ -2347,48 +2320,48 @@ public static class Inquiry
 
             sb.AppendFormat(Localization.Release_firmware_0, response.Qt_ReleasedFirmware).AppendLine();
 
-            sb.AppendFormat(Localization.Firmware_version_0_1, response.Qt_FirmwareMajorVersion,
-                            response.Qt_FirmwareMinorVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Firmware_version_0_1,
+                            response.Qt_FirmwareMajorVersion,
+                            response.Qt_FirmwareMinorVersion)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.EEPROM_format_version_0_1, response.Qt_EEPROMFormatMajorVersion,
-                            response.Qt_EEPROMFormatMinorVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.EEPROM_format_version_0_1,
+                            response.Qt_EEPROMFormatMajorVersion,
+                            response.Qt_EEPROMFormatMinorVersion)
+              .AppendLine();
 
             sb.AppendFormat(Localization.Firmware_personality_0,     response.Qt_FirmwarePersonality).AppendLine();
             sb.AppendFormat(Localization.Firmware_sub_personality_0, response.Qt_FirmwareSubPersonality).AppendLine();
 
-            sb.AppendFormat(Localization.Tape_directory_format_version_0, response.Qt_TapeDirectoryFormatVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Tape_directory_format_version_0, response.Qt_TapeDirectoryFormatVersion)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Controller_hardware_version_0, response.Qt_ControllerHardwareVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Controller_hardware_version_0, response.Qt_ControllerHardwareVersion)
+              .AppendLine();
 
             sb.AppendFormat(Localization.Drive_EEPROM_version_0,   response.Qt_DriveEEPROMVersion).AppendLine();
             sb.AppendFormat(Localization.Drive_hardware_version_0, response.Qt_DriveHardwareVersion).AppendLine();
 
-            sb.AppendFormat(Localization.Media_loader_firmware_version_0, response.Qt_MediaLoaderFirmwareVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Media_loader_firmware_version_0, response.Qt_MediaLoaderFirmwareVersion)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Media_loader_hardware_version_0, response.Qt_MediaLoaderHardwareVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Media_loader_hardware_version_0, response.Qt_MediaLoaderHardwareVersion)
+              .AppendLine();
 
-            sb.AppendFormat(Localization.Media_loader_mechanical_version_0, response.Qt_MediaLoaderMechanicalVersion).
-               AppendLine();
+            sb.AppendFormat(Localization.Media_loader_mechanical_version_0, response.Qt_MediaLoaderMechanicalVersion)
+              .AppendLine();
 
-            if(response.Qt_LibraryPresent)
-                sb.AppendLine(Localization.Library_is_present);
+            if(response.Qt_LibraryPresent) sb.AppendLine(Localization.Library_is_present);
 
-            if(response.Qt_MediaLoaderPresent)
-                sb.AppendLine(Localization.Media_loader_is_present);
+            if(response.Qt_MediaLoaderPresent) sb.AppendLine(Localization.Media_loader_is_present);
 
-            sb.AppendFormat(Localization.Module_revision_0, StringHandlers.CToString(response.Qt_ModuleRevision)).
-               AppendLine();
+            sb.AppendFormat(Localization.Module_revision_0, StringHandlers.CToString(response.Qt_ModuleRevision))
+              .AppendLine();
         }
 
-    #endregion Quantum vendor prettifying
+#endregion Quantum vendor prettifying
 
-    #region IBM vendor prettifying
+#region IBM vendor prettifying
 
         if(response.IBMPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "ibm")
@@ -2400,15 +2373,14 @@ public static class Inquiry
             else
                 sb.AppendFormat(Localization.Performance_is_limited_using_factor_0, response.IBM_PerformanceLimit);
 
-            if(response.IBM_AutDis)
-                sb.AppendLine(Localization.Automation_is_disabled);
+            if(response.IBM_AutDis) sb.AppendLine(Localization.Automation_is_disabled);
 
             sb.AppendFormat(Localization.IBM_OEM_Specific_Field_0, response.IBM_OEMSpecific).AppendLine();
         }
 
-    #endregion IBM vendor prettifying
+#endregion IBM vendor prettifying
 
-    #region HP vendor prettifying
+#region HP vendor prettifying
 
         if(response.HPPresent &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "hp")
@@ -2424,9 +2396,9 @@ public static class Inquiry
                 sb.AppendLine(Localization.Device_supports_Tape_Disaster_Recovery);
         }
 
-    #endregion HP vendor prettifying
+#endregion HP vendor prettifying
 
-    #region Seagate vendor prettifying
+#region Seagate vendor prettifying
 
         if((response.SeagatePresent || response.Seagate2Present || response.Seagate3Present) &&
            StringHandlers.CToString(response.VendorIdentification).ToLowerInvariant().Trim() == "seagate")
@@ -2436,38 +2408,38 @@ public static class Inquiry
             if(response.SeagatePresent)
             {
                 sb.AppendFormat(Core.Drive_serial_number_0,
-                                StringHandlers.CToString(response.Seagate_DriveSerialNumber)).
-                   AppendLine();
+                                StringHandlers.CToString(response.Seagate_DriveSerialNumber))
+                  .AppendLine();
             }
 
             if(response.Seagate2Present)
             {
-                sb.AppendFormat(Localization.Drive_copyright_0, StringHandlers.CToString(response.Seagate_Copyright)).
-                   AppendLine();
+                sb.AppendFormat(Localization.Drive_copyright_0, StringHandlers.CToString(response.Seagate_Copyright))
+                  .AppendLine();
             }
 
             if(response.Seagate3Present)
             {
                 sb.AppendFormat(Localization.Drive_servo_part_number_0,
-                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40)).
-                   AppendLine();
+                                PrintHex.ByteArrayToHexArrayString(response.Seagate_ServoPROMPartNo, 40))
+                  .AppendLine();
             }
         }
 
-    #endregion Seagate vendor prettifying
+#endregion Seagate vendor prettifying
 
-    #region Kreon vendor prettifying
+#region Kreon vendor prettifying
 
         if(response.KreonPresent)
         {
             sb.AppendFormat(Localization.Drive_is_flashed_with_Kreon_firmware_0,
-                            StringHandlers.CToString(response.KreonVersion)).
-               AppendLine();
+                            StringHandlers.CToString(response.KreonVersion))
+              .AppendLine();
         }
 
-    #endregion Kreon vendor prettifying
+#endregion Kreon vendor prettifying
 
-    #if DEBUG
+#if DEBUG
         if(response.DeviceTypeModifier != 0)
             sb.AppendFormat(Localization.Vendor_device_type_modifier_0, response.DeviceTypeModifier).AppendLine();
 
@@ -2477,8 +2449,7 @@ public static class Inquiry
         if(response.Reserved3 != 0)
             sb.AppendFormat(Localization.Reserved_byte_56_bits_seven_to_four_0, response.Reserved3).AppendLine();
 
-        if(response.Reserved4 != 0)
-            sb.AppendFormat(Localization.Reserved_byte_57, response.Reserved4).AppendLine();
+        if(response.Reserved4 != 0) sb.AppendFormat(Localization.Reserved_byte_57, response.Reserved4).AppendLine();
 
         if(response.Reserved5 != null)
         {
@@ -2521,14 +2492,13 @@ public static class Inquiry
             }
         }
 
-        if(response.VendorSpecific2 == null)
-            return sb.ToString();
+        if(response.VendorSpecific2 == null) return sb.ToString();
 
         sb.AppendFormat(Localization.Vendor_specific_bytes_96_to_0, response.AdditionalLength + 4).AppendLine();
         sb.AppendLine("============================================================");
         sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific2, 60));
         sb.AppendLine("============================================================");
-    #endif
+#endif
 
         return sb.ToString();
     }

@@ -48,8 +48,7 @@ public sealed partial class AmigaDOSPlugin
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(partition.Start + 4 >= partition.End)
-            return false;
+        if(partition.Start + 4 >= partition.End) return false;
 
         // Boot block is unless defined otherwise, 2 blocks
         // Funny, you may need boot block to find root block if it's not in standard place just to know size of
@@ -59,8 +58,7 @@ public sealed partial class AmigaDOSPlugin
         // so this is not entirely wrong...
         ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         BootBlock bblk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
 
@@ -73,15 +71,13 @@ public sealed partial class AmigaDOSPlugin
         {
             errno = imagePlugin.ReadSectors(1 + partition.Start, 2, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             bblk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
         }
 
         // Not FFS or MuFS?
-        if((bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK)
-            return false;
+        if((bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK) return false;
 
         // Clear checksum on sector
         sector[4] = sector[5] = sector[6] = sector[7] = 0;
@@ -116,14 +112,12 @@ public sealed partial class AmigaDOSPlugin
 
             errno = imagePlugin.ReadSector(rootPtr, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             rblk.type = BigEndianBitConverter.ToUInt32(sector, 0x00);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.type = {0}", rblk.type);
 
-            if(rblk.type != TYPE_HEADER)
-                continue;
+            if(rblk.type != TYPE_HEADER) continue;
 
             rblk.hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
@@ -135,16 +129,13 @@ public sealed partial class AmigaDOSPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}",       blockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerBlock = {0}", sectorsPerBlock);
 
-            if(blockSize % sector.Length > 0)
-                sectorsPerBlock++;
+            if(blockSize % sector.Length > 0) sectorsPerBlock++;
 
-            if(rootPtr + sectorsPerBlock >= partition.End)
-                continue;
+            if(rootPtr + sectorsPerBlock >= partition.End) continue;
 
             errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             // Clear checksum on sector
             rblk.checksum = BigEndianBitConverter.ToUInt32(sector, 20);
@@ -157,8 +148,7 @@ public sealed partial class AmigaDOSPlugin
             rblk.sec_type = BigEndianBitConverter.ToUInt32(sector, sector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rblk.sec_type = {0}", rblk.sec_type);
 
-            if(rblk.sec_type == SUBTYPE_ROOT && rblk.checksum == rsum)
-                return true;
+            if(rblk.sec_type == SUBTYPE_ROOT && rblk.checksum == rsum) return true;
         }
 
         return false;
@@ -174,8 +164,7 @@ public sealed partial class AmigaDOSPlugin
         information = null;
         ErrorNumber errno = imagePlugin.ReadSectors(0 + partition.Start, 2, out byte[] bootBlockSectors);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         BootBlock bootBlk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
         bootBlk.bootCode = new byte[bootBlockSectors.Length - 12];
@@ -213,14 +202,12 @@ public sealed partial class AmigaDOSPlugin
 
             errno = imagePlugin.ReadSector(rootPtr, out rootBlockSector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             rootBlk.type = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x00);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.type = {0}", rootBlk.type);
 
-            if(rootBlk.type != TYPE_HEADER)
-                continue;
+            if(rootBlk.type != TYPE_HEADER) continue;
 
             rootBlk.hashTableSize = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x0C);
 
@@ -232,16 +219,13 @@ public sealed partial class AmigaDOSPlugin
             AaruConsole.DebugWriteLine(MODULE_NAME, "blockSize = {0}",       blockSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerBlock = {0}", sectorsPerBlock);
 
-            if(blockSize % rootBlockSector.Length > 0)
-                sectorsPerBlock++;
+            if(blockSize % rootBlockSector.Length > 0) sectorsPerBlock++;
 
-            if(rootPtr + sectorsPerBlock >= partition.End)
-                continue;
+            if(rootPtr + sectorsPerBlock >= partition.End) continue;
 
             errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out rootBlockSector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             // Clear checksum on sector
             rootBlk.checksum    = BigEndianBitConverter.ToUInt32(rootBlockSector, 20);
@@ -254,21 +238,18 @@ public sealed partial class AmigaDOSPlugin
             rootBlk.sec_type = BigEndianBitConverter.ToUInt32(rootBlockSector, rootBlockSector.Length - 4);
             AaruConsole.DebugWriteLine(MODULE_NAME, "rootBlk.sec_type = {0}", rootBlk.sec_type);
 
-            if(rootBlk.sec_type != SUBTYPE_ROOT || rootBlk.checksum != rsum)
-                continue;
+            if(rootBlk.sec_type != SUBTYPE_ROOT || rootBlk.checksum != rsum) continue;
 
             errno = imagePlugin.ReadSectors(rootPtr, sectorsPerBlock, out rootBlockSector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             rootFound = true;
 
             break;
         }
 
-        if(!rootFound)
-            return;
+        if(!rootFound) return;
 
         rootBlk = MarshalRootBlock(rootBlockSector);
 
@@ -318,8 +299,7 @@ public sealed partial class AmigaDOSPlugin
                 break;
         }
 
-        if((bootBlk.diskType & 0x6D754600) == 0x6D754600)
-            sbInformation.Append(Localization.with_multi_user_patches);
+        if((bootBlk.diskType & 0x6D754600) == 0x6D754600) sbInformation.Append(Localization.with_multi_user_patches);
 
         sbInformation.AppendLine();
 
@@ -333,13 +313,12 @@ public sealed partial class AmigaDOSPlugin
             sbInformation.AppendFormat(Localization.Boot_code_SHA1_0, sha1Ctx.End()).AppendLine();
         }
 
-        if(rootBlk.bitmapFlag == 0xFFFFFFFF)
-            sbInformation.AppendLine(Localization.Volume_bitmap_is_valid);
+        if(rootBlk.bitmapFlag == 0xFFFFFFFF) sbInformation.AppendLine(Localization.Volume_bitmap_is_valid);
 
         if(rootBlk.bitmapExtensionBlock != 0x00000000 && rootBlk.bitmapExtensionBlock != 0xFFFFFFFF)
         {
-            sbInformation.AppendFormat(Localization.Bitmap_extension_at_block_0, rootBlk.bitmapExtensionBlock).
-                          AppendLine();
+            sbInformation.AppendFormat(Localization.Bitmap_extension_at_block_0, rootBlk.bitmapExtensionBlock)
+                         .AppendLine();
         }
 
         if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
@@ -351,16 +330,16 @@ public sealed partial class AmigaDOSPlugin
         sbInformation.AppendFormat(Localization.Volume_has_0_blocks,          blocks).AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_created_on_0,
-                                   DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks)).
-                      AppendLine();
+                                   DateHandlers.AmigaToDateTime(rootBlk.cDays, rootBlk.cMins, rootBlk.cTicks))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_last_modified_on_0,
-                                   DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks)).
-                      AppendLine();
+                                   DateHandlers.AmigaToDateTime(rootBlk.vDays, rootBlk.vMins, rootBlk.vTicks))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_root_directory_last_modified_on_0,
-                                   DateHandlers.AmigaToDateTime(rootBlk.rDays, rootBlk.rMins, rootBlk.rTicks)).
-                      AppendLine();
+                                   DateHandlers.AmigaToDateTime(rootBlk.rDays, rootBlk.rMins, rootBlk.rTicks))
+                     .AppendLine();
 
         sbInformation.AppendFormat(Localization.Root_block_checksum_is_0, rootBlk.checksum).AppendLine();
         information = sbInformation.ToString();

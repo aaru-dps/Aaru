@@ -128,8 +128,7 @@ public static class MMC
 
     static bool IsData(byte[] sector)
     {
-        if(sector?.Length != 2352)
-            return false;
+        if(sector?.Length != 2352) return false;
 
         byte[] syncMark =
         {
@@ -146,8 +145,7 @@ public static class MMC
     {
         offset = 0;
 
-        if(sector?.Length != 2352)
-            return false;
+        if(sector?.Length != 2352) return false;
 
         byte[] syncMark =
         {
@@ -205,8 +203,7 @@ public static class MMC
     /// <returns><c>true</c> if it corresponds to a CD-i, <c>false</c>otherwise.</returns>
     static bool IsCdi(byte[] sector0, byte[] sector16)
     {
-        if(sector16?.Length != 2352)
-            return false;
+        if(sector16?.Length != 2352) return false;
 
         byte[] cdiMark =
         {
@@ -215,8 +212,7 @@ public static class MMC
 
         bool isData = IsData(sector0);
 
-        if(!isData || sector0[0xF] != 2 && sector0[0xF] != 1)
-            return false;
+        if(!isData || sector0[0xF] != 2 && sector0[0xF] != 1) return false;
 
         var testMark = new byte[4];
         Array.Copy(sector16, 24, testMark, 0, 4);
@@ -226,8 +222,7 @@ public static class MMC
 
     static bool IsVideoNowColor(byte[] videoFrame)
     {
-        if(videoFrame is null || videoFrame.Length < _videoNowColorFrameMarker.Length)
-            return false;
+        if(videoFrame is null || videoFrame.Length < _videoNowColorFrameMarker.Length) return false;
 
         var buffer = new byte[_videoNowColorFrameMarker.Length];
 
@@ -235,11 +230,9 @@ public static class MMC
         {
             Array.Copy(videoFrame, framePosition, buffer, 0, buffer.Length);
 
-            for(var ab = 9; ab < buffer.Length; ab += 10)
-                buffer[ab] = 0;
+            for(var ab = 9; ab < buffer.Length; ab += 10) buffer[ab] = 0;
 
-            if(!_videoNowColorFrameMarker.SequenceEqual(buffer))
-                continue;
+            if(!_videoNowColorFrameMarker.SequenceEqual(buffer)) continue;
 
             return true;
         }
@@ -255,11 +248,9 @@ public static class MMC
         {
             Array.Copy(data, framePosition, buffer, 0, buffer.Length);
 
-            for(var ab = 9; ab < buffer.Length; ab += 10)
-                buffer[ab] = 0;
+            for(var ab = 9; ab < buffer.Length; ab += 10) buffer[ab] = 0;
 
-            if(!_videoNowColorFrameMarker.SequenceEqual(buffer))
-                continue;
+            if(!_videoNowColorFrameMarker.SequenceEqual(buffer)) continue;
 
             return 18032 - framePosition;
         }
@@ -294,7 +285,8 @@ public static class MMC
         {
             Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_current_profile_is_0,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                        ftr.CurrentProfile);
 
             switch(ftr.CurrentProfile)
@@ -419,8 +411,8 @@ public static class MMC
 
         if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == 2) == true)
         {
-            secondSessionFirstTrack = decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).
-                                                 Min(t => t.POINT);
+            secondSessionFirstTrack =
+                decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).Min(t => t.POINT);
         }
 
         if(mediaType is MediaType.CD or MediaType.CDROMXA or MediaType.CDI)
@@ -469,7 +461,7 @@ public static class MMC
                 }
 
                 foreach(FullTOC.TrackDataDescriptor track in
-                    decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99))
+                        decodedToc.Value.TrackDescriptors.Where(t => t.POINT is > 0 and <= 0x99))
                 {
                     if(track.TNO == 1 &&
                        ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
@@ -485,8 +477,7 @@ public static class MMC
                                                   track.PFRAME -
                                                   150);
 
-                        if(startAddress < startOfFirstDataTrack)
-                            startOfFirstDataTrack = startAddress;
+                        if(startAddress < startOfFirstDataTrack) startOfFirstDataTrack = startAddress;
 
                         hasDataTrack                  =  true;
                         allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
@@ -504,8 +495,8 @@ public static class MMC
                 {
                     case true when hasAudioTrack && allFirstSessionTracksAreAudio && sessions == 2:
                         AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                   Localization.Core.
-                                                                Disc_has_audio_and_data_two_sessions_all_data_second_CD_Plus);
+                                                   Localization.Core
+                                                               .Disc_has_audio_and_data_two_sessions_all_data_second_CD_Plus);
 
                         mediaType = MediaType.CDPLUS;
 
@@ -536,25 +527,37 @@ public static class MMC
 
             if(mediaType is MediaType.CD or MediaType.CDROM && hasDataTrack)
             {
-                foreach(uint startAddress in decodedToc.Value.TrackDescriptors.
-                                                        Where(t => t.POINT is > 0 and <= 0x99 &&
+                foreach(uint startAddress in decodedToc.Value.TrackDescriptors
+                                                       .Where(t => t.POINT is > 0 and <= 0x99 &&
                                                                    ((TocControl)(t.CONTROL & 0x0D) ==
                                                                     TocControl.DataTrack ||
                                                                     (TocControl)(t.CONTROL & 0x0D) ==
-                                                                    TocControl.DataTrackIncremental)).
-                                                        Select(track => (uint)(track.PHOUR * 3600 * 75 +
+                                                                    TocControl.DataTrackIncremental))
+                                                       .Select(track => (uint)(track.PHOUR * 3600 * 75 +
                                                                                track.PMIN  * 60   * 75 +
                                                                                track.PSEC  * 75        +
                                                                                track.PFRAME -
                                                                                150) +
                                                                         16))
                 {
-                    sense = dev.ReadCd(out cmdBuf, out _, startAddress, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                       true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                       MmcSubchannel.None, dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       startAddress,
+                                       2352,
+                                       1,
+                                       MmcSectorTypes.AllTypes,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.AllHeaders,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
-                    if(sense || dev.Error)
-                        continue;
+                    if(sense || dev.Error) continue;
 
                     if(cmdBuf[0]  != 0x00 ||
                        cmdBuf[1]  != 0xFF ||
@@ -592,36 +595,86 @@ public static class MMC
                                                             secondSessionFirstTrackTrack.PFRAME -
                                                             150);
 
-            sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1, MmcSectorTypes.AllTypes,
-                               false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                               MmcSubchannel.None, dev.Timeout, out _);
+            sense = dev.ReadCd(out cmdBuf,
+                               out _,
+                               firstSectorSecondSessionFirstTrack,
+                               2352,
+                               1,
+                               MmcSectorTypes.AllTypes,
+                               false,
+                               false,
+                               true,
+                               MmcHeaderCodes.AllHeaders,
+                               true,
+                               true,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
             if(!sense && !dev.Error)
                 firstTrackSecondSession = cmdBuf;
             else
             {
-                sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1, MmcSectorTypes.Cdda,
-                                   false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                   MmcSubchannel.None, dev.Timeout, out _);
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   firstSectorSecondSessionFirstTrack,
+                                   2352,
+                                   1,
+                                   MmcSectorTypes.Cdda,
+                                   false,
+                                   false,
+                                   true,
+                                   MmcHeaderCodes.AllHeaders,
+                                   true,
+                                   true,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
 
-                if(!sense && !dev.Error)
-                    firstTrackSecondSession = cmdBuf;
+                if(!sense && !dev.Error) firstTrackSecondSession = cmdBuf;
             }
 
-            sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
-                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                               MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+            sense = dev.ReadCd(out cmdBuf,
+                               out _,
+                               firstSectorSecondSessionFirstTrack - 1,
+                               2352,
+                               3,
+                               MmcSectorTypes.AllTypes,
+                               false,
+                               false,
+                               true,
+                               MmcHeaderCodes.AllHeaders,
+                               true,
+                               true,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
             if(!sense && !dev.Error)
                 firstTrackSecondSessionAudio = cmdBuf;
             else
             {
-                sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
-                                   MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
-                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   firstSectorSecondSessionFirstTrack - 1,
+                                   2352,
+                                   3,
+                                   MmcSectorTypes.Cdda,
+                                   false,
+                                   false,
+                                   false,
+                                   MmcHeaderCodes.None,
+                                   true,
+                                   false,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
 
-                if(!sense && !dev.Error)
-                    firstTrackSecondSessionAudio = cmdBuf;
+                if(!sense && !dev.Error) firstTrackSecondSessionAudio = cmdBuf;
             }
         }
 
@@ -629,15 +682,41 @@ public static class MMC
 
         for(var i = 0; i < 9; i++)
         {
-            sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                               dev.Timeout, out _);
+            sense = dev.ReadCd(out cmdBuf,
+                               out _,
+                               (uint)i,
+                               2352,
+                               1,
+                               MmcSectorTypes.AllTypes,
+                               false,
+                               false,
+                               true,
+                               MmcHeaderCodes.AllHeaders,
+                               true,
+                               true,
+                               MmcErrorField.None,
+                               MmcSubchannel.None,
+                               dev.Timeout,
+                               out _);
 
             if(sense || dev.Error)
             {
-                sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false, false,
-                                   MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                   dev.Timeout, out _);
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   (uint)i,
+                                   2352,
+                                   1,
+                                   MmcSectorTypes.Cdda,
+                                   false,
+                                   false,
+                                   false,
+                                   MmcHeaderCodes.None,
+                                   true,
+                                   false,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
 
                 if(sense || !dev.Error)
                 {
@@ -665,9 +744,22 @@ public static class MMC
             // Check for hidden data before start of track 1
             if(firstTrackSector > 0)
             {
-                sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                   dev.Timeout, out _);
+                sense = dev.ReadCd(out sector0,
+                                   out _,
+                                   0,
+                                   2352,
+                                   1,
+                                   MmcSectorTypes.AllTypes,
+                                   false,
+                                   false,
+                                   true,
+                                   MmcHeaderCodes.AllHeaders,
+                                   true,
+                                   true,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
 
                 if(!dev.Error && !sense)
                 {
@@ -677,9 +769,22 @@ public static class MMC
 
                     if(hiddenData)
                     {
-                        sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes, false,
-                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out byte[] sector16,
+                                           out _,
+                                           16,
+                                           2352,
+                                           1,
+                                           MmcSectorTypes.AllTypes,
+                                           false,
+                                           false,
+                                           true,
+                                           MmcHeaderCodes.AllHeaders,
+                                           true,
+                                           true,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && IsCdi(sector0, sector16))
                         {
@@ -699,11 +804,9 @@ public static class MMC
                         {
                             int sectorsForOffset = combinedOffset / 2352;
 
-                            if(sectorsForOffset < 0)
-                                sectorsForOffset *= -1;
+                            if(sectorsForOffset < 0) sectorsForOffset *= -1;
 
-                            if(combinedOffset % 2352 != 0)
-                                sectorsForOffset++;
+                            if(combinedOffset % 2352 != 0) sectorsForOffset++;
 
                             var lba0  = 0;
                             var lba16 = 16;
@@ -714,25 +817,64 @@ public static class MMC
                                 lba16 -= sectorsForOffset;
                             }
 
-                            sense = dev.ReadCd(out sector0, out _, (uint)lba0, 2352, (uint)sectorsForOffset + 1,
-                                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
-                                               true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                            sense = dev.ReadCd(out sector0,
+                                               out _,
+                                               (uint)lba0,
+                                               2352,
+                                               (uint)sectorsForOffset + 1,
+                                               MmcSectorTypes.AllTypes,
+                                               false,
+                                               false,
+                                               true,
+                                               MmcHeaderCodes.AllHeaders,
+                                               true,
+                                               true,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
                             // Drive does not support reading negative sectors?
                             if(sense && lba0 < 0)
                             {
-                                dev.ReadCd(out sector0, out _, 0, 2352, 2, MmcSectorTypes.AllTypes, false, false, true,
-                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                                dev.ReadCd(out sector0,
+                                           out _,
+                                           0,
+                                           2352,
+                                           2,
+                                           MmcSectorTypes.AllTypes,
+                                           false,
+                                           false,
+                                           true,
+                                           MmcHeaderCodes.AllHeaders,
+                                           true,
+                                           true,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                                 sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
                             }
                             else
                                 sector0 = DescrambleAndFixOffset(sector0, combinedOffset, sectorsForOffset);
 
-                            dev.ReadCd(out byte[] sector16, out _, (uint)lba16, 2352, (uint)sectorsForOffset + 1,
-                                       MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                       true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                            dev.ReadCd(out byte[] sector16,
+                                       out _,
+                                       (uint)lba16,
+                                       2352,
+                                       (uint)sectorsForOffset + 1,
+                                       MmcSectorTypes.AllTypes,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.AllHeaders,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                             sector16 = DescrambleAndFixOffset(sector16, combinedOffset, sectorsForOffset);
 
@@ -761,18 +903,44 @@ public static class MMC
             case MediaType.CDROM:
             case MediaType.CDROMXA:
             {
-                sense = dev.ReadCd(out cmdBuf, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                   dev.Timeout, out _);
+                sense = dev.ReadCd(out cmdBuf,
+                                   out _,
+                                   0,
+                                   2352,
+                                   1,
+                                   MmcSectorTypes.AllTypes,
+                                   false,
+                                   false,
+                                   true,
+                                   MmcHeaderCodes.AllHeaders,
+                                   true,
+                                   true,
+                                   MmcErrorField.None,
+                                   MmcSubchannel.None,
+                                   dev.Timeout,
+                                   out _);
 
                 if(!sense && !dev.Error)
                 {
                     sector0 = new byte[2048];
                     Array.Copy(cmdBuf, 16, sector0, 0, 2048);
 
-                    sense = dev.ReadCd(out cmdBuf, out _, 1, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       1,
+                                       2352,
+                                       1,
+                                       MmcSectorTypes.AllTypes,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.AllHeaders,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense && !dev.Error)
                     {
@@ -780,9 +948,22 @@ public static class MMC
                         Array.Copy(cmdBuf, 16, sector1, 0, 2048);
                     }
 
-                    sense = dev.ReadCd(out cmdBuf, out _, 4200, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       4200,
+                                       2352,
+                                       1,
+                                       MmcSectorTypes.AllTypes,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.AllHeaders,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense && !dev.Error)
                     {
@@ -790,9 +971,22 @@ public static class MMC
                         Array.Copy(cmdBuf, 24, playdia1, 0, 2048);
                     }
 
-                    sense = dev.ReadCd(out cmdBuf, out _, 4201, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       4201,
+                                       2352,
+                                       1,
+                                       MmcSectorTypes.AllTypes,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.AllHeaders,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense && !dev.Error)
                     {
@@ -802,9 +996,22 @@ public static class MMC
 
                     if(startOfFirstDataTrack != uint.MaxValue)
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2352, 1, MmcSectorTypes.AllTypes,
-                                           false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           startOfFirstDataTrack,
+                                           2352,
+                                           1,
+                                           MmcSectorTypes.AllTypes,
+                                           false,
+                                           false,
+                                           true,
+                                           MmcHeaderCodes.AllHeaders,
+                                           true,
+                                           true,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -812,9 +1019,22 @@ public static class MMC
                             Array.Copy(cmdBuf, 16, firstDataSectorNotZero, 0, 2048);
                         }
 
-                        sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2352, 1,
-                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           startOfFirstDataTrack + 1,
+                                           2352,
+                                           1,
+                                           MmcSectorTypes.AllTypes,
+                                           false,
+                                           false,
+                                           true,
+                                           MmcHeaderCodes.AllHeaders,
+                                           true,
+                                           true,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -827,33 +1047,70 @@ public static class MMC
 
                     for(uint p = 0; p < 12; p++)
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, p, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           MmcSubchannel.None, dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           p,
+                                           2352,
+                                           1,
+                                           MmcSectorTypes.AllTypes,
+                                           false,
+                                           false,
+                                           true,
+                                           MmcHeaderCodes.AllHeaders,
+                                           true,
+                                           true,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(sense || dev.Error)
-                            break;
+                        if(sense || dev.Error) break;
 
                         ps2Ms.Write(cmdBuf, cmdBuf[0x0F] == 0x02 ? 24 : 16, 2048);
                     }
 
-                    if(ps2Ms.Length == 0x6000)
-                        ps2BootSectors = ps2Ms.ToArray();
+                    if(ps2Ms.Length == 0x6000) ps2BootSectors = ps2Ms.ToArray();
                 }
                 else
                 {
-                    sense = dev.ReadCd(out cmdBuf, out _, 0, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
-                                       MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       0,
+                                       2324,
+                                       1,
+                                       MmcSectorTypes.Mode2,
+                                       false,
+                                       false,
+                                       false,
+                                       MmcHeaderCodes.None,
+                                       true,
+                                       false,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense && !dev.Error)
                     {
                         sector0 = new byte[2048];
                         Array.Copy(cmdBuf, 0, sector0, 0, 2048);
 
-                        sense = dev.ReadCd(out cmdBuf, out _, 1, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
-                                           MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                           dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           1,
+                                           2324,
+                                           1,
+                                           MmcSectorTypes.Mode2,
+                                           false,
+                                           false,
+                                           false,
+                                           MmcHeaderCodes.None,
+                                           true,
+                                           false,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -861,9 +1118,22 @@ public static class MMC
                             Array.Copy(cmdBuf, 1, sector0, 0, 2048);
                         }
 
-                        sense = dev.ReadCd(out cmdBuf, out _, 4200, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
-                                           MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                           dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           4200,
+                                           2324,
+                                           1,
+                                           MmcSectorTypes.Mode2,
+                                           false,
+                                           false,
+                                           false,
+                                           MmcHeaderCodes.None,
+                                           true,
+                                           false,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -871,9 +1141,22 @@ public static class MMC
                             Array.Copy(cmdBuf, 0, playdia1, 0, 2048);
                         }
 
-                        sense = dev.ReadCd(out cmdBuf, out _, 4201, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
-                                           MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                           dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           4201,
+                                           2324,
+                                           1,
+                                           MmcSectorTypes.Mode2,
+                                           false,
+                                           false,
+                                           false,
+                                           MmcHeaderCodes.None,
+                                           true,
+                                           false,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
@@ -883,9 +1166,22 @@ public static class MMC
 
                         if(startOfFirstDataTrack != uint.MaxValue)
                         {
-                            sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2324, 1, MmcSectorTypes.Mode2,
-                                               false, false, false, MmcHeaderCodes.None, true, false,
-                                               MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf,
+                                               out _,
+                                               startOfFirstDataTrack,
+                                               2324,
+                                               1,
+                                               MmcSectorTypes.Mode2,
+                                               false,
+                                               false,
+                                               false,
+                                               MmcHeaderCodes.None,
+                                               true,
+                                               false,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
                             if(!sense && !dev.Error)
                             {
@@ -893,9 +1189,22 @@ public static class MMC
                                 Array.Copy(cmdBuf, 0, firstDataSectorNotZero, 0, 2048);
                             }
 
-                            sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2324, 1,
-                                               MmcSectorTypes.Mode2, false, false, false, MmcHeaderCodes.None, true,
-                                               false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf,
+                                               out _,
+                                               startOfFirstDataTrack + 1,
+                                               2324,
+                                               1,
+                                               MmcSectorTypes.Mode2,
+                                               false,
+                                               false,
+                                               false,
+                                               MmcHeaderCodes.None,
+                                               true,
+                                               false,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
                             if(!sense && !dev.Error)
                             {
@@ -908,58 +1217,130 @@ public static class MMC
 
                         for(uint p = 0; p < 12; p++)
                         {
-                            sense = dev.ReadCd(out cmdBuf, out _, p, 2324, 1, MmcSectorTypes.Mode2, false, false, false,
-                                               MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                               dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf,
+                                               out _,
+                                               p,
+                                               2324,
+                                               1,
+                                               MmcSectorTypes.Mode2,
+                                               false,
+                                               false,
+                                               false,
+                                               MmcHeaderCodes.None,
+                                               true,
+                                               false,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense || dev.Error)
-                                break;
+                            if(sense || dev.Error) break;
 
                             ps2Ms.Write(cmdBuf, 0, 2048);
                         }
 
-                        if(ps2Ms.Length == 0x6000)
-                            ps2BootSectors = ps2Ms.ToArray();
+                        if(ps2Ms.Length == 0x6000) ps2BootSectors = ps2Ms.ToArray();
                     }
                     else
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false, false,
-                                           MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                           dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf,
+                                           out _,
+                                           0,
+                                           2048,
+                                           1,
+                                           MmcSectorTypes.Mode1,
+                                           false,
+                                           false,
+                                           false,
+                                           MmcHeaderCodes.None,
+                                           true,
+                                           false,
+                                           MmcErrorField.None,
+                                           MmcSubchannel.None,
+                                           dev.Timeout,
+                                           out _);
 
                         if(!sense && !dev.Error)
                         {
                             sector0 = cmdBuf;
 
-                            sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false, false,
-                                               MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.None,
-                                               dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf,
+                                               out _,
+                                               0,
+                                               2048,
+                                               1,
+                                               MmcSectorTypes.Mode1,
+                                               false,
+                                               false,
+                                               false,
+                                               MmcHeaderCodes.None,
+                                               true,
+                                               false,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(!sense && !dev.Error)
-                                sector1 = cmdBuf;
+                            if(!sense && !dev.Error) sector1 = cmdBuf;
 
-                            sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 12, MmcSectorTypes.Mode1, false, false,
-                                               false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                               MmcSubchannel.None, dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf,
+                                               out _,
+                                               0,
+                                               2048,
+                                               12,
+                                               MmcSectorTypes.Mode1,
+                                               false,
+                                               false,
+                                               false,
+                                               MmcHeaderCodes.None,
+                                               true,
+                                               false,
+                                               MmcErrorField.None,
+                                               MmcSubchannel.None,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(!sense && !dev.Error)
-                                ps2BootSectors = cmdBuf;
+                            if(!sense && !dev.Error) ps2BootSectors = cmdBuf;
 
                             if(startOfFirstDataTrack != uint.MaxValue)
                             {
-                                sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2048, 1,
-                                                   MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None, true,
-                                                   false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                sense = dev.ReadCd(out cmdBuf,
+                                                   out _,
+                                                   startOfFirstDataTrack,
+                                                   2048,
+                                                   1,
+                                                   MmcSectorTypes.Mode1,
+                                                   false,
+                                                   false,
+                                                   false,
+                                                   MmcHeaderCodes.None,
+                                                   true,
+                                                   false,
+                                                   MmcErrorField.None,
+                                                   MmcSubchannel.None,
+                                                   dev.Timeout,
+                                                   out _);
 
-                                if(!sense && !dev.Error)
-                                    firstDataSectorNotZero = cmdBuf;
+                                if(!sense && !dev.Error) firstDataSectorNotZero = cmdBuf;
 
-                                sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2048, 1,
-                                                   MmcSectorTypes.Mode1, false, false, false, MmcHeaderCodes.None, true,
-                                                   false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                                sense = dev.ReadCd(out cmdBuf,
+                                                   out _,
+                                                   startOfFirstDataTrack + 1,
+                                                   2048,
+                                                   1,
+                                                   MmcSectorTypes.Mode1,
+                                                   false,
+                                                   false,
+                                                   false,
+                                                   MmcHeaderCodes.None,
+                                                   true,
+                                                   false,
+                                                   MmcErrorField.None,
+                                                   MmcSubchannel.None,
+                                                   dev.Timeout,
+                                                   out _);
 
-                                if(!sense && !dev.Error)
-                                    secondDataSectorNotZero = cmdBuf;
+                                if(!sense && !dev.Error) secondDataSectorNotZero = cmdBuf;
                             }
                         }
                         else
@@ -980,11 +1361,17 @@ public static class MMC
             case MediaType.Unknown:
                 if(mediaType is MediaType.BDROM or MediaType.UHDBD)
                 {
-                    sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Bd, 0, 0,
-                                                  MmcDiscStructureFormat.DiscInformation, 0, dev.Timeout, out _);
+                    sense = dev.ReadDiscStructure(out cmdBuf,
+                                                  out _,
+                                                  MmcDiscStructureMediaType.Bd,
+                                                  0,
+                                                  0,
+                                                  MmcDiscStructureFormat.DiscInformation,
+                                                  0,
+                                                  dev.Timeout,
+                                                  out _);
 
-                    if(!sense)
-                        blurayDi = DI.Decode(cmdBuf);
+                    if(!sense) blurayDi = DI.Decode(cmdBuf);
                 }
 
                 sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 1, false, dev.Timeout, out _);
@@ -993,59 +1380,144 @@ public static class MMC
                 {
                     sector0 = cmdBuf;
 
-                    sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 1, 2048, 0, 1, false, dev.Timeout,
+                    sense = dev.Read16(out cmdBuf,
+                                       out _,
+                                       0,
+                                       false,
+                                       false,
+                                       false,
+                                       1,
+                                       2048,
+                                       0,
+                                       1,
+                                       false,
+                                       dev.Timeout,
                                        out _);
 
-                    if(!sense && !dev.Error)
-                        sector1 = cmdBuf;
+                    if(!sense && !dev.Error) sector1 = cmdBuf;
 
-                    sense = dev.Read16(out cmdBuf, out _, 0, false, false, false, 0, 2048, 0, 12, false, dev.Timeout,
+                    sense = dev.Read16(out cmdBuf,
+                                       out _,
+                                       0,
+                                       false,
+                                       false,
+                                       false,
+                                       0,
+                                       2048,
+                                       0,
+                                       12,
+                                       false,
+                                       dev.Timeout,
                                        out _);
 
-                    if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
-                        ps2BootSectors = cmdBuf;
+                    if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
                 }
                 else
                 {
-                    sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1, false,
-                                       dev.Timeout, out _);
+                    sense = dev.Read12(out cmdBuf,
+                                       out _,
+                                       0,
+                                       false,
+                                       false,
+                                       false,
+                                       false,
+                                       0,
+                                       2048,
+                                       0,
+                                       1,
+                                       false,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense && !dev.Error)
                     {
                         sector0 = cmdBuf;
 
-                        sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1, false,
-                                           dev.Timeout, out _);
+                        sense = dev.Read12(out cmdBuf,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           1,
+                                           2048,
+                                           0,
+                                           1,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(!sense && !dev.Error)
-                            sector1 = cmdBuf;
+                        if(!sense && !dev.Error) sector1 = cmdBuf;
 
-                        sense = dev.Read12(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12, false,
-                                           dev.Timeout, out _);
+                        sense = dev.Read12(out cmdBuf,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           0,
+                                           2048,
+                                           0,
+                                           12,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
-                            ps2BootSectors = cmdBuf;
+                        if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
                     }
                     else
                     {
-                        sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 1, dev.Timeout,
+                        sense = dev.Read10(out cmdBuf,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           0,
+                                           2048,
+                                           0,
+                                           1,
+                                           dev.Timeout,
                                            out _);
 
                         if(!sense && !dev.Error)
                         {
                             sector0 = cmdBuf;
 
-                            sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 1, 2048, 0, 1,
-                                               dev.Timeout, out _);
+                            sense = dev.Read10(out cmdBuf,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               1,
+                                               2048,
+                                               0,
+                                               1,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(!sense && !dev.Error)
-                                sector1 = cmdBuf;
+                            if(!sense && !dev.Error) sector1 = cmdBuf;
 
-                            sense = dev.Read10(out cmdBuf, out _, 0, false, false, false, false, 0, 2048, 0, 12,
-                                               dev.Timeout, out _);
+                            sense = dev.Read10(out cmdBuf,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               0,
+                                               2048,
+                                               0,
+                                               12,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
-                                ps2BootSectors = cmdBuf;
+                            if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
                         }
                         else
                         {
@@ -1057,13 +1529,11 @@ public static class MMC
 
                                 sense = dev.Read6(out cmdBuf, out _, 1, 2048, 1, dev.Timeout, out _);
 
-                                if(!sense && !dev.Error)
-                                    sector1 = cmdBuf;
+                                if(!sense && !dev.Error) sector1 = cmdBuf;
 
                                 sense = dev.Read6(out cmdBuf, out _, 0, 2048, 12, dev.Timeout, out _);
 
-                                if(!sense && !dev.Error && cmdBuf.Length == 0x6000)
-                                    ps2BootSectors = cmdBuf;
+                                if(!sense && !dev.Error && cmdBuf.Length == 0x6000) ps2BootSectors = cmdBuf;
                             }
                         }
                     }
@@ -1071,8 +1541,15 @@ public static class MMC
 
                 if(mediaType == MediaType.DVDROM)
                 {
-                    sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                  MmcDiscStructureFormat.PhysicalInformation, 0, dev.Timeout, out _);
+                    sense = dev.ReadDiscStructure(out cmdBuf,
+                                                  out _,
+                                                  MmcDiscStructureMediaType.Dvd,
+                                                  0,
+                                                  0,
+                                                  MmcDiscStructureFormat.PhysicalInformation,
+                                                  0,
+                                                  dev.Timeout,
+                                                  out _);
 
                     if(!sense)
                     {
@@ -1106,8 +1583,14 @@ public static class MMC
                         }
                     }
 
-                    sense = dev.ReadDiscStructure(out cmdBuf, out _, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                  MmcDiscStructureFormat.DiscManufacturingInformation, 0, dev.Timeout,
+                    sense = dev.ReadDiscStructure(out cmdBuf,
+                                                  out _,
+                                                  MmcDiscStructureMediaType.Dvd,
+                                                  0,
+                                                  0,
+                                                  MmcDiscStructureFormat.DiscManufacturingInformation,
+                                                  0,
+                                                  dev.Timeout,
                                                   out _);
 
                     if(!sense)
@@ -1150,8 +1633,20 @@ public static class MMC
             // Recordables will be checked for PhotoCD only
             case MediaType.CDR:
                 // Check if ISO9660
-                sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
-                                   dev.Timeout, out _);
+                sense = dev.Read12(out byte[] isoSector,
+                                   out _,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   false,
+                                   16,
+                                   2048,
+                                   0,
+                                   1,
+                                   false,
+                                   dev.Timeout,
+                                   out _);
 
                 // Sector 16 reads, and contains "CD001" magic?
                 if(sense                ||
@@ -1167,12 +1662,23 @@ public static class MMC
 
                 while(isoSectorPosition < 32)
                 {
-                    sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, isoSectorPosition, 2048, 0,
-                                       1, false, dev.Timeout, out _);
+                    sense = dev.Read12(out isoSector,
+                                       out _,
+                                       0,
+                                       false,
+                                       false,
+                                       false,
+                                       false,
+                                       isoSectorPosition,
+                                       2048,
+                                       0,
+                                       1,
+                                       false,
+                                       dev.Timeout,
+                                       out _);
 
                     // If sector cannot be read, break here
-                    if(sense)
-                        break;
+                    if(sense) break;
 
                     // If sector does not contain "CD001" magic, break
                     if(isoSector[1] != 0x43 ||
@@ -1183,8 +1689,7 @@ public static class MMC
                         break;
 
                     // If it is PVD or end of descriptor chain, break
-                    if(isoSector[0] == 1 || isoSector[0] == 255)
-                        break;
+                    if(isoSector[0] == 1 || isoSector[0] == 255) break;
 
                     isoSectorPosition++;
                 }
@@ -1201,8 +1706,7 @@ public static class MMC
                 var rootStart  = BitConverter.ToUInt32(isoSector, 158);
                 var rootLength = BitConverter.ToUInt32(isoSector, 166);
 
-                if(rootStart == 0 || rootLength == 0)
-                    return;
+                if(rootStart == 0 || rootLength == 0) return;
 
                 rootLength /= 2048;
 
@@ -1212,11 +1716,22 @@ public static class MMC
 
                     for(uint i = 0; i < rootLength; i++)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, rootStart + i, 2048, 0,
-                                           1, false, dev.Timeout, out _);
+                        sense = dev.Read12(out isoSector,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           rootStart + i,
+                                           2048,
+                                           0,
+                                           1,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(sense)
-                            break;
+                        if(sense) break;
 
                         rootMs.Write(isoSector, 0, 2048);
                     }
@@ -1228,8 +1743,7 @@ public static class MMC
                     return;
                 }
 
-                if(isoSector.Length < 2048)
-                    return;
+                if(isoSector.Length < 2048) return;
 
                 var  rootPos   = 0;
                 uint pcdStart  = 0;
@@ -1244,8 +1758,7 @@ public static class MMC
                     Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
                     string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                    if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                        name = name[..^2];
+                    if(name.EndsWith(";1", StringComparison.InvariantCulture)) name = name[..^2];
 
                     if(name == "PHOTO_CD" && (isoSector[rootPos + 25] & 0x02) == 0x02)
                     {
@@ -1264,11 +1777,22 @@ public static class MMC
 
                         for(uint i = 0; i < pcdLength; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, pcdStart + i, 2048,
-                                               0, 1, false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               pcdStart + i,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             pcdMs.Write(isoSector, 0, 2048);
                         }
@@ -1280,8 +1804,7 @@ public static class MMC
                         return;
                     }
 
-                    if(isoSector.Length < 2048)
-                        return;
+                    if(isoSector.Length < 2048) return;
 
                     for(var pi = 0; pi < pcdLength; pi++)
                     {
@@ -1297,8 +1820,7 @@ public static class MMC
                             Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name[..^2];
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture)) name = name[..^2];
 
                             if(name == "INFO.PCD")
                             {
@@ -1312,11 +1834,22 @@ public static class MMC
 
                         if(infoPos > 0)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0, 1,
-                                               false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               infoPos,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             var systemId = new byte[8];
                             Array.Copy(isoSector, 0, systemId, 0, 8);
@@ -1366,8 +1899,7 @@ public static class MMC
                 return;
         }
 
-        if(sector0 == null)
-            return;
+        if(sector0 == null) return;
 
         switch(mediaType)
         {
@@ -1411,12 +1943,12 @@ public static class MMC
                     // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
                     byte decryptByte = ps2BootSectors[0];
 
-                    for(var i = 0; i < 0x6000; i++)
-                        ps2BootSectors[i] ^= decryptByte;
+                    for(var i = 0; i < 0x6000; i++) ps2BootSectors[i] ^= decryptByte;
 
                     string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
                                                ps2BootSectorsHash);
 
                     if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
@@ -1510,8 +2042,7 @@ public static class MMC
                     {
                         Array.Copy(firstTrackSecondSessionAudio, i, jaguar, 0, jaguar.Length);
 
-                        if(!_atariSignature.SequenceEqual(jaguar))
-                            continue;
+                        if(!_atariSignature.SequenceEqual(jaguar)) continue;
 
                         mediaType = MediaType.JaguarCD;
 
@@ -1551,9 +2082,22 @@ public static class MMC
                 // Check CD+G, CD+EG and CD+MIDI
                 if(mediaType == MediaType.CDDA)
                 {
-                    sense = dev.ReadCd(out byte[] subBuf, out _, 150, 96, 8, MmcSectorTypes.Cdda, false, false, false,
-                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out byte[] subBuf,
+                                       out _,
+                                       150,
+                                       96,
+                                       8,
+                                       MmcSectorTypes.Cdda,
+                                       false,
+                                       false,
+                                       false,
+                                       MmcHeaderCodes.None,
+                                       false,
+                                       false,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.Raw,
+                                       dev.Timeout,
+                                       out _);
 
                     if(!sense)
                     {
@@ -1567,14 +2111,11 @@ public static class MMC
                             Array.Copy(subBuf, i * 96, tmpSub, 0, 96);
                             DetectRwPackets(tmpSub, out bool cdgPacket, out bool cdegPacket, out bool cdmidiPacket);
 
-                            if(cdgPacket)
-                                cdg = true;
+                            if(cdgPacket) cdg = true;
 
-                            if(cdegPacket)
-                                cdeg = true;
+                            if(cdegPacket) cdeg = true;
 
-                            if(cdmidiPacket)
-                                cdmidi = true;
+                            if(cdmidiPacket) cdmidi = true;
                         }
 
                         if(cdeg)
@@ -1611,8 +2152,20 @@ public static class MMC
             hasPs2CdBoot:
 
                 // Check if ISO9660
-                sense = dev.Read12(out byte[] isoSector, out _, 0, false, false, false, false, 16, 2048, 0, 1, false,
-                                   dev.Timeout, out _);
+                sense = dev.Read12(out byte[] isoSector,
+                                   out _,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   false,
+                                   16,
+                                   2048,
+                                   0,
+                                   1,
+                                   false,
+                                   dev.Timeout,
+                                   out _);
 
                 // Sector 16 reads, and contains "CD001" magic?
                 if(sense                ||
@@ -1628,12 +2181,23 @@ public static class MMC
 
                 while(isoSectorPosition < 32)
                 {
-                    sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, isoSectorPosition, 2048, 0,
-                                       1, false, dev.Timeout, out _);
+                    sense = dev.Read12(out isoSector,
+                                       out _,
+                                       0,
+                                       false,
+                                       false,
+                                       false,
+                                       false,
+                                       isoSectorPosition,
+                                       2048,
+                                       0,
+                                       1,
+                                       false,
+                                       dev.Timeout,
+                                       out _);
 
                     // If sector cannot be read, break here
-                    if(sense)
-                        break;
+                    if(sense) break;
 
                     // If sector does not contain "CD001" magic, break
                     if(isoSector[1] != 0x43 ||
@@ -1644,8 +2208,7 @@ public static class MMC
                         break;
 
                     // If it is PVD or end of descriptor chain, break
-                    if(isoSector[0] == 1 || isoSector[0] == 255)
-                        break;
+                    if(isoSector[0] == 1 || isoSector[0] == 255) break;
 
                     isoSectorPosition++;
                 }
@@ -1662,8 +2225,7 @@ public static class MMC
                 var rootStart  = BitConverter.ToUInt32(isoSector, 158);
                 var rootLength = BitConverter.ToUInt32(isoSector, 166);
 
-                if(rootStart == 0 || rootLength == 0)
-                    return;
+                if(rootStart == 0 || rootLength == 0) return;
 
                 rootLength /= 2048;
 
@@ -1673,11 +2235,22 @@ public static class MMC
 
                     for(uint i = 0; i < rootLength; i++)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, rootStart + i, 2048, 0,
-                                           1, false, dev.Timeout, out _);
+                        sense = dev.Read12(out isoSector,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           rootStart + i,
+                                           2048,
+                                           0,
+                                           1,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(sense)
-                            break;
+                        if(sense) break;
 
                         rootMs.Write(isoSector, 0, 2048);
                     }
@@ -1689,8 +2262,7 @@ public static class MMC
                     return;
                 }
 
-                if(isoSector.Length < 2048)
-                    return;
+                if(isoSector.Length < 2048) return;
 
                 List<string> rootEntries   = new();
                 uint         ngcdIplStart  = 0;
@@ -1715,8 +2287,7 @@ public static class MMC
                         Array.Copy(isoSector, rootPos + 33, tmpName, 0, nameLen);
                         string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                        if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                            name = name[..^2];
+                        if(name.EndsWith(";1", StringComparison.InvariantCulture)) name = name[..^2];
 
                         rootEntries.Add(name);
 
@@ -1751,8 +2322,7 @@ public static class MMC
                     }
                 }
 
-                if(rootEntries.Count == 0)
-                    return;
+                if(rootEntries.Count == 0) return;
 
                 if(rootEntries.Contains("CD32.TM"))
                 {
@@ -1777,8 +2347,7 @@ public static class MMC
                 {
                     uint ngcdSectors = ngcdIplLength / 2048;
 
-                    if(ngcdIplLength % 2048 > 0)
-                        ngcdSectors++;
+                    if(ngcdIplLength % 2048 > 0) ngcdSectors++;
 
                     string iplTxt;
 
@@ -1789,11 +2358,22 @@ public static class MMC
 
                         for(uint i = 0; i < ngcdSectors; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, ngcdIplStart + i,
-                                               2048, 0, 1, false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               ngcdIplStart + i,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             ngcdMs.Write(isoSector, 0, 2048);
                         }
@@ -1821,8 +2401,7 @@ public static class MMC
                             // End of file
                             if(line is null || line.Length == 0)
                             {
-                                if(lineNumber == 0)
-                                    correctNeoGeoCd = false;
+                                if(lineNumber == 0) correctNeoGeoCd = false;
 
                                 break;
                             }
@@ -1831,14 +2410,12 @@ public static class MMC
                             string[] split = line.Split(',');
 
                             // Empty line
-                            if(split.Length == 0)
-                                continue;
+                            if(split.Length == 0) continue;
 
                             // More than 3 entries
                             if(split.Length != 3)
                             {
-                                if(line[0] < 0x20)
-                                    break;
+                                if(line[0] < 0x20) break;
 
                                 correctNeoGeoCd = false;
 
@@ -1922,11 +2499,22 @@ public static class MMC
 
                         for(uint i = 0; i < vcdLength; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, vcdStart + i, 2048,
-                                               0, 1, false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               vcdStart + i,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             vcdMs.Write(isoSector, 0, 2048);
                         }
@@ -1938,8 +2526,7 @@ public static class MMC
                         return;
                     }
 
-                    if(isoSector.Length < 2048)
-                        return;
+                    if(isoSector.Length < 2048) return;
 
                     uint infoPos = 0;
 
@@ -1956,8 +2543,7 @@ public static class MMC
                             Array.Copy(isoSector, vcdPos + 33, tmpName, 0, nameLen);
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name[..^2];
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture)) name = name[..^2];
 
                             if(name is "INFO.VCD" or "INFO.SVD")
                             {
@@ -1972,11 +2558,22 @@ public static class MMC
 
                     if(infoPos > 0)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0, 1,
-                                           false, dev.Timeout, out _);
+                        sense = dev.Read12(out isoSector,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           infoPos,
+                                           2048,
+                                           0,
+                                           1,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(sense)
-                            break;
+                        if(sense) break;
 
                         var systemId = new byte[8];
                         Array.Copy(isoSector, 0, systemId, 0, 8);
@@ -2018,11 +2615,22 @@ public static class MMC
 
                         for(uint i = 0; i < pcdLength; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, pcdStart + i, 2048,
-                                               0, 1, false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               pcdStart + i,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             pcdMs.Write(isoSector, 0, 2048);
                         }
@@ -2034,8 +2642,7 @@ public static class MMC
                         return;
                     }
 
-                    if(isoSector.Length < 2048)
-                        return;
+                    if(isoSector.Length < 2048) return;
 
                     uint infoPos = 0;
 
@@ -2052,8 +2659,7 @@ public static class MMC
                             Array.Copy(isoSector, pcdPos + 33, tmpName, 0, nameLen);
                             string name = StringHandlers.CToString(tmpName).ToUpperInvariant();
 
-                            if(name.EndsWith(";1", StringComparison.InvariantCulture))
-                                name = name[..^2];
+                            if(name.EndsWith(";1", StringComparison.InvariantCulture)) name = name[..^2];
 
                             if(name == "INFO.PCD")
                             {
@@ -2068,11 +2674,22 @@ public static class MMC
 
                     if(infoPos > 0)
                     {
-                        sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, infoPos, 2048, 0, 1,
-                                           false, dev.Timeout, out _);
+                        sense = dev.Read12(out isoSector,
+                                           out _,
+                                           0,
+                                           false,
+                                           false,
+                                           false,
+                                           false,
+                                           infoPos,
+                                           2048,
+                                           0,
+                                           1,
+                                           false,
+                                           dev.Timeout,
+                                           out _);
 
-                        if(sense)
-                            break;
+                        if(sense) break;
 
                         var systemId = new byte[8];
                         Array.Copy(isoSector, 0, systemId, 0, 8);
@@ -2097,8 +2714,7 @@ public static class MMC
                 {
                     uint ps1Sectors = ps1Length / 2048;
 
-                    if(ps1Length % 2048 > 0)
-                        ps1Sectors++;
+                    if(ps1Length % 2048 > 0) ps1Sectors++;
 
                     string ps1Txt;
 
@@ -2109,11 +2725,22 @@ public static class MMC
 
                         for(uint i = 0; i < ps1Sectors; i++)
                         {
-                            sense = dev.Read12(out isoSector, out _, 0, false, false, false, false, ps1Start + i, 2048,
-                                               0, 1, false, dev.Timeout, out _);
+                            sense = dev.Read12(out isoSector,
+                                               out _,
+                                               0,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               ps1Start + i,
+                                               2048,
+                                               0,
+                                               1,
+                                               false,
+                                               dev.Timeout,
+                                               out _);
 
-                            if(sense)
-                                break;
+                            if(sense) break;
 
                             ps1Ms.Write(isoSector, 0, 2048);
                         }
@@ -2139,8 +2766,7 @@ public static class MMC
                             string line = sr.ReadLine();
 
                             // End of file
-                            if(line is null || line.Length == 0)
-                                break;
+                            if(line is null || line.Length == 0) break;
 
                             line = line.Replace(" ", "");
 
@@ -2148,8 +2774,7 @@ public static class MMC
                             {
                                 ps1BootFile = line[11..];
 
-                                if(ps1BootFile.StartsWith('\\'))
-                                    ps1BootFile = ps1BootFile[1..];
+                                if(ps1BootFile.StartsWith('\\')) ps1BootFile = ps1BootFile[1..];
 
                                 if(ps1BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
                                     ps1BootFile = ps1BootFile[..^2];
@@ -2157,13 +2782,11 @@ public static class MMC
                                 break;
                             }
 
-                            if(!line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase))
-                                continue;
+                            if(!line.StartsWith("BOOT2=cdrom0:", StringComparison.InvariantCultureIgnoreCase)) continue;
 
                             ps2BootFile = line[13..];
 
-                            if(ps2BootFile.StartsWith('\\'))
-                                ps2BootFile = ps2BootFile[1..];
+                            if(ps2BootFile.StartsWith('\\')) ps2BootFile = ps2BootFile[1..];
 
                             if(ps2BootFile.EndsWith(";1", StringComparison.InvariantCultureIgnoreCase))
                                 ps2BootFile = ps2BootFile[..^2];
@@ -2206,12 +2829,12 @@ public static class MMC
                     // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
                     byte decryptByte = ps2BootSectors[0];
 
-                    for(var i = 0; i < 0x6000; i++)
-                        ps2BootSectors[i] ^= decryptByte;
+                    for(var i = 0; i < 0x6000; i++) ps2BootSectors[i] ^= decryptByte;
 
                     string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Core.PlayStation_2_boot_sectors_SHA256_0,
                                                ps2BootSectorsHash);
 
                     if(ps2BootSectorsHash is PS2_PAL_HASH or PS2_NTSC_HASH or PS2_JAPANESE_HASH)
@@ -2319,17 +2942,13 @@ public static class MMC
 
         var i = 0;
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
         {

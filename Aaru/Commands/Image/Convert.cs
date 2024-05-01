@@ -70,16 +70,20 @@ sealed class ConvertImageCommand : Command
     public ConvertImageCommand() : base("convert", UI.Image_Convert_Command_Description)
     {
         Add(new Option<string>(new[]
-        {
-            "--cicm-xml", "-x"
-        }, () => null, UI.Take_metadata_from_existing_CICM_XML_sidecar));
+                               {
+                                   "--cicm-xml", "-x"
+                               },
+                               () => null,
+                               UI.Take_metadata_from_existing_CICM_XML_sidecar));
 
         Add(new Option<string>("--comments", () => null, UI.Image_comments));
 
         Add(new Option<int>(new[]
-        {
-            "--count", "-c"
-        }, () => 64, UI.How_many_sectors_to_convert_at_once));
+                            {
+                                "--count", "-c"
+                            },
+                            () => 64,
+                            UI.How_many_sectors_to_convert_at_once));
 
         Add(new Option<string>("--creator", () => null, UI.Who_person_created_the_image));
 
@@ -92,14 +96,17 @@ sealed class ConvertImageCommand : Command
         Add(new Option<string>("--drive-serial", () => null, UI.Serial_number_of_drive_read_the_media_by_image));
 
         Add(new Option<bool>(new[]
-        {
-            "--force", "-f"
-        }, UI.Continue_conversion_even_if_data_lost));
+                             {
+                                 "--force", "-f"
+                             },
+                             UI.Continue_conversion_even_if_data_lost));
 
         Add(new Option<string>(new[]
-        {
-            "--format", "-p"
-        }, () => null, UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
+                               {
+                                   "--format", "-p"
+                               },
+                               () => null,
+                               UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
 
         Add(new Option<string>("--media-barcode", () => null, UI.Barcode_of_the_media_by_image));
 
@@ -114,49 +121,67 @@ sealed class ConvertImageCommand : Command
         Add(new Option<string>("--media-title",  () => null, UI.Title_of_media_represented_by_image));
 
         Add(new Option<string>(new[]
-        {
-            "--options", "-O"
-        }, () => null, UI.Comma_separated_name_value_pairs_of_image_options));
+                               {
+                                   "--options", "-O"
+                               },
+                               () => null,
+                               UI.Comma_separated_name_value_pairs_of_image_options));
 
         Add(new Option<string>(new[]
-        {
-            "--resume-file", "-r"
-        }, () => null, UI.Take_dump_hardware_from_existing_resume));
+                               {
+                                   "--resume-file", "-r"
+                               },
+                               () => null,
+                               UI.Take_dump_hardware_from_existing_resume));
 
         Add(new Option<string>(new[]
-        {
-            "--geometry", "-g"
-        }, () => null, UI.Force_geometry_help));
+                               {
+                                   "--geometry", "-g"
+                               },
+                               () => null,
+                               UI.Force_geometry_help));
 
         Add(new Option<bool>(new[]
-        {
-            "--fix-subchannel-position"
-        }, () => true, UI.Fix_subchannel_position_help));
+                             {
+                                 "--fix-subchannel-position"
+                             },
+                             () => true,
+                             UI.Fix_subchannel_position_help));
 
         Add(new Option<bool>(new[]
-        {
-            "--fix-subchannel"
-        }, () => false, UI.Fix_subchannel_help));
+                             {
+                                 "--fix-subchannel"
+                             },
+                             () => false,
+                             UI.Fix_subchannel_help));
 
         Add(new Option<bool>(new[]
-        {
-            "--fix-subchannel-crc"
-        }, () => false, UI.Fix_subchannel_crc_help));
+                             {
+                                 "--fix-subchannel-crc"
+                             },
+                             () => false,
+                             UI.Fix_subchannel_crc_help));
 
         Add(new Option<bool>(new[]
-        {
-            "--generate-subchannels"
-        }, () => false, UI.Generates_subchannels_help));
+                             {
+                                 "--generate-subchannels"
+                             },
+                             () => false,
+                             UI.Generates_subchannels_help));
 
         Add(new Option<bool>(new[]
-        {
-            "--decrypt"
-        }, () => false, UI.Decrypt_sectors_help));
+                             {
+                                 "--decrypt"
+                             },
+                             () => false,
+                             UI.Decrypt_sectors_help));
 
         Add(new Option<string>(new[]
-        {
-            "--aaru-metadata", "-m"
-        }, () => null, "Take metadata from existing Aaru Metadata sidecar."));
+                               {
+                                   "--aaru-metadata", "-m"
+                               },
+                               () => null,
+                               "Take metadata from existing Aaru Metadata sidecar."));
 
         AddArgument(new Argument<string>
         {
@@ -215,11 +240,9 @@ sealed class ConvertImageCommand : Command
             };
         }
 
-        if(fixSubchannelCrc)
-            fixSubchannel = true;
+        if(fixSubchannelCrc) fixSubchannel = true;
 
-        if(fixSubchannel)
-            fixSubchannelPosition = true;
+        if(fixSubchannel) fixSubchannelPosition = true;
 
         Statistics.AddCommand("convert-image");
 
@@ -274,8 +297,7 @@ sealed class ConvertImageCommand : Command
         {
             string[] geometryPieces = geometry.Split('/');
 
-            if(geometryPieces.Length == 0)
-                geometryPieces = geometry.Split('-');
+            if(geometryPieces.Length == 0) geometryPieces = geometry.Split('-');
 
             if(geometryPieces.Length != 3)
             {
@@ -350,16 +372,16 @@ sealed class ConvertImageCommand : Command
                 try
                 {
                     // Should be covered by virtue of being the same exact class as the JSON above
-                #pragma warning disable IL2026
+#pragma warning disable IL2026
                     var xs = new XmlSerializer(typeof(CICMMetadataType));
-                #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                     var sr = new StreamReader(cicmXml);
 
                     // Should be covered by virtue of being the same exact class as the JSON above
-                #pragma warning disable IL2026
+#pragma warning disable IL2026
                     sidecar = (CICMMetadataType)xs.Deserialize(sr);
-                #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                     sr.Close();
                 }
@@ -390,7 +412,8 @@ sealed class ConvertImageCommand : Command
                         var fs = new FileStream(resumeFile, FileMode.Open);
 
                         resume =
-                            (JsonSerializer.Deserialize(fs, typeof(ResumeJson),
+                            (JsonSerializer.Deserialize(fs,
+                                                        typeof(ResumeJson),
                                                         ResumeJsonContext.Default) as ResumeJson)?.Resume;
 
                         fs.Close();
@@ -398,16 +421,16 @@ sealed class ConvertImageCommand : Command
                     else
                     {
                         // Bypassed by JSON source generator used above
-                    #pragma warning disable IL2026
+#pragma warning disable IL2026
                         var xs = new XmlSerializer(typeof(Resume));
-                    #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                         var sr = new StreamReader(resumeFile);
 
                         // Bypassed by JSON source generator used above
-                    #pragma warning disable IL2026
+#pragma warning disable IL2026
                         resume = (Resume)xs.Deserialize(sr);
-                    #pragma warning restore IL2026
+#pragma warning restore IL2026
 
                         sr.Close();
                     }
@@ -502,7 +525,7 @@ sealed class ConvertImageCommand : Command
             mediaType = inputFormat.Info.MediaType;
 
             // Obsolete types
-        #pragma warning disable 612
+#pragma warning disable 612
             mediaType = mediaType switch
                         {
                             MediaType.SQ1500     => MediaType.SyJet,
@@ -510,7 +533,7 @@ sealed class ConvertImageCommand : Command
                             MediaType.Bernoulli2 => MediaType.BernoulliBox2_20,
                             _                    => inputFormat.Info.MediaType
                         };
-        #pragma warning restore 612
+#pragma warning restore 612
 
             AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
@@ -589,7 +612,7 @@ sealed class ConvertImageCommand : Command
         }
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-            !outputFormat.SupportedMediaTags.Contains(mediaTag) && !force))
+                    !outputFormat.SupportedMediaTags.Contains(mediaTag) && !force))
         {
             AaruConsole.ErrorWriteLine(UI.Converting_image_will_lose_media_tag_0, mediaTag);
             AaruConsole.ErrorWriteLine(UI.If_you_dont_care_use_force_option);
@@ -600,7 +623,7 @@ sealed class ConvertImageCommand : Command
         bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
 
         foreach(SectorTagType sectorTag in inputFormat.Info.ReadableSectorTags.Where(sectorTag =>
-            !outputFormat.SupportedSectorTags.Contains(sectorTag)))
+                    !outputFormat.SupportedSectorTags.Contains(sectorTag)))
         {
             if(force)
             {
@@ -614,8 +637,8 @@ sealed class ConvertImageCommand : Command
 
             AaruConsole.ErrorWriteLine(UI.Converting_image_will_lose_sector_tag_0, sectorTag);
 
-            AaruConsole.ErrorWriteLine(UI.
-                                           If_you_dont_care_use_force_option_This_will_skip_all_sector_tags_converting_only_user_data);
+            AaruConsole.ErrorWriteLine(UI
+                                          .If_you_dont_care_use_force_option_This_will_skip_all_sector_tags_converting_only_user_data);
 
             return (int)ErrorNumber.DataWillBeLost;
         }
@@ -646,8 +669,8 @@ sealed class ConvertImageCommand : Command
             }
         }
 
-        if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                    CanStoreSessions) !=
+        if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities
+                                                                                   .CanStoreSessions) !=
            true &&
            (inputFormat as IOpticalMediaImage)?.Sessions?.Count > 1)
         {
@@ -662,8 +685,8 @@ sealed class ConvertImageCommand : Command
             AaruConsole.ErrorWriteLine("Output format does not support sessions, this will end in a loss of data, continuing...");*/
         }
 
-        if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities.
-                                                                                    CanStoreHiddenTracks) !=
+        if((outputFormat as IWritableOpticalImage)?.OpticalCapabilities.HasFlag(OpticalImageCapabilities
+                                                                                   .CanStoreHiddenTracks) !=
            true &&
            (inputFormat as IOpticalMediaImage)?.Tracks?.Any(t => t.Sequence == 0) == true)
         {
@@ -684,7 +707,10 @@ sealed class ConvertImageCommand : Command
         {
             ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
 
-            created = outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
+            created = outputFormat.Create(outputPath,
+                                          mediaType,
+                                          parsedOptions,
+                                          inputFormat.Info.Sectors,
                                           inputFormat.Info.SectorSize);
         });
 
@@ -731,15 +757,15 @@ sealed class ConvertImageCommand : Command
         List<DumpHardware> dumpHardware = inputFormat.DumpHardware;
 
         foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags.Where(mediaTag =>
-            !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
+                    !force || outputFormat.SupportedMediaTags.Contains(mediaTag)))
         {
             ErrorNumber errorNumber = ErrorNumber.NoError;
 
-            AnsiConsole.Progress().
-                        AutoClear(false).
-                        HideCompleted(false).
-                        Columns(new TaskDescriptionColumn(), new SpinnerColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(false)
+                       .HideCompleted(false)
+                       .Columns(new TaskDescriptionColumn(), new SpinnerColumn())
+                       .Start(ctx =>
                         {
                             ctx.AddTask(string.Format(UI.Converting_media_tag_0, Markup.Escape(mediaTag.ToString())));
                             ErrorNumber errno = inputFormat.ReadMediaTag(mediaTag, out byte[] tag);
@@ -758,8 +784,7 @@ sealed class ConvertImageCommand : Command
                                 return;
                             }
 
-                            if((outputFormat as IWritableImage)?.WriteMediaTag(tag, mediaTag) == true)
-                                return;
+                            if((outputFormat as IWritableImage)?.WriteMediaTag(tag, mediaTag) == true) return;
 
                             if(force)
                                 AaruConsole.ErrorWriteLine(UI.Error_0_writing_media_tag, outputFormat.ErrorMessage);
@@ -772,8 +797,7 @@ sealed class ConvertImageCommand : Command
                             }
                         });
 
-            if(errorNumber != ErrorNumber.NoError)
-                return (int)errorNumber;
+            if(errorNumber != ErrorNumber.NoError) return (int)errorNumber;
         }
 
         AaruConsole.WriteLine(UI._0_sectors_to_convert, inputFormat.Info.Sectors);
@@ -792,14 +816,13 @@ sealed class ConvertImageCommand : Command
 
             ErrorNumber errno = ErrorNumber.NoError;
 
-            if(decrypt)
-                AaruConsole.WriteLine("Decrypting encrypted sectors.");
+            if(decrypt) AaruConsole.WriteLine("Decrypting encrypted sectors.");
 
-            AnsiConsole.Progress().
-                        AutoClear(true).
-                        HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
                             ProgressTask discTask = ctx.AddTask(UI.Converting_disc);
                             discTask.MaxValue = inputOptical.Tracks.Count;
@@ -880,8 +903,9 @@ sealed class ConvertImageCommand : Command
                                         {
                                             if(!force)
                                             {
-                                                AaruConsole.ErrorWriteLine(UI.
-                                                                               Input_image_is_not_returning_raw_sectors_use_force_if_you_want_to_continue);
+                                                AaruConsole
+                                                   .ErrorWriteLine(UI
+                                                                      .Input_image_is_not_returning_raw_sectors_use_force_if_you_want_to_continue);
 
                                                 errno = ErrorNumber.InOutError;
 
@@ -902,9 +926,11 @@ sealed class ConvertImageCommand : Command
                                                                                out sector);
 
                                         // TODO: Move to generic place when anything but CSS DVDs can be decrypted
-                                        if(inputOptical.Info.MediaType is MediaType.DVDROM or MediaType.DVDR
-                                            or MediaType.DVDRDL
-                                            or MediaType.DVDPR or MediaType.DVDPRDL &&
+                                        if(inputOptical.Info.MediaType is MediaType.DVDROM
+                                                                       or MediaType.DVDR
+                                                                       or MediaType.DVDRDL
+                                                                       or MediaType.DVDPR
+                                                                       or MediaType.DVDPRDL &&
                                            decrypt)
                                         {
                                             // Only sectors which are MPEG packets can be encrypted.
@@ -915,7 +941,8 @@ sealed class ConvertImageCommand : Command
                                                 if(sectorsToDo == 1)
                                                 {
                                                     if(inputOptical.ReadSectorTag(doneSectors + track.StartSector,
-                                                           SectorTagType.DvdSectorCmi, out cmi) ==
+                                                           SectorTagType.DvdSectorCmi,
+                                                           out cmi) ==
                                                        ErrorNumber.NoError &&
                                                        inputOptical.ReadSectorTag(doneSectors + track.StartSector,
                                                            SectorTagType.DvdTitleKeyDecrypted,
@@ -938,15 +965,16 @@ sealed class ConvertImageCommand : Command
                                                                 return idPlugins.Contains("iso9660 filesystem");
                                                             });
 
-                                                            if(plugins.ReadOnlyFilesystems.
-                                                                       TryGetValue("iso9660 filesystem",
+                                                            if(plugins.ReadOnlyFilesystems
+                                                                      .TryGetValue("iso9660 filesystem",
                                                                            out IReadOnlyFilesystem rofs))
                                                             {
                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
 
                                                                 generatedTitleKeys =
-                                                                    CSS.GenerateTitleKeys(inputOptical, partitions,
+                                                                    CSS.GenerateTitleKeys(inputOptical,
+                                                                        partitions,
                                                                         trackSectors,
                                                                         rofs);
                                                             }
@@ -955,13 +983,14 @@ sealed class ConvertImageCommand : Command
                                                         if(generatedTitleKeys != null)
                                                         {
                                                             sector = CSS.DecryptSector(sector,
-                                                                generatedTitleKeys.
-                                                                    Skip((int)(5 *
+                                                                generatedTitleKeys
+                                                                   .Skip((int)(5 *
                                                                                (doneSectors +
-                                                                                       track.
-                                                                                           StartSector))).
-                                                                    Take(5).
-                                                                    ToArray(), null);
+                                                                                       track
+                                                                                          .StartSector)))
+                                                                   .Take(5)
+                                                                   .ToArray(),
+                                                                null);
                                                         }
                                                     }
                                                 }
@@ -969,7 +998,8 @@ sealed class ConvertImageCommand : Command
                                                 {
                                                     if(inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
                                                            sectorsToDo,
-                                                           SectorTagType.DvdSectorCmi, out cmi) ==
+                                                           SectorTagType.DvdSectorCmi,
+                                                           out cmi) ==
                                                        ErrorNumber.NoError &&
                                                        inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
                                                            sectorsToDo,
@@ -993,15 +1023,16 @@ sealed class ConvertImageCommand : Command
                                                                 return idPlugins.Contains("iso9660 filesystem");
                                                             });
 
-                                                            if(plugins.ReadOnlyFilesystems.
-                                                                       TryGetValue("iso9660 filesystem",
+                                                            if(plugins.ReadOnlyFilesystems
+                                                                      .TryGetValue("iso9660 filesystem",
                                                                            out IReadOnlyFilesystem rofs))
                                                             {
                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                                                     UI.Generating_decryption_keys);
 
                                                                 generatedTitleKeys =
-                                                                    CSS.GenerateTitleKeys(inputOptical, partitions,
+                                                                    CSS.GenerateTitleKeys(inputOptical,
+                                                                        partitions,
                                                                         trackSectors,
                                                                         rofs);
                                                             }
@@ -1010,13 +1041,15 @@ sealed class ConvertImageCommand : Command
                                                         if(generatedTitleKeys != null)
                                                         {
                                                             sector = CSS.DecryptSector(sector,
-                                                                generatedTitleKeys.
-                                                                    Skip((int)(5 *
+                                                                generatedTitleKeys
+                                                                   .Skip((int)(5 *
                                                                                (doneSectors +
-                                                                                       track.
-                                                                                           StartSector))).
-                                                                    Take((int)(5 * sectorsToDo)).
-                                                                    ToArray(), null, sectorsToDo);
+                                                                                       track
+                                                                                          .StartSector)))
+                                                                   .Take((int)(5 * sectorsToDo))
+                                                                   .ToArray(),
+                                                                null,
+                                                                sectorsToDo);
                                                         }
                                                     }
                                                 }
@@ -1084,8 +1117,7 @@ sealed class ConvertImageCommand : Command
                             }
                         });
 
-            if(errno != ErrorNumber.NoError)
-                return (int)errno;
+            if(errno != ErrorNumber.NoError) return (int)errno;
 
             Dictionary<byte, string> isrcs                     = new();
             Dictionary<byte, byte>   trackFlags                = new();
@@ -1115,31 +1147,28 @@ sealed class ConvertImageCommand : Command
                     tracks[i].Indexes[idx.Key] = idx.Value;
             }
 
-            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.
-                                                      Where(t => t == SectorTagType.CdTrackIsrc).
-                                                      OrderBy(t => t))
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc)
+                                                     .OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
                     errno = inputOptical.ReadSectorTag(track.Sequence, tag, out byte[] isrc);
 
-                    if(errno != ErrorNumber.NoError)
-                        continue;
+                    if(errno != ErrorNumber.NoError) continue;
 
                     isrcs[(byte)track.Sequence] = Encoding.UTF8.GetString(isrc);
                 }
             }
 
-            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags.
-                                                      Where(t => t == SectorTagType.CdTrackFlags).
-                                                      OrderBy(t => t))
+            foreach(SectorTagType tag in inputOptical.Info.ReadableSectorTags
+                                                     .Where(t => t == SectorTagType.CdTrackFlags)
+                                                     .OrderBy(t => t))
             {
                 foreach(Track track in tracks)
                 {
                     errno = inputOptical.ReadSectorTag(track.Sequence, tag, out byte[] flags);
 
-                    if(errno != ErrorNumber.NoError)
-                        continue;
+                    if(errno != ErrorNumber.NoError) continue;
 
                     trackFlags[(byte)track.Sequence] = flags[0];
                 }
@@ -1147,8 +1176,7 @@ sealed class ConvertImageCommand : Command
 
             for(ulong s = 0; s < inputOptical.Info.Sectors; s++)
             {
-                if(s > int.MaxValue)
-                    break;
+                if(s > int.MaxValue) break;
 
                 subchannelExtents.Add((int)s);
             }
@@ -1175,16 +1203,15 @@ sealed class ConvertImageCommand : Command
                         continue;
                 }
 
-                if(force && !outputOptical.SupportedSectorTags.Contains(tag))
-                    continue;
+                if(force && !outputOptical.SupportedSectorTags.Contains(tag)) continue;
 
                 errno = ErrorNumber.NoError;
 
-                AnsiConsole.Progress().
-                            AutoClear(true).
-                            HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
                                 ProgressTask discTask = ctx.AddTask(UI.Converting_disc);
                                 discTask.MaxValue = inputOptical.Tracks.Count;
@@ -1192,7 +1219,8 @@ sealed class ConvertImageCommand : Command
                                 foreach(Track track in inputOptical.Tracks)
                                 {
                                     discTask.Description =
-                                        string.Format(UI.Converting_tags_in_track_0_of_1, discTask.Value + 1,
+                                        string.Format(UI.Converting_tags_in_track_0_of_1,
+                                                      discTask.Value + 1,
                                                       discTask.MaxValue);
 
                                     doneSectors = 0;
@@ -1272,11 +1300,13 @@ sealed class ConvertImageCommand : Command
                                             string.Format(UI.Converting_tag_3_for_sectors_0_to_1_in_track_2,
                                                           doneSectors + track.StartSector,
                                                           doneSectors + sectorsToDo + track.StartSector,
-                                                          track.Sequence, tag);
+                                                          track.Sequence,
+                                                          tag);
 
                                         if(sectorsToDo == 1)
                                         {
-                                            errno = inputOptical.ReadSectorTag(doneSectors + track.StartSector, tag,
+                                            errno = inputOptical.ReadSectorTag(doneSectors + track.StartSector,
+                                                                               tag,
                                                                                out sector);
 
                                             if(errno == ErrorNumber.NoError)
@@ -1286,25 +1316,34 @@ sealed class ConvertImageCommand : Command
                                                     bool indexesChanged =
                                                         CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                                             MmcSubchannel.Raw,
-                                                            sector, doneSectors + track.StartSector,
-                                                            1, null, isrcs, (byte)track.Sequence,
-                                                            ref mcn, tracks, subchannelExtents,
-                                                            fixSubchannelPosition, outputOptical,
-                                                            fixSubchannel, fixSubchannelCrc, null,
-                                                            null, smallestPregapLbaPerTrack, false,
+                                                            sector,
+                                                            doneSectors + track.StartSector,
+                                                            1,
+                                                            null,
+                                                            isrcs,
+                                                            (byte)track.Sequence,
+                                                            ref mcn,
+                                                            tracks,
+                                                            subchannelExtents,
+                                                            fixSubchannelPosition,
+                                                            outputOptical,
+                                                            fixSubchannel,
+                                                            fixSubchannelCrc,
+                                                            null,
+                                                            null,
+                                                            smallestPregapLbaPerTrack,
+                                                            false,
                                                             out _);
 
-                                                    if(indexesChanged)
-                                                        outputOptical.SetTracks(tracks.ToList());
+                                                    if(indexesChanged) outputOptical.SetTracks(tracks.ToList());
 
                                                     result = true;
                                                 }
                                                 else
                                                 {
-                                                    result =
-                                                        outputOptical.WriteSectorTag(sector,
-                                                            doneSectors + track.StartSector,
-                                                            tag);
+                                                    result = outputOptical.WriteSectorTag(sector,
+                                                        doneSectors + track.StartSector,
+                                                        tag);
                                                 }
                                             }
                                             else
@@ -1313,15 +1352,18 @@ sealed class ConvertImageCommand : Command
 
                                                 if(force)
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_continuing,
-                                                                       errno, doneSectors + track.StartSector);
+                                                    AaruConsole
+                                                       .ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_continuing,
+                                                                       errno,
+                                                                       doneSectors + track.StartSector);
                                                 }
                                                 else
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_not_continuing,
-                                                                       errno, doneSectors + track.StartSector);
+                                                    AaruConsole
+                                                       .ErrorWriteLine(UI
+                                                                          .Error_0_reading_tag_for_sector_1_not_continuing,
+                                                                       errno,
+                                                                       doneSectors + track.StartSector);
 
                                                     return;
                                                 }
@@ -1330,7 +1372,8 @@ sealed class ConvertImageCommand : Command
                                         else
                                         {
                                             errno = inputOptical.ReadSectorsTag(doneSectors + track.StartSector,
-                                                                                    sectorsToDo, tag,
+                                                                                    sectorsToDo,
+                                                                                    tag,
                                                                                     out sector);
 
                                             if(errno == ErrorNumber.NoError)
@@ -1340,25 +1383,35 @@ sealed class ConvertImageCommand : Command
                                                     bool indexesChanged =
                                                         CompactDisc.WriteSubchannelToImage(MmcSubchannel.Raw,
                                                             MmcSubchannel.Raw,
-                                                            sector, doneSectors + track.StartSector,
-                                                            sectorsToDo, null, isrcs,
-                                                            (byte)track.Sequence, ref mcn, tracks,
-                                                            subchannelExtents, fixSubchannelPosition,
-                                                            outputOptical, fixSubchannel,
-                                                            fixSubchannelCrc, null, null,
-                                                            smallestPregapLbaPerTrack, false, out _);
+                                                            sector,
+                                                            doneSectors + track.StartSector,
+                                                            sectorsToDo,
+                                                            null,
+                                                            isrcs,
+                                                            (byte)track.Sequence,
+                                                            ref mcn,
+                                                            tracks,
+                                                            subchannelExtents,
+                                                            fixSubchannelPosition,
+                                                            outputOptical,
+                                                            fixSubchannel,
+                                                            fixSubchannelCrc,
+                                                            null,
+                                                            null,
+                                                            smallestPregapLbaPerTrack,
+                                                            false,
+                                                            out _);
 
-                                                    if(indexesChanged)
-                                                        outputOptical.SetTracks(tracks.ToList());
+                                                    if(indexesChanged) outputOptical.SetTracks(tracks.ToList());
 
                                                     result = true;
                                                 }
                                                 else
                                                 {
-                                                    result =
-                                                        outputOptical.WriteSectorsTag(sector,
-                                                            doneSectors + track.StartSector,
-                                                            sectorsToDo, tag);
+                                                    result = outputOptical.WriteSectorsTag(sector,
+                                                        doneSectors + track.StartSector,
+                                                        sectorsToDo,
+                                                        tag);
                                                 }
                                             }
                                             else
@@ -1367,15 +1420,18 @@ sealed class ConvertImageCommand : Command
 
                                                 if(force)
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_continuing,
-                                                                       errno, doneSectors + track.StartSector);
+                                                    AaruConsole
+                                                       .ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_continuing,
+                                                                       errno,
+                                                                       doneSectors + track.StartSector);
                                                 }
                                                 else
                                                 {
-                                                    AaruConsole.
-                                                        ErrorWriteLine(UI.Error_0_reading_tag_for_sector_1_not_continuing,
-                                                                       errno, doneSectors + track.StartSector);
+                                                    AaruConsole
+                                                       .ErrorWriteLine(UI
+                                                                          .Error_0_reading_tag_for_sector_1_not_continuing,
+                                                                       errno,
+                                                                       doneSectors + track.StartSector);
 
                                                     return;
                                                 }
@@ -1386,15 +1442,15 @@ sealed class ConvertImageCommand : Command
                                         {
                                             if(force)
                                             {
-                                                AaruConsole.
-                                                    ErrorWriteLine(UI.Error_0_writing_tag_for_sector_1_continuing,
+                                                AaruConsole
+                                                   .ErrorWriteLine(UI.Error_0_writing_tag_for_sector_1_continuing,
                                                                    outputOptical.ErrorMessage,
                                                                    doneSectors + track.StartSector);
                                             }
                                             else
                                             {
-                                                AaruConsole.
-                                                    ErrorWriteLine(UI.Error_0_writing_tag_for_sector_1_not_continuing,
+                                                AaruConsole
+                                                   .ErrorWriteLine(UI.Error_0_writing_tag_for_sector_1_not_continuing,
                                                                    outputOptical.ErrorMessage,
                                                                    doneSectors + track.StartSector);
 
@@ -1413,15 +1469,15 @@ sealed class ConvertImageCommand : Command
                                 }
                             });
 
-                if(errno != ErrorNumber.NoError && !force)
-                    return (int)errno;
+                if(errno != ErrorNumber.NoError && !force) return (int)errno;
             }
 
             if(isrcs.Count > 0)
             {
                 foreach(KeyValuePair<byte, string> isrc in isrcs)
                 {
-                    outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key,
+                    outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value),
+                                                 isrc.Key,
                                                  SectorTagType.CdTrackIsrc);
                 }
             }
@@ -1431,27 +1487,56 @@ sealed class ConvertImageCommand : Command
                 foreach((byte track, byte flags) in trackFlags)
                 {
                     outputOptical.WriteSectorTag(new[]
-                    {
-                        flags
-                    }, track, SectorTagType.CdTrackFlags);
+                                                 {
+                                                     flags
+                                                 },
+                                                 track,
+                                                 SectorTagType.CdTrackFlags);
                 }
             }
 
-            if(mcn != null)
-                outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
+            if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
 
             // TODO: Progress
-            if(inputOptical.Info.MediaType is MediaType.CD or MediaType.CDDA or MediaType.CDG or MediaType.CDEG
-                                           or MediaType.CDI or MediaType.CDROM or MediaType.CDROMXA or MediaType.CDPLUS
-                                           or MediaType.CDMO or MediaType.CDR or MediaType.CDRW or MediaType.CDMRW
-                                           or MediaType.VCD or MediaType.SVCD or MediaType.PCD or MediaType.DTSCD
-                                           or MediaType.CDMIDI or MediaType.CDV or MediaType.CDIREADY
-                                           or MediaType.FMTOWNS or MediaType.PS1CD or MediaType.PS2CD
-                                           or MediaType.MEGACD or MediaType.SATURNCD or MediaType.GDROM or MediaType.GDR
-                                           or MediaType.MilCD or MediaType.SuperCDROM2 or MediaType.JaguarCD
-                                           or MediaType.ThreeDO or MediaType.PCFX or MediaType.NeoGeoCD
-                                           or MediaType.CDTV or MediaType.CD32 or MediaType.Playdia or MediaType.Pippin
-                                           or MediaType.VideoNow or MediaType.VideoNowColor or MediaType.VideoNowXp
+            if(inputOptical.Info.MediaType is MediaType.CD
+                                           or MediaType.CDDA
+                                           or MediaType.CDG
+                                           or MediaType.CDEG
+                                           or MediaType.CDI
+                                           or MediaType.CDROM
+                                           or MediaType.CDROMXA
+                                           or MediaType.CDPLUS
+                                           or MediaType.CDMO
+                                           or MediaType.CDR
+                                           or MediaType.CDRW
+                                           or MediaType.CDMRW
+                                           or MediaType.VCD
+                                           or MediaType.SVCD
+                                           or MediaType.PCD
+                                           or MediaType.DTSCD
+                                           or MediaType.CDMIDI
+                                           or MediaType.CDV
+                                           or MediaType.CDIREADY
+                                           or MediaType.FMTOWNS
+                                           or MediaType.PS1CD
+                                           or MediaType.PS2CD
+                                           or MediaType.MEGACD
+                                           or MediaType.SATURNCD
+                                           or MediaType.GDROM
+                                           or MediaType.GDR
+                                           or MediaType.MilCD
+                                           or MediaType.SuperCDROM2
+                                           or MediaType.JaguarCD
+                                           or MediaType.ThreeDO
+                                           or MediaType.PCFX
+                                           or MediaType.NeoGeoCD
+                                           or MediaType.CDTV
+                                           or MediaType.CD32
+                                           or MediaType.Playdia
+                                           or MediaType.Pippin
+                                           or MediaType.VideoNow
+                                           or MediaType.VideoNowColor
+                                           or MediaType.VideoNowXp
                                            or MediaType.CVD &&
                generateSubchannels)
             {
@@ -1459,8 +1544,16 @@ sealed class ConvertImageCommand : Command
                 {
                     ctx.AddTask(Localization.Core.Generating_subchannels).IsIndeterminate();
 
-                    CompactDisc.GenerateSubchannels(subchannelExtents, tracks, trackFlags, inputOptical.Info.Sectors,
-                                                    null, null, null, null, null, outputOptical);
+                    CompactDisc.GenerateSubchannels(subchannelExtents,
+                                                    tracks,
+                                                    trackFlags,
+                                                    inputOptical.Info.Sectors,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    null,
+                                                    outputOptical);
                 });
             }
         }
@@ -1475,8 +1568,10 @@ sealed class ConvertImageCommand : Command
                         ? (geometryValues.Value.cylinders, geometryValues.Value.heads, geometryValues.Value.sectors)
                         : (inputFormat.Info.Cylinders, inputFormat.Info.Heads, inputFormat.Info.SectorsPerTrack);
 
-                AaruConsole.WriteLine(UI.Setting_geometry_to_0_cylinders_1_heads_and_2_sectors_per_track, chs.cylinders,
-                                      chs.heads, chs.sectors);
+                AaruConsole.WriteLine(UI.Setting_geometry_to_0_cylinders_1_heads_and_2_sectors_per_track,
+                                      chs.cylinders,
+                                      chs.heads,
+                                      chs.sectors);
 
                 if(!outputMedia.SetGeometry(chs.cylinders, chs.heads, chs.sectors))
                 {
@@ -1487,11 +1582,11 @@ sealed class ConvertImageCommand : Command
 
             ErrorNumber errno = ErrorNumber.NoError;
 
-            AnsiConsole.Progress().
-                        AutoClear(true).
-                        HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
                             ProgressTask mediaTask = ctx.AddTask(UI.Converting_media);
                             mediaTask.MaxValue = inputFormat.Info.Sectors;
@@ -1532,7 +1627,8 @@ sealed class ConvertImageCommand : Command
 
                                         if(force)
                                         {
-                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno,
+                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing,
+                                                                       errno,
                                                                        doneSectors);
                                         }
                                         else
@@ -1563,7 +1659,8 @@ sealed class ConvertImageCommand : Command
 
                                         if(force)
                                         {
-                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno,
+                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing,
+                                                                       errno,
                                                                        doneSectors);
                                         }
                                         else
@@ -1588,7 +1685,8 @@ sealed class ConvertImageCommand : Command
                                     else
                                     {
                                         AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_not_continuing,
-                                                                   outputMedia.ErrorMessage, doneSectors);
+                                                                   outputMedia.ErrorMessage,
+                                                                   doneSectors);
 
                                         errno = ErrorNumber.WriteError;
 
@@ -1618,8 +1716,7 @@ sealed class ConvertImageCommand : Command
                                         continue;
                                 }
 
-                                if(force && !outputMedia.SupportedSectorTags.Contains(tag))
-                                    continue;
+                                if(force && !outputMedia.SupportedSectorTags.Contains(tag)) continue;
 
                                 doneSectors = 0;
 
@@ -1637,7 +1734,8 @@ sealed class ConvertImageCommand : Command
 
                                     tagsTask.Description = string.Format(UI.Converting_tag_2_for_sectors_0_to_1,
                                                                          doneSectors,
-                                                                         doneSectors + sectorsToDo, tag);
+                                                                         doneSectors + sectorsToDo,
+                                                                         tag);
 
                                     bool result;
 
@@ -1649,7 +1747,9 @@ sealed class ConvertImageCommand : Command
                                     {
                                         result = sectorsToDo == 1
                                                      ? outputMedia.WriteSectorTag(sector, doneSectors, tag)
-                                                     : outputMedia.WriteSectorsTag(sector, doneSectors, sectorsToDo,
+                                                     : outputMedia.WriteSectorsTag(sector,
+                                                         doneSectors,
+                                                         sectorsToDo,
                                                          tag);
                                     }
                                     else
@@ -1658,7 +1758,8 @@ sealed class ConvertImageCommand : Command
 
                                         if(force)
                                         {
-                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing, errno,
+                                            AaruConsole.ErrorWriteLine(UI.Error_0_reading_sector_1_continuing,
+                                                                       errno,
                                                                        doneSectors);
                                         }
                                         else
@@ -1676,12 +1777,14 @@ sealed class ConvertImageCommand : Command
                                         if(force)
                                         {
                                             AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_continuing,
-                                                                       outputMedia.ErrorMessage, doneSectors);
+                                                                       outputMedia.ErrorMessage,
+                                                                       doneSectors);
                                         }
                                         else
                                         {
                                             AaruConsole.ErrorWriteLine(UI.Error_0_writing_sector_1_not_continuing,
-                                                                       outputMedia.ErrorMessage, doneSectors);
+                                                                       outputMedia.ErrorMessage,
+                                                                       doneSectors);
 
                                             errno = ErrorNumber.WriteError;
 
@@ -1704,28 +1807,35 @@ sealed class ConvertImageCommand : Command
                                     {
                                         ErrorNumber error = inputFlux.SubTrackLength(head, track, out byte subTrackLen);
 
-                                        if(error != ErrorNumber.NoError)
-                                            continue;
+                                        if(error != ErrorNumber.NoError) continue;
 
                                         for(byte subTrackIndex = 0; subTrackIndex < subTrackLen; subTrackIndex++)
                                         {
-                                            error = inputFlux.CapturesLength(head, track, subTrackIndex,
+                                            error = inputFlux.CapturesLength(head,
+                                                                             track,
+                                                                             subTrackIndex,
                                                                              out uint capturesLen);
 
-                                            if(error != ErrorNumber.NoError)
-                                                continue;
+                                            if(error != ErrorNumber.NoError) continue;
 
                                             for(uint captureIndex = 0; captureIndex < capturesLen; captureIndex++)
                                             {
-                                                inputFlux.ReadFluxCapture(head, track, subTrackIndex, captureIndex,
+                                                inputFlux.ReadFluxCapture(head,
+                                                                          track,
+                                                                          subTrackIndex,
+                                                                          captureIndex,
                                                                           out ulong indexResolution,
                                                                           out ulong dataResolution,
                                                                           out byte[] indexBuffer,
                                                                           out byte[] dataBuffer);
 
-                                                outputFlux.WriteFluxCapture(indexResolution, dataResolution,
+                                                outputFlux.WriteFluxCapture(indexResolution,
+                                                                            dataResolution,
                                                                             indexBuffer,
-                                                                            dataBuffer, head, track, subTrackIndex,
+                                                                            dataBuffer,
+                                                                            head,
+                                                                            track,
+                                                                            subTrackIndex,
                                                                             captureIndex);
                                             }
                                         }
@@ -1733,8 +1843,7 @@ sealed class ConvertImageCommand : Command
                                 }
                             }
 
-                            if(inputTape == null || outputTape == null || !inputTape.IsTape)
-                                return;
+                            if(inputTape == null || outputTape == null || !inputTape.IsTape) return;
 
                             ProgressTask filesTask = ctx.AddTask(UI.Converting_files);
                             filesTask.MaxValue = inputTape.Files.Count;
@@ -1742,7 +1851,8 @@ sealed class ConvertImageCommand : Command
                             foreach(TapeFile tapeFile in inputTape.Files)
                             {
                                 filesTask.Description =
-                                    string.Format(UI.Converting_file_0_of_partition_1, tapeFile.File,
+                                    string.Format(UI.Converting_file_0_of_partition_1,
+                                                  tapeFile.File,
                                                   tapeFile.Partition);
 
                                 outputTape.AddFile(tapeFile);
@@ -1765,8 +1875,7 @@ sealed class ConvertImageCommand : Command
                             partitionTask.StopTask();
                         });
 
-            if(errno != ErrorNumber.NoError)
-                return (int)errno;
+            if(errno != ErrorNumber.NoError) return (int)errno;
         }
 
         if(resume != null || dumpHardware != null)
@@ -1776,13 +1885,11 @@ sealed class ConvertImageCommand : Command
                 ctx.AddTask(UI.Writing_dump_hardware_list).IsIndeterminate();
 
                 if(resume != null)
-                    ret = outputFormat.SetDumpHardware(resume.Tries);
-                else if(dumpHardware != null)
-                    ret = outputFormat.SetDumpHardware(dumpHardware);
+                    ret                           = outputFormat.SetDumpHardware(resume.Tries);
+                else if(dumpHardware != null) ret = outputFormat.SetDumpHardware(dumpHardware);
             });
 
-            if(ret)
-                AaruConsole.WriteLine(UI.Written_dump_hardware_list_to_output_image);
+            if(ret) AaruConsole.WriteLine(UI.Written_dump_hardware_list_to_output_image);
         }
 
         ret = false;
@@ -1794,13 +1901,11 @@ sealed class ConvertImageCommand : Command
                 ctx.AddTask(UI.Writing_metadata).IsIndeterminate();
 
                 if(sidecar != null)
-                    ret = outputFormat.SetMetadata(sidecar);
-                else if(metadata != null)
-                    ret = outputFormat.SetMetadata(metadata);
+                    ret                       = outputFormat.SetMetadata(sidecar);
+                else if(metadata != null) ret = outputFormat.SetMetadata(metadata);
             });
 
-            if(ret)
-                AaruConsole.WriteLine(UI.Written_Aaru_Metadata_to_output_image);
+            if(ret) AaruConsole.WriteLine(UI.Written_Aaru_Metadata_to_output_image);
         }
 
         var closed = false;

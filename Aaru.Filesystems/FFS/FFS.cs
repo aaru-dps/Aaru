@@ -29,8 +29,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Interfaces;
-using time_t = int;
-using ufs_daddr_t = int;
 
 namespace Aaru.Filesystems;
 

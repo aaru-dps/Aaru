@@ -75,7 +75,9 @@ public sealed partial class CloneCd
 
             _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
 
-            _dataStream = new FileStream(_writingBaseName + ".img", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+            _dataStream = new FileStream(_writingBaseName + ".img",
+                                         FileMode.OpenOrCreate,
+                                         FileAccess.ReadWrite,
                                          FileShare.None);
         }
         catch(IOException ex)
@@ -181,9 +183,9 @@ public sealed partial class CloneCd
             return false;
         }
 
-        _dataStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        _dataStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
 
@@ -223,9 +225,9 @@ public sealed partial class CloneCd
             return false;
         }
 
-        _dataStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        _dataStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         _dataStream.Write(data, 0, data.Length);
 
@@ -325,8 +327,7 @@ public sealed partial class CloneCd
         _descriptorStream.WriteLine("DataTracksScrambled=0");
         _descriptorStream.WriteLine("CDTextLength=0");
 
-        if(!string.IsNullOrEmpty(_catalog))
-            _descriptorStream.WriteLine("CATALOG={0}", _catalog);
+        if(!string.IsNullOrEmpty(_catalog)) _descriptorStream.WriteLine("CATALOG={0}", _catalog);
 
         for(var i = 1; i <= toc.LastCompleteSession; i++)
         {
@@ -372,11 +373,9 @@ public sealed partial class CloneCd
             long plba = MsfToLba((toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
                                   toc.TrackDescriptors[i].PFRAME));
 
-            if(alba > 405000)
-                alba = (alba - 405000 + 300) * -1;
+            if(alba > 405000) alba = (alba - 405000 + 300) * -1;
 
-            if(plba > 405000)
-                plba = (plba - 405000 + 300) * -1;
+            if(plba > 405000) plba = (plba - 405000 + 300) * -1;
 
             _descriptorStream.WriteLine("[Entry {0}]",      i);
             _descriptorStream.WriteLine("Session={0}",      toc.TrackDescriptors[i].SessionNumber);
@@ -475,13 +474,16 @@ public sealed partial class CloneCd
                 {
                     try
                     {
-                        _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
-                                                    FileAccess.ReadWrite, FileShare.None);
+                        _subStream = new FileStream(_writingBaseName + ".sub",
+                                                    FileMode.OpenOrCreate,
+                                                    FileAccess.ReadWrite,
+                                                    FileShare.None);
                     }
                     catch(IOException ex)
                     {
                         ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
                                                      ex.Message);
+
                         AaruConsole.WriteException(ex);
 
                         return false;
@@ -548,13 +550,16 @@ public sealed partial class CloneCd
                 {
                     try
                     {
-                        _subStream = new FileStream(_writingBaseName + ".sub", FileMode.OpenOrCreate,
-                                                    FileAccess.ReadWrite, FileShare.None);
+                        _subStream = new FileStream(_writingBaseName + ".sub",
+                                                    FileMode.OpenOrCreate,
+                                                    FileAccess.ReadWrite,
+                                                    FileShare.None);
                     }
                     catch(IOException ex)
                     {
                         ErrorMessage = string.Format(Localization.Could_not_create_subchannel_file_exception_0,
                                                      ex.Message);
+
                         AaruConsole.WriteException(ex);
 
                         return false;

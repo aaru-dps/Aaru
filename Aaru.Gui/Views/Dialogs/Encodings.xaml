@@ -31,30 +31,47 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Dialogs.Encodings"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="480"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Dialogs.Encodings"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <dialogs:EncodingsViewModel />
     </Design.DataContext>
     <Border Padding="15">
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="260" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <DataGrid ItemsSource="{Binding Encodings}" HorizontalScrollBarVisibility="Visible">
+            <DataGrid ItemsSource="{Binding Encodings}"
+                      HorizontalScrollBarVisibility="Visible">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{Binding CodeLabel}" Binding="{Binding Name}" Width="Auto"
+                    <DataGridTextColumn Header="{Binding CodeLabel}"
+                                        Binding="{Binding Name}"
+                                        Width="Auto"
                                         IsReadOnly="True" />
-                    <DataGridTextColumn Header="{Binding NameLabel}" Binding="{Binding DisplayName}" Width="Auto"
+                    <DataGridTextColumn Header="{Binding NameLabel}"
+                                        Binding="{Binding DisplayName}"
+                                        Width="Auto"
                                         IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
-            <Border Grid.Row="1" Padding="10">
-                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding CloseCommand}">
+            <Border Grid.Row="1"
+                    Padding="10">
+                <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding CloseCommand}">
                     <TextBlock Text="{Binding CloseLabel}" />
                 </Button>
             </Border>

@@ -92,8 +92,7 @@ public static class AppleRle
                     continue;
             }
 
-            if(inPosition == source.Length)
-                break;
+            if(inPosition == source.Length) break;
 
             while(true)
             {
@@ -101,8 +100,7 @@ public static class AppleRle
                 byte b2 = source[inPosition++];
                 var  s  = (short)(b1 << 8 | b2);
 
-                if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK)
-                    continue;
+                if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK) continue;
 
                 if(s < 0)
                 {

@@ -63,8 +63,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -106,8 +105,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -138,8 +136,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -174,8 +171,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -211,8 +207,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -254,8 +249,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -296,8 +290,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -333,8 +326,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -366,8 +358,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -395,8 +386,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -427,8 +417,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -458,8 +447,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -488,8 +476,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -517,8 +504,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -545,8 +531,7 @@ public sealed class OffsetStream : Stream
         if(start < 0)
             throw new ArgumentOutOfRangeException(nameof(start), Localization.Start_cant_be_a_negative_number);
 
-        if(end < 0)
-            throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
+        if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), Localization.End_cant_be_a_negative_number);
 
         _streamStart = start;
         _streamEnd   = end;
@@ -594,8 +579,7 @@ public sealed class OffsetStream : Stream
     /// <inheritdoc />
     public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
-        if(_baseStream.Position + count > _streamEnd)
-            count = (int)(_streamEnd - _baseStream.Position);
+        if(_baseStream.Position + count > _streamEnd) count = (int)(_streamEnd - _baseStream.Position);
 
         return _baseStream.BeginRead(buffer, offset, count, callback, state);
     }
@@ -603,8 +587,7 @@ public sealed class OffsetStream : Stream
     /// <inheritdoc />
     public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
     {
-        if(_baseStream.Position + count > _streamEnd)
-            throw new IOException(Localization.Cannot_write_past_stream_end);
+        if(_baseStream.Position + count > _streamEnd) throw new IOException(Localization.Cannot_write_past_stream_end);
 
         return _baseStream.BeginWrite(buffer, offset, count, callback, state);
     }
@@ -624,8 +607,7 @@ public sealed class OffsetStream : Stream
     /// <inheritdoc />
     public override void WriteByte(byte value)
     {
-        if(_baseStream.Position + 1 > _streamEnd)
-            throw new IOException(Localization.Cannot_write_past_stream_end);
+        if(_baseStream.Position + 1 > _streamEnd) throw new IOException(Localization.Cannot_write_past_stream_end);
 
         _baseStream.WriteByte(value);
     }
@@ -636,8 +618,7 @@ public sealed class OffsetStream : Stream
     /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
-        if(_baseStream.Position + count > _streamEnd + 1)
-            count = (int)(_streamEnd - _baseStream.Position);
+        if(_baseStream.Position + count > _streamEnd + 1) count = (int)(_streamEnd - _baseStream.Position);
 
         return _baseStream.EnsureRead(buffer, offset, count);
     }
@@ -648,8 +629,7 @@ public sealed class OffsetStream : Stream
         switch(origin)
         {
             case SeekOrigin.Begin:
-                if(offset + _streamStart > _streamEnd)
-                    throw new IOException(Localization.Cannot_seek_after_stream_end);
+                if(offset + _streamStart > _streamEnd) throw new IOException(Localization.Cannot_seek_after_stream_end);
 
                 return _baseStream.Seek(offset + _streamStart, SeekOrigin.Begin) - _streamStart;
             case SeekOrigin.End:
@@ -672,8 +652,7 @@ public sealed class OffsetStream : Stream
     /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count)
     {
-        if(_baseStream.Position + count > _streamEnd)
-            throw new IOException(Localization.Cannot_write_past_stream_end);
+        if(_baseStream.Position + count > _streamEnd) throw new IOException(Localization.Cannot_write_past_stream_end);
 
         _baseStream.Write(buffer, offset, count);
     }

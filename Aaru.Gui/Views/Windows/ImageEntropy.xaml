@@ -31,60 +31,85 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.ImageEntropy" Icon="/Assets/aaru-logo.png"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.ImageEntropy"
+        Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
         <windows:ImageEntropyViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <StackPanel IsVisible="{Binding OptionsVisible}" Orientation="Vertical">
-            <CheckBox IsEnabled="{Binding DuplicatedSectorsEnabled}" IsChecked="{Binding DuplicatedSectorsChecked}">
+        <StackPanel IsVisible="{Binding OptionsVisible}"
+                    Orientation="Vertical">
+            <CheckBox IsEnabled="{Binding DuplicatedSectorsEnabled}"
+                      IsChecked="{Binding DuplicatedSectorsChecked}">
                 <TextBlock Text="{Binding DuplicatedSectorsLabel}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding SeparatedTracksEnabled}" IsChecked="{Binding SeparatedTracksChecked}"
+            <CheckBox IsEnabled="{Binding SeparatedTracksEnabled}"
+                      IsChecked="{Binding SeparatedTracksChecked}"
                       IsVisible="{Binding SeparatedTracksVisible}">
                 <TextBlock Text="{Binding SeparatedTracksLabel}" />
             </CheckBox>
-            <CheckBox IsEnabled="{Binding WholeDiscEnabled}" IsChecked="{Binding WholeDiscChecked}"
+            <CheckBox IsEnabled="{Binding WholeDiscEnabled}"
+                      IsChecked="{Binding WholeDiscChecked}"
                       IsVisible="{Binding WholeDiscVisible}">
                 <TextBlock Text="{Binding WholeDiscLabel}" />
             </CheckBox>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
-            <TextBlock Text="{Binding MediaEntropyText}" IsVisible="{Binding MediaEntropyVisible}" />
-            <TextBlock Text="{Binding MediaUniqueSectorsText}" IsVisible="{Binding MediaUniqueSectorsVisible}" />
-            <TextBlock Text="{Binding TrackEntropyLabel}" IsVisible="{Binding SeparatedTracksEnabled}" />
-            <DataGrid IsVisible="{Binding SeparatedTracksEnabled}" ItemsSource="{Binding TrackEntropy}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ResultsVisible}">
+            <TextBlock Text="{Binding MediaEntropyText}"
+                       IsVisible="{Binding MediaEntropyVisible}" />
+            <TextBlock Text="{Binding MediaUniqueSectorsText}"
+                       IsVisible="{Binding MediaUniqueSectorsVisible}" />
+            <TextBlock Text="{Binding TrackEntropyLabel}"
+                       IsVisible="{Binding SeparatedTracksEnabled}" />
+            <DataGrid IsVisible="{Binding SeparatedTracksEnabled}"
+                      ItemsSource="{Binding TrackEntropy}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="{Binding TrackLabel}" Binding="{Binding Track}" />
-                    <DataGridTextColumn Header="{Binding EntropyLabel}" Binding="{Binding Entropy}" />
-                    <DataGridTextColumn Header="{Binding UniqueSectorsLabel}" Binding="{Binding UniqueSectors}" />
+                    <DataGridTextColumn Header="{Binding TrackLabel}"
+                                        Binding="{Binding Track}" />
+                    <DataGridTextColumn Header="{Binding EntropyLabel}"
+                                        Binding="{Binding Entropy}" />
+                    <DataGridTextColumn Header="{Binding UniqueSectorsLabel}"
+                                        Binding="{Binding UniqueSectors}" />
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}"
+                <ProgressBar Maximum="{Binding ProgressMax}"
+                             Value="{Binding ProgressValue}"
                              IsIndeterminate="{Binding ProgressIndeterminate}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBlock Text="{Binding Progress2Text}" />
-                <ProgressBar Maximum="{Binding Progress2Max}" Value="{Binding Progress2Value}"
+                <ProgressBar Maximum="{Binding Progress2Max}"
+                             Value="{Binding Progress2Value}"
                              IsIndeterminate="{Binding Progress2Indeterminate}" />
             </StackPanel>
         </StackPanel>
-        <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
+        <Button Command="{Binding StartCommand}"
+                IsVisible="{Binding StartVisible}">
             <TextBlock Text="{Binding StartLabel}" />
         </Button>
-        <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
+        <Button Command="{Binding CloseCommand}"
+                IsVisible="{Binding CloseVisible}">
             <TextBlock Text="{Binding CloseLabel}" />
         </Button>
-        <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}">
+        <Button Command="{Binding StopCommand}"
+                IsVisible="{Binding StopVisible}">
             <TextBlock Text="{Binding StopLabel}" />
         </Button>
     </StackPanel>

@@ -53,8 +53,7 @@ public sealed partial class Dim
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < DATA_OFFSET)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < DATA_OFFSET) return ErrorNumber.InvalidArgument;
 
         long diskSize = stream.Length - DATA_OFFSET;
 
@@ -67,8 +66,7 @@ public sealed partial class Dim
         stream.Seek(0xC2, SeekOrigin.Begin);
         stream.EnsureRead(_comment, 0, 60);
 
-        if(!_headerId.SequenceEqual(_hdrId))
-            return ErrorNumber.InvalidArgument;
+        if(!_headerId.SequenceEqual(_hdrId)) return ErrorNumber.InvalidArgument;
 
         _imageInfo.MediaType = MediaType.Unknown;
 
@@ -84,8 +82,7 @@ public sealed partial class Dim
                     return ErrorNumber.NotSupported;
                 }
 
-                if(diskSize / (2 * 8 * 1024) == 77)
-                    _imageInfo.MediaType = MediaType.SHARP_525;
+                if(diskSize / (2 * 8 * 1024) == 77) _imageInfo.MediaType = MediaType.SHARP_525;
 
                 _imageInfo.SectorSize = 1024;
 
@@ -101,8 +98,7 @@ public sealed partial class Dim
                     return ErrorNumber.NotSupported;
                 }
 
-                if(diskSize / (2 * 9 * 512) == 80)
-                    _imageInfo.MediaType = MediaType.SHARP_525_9;
+                if(diskSize / (2 * 9 * 512) == 80) _imageInfo.MediaType = MediaType.SHARP_525_9;
 
                 _imageInfo.SectorSize = 512;
 
@@ -118,8 +114,7 @@ public sealed partial class Dim
                     return ErrorNumber.NotSupported;
                 }
 
-                if(diskSize / (2 * 15 * 512) == 80)
-                    _imageInfo.MediaType = MediaType.DOS_525_HD;
+                if(diskSize / (2 * 15 * 512) == 80) _imageInfo.MediaType = MediaType.DOS_525_HD;
 
                 _imageInfo.SectorSize = 512;
 
@@ -135,8 +130,7 @@ public sealed partial class Dim
                     return ErrorNumber.NotSupported;
                 }
 
-                if(diskSize / (2 * 9 * 512) == 80)
-                    _imageInfo.MediaType = MediaType.SHARP_35_9;
+                if(diskSize / (2 * 9 * 512) == 80) _imageInfo.MediaType = MediaType.SHARP_35_9;
 
                 _imageInfo.SectorSize = 512;
 
@@ -152,8 +146,7 @@ public sealed partial class Dim
                     return ErrorNumber.NotSupported;
                 }
 
-                if(diskSize / (2 * 18 * 512) == 80)
-                    _imageInfo.MediaType = MediaType.DOS_35_HD;
+                if(diskSize / (2 * 18 * 512) == 80) _imageInfo.MediaType = MediaType.DOS_35_HD;
 
                 _imageInfo.SectorSize = 512;
 
@@ -163,15 +156,13 @@ public sealed partial class Dim
             case DiskType.N88:
                 if(diskSize % (2 * 26 * 256) == 0)
                 {
-                    if(diskSize % (2 * 26 * 256) == 77)
-                        _imageInfo.MediaType = MediaType.NEC_8_DD;
+                    if(diskSize % (2 * 26 * 256) == 77) _imageInfo.MediaType = MediaType.NEC_8_DD;
 
                     _imageInfo.SectorSize = 256;
                 }
                 else if(diskSize % (2 * 26 * 128) == 0)
                 {
-                    if(diskSize % (2 * 26 * 128) == 77)
-                        _imageInfo.MediaType = MediaType.NEC_8_SD;
+                    if(diskSize % (2 * 26 * 128) == 77) _imageInfo.MediaType = MediaType.NEC_8_SD;
 
                     _imageInfo.SectorSize = 256;
                 }
@@ -255,11 +246,9 @@ public sealed partial class Dim
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

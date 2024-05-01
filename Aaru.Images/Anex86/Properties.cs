@@ -44,6 +44,7 @@ public sealed partial class Anex86
 #region IWritableImage Members
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

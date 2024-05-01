@@ -103,8 +103,11 @@ sealed class RemoteCommand : Command
         {
             var remote = new Remote(new Uri(host));
 
-            Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
-                                 remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+            Statistics.AddRemote(remote.ServerApplication,
+                                 remote.ServerVersion,
+                                 remote.ServerOperatingSystem,
+                                 remote.ServerOperatingSystemVersion,
+                                 remote.ServerArchitecture);
 
             Table table = new()
             {

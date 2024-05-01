@@ -134,21 +134,22 @@ public sealed partial class MediaScan
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
-                    if(_aborted)
-                        break;
+                    if(_aborted) break;
 
-                    if(results.Blocks - i < blocksToRead)
-                        blocksToRead = (byte)(results.Blocks - i);
+                    if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
 
-                    if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
-                        results.MaxSpeed = currentSpeed;
+                    if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                    if(currentSpeed < results.MinSpeed && currentSpeed > 0)
-                        results.MinSpeed = currentSpeed;
+                    if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-                    UpdateProgress?.
-                        Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2, i, results.Blocks, ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
-                               (long)i, (long)results.Blocks);
+                    UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                         i,
+                                                         results.Blocks,
+                                                         ByteSize.FromMegabytes(currentSpeed)
+                                                                 .Per(_oneSecond)
+                                                                 .Humanize()),
+                                           (long)i,
+                                           (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
@@ -191,8 +192,7 @@ public sealed partial class MediaScan
                         ScanUnreadable?.Invoke(i);
                         results.Errored += blocksToRead;
 
-                        for(ulong b = i; b < i + blocksToRead; b++)
-                            results.UnreadableSectors.Add(b);
+                        for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                         mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
@@ -203,8 +203,7 @@ public sealed partial class MediaScan
 
                     double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                    if(elapsed <= 0)
-                        continue;
+                    if(elapsed <= 0) continue;
 
                     currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
@@ -217,7 +216,11 @@ public sealed partial class MediaScan
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(_dev, results.Blocks, blockSize, _scanStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev,
+                             results.Blocks,
+                             blockSize,
+                             _scanStopwatch.Elapsed.TotalSeconds,
+                             currentSpeed                             * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
 
@@ -227,8 +230,7 @@ public sealed partial class MediaScan
                 {
                     for(var i = 0; i < seekTimes; i++)
                     {
-                        if(_aborted)
-                            break;
+                        if(_aborted) break;
 
                         var seekPos = (uint)rnd.Next((int)results.Blocks);
 
@@ -236,11 +238,9 @@ public sealed partial class MediaScan
 
                         ataReader.Seek(seekPos, out seekCur);
 
-                        if(seekCur > results.SeekMax && seekCur > 0)
-                            results.SeekMax = seekCur;
+                        if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin && seekCur > 0)
-                            results.SeekMin = seekCur;
+                        if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;
                         GC.Collect();
@@ -268,20 +268,19 @@ public sealed partial class MediaScan
                     {
                         for(byte sc = 1; sc < sectors; sc++)
                         {
-                            if(_aborted)
-                                break;
+                            if(_aborted) break;
 
-                            if(currentSpeed > results.MaxSpeed && currentSpeed > 0)
-                                results.MaxSpeed = currentSpeed;
+                            if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                            if(currentSpeed < results.MinSpeed && currentSpeed > 0)
-                                results.MinSpeed = currentSpeed;
+                            if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
                             PulseProgress?.Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3,
-                                                                cy, hd, sc,
-                                                                ByteSize.FromMegabytes(currentSpeed).
-                                                                         Per(_oneSecond).
-                                                                         Humanize()));
+                                                                cy,
+                                                                hd,
+                                                                sc,
+                                                                ByteSize.FromMegabytes(currentSpeed)
+                                                                        .Per(_oneSecond)
+                                                                        .Humanize()));
 
                             bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
 
@@ -334,8 +333,7 @@ public sealed partial class MediaScan
 
                             double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                            if(elapsed <= 0)
-                                continue;
+                            if(elapsed <= 0) continue;
 
                             currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                             ScanSpeed?.Invoke(currentBlock, currentSpeed           * 1024);
@@ -350,7 +348,11 @@ public sealed partial class MediaScan
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(_dev, results.Blocks, blockSize, _scanStopwatch.Elapsed.TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev,
+                             results.Blocks,
+                             blockSize,
+                             _scanStopwatch.Elapsed.TotalSeconds,
+                             currentSpeed                             * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
 
@@ -360,23 +362,22 @@ public sealed partial class MediaScan
                 {
                     for(var i = 0; i < seekTimes; i++)
                     {
-                        if(_aborted)
-                            break;
+                        if(_aborted) break;
 
                         var seekCy = (ushort)rnd.Next(cylinders);
                         var seekHd = (byte)rnd.Next(heads);
                         var seekSc = (byte)rnd.Next(sectors);
 
                         PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_cylinder_0_head_1_sector_2,
-                                                            seekCy, seekHd, seekSc));
+                                                            seekCy,
+                                                            seekHd,
+                                                            seekSc));
 
                         ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
-                        if(seekCur > results.SeekMax && seekCur > 0)
-                            results.SeekMax = seekCur;
+                        if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin && seekCur > 0)
-                            results.SeekMin = seekCur;
+                        if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;
                         GC.Collect();

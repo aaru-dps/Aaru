@@ -87,9 +87,10 @@ public class FileSystem
                                                                                        : null,
                                                                                ClusterSize = cicm.ClusterSize,
                                                                                Clusters    = cicm.Clusters,
-                                                                               Files = cicm.FilesSpecified
-                                                                                   ? cicm.Files
-                                                                                   : null,
+                                                                               Files =
+                                                                                   cicm.FilesSpecified
+                                                                                       ? cicm.Files
+                                                                                       : null,
                                                                                Bootable     = cicm.Bootable,
                                                                                VolumeSerial = cicm.VolumeSerial,
                                                                                VolumeName   = cicm.VolumeName,

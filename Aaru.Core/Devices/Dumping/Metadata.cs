@@ -93,8 +93,7 @@ partial class Dump
         Metadata sidecar = _sidecarClass.Create();
         _sidecarStopwatch.Stop();
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         totalChkDuration = _sidecarStopwatch.Elapsed.TotalMilliseconds;
 
@@ -102,9 +101,9 @@ partial class Dump
                            _sidecarStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         _dumpLog.WriteLine(Localization.Core.Average_checksum_speed_0,
-                           ByteSize.FromBytes(blockSize * (blocks + 1)).
-                                    Per(totalChkDuration.Milliseconds()).
-                                    Humanize());
+                           ByteSize.FromBytes(blockSize * (blocks + 1))
+                                   .Per(totalChkDuration.Milliseconds())
+                                   .Humanize());
 
         if(_preSidecar != null)
         {
@@ -130,8 +129,8 @@ partial class Dump
                                                   {
                                                       o.start,
                                                       o.type
-                                                  }).
-                                                  Distinct())
+                                                  })
+                                                 .Distinct())
                 _dumpLog.WriteLine(Localization.Core.Found_filesystem_0_at_sector_1, filesystem.type, filesystem.start);
         }
 
@@ -143,13 +142,12 @@ partial class Dump
         sidecar.OpticalDiscs[0].Sessions     = (uint)sessions;
         sidecar.OpticalDiscs[0].Layers       = layers;
 
-        if(discOffset.HasValue)
-            sidecar.OpticalDiscs[0].Offset = (int)(discOffset / 4);
+        if(discOffset.HasValue) sidecar.OpticalDiscs[0].Offset = (int)(discOffset / 4);
 
         if(mediaTags != null)
         {
-            foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.SupportedMediaTags.
-                                                                                  Contains(tag.Key)))
+            foreach(KeyValuePair<MediaTagType, byte[]> tag in
+                    mediaTags.Where(tag => _outputPlugin.SupportedMediaTags.Contains(tag.Key)))
                 AddMediaTagToSidecar(_outputPath, tag.Key, tag.Value, ref sidecar);
         }
 
@@ -157,10 +155,13 @@ partial class Dump
 
         var jsonFs = new FileStream(_outputPrefix + ".metadata.json", FileMode.Create);
 
-        JsonSerializer.Serialize(jsonFs, new MetadataJson
-        {
-            AaruMetadata = sidecar
-        }, typeof(MetadataJson), MetadataJsonContext.Default);
+        JsonSerializer.Serialize(jsonFs,
+                                 new MetadataJson
+                                 {
+                                     AaruMetadata = sidecar
+                                 },
+                                 typeof(MetadataJson),
+                                 MetadataJsonContext.Default);
 
         jsonFs.Close();
     }

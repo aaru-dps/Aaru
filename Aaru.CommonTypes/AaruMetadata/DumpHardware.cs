@@ -58,8 +58,7 @@ public class DumpHardware
     [Obsolete("Will be removed in Aaru 7")]
     public static implicit operator DumpHardware(DumpHardwareType cicm)
     {
-        if(cicm is null)
-            return null;
+        if(cicm is null) return null;
 
         var hw = new DumpHardware
         {
@@ -71,13 +70,11 @@ public class DumpHardware
             Software     = cicm.Software
         };
 
-        if(cicm.Extents is null)
-            return hw;
+        if(cicm.Extents is null) return hw;
 
         hw.Extents = new List<Extent>();
 
-        foreach(ExtentType ext in cicm.Extents)
-            hw.Extents.Add(ext);
+        foreach(ExtentType ext in cicm.Extents) hw.Extents.Add(ext);
 
         return hw;
     }

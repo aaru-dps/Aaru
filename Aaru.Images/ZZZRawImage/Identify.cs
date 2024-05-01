@@ -90,11 +90,9 @@ public sealed partial class ZZZRawImage
         }
 
         // Check if file is not multiple of 512
-        if(imageFilter.DataForkLength % 512 == 0)
-            return true;
+        if(imageFilter.DataForkLength % 512 == 0) return true;
 
-        if(_extension == ".hdf" && imageFilter.DataForkLength % 256 == 0)
-            return true;
+        if(_extension == ".hdf" && imageFilter.DataForkLength % 256 == 0) return true;
 
         // Only for single track data CDs
         if(imageFilter.DataForkLength % 2352 == 0 && imageFilter.DataForkLength <= 846720000 ||
@@ -111,7 +109,7 @@ public sealed partial class ZZZRawImage
         // Check known disk sizes with sectors smaller than 512
         switch(imageFilter.DataForkLength)
         {
-        #region Commodore
+#region Commodore
 
             case 174848:
             case 175531:
@@ -119,7 +117,7 @@ public sealed partial class ZZZRawImage
             case 351062:
             case 822400:
 
-        #endregion Commodore
+#endregion Commodore
 
             case 81664:
             case 116480:

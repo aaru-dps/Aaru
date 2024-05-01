@@ -46,29 +46,23 @@ public sealed partial class NILFS2
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbAddr + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
         Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -83,31 +77,25 @@ public sealed partial class NILFS2
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         uint sbAddr = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
         Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
-        if(nilfsSb.magic != NILFS2_MAGIC)
-            return;
+        if(nilfsSb.magic != NILFS2_MAGIC) return;
 
         var sb = new StringBuilder();
 
@@ -126,17 +114,17 @@ public sealed partial class NILFS2
         sb.AppendFormat(Localization._0_bytes_per_inode, nilfsSb.inode_size).AppendLine();
         sb.AppendFormat(Localization.Volume_UUID_0,      nilfsSb.uuid).AppendLine();
 
-        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(nilfsSb.volume_name, encoding))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_created_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_mounted_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.mtime))
+          .AppendLine();
 
-        sb.AppendFormat(Localization.Volume_last_written_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_written_on_0, DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime))
+          .AppendLine();
 
         information = sb.ToString();
 
@@ -150,8 +138,7 @@ public sealed partial class NILFS2
             ModificationDate = DateHandlers.UnixUnsignedToDateTime(nilfsSb.wtime)
         };
 
-        if(nilfsSb.creator_os == 0)
-            metadata.SystemIdentifier = "Linux";
+        if(nilfsSb.creator_os == 0) metadata.SystemIdentifier = "Linux";
 
         metadata.Clusters = nilfsSb.dev_size / metadata.ClusterSize;
     }

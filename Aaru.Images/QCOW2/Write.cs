@@ -119,8 +119,7 @@ public sealed partial class Qcow2
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -128,44 +127,37 @@ public sealed partial class Qcow2
 
         _l2Mask = 0;
 
-        for(var i = 0; i < _l2Bits; i++)
-            _l2Mask = (_l2Mask << 1) + 1;
+        for(var i = 0; i < _l2Bits; i++) _l2Mask = (_l2Mask << 1) + 1;
 
         _l2Mask <<= (int)_qHdr.cluster_bits;
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _qHdr.cluster_bits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _qHdr.cluster_bits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         _qHdr.l1_size = (uint)((long)_qHdr.size + (1 << _l1Shift) - 1 >> _l1Shift);
 
-        if(_qHdr.l1_size == 0)
-            _qHdr.l1_size = 1;
+        if(_qHdr.l1_size == 0) _qHdr.l1_size = 1;
 
         _l1Table = new ulong[_qHdr.l1_size];
 
         ulong clusters       = _qHdr.size   / (ulong)_clusterSize;
         ulong refCountBlocks = clusters * 2 / (ulong)_clusterSize;
 
-        if(clusters * 2 % (ulong)_clusterSize > 0)
-            refCountBlocks++;
+        if(clusters * 2 % (ulong)_clusterSize > 0) refCountBlocks++;
 
-        if(refCountBlocks == 0)
-            refCountBlocks = 1;
+        if(refCountBlocks == 0) refCountBlocks = 1;
 
         _qHdr.refcount_table_offset   = (ulong)_clusterSize;
         _qHdr.refcount_table_clusters = (uint)(refCountBlocks * 8 / (ulong)_clusterSize);
 
-        if(_qHdr.refcount_table_clusters == 0)
-            _qHdr.refcount_table_clusters = 1;
+        if(_qHdr.refcount_table_clusters == 0) _qHdr.refcount_table_clusters = 1;
 
         _refCountTable        = new ulong[refCountBlocks];
         _qHdr.l1_table_offset = _qHdr.refcount_table_offset + (ulong)(_qHdr.refcount_table_clusters * _clusterSize);
         ulong l1TableClusters = _qHdr.l1_size * 8 / (ulong)_clusterSize;
 
-        if(l1TableClusters == 0)
-            l1TableClusters = 1;
+        if(l1TableClusters == 0) l1TableClusters = 1;
 
         var empty = new byte[_qHdr.l1_table_offset + l1TableClusters * (ulong)_clusterSize];
         _writingStream.Write(empty, 0, empty.Length);
@@ -209,8 +201,7 @@ public sealed partial class Qcow2
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -218,7 +209,8 @@ public sealed partial class Qcow2
 
         if((long)l1Off >= _l1Table.LongLength)
         {
-            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1, l1Off,
+            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1,
+                                         l1Off,
                                          _l1Table.LongLength);
 
             return false;
@@ -275,9 +267,11 @@ public sealed partial class Qcow2
         _writingStream.Seek((long)(refBlockOffset + refCountBlockIndex), SeekOrigin.Begin);
 
         _writingStream.Write(new byte[]
-        {
-            0, 1
-        }, 0, 2);
+                             {
+                                 0, 1
+                             },
+                             0,
+                             2);
 
         ErrorMessage = "";
 
@@ -310,16 +304,14 @@ public sealed partial class Qcow2
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         for(uint i = 0; i < length; i++)
         {
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -384,8 +376,7 @@ public sealed partial class Qcow2
 
         _writingStream.Seek((long)_qHdr.l1_table_offset, SeekOrigin.Begin);
 
-        for(long i = 0; i < _l1Table.LongLength; i++)
-            _l1Table[i] = Swapping.Swap(_l1Table[i]);
+        for(long i = 0; i < _l1Table.LongLength; i++) _l1Table[i] = Swapping.Swap(_l1Table[i]);
 
         byte[] l1TableB = MemoryMarshal.Cast<ulong, byte>(_l1Table).ToArray();
         _writingStream.Write(l1TableB, 0, l1TableB.Length);

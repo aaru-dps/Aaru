@@ -58,8 +58,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
         _atapi = atapiIdentify;
         _view  = view;
 
-        if(ataIdentify == null && atapiIdentify == null)
-            return;
+        if(ataIdentify == null && atapiIdentify == null) return;
 
         if(ataIdentify != null)
         {
@@ -127,15 +126,13 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
 
         if(_ata != null)
-            saveFs.Write(_ata, 0, _ata.Length);
-        else if(_atapi != null)
-            saveFs.Write(_atapi, 0, _atapi.Length);
+            saveFs.Write(_ata,                       0, _ata.Length);
+        else if(_atapi != null) saveFs.Write(_atapi, 0, _atapi.Length);
 
         saveFs.Close();
     }
@@ -155,8 +152,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         string result = await dlgSaveText.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);

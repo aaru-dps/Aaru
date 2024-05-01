@@ -55,23 +55,22 @@ public sealed class EncodingsViewModel : ViewModelBase
 
         Task.Run(() =>
         {
-            var encodings = Encoding.GetEncodings().
-                                     Select(info => new EncodingModel
+            var encodings = Encoding.GetEncodings()
+                                    .Select(info => new EncodingModel
                                      {
                                          Name        = info.Name,
                                          DisplayName = info.GetEncoding().EncodingName
-                                     }).
-                                     ToList();
+                                     })
+                                    .ToList();
 
-            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().
-                                       Select(info => new EncodingModel
+            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
+                                      .Select(info => new EncodingModel
                                        {
                                            Name        = info.Name,
                                            DisplayName = info.DisplayName
                                        }));
 
-            foreach(EncodingModel encoding in encodings.OrderBy(t => t.DisplayName))
-                Encodings.Add(encoding);
+            foreach(EncodingModel encoding in encodings.OrderBy(t => t.DisplayName)) Encodings.Add(encoding);
         });
     }
 

@@ -79,13 +79,11 @@ public sealed class AppleMap : IPartition
 
         partitions = new List<Partition>();
 
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] ddmSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         ushort maxDrivers = 61;
 
@@ -134,8 +132,7 @@ public sealed class AppleMap : IPartition
 
                     AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
 
-                    if(ddm.sbMap[i].ddSize == 0)
-                        continue;
+                    if(ddm.sbMap[i].ddSize == 0) continue;
 
                     var part = new Partition
                     {
@@ -147,8 +144,7 @@ public sealed class AppleMap : IPartition
                         Type     = "Apple_Driver"
                     };
 
-                    if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0)
-                        part.Length++;
+                    if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0) part.Length++;
 
                     partitions.Add(part);
 
@@ -159,8 +155,7 @@ public sealed class AppleMap : IPartition
 
         errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] partSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         AppleOldDevicePartitionMap oldMap =
             Marshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
@@ -176,19 +171,24 @@ public sealed class AppleMap : IPartition
                 AppleMapOldPartitionEntry oldEntry =
                     Marshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdStart = {0}",
+                                           oldEntry.pdStart,
                                            (i - 2) / 12);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdSize = {0}",
+                                           oldEntry.pdSize,
                                            (i - 2) / 12);
 
-                AaruConsole.DebugWriteLine(MODULE_NAME, "old_map.sbMap[{1}].pdFSID = 0x{0:X8}", oldEntry.pdFSID,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
+                                           oldEntry.pdFSID,
                                            (i - 2) / 12);
 
                 if(oldEntry is { pdSize: 0, pdFSID: 0 })
                 {
-                    if(oldEntry.pdStart == 0)
-                        break;
+                    if(oldEntry.pdStart == 0) break;
 
                     continue;
                 }
@@ -268,8 +268,7 @@ public sealed class AppleMap : IPartition
 
         errno = imagePlugin.ReadSectors(sectorOffset, sectorsToRead, out byte[] entries);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "entry_size = {0}",      entrySize);
         AaruConsole.DebugWriteLine(MODULE_NAME, "entry_count = {0}",     entryCount);
@@ -286,8 +285,7 @@ public sealed class AppleMap : IPartition
             Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
-            if(entry.signature != APM_MAGIC)
-                continue;
+            if(entry.signature != APM_MAGIC) continue;
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
@@ -295,10 +293,14 @@ public sealed class AppleMap : IPartition
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].start = {1}",          i, entry.start);
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].sectors = {1}",        i, entry.sectors);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].name = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].name = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.name));
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].type = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].type = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.type));
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_data_block = {1}", i, entry.first_data_block);
@@ -320,15 +322,16 @@ public sealed class AppleMap : IPartition
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].processor = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].processor = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.processor));
 
             var flags = (AppleMapFlags)entry.flags;
 
             // BeOS doesn't mark its partitions as valid
             //if(flags.HasFlag(AppleMapFlags.Valid) &&
-            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" || entry.sectors <= 0)
-                continue;
+            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" || entry.sectors <= 0) continue;
 
             var sb = new StringBuilder();
 
@@ -346,28 +349,22 @@ public sealed class AppleMap : IPartition
 
             sb.AppendLine(Localization.Partition_flags);
 
-            if(flags.HasFlag(AppleMapFlags.Valid))
-                sb.AppendLine(Localization.Partition_is_valid);
+            if(flags.HasFlag(AppleMapFlags.Valid)) sb.AppendLine(Localization.Partition_is_valid);
 
-            if(flags.HasFlag(AppleMapFlags.Allocated))
-                sb.AppendLine(Localization.Partition_entry_is_allocated);
+            if(flags.HasFlag(AppleMapFlags.Allocated)) sb.AppendLine(Localization.Partition_entry_is_allocated);
 
-            if(flags.HasFlag(AppleMapFlags.InUse))
-                sb.AppendLine(Localization.Partition_is_in_use);
+            if(flags.HasFlag(AppleMapFlags.InUse)) sb.AppendLine(Localization.Partition_is_in_use);
 
-            if(flags.HasFlag(AppleMapFlags.Bootable))
-                sb.AppendLine(Localization.Partition_is_bootable);
+            if(flags.HasFlag(AppleMapFlags.Bootable)) sb.AppendLine(Localization.Partition_is_bootable);
 
-            if(flags.HasFlag(AppleMapFlags.Readable))
-                sb.AppendLine(Localization.Partition_is_readable);
+            if(flags.HasFlag(AppleMapFlags.Readable)) sb.AppendLine(Localization.Partition_is_readable);
 
-            if(flags.HasFlag(AppleMapFlags.Writable))
-                sb.AppendLine(Localization.Partition_is_writable);
+            if(flags.HasFlag(AppleMapFlags.Writable)) sb.AppendLine(Localization.Partition_is_writable);
 
             if(flags.HasFlag(AppleMapFlags.Bootable))
             {
-                sb.AppendFormat(Localization.First_boot_sector_0, entry.first_boot_block * entrySize / sectorSize).
-                   AppendLine();
+                sb.AppendFormat(Localization.First_boot_sector_0, entry.first_boot_block * entrySize / sectorSize)
+                  .AppendLine();
 
                 sb.AppendFormat(Localization.Boot_is_0_bytes, entry.boot_size).AppendLine();
                 sb.AppendFormat(Localization.Boot_load_address_0_X8, entry.load_address).AppendLine();
@@ -390,8 +387,10 @@ public sealed class AppleMap : IPartition
             // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
             else if(partition.Start < imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cutting_last_partition_end_0_to_media_size_1,
-                                           partition.End, imagePlugin.Info.Sectors - 1);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Cutting_last_partition_end_0_to_media_size_1,
+                                           partition.End,
+                                           imagePlugin.Info.Sectors - 1);
 
                 partition.Length = imagePlugin.Info.Sectors - partition.Start;
                 partitions.Add(partition);
@@ -401,7 +400,8 @@ public sealed class AppleMap : IPartition
             {
                 AaruConsole.DebugWriteLine(MODULE_NAME,
                                            Localization.Not_adding_partition_because_start_0_is_outside_media_size_1,
-                                           partition.Start, imagePlugin.Info.Sectors - 1);
+                                           partition.Start,
+                                           imagePlugin.Info.Sectors - 1);
             }
         }
 

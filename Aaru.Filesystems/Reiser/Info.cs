@@ -45,29 +45,23 @@ public sealed partial class Reiser : IFilesystem
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
-        if(partition.Start + sbAddr + sbSize >= partition.End)
-            return false;
+        if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return false;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return false;
 
         Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -84,26 +78,21 @@ public sealed partial class Reiser : IFilesystem
         information =   "";
         metadata    =   new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         uint sbAddr = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
 
-        if(sbAddr == 0)
-            sbAddr = 1;
+        if(sbAddr == 0) sbAddr = 1;
 
         var sbSize = (uint)(Marshal.SizeOf<Superblock>() / imagePlugin.Info.SectorSize);
 
-        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0)
-            sbSize++;
+        if(Marshal.SizeOf<Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
         ErrorNumber errno = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
-        if(sector.Length < Marshal.SizeOf<Superblock>())
-            return;
+        if(sector.Length < Marshal.SizeOf<Superblock>()) return;
 
         Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -118,22 +107,18 @@ public sealed partial class Reiser : IFilesystem
             sb.AppendLine(Localization.Reiser_3_5_filesystem);
         else if(_magic36.SequenceEqual(reiserSb.magic))
             sb.AppendLine(Localization.Reiser_3_6_filesystem);
-        else if(_magicJr.SequenceEqual(reiserSb.magic))
-            sb.AppendLine(Localization.Reiser_Jr_filesystem);
+        else if(_magicJr.SequenceEqual(reiserSb.magic)) sb.AppendLine(Localization.Reiser_Jr_filesystem);
 
-        sb.AppendFormat(Localization.Volume_has_0_blocks_with_1_blocks_free, reiserSb.block_count,
-                        reiserSb.free_blocks).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_has_0_blocks_with_1_blocks_free, reiserSb.block_count, reiserSb.free_blocks)
+          .AppendLine();
 
         sb.AppendFormat(Localization._0_bytes_per_block,                reiserSb.blocksize).AppendLine();
         sb.AppendFormat(Localization.Root_directory_resides_on_block_0, reiserSb.root_block).AppendLine();
 
-        if(reiserSb.umount_state == 2)
-            sb.AppendLine(Localization.Volume_has_not_been_cleanly_umounted);
+        if(reiserSb.umount_state == 2) sb.AppendLine(Localization.Volume_has_not_been_cleanly_umounted);
 
-        sb.AppendFormat(Localization.Volume_last_checked_on_0,
-                        DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check)).
-           AppendLine();
+        sb.AppendFormat(Localization.Volume_last_checked_on_0, DateHandlers.UnixUnsignedToDateTime(reiserSb.last_check))
+          .AppendLine();
 
         if(reiserSb.version >= 2)
         {
@@ -152,8 +137,7 @@ public sealed partial class Reiser : IFilesystem
             Dirty        = reiserSb.umount_state == 2
         };
 
-        if(reiserSb.version < 2)
-            return;
+        if(reiserSb.version < 2) return;
 
         metadata.VolumeName   = StringHandlers.CToString(reiserSb.label, encoding);
         metadata.VolumeSerial = reiserSb.uuid.ToString();

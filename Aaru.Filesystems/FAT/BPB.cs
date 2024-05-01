@@ -384,9 +384,9 @@ public sealed partial class FAT
             var rootMs = new MemoryStream();
 
             foreach(ulong rootSector in new ulong[]
-                {
-                    0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
-                })
+                    {
+                        0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20
+                    })
             {
                 imagePlugin.ReadSector(rootSector, out byte[] tmp);
                 rootMs.Write(tmp, 0, tmp.Length);
@@ -410,8 +410,7 @@ public sealed partial class FAT
                     break;
                 }
 
-                if(!validRootDir)
-                    break;
+                if(!validRootDir) break;
             }
 
             if(z80Di == 0xF3                   &&
@@ -792,8 +791,7 @@ public sealed partial class FAT
             return BpbKind.Atari;
         }
 
-        if(!useApricotBpb)
-            return BpbKind.None;
+        if(!useApricotBpb) return BpbKind.None;
 
         fakeBpb.bps      = apricotBpb.mainBPB.bps;
         fakeBpb.spc      = apricotBpb.mainBPB.spc;

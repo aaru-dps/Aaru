@@ -51,13 +51,11 @@ public sealed partial class ISO9660
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = Stat(path, out FileEntryInfo stat);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         attributes = stat.Attributes;
 
@@ -69,19 +67,15 @@ public sealed partial class ISO9660
     {
         node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
-        if(entry.Flags.HasFlag(FileFlags.Directory) && !_debug)
-            return ErrorNumber.IsDirectory;
+        if(entry.Flags.HasFlag(FileFlags.Directory) && !_debug) return ErrorNumber.IsDirectory;
 
-        if(entry.Extents is null)
-            return ErrorNumber.InvalidArgument;
+        if(entry.Extents is null) return ErrorNumber.InvalidArgument;
 
         node = new Iso9660FileNode
         {
@@ -97,11 +91,9 @@ public sealed partial class ISO9660
     /// <inheritdoc />
     public ErrorNumber CloseFile(IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(node is not Iso9660FileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not Iso9660FileNode mynode) return ErrorNumber.InvalidArgument;
 
         mynode.Dentry = null;
 
@@ -114,29 +106,28 @@ public sealed partial class ISO9660
     {
         read = 0;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(buffer is null || buffer.Length < length)
-            return ErrorNumber.InvalidArgument;
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
 
-        if(node is not Iso9660FileNode mynode)
-            return ErrorNumber.InvalidArgument;
+        if(node is not Iso9660FileNode mynode) return ErrorNumber.InvalidArgument;
 
         read = length;
 
-        if(length + mynode.Offset >= mynode.Length)
-            read = mynode.Length - mynode.Offset;
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
 
         long offset = mynode.Offset + mynode.Dentry.XattrLength * _blockSize;
 
         if(mynode.Dentry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) != true ||
            mynode.Dentry.Extents.Count                                                 != 1)
         {
-            ErrorNumber err = ReadWithExtents(offset, read, mynode.Dentry.Extents,
+            ErrorNumber err = ReadWithExtents(offset,
+                                              read,
+                                              mynode.Dentry.Extents,
                                               mynode.Dentry.XA?.signature == XA_MAGIC &&
                                               mynode.Dentry.XA?.attributes.HasFlag(XaAttributes.Interleaved) == true,
-                                              mynode.Dentry.XA?.filenumber ?? 0, out byte[] buf);
+                                              mynode.Dentry.XA?.filenumber ?? 0,
+                                              out byte[] buf);
 
             if(err != ErrorNumber.NoError)
             {
@@ -158,11 +149,11 @@ public sealed partial class ISO9660
             long offsetInSector = offset                  % 2352;
             long sizeInSectors  = (read + offsetInSector) / 2352;
 
-            if((read + offsetInSector) % 2352 > 0)
-                sizeInSectors++;
+            if((read + offsetInSector) % 2352 > 0) sizeInSectors++;
 
             ErrorNumber errno = _image.ReadSectorsLong((ulong)(mynode.Dentry.Extents[0].extent + firstSector),
-                                                       (uint)sizeInSectors, out byte[] buf);
+                                                       (uint)sizeInSectors,
+                                                       out byte[] buf);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -193,13 +184,11 @@ public sealed partial class ISO9660
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
         stat = new FileEntryInfo
         {
@@ -211,17 +200,13 @@ public sealed partial class ISO9660
             LastWriteTimeUtc = entry.Timestamp
         };
 
-        if(entry.Extents?.Count > 0)
-            stat.Inode = entry.Extents[0].extent;
+        if(entry.Extents?.Count > 0) stat.Inode = entry.Extents[0].extent;
 
-        if(entry.Size % 2048 > 0)
-            stat.Blocks++;
+        if(entry.Size % 2048 > 0) stat.Blocks++;
 
-        if(entry.Flags.HasFlag(FileFlags.Directory))
-            stat.Attributes |= FileAttributes.Directory;
+        if(entry.Flags.HasFlag(FileFlags.Directory)) stat.Attributes |= FileAttributes.Directory;
 
-        if(entry.Flags.HasFlag(FileFlags.Hidden))
-            stat.Attributes |= FileAttributes.Hidden;
+        if(entry.Flags.HasFlag(FileFlags.Hidden)) stat.Attributes |= FileAttributes.Hidden;
 
         if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias) == true)
             stat.Attributes |= FileAttributes.Alias;
@@ -250,28 +235,21 @@ public sealed partial class ISO9660
         if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle) == true)
             stat.Attributes |= FileAttributes.Bundle;
 
-        if(entry.AppleIcon != null)
-            stat.Attributes |= FileAttributes.HasCustomIcon;
+        if(entry.AppleIcon != null) stat.Attributes |= FileAttributes.HasCustomIcon;
 
         if(entry.XA != null)
         {
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupExecute))
-                stat.Mode |= 8;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupExecute)) stat.Mode |= 8;
 
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupRead))
-                stat.Mode |= 32;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupRead)) stat.Mode |= 32;
 
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerExecute))
-                stat.Mode |= 64;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerExecute)) stat.Mode |= 64;
 
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerRead))
-                stat.Mode |= 256;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerRead)) stat.Mode |= 256;
 
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemExecute))
-                stat.Mode |= 1;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemExecute)) stat.Mode |= 1;
 
-            if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemRead))
-                stat.Mode |= 4;
+            if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemRead)) stat.Mode |= 4;
 
             stat.UID   = entry.XA.Value.user;
             stat.GID   = entry.XA.Value.group;
@@ -288,11 +266,9 @@ public sealed partial class ISO9660
             if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Character))
                 stat.Attributes |= FileAttributes.CharDevice;
 
-            if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Pipe))
-                stat.Attributes |= FileAttributes.Pipe;
+            if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Pipe)) stat.Attributes |= FileAttributes.Pipe;
 
-            if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Socket))
-                stat.Attributes |= FileAttributes.Socket;
+            if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Socket)) stat.Attributes |= FileAttributes.Socket;
 
             if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Symlink))
                 stat.Attributes |= FileAttributes.Symlink;
@@ -312,8 +288,7 @@ public sealed partial class ISO9660
             if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Character))
                 stat.Attributes |= FileAttributes.CharDevice;
 
-            if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Pipe))
-                stat.Attributes |= FileAttributes.Pipe;
+            if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Pipe)) stat.Attributes |= FileAttributes.Pipe;
 
             if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Socket))
                 stat.Attributes |= FileAttributes.Socket;
@@ -328,32 +303,23 @@ public sealed partial class ISO9660
 
         if(entry.AmigaProtection != null)
         {
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec))
-                stat.Mode |= 8;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) stat.Mode |= 8;
 
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead))
-                stat.Mode |= 32;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) stat.Mode |= 32;
 
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite))
-                stat.Mode |= 16;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) stat.Mode |= 16;
 
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec))
-                stat.Mode |= 1;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) stat.Mode |= 1;
 
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead))
-                stat.Mode |= 4;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) stat.Mode |= 4;
 
-            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite))
-                stat.Mode |= 2;
+            if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode |= 2;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec))
-                stat.Mode |= 64;
+            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode |= 64;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead))
-                stat.Mode |= 256;
+            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode |= 256;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite))
-                stat.Mode |= 128;
+            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;
 
             if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Archive))
                 stat.Attributes |= FileAttributes.Archive;
@@ -365,52 +331,39 @@ public sealed partial class ISO9660
                             entry.PosixDeviceNumber.Value.dev_t_low;
         }
 
-        if(entry.RripModify != null)
-            stat.LastWriteTimeUtc = DecodeIsoDateTime(entry.RripModify);
+        if(entry.RripModify != null) stat.LastWriteTimeUtc = DecodeIsoDateTime(entry.RripModify);
 
-        if(entry.RripAccess != null)
-            stat.AccessTimeUtc = DecodeIsoDateTime(entry.RripAccess);
+        if(entry.RripAccess != null) stat.AccessTimeUtc = DecodeIsoDateTime(entry.RripAccess);
 
-        if(entry.RripAttributeChange != null)
-            stat.StatusChangeTimeUtc = DecodeIsoDateTime(entry.RripAttributeChange);
+        if(entry.RripAttributeChange != null) stat.StatusChangeTimeUtc = DecodeIsoDateTime(entry.RripAttributeChange);
 
-        if(entry.RripBackup != null)
-            stat.BackupTimeUtc = DecodeIsoDateTime(entry.RripBackup);
+        if(entry.RripBackup != null) stat.BackupTimeUtc = DecodeIsoDateTime(entry.RripBackup);
 
-        if(entry.SymbolicLink != null)
-            stat.Attributes |= FileAttributes.Symlink;
+        if(entry.SymbolicLink != null) stat.Attributes |= FileAttributes.Symlink;
 
-        if(entry.XattrLength == 0 || _cdi || _highSierra)
-            return ErrorNumber.NoError;
+        if(entry.XattrLength == 0 || _cdi || _highSierra) return ErrorNumber.NoError;
 
         if(entry.CdiSystemArea != null)
         {
             stat.UID = entry.CdiSystemArea.Value.owner;
             stat.GID = entry.CdiSystemArea.Value.group;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupExecute))
-                stat.Mode |= 8;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupExecute)) stat.Mode |= 8;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupRead))
-                stat.Mode |= 32;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupRead)) stat.Mode |= 32;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherExecute))
-                stat.Mode |= 1;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherExecute)) stat.Mode |= 1;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherRead))
-                stat.Mode |= 4;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherRead)) stat.Mode |= 4;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerExecute))
-                stat.Mode |= 64;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerExecute)) stat.Mode |= 64;
 
-            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerRead))
-                stat.Mode |= 256;
+            if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerRead)) stat.Mode |= 256;
         }
 
         ErrorNumber errno = ReadSingleExtent(entry.XattrLength * _blockSize, entry.Extents[0].extent, out byte[] ea);
 
-        if(errno != ErrorNumber.NoError)
-            return ErrorNumber.NoError;
+        if(errno != ErrorNumber.NoError) return ErrorNumber.NoError;
 
         ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
@@ -419,23 +372,17 @@ public sealed partial class ISO9660
 
         stat.Mode = 0;
 
-        if(ear.permissions.HasFlag(Permissions.GroupExecute))
-            stat.Mode |= 8;
+        if(ear.permissions.HasFlag(Permissions.GroupExecute)) stat.Mode |= 8;
 
-        if(ear.permissions.HasFlag(Permissions.GroupRead))
-            stat.Mode |= 32;
+        if(ear.permissions.HasFlag(Permissions.GroupRead)) stat.Mode |= 32;
 
-        if(ear.permissions.HasFlag(Permissions.OwnerExecute))
-            stat.Mode |= 64;
+        if(ear.permissions.HasFlag(Permissions.OwnerExecute)) stat.Mode |= 64;
 
-        if(ear.permissions.HasFlag(Permissions.OwnerRead))
-            stat.Mode |= 256;
+        if(ear.permissions.HasFlag(Permissions.OwnerRead)) stat.Mode |= 256;
 
-        if(ear.permissions.HasFlag(Permissions.OtherExecute))
-            stat.Mode |= 1;
+        if(ear.permissions.HasFlag(Permissions.OtherExecute)) stat.Mode |= 1;
 
-        if(ear.permissions.HasFlag(Permissions.OtherRead))
-            stat.Mode |= 4;
+        if(ear.permissions.HasFlag(Permissions.OtherRead)) stat.Mode |= 4;
 
         stat.CreationTimeUtc  = DateHandlers.Iso9660ToDateTime(ear.creation_date);
         stat.LastWriteTimeUtc = DateHandlers.Iso9660ToDateTime(ear.modification_date);
@@ -450,11 +397,9 @@ public sealed partial class ISO9660
 
         ErrorNumber err = GetFileEntry(path, out DecodedDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
-        if(entry.SymbolicLink is null)
-            return ErrorNumber.InvalidArgument;
+        if(entry.SymbolicLink is null) return ErrorNumber.InvalidArgument;
 
         dest = entry.SymbolicLink;
 
@@ -472,12 +417,12 @@ public sealed partial class ISO9660
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
-        if(pieces.Length == 0)
-            return ErrorNumber.InvalidArgument;
+        if(pieces.Length == 0) return ErrorNumber.InvalidArgument;
 
         var parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
@@ -485,8 +430,7 @@ public sealed partial class ISO9660
         {
             ErrorNumber err = OpenDir(parentPath, out IDirNode node);
 
-            if(err != ErrorNumber.NoError)
-                return err;
+            if(err != ErrorNumber.NoError) return err;
 
             CloseDir(node);
         }
@@ -495,8 +439,7 @@ public sealed partial class ISO9660
 
         if(pieces.Length == 1)
             parent = _rootDirectoryCache;
-        else if(!_directoryCache.TryGetValue(parentPath, out parent))
-            return ErrorNumber.InvalidArgument;
+        else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
         KeyValuePair<string, DecodedDirectoryEntry> dirent =
             parent.FirstOrDefault(t => t.Key.Equals(pieces[^1], StringComparison.CurrentCultureIgnoreCase));
@@ -508,8 +451,7 @@ public sealed partial class ISO9660
                 dirent = parent.FirstOrDefault(t => t.Key.Equals(pieces[^1] + ";1",
                                                                  StringComparison.CurrentCultureIgnoreCase));
 
-                if(string.IsNullOrEmpty(dirent.Key))
-                    return ErrorNumber.NoSuchFile;
+                if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
             }
             else
                 return ErrorNumber.NoSuchFile;
@@ -522,18 +464,27 @@ public sealed partial class ISO9660
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     ErrorNumber ReadSingleExtent(long size, uint startingSector, out byte[] buffer, bool interleaved = false,
-                                 byte fileNumber = 0) => ReadWithExtents(0, size, new List<(uint extent, uint size)>
-    {
-        (startingSector, (uint)size)
-    }, interleaved, fileNumber, out buffer);
+                                 byte fileNumber = 0) => ReadWithExtents(0,
+                                                                         size,
+                                                                         new List<(uint extent, uint size)>
+                                                                         {
+                                                                             (startingSector, (uint)size)
+                                                                         },
+                                                                         interleaved,
+                                                                         fileNumber,
+                                                                         out buffer);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     ErrorNumber ReadSingleExtent(long offset,              long size, uint startingSector, out byte[] buffer,
-                                 bool interleaved = false, byte fileNumber = 0) => ReadWithExtents(offset, size,
+                                 bool interleaved = false, byte fileNumber = 0) => ReadWithExtents(offset,
+        size,
         new List<(uint extent, uint size)>
         {
             (startingSector, (uint)size)
-        }, interleaved, fileNumber, out buffer);
+        },
+        interleaved,
+        fileNumber,
+        out buffer);
 
     // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
     ErrorNumber ReadWithExtents(long offset,     long size, List<(uint extent, uint size)> extents, bool interleaved,
@@ -556,7 +507,9 @@ public sealed partial class ISO9660
 
             while(leftExtentSize > 0)
             {
-                ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector, out byte[] sector, interleaved,
+                ErrorNumber errno = ReadSector(extents[i].extent + currentExtentSector,
+                                               out byte[] sector,
+                                               interleaved,
                                                fileNumber);
 
                 if(errno != ErrorNumber.NoError)
@@ -593,16 +546,13 @@ public sealed partial class ISO9660
                 leftExtentSize -= sector.Length;
                 currentFilePos += sector.Length;
 
-                if(ms.Length >= size)
-                    break;
+                if(ms.Length >= size) break;
             }
 
-            if(ms.Length >= size)
-                break;
+            if(ms.Length >= size) break;
         }
 
-        if(ms.Length >= size)
-            ms.SetLength(size);
+        if(ms.Length >= size) ms.SetLength(size);
 
         buffer = ms.ToArray();
 
@@ -621,10 +571,10 @@ public sealed partial class ISO9660
             while(leftExtentSize > 0)
             {
                 ErrorNumber errno = _image.ReadSectorTag((extents[i].extent + currentExtentSector) * _blockSize / 2048,
-                                                         SectorTagType.CdSectorSubHeader, out byte[] fullSector);
+                                                         SectorTagType.CdSectorSubHeader,
+                                                         out byte[] fullSector);
 
-                if(errno != ErrorNumber.NoError)
-                    return null;
+                if(errno != ErrorNumber.NoError) return null;
 
                 ms.Write(fullSector, copy ? 0 : 4, 4);
 

@@ -82,8 +82,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         SaveEvpdPageCommand      = ReactiveCommand.Create(ExecuteSaveEvpdPageCommand);
         SaveMmcFeaturesCommand   = ReactiveCommand.Create(ExecuteSaveMmcFeaturesCommand);
 
-        if(InquiryData == null || !scsiInquiry.HasValue)
-            return;
+        if(InquiryData == null || !scsiInquiry.HasValue) return;
 
         ScsiInquiryText = Decoders.SCSI.Inquiry.Prettify(scsiInquiry);
 
@@ -513,51 +512,51 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdDecodedPage = EVPD.DecodePageB4(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                                  ToLowerInvariant().
-                                                  Trim() ==
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
                                    "quantum":
                         evpdPageTitle   = UI.Quantum_Firmware_Build_Information_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                                  ToLowerInvariant().
-                                                  Trim() ==
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
                                    "seagate":
                         evpdPageTitle   = UI.Seagate_Firmware_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
 
                         break;
-                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                                  ToLowerInvariant().
-                                                  Trim() ==
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
                                    "ibm":
                         evpdPageTitle   = UI.IBM_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
 
                         break;
-                    case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                                  ToLowerInvariant().
-                                                  Trim() ==
+                    case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
                                    "ibm":
                         evpdPageTitle   = UI.IBM_Drive_Serial_Numbers_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
 
                         break;
                     case 0xC0 or 0xC1
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                            ToLowerInvariant().
-                                            Trim() ==
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
                              "certance":
                         evpdPageTitle   = UI.Certance_Drive_Component_Revision_Levels_page;
                         evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
 
                         break;
                     case 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                            ToLowerInvariant().
-                                            Trim() ==
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
                              "certance":
                         evpdPageTitle = page.Key switch
                                         {
@@ -573,9 +572,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
                         break;
                     case 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5
-                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                            ToLowerInvariant().
-                                            Trim() ==
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
                              "hp":
                         evpdPageTitle = page.Key switch
                                         {
@@ -591,9 +590,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
 
                         break;
-                    case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).
-                                                  ToLowerInvariant().
-                                                  Trim() ==
+                    case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
                                    "certance":
                         evpdPageTitle   = UI.Certance_drive_status_page;
                         evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
@@ -601,13 +600,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         break;
                     default:
                     {
-                        if(page.Key == 0x00)
-                            continue;
+                        if(page.Key == 0x00) continue;
 
                         evpdPageTitle   = string.Format(UI.Page_0_h, page.Key);
                         evpdDecodedPage = UI.Undecoded;
 
-                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Found_undecoded_SCSI_VPD_page_0,
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Core.Found_undecoded_SCSI_VPD_page_0,
                                                    page.Key);
 
                         break;
@@ -623,14 +622,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
             }
         }
 
-        if(_configuration == null)
-            return;
+        if(_configuration == null) return;
 
         Features.SeparatedFeatures ftr = Features.Separate(_configuration);
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_length_is_0, ftr.DataLength);
 
-        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_current_profile_is_0,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Core.GET_CONFIGURATION_current_profile_is_0,
                                    ftr.CurrentProfile);
 
         if(ftr.Descriptors != null)
@@ -734,11 +733,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedModeSensePage;
         set
         {
-            if(value == _selectedModeSensePage)
-                return;
+            if(value == _selectedModeSensePage) return;
 
-            if(value is ScsiPageModel pageModel)
-                ModeSensePageText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) ModeSensePageText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedModeSensePage, value);
         }
@@ -755,11 +752,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedEvpdPage;
         set
         {
-            if(value == _selectedEvpdPage)
-                return;
+            if(value == _selectedEvpdPage) return;
 
-            if(value is ScsiPageModel pageModel)
-                EvpdPageText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) EvpdPageText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedEvpdPage, value);
         }
@@ -776,11 +771,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedMmcFeature;
         set
         {
-            if(value == _selectedMmcFeature)
-                return;
+            if(value == _selectedMmcFeature) return;
 
-            if(value is ScsiPageModel pageModel)
-                MmcFeatureText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) MmcFeatureText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedMmcFeature, value);
         }
@@ -821,8 +814,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(InquiryData, 0, InquiryData.Length);
@@ -845,8 +837,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveText.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
@@ -869,8 +860,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_scsiModeSense6, 0, _scsiModeSense6.Length);
@@ -893,8 +883,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_scsiModeSense10, 0, _scsiModeSense10.Length);
@@ -904,8 +893,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveEvpdPageCommand()
     {
-        if(SelectedEvpdPage is not ScsiPageModel pageModel)
-            return;
+        if(SelectedEvpdPage is not ScsiPageModel pageModel) return;
 
         var dlgSaveBinary = new SaveFileDialog();
 
@@ -920,8 +908,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(pageModel.Data, 0, pageModel.Data.Length);
@@ -944,8 +931,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(_configuration, 0, _configuration.Length);

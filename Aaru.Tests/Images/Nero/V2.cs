@@ -552,7 +552,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 3455936,
             Md5       = "692148a01b4204160b088141fb52bd70",
             LongMd5   = "692148a01b4204160b088141fb52bd70",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -583,7 +582,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 2295104,
             Md5       = "759e9c19389aee07f88a994132b6f8d9",
             LongMd5   = "759e9c19389aee07f88a994132b6f8d9",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -614,7 +612,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 1218960,
             Md5       = "c22b7796791cd4299d74863ed04496c6",
             LongMd5   = "c22b7796791cd4299d74863ed04496c6",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -645,7 +642,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 2236704,
             Md5       = "00b1d7c5e9855959a4d2f6b796aeaf4c",
             LongMd5   = "00b1d7c5e9855959a4d2f6b796aeaf4c",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -676,7 +672,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 2146368,
             Md5       = "106f141400355476b499213f36a363f9",
             LongMd5   = "106f141400355476b499213f36a363f9",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1343,7 +1338,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 279196,
             Md5       = "cce718c0d4d60eb9a0571cd0ae7e2ff2",
             LongMd5   = "cce718c0d4d60eb9a0571cd0ae7e2ff2",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1443,7 +1437,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 279196,
             Md5       = "5c30e6a6fa2e85751a2e1592fbf3245d",
             LongMd5   = "5c30e6a6fa2e85751a2e1592fbf3245d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1543,7 +1536,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 82704,
             Md5       = "dac40e24aeccfe416a044bf9502d2b7e",
             LongMd5   = "dac40e24aeccfe416a044bf9502d2b7e",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1562,7 +1554,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 83072,
             Md5       = "a412c13e81a4044407a81ad794095306",
             LongMd5   = "a412c13e81a4044407a81ad794095306",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1581,7 +1572,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 82695,
             Md5       = "b14ace0656db97360e21bc9d7d3d5109",
             LongMd5   = "5793b471f2ef0087af63facba9485bee",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1601,7 +1591,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 82695,
             Md5       = "b14ace0656db97360e21bc9d7d3d5109",
             LongMd5   = "5793b471f2ef0087af63facba9485bee",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1621,7 +1610,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 83068,
             Md5       = "05dcbde7856dae96bb1fcff7d02fdb96",
             LongMd5   = "bf5a216352b7a025fb98d76b38afbe3d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1641,7 +1629,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 83068,
             Md5       = "05dcbde7856dae96bb1fcff7d02fdb96",
             LongMd5   = "bf5a216352b7a025fb98d76b38afbe3d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1661,7 +1648,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85364,
             Md5       = "331c02751e4c2fd505fffa163b1bc361",
             LongMd5   = "12f448affe38c96311c9de4633f787e1",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1681,7 +1667,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85364,
             Md5       = "52df6748a9436452e6a024d6d43cc5fb",
             LongMd5   = "ed6f139b0e763690d84b1f4aba2a6b78",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1701,7 +1686,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85364,
             Md5       = "45703870e27a99cdc5ee486f9b919209",
             LongMd5   = "d9ed9c8bafd5f218d3b7f6aee6be2d44",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1721,7 +1705,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85364,
             Md5       = "56392a983981f9e222ea18807934a3d4",
             LongMd5   = "9cbd519fe328fcb206c1786fbbfeeb87",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1741,7 +1724,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "ee86f608a9276e4bc267b8c66907ada4",
             LongMd5   = "f92ebc7cd69e2e060db761eba6582d67",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1761,7 +1743,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "6fbd06e26bbeb49b19434b8630b4711d",
             LongMd5   = "68692050b99c94dc61c38c2b315ac8f5",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1781,7 +1762,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85368,
             Md5       = "408ff544e060baa6b67cce490aba1f77",
             LongMd5   = "c48e0ec4b399399507e1da52e569db33",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1801,7 +1781,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85368,
             Md5       = "79fc10eb1b87a95cc46581a6680fed02",
             LongMd5   = "1ba7ebd3904756d07f28c8cca5df3176",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1821,7 +1800,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85366,
             Md5       = "cfd56ea81d9927f3bd84303e2e46f3d0",
             LongMd5   = "5906fae5ed3eae8b34d7b1c3768254f3",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1841,7 +1819,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85366,
             Md5       = "45a74e0240eafd4a25f3719fcb63c423",
             LongMd5   = "5d2ebb99b0aaaacd08294f910b95ea25",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1861,7 +1838,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "a36f10b5881798f73a60dcabfdbda2e5",
             LongMd5   = "cbef2b2fa29347456f2d2c6aadf0a65a",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1881,7 +1857,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "20484d666fdb7be5cb4783853f1d5e11",
             LongMd5   = "3fd901634fca7ec9979b69ae8b242d5c",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1901,7 +1876,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85370,
             Md5       = "477788d0e383b9dbd9bf179c6eae1950",
             LongMd5   = "b688819e815a7dea55ab894666d98a36",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1921,7 +1895,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85370,
             Md5       = "884633f3720b20c36c2f56032456ff42",
             LongMd5   = "520c0da95e556285f264055309d0643d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1941,7 +1914,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85366,
             Md5       = "8703cbb59eb1dfb6f7b3748f9e410698",
             LongMd5   = "750009655962df0f01d3261ed71e2b06",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1961,7 +1933,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85366,
             Md5       = "5a8ee84276bdf1b1d0b07b64639892a4",
             LongMd5   = "2b89eb05149632731bc07aef7bd85518",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -1981,7 +1952,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "b88ca672a6f86f84072a626b62ba9f14",
             LongMd5   = "131c8da49d40e850f4e956cc8770445d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2001,7 +1971,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "7b7558a98a0ade5e3d5046eb24983c2b",
             LongMd5   = "2d625d5192a506cf2baf91f8b04ff722",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2021,7 +1990,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85370,
             Md5       = "2b96f44ee072f04cb7477abc23c0ac78",
             LongMd5   = "bf7ad9935df332783848f815458e1687",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2041,7 +2009,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85370,
             Md5       = "70ea1fca4e5929514d15be2b16156961",
             LongMd5   = "929cff7615d84c900c637067e6bf44e6",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2061,7 +2028,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 82697,
             Md5       = "9712faa85483cf520e0efae0bbd53164",
             LongMd5   = "c7a5031c12fcac644f20384c8cafe3a8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2081,7 +2047,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 82697,
             Md5       = "9712faa85483cf520e0efae0bbd53164",
             LongMd5   = "c7a5031c12fcac644f20384c8cafe3a8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2101,7 +2066,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 83082,
             Md5       = "2a391c84479c34267439103ca6abf7bf",
             LongMd5   = "dd5fd9f1e45acff0c2c9b85f6abb3ab8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2121,7 +2085,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 83082,
             Md5       = "2a391c84479c34267439103ca6abf7bf",
             LongMd5   = "dd5fd9f1e45acff0c2c9b85f6abb3ab8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2141,7 +2104,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85378,
             Md5       = "0861eb66287123d470b7945debe8fb12",
             LongMd5   = "139d794e62632e4845ab24daff3685f0",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2161,7 +2123,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85378,
             Md5       = "b2b0772bbc6b950bbdbaaac90831c9f2",
             LongMd5   = "9cd6841be3c35cd3ea012fbb4f5b313d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2181,7 +2142,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85378,
             Md5       = "8329b3663619eca9d424eb1fbc7036b7",
             LongMd5   = "451bc347c53260b50c48b101e64e9023",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2201,7 +2161,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85378,
             Md5       = "055310ad3609d44011081863d617d33f",
             LongMd5   = "a9d37132e6b519bb774f603129c1b7dd",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2221,7 +2180,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "cc9ece6ddcbb456ff5cf197d0f21b785",
             LongMd5   = "d0042821851343b7149231e13f60677d",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2241,7 +2199,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "ae08aedc15e623ed2a035b9813e5360d",
             LongMd5   = "260416feefd735fbfa9d428197fc31ce",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2261,7 +2218,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85382,
             Md5       = "23ba6f2deb635e408e7938345aaecd5e",
             LongMd5   = "3c3cc0829c0f5b3dc90552cd06f6caca",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2281,7 +2237,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85382,
             Md5       = "1b7b0d16a910b65173fd777c974e94b6",
             LongMd5   = "cb9495de8c27af64b84925b32351ceb2",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2301,7 +2256,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85380,
             Md5       = "7f550c2b0b587275a63ccf13a732bb55",
             LongMd5   = "629a18aa832bc0336d7f5eeb69d179c8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2321,7 +2275,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85380,
             Md5       = "119fe576b2a81e0070b48748545ed691",
             LongMd5   = "aae875760f7a1e6e41b1b93b71de3b20",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2341,7 +2294,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "2b4b5af6ac9d988a2dc38dc5b873d574",
             LongMd5   = "5c18f49d07d53fd799e74f24d4d53484",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2361,7 +2313,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "0613ae6e1c5b87ae563b3f7f572a8b18",
             LongMd5   = "a6169364cb292c245e435eb63cb47057",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2381,7 +2332,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85384,
             Md5       = "d45ffe1153db6f5c71596cbd905fc488",
             LongMd5   = "a902f86d13d56f2e6f227a52634089d9",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2401,7 +2351,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85384,
             Md5       = "779eecd0085b18b1d9918b41423dd339",
             LongMd5   = "d0513c7eee273befeff5ce89f9238560",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2421,7 +2370,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85380,
             Md5       = "4c81ffc4fa384850de42910b35a5aca3",
             LongMd5   = "b3a211be5fdae118e301a64de7fcb179",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2441,7 +2389,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85380,
             Md5       = "55785037c6349fa1f7fdd0b908181818",
             LongMd5   = "eab4b4988478a929abb00456c79bdd93",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2461,7 +2408,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "92ce7748584f7e6ed60c4bd507b4dc0f",
             LongMd5   = "685810f81bfdf3726b29c6bfb3fe6240",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2481,7 +2427,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 86529,
             Md5       = "2a546c0c5eabb2bdcf23f30b463bb275",
             LongMd5   = "50de9b1be03914910e6c60f7bfa0e077",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2501,7 +2446,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85384,
             Md5       = "8122aa37899aea7ca6edd5da216ea172",
             LongMd5   = "20a452a3389e06af32a79137b005dc66",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2521,7 +2465,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85384,
             Md5       = "92b7c6ba9530389f8189f5ca271dfb25",
             LongMd5   = "f7c3a968839604a0317132c76387617c",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2541,7 +2484,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84616,
             Md5       = "d15dc18c94c1800c578dc50130395a3e",
             LongMd5   = "e133b2452e7f8a3fb0993e6626b81dbf",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2561,7 +2503,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84616,
             Md5       = "897d2c63f0e181854191c859d9aa8bd2",
             LongMd5   = "00b91fff0f255a541f9e6ce1484f7853",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2581,7 +2522,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84616,
             Md5       = "d3dd0903e74a4a714114751fe3071ceb",
             LongMd5   = "9764d6dcd88081043d12592ec529739e",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2601,7 +2541,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84616,
             Md5       = "076f320539c8171246e4d24a5cf3d533",
             LongMd5   = "70a988b0c6c9ecd3ae3b12a18dd4dc0e",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2621,7 +2560,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "fac65be4def378788d467966e2b795d8",
             LongMd5   = "0c221dec63b409a3785d7183b4149176",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2641,7 +2579,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "366195d1e5140c0a690d2b256891db60",
             LongMd5   = "934e4d7fde8b1ad40c8135e43159e74b",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2661,7 +2598,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84620,
             Md5       = "a40b83ad5ba0de4a1e19426c0bd05934",
             LongMd5   = "4b7698c901b19739c5911db97eb1ca55",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2681,7 +2617,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84620,
             Md5       = "cc0ebb19ee2fa513c7fcdc6c4916536d",
             LongMd5   = "7cee40146211ed2bbd50dbe5082bd290",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2701,7 +2636,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84618,
             Md5       = "86d67a9f66ff43f89f5a58b785598b08",
             LongMd5   = "1bb6cc5f1db38a4bb4598cd8776d5aaf",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2721,7 +2655,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84618,
             Md5       = "ca9cee749466053ab344a27a4b5c2e11",
             LongMd5   = "3880fae96c3fb170fb4f337985adc5c5",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2741,7 +2674,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "803526863c0ec3f64c2a89cdb7ebce77",
             LongMd5   = "5f16344d375502a1082c635f5e27ea4e",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2761,7 +2693,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "00570af53cea4275c7191ba52e65f1bf",
             LongMd5   = "2efedcd2a6bfb1658015221ecfba0752",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2781,7 +2712,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84622,
             Md5       = "b0b56d1663c508e7d0ceb33f3bb5cc78",
             LongMd5   = "20a0714daaff2d41798d97f72cd95b3a",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2801,7 +2731,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84622,
             Md5       = "de4c155829449b40632bb9165dba0839",
             LongMd5   = "f12ca7d65ddad197d3075926ad7c3aaf",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2821,7 +2750,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84618,
             Md5       = "bd83c27796677aa75f067c474952226e",
             LongMd5   = "220904f85af94dff3b899e36c30c6511",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2841,7 +2769,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84618,
             Md5       = "fa86ee2ecaf7a0b9e06b1e0ea3e66a16",
             LongMd5   = "e6e3a29fc6642716c1c302c63586f7cb",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2861,7 +2788,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "7f6b97cd47875e397de275b56a3cfd86",
             LongMd5   = "1b50de41d291308c1aa678da06a38978",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2881,7 +2807,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 85793,
             Md5       = "c3bed9a87c42cafe1f7a1239eaa0fac6",
             LongMd5   = "0c5c3ab226f73c3c36636abdb6ac289e",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2901,7 +2826,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84622,
             Md5       = "54ba4fe1ac87998dd0cb7dddfea97664",
             LongMd5   = "a946851e149714a084ea3d1794964fc5",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2921,7 +2845,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 84622,
             Md5       = "372d1a672f8ec1310c8665024b35b483",
             LongMd5   = "e4e2304b1cccffdac1e781bae228dee4",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -2941,7 +2864,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 337261,
             Md5       = "9f1272614a307e3fac0b3e6ba90098e8",
             LongMd5   = "b5d6a75d73752f78a978e51e7f4c4adf",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -3049,7 +2971,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 337261,
             Md5       = "7bbe7fd534a37882924c718604c9a6e9",
             LongMd5   = "c3053f05e4f371fcceeaf001bd1b235c",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -3157,7 +3078,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 727605,
             Md5       = "f47418bf60ea47be64e97c17192e2d5f",
             LongMd5   = "e7daf8bc5100fd211028cf0f6491d343",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -3177,7 +3097,6 @@ public class V2 : OpticalMediaImageTest
             Sectors   = 31084,
             Md5       = "c76c3537f1b3f3c4feecca0e35b4b859",
             LongMd5   = "a58449cfb0de9708f2a19d515d9d37f8",
-
             Tracks = new[]
             {
                 new TrackInfoTestExpected
@@ -3405,7 +3324,7 @@ public class V2 : OpticalMediaImageTest
             }
         },
 
-    #region These test images violate the specifications and are not expected to work yet
+#region These test images violate the specifications and are not expected to work yet
 
         /*
         new OpticalImageTestExpected
@@ -3686,6 +3605,6 @@ public class V2 : OpticalMediaImageTest
         },
         */
 
-    #endregion
+#endregion
     };
 }

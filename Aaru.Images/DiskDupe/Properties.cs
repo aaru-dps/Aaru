@@ -55,6 +55,7 @@ public sealed partial class DiskDupe
     public string Format => "DDI disk image";
 
     /// <inheritdoc />
+
     // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 

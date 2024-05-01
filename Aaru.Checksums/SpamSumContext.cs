@@ -76,8 +76,7 @@ public sealed class SpamSumContext : IChecksum
             Bh = new BlockhashContext[NUM_BLOCKHASHES]
         };
 
-        for(var i = 0; i < NUM_BLOCKHASHES; i++)
-            _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
+        for(var i = 0; i < NUM_BLOCKHASHES; i++) _self.Bh[i].Digest = new byte[SPAMSUM_LENGTH];
 
         _self.Bhstart          = 0;
         _self.Bhend            = 1;
@@ -109,8 +108,7 @@ public sealed class SpamSumContext : IChecksum
     {
         _self.TotalSize += len;
 
-        for(var i = 0; i < len; i++)
-            fuzzy_engine_step(data[i]);
+        for(var i = 0; i < len; i++) fuzzy_engine_step(data[i]);
     }
 
     /// <inheritdoc />
@@ -205,8 +203,7 @@ public sealed class SpamSumContext : IChecksum
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void fuzzy_try_reduce_blockhash()
     {
-        if(_self.Bhstart >= _self.Bhend)
-            throw new Exception(Localization.Assertion_failed);
+        if(_self.Bhstart >= _self.Bhend) throw new Exception(Localization.Assertion_failed);
 
         if(_self.Bhend - _self.Bhstart < 2)
             /* Need at least two working hashes. */
@@ -254,8 +251,7 @@ public sealed class SpamSumContext : IChecksum
             /* We have hit a reset point. We now emit hashes which are
              * based on all characters in the piece of the message between
              * the last reset point and this one */
-            if(0 == _self.Bh[i].Dlen)
-                fuzzy_try_fork_blockhash();
+            if(0 == _self.Bh[i].Dlen) fuzzy_try_fork_blockhash();
 
             _self.Bh[i].Digest[_self.Bh[i].Dlen] = _b64[_self.Bh[i].H     % 64];
             _self.Bh[i].Halfdigest               = _b64[_self.Bh[i].Halfh % 64];
@@ -271,8 +267,7 @@ public sealed class SpamSumContext : IChecksum
                 _self.Bh[i].Digest[++_self.Bh[i].Dlen] = 0;
                 _self.Bh[i].H                          = HASH_INIT;
 
-                if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2)
-                    continue;
+                if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2) continue;
 
                 _self.Bh[i].Halfh      = HASH_INIT;
                 _self.Bh[i].Halfdigest = 0;
@@ -301,19 +296,15 @@ public sealed class SpamSumContext : IChecksum
         {
             ++bi;
 
-            if(bi >= NUM_BLOCKHASHES)
-                throw new OverflowException(Localization.The_input_exceeds_data_types);
+            if(bi >= NUM_BLOCKHASHES) throw new OverflowException(Localization.The_input_exceeds_data_types);
         }
 
         /* Adapt blocksize guess to actual digest length. */
-        while(bi >= _self.Bhend)
-            --bi;
+        while(bi >= _self.Bhend) --bi;
 
-        while(bi > _self.Bhstart && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
-            --bi;
+        while(bi > _self.Bhstart && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) --bi;
 
-        if(bi > 0 && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2)
-            throw new Exception(Localization.Assertion_failed);
+        if(bi > 0 && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) throw new Exception(Localization.Assertion_failed);
 
         sb.Append($"{SSDEEP_BS(bi)}:");
         int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
@@ -322,8 +313,7 @@ public sealed class SpamSumContext : IChecksum
             /* Maybe snprintf has set errno here? */
             throw new OverflowException(Localization.The_input_exceeds_data_types);
 
-        if(i >= remain)
-            throw new Exception(Localization.Assertion_failed);
+        if(i >= remain) throw new Exception(Localization.Assertion_failed);
 
         remain -= i;
 
@@ -333,8 +323,7 @@ public sealed class SpamSumContext : IChecksum
 
         i = (int)_self.Bh[bi].Dlen;
 
-        if(i > remain)
-            throw new Exception(Localization.Assertion_failed);
+        if(i > remain) throw new Exception(Localization.Assertion_failed);
 
         Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
         resultOff += i;
@@ -342,8 +331,7 @@ public sealed class SpamSumContext : IChecksum
 
         if(h != 0)
         {
-            if(remain <= 0)
-                throw new Exception(Localization.Assertion_failed);
+            if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
             result[resultOff] = _b64[_self.Bh[bi].H % 64];
 
@@ -358,8 +346,7 @@ public sealed class SpamSumContext : IChecksum
         }
         else if(_self.Bh[bi].Digest[i] != 0)
         {
-            if(remain <= 0)
-                throw new Exception(Localization.Assertion_failed);
+            if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
             result[resultOff] = _self.Bh[bi].Digest[i];
 
@@ -373,8 +360,7 @@ public sealed class SpamSumContext : IChecksum
             }
         }
 
-        if(remain <= 0)
-            throw new Exception(Localization.Assertion_failed);
+        if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
         result[resultOff++] = 0x3A; // ':'
         --remain;
@@ -384,8 +370,7 @@ public sealed class SpamSumContext : IChecksum
             ++bi;
             i = (int)_self.Bh[bi].Dlen;
 
-            if(i > remain)
-                throw new Exception(Localization.Assertion_failed);
+            if(i > remain) throw new Exception(Localization.Assertion_failed);
 
             Array.Copy(_self.Bh[bi].Digest, 0, result, resultOff, i);
             resultOff += i;
@@ -393,8 +378,7 @@ public sealed class SpamSumContext : IChecksum
 
             if(h != 0)
             {
-                if(remain <= 0)
-                    throw new Exception(Localization.Assertion_failed);
+                if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
                 h                 = _self.Bh[bi].Halfh;
                 result[resultOff] = _b64[h % 64];
@@ -414,8 +398,7 @@ public sealed class SpamSumContext : IChecksum
 
                 if(i != 0)
                 {
-                    if(remain <= 0)
-                        throw new Exception(Localization.Assertion_failed);
+                    if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
                     result[resultOff] = (byte)i;
 
@@ -432,11 +415,9 @@ public sealed class SpamSumContext : IChecksum
         }
         else if(h != 0)
         {
-            if(_self.Bh[bi].Dlen != 0)
-                throw new Exception(Localization.Assertion_failed);
+            if(_self.Bh[bi].Dlen != 0) throw new Exception(Localization.Assertion_failed);
 
-            if(remain <= 0)
-                throw new Exception(Localization.Assertion_failed);
+            if(remain <= 0) throw new Exception(Localization.Assertion_failed);
 
             result[resultOff++] = _b64[_self.Bh[bi].H % 64];
             /* No need to bother with FUZZY_FLAG_ELIMSEQ, because this
@@ -490,8 +471,7 @@ public sealed class SpamSumContext : IChecksum
         // LINQ is six times slower
         foreach(byte c in cString)
         {
-            if(c == 0)
-                break;
+            if(c == 0) break;
 
             count++;
         }

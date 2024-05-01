@@ -80,8 +80,7 @@ public sealed partial class Sidecar
             }
         };
 
-        if(_aborted)
-            return _sidecar;
+        if(_aborted) return _sidecar;
 
         ulong          currentBlock = 0;
         ulong          totalSize    = 0;
@@ -92,8 +91,7 @@ public sealed partial class Sidecar
 
         for(var i = 0; i < files.Count; i++)
         {
-            if(_aborted)
-                return _sidecar;
+            if(_aborted) return _sidecar;
 
             _fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
             var fileWorker = new Checksum();
@@ -135,7 +133,8 @@ public sealed partial class Sidecar
                     _fs.EnsureRead(sector, 0, sector.Length);
 
                     UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
-                                    (long)doneSectors, (long)sectors);
+                                    (long)doneSectors,
+                                    (long)sectors);
 
                     doneSectors += sectorsToRead;
                 }
@@ -145,7 +144,8 @@ public sealed partial class Sidecar
                     _fs.EnsureRead(sector, 0, sector.Length);
 
                     UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
-                                    (long)doneSectors, (long)sectors);
+                                    (long)doneSectors,
+                                    (long)sectors);
 
                     doneSectors += sectors - doneSectors;
                 }

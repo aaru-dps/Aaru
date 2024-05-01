@@ -108,8 +108,8 @@ public sealed class AaruContext : DbContext
     {
         var optionsBuilder = new DbContextOptionsBuilder();
 
-        optionsBuilder.UseLazyLoadingProxies().
-                       UseSqlite(!pooling ? $"Data Source={dbPath};Pooling=False" : $"Data Source={dbPath}");
+        optionsBuilder.UseLazyLoadingProxies()
+                      .UseSqlite(!pooling ? $"Data Source={dbPath};Pooling=False" : $"Data Source={dbPath}");
 
         return new AaruContext(optionsBuilder.Options);
     }
@@ -120,210 +120,217 @@ public sealed class AaruContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity("Aaru.CommonTypes.Metadata.Ata",
-                            b => b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").
-                                   WithMany().
-                                   HasForeignKey("ReadCapabilitiesId").
-                                   OnDelete(DeleteBehavior.SetNull));
+                            b => b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities")
+                                  .WithMany()
+                                  .HasForeignKey("ReadCapabilitiesId")
+                                  .OnDelete(DeleteBehavior.SetNull));
 
         modelBuilder.Entity("Aaru.CommonTypes.Metadata.BlockDescriptor",
-                            b => b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).
-                                   WithMany("BlockDescriptors").
-                                   HasForeignKey("ScsiModeId").
-                                   OnDelete(DeleteBehavior.Cascade));
+                            b => b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null)
+                                  .WithMany("BlockDescriptors")
+                                  .HasForeignKey("ScsiModeId")
+                                  .OnDelete(DeleteBehavior.Cascade));
 
         modelBuilder.Entity("Aaru.CommonTypes.Metadata.DensityCode",
-                            b => b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia", null).
-                                   WithMany("DensityCodes").
-                                   HasForeignKey("SscSupportedMediaId").
-                                   OnDelete(DeleteBehavior.Cascade));
+                            b => b.HasOne("Aaru.CommonTypes.Metadata.SscSupportedMedia", null)
+                                  .WithMany("DensityCodes")
+                                  .HasForeignKey("SscSupportedMediaId")
+                                  .OnDelete(DeleteBehavior.Cascade));
 
         modelBuilder.Entity("Aaru.CommonTypes.Metadata.Mmc",
-                            b => b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features").
-                                   WithMany().
-                                   HasForeignKey("FeaturesId").
-                                   OnDelete(DeleteBehavior.SetNull));
+                            b => b.HasOne("Aaru.CommonTypes.Metadata.MmcFeatures", "Features")
+                                  .WithMany()
+                                  .HasForeignKey("FeaturesId")
+                                  .OnDelete(DeleteBehavior.SetNull));
 
-        modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense").
-              WithMany().
-              HasForeignKey("ModeSenseId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.CommonTypes.Metadata.Scsi",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", "ModeSense")
+                                 .WithMany()
+                                 .HasForeignKey("ModeSenseId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Mmc", "MultiMediaDevice").
-              WithMany().
-              HasForeignKey("MultiMediaDeviceId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Mmc", "MultiMediaDevice")
+                                 .WithMany()
+                                 .HasForeignKey("MultiMediaDeviceId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").
-              WithMany().
-              HasForeignKey("ReadCapabilitiesId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.TestedMedia", "ReadCapabilities")
+                                 .WithMany()
+                                 .HasForeignKey("ReadCapabilitiesId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Ssc", "SequentialDevice").
-              WithMany().
-              HasForeignKey("SequentialDeviceId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", "SequentialDevice")
+                                 .WithMany()
+                                 .HasForeignKey("SequentialDeviceId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
-        modelBuilder.Entity("Aaru.CommonTypes.Metadata.ScsiPage", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null).
-              WithMany("EVPDPages").
-              HasForeignKey("ScsiId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.CommonTypes.Metadata.ScsiPage",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null)
+                                 .WithMany("EVPDPages")
+                                 .HasForeignKey("ScsiId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null).
-              WithMany("ModePages").
-              HasForeignKey("ScsiModeId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.ScsiMode", null)
+                                 .WithMany("ModePages")
+                                 .HasForeignKey("ScsiModeId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
-        modelBuilder.Entity("Aaru.CommonTypes.Metadata.SscSupportedMedia", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).
-              WithMany("SupportedMediaTypes").
-              HasForeignKey("SscId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.CommonTypes.Metadata.SscSupportedMedia",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null)
+                                 .WithMany("SupportedMediaTypes")
+                                 .HasForeignKey("SscId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null).
-              WithMany("SupportedMediaTypes").
-              HasForeignKey("TestedSequentialMediaId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null)
+                                 .WithMany("SupportedMediaTypes")
+                                 .HasForeignKey("TestedSequentialMediaId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
-        modelBuilder.Entity("Aaru.CommonTypes.Metadata.SupportedDensity", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).
-              WithMany("SupportedDensities").
-              HasForeignKey("SscId").
-              OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity("Aaru.CommonTypes.Metadata.SupportedDensity",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null)
+                                 .WithMany("SupportedDensities")
+                                 .HasForeignKey("SscId")
+                                 .OnDelete(DeleteBehavior.Cascade);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null).
-              WithMany("SupportedDensities").
-              HasForeignKey("TestedSequentialMediaId").
-              OnDelete(DeleteBehavior.Cascade);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.TestedSequentialMedia", null)
+                                 .WithMany("SupportedDensities")
+                                 .HasForeignKey("TestedSequentialMediaId")
+                                 .OnDelete(DeleteBehavior.Cascade);
+                            });
 
-        modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedMedia", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Ata", null).
-              WithMany("RemovableMedias").
-              HasForeignKey("AtaId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedMedia",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ata", null)
+                                 .WithMany("RemovableMedias")
+                                 .HasForeignKey("AtaId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CHS").
-              WithMany().
-              HasForeignKey("CHSId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CHS")
+                                 .WithMany()
+                                 .HasForeignKey("CHSId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS").
-              WithMany().
-              HasForeignKey("CurrentCHSId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Chs", "CurrentCHS")
+                                 .WithMany()
+                                 .HasForeignKey("CurrentCHSId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Mmc", null).
-              WithMany("TestedMedia").
-              HasForeignKey("MmcId").
-              OnDelete(DeleteBehavior.Cascade);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Mmc", null)
+                                 .WithMany("TestedMedia")
+                                 .HasForeignKey("MmcId")
+                                 .OnDelete(DeleteBehavior.Cascade);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null).
-              WithMany("RemovableMedias").
-              HasForeignKey("ScsiId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", null)
+                                 .WithMany("RemovableMedias")
+                                 .HasForeignKey("ScsiId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
         modelBuilder.Entity("Aaru.CommonTypes.Metadata.TestedSequentialMedia",
-                            b => b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null).
-                                   WithMany("TestedMedia").
-                                   HasForeignKey("SscId").
-                                   OnDelete(DeleteBehavior.SetNull));
+                            b => b.HasOne("Aaru.CommonTypes.Metadata.Ssc", null)
+                                  .WithMany("TestedMedia")
+                                  .HasForeignKey("SscId")
+                                  .OnDelete(DeleteBehavior.SetNull));
 
-        modelBuilder.Entity("Aaru.Database.Models.Device", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").
-              WithMany().
-              HasForeignKey("ATAId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.Database.Models.Device",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA")
+                                 .WithMany()
+                                 .HasForeignKey("ATAId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").
-              WithMany().
-              HasForeignKey("ATAPIId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI")
+                                 .WithMany()
+                                 .HasForeignKey("ATAPIId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").
-              WithMany().
-              HasForeignKey("FireWireId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire")
+                                 .WithMany()
+                                 .HasForeignKey("FireWireId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").
-              WithMany().
-              HasForeignKey("MultiMediaCardId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard")
+                                 .WithMany()
+                                 .HasForeignKey("MultiMediaCardId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").
-              WithMany().
-              HasForeignKey("PCMCIAId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA")
+                                 .WithMany()
+                                 .HasForeignKey("PCMCIAId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").
-              WithMany().
-              HasForeignKey("SCSIId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI")
+                                 .WithMany()
+                                 .HasForeignKey("SCSIId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital").
-              WithMany().
-              HasForeignKey("SecureDigitalId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital")
+                                 .WithMany()
+                                 .HasForeignKey("SecureDigitalId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").
-              WithMany().
-              HasForeignKey("USBId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB")
+                                 .WithMany()
+                                 .HasForeignKey("USBId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
-        modelBuilder.Entity("Aaru.Database.Models.Report", b =>
-        {
-            b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA").
-              WithMany().
-              HasForeignKey("ATAId").
-              OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity("Aaru.Database.Models.Report",
+                            b =>
+                            {
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATA")
+                                 .WithMany()
+                                 .HasForeignKey("ATAId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI").
-              WithMany().
-              HasForeignKey("ATAPIId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Ata", "ATAPI")
+                                 .WithMany()
+                                 .HasForeignKey("ATAPIId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire").
-              WithMany().
-              HasForeignKey("FireWireId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.FireWire", "FireWire")
+                                 .WithMany()
+                                 .HasForeignKey("FireWireId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard").
-              WithMany().
-              HasForeignKey("MultiMediaCardId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "MultiMediaCard")
+                                 .WithMany()
+                                 .HasForeignKey("MultiMediaCardId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA").
-              WithMany().
-              HasForeignKey("PCMCIAId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Pcmcia", "PCMCIA")
+                                 .WithMany()
+                                 .HasForeignKey("PCMCIAId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI").
-              WithMany().
-              HasForeignKey("SCSIId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.Scsi", "SCSI")
+                                 .WithMany()
+                                 .HasForeignKey("SCSIId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital").
-              WithMany().
-              HasForeignKey("SecureDigitalId").
-              OnDelete(DeleteBehavior.SetNull);
+                                b.HasOne("Aaru.CommonTypes.Metadata.MmcSd", "SecureDigital")
+                                 .WithMany()
+                                 .HasForeignKey("SecureDigitalId")
+                                 .OnDelete(DeleteBehavior.SetNull);
 
-            b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB").
-              WithMany().
-              HasForeignKey("USBId").
-              OnDelete(DeleteBehavior.SetNull);
-        });
+                                b.HasOne("Aaru.CommonTypes.Metadata.Usb", "USB")
+                                 .WithMany()
+                                 .HasForeignKey("USBId")
+                                 .OnDelete(DeleteBehavior.SetNull);
+                            });
 
         modelBuilder.Entity<CdOffset>().HasIndex(b => b.ModifiedWhen);
 

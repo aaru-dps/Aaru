@@ -64,8 +64,7 @@ public sealed partial class Chd
 
     ErrorNumber GetHunk(ulong hunkNo, out byte[] buffer)
     {
-        if(_hunkCache.TryGetValue(hunkNo, out buffer))
-            return ErrorNumber.NoError;
+        if(_hunkCache.TryGetValue(hunkNo, out buffer)) return ErrorNumber.NoError;
 
         switch(_mapVersion)
         {
@@ -94,10 +93,10 @@ public sealed partial class Chd
 
                     if(read != _sectorsPerHunk * _imageInfo.SectorSize)
                     {
-                        AaruConsole.
-                            ErrorWriteLine(string.
-                                               Format(Localization.Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
-                                                      read, _sectorsPerHunk * _imageInfo.SectorSize));
+                        AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                                    .Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                                 read,
+                                                                 _sectorsPerHunk * _imageInfo.SectorSize));
 
                         return ErrorNumber.InOutError;
                     }
@@ -138,10 +137,10 @@ public sealed partial class Chd
 
                                     if(read != _bytesPerHunk)
                                     {
-                                        AaruConsole.
-                                            ErrorWriteLine(string.
-                                                               Format(Localization.Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
-                                                                      read, _bytesPerHunk));
+                                        AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                                          .Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                                       read,
+                                                                       _bytesPerHunk));
 
                                         return ErrorNumber.InOutError;
                                     }
@@ -152,8 +151,8 @@ public sealed partial class Chd
                                 // TODO: Guess wth is MAME doing with these hunks
                                 else
                                 {
-                                    AaruConsole.ErrorWriteLine(Localization.
-                                                                   Compressed_CD_GD_ROM_hunks_are_not_yet_supported);
+                                    AaruConsole.ErrorWriteLine(Localization
+                                                                  .Compressed_CD_GD_ROM_hunks_are_not_yet_supported);
 
                                     return ErrorNumber.NotImplemented;
                                 }
@@ -178,8 +177,7 @@ public sealed partial class Chd
                         buffer = new byte[_bytesPerHunk];
                         byte[] mini = BigEndianBitConverter.GetBytes(entry.offset);
 
-                        for(var i = 0; i < _bytesPerHunk; i++)
-                            buffer[i] = mini[i % 8];
+                        for(var i = 0; i < _bytesPerHunk; i++) buffer[i] = mini[i % 8];
 
                         break;
                     case EntryFlagsV3.SelfHunk:
@@ -221,8 +219,7 @@ public sealed partial class Chd
                 return ErrorNumber.NotSupported;
         }
 
-        if(_hunkCache.Count >= _maxBlockCache)
-            _hunkCache.Clear();
+        if(_hunkCache.Count >= _maxBlockCache) _hunkCache.Clear();
 
         _hunkCache.Add(hunkNo, buffer);
 

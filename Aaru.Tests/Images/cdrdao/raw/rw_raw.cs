@@ -572,7 +572,7 @@ public class rw_raw : OpticalMediaImageTest
             }
         },
 
-    #region These test images violate the specifications and are not expected to work yet
+#region These test images violate the specifications and are not expected to work yet
 
         /*
         new OpticalImageTestExpected
@@ -697,6 +697,6 @@ public class rw_raw : OpticalMediaImageTest
         },
         */
 
-    #endregion
+#endregion
     };
 }

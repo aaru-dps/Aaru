@@ -47,12 +47,10 @@ public sealed partial class LisaFS
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
-            return false;
+        if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true) return false;
 
         // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-        if(imagePlugin.Info.Sectors < 800)
-            return false;
+        if(imagePlugin.Info.Sectors < 800) return false;
 
         int beforeMddf = -1;
 
@@ -61,23 +59,19 @@ public sealed partial class LisaFS
         {
             ErrorNumber errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
-            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED)
-                beforeMddf = i - 1;
+            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED) beforeMddf = i - 1;
 
-            if(searchTag.FileId != FILEID_MDDF)
-                continue;
+            if(searchTag.FileId != FILEID_MDDF) continue;
 
             errno = imagePlugin.ReadSector((ulong)i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             var infoMddf = new MDDF
             {
@@ -95,30 +89,25 @@ public sealed partial class LisaFS
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size = {0} sectors", infoMddf.vol_size);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size - 1 = {0}",     infoMddf.volsize_minus_one);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.vol_size - mddf.mddf_block -1 = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "mddf.vol_size - mddf.mddf_block -1 = {0}",
                                        infoMddf.volsize_minus_mddf_minus_one);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, "Disk sector = {0} bytes",    imagePlugin.Info.SectorSize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.blocksize = {0} bytes", infoMddf.blocksize);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.datasize = {0} bytes",  infoMddf.datasize);
 
-            if(infoMddf.mddf_block != i - beforeMddf)
-                return false;
+            if(infoMddf.mddf_block != i - beforeMddf) return false;
 
-            if(infoMddf.vol_size > imagePlugin.Info.Sectors)
-                return false;
+            if(infoMddf.vol_size > imagePlugin.Info.Sectors) return false;
 
-            if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one)
-                return false;
+            if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return false;
 
-            if(infoMddf.vol_size - i - 1 != infoMddf.volsize_minus_mddf_minus_one - beforeMddf)
-                return false;
+            if(infoMddf.vol_size - i - 1 != infoMddf.volsize_minus_mddf_minus_one - beforeMddf) return false;
 
-            if(infoMddf.datasize > infoMddf.blocksize)
-                return false;
+            if(infoMddf.datasize > infoMddf.blocksize) return false;
 
-            if(infoMddf.blocksize < imagePlugin.Info.SectorSize)
-                return false;
+            if(infoMddf.blocksize < imagePlugin.Info.SectorSize) return false;
 
             return infoMddf.datasize == imagePlugin.Info.SectorSize;
         }
@@ -135,12 +124,10 @@ public sealed partial class LisaFS
         metadata    = new FileSystem();
         var sb = new StringBuilder();
 
-        if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true)
-            return;
+        if(imagePlugin.Info.ReadableSectorTags?.Contains(SectorTagType.AppleSectorTag) != true) return;
 
         // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
-        if(imagePlugin.Info.Sectors < 800)
-            return;
+        if(imagePlugin.Info.Sectors < 800) return;
 
         int beforeMddf = -1;
 
@@ -149,23 +136,19 @@ public sealed partial class LisaFS
         {
             ErrorNumber errno = imagePlugin.ReadSectorTag((ulong)i, SectorTagType.AppleSectorTag, out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             DecodeTag(tag, out LisaTag.PriamTag searchTag);
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Sector_0_file_ID_1, i, searchTag.FileId);
 
-            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED)
-                beforeMddf = i - 1;
+            if(beforeMddf == -1 && searchTag.FileId == FILEID_LOADER_SIGNED) beforeMddf = i - 1;
 
-            if(searchTag.FileId != FILEID_MDDF)
-                continue;
+            if(searchTag.FileId != FILEID_MDDF) continue;
 
             errno = imagePlugin.ReadSector((ulong)i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             var infoMddf = new MDDF();
             var pString  = new byte[33];
@@ -288,30 +271,24 @@ public sealed partial class LisaFS
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown37 = 0x{0:X8} ({0})", infoMddf.unknown37);
             AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown38 = 0x{0:X8} ({0})", infoMddf.unknown38);
 
-            AaruConsole.DebugWriteLine(MODULE_NAME, "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "mddf.unknown_timestamp = 0x{0:X8} ({0}, {1})",
                                        infoMddf.unknown_timestamp,
                                        DateHandlers.LisaToDateTime(infoMddf.unknown_timestamp));
 
-            if(infoMddf.mddf_block != i - beforeMddf)
-                return;
+            if(infoMddf.mddf_block != i - beforeMddf) return;
 
-            if(infoMddf.vol_size > imagePlugin.Info.Sectors)
-                return;
+            if(infoMddf.vol_size > imagePlugin.Info.Sectors) return;
 
-            if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one)
-                return;
+            if(infoMddf.vol_size - 1 != infoMddf.volsize_minus_one) return;
 
-            if(infoMddf.vol_size - i - 1 != infoMddf.volsize_minus_mddf_minus_one - beforeMddf)
-                return;
+            if(infoMddf.vol_size - i - 1 != infoMddf.volsize_minus_mddf_minus_one - beforeMddf) return;
 
-            if(infoMddf.datasize > infoMddf.blocksize)
-                return;
+            if(infoMddf.datasize > infoMddf.blocksize) return;
 
-            if(infoMddf.blocksize < imagePlugin.Info.SectorSize)
-                return;
+            if(infoMddf.blocksize < imagePlugin.Info.SectorSize) return;
 
-            if(infoMddf.datasize != imagePlugin.Info.SectorSize)
-                return;
+            if(infoMddf.datasize != imagePlugin.Info.SectorSize) return;
 
             switch(infoMddf.fsversion)
             {
@@ -342,13 +319,12 @@ public sealed partial class LisaFS
 
             sb.AppendFormat(Localization.Volume_is_number_0_of_1, infoMddf.volnum, infoMddf.vol_sequence).AppendLine();
 
-            sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_created_this_volume_0,
-                            infoMddf.machine_id).
-               AppendLine();
+            sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_created_this_volume_0, infoMddf.machine_id)
+              .AppendLine();
 
             sb.AppendFormat(Localization.Serial_number_of_Lisa_computer_that_can_use_this_volume_software_0,
-                            infoMddf.serialization).
-               AppendLine();
+                            infoMddf.serialization)
+              .AppendLine();
 
             sb.AppendFormat(Localization.Volume_created_on_0, infoMddf.dtvc).AppendLine();
             sb.AppendFormat(Localization.Volume_catalog_created_on_0, infoMddf.dtcc).AppendLine();
@@ -358,8 +334,8 @@ public sealed partial class LisaFS
             sb.AppendFormat(Localization.There_are_0_reserved_blocks_before_volume, beforeMddf).AppendLine();
             sb.AppendFormat(Localization._0_blocks_minus_one, infoMddf.volsize_minus_one).AppendLine();
 
-            sb.AppendFormat(Localization._0_blocks_minus_one_minus_MDDF_offset, infoMddf.volsize_minus_mddf_minus_one).
-               AppendLine();
+            sb.AppendFormat(Localization._0_blocks_minus_one_minus_MDDF_offset, infoMddf.volsize_minus_mddf_minus_one)
+              .AppendLine();
 
             sb.AppendFormat(Localization._0_blocks_in_volume,          infoMddf.vol_size).AppendLine();
             sb.AppendFormat(Localization._0_bytes_per_sector_uncooked, infoMddf.blocksize).AppendLine();
@@ -376,8 +352,9 @@ public sealed partial class LisaFS
             sb.AppendFormat(Localization.Overmount_stamp_0,            infoMddf.overmount_stamp).AppendLine();
 
             sb.AppendFormat(Localization.S_Records_start_at_0_and_spans_for_1_blocks,
-                            infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf, infoMddf.srec_len).
-               AppendLine();
+                            infoMddf.srec_ptr + infoMddf.mddf_block + beforeMddf,
+                            infoMddf.srec_len)
+              .AppendLine();
 
             sb.AppendLine(infoMddf.vol_left_mounted == 0 ? Localization.Volume_is_clean : Localization.Volume_is_dirty);
 
@@ -385,8 +362,7 @@ public sealed partial class LisaFS
 
             metadata = new FileSystem();
 
-            if(DateTime.Compare(infoMddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0)
-                metadata.BackupDate = infoMddf.dtvb;
+            if(DateTime.Compare(infoMddf.dtvb, DateHandlers.LisaToDateTime(0)) > 0) metadata.BackupDate = infoMddf.dtvb;
 
             metadata.Clusters    = infoMddf.vol_size;
             metadata.ClusterSize = (uint)(infoMddf.clustersize * infoMddf.datasize);

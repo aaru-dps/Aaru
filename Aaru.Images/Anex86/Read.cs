@@ -49,8 +49,7 @@ public sealed partial class Anex86
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
         stream.EnsureRead(hdrB, 0, hdrB.Length);
@@ -61,8 +60,7 @@ public sealed partial class Anex86
                                                       (ushort)_header.spt, (uint)_header.bps, MediaEncoding.MFM,
                                                       false));
 
-        if(_imageInfo.MediaType == MediaType.Unknown)
-            _imageInfo.MediaType = MediaType.GENERIC_HDD;
+        if(_imageInfo.MediaType == MediaType.Unknown) _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.MediaType_0, _imageInfo.MediaType);
 
@@ -90,11 +88,9 @@ public sealed partial class Anex86
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 

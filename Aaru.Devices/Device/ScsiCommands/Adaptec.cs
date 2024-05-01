@@ -69,10 +69,14 @@ public partial class Device
         cdb[2] = (byte)((lba & 0xFF00)   >> 8);
         cdb[3] = (byte)(lba & 0xFF);
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -108,12 +112,16 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
         cdb[4] = 1;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -146,12 +154,16 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
         cdb[4] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -176,7 +188,12 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
 
-        LastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref oneKBuffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -199,7 +216,12 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;

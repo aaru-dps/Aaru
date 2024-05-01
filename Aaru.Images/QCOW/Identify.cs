@@ -46,8 +46,7 @@ public sealed partial class Qcow
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var qHdrB = new byte[48];
         stream.EnsureRead(qHdrB, 0, 48);

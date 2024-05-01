@@ -50,8 +50,7 @@ partial class Dump
     {
         List<ulong> runOutSectors = new();
 
-        if(_outputPlugin is not IWritableOpticalImage outputOptical)
-            return;
+        if(_outputPlugin is not IWritableOpticalImage outputOptical) return;
 
         // Count how many run end sectors are detected as bad blocks
         for(ulong i = blocks - 1; i > blocks - 1 - _ignoreCdrRunOuts; i--)
@@ -62,8 +61,7 @@ partial class Dump
                 break;
         }
 
-        if(runOutSectors.Count == 0)
-            return;
+        if(runOutSectors.Count == 0) return;
 
         _dumpLog.WriteLine(string.Format(Localization.Core._0_sectors_at_the_end_of_the_disc_are_unreadable,
                                          runOutSectors.Count));
@@ -75,8 +73,7 @@ partial class Dump
         {
             Track track = tracks.FirstOrDefault(t => t.StartSector <= s && t.EndSector >= s);
 
-            if(track is null)
-                continue;
+            if(track is null) continue;
 
             var sector = new byte[2352];
 
@@ -115,8 +112,7 @@ partial class Dump
             _resume.BadBlocks.Remove(s);
             extents.Add(s);
 
-            if(desiredSubchannel == MmcSubchannel.None)
-                continue;
+            if(desiredSubchannel == MmcSubchannel.None) continue;
 
             // Hidden track
             ulong trackStart;

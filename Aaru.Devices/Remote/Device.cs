@@ -59,6 +59,7 @@ public sealed partial class Device : Devices.Device
     }
 
     /// <summary>Current device is remote</summary>
+
     // ReSharper disable once UnusedMember.Global
     public bool IsRemote => _remote != null;
 
@@ -96,16 +97,13 @@ public sealed partial class Device : Devices.Device
             IsRemovable = false
         };
 
-        if(aaruUri.Scheme is not ("dic" or "aaru"))
-            return null;
+        if(aaruUri.Scheme is not ("dic" or "aaru")) return null;
 
         string devicePath = aaruUri.AbsolutePath;
 
-        if(devicePath.StartsWith('/'))
-            devicePath = devicePath[1..];
+        if(devicePath.StartsWith('/')) devicePath = devicePath[1..];
 
-        if(devicePath.StartsWith("dev", StringComparison.Ordinal))
-            devicePath = $"/{devicePath}";
+        if(devicePath.StartsWith("dev", StringComparison.Ordinal)) devicePath = $"/{devicePath}";
 
         dev.DevicePath = devicePath;
 
@@ -134,8 +132,7 @@ public sealed partial class Device : Devices.Device
             return null;
         }
 
-        if(dev._remote.ServerOperatingSystem == "Linux")
-            ReadMultipleBlockCannotSetBlockCount = true;
+        if(dev._remote.ServerOperatingSystem == "Linux") ReadMultipleBlockCannotSetBlockCount = true;
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
@@ -153,7 +150,9 @@ public sealed partial class Device : Devices.Device
         {
             case DeviceType.SecureDigital:
             case DeviceType.MMC:
-                if(!dev._remote.GetSdhciRegisters(out dev.CachedCsd, out dev.CachedCid, out dev.CachedOcr,
+                if(!dev._remote.GetSdhciRegisters(out dev.CachedCsd,
+                                                  out dev.CachedCid,
+                                                  out dev.CachedOcr,
                                                   out dev.CachedScr))
                 {
                     dev.Type     = DeviceType.SCSI;
@@ -163,7 +162,7 @@ public sealed partial class Device : Devices.Device
                 break;
         }
 
-    #region SecureDigital / MultiMediaCard
+#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -198,13 +197,16 @@ public sealed partial class Device : Devices.Device
             return dev;
         }
 
-    #endregion SecureDigital / MultiMediaCard
+#endregion SecureDigital / MultiMediaCard
 
-    #region USB
+#region USB
 
-        if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors, out ushort remoteUsbVendor,
-                                  out ushort remoteUsbProduct, out string remoteUsbManufacturer,
-                                  out string remoteUsbProductString, out string remoteUsbSerial))
+        if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors,
+                                  out ushort remoteUsbVendor,
+                                  out ushort remoteUsbProduct,
+                                  out string remoteUsbManufacturer,
+                                  out string remoteUsbProductString,
+                                  out string remoteUsbSerial))
         {
             dev.IsUsb                 = true;
             dev.UsbDescriptors        = remoteUsbDescriptors;
@@ -215,29 +217,31 @@ public sealed partial class Device : Devices.Device
             dev.UsbSerialString       = remoteUsbSerial;
         }
 
-    #endregion USB
+#endregion USB
 
-    #region FireWire
+#region FireWire
 
-        if(dev._remote.GetFireWireData(out dev.FirewireVendor, out dev.FirewireModel, out dev.FirewireGuid,
-                                       out string remoteFireWireVendorName, out string remoteFireWireModelName))
+        if(dev._remote.GetFireWireData(out dev.FirewireVendor,
+                                       out dev.FirewireModel,
+                                       out dev.FirewireGuid,
+                                       out string remoteFireWireVendorName,
+                                       out string remoteFireWireModelName))
         {
             dev.IsFireWire         = true;
             dev.FireWireVendorName = remoteFireWireVendorName;
             dev.FireWireModelName  = remoteFireWireModelName;
         }
 
-    #endregion FireWire
+#endregion FireWire
 
-    #region PCMCIA
+#region PCMCIA
 
-        if(!dev._remote.GetPcmciaData(out byte[] cisBuf))
-            return dev;
+        if(!dev._remote.GetPcmciaData(out byte[] cisBuf)) return dev;
 
         dev.IsPcmcia = true;
         dev.Cis      = cisBuf;
 
-    #endregion PCMCIA
+#endregion PCMCIA
 
         return dev;
     }
@@ -245,8 +249,7 @@ public sealed partial class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(_remote == null)
-            return;
+        if(_remote == null) return;
 
         _remote.Close();
         _remote.Disconnect();

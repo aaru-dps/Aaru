@@ -104,7 +104,7 @@ sealed class ConfigureCommand : Command
         Settings.Settings.Current.EnableDecryption =
             AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_enable_decryption_of_copy_protected_media_Q}[/]");
 
-    #region Device reports
+#region Device reports
 
         AaruConsole.WriteLine();
 
@@ -120,9 +120,9 @@ sealed class ConfigureCommand : Command
         Settings.Settings.Current.ShareReports =
             AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_your_device_reports_with_us_Q}[/]");
 
-    #endregion Device reports
+#endregion Device reports
 
-    #region Statistics
+#region Statistics
 
         AaruConsole.WriteLine();
 
@@ -158,7 +158,7 @@ sealed class ConfigureCommand : Command
         else
             Settings.Settings.Current.Stats = null;
 
-    #endregion Statistics
+#endregion Statistics
 
         Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
         Settings.Settings.SaveSettings();

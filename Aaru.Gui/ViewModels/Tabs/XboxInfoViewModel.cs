@@ -69,13 +69,11 @@ public sealed class XboxInfoViewModel
         if(dmi != null)
         {
             if(DMI.IsXbox(dmi))
-                XboxDmiText = DMI.PrettifyXbox(dmi);
-            else if(DMI.IsXbox360(dmi))
-                XboxDmiText = DMI.PrettifyXbox360(dmi);
+                XboxDmiText                         = DMI.PrettifyXbox(dmi);
+            else if(DMI.IsXbox360(dmi)) XboxDmiText = DMI.PrettifyXbox360(dmi);
         }
 
-        if(decodedSecuritySector.HasValue)
-            XboxSsText = SS.Prettify(decodedSecuritySector);
+        if(decodedSecuritySector.HasValue) XboxSsText = SS.Prettify(decodedSecuritySector);
 
         SaveXboxSsVisible = securitySector != null;
     }
@@ -117,8 +115,7 @@ public sealed class XboxInfoViewModel
 
         string result = await dlgSaveBinary.ShowAsync(_view);
 
-        if(result is null)
-            return;
+        if(result is null) return;
 
         var saveFs = new FileStream(result, FileMode.Create);
         saveFs.Write(data, 0, data.Length);

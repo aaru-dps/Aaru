@@ -31,17 +31,25 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.MediaInfo">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.MediaInfo">
     <Design.DataContext>
         <panels:MediaInfoViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock HorizontalAlignment="Center" Text="{Binding MediaInformationLabel}" />
-        <Image Width="128" Height="128" HorizontalAlignment="Center" Source="{Binding MediaLogo}" />
+        <TextBlock HorizontalAlignment="Center"
+                   Text="{Binding MediaInformationLabel}" />
+        <Image Width="128"
+               Height="128"
+               HorizontalAlignment="Center"
+               Source="{Binding MediaLogo}" />
         <TabControl>
             <TabItem IsVisible="{Binding GeneralVisible}">
                 <TabItem.Header>
@@ -50,18 +58,23 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding MediaTypeLabel}" />
-                        <TextBox Text="{Binding MediaType}" IsReadOnly="True" />
+                        <TextBox Text="{Binding MediaType}"
+                                 IsReadOnly="True" />
                     </StackPanel>
-                    <TextBlock IsVisible="{Binding !!MediaSize}" Text="{Binding MediaSize}" />
-                    <StackPanel Orientation="Horizontal" IsVisible="{Binding !!MediaSerial}">
+                    <TextBlock IsVisible="{Binding !!MediaSize}"
+                               Text="{Binding MediaSize}" />
+                    <StackPanel Orientation="Horizontal"
+                                IsVisible="{Binding !!MediaSerial}">
                         <TextBlock Text="{Binding MediaSerialNumberLabel}" />
-                        <TextBox Text="{Binding MediaSerial}" IsReadOnly="True" />
+                        <TextBox Text="{Binding MediaSerial}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <Button IsVisible="{Binding SaveReadMediaSerialVisible}"
                             Command="{Binding SaveReadMediaSerialCommand}">
                         <TextBlock Text="{Binding SaveReadMediaSerialLabel}" />
                     </Button>
-                    <Button IsVisible="{Binding SaveReadCapacityVisible}" Command="{Binding SaveReadCapacityCommand}">
+                    <Button IsVisible="{Binding SaveReadCapacityVisible}"
+                            Command="{Binding SaveReadCapacityCommand}">
                         <TextBlock Text="{Binding SaveReadCapacityLabel}" />
                     </Button>
                     <Button IsVisible="{Binding SaveReadCapacity16Visible}"
@@ -94,15 +107,21 @@
                     <TextBlock Text="{Binding SscLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <TextBlock IsVisible="{Binding !!DensitySupport}" Text="{Binding DensitySupportLabel}" />
-                    <TextBox IsVisible="{Binding !!DensitySupport}" Text="{Binding DensitySupport}" IsReadOnly="True" />
-                    <TextBlock IsVisible="{Binding !!MediumSupport}" Text="{Binding MediumSupportLabel}" />
-                    <TextBox Text="{Binding MediumSupport}" IsReadOnly="True" />
+                    <TextBlock IsVisible="{Binding !!DensitySupport}"
+                               Text="{Binding DensitySupportLabel}" />
+                    <TextBox IsVisible="{Binding !!DensitySupport}"
+                             Text="{Binding DensitySupport}"
+                             IsReadOnly="True" />
+                    <TextBlock IsVisible="{Binding !!MediumSupport}"
+                               Text="{Binding MediumSupportLabel}" />
+                    <TextBox Text="{Binding MediumSupport}"
+                             IsReadOnly="True" />
                     <Button IsVisible="{Binding SaveDensitySupportVisible}"
                             Command="{Binding SaveDensitySupportCommand}">
                         <TextBlock Text="{Binding SaveDensitySupportLabel}" />
                     </Button>
-                    <Button IsVisible="{Binding SaveMediumSupportVisible}" Command="{Binding SaveMediumSupportCommand}">
+                    <Button IsVisible="{Binding SaveMediumSupportVisible}"
+                            Command="{Binding SaveMediumSupportCommand}">
                         <TextBlock Text="{Binding SaveMediumSupportLabel}" />
                     </Button>
                 </StackPanel>

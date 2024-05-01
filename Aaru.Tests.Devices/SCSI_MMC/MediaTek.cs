@@ -65,12 +65,24 @@ static partial class ScsiMmc
 
         AaruConsole.WriteLine(Localization.Sending_READ_CD_to_the_device);
 
-        bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, 2352, 1, MmcSectorTypes.AllTypes,
-                                false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                MmcSubchannel.None, dev.Timeout, out double duration);
+        bool sense = dev.ReadCd(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                address,
+                                2352,
+                                1,
+                                MmcSectorTypes.AllTypes,
+                                false,
+                                false,
+                                true,
+                                MmcHeaderCodes.AllHeaders,
+                                true,
+                                true,
+                                MmcErrorField.None,
+                                MmcSubchannel.None,
+                                dev.Timeout,
+                                out double duration);
 
-        if(sense)
-            AaruConsole.WriteLine(Localization.READ_CD_failed);
+        if(sense) AaruConsole.WriteLine(Localization.READ_CD_failed);
 
         AaruConsole.WriteLine(Localization.Sending_MediaTek_READ_DRAM_to_the_device);
         sense = dev.MediaTekReadDram(out buffer, out senseBuffer, 0, 0xB00, dev.Timeout, out duration);
@@ -121,8 +133,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MediaTek_READ_CACHE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();
@@ -135,8 +146,7 @@ static partial class ScsiMmc
                 AaruConsole.WriteLine(Localization.Device_0, devPath);
                 AaruConsole.WriteLine(Localization.MediaTek_READ_CACHE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
                 AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
                 System.Console.ReadKey();

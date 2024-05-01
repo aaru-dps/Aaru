@@ -60,7 +60,11 @@ public class LZMA
             var srcSize = (nuint)source.Length;
             var dstSize = (nuint)destination.Length;
 
-            AARU_lzma_decode_buffer(destination, ref dstSize, source, ref srcSize, properties,
+            AARU_lzma_decode_buffer(destination,
+                                    ref dstSize,
+                                    source,
+                                    ref srcSize,
+                                    properties,
                                     (nuint)properties.Length);
 
             return (int)dstSize;
@@ -94,8 +98,19 @@ public class LZMA
             var propsSize = (nuint)properties.Length;
             var srcSize   = (nuint)source.Length;
 
-            AARU_lzma_encode_buffer(destination, ref dstSize, source, srcSize, properties, ref propsSize, level,
-                                    dictSize,    lc,          lp,     pb,      fb,         0);
+            AARU_lzma_encode_buffer(destination,
+                                    ref dstSize,
+                                    source,
+                                    srcSize,
+                                    properties,
+                                    ref propsSize,
+                                    level,
+                                    dictSize,
+                                    lc,
+                                    lp,
+                                    pb,
+                                    fb,
+                                    0);
 
             return (int)dstSize;
         }

@@ -57,8 +57,7 @@ public static class Cartridge
 {
     public static MediumStatus? Decode(byte[] response)
     {
-        if(response?.Length != 8)
-            return null;
+        if(response?.Length != 8) return null;
 
         return new MediumStatus
         {
@@ -80,24 +79,20 @@ public static class Cartridge
 
     public static string Prettify(MediumStatus? status)
     {
-        if(status == null)
-            return null;
+        if(status == null) return null;
 
         MediumStatus decoded = status.Value;
         var          sb      = new StringBuilder();
 
-        if(decoded.PWP)
-            sb.AppendLine(Localization.Disc_surface_is_set_to_write_protected_status);
+        if(decoded.PWP) sb.AppendLine(Localization.Disc_surface_is_set_to_write_protected_status);
 
         if(decoded.Cartridge)
         {
             sb.AppendLine(Localization.Disc_comes_in_a_cartridge);
 
-            if(decoded.OUT)
-                sb.AppendLine(Localization.Disc_has_been_extracted_from_the_cartridge);
+            if(decoded.OUT) sb.AppendLine(Localization.Disc_has_been_extracted_from_the_cartridge);
 
-            if(decoded.CWP)
-                sb.AppendLine(Localization.Cartridge_is_set_to_write_protected);
+            if(decoded.CWP) sb.AppendLine(Localization.Cartridge_is_set_to_write_protected);
         }
 
         switch(decoded.DiscType)
@@ -116,8 +111,7 @@ public static class Cartridge
                 break;
         }
 
-        if(!decoded.MSWI)
-            return sb.ToString();
+        if(!decoded.MSWI) return sb.ToString();
 
         switch(decoded.RAMSWI)
         {
@@ -132,8 +126,8 @@ public static class Cartridge
 
                 break;
             default:
-                sb.AppendFormat(Localization.Disc_has_unknown_reason_0_for_write_inhibition, decoded.RAMSWI).
-                   AppendLine();
+                sb.AppendFormat(Localization.Disc_has_unknown_reason_0_for_write_inhibition, decoded.RAMSWI)
+                  .AppendLine();
 
                 break;
         }

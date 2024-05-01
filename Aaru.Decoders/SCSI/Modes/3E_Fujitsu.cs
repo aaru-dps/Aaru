@@ -76,17 +76,13 @@ public static partial class Modes
 
     public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
     {
-        if((pageResponse?[0] & 0x40) == 0x40)
-            return null;
+        if((pageResponse?[0] & 0x40) == 0x40) return null;
 
-        if((pageResponse?[0] & 0x3F) != 0x3E)
-            return null;
+        if((pageResponse?[0] & 0x3F) != 0x3E) return null;
 
-        if(pageResponse[1] + 2 != pageResponse.Length)
-            return null;
+        if(pageResponse[1] + 2 != pageResponse.Length) return null;
 
-        if(pageResponse.Length != 8)
-            return null;
+        if(pageResponse.Length != 8) return null;
 
         var decoded = new Fujitsu_ModePage_3E();
 
@@ -111,19 +107,16 @@ public static partial class Modes
 
     public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
     {
-        if(!modePage.HasValue)
-            return null;
+        if(!modePage.HasValue) return null;
 
         Fujitsu_ModePage_3E page = modePage.Value;
         var                 sb   = new StringBuilder();
 
         sb.AppendLine(Localization.Fujitsu_Verify_Control_Page);
 
-        if(page.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(page.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(page.audioVisualMode)
-            sb.AppendLine("\t" + Localization.Audio_Visual_data_support_mode_is_applied);
+        if(page.audioVisualMode) sb.AppendLine("\t" + Localization.Audio_Visual_data_support_mode_is_applied);
 
         if(page.streamingMode)
             sb.AppendLine("\t" + Localization.Test_write_operation_is_restricted_during_read_or_write_operations);
@@ -145,8 +138,8 @@ public static partial class Modes
         }
 
         sb.AppendFormat("\t" + Localization.The_device_type_that_would_be_provided_in_the_INQUIRY_response_is_0,
-                        page.devType).
-           AppendLine();
+                        page.devType)
+          .AppendLine();
 
         return sb.ToString();
     }

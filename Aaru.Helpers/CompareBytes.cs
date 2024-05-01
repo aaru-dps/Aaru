@@ -61,8 +61,7 @@ public static partial class ArrayHelpers
 
         for(long i = 0; i < leastBytes; i++)
         {
-            if(compareArray1[i] == compareArray2[i])
-                continue;
+            if(compareArray1[i] == compareArray2[i]) continue;
 
             different = true;
 

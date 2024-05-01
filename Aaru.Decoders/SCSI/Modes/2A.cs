@@ -50,33 +50,25 @@ public static partial class Modes
 
     public static string PrettifyModePage_2A(ModePage_2A modePage)
     {
-        if(modePage is null)
-            return null;
+        if(modePage is null) return null;
 
         var sb = new StringBuilder();
 
         sb.AppendLine(Localization.SCSI_CD_ROM_capabilities_page);
 
-        if(modePage.PS)
-            sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
+        if(modePage.PS) sb.AppendLine("\t" + Localization.Parameters_can_be_saved);
 
-        if(modePage.AudioPlay)
-            sb.AppendLine("\t" + Localization.Drive_can_play_audio);
+        if(modePage.AudioPlay) sb.AppendLine("\t" + Localization.Drive_can_play_audio);
 
-        if(modePage.Mode2Form1)
-            sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_1_format);
+        if(modePage.Mode2Form1) sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_1_format);
 
-        if(modePage.Mode2Form2)
-            sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_2_format);
+        if(modePage.Mode2Form2) sb.AppendLine("\t" + Localization.Drive_can_read_sectors_in_Mode_2_Form_2_format);
 
-        if(modePage.MultiSession)
-            sb.AppendLine("\t" + Localization.Drive_supports_multi_session_discs_and_or_Photo_CD);
+        if(modePage.MultiSession) sb.AppendLine("\t" + Localization.Drive_supports_multi_session_discs_and_or_Photo_CD);
 
-        if(modePage.CDDACommand)
-            sb.AppendLine("\t" + Localization.Drive_can_read_digital_audio);
+        if(modePage.CDDACommand) sb.AppendLine("\t" + Localization.Drive_can_read_digital_audio);
 
-        if(modePage.AccurateCDDA)
-            sb.AppendLine("\t" + Localization.Drive_can_continue_from_streaming_loss);
+        if(modePage.AccurateCDDA) sb.AppendLine("\t" + Localization.Drive_can_continue_from_streaming_loss);
 
         if(modePage.Subchannel)
             sb.AppendLine("\t" + Localization.Drive_can_read_uncorrected_and_interleaved_R_W_subchannels);
@@ -84,14 +76,11 @@ public static partial class Modes
         if(modePage.DeinterlaveSubchannel)
             sb.AppendLine("\t" + Localization.Drive_can_read__deinterleave_and_correct_R_W_subchannels);
 
-        if(modePage.C2Pointer)
-            sb.AppendLine("\t" + Localization.Drive_supports_C2_pointers);
+        if(modePage.C2Pointer) sb.AppendLine("\t" + Localization.Drive_supports_C2_pointers);
 
-        if(modePage.UPC)
-            sb.AppendLine("\t" + Localization.Drive_can_read_Media_Catalogue_Number);
+        if(modePage.UPC) sb.AppendLine("\t" + Localization.Drive_can_read_Media_Catalogue_Number);
 
-        if(modePage.ISRC)
-            sb.AppendLine("\t" + Localization.Drive_can_read_ISRC);
+        if(modePage.ISRC) sb.AppendLine("\t" + Localization.Drive_can_read_ISRC);
 
         switch(modePage.LoadingMechanism)
         {
@@ -117,14 +106,13 @@ public static partial class Modes
                 break;
             default:
                 sb.AppendFormat("\t" + Localization.Drive_uses_unknown_loading_mechanism_type__0_,
-                                modePage.LoadingMechanism).
-                   AppendLine();
+                                modePage.LoadingMechanism)
+                  .AppendLine();
 
                 break;
         }
 
-        if(modePage.Lock)
-            sb.AppendLine("\t" + Localization.Drive_can_lock_media);
+        if(modePage.Lock) sb.AppendLine("\t" + Localization.Drive_can_lock_media);
 
         if(modePage.PreventJumper)
         {
@@ -142,19 +130,17 @@ public static partial class Modes
                               : "\t" + Localization.Drive_is_not_locked__media_can_be_ejected_and_inserted);
         }
 
-        if(modePage.Eject)
-            sb.AppendLine("\t" + Localization.Drive_can_eject_media);
+        if(modePage.Eject) sb.AppendLine("\t" + Localization.Drive_can_eject_media);
 
-        if(modePage.SeparateChannelMute)
-            sb.AppendLine("\t" + Localization.Each_channel_can_be_muted_independently);
+        if(modePage.SeparateChannelMute) sb.AppendLine("\t" + Localization.Each_channel_can_be_muted_independently);
 
         if(modePage.SeparateChannelVolume)
             sb.AppendLine("\t" + Localization.Each_channel_s_volume_can_be_controlled_independently);
 
         if(modePage.SupportedVolumeLevels > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_supports_0_volume_levels, modePage.SupportedVolumeLevels).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_supports_0_volume_levels, modePage.SupportedVolumeLevels)
+              .AppendLine();
         }
 
         if(modePage.BufferSize > 0)
@@ -162,14 +148,14 @@ public static partial class Modes
 
         if(modePage.MaximumSpeed > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_maximum_reading_speed_is_0_Kbyte_sec, modePage.MaximumSpeed).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_maximum_reading_speed_is_0_Kbyte_sec, modePage.MaximumSpeed)
+              .AppendLine();
         }
 
         if(modePage.CurrentSpeed > 0)
         {
-            sb.AppendFormat("\t" + Localization.Drive_current_reading_speed_is_0_Kbyte_sec, modePage.CurrentSpeed).
-               AppendLine();
+            sb.AppendFormat("\t" + Localization.Drive_current_reading_speed_is_0_Kbyte_sec, modePage.CurrentSpeed)
+              .AppendLine();
         }
 
         if(modePage.ReadCDR)
@@ -178,8 +164,7 @@ public static partial class Modes
                               ? "\t" + Localization.Drive_can_read_and_write_CD_R
                               : "\t" + Localization.Drive_can_read_CD_R);
 
-            if(modePage.Method2)
-                sb.AppendLine("\t" + Localization.Drive_supports_reading_CD_R_packet_media);
+            if(modePage.Method2) sb.AppendLine("\t" + Localization.Drive_supports_reading_CD_R_packet_media);
         }
 
         if(modePage.ReadCDRW)
@@ -189,8 +174,7 @@ public static partial class Modes
                               : "\t" + Localization.Drive_can_read_CD_RW);
         }
 
-        if(modePage.ReadDVDROM)
-            sb.AppendLine("\t" + Localization.Drive_can_read_DVD_ROM);
+        if(modePage.ReadDVDROM) sb.AppendLine("\t" + Localization.Drive_can_read_DVD_ROM);
 
         if(modePage.ReadDVDR)
         {
@@ -209,11 +193,9 @@ public static partial class Modes
         if(modePage.Composite)
             sb.AppendLine("\t" + Localization.Drive_can_deliver_a_composite_audio_and_video_data_stream);
 
-        if(modePage.DigitalPort1)
-            sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_1);
+        if(modePage.DigitalPort1) sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_1);
 
-        if(modePage.DigitalPort2)
-            sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_2);
+        if(modePage.DigitalPort2) sb.AppendLine("\t" + Localization.Drive_supports_IEC_958_digital_output_on_port_2);
 
         if(modePage.SDP)
             sb.AppendLine("\t" + Localization.Drive_contains_a_changer_that_can_report_the_exact_contents_of_the_slots);
@@ -224,14 +206,14 @@ public static partial class Modes
             {
                 case 0:
                     sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_CLV_mode,
-                                    modePage.CurrentWriteSpeedSelected).
-                       AppendLine();
+                                    modePage.CurrentWriteSpeedSelected)
+                      .AppendLine();
 
                     break;
                 case 1:
                     sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec_in_pure_CAV_mode,
-                                    modePage.CurrentWriteSpeedSelected).
-                       AppendLine();
+                                    modePage.CurrentWriteSpeedSelected)
+                      .AppendLine();
 
                     break;
             }
@@ -240,58 +222,52 @@ public static partial class Modes
         {
             if(modePage.MaxWriteSpeed > 0)
             {
-                sb.AppendFormat("\t" + Localization.Drive_maximum_writing_speed_is_0_Kbyte_sec, modePage.MaxWriteSpeed).
-                   AppendLine();
+                sb.AppendFormat("\t" + Localization.Drive_maximum_writing_speed_is_0_Kbyte_sec, modePage.MaxWriteSpeed)
+                  .AppendLine();
             }
 
             if(modePage.CurrentWriteSpeed > 0)
             {
                 sb.AppendFormat("\t" + Localization.Drive_current_writing_speed_is_0_Kbyte_sec,
-                                modePage.CurrentWriteSpeed).
-                   AppendLine();
+                                modePage.CurrentWriteSpeed)
+                  .AppendLine();
             }
         }
 
         if(modePage.WriteSpeedPerformanceDescriptors != null)
         {
             foreach(ModePage_2A_WriteDescriptor descriptor in
-                modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
+                    modePage.WriteSpeedPerformanceDescriptors.Where(descriptor => descriptor.WriteSpeed > 0))
             {
                 switch(descriptor.RotationControl)
                 {
                     case 0:
                         sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_0_Kbyte_sec_in_CLV_mode,
-                                        descriptor.WriteSpeed).
-                           AppendLine();
+                                        descriptor.WriteSpeed)
+                          .AppendLine();
 
                         break;
                     case 1:
                         sb.AppendFormat("\t" + Localization.Drive_supports_writing_at_is_0_Kbyte_sec_in_pure_CAV_mode,
-                                        descriptor.WriteSpeed).
-                           AppendLine();
+                                        descriptor.WriteSpeed)
+                          .AppendLine();
 
                         break;
                 }
             }
         }
 
-        if(modePage.TestWrite)
-            sb.AppendLine("\t" + Localization.Drive_supports_test_writing);
+        if(modePage.TestWrite) sb.AppendLine("\t" + Localization.Drive_supports_test_writing);
 
-        if(modePage.ReadBarcode)
-            sb.AppendLine("\t" + Localization.Drive_can_read_barcode);
+        if(modePage.ReadBarcode) sb.AppendLine("\t" + Localization.Drive_can_read_barcode);
 
-        if(modePage.SCC)
-            sb.AppendLine("\t" + Localization.Drive_can_read_both_sides_of_a_disc);
+        if(modePage.SCC) sb.AppendLine("\t" + Localization.Drive_can_read_both_sides_of_a_disc);
 
-        if(modePage.LeadInPW)
-            sb.AppendLine("\t" + Localization.Drive_an_read_raw_R_W_subchannel_from_the_Lead_In);
+        if(modePage.LeadInPW) sb.AppendLine("\t" + Localization.Drive_an_read_raw_R_W_subchannel_from_the_Lead_In);
 
-        if(modePage.CMRSupported == 1)
-            sb.AppendLine("\t" + Localization.Drive_supports_DVD_CSS_and_or_DVD_CPPM);
+        if(modePage.CMRSupported == 1) sb.AppendLine("\t" + Localization.Drive_supports_DVD_CSS_and_or_DVD_CPPM);
 
-        if(modePage.BUF)
-            sb.AppendLine("\t" + Localization.Drive_supports_buffer_under_run_free_recording);
+        if(modePage.BUF) sb.AppendLine("\t" + Localization.Drive_supports_buffer_under_run_free_recording);
 
         return sb.ToString();
     }

@@ -65,23 +65,20 @@ public sealed class Plan9 : IPartition
     {
         partitions = new List<Partition>();
 
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset + 1, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
         string[] really = StringHandlers.CToString(sector).Split('\n');
 
-        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part[..5] == "part ").
-                                          Select(part => part.Split(' ')).
-                                          TakeWhile(tokens => tokens.Length == 4))
+        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part[..5] == "part ")
+                                         .Select(part => part.Split(' '))
+                                         .TakeWhile(tokens => tokens.Length == 4))
         {
-            if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end))
-                break;
+            if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
             var part = new Partition
             {

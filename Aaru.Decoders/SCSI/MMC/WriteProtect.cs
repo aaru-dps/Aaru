@@ -58,8 +58,7 @@ public static class WriteProtect
 {
     public static WriteProtectionStatus? DecodeWriteProtectionStatus(byte[] WPSResponse)
     {
-        if(WPSResponse == null)
-            return null;
+        if(WPSResponse == null) return null;
 
         var decoded = new WriteProtectionStatus
         {
@@ -81,26 +80,21 @@ public static class WriteProtect
 
     public static string PrettifyWriteProtectionStatus(WriteProtectionStatus? WPSResponse)
     {
-        if(WPSResponse == null)
-            return null;
+        if(WPSResponse == null) return null;
 
         WriteProtectionStatus response = WPSResponse.Value;
 
         var sb = new StringBuilder();
 
-        if(response.MSWI)
-            sb.AppendLine(Localization.Writing_inhibited_by_media_specific_reason);
+        if(response.MSWI) sb.AppendLine(Localization.Writing_inhibited_by_media_specific_reason);
 
-        if(response.CWP)
-            sb.AppendLine(Localization.Cartridge_sets_write_protection);
+        if(response.CWP) sb.AppendLine(Localization.Cartridge_sets_write_protection);
 
-        if(response.PWP)
-            sb.AppendLine(Localization.Media_surface_sets_write_protection);
+        if(response.PWP) sb.AppendLine(Localization.Media_surface_sets_write_protection);
 
-        if(response.SWPP)
-            sb.AppendLine(Localization.Software_write_protection_is_set_until_power_down);
+        if(response.SWPP) sb.AppendLine(Localization.Software_write_protection_is_set_until_power_down);
 
-    #if DEBUG
+#if DEBUG
         if(response.Reserved1 != 0)
             sb.AppendFormat(Localization.Reserved1_equals_0_X8, response.Reserved1).AppendLine();
 
@@ -118,7 +112,7 @@ public static class WriteProtect
 
         if(response.Reserved6 != 0)
             sb.AppendFormat(Localization.Reserved_6_equals_0_X2, response.Reserved6).AppendLine();
-    #endif
+#endif
 
         return sb.ToString();
     }

@@ -58,8 +58,7 @@ static partial class Usb
         // devices that match the interface GUID of a Hub Controller
         IntPtr h = SetupDiGetClassDevs(ref hostGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-        if(h == _invalidHandleValue)
-            return new ReadOnlyCollection<UsbController>(hostList);
+        if(h == _invalidHandleValue) return new ReadOnlyCollection<UsbController>(hostList);
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
         bool   success;
@@ -104,11 +103,21 @@ static partial class Usb
                     var requiredSize = 0;
                     int regType      = REG_SZ;
 
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DEVICEDESC,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
                         host.ControllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
 
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DRIVER,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
                         host.ControllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
                 }
@@ -137,8 +146,7 @@ static partial class Usb
         // to generate a list of all USB devices
         IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -160,14 +168,24 @@ static partial class Usb
                 int regType      = REG_SZ;
                 var keyName      = "";
 
-                if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                if(SetupDiGetDeviceRegistryProperty(h,
+                                                    ref da,
+                                                    SPDRP_DRIVER,
+                                                    ref regType,
+                                                    ptrBuf,
+                                                    BUFFER_SIZE,
                                                     ref requiredSize))
                     keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                 // is it a match?
                 if(keyName == driverKeyName)
                 {
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DEVICEDESC,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
                         ans = Marshal.PtrToStringAuto(ptrBuf);
 
@@ -195,8 +213,7 @@ static partial class Usb
         // to generate a list of all USB devices
         IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -219,7 +236,12 @@ static partial class Usb
 
                 var keyName = "";
 
-                if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                if(SetupDiGetDeviceRegistryProperty(h,
+                                                    ref da,
+                                                    SPDRP_DRIVER,
+                                                    ref regType,
+                                                    ptrBuf,
+                                                    BUFFER_SIZE,
                                                     ref requiredSize))
                     keyName = Marshal.PtrToStringAuto(ptrBuf);
 
@@ -285,18 +307,28 @@ static partial class Usb
             };
 
             // Open a handle to the Host Controller
-            IntPtr h = CreateFile(ControllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(ControllerDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return root;
+            if(h == _invalidHandleValue) return root;
 
             var    hubName    = new UsbRootHubName();
             int    nBytes     = Marshal.SizeOf(hubName);
             IntPtr ptrHubName = Marshal.AllocHGlobal(nBytes);
 
             // get the Hub Name
-            if(DeviceIoControl(h, IOCTL_USB_GET_ROOT_HUB_NAME, ptrHubName, nBytes, ptrHubName, nBytes, out _,
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_ROOT_HUB_NAME,
+                               ptrHubName,
+                               nBytes,
+                               ptrHubName,
+                               nBytes,
+                               out _,
                                IntPtr.Zero))
             {
                 hubName = (UsbRootHubName)(Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName)) ??
@@ -307,7 +339,12 @@ static partial class Usb
 
             // TODO: Get DriverKeyName for Root Hub
             // Now let's open the Hub (based upon the HubName we got above)
-            IntPtr h2 = CreateFile(root.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h2 = CreateFile(root.HubDevicePath,
+                                   GENERIC_WRITE,
+                                   FILE_SHARE_WRITE,
+                                   IntPtr.Zero,
+                                   OPEN_EXISTING,
+                                   0,
                                    IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
@@ -322,7 +359,13 @@ static partial class Usb
                 Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                 // get the Hub Information
-                if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes, out _,
+                if(DeviceIoControl(h2,
+                                   IOCTL_USB_GET_NODE_INFORMATION,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   out _,
                                    IntPtr.Zero))
                 {
                     nodeInfo = (UsbNodeInformation)(Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation)) ??
@@ -458,11 +501,15 @@ static partial class Usb
             var portList = new List<UsbPort>();
 
             // Open a handle to the Hub device
-            IntPtr h = CreateFile(HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(HubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return new ReadOnlyCollection<UsbPort>(portList);
+            if(h == _invalidHandleValue) return new ReadOnlyCollection<UsbPort>(portList);
 
             int    nBytes            = Marshal.SizeOf(typeof(UsbNodeConnectionInformationEx));
             IntPtr ptrNodeConnection = Marshal.AllocHGlobal(nBytes);
@@ -478,8 +525,14 @@ static partial class Usb
 
                 Marshal.StructureToPtr(nodeConnection, ptrNodeConnection, true);
 
-                if(!DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, ptrNodeConnection, nBytes,
-                                    ptrNodeConnection, nBytes, out _, IntPtr.Zero))
+                if(!DeviceIoControl(h,
+                                    IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX,
+                                    ptrNodeConnection,
+                                    nBytes,
+                                    ptrNodeConnection,
+                                    nBytes,
+                                    out _,
+                                    IntPtr.Zero))
                     continue;
 
                 nodeConnection =
@@ -556,8 +609,7 @@ static partial class Usb
         /// <returns>Downstream external hub</returns>
         internal UsbDevice GetDevice()
         {
-            if(!PortIsDeviceConnected)
-                return null;
+            if(!PortIsDeviceConnected) return null;
 
             // Copy over some values from the Port class
             // Ya know, I've given some thought about making Device a derived class...
@@ -569,11 +621,15 @@ static partial class Usb
             };
 
             // Open a handle to the Hub device
-            IntPtr h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(PortHubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return device;
+            if(h == _invalidHandleValue) return device;
 
             int nBytesReturned;
             int nBytes = BUFFER_SIZE;
@@ -606,8 +662,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // The location of the string descriptor is immediately after
                     // the Request structure.  Because this location is not "covered"
@@ -646,8 +708,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // the location of the string descriptor is immediately after the Request structure
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
@@ -683,8 +751,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // the location of the string descriptor is immediately after the Request structure
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
@@ -717,8 +791,14 @@ static partial class Usb
             Marshal.StructureToPtr(dcrRequest, dcrPtrRequest, true);
 
             // Use an IOCTL call to request the String Descriptor
-            if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, dcrPtrRequest, nBytes, dcrPtrRequest,
-                               nBytes, out nBytesReturned, IntPtr.Zero))
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                               dcrPtrRequest,
+                               nBytes,
+                               dcrPtrRequest,
+                               nBytes,
+                               out nBytesReturned,
+                               IntPtr.Zero))
             {
                 var ptrStringDesc = IntPtr.Add(dcrPtrRequest, Marshal.SizeOf(dcrRequest));
                 device.BinaryDeviceDescriptors = new byte[nBytesReturned];
@@ -738,8 +818,14 @@ static partial class Usb
             Marshal.StructureToPtr(driverKey, ptrDriverKey, true);
 
             // Use an IOCTL call to request the Driver Key Name
-            if(DeviceIoControl(h,      IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME, ptrDriverKey, nBytes, ptrDriverKey,
-                               nBytes, out nBytesReturned,                           IntPtr.Zero))
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME,
+                               ptrDriverKey,
+                               nBytes,
+                               ptrDriverKey,
+                               nBytes,
+                               out nBytesReturned,
+                               IntPtr.Zero))
             {
                 driverKey = (UsbNodeConnectionDriverkeyName)(Marshal.PtrToStructure(ptrDriverKey,
                                                                  typeof(UsbNodeConnectionDriverkeyName)) ??
@@ -762,8 +848,7 @@ static partial class Usb
         /// <returns>Downstream external hub</returns>
         internal UsbHub GetHub()
         {
-            if(!PortIsHub)
-                return null;
+            if(!PortIsHub) return null;
 
             var hub = new UsbHub
             {
@@ -772,11 +857,15 @@ static partial class Usb
             };
 
             // Open a handle to the Host Controller
-            IntPtr h = CreateFile(PortHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(PortHubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return hub;
+            if(h == _invalidHandleValue) return hub;
 
             // Get the DevicePath for downstream hub
             var nodeName = new UsbNodeConnectionName
@@ -789,7 +878,13 @@ static partial class Usb
             Marshal.StructureToPtr(nodeName, ptrNodeName, true);
 
             // Use an IOCTL call to request the Node Name
-            if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_NAME, ptrNodeName, nBytes, ptrNodeName, nBytes, out _,
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_NODE_CONNECTION_NAME,
+                               ptrNodeName,
+                               nBytes,
+                               ptrNodeName,
+                               nBytes,
+                               out _,
                                IntPtr.Zero))
             {
                 nodeName = (UsbNodeConnectionName)(Marshal.PtrToStructure(ptrNodeName, typeof(UsbNodeConnectionName)) ??
@@ -799,7 +894,12 @@ static partial class Usb
             }
 
             // Now let's open the Hub (based upon the HubName we got above)
-            IntPtr h2 = CreateFile(hub.HubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h2 = CreateFile(hub.HubDevicePath,
+                                   GENERIC_WRITE,
+                                   FILE_SHARE_WRITE,
+                                   IntPtr.Zero,
+                                   OPEN_EXISTING,
+                                   0,
                                    IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
@@ -814,7 +914,13 @@ static partial class Usb
                 Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                 // get the Hub Information
-                if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes, out _,
+                if(DeviceIoControl(h2,
+                                   IOCTL_USB_GET_NODE_INFORMATION,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   out _,
                                    IntPtr.Zero))
                 {
                     nodeInfo = (UsbNodeInformation)(Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation)) ??

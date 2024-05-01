@@ -31,44 +31,64 @@
 // Copyright © 2011‐2023 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Windows.ImageSidecar"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="480"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Windows.ImageSidecar"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <windows:ImageSidecarViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding DestinationFileLabel}" />
         <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DestinationText}" IsReadOnly="True" />
-            <Button Command="{Binding DestinationCommand}" IsEnabled="{Binding DestinationEnabled}">
+            <TextBox Text="{Binding DestinationText}"
+                     IsReadOnly="True" />
+            <Button Command="{Binding DestinationCommand}"
+                    IsEnabled="{Binding DestinationEnabled}">
                 <TextBlock Text="{Binding ChooseLabel}" />
             </Button>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <TextBlock Text="{Binding StatusText}" IsVisible="{Binding StatusVisible}" />
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <TextBlock Text="{Binding StatusText}"
+                       IsVisible="{Binding StatusVisible}" />
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMaxValue}" Value="{Binding ProgressValue}"
+                <ProgressBar Maximum="{Binding ProgressMaxValue}"
+                             Value="{Binding ProgressValue}"
                              IsIndeterminate="{Binding ProgressIndeterminate}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBlock Text="{Binding Progress2Text}" />
-                <ProgressBar Maximum="{Binding Progress2MaxValue}" Value="{Binding Progress2Value}"
+                <ProgressBar Maximum="{Binding Progress2MaxValue}"
+                             Value="{Binding Progress2Value}"
                              IsIndeterminate="{Binding Progress2Indeterminate}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
                 <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
                 <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsEnabled="{Binding StopEnabled}" IsVisible="{Binding StopVisible}">
+            <Button Command="{Binding StopCommand}"
+                    IsEnabled="{Binding StopEnabled}"
+                    IsVisible="{Binding StopVisible}">
                 <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>

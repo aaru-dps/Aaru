@@ -70,20 +70,15 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MediumScan;
 
-        if(written)
-            cdb[1] += 0x10;
+        if(written) cdb[1] += 0x10;
 
-        if(advancedScan)
-            cdb[1] += 0x08;
+        if(advancedScan) cdb[1] += 0x08;
 
-        if(reverse)
-            cdb[1] += 0x04;
+        if(reverse) cdb[1] += 0x04;
 
-        if(partial)
-            cdb[1] += 0x02;
+        if(partial) cdb[1] += 0x02;
 
-        if(relAddr)
-            cdb[1] += 0x01;
+        if(relAddr) cdb[1] += 0x01;
 
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);
         cdb[3] = (byte)((lba & 0xFF0000)   >> 16);
@@ -104,16 +99,19 @@ public partial class Device
             cdb[8]    = 8;
         }
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout,
-                                    buffer.Length == 0 ? ScsiDirection.None : ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    buffer.Length == 0 ? ScsiDirection.None : ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MEDIUM_SCAN_took_0_ms, duration);
 
-        if(Error)
-            return sense;
+        if(Error) return sense;
 
         DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
