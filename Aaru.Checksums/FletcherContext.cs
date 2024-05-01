@@ -50,7 +50,7 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
-public sealed class Fletcher32Context : IChecksum
+public sealed partial class Fletcher32Context : IChecksum
 {
     internal const ushort FLETCHER_MODULE = 0xFFFF;
     internal const uint   NMAX            = 5552;
@@ -128,17 +128,17 @@ public sealed class Fletcher32Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr fletcher32_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr fletcher32_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int fletcher32_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int fletcher32_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int fletcher32_final(IntPtr ctx, ref uint crc);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int fletcher32_final(IntPtr ctx, ref uint crc);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void fletcher32_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void fletcher32_free(IntPtr ctx);
 
     static void Step(ref ushort previousSum1, ref ushort previousSum2, byte[] data, uint len, bool useNative,
                      IntPtr     nativeContext)
@@ -418,7 +418,7 @@ public sealed class Fletcher32Context : IChecksum
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
-public sealed class Fletcher16Context : IChecksum
+public sealed partial class Fletcher16Context : IChecksum
 {
     const byte FLETCHER_MODULE = 0xFF;
     const byte NMAX            = 22;
@@ -497,17 +497,17 @@ public sealed class Fletcher16Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr fletcher16_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr fletcher16_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int fletcher16_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int fletcher16_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int fletcher16_final(IntPtr ctx, ref ushort checksum);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int fletcher16_final(IntPtr ctx, ref ushort checksum);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void fletcher16_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void fletcher16_free(IntPtr ctx);
 
     static void Step(ref byte previousSum1, ref byte previousSum2, byte[] data, uint len, bool useNative,
                      IntPtr   nativeContext)

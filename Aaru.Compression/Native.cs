@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Compression;
 
 /// <summary>Handles native implementations of compression algorithms</summary>
-public static class Native
+public static partial class Native
 {
     static bool _checked;
     static bool _supported;
@@ -76,6 +76,6 @@ public static class Native
         }
     }
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern ulong AARU_get_acn_version();
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial ulong AARU_get_acn_version();
 }

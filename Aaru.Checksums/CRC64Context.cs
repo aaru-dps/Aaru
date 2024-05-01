@@ -48,7 +48,7 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-public sealed class Crc64Context : IChecksum
+public sealed partial class Crc64Context : IChecksum
 {
     /// <summary>ECMA CRC64 polynomial</summary>
     const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
@@ -371,17 +371,17 @@ public sealed class Crc64Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr crc64_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr crc64_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc64_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc64_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc64_final(IntPtr ctx, ref ulong crc);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc64_final(IntPtr ctx, ref ulong crc);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void crc64_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void crc64_free(IntPtr ctx);
 
     static ulong[][] GenerateTable(ulong polynomial)
     {

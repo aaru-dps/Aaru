@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 namespace Aaru.Checksums;
 
 /// <summary>Handles native implementations of compression algorithms</summary>
-public static class Native
+public static partial class Native
 {
     static bool _checked;
     static bool _supported;
@@ -76,6 +76,6 @@ public static class Native
         }
     }
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern ulong get_acn_version();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial ulong get_acn_version();
 }

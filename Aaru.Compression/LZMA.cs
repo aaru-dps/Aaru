@@ -34,19 +34,20 @@ using SharpCompress.Compressors.LZMA;
 namespace Aaru.Compression;
 
 /// <summary>Implements the LZMA compression algorithm</summary>
-public class LZMA
+public partial class LZMA
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzma_decode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, ref nuint srcSize,
-                                              byte[] props,     nuint     propsSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzma_decode_buffer(byte[]    dstBuffer, ref nuint dstSize, byte[] srcBuffer,
+                                                       ref nuint srcSize,   byte[]    props,   nuint  propsSize);
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer, nuint srcSize,
-                                              byte[] outProps, ref nuint outPropsSize, int level, uint dictSize, int lc,
-                                              int    lp, int pb, int fb, int numThreads);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzma_encode_buffer(byte[] dstBuffer, ref nuint dstSize, byte[] srcBuffer,
+                                                       nuint  srcSize,   byte[] outProps, ref nuint outPropsSize,
+                                                       int    level,     uint dictSize, int lc, int lp, int pb, int fb,
+                                                       int    numThreads);
 
     /// <summary>Decodes a buffer compressed with LZMA</summary>
     /// <param name="source">Encoded buffer</param>

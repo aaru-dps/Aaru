@@ -41,7 +41,7 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements a CRC16 algorithm</summary>
-public class Crc16Context : IChecksum
+public partial class Crc16Context : IChecksum
 {
     readonly ushort     _finalSeed;
     readonly bool       _inverse;
@@ -198,29 +198,29 @@ public class Crc16Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr crc16_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr crc16_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc16_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc16_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc16_final(IntPtr ctx, ref ushort crc);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc16_final(IntPtr ctx, ref ushort crc);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void crc16_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void crc16_free(IntPtr ctx);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr crc16_ccitt_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr crc16_ccitt_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc16_ccitt_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc16_ccitt_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc16_ccitt_final(IntPtr ctx, ref ushort crc);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc16_ccitt_final(IntPtr ctx, ref ushort crc);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void crc16_ccitt_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void crc16_ccitt_free(IntPtr ctx);
 
     static void Step(ref ushort previousCrc, ushort[][] table, byte[] data, uint len)
     {

@@ -1170,54 +1170,76 @@ static partial class Usb
 
     // ********************** API Definitions ************************
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    static extern IntPtr SetupDiGetClassDevs( // 1st form using a ClassGUID
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetClassDevsW")]
+    private static partial IntPtr SetupDiGetClassDevs( // 1st form using a ClassGUID
         ref Guid classGuid, int enumerator, IntPtr hwndParent, int flags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)] // 2nd form uses an Enumerator
-    static extern IntPtr SetupDiGetClassDevs(int classGuid, string enumerator, IntPtr hwndParent, int flags);
+    [LibraryImport("setupapi.dll",
+                   EntryPoint = "SetupDiGetClassDevsW",
+                   StringMarshalling = StringMarshalling.Utf16)] // 2nd form uses an Enumerator
+    private static partial IntPtr SetupDiGetClassDevs(int    classGuid,  string enumerator,
+                                                      IntPtr hwndParent, int    flags);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiEnumDeviceInterfaces(IntPtr                    deviceInfoSet,      IntPtr deviceInfoData,
-                                                   ref Guid                  interfaceClassGuid, int    memberIndex,
-                                                   ref SpDeviceInterfaceData deviceInterfaceData);
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiEnumDeviceInterfaces(IntPtr   deviceInfoSet,      IntPtr deviceInfoData,
+                                                            ref Guid interfaceClassGuid, int    memberIndex,
+                                                            ref SpDeviceInterfaceData
+                                                                deviceInterfaceData);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr deviceInfoSet,
-                                                       ref SpDeviceInterfaceData deviceInterfaceData,
-                                                       ref SpDeviceInterfaceDetailData deviceInterfaceDetailData,
-                                                       int deviceInterfaceDetailDataSize, ref int requiredSize,
-                                                       ref SpDevinfoData deviceInfoData);
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetDeviceInterfaceDetailW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiGetDeviceInterfaceDetail(IntPtr deviceInfoSet,
+                                                                ref SpDeviceInterfaceData
+                                                                    deviceInterfaceData,
+                                                                ref SpDeviceInterfaceDetailData
+                                                                    deviceInterfaceDetailData,
+                                                                int               deviceInterfaceDetailDataSize,
+                                                                ref int           requiredSize,
+                                                                ref SpDevinfoData deviceInfoData);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceRegistryProperty(IntPtr  deviceInfoSet,  ref SpDevinfoData deviceInfoData,
-                                                        int     iProperty,      ref int           propertyRegDataType,
-                                                        IntPtr  propertyBuffer, int               propertyBufferSize,
-                                                        ref int requiredSize);
+    [LibraryImport("setupapi.dll",
+                   EntryPoint = "SetupDiGetDeviceRegistryPropertyW",
+                   SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiGetDeviceRegistryProperty(
+        IntPtr  deviceInfoSet,       ref SpDevinfoData deviceInfoData, int iProperty,
+        ref int propertyRegDataType, IntPtr            propertyBuffer, int propertyBufferSize,
+        ref int requiredSize);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiEnumDeviceInfo(IntPtr deviceInfoSet, int memberIndex, ref SpDevinfoData deviceInfoData);
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiEnumDeviceInfo(IntPtr            deviceInfoSet, int memberIndex,
+                                                      ref SpDevinfoData deviceInfoData);
 
-    [DllImport("setupapi.dll", SetLastError = true)]
-    static extern bool SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceInstanceId(IntPtr        deviceInfoSet,    ref SpDevinfoData deviceInfoData,
-                                                  StringBuilder deviceInstanceId, int deviceInstanceIdSize,
-                                                  out int       requiredSize);
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetDeviceInstanceIdW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiGetDeviceInstanceId(
+        IntPtr deviceInfoSet,        ref SpDevinfoData deviceInfoData, StringBuilder deviceInstanceId,
+        int    deviceInstanceIdSize, out int           requiredSize);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool DeviceIoControl(IntPtr hDevice,     int dwIoControlCode, IntPtr  lpInBuffer, int nInBufferSize,
-                                       IntPtr lpOutBuffer, int nOutBufferSize,  out int lpBytesReturned,
-                                       IntPtr lpOverlapped);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool DeviceIoControl(IntPtr hDevice,        int     dwIoControlCode, IntPtr lpInBuffer,
+                                                int    nInBufferSize,  IntPtr  lpOutBuffer,
+                                                int    nOutBufferSize, out int lpBytesReturned,
+                                                IntPtr lpOverlapped);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern IntPtr CreateFile(string lpFileName,           int dwDesiredAccess,       int dwShareMode,
-                                    IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes,
-                                    IntPtr hTemplateFile);
+    [LibraryImport("kernel32.dll",
+                   EntryPoint = "CreateFileW",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Utf16)]
+    private static partial IntPtr CreateFile(string lpFileName,           int    dwDesiredAccess, int dwShareMode,
+                                             IntPtr lpSecurityAttributes, int    dwCreationDisposition,
+                                             int    dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool CloseHandle(IntPtr hObject);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CloseHandle(IntPtr hObject);
 
 #endregion
 }

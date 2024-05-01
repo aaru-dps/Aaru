@@ -32,17 +32,17 @@ namespace Aaru.Compression;
 
 // ReSharper disable once InconsistentNaming
 /// <summary>Implements the LZIP compression algorithm</summary>
-public class LZIP
+public partial class LZIP
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_encode_buffer(byte[] dstBuffer,      int dstSize, byte[] srcBuffer, int srcSize,
-                                              int    dictionarySize, int matchLenLimit);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
+                                                       int    dictionarySize, int matchLenLimit);
 
     /// <summary>Decodes a buffer compressed with LZIP</summary>
     /// <param name="source">Encoded buffer</param>

@@ -40,12 +40,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 using System.Security.Principal;
 
 namespace Aaru.CommonTypes.Interop;
 
 /// <summary>Detects the underlying execution framework and operating system</summary>
-public static class DetectOS
+public static partial class DetectOS
 {
     /// <summary>Are we running under Mono?</summary>
     public static readonly bool IsMono =
@@ -98,11 +99,15 @@ public static class DetectOS
         }
     }
 
-    [DllImport("libc", SetLastError = true)]
-    static extern int uname(out UtsName name);
+    [LibraryImport("libc", SetLastError = true)]
+    private static partial int uname(out UtsName name);
 
-    [DllImport("libc", SetLastError = true, EntryPoint = "sysctlbyname", CharSet = CharSet.Ansi)]
-    static extern int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
+    [LibraryImport("libc",
+                   EntryPoint = "sysctlbyname",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    private static partial int OSX_sysctlbyname(string name, IntPtr oldp, IntPtr oldlenp, IntPtr newp, uint newlen);
 
     /// <summary>Gets the real platform ID, not the incomplete .NET framework one</summary>
     /// <returns>Platform ID</returns>

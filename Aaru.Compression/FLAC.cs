@@ -36,23 +36,24 @@ namespace Aaru.Compression;
 
 // ReSharper disable once InconsistentNaming
 /// <summary>Implements the FLAC lossless audio compression algorithm</summary>
-public class FLAC
+public partial class FLAC
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                        nuint  srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial nuint AARU_flac_decode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
+                                                                 nuint  srcSize);
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
-                                                        nuint  srcSize, uint blocksize, int doMidSideStereo,
-                                                        int    looseMidSideStereo, string apodization, uint maxLpcOrder,
-                                                        uint   qlpCoeffPrecision, int doQlpCoeffPrecSearch,
-                                                        int    doExhaustiveModelSearch, uint minResidualPartitionOrder,
-                                                        uint   maxResidualPartitionOrder, string applicationID,
-                                                        uint   applicationIDLen);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial nuint AARU_flac_encode_redbook_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer,
+                                                                 nuint srcSize, uint blocksize, int doMidSideStereo,
+                                                                 int looseMidSideStereo, string apodization,
+                                                                 uint maxLpcOrder, uint qlpCoeffPrecision,
+                                                                 int doQlpCoeffPrecSearch, int doExhaustiveModelSearch,
+                                                                 uint minResidualPartitionOrder,
+                                                                 uint maxResidualPartitionOrder, string applicationID,
+                                                                 uint applicationIDLen);
 
     /// <summary>Decodes a buffer compressed with FLAC</summary>
     /// <param name="source">Encoded buffer</param>

@@ -36,15 +36,16 @@ using System.Runtime.InteropServices;
 namespace Aaru.Compression;
 
 /// <summary>Implements the Apple version of RLE</summary>
-public static class AppleRle
+public static partial class AppleRle
 {
     const uint DART_CHUNK = 20960;
 
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer,
+                                                            int    srcSize);
 
     /// <summary>Decodes a buffer compressed with Apple RLE</summary>
     /// <param name="source">Encoded buffer</param>

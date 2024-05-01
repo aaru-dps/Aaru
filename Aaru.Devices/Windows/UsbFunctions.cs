@@ -164,11 +164,11 @@ static partial class Usb
         }
     }
 
-    [DllImport("setupapi.dll")]
-    static extern int CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, int ulFlags);
+    [LibraryImport("setupapi.dll")]
+    private static partial int CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, int ulFlags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    static extern int CM_Get_Device_ID(uint dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
+    [LibraryImport("setupapi.dll", EntryPoint = "CM_Get_Device_IDW")]
+    private static partial int CM_Get_Device_ID(uint dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
     /// <summary>Find a device based upon a Drive Letter</summary>
     /// <param name="driveLetter">Drive letter</param>

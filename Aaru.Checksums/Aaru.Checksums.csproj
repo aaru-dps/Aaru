@@ -27,6 +27,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>

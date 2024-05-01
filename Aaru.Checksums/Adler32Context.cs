@@ -52,7 +52,7 @@ namespace Aaru.Checksums;
 /// <inheritdoc />
 /// <summary>Implements the Adler-32 algorithm</summary>
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
-public sealed class Adler32Context : IChecksum
+public sealed partial class Adler32Context : IChecksum
 {
     internal const ushort ADLER_MODULE = 65521;
     internal const uint   NMAX         = 5552;
@@ -130,17 +130,17 @@ public sealed class Adler32Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr adler32_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr adler32_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int adler32_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int adler32_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int adler32_final(IntPtr ctx, ref uint checksum);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int adler32_final(IntPtr ctx, ref uint checksum);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void adler32_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void adler32_free(IntPtr ctx);
 
     static void Step(ref ushort preSum1, ref ushort preSum2, byte[] data, uint len, bool useNative,
                      IntPtr     nativeContext)

@@ -49,7 +49,7 @@ namespace Aaru.Checksums;
 [SuppressMessage("ReSharper", "MemberCanBeInternal")]
 [SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public sealed class Crc32Context : IChecksum
+public sealed partial class Crc32Context : IChecksum
 {
     const uint CRC32_ISO_POLY = 0xEDB88320;
     const uint CRC32_ISO_SEED = 0xFFFFFFFF;
@@ -426,17 +426,17 @@ public sealed class Crc32Context : IChecksum
 
 #endregion
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern IntPtr crc32_init();
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial IntPtr crc32_init();
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc32_update(IntPtr ctx, byte[] data, uint len);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc32_update(IntPtr ctx, byte[] data, uint len);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern int crc32_final(IntPtr ctx, ref uint crc);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial int crc32_final(IntPtr ctx, ref uint crc);
 
-    [DllImport("libAaru.Checksums.Native", SetLastError = true)]
-    static extern void crc32_free(IntPtr ctx);
+    [LibraryImport("libAaru.Checksums.Native", SetLastError = true)]
+    private static partial void crc32_free(IntPtr ctx);
 
     static uint[][] GenerateTable(uint polynomial)
     {
