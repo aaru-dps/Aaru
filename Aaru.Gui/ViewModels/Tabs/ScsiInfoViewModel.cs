@@ -44,6 +44,7 @@ using Aaru.Gui.Models;
 using Aaru.Helpers;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
@@ -801,25 +802,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveInquiryBinaryCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(InquiryData, 0, InquiryData.Length);
 
         saveFs.Close();
@@ -827,25 +820,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveInquiryTextCommand()
     {
-        var dlgSaveText = new SaveFileDialog();
-
-        dlgSaveText.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.txt"
-                }
-            ],
-            Name = UI.Dialog_Text_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.PlainText
+            }
         });
-
-        string result = await dlgSaveText.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
         await saveSw.WriteAsync(ScsiInquiryText);
         saveFs.Close();
@@ -853,25 +838,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveModeSense6Command()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_scsiModeSense6, 0, _scsiModeSense6.Length);
 
         saveFs.Close();
@@ -879,25 +856,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveModeSense10Command()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_scsiModeSense10, 0, _scsiModeSense10.Length);
 
         saveFs.Close();
@@ -907,25 +876,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
     {
         if(SelectedEvpdPage is not ScsiPageModel pageModel) return;
 
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(pageModel.Data, 0, pageModel.Data.Length);
 
         saveFs.Close();
@@ -933,25 +894,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveMmcFeaturesCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_configuration, 0, _configuration.Length);
 
         saveFs.Close();

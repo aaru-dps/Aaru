@@ -30,6 +30,7 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ using Aaru.Core.Media.Info;
 using Aaru.Decoders.Xbox;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -101,25 +103,17 @@ public sealed class XboxInfoViewModel
 
     async Task SaveElement(byte[] data)
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(data, 0, data.Length);
 
         saveFs.Close();

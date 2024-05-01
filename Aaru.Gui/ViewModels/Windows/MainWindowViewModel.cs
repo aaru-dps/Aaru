@@ -59,6 +59,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -530,17 +531,19 @@ public sealed class MainWindowViewModel : ViewModelBase
     async Task ExecuteOpenCommand()
     {
         // TODO: Extensions
-        var dlgOpenImage = new OpenFileDialog
+        IReadOnlyList<IStorageFile> result = await _view.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
             Title         = UI.Dialog_Choose_image_to_open,
-            AllowMultiple = false
-        };
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.All
+            }
+        });
 
-        string[] result = await dlgOpenImage.ShowAsync(_view);
+        if(result.Count != 1) return;
 
-        if(result?.Length != 1) return;
-
-        IFilter inputFilter = PluginRegister.Singleton.GetFilter(result[0]);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(result[0].Path.AbsolutePath);
 
         if(inputFilter == null)
         {
@@ -587,7 +590,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 var imageModel = new ImageModel
                 {
-                    Path = result[0],
+                    Path = result[0].Path.AbsolutePath,
                     Icon = AssetLoader.Exists(mediaResource)
                                ? new Bitmap(AssetLoader.Open(mediaResource))
                                : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
@@ -595,9 +598,9 @@ public sealed class MainWindowViewModel : ViewModelBase
                                    : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
                                        ? _genericOpticalIcon
                                        : _genericFolderIcon,
-                    FileName  = Path.GetFileName(result[0]),
+                    FileName  = Path.GetFileName(result[0].Path.AbsolutePath),
                     Image     = imageFormat,
-                    ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view),
+                    ViewModel = new ImageInfoViewModel(result[0].Path.AbsolutePath, inputFilter, imageFormat, _view),
                     Filter    = inputFilter
                 };
 

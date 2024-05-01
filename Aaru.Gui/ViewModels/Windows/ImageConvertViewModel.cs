@@ -53,6 +53,7 @@ using Aaru.Devices;
 using Aaru.Gui.Models;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -2049,29 +2050,29 @@ public sealed class ImageConvertViewModel : ViewModelBase
     {
         if(SelectedPlugin is null) return;
 
-        var dlgDestination = new SaveFileDialog
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = UI.Dialog_Choose_destination_file
-        };
-
-        dlgDestination.Filters?.Add(new FileDialogFilter
-        {
-            Name       = SelectedPlugin.Plugin.Name,
-            Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()
+            Title = UI.Dialog_Choose_destination_file,
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                new(SelectedPlugin.Plugin.Name)
+                {
+                    Patterns = SelectedPlugin.Plugin.KnownExtensions.ToList()
+                }
+            }
         });
 
-        string result = await dlgDestination.ShowAsync(_view);
-
-        if(result is null || result.Length != 1)
+        if(result is null)
         {
             DestinationText = "";
 
             return;
         }
 
-        if(string.IsNullOrEmpty(Path.GetExtension(result))) result += SelectedPlugin.Plugin.KnownExtensions.First();
+        DestinationText = result.Path.AbsolutePath;
 
-        DestinationText = result;
+        if(string.IsNullOrEmpty(Path.GetExtension(DestinationText)))
+            DestinationText += SelectedPlugin.Plugin.KnownExtensions.First();
     }
 
     void ExecuteCreatorCommand() => CreatorText = _inputFormat.Info.Creator;
@@ -2113,37 +2114,29 @@ public sealed class ImageConvertViewModel : ViewModelBase
         _aaruMetadata    = null;
         MetadataJsonText = "";
 
-        var dlgMetadata = new OpenFileDialog
-        {
-            Title = UI.Dialog_Choose_existing_metadata_sidecar
-        };
+        IReadOnlyList<IStorageFile> result = _view.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                                                   {
+                                                       Title         = UI.Dialog_Choose_existing_metadata_sidecar,
+                                                       AllowMultiple = false,
+                                                       FileTypeFilter = new List<FilePickerFileType>
+                                                       {
+                                                           FilePickerFileTypes.AaruMetadata
+                                                       }
+                                                   })
+                                                  .Result;
 
-        dlgMetadata.Filters?.Add(new FileDialogFilter
-        {
-            Name = UI.Dialog_Aaru_Metadata,
-            Extensions =
-            [
-                ..new[]
-                {
-                    ".json"
-                }
-            ]
-        });
-
-        string[] result = await dlgMetadata.ShowAsync(_view);
-
-        if(result is null || result.Length != 1) return;
+        if(result.Count != 1) return;
 
         try
         {
-            var fs = new FileStream(result[0], FileMode.Open);
+            var fs = new FileStream(result[0].Path.AbsolutePath, FileMode.Open);
 
             _aaruMetadata =
                 (await JsonSerializer.DeserializeAsync(fs, typeof(MetadataJson), MetadataJsonContext.Default) as
                      MetadataJson)?.AaruMetadata;
 
             fs.Close();
-            MetadataJsonText = result[0];
+            MetadataJsonText = result[0].Path.AbsolutePath;
         }
         catch
         {
@@ -2164,30 +2157,22 @@ public sealed class ImageConvertViewModel : ViewModelBase
         _dumpHardware  = null;
         ResumeFileText = "";
 
-        var dlgMetadata = new OpenFileDialog
-        {
-            Title = UI.Dialog_Choose_existing_resume_file
-        };
+        IReadOnlyList<IStorageFile> result = _view.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                                                   {
+                                                       Title         = UI.Dialog_Choose_existing_resume_file,
+                                                       AllowMultiple = false,
+                                                       FileTypeFilter = new List<FilePickerFileType>
+                                                       {
+                                                           FilePickerFileTypes.AaruResumeFile
+                                                       }
+                                                   })
+                                                  .Result;
 
-        dlgMetadata.Filters?.Add(new FileDialogFilter
-        {
-            Name = UI.Dialog_Choose_existing_resume_file,
-            Extensions =
-            [
-                ..new[]
-                {
-                    ".json"
-                }
-            ]
-        });
-
-        string[] result = await dlgMetadata.ShowAsync(_view);
-
-        if(result is null || result.Length != 1) return;
+        if(result.Count != 1) return;
 
         try
         {
-            var fs = new FileStream(result[0], FileMode.Open);
+            var fs = new FileStream(result[0].Path.AbsolutePath, FileMode.Open);
 
             Resume resume =
                 (await JsonSerializer.DeserializeAsync(fs, typeof(ResumeJson), ResumeJsonContext.Default) as ResumeJson)
@@ -2198,7 +2183,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             if(resume?.Tries?.Any() == false)
             {
                 _dumpHardware  = resume.Tries;
-                ResumeFileText = result[0];
+                ResumeFileText = result[0].Path.AbsolutePath;
             }
             else
             {

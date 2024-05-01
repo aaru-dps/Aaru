@@ -3105,4 +3105,10 @@ Do you want to continue?</value>
     <data name="CD_PMA" xml:space="preserve">
         <value>CD PMA:</value>
     </data>
+    <data name="Dialog_All_files" xml:space="preserve">
+        <value>All</value>
+    </data>
+    <data name="Dialog_Aaru_Resume" xml:space="preserve">
+        <value>Aaru resume file</value>
+    </data>
 </root>

@@ -46,6 +46,7 @@ using Aaru.Core;
 using Aaru.Gui.Models;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -141,18 +142,18 @@ public sealed class SubdirectoryViewModel
     {
         if(SelectedEntries.Count == 0) return;
 
-        var saveFilesFolderDialog = new OpenFolderDialog
-        {
-            Title = UI.Dialog_Choose_destination_folder
-        };
+        IReadOnlyList<IStorageFolder> result =
+            await _view.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title         = UI.Dialog_Choose_destination_folder,
+                AllowMultiple = false
+            });
 
-        string result = await saveFilesFolderDialog.ShowAsync(_view);
-
-        if(result is null) return;
+        if(result.Count != 1) return;
 
         Statistics.AddCommand("extract-files");
 
-        string folder = saveFilesFolderDialog.Directory;
+        string folder = result[0].Path.AbsolutePath;
 
         foreach(FileModel file in SelectedEntries)
         {

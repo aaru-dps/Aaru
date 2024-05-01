@@ -30,12 +30,14 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Decoders.ATA;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
 
@@ -112,25 +114,17 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveAtaBinaryCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
 
         if(_ata != null)
             saveFs.Write(_ata,                       0, _ata.Length);
@@ -141,25 +135,17 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveAtaTextCommand()
     {
-        var dlgSaveText = new SaveFileDialog();
-
-        dlgSaveText.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.txt"
-                }
-            ],
-            Name = UI.Dialog_Text_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.PlainText
+            }
         });
-
-        string result = await dlgSaveText.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
         await saveSw.WriteAsync(AtaIdentifyText);
         saveFs.Close();

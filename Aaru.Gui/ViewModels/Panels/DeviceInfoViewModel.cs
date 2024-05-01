@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Humanizer;
 using Humanizer.Localisation;
 using ReactiveUI;
@@ -1018,25 +1020,17 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveUsbDescriptorsCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_devInfo.UsbDescriptors, 0, _devInfo.UsbDescriptors.Length);
 
         saveFs.Close();

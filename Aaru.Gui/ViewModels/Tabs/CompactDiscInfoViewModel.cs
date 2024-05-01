@@ -40,6 +40,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 
 namespace Aaru.Gui.ViewModels.Tabs;
@@ -149,25 +150,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdInformationCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_compactDiscInformationData, 0, _compactDiscInformationData.Length);
 
         saveFs.Close();
@@ -175,25 +168,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdTocCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_tocData, 0, _tocData.Length);
 
         saveFs.Close();
@@ -201,25 +186,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdFullTocCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_rawTocData, 0, _rawTocData.Length);
 
         saveFs.Close();
@@ -227,25 +204,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdSessionCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_sessionData, 0, _sessionData.Length);
 
         saveFs.Close();
@@ -253,25 +222,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdTextCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_cdTextLeadInData, 0, _cdTextLeadInData.Length);
 
         saveFs.Close();
@@ -279,25 +240,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdAtipCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_atipData, 0, _atipData.Length);
 
         saveFs.Close();
@@ -305,25 +258,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdPmaCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.bin"
-                }
-            ],
-            Name = UI.Dialog_Binary_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Binary
+            }
         });
-
-        string result = await dlgSaveBinary.ShowAsync(_view);
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_pmaData, 0, _pmaData.Length);
 
         saveFs.Close();

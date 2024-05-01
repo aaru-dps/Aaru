@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
@@ -39,7 +40,7 @@ using System.Threading.Tasks;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
 using Aaru.Localization;
-using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -94,27 +95,19 @@ public sealed class ConsoleViewModel : ViewModelBase
 
     async Task ExecuteSaveCommand()
     {
-        var dlgSave = new SaveFileDialog();
-
-        dlgSave.Filters?.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions =
-            [
-                ..new[]
-                {
-                    "log"
-                }
-            ],
-            Name = UI.Dialog_Log_files
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.Log
+            }
         });
-
-        string result = await dlgSave.ShowAsync(_view);
 
         if(result is null) return;
 
         try
         {
-            var logFs = new FileStream(result, FileMode.Create, FileAccess.ReadWrite);
+            var logFs = new FileStream(result.Path.AbsolutePath, FileMode.Create, FileAccess.ReadWrite);
             var logSw = new StreamWriter(logFs);
 
             logSw.WriteLine(UI.Log_saved_at_0, DateTime.Now);

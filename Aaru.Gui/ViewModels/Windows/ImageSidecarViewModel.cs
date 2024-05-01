@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
@@ -44,6 +45,7 @@ using Aaru.Console;
 using Aaru.Core;
 using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ReactiveUI;
 
@@ -322,24 +324,14 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
     async Task ExecuteDestinationCommand()
     {
-        var dlgDestination = new SaveFileDialog
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = UI.Dialog_Choose_destination_file
-        };
-
-        dlgDestination.Filters?.Add(new FileDialogFilter
-        {
-            Name = UI.Dialog_Aaru_Metadata,
-            Extensions =
-            [
-                ..new[]
-                {
-                    "*.json"
-                }
-            ]
+            Title = UI.Dialog_Choose_destination_file,
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.AaruMetadata
+            }
         });
-
-        string result = await dlgDestination.ShowAsync(_view);
 
         if(result is null)
         {
@@ -348,8 +340,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
             return;
         }
 
-        if(string.IsNullOrEmpty(Path.GetExtension(result))) result += ".json";
-
-        DestinationText = result;
+        DestinationText = result.Path.AbsolutePath;
+        if(string.IsNullOrEmpty(Path.GetExtension(DestinationText))) DestinationText += ".json";
     }
 }

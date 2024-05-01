@@ -2198,6 +2198,24 @@ namespace Aaru.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aaru resume file.
+        /// </summary>
+        public static string Dialog_Aaru_Resume {
+            get {
+                return ResourceManager.GetString("Dialog_Aaru_Resume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string Dialog_All_files {
+            get {
+                return ResourceManager.GetString("Dialog_All_files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Binary.
         /// </summary>
         public static string Dialog_Binary_files {
