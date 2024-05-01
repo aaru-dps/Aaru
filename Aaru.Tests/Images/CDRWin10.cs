@@ -41,8 +41,8 @@ public class CDRWin10 : OpticalMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CDRWin 10");
     public override IMediaImage Plugin     => new Aaru.Images.Alcohol120();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "report_audiocd.xmd",
@@ -51,8 +51,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
             SubchannelMd5 = "d4075209391c6955f438d0fa6095c6e2",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -165,7 +165,7 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -175,8 +175,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
             SubchannelMd5 = "811058470f33be5988ea1c2627200039",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -185,8 +185,8 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -201,9 +201,9 @@ public class CDRWin10 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -213,8 +213,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
             SubchannelMd5 = "6d0cd8e56dada05a86a4abd10f77e054",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -223,8 +223,8 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
@@ -233,9 +233,9 @@ public class CDRWin10 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -245,8 +245,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
             SubchannelMd5 = "d814823071e3671fbf204e5bf063f432",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -255,8 +255,8 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -271,9 +271,9 @@ public class CDRWin10 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -283,8 +283,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "557b9658671c16602e635f157b7525db",
             LongMd5       = "76454ac3a025857dc41e05c430783eab",
             SubchannelMd5 = "5a33440f5c51acff1921e92269978645",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -397,8 +397,8 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 4,
                     Number  = 14,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 69136,
@@ -406,9 +406,9 @@ public class CDRWin10 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Melanie C"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -418,8 +418,8 @@ public class CDRWin10 : OpticalMediaImageTest
             Md5           = "9a19aa0df066732a8ec34025e8160248",
             LongMd5       = "f4adafc5f2bdda2e4d70dce667cf47c1",
             SubchannelMd5 = "b349f26946197859f6a0ef5c3881b8ca",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -428,8 +428,8 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
@@ -437,7 +437,7 @@ public class CDRWin10 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -559,7 +559,7 @@ public class CDRWin10 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

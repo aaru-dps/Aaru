@@ -124,11 +124,11 @@ public sealed partial class ISO9660
         if(_highSierra) hsOff = 8;
 
         _cdi = false;
-        List<ulong> bvdSectors = new();
-        List<ulong> pvdSectors = new();
-        List<ulong> svdSectors = new();
-        List<ulong> evdSectors = new();
-        List<ulong> vpdSectors = new();
+        List<ulong> bvdSectors = [];
+        List<ulong> pvdSectors = [];
+        List<ulong> svdSectors = [];
+        List<ulong> evdSectors = [];
+        List<ulong> vpdSectors = [];
 
         while(true)
         {
@@ -590,10 +590,7 @@ public sealed partial class ISO9660
             _rootDirectoryCache.Add("$",
                                     new DecodedDirectoryEntry
                                     {
-                                        Extents = new List<(uint extent, uint size)>
-                                        {
-                                            (rootLocation, rootSize)
-                                        },
+                                        Extents   = [(rootLocation, rootSize)],
                                         Filename  = "$",
                                         Size      = rootSize,
                                         Timestamp = decodedVd.CreationTime
@@ -604,10 +601,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add("$PATH_TABLE.LSB",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                (pathTableLsbLocation, (uint)pathTableData.Length)
-                                            },
+                                            Extents   = [(pathTableLsbLocation, (uint)pathTableData.Length)],
                                             Filename  = "$PATH_TABLE.LSB",
                                             Size      = (uint)pathTableData.Length,
                                             Timestamp = decodedVd.CreationTime
@@ -617,10 +611,7 @@ public sealed partial class ISO9660
             _rootDirectoryCache.Add("$PATH_TABLE.MSB",
                                     new DecodedDirectoryEntry
                                     {
-                                        Extents = new List<(uint extent, uint size)>
-                                        {
-                                            (Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)
-                                        },
+                                        Extents   = [(Swapping.Swap(pathTableMsbLocation), (uint)pathTableData.Length)],
                                         Filename  = "$PATH_TABLE.MSB",
                                         Size      = (uint)pathTableData.Length,
                                         Timestamp = decodedVd.CreationTime
@@ -631,10 +622,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)i, 2048)
-                                            },
+                                            Extents   = [((uint)i, 2048)],
                                             Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
                                             Size      = 2048,
                                             Timestamp = decodedVd.CreationTime
@@ -646,10 +634,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)i, 2048)
-                                            },
+                                            Extents   = [((uint)i, 2048)],
                                             Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
                                             Size      = 2048,
                                             Timestamp = decodedVd.CreationTime
@@ -661,10 +646,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)i, 2048)
-                                            },
+                                            Extents   = [((uint)i, 2048)],
                                             Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
                                             Size      = 2048,
                                             Timestamp = decodedVd.CreationTime
@@ -676,10 +658,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)i, 2048)
-                                            },
+                                            Extents   = [((uint)i, 2048)],
                                             Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
                                             Size      = 2048,
                                             Timestamp = decodedVd.CreationTime
@@ -691,10 +670,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)i, 2048)
-                                            },
+                                            Extents   = [((uint)i, 2048)],
                                             Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
                                             Size      = 2048,
                                             Timestamp = decodedVd.CreationTime
@@ -706,10 +682,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add("$IP.BIN",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())
-                                            },
+                                            Extents   = [((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())],
                                             Filename  = "$IP.BIN",
                                             Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
                                             Timestamp = decodedVd.CreationTime
@@ -721,10 +694,7 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add("$IP.BIN",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
-                                                ((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())
-                                            },
+                                            Extents   = [((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())],
                                             Filename  = "$IP.BIN",
                                             Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
                                             Timestamp = decodedVd.CreationTime
@@ -736,10 +706,10 @@ public sealed partial class ISO9660
                 _rootDirectoryCache.Add("$IP.BIN",
                                         new DecodedDirectoryEntry
                                         {
-                                            Extents = new List<(uint extent, uint size)>
-                                            {
+                                            Extents =
+                                            [
                                                 ((uint)partition.Start, (uint)Marshal.SizeOf<Dreamcast.IPBin>())
-                                            },
+                                            ],
                                             Filename  = "$IP.BIN",
                                             Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
                                             Timestamp = decodedVd.CreationTime

@@ -1131,9 +1131,9 @@ partial class Dump
             case MediaTagType.Xbox_SecuritySector:
                 sidecar.OpticalDiscs[0].Xbox ??= new Xbox();
 
-                sidecar.OpticalDiscs[0].Xbox.SecuritySectors = new List<XboxSecuritySector>
-                {
-                    new()
+                sidecar.OpticalDiscs[0].Xbox.SecuritySectors =
+                [
+                    new XboxSecuritySector
                     {
                         RequestNumber  = 0,
                         RequestVersion = 1,
@@ -1144,7 +1144,7 @@ partial class Dump
                             Checksums = Checksum.GetChecksums(tag)
                         }
                     }
-                };
+                ];
 
                 break;
             case MediaTagType.Xbox_PFI:
@@ -1206,27 +1206,27 @@ partial class Dump
 
                 break;
             case MediaTagType.CD_FirstTrackPregap:
-                sidecar.OpticalDiscs[0].FirstTrackPregrap = new List<Border>
-                {
-                    new()
+                sidecar.OpticalDiscs[0].FirstTrackPregrap =
+                [
+                    new Border
                     {
                         Image     = outputPath,
                         Size      = (ulong)tag.Length,
                         Checksums = Checksum.GetChecksums(tag)
                     }
-                };
+                ];
 
                 break;
             case MediaTagType.CD_LeadIn:
-                sidecar.OpticalDiscs[0].LeadIn = new List<Border>
-                {
-                    new()
+                sidecar.OpticalDiscs[0].LeadIn =
+                [
+                    new Border
                     {
                         Image     = outputPath,
                         Size      = (ulong)tag.Length,
                         Checksums = Checksum.GetChecksums(tag)
                     }
-                };
+                ];
 
                 break;
         }

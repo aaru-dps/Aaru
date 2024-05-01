@@ -43,8 +43,8 @@ public class NeXT_Floppy : FilesystemTest
     public override IFilesystem Plugin => new FFSPlugin();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "nextstep_3.3_mf2dd.img.lz",
@@ -145,5 +145,5 @@ public class NeXT_Floppy : FilesystemTest
             ClusterSize = 1024,
             Type        = "ufs"
         }
-    };
+    ];
 }

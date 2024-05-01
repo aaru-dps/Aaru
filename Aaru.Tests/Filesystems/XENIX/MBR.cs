@@ -41,8 +41,8 @@ public class MBR() : FilesystemTest("xenixfs")
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "xenix_2.3.2d.aif",
@@ -70,5 +70,5 @@ public class MBR() : FilesystemTest("xenixfs")
             ClusterSize = 1024,
             VolumeName  = ""
         }
-    };
+    ];
 }

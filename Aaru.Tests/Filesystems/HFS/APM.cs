@@ -41,8 +41,8 @@ public class APM() : FilesystemTest("hfs")
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amigaos_3.9.aif",
@@ -503,5 +503,5 @@ public class APM() : FilesystemTest("hfs")
             ClusterSize = 2048,
             VolumeName  = "VolumeLabel"
         }
-    };
+    ];
 }

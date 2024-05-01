@@ -159,19 +159,13 @@ public static class AppleSony
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[]
-                            {
-                                data[position], data[position + 1], data[position + 2]
-                            },
+                            prologue = [data[position], data[position + 1], data[position + 2]],
                             track    = data[position + 3],
                             sector   = data[position + 4],
                             side     = data[position + 5],
                             format   = (AppleEncodedFormat)data[position + 6],
                             checksum = data[position + 7],
-                            epilogue = new[]
-                            {
-                                data[position + 8], data[position + 9]
-                            }
+                            epilogue = [data[position + 8], data[position + 9]]
                         }
                     };
 
@@ -198,11 +192,8 @@ public static class AppleSony
 
                     sector.dataField = new RawDataField
                     {
-                        prologue = new[]
-                        {
-                            data[position], data[position + 1], data[position + 2]
-                        },
-                        spare = data[position + 3]
+                        prologue = [data[position], data[position + 1], data[position + 2]],
+                        spare    = data[position + 3]
                     };
 
                     position += 4;
@@ -316,7 +307,7 @@ public static class AppleSony
         var             onSync      = false;
         var             gaps        = new MemoryStream();
         var             count       = 0;
-        List<RawSector> sectors     = new();
+        List<RawSector> sectors     = [];
         byte            trackNumber = 0;
         byte            sideNumber  = 0;
         endOffset = offset;
@@ -387,7 +378,7 @@ public static class AppleSony
     public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
     {
         endOffset = offset;
-        List<RawTrack> tracks   = new();
+        List<RawTrack> tracks   = [];
         int            position = offset;
 
         RawTrack track = MarshalTrack(data, out position, position);

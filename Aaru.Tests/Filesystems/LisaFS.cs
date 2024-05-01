@@ -41,8 +41,8 @@ public class LisaFs() : ReadOnlyFilesystemTest("lisafs")
     public override IFilesystem Plugin => new LisaFS();
     public override bool Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "166files.dc42.lz",
@@ -219,5 +219,5 @@ public class LisaFs() : ReadOnlyFilesystemTest("lisafs")
             VolumeName   = "AOS 3.0",
             VolumeSerial = "A4FE1A191F011652"
         }
-    };
+    ];
 }

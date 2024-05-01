@@ -41,8 +41,8 @@ public class GPT() : ReadOnlyFilesystemTest("fat12")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -56,5 +56,5 @@ public class GPT() : ReadOnlyFilesystemTest("fat12")
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "66901F1B"
         }
-    };
+    ];
 }

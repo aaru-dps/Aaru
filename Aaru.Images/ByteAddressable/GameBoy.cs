@@ -422,8 +422,8 @@ public class GameBoy : IByteAddressableImage
             case 0xFC: // Pocket Camera
                 mappings = new LinearMemoryMap
                 {
-                    Devices = new[]
-                    {
+                    Devices =
+                    [
                         new LinearMemoryDevice
                         {
                             Location     = "U1",
@@ -458,7 +458,7 @@ public class GameBoy : IByteAddressableImage
                                 Length = DecodeSaveRamSize(header.SramSize)
                             }
                         }
-                    }
+                    ]
                 };
 
                 return ErrorNumber.NoError;

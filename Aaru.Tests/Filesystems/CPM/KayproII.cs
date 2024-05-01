@@ -42,8 +42,8 @@ public class KayproII() : ReadOnlyFilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "filename.imd",
@@ -64,5 +64,5 @@ public class KayproII() : ReadOnlyFilesystemTest("cpmfs")
             Clusters    = 194,
             ClusterSize = 1024
         }
-    };
+    ];
 }

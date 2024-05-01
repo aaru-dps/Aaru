@@ -80,7 +80,7 @@ public sealed class Entropy
     /// <returns>Calculated entropy</returns>
     public EntropyResults[] CalculateTracksEntropy(bool duplicatedSectors)
     {
-        List<EntropyResults> entropyResults = new();
+        List<EntropyResults> entropyResults = [];
 
         if(_inputFormat is not IOpticalMediaImage opticalMediaImage)
         {
@@ -111,7 +111,7 @@ public sealed class Entropy
 
                 var          entTable              = new ulong[256];
                 ulong        trackSize             = 0;
-                List<string> uniqueSectorsPerTrack = new();
+                List<string> uniqueSectorsPerTrack = [];
 
                 trackEntropy.Sectors = currentTrack.EndSector - currentTrack.StartSector + 1;
 
@@ -197,7 +197,7 @@ public sealed class Entropy
 
         var          entTable      = new ulong[256];
         ulong        diskSize      = 0;
-        List<string> uniqueSectors = new();
+        List<string> uniqueSectors = [];
 
         entropy.Sectors = mediaImage.Info.Sectors;
         AaruConsole.WriteLine(Localization.Core.Sectors_0, entropy.Sectors);

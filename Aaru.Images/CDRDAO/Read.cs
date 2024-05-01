@@ -100,7 +100,7 @@ public sealed partial class Cdrdao
             // Initialize disc
             _discimage = new CdrdaoDisc
             {
-                Tracks  = new List<CdrdaoTrack>(),
+                Tracks  = [],
                 Comment = ""
             };
 
@@ -779,7 +779,7 @@ public sealed partial class Cdrdao
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_offset_map);
 
-            Partitions = new List<Partition>();
+            Partitions = [];
             _offsetmap = new Dictionary<uint, ulong>();
 
             ulong byteOffset        = 0;
@@ -1236,10 +1236,7 @@ public sealed partial class Cdrdao
 
                 if(aaruTrack.Flag4Ch) flags |= CdFlags.FourChannel;
 
-                buffer = new[]
-                {
-                    (byte)flags
-                };
+                buffer = [(byte)flags];
 
                 return ErrorNumber.NoError;
             }

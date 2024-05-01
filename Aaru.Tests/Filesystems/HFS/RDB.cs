@@ -41,8 +41,8 @@ public class RDB() : FilesystemTest("hfs")
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amigaos_3.9.aif",
@@ -53,5 +53,5 @@ public class RDB() : FilesystemTest("hfs")
             ClusterSize = 8192,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

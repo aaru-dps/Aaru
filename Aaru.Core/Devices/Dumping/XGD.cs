@@ -623,19 +623,18 @@ partial class Dump
             _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
         }
 
-        (outputFormat as IWritableOpticalImage).SetTracks(new List<Track>
-        {
-            new()
-            {
-                BytesPerSector    = (int)blockSize,
-                EndSector         = blocks - 1,
-                Sequence          = 1,
-                RawBytesPerSector = (int)blockSize,
-                SubchannelType    = TrackSubchannelType.None,
-                Session           = 1,
-                Type              = TrackType.Data
-            }
-        });
+        (outputFormat as IWritableOpticalImage).SetTracks([
+                                                              new Track
+                                                              {
+                                                                  BytesPerSector    = (int)blockSize,
+                                                                  EndSector         = blocks - 1,
+                                                                  Sequence          = 1,
+                                                                  RawBytesPerSector = (int)blockSize,
+                                                                  SubchannelType    = TrackSubchannelType.None,
+                                                                  Session           = 1,
+                                                                  Type              = TrackType.Data
+                                                              }
+                                                          ]);
 
         ulong currentSector = _resume.NextBlock;
 
@@ -785,11 +784,7 @@ partial class Dump
                     i += _skip - blocksToRead;
 
                     string[] senseLines = Sense.PrettifySense(senseBuf)
-                                               .Split(new[]
-                                                      {
-                                                          Environment.NewLine
-                                                      },
-                                                      StringSplitOptions.RemoveEmptyEntries);
+                                               .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
 
                     foreach(string senseLine in senseLines) _dumpLog.WriteLine(senseLine);
 
@@ -997,11 +992,7 @@ partial class Dump
                 l1 += _skip - blocksToRead;
 
                 string[] senseLines = Sense.PrettifySense(senseBuf)
-                                           .Split(new[]
-                                                  {
-                                                      Environment.NewLine
-                                                  },
-                                                  StringSplitOptions.RemoveEmptyEntries);
+                                           .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
 
                 foreach(string senseLine in senseLines) _dumpLog.WriteLine(senseLine);
             }
@@ -1152,12 +1143,11 @@ partial class Dump
 
         if(_resume.BadBlocks.Count > 0 && !_aborted && _retryPasses > 0)
         {
-            List<ulong> tmpList = new();
+            List<ulong> tmpList = [];
 
             foreach(ulong ur in _resume.BadBlocks)
-            {
-                for(ulong i = ur; i < ur + blocksToRead; i++) tmpList.Add(i);
-            }
+                for(ulong i = ur; i < ur + blocksToRead; i++)
+                    tmpList.Add(i);
 
             tmpList.Sort();
 
@@ -1245,15 +1235,15 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         }
-                    }
+                    ]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -1368,10 +1358,7 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
-                        currentModePage.Value
-                    }
+                    Pages  = [currentModePage.Value]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -1465,13 +1452,13 @@ partial class Dump
             var layers = new Layers
             {
                 Type = LayerType.OTP,
-                Sectors = new List<Sectors>
-                {
-                    new()
+                Sectors =
+                [
+                    new Sectors
                     {
                         Value = layerBreak
                     }
-                }
+                ]
             };
 
             WriteOpticalSidecar(blockSize, blocks, dskType, layers, mediaTags, 1, out totalChkDuration, null);

@@ -40,8 +40,8 @@ public class Raw : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "KryoFlux", "raw");
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf1dd_gcr_s0.img.lz",
@@ -90,5 +90,5 @@ public class Raw : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "9dea1e119a73a21a38d134f36b2e5564"
         }
-    };
+    ];
 }

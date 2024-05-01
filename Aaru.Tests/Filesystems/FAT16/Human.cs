@@ -41,8 +41,8 @@ public class Human() : ReadOnlyFilesystemTest("fat16")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "sasidisk.aif",
@@ -65,5 +65,5 @@ public class Human() : ReadOnlyFilesystemTest("fat16")
             ClusterSize = 1024,
             SystemId    = " Hero Soft V1.10"
         }
-    };
+    ];
 }

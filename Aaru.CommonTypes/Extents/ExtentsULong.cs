@@ -52,13 +52,13 @@ public sealed class ExtentsULong
     List<Tuple<ulong, ulong>> _backend;
 
     /// <summary>Initialize an empty list of extents</summary>
-    public ExtentsULong() => _backend = new List<Tuple<ulong, ulong>>();
+    public ExtentsULong() => _backend = [];
 
     /// <summary>Initializes extents with an specific list</summary>
     /// <param name="list">List of extents as tuples "start, end"</param>
     public ExtentsULong(IEnumerable<Tuple<ulong, ulong>> list)
     {
-        _backend = new List<Tuple<ulong, ulong>>();
+        _backend = [];
 
         // This ensure no overlapping extents are added on creation
         foreach(Tuple<ulong, ulong> t in list) Add(t.Item1, t.Item2);

@@ -135,12 +135,7 @@ partial class Dump
 
                         if(titleKey.HasValue)
                         {
-                            outputFormat.WriteSectorTag(new[]
-                                                        {
-                                                            titleKey.Value.CMI
-                                                        },
-                                                        i + j,
-                                                        SectorTagType.DvdSectorCmi);
+                            outputFormat.WriteSectorTag([titleKey.Value.CMI], i + j, SectorTagType.DvdSectorCmi);
                         }
                         else
                             continue;
@@ -149,19 +144,9 @@ partial class Dump
                         // not encrypted even if the CMI says it is.
                         if(titleKey.Value.Key.All(static k => k == 0))
                         {
-                            outputFormat.WriteSectorTag(new byte[]
-                                                        {
-                                                            0, 0, 0, 0, 0
-                                                        },
-                                                        i + j,
-                                                        SectorTagType.DvdSectorTitleKey);
+                            outputFormat.WriteSectorTag([0, 0, 0, 0, 0], i + j, SectorTagType.DvdSectorTitleKey);
 
-                            outputFormat.WriteSectorTag(new byte[]
-                                                        {
-                                                            0, 0, 0, 0, 0
-                                                        },
-                                                        i + j,
-                                                        SectorTagType.DvdTitleKeyDecrypted);
+                            outputFormat.WriteSectorTag([0, 0, 0, 0, 0], i + j, SectorTagType.DvdTitleKeyDecrypted);
 
                             _resume.MissingTitleKeys.Remove(i + j);
 

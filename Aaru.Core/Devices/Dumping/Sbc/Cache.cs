@@ -126,12 +126,7 @@ partial class Dump
 
                     if(key.All(static k => k == 0))
                     {
-                        outputFormat.WriteSectorTag(new byte[]
-                                                    {
-                                                        0, 0, 0, 0, 0
-                                                    },
-                                                    i + j,
-                                                    SectorTagType.DvdTitleKeyDecrypted);
+                        outputFormat.WriteSectorTag([0, 0, 0, 0, 0], i + j, SectorTagType.DvdTitleKeyDecrypted);
 
                         _resume.MissingTitleKeys?.Remove(i + j);
 

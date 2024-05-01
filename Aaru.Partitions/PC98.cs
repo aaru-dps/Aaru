@@ -62,7 +62,7 @@ public sealed class PC98 : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<CommonTypes.Partition>();
+        partitions = [];
 
         if(sectorOffset != 0) return false;
 

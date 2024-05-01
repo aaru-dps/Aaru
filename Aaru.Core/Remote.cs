@@ -140,7 +140,7 @@ public static class Remote
 
             if(!create)
             {
-                List<DateTime> latestAll = new();
+                List<DateTime> latestAll = [];
 
                 if(mctx.UsbVendors.Any()) latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
 
@@ -284,7 +284,7 @@ public static class Remote
                                 ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.NesHeaders?.Count ?? 0;
 
-                                foreach(NesHeaderDto header in sync.NesHeaders ?? new List<NesHeaderDto>())
+                                foreach(NesHeaderDto header in sync.NesHeaders ?? [])
                                 {
                                     task.Increment(1);
 
@@ -491,7 +491,7 @@ public static class Remote
                                 ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_iNES_NES_2_0_headers);
                                 task.MaxValue = sync.Offsets.Count;
 
-                                sync.NesHeaders ??= new List<NesHeaderDto>();
+                                sync.NesHeaders ??= [];
 
                                 foreach(NesHeaderDto header in sync.NesHeaders)
                                 {

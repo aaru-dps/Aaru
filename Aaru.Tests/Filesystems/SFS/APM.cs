@@ -41,8 +41,8 @@ public class APM() : FilesystemTest("sfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "morphos_3.13.aif",
@@ -52,5 +52,5 @@ public class APM() : FilesystemTest("sfs")
             Clusters    = 262018,
             ClusterSize = 512
         }
-    };
+    ];
 }

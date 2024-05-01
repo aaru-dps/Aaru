@@ -42,8 +42,8 @@ public class XDF : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "XDF");
     public override IMediaImage Plugin     => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf2hd_xdf_teledisk.xdf.lz",
@@ -60,5 +60,5 @@ public class XDF : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "825ca9cdcb2f35ff8bbbda9cb0a27c4d"
         }
-    };
+    ];
 }

@@ -118,7 +118,7 @@ public partial class Device
             {
                 AaruConsole.ErrorWriteLine(Localization.Invalid_remote_URI);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             using var remote = new Remote.Remote(aaruUri);
@@ -136,7 +136,7 @@ public partial class Device
         {
             AaruConsole.ErrorWriteLine(Localization.Error_connecting_to_host);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
     }
 }

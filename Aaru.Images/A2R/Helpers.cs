@@ -112,10 +112,7 @@ public sealed partial class A2R
 
         if(over == 0)
         {
-            return new[]
-            {
-                (byte)ticks
-            };
+            return [(byte)ticks];
         }
 
         var expanded = new byte[over + 1];
@@ -134,7 +131,7 @@ public sealed partial class A2R
     /// <returns>The <c>uint</c> flux representation</returns>
     static List<uint> FluxRepresentationsToUInt32List(IEnumerable<byte> flux)
     {
-        List<uint> scpData = new();
+        List<uint> scpData = [];
         uint       tick    = 0;
 
         foreach(byte b in flux)

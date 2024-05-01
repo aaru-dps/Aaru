@@ -40,25 +40,13 @@ namespace Aaru.Tests.Devices;
 [TestFixture]
 public class PocketZip
 {
-    readonly string[] _testFiles =
-    {
-        "clik!.bin.lz", "pocketzip.bin.lz"
-    };
+    readonly string[] _testFiles = ["clik!.bin.lz", "pocketzip.bin.lz"];
 
-    readonly MediaType[] _mediaTypes =
-    {
-        MediaType.PocketZip, MediaType.PocketZip
-    };
+    readonly MediaType[] _mediaTypes = [MediaType.PocketZip, MediaType.PocketZip];
 
-    readonly ulong[] _sectors =
-    {
-        78882, 78882
-    };
+    readonly ulong[] _sectors = [78882, 78882];
 
-    readonly uint[] _sectorSize =
-    {
-        512, 512
-    };
+    readonly uint[] _sectorSize = [512, 512];
 
     readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "PocketZIP");
 

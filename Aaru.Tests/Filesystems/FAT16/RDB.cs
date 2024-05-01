@@ -41,8 +41,8 @@ public class RDB() : ReadOnlyFilesystemTest("fat16")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amigaos_3.9.aif",
@@ -68,5 +68,5 @@ public class RDB() : ReadOnlyFilesystemTest("fat16")
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "519F5D8B"
         }
-    };
+    ];
 }

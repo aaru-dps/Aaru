@@ -70,12 +70,7 @@ sealed class DeviceReportCommand : Command
             Name        = "device-path"
         });
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--trap-disc", "-t"
-                             },
-                             () => false,
-                             UI.Device_report_using_trap_disc));
+        Add(new Option<bool>(["--trap-disc", "-t"], () => false, UI.Device_report_using_trap_disc));
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
@@ -244,7 +239,7 @@ sealed class DeviceReportCommand : Command
             });
         }
 
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
         string mediumTypeName;
         string mediumModel;
 
@@ -291,7 +286,7 @@ sealed class DeviceReportCommand : Command
                     });
 
                     report.ATA.Identify = Core.Devices.Report.DeviceReport.ClearIdentify(buffer);
-                    List<TestedMedia> mediaTests = new();
+                    List<TestedMedia> mediaTests = [];
 
                     while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                     {
@@ -410,7 +405,7 @@ sealed class DeviceReportCommand : Command
                 reporter.ReportScsiModes(ref report, out byte[] cdromMode, out MediumTypes mediumType);
 
                 string mediumManufacturer;
-                byte[] senseBuffer = Array.Empty<byte>();
+                byte[] senseBuffer = [];
                 var    sense       = true;
 
                 switch(dev.ScsiType)
@@ -453,7 +448,7 @@ sealed class DeviceReportCommand : Command
                         }
                         else
                         {
-                            List<string> mediaTypes = new();
+                            List<string> mediaTypes = [];
 
                             report.SCSI.MultiMediaDevice = new Mmc
                             {
@@ -751,7 +746,7 @@ sealed class DeviceReportCommand : Command
 
                             if(dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
 
-                            List<TestedMedia> mediaTests = new();
+                            List<TestedMedia> mediaTests = [];
 
                             foreach(string mediaType in mediaTypes)
                             {
@@ -992,7 +987,7 @@ sealed class DeviceReportCommand : Command
                     {
                         report.SCSI.SequentialDevice = reporter.ReportScsiSsc();
 
-                        List<TestedSequentialMedia> seqTests = new();
+                        List<TestedSequentialMedia> seqTests = [];
 
                         while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                         {
@@ -1139,18 +1134,16 @@ sealed class DeviceReportCommand : Command
                         when dev.Model.StartsWith("MDM", StringComparison.Ordinal) ||
                              dev.Model.StartsWith("MDH", StringComparison.Ordinal):
                     {
-                        List<string> mediaTypes = new()
-                        {
-                            Localization.Core.Media_Type_Name_MMD_140A,
-                            Localization.Core.Media_Type_Name_MDW_60,
-                            Localization.Core.Media_Type_Name_MDW_74,
-                            Localization.Core.Media_Type_Name_MDW_80,
+                        List<string> mediaTypes =
+                        [
+                            Localization.Core.Media_Type_Name_MMD_140A, Localization.Core.Media_Type_Name_MDW_60,
+                            Localization.Core.Media_Type_Name_MDW_74, Localization.Core.Media_Type_Name_MDW_80,
                             Localization.Core.Media_Type_Name_MiniDisc
-                        };
+                        ];
 
                         mediaTypes.Sort();
 
-                        List<TestedMedia> mediaTests = new();
+                        List<TestedMedia> mediaTests = [];
 
                         foreach(string mediaType in mediaTypes)
                         {
@@ -1390,7 +1383,7 @@ sealed class DeviceReportCommand : Command
                     {
                         if(removable)
                         {
-                            List<TestedMedia> mediaTests = new();
+                            List<TestedMedia> mediaTests = [];
 
                             while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                             {

@@ -86,7 +86,7 @@ public sealed partial class Alcohol120
         {
             if(_writingTracks != null && _alcTracks == null) return _writingTracks;
 
-            List<CommonTypes.Structs.Track> tracks = new();
+            List<CommonTypes.Structs.Track> tracks = [];
             _alcTracks ??= new Dictionary<int, Track>();
 
             foreach(Track alcTrack in _alcTracks.Values)

@@ -38,7 +38,7 @@ public sealed partial class ISO9660
     {
         if(data is null || data.Length == 0) return null;
 
-        List<PathTableEntryInternal> table = new();
+        List<PathTableEntryInternal> table = [];
 
         var off = 0;
 
@@ -81,7 +81,7 @@ public sealed partial class ISO9660
     {
         if(data is null) return null;
 
-        List<PathTableEntryInternal> table = new();
+        List<PathTableEntryInternal> table = [];
 
         var off = 0;
 

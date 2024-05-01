@@ -84,7 +84,7 @@ public sealed class NeXTDisklabel : IPartition
 
         uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
 
-        partitions = new List<Partition>();
+        partitions = [];
 
         ulong       labelPosition = 0;
         ErrorNumber errno;

@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
@@ -127,7 +126,7 @@ public partial class Device
     public bool RequestExtendedErrorCode(out byte   errorCode, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                          out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersLba28
         {

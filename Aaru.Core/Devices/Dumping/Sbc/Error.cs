@@ -174,15 +174,15 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         }
-                    }
+                    ]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -207,15 +207,15 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01(pg)
                         }
-                    }
+                    ]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -340,10 +340,7 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
-                    currentModePage.Value
-                }
+                Pages  = [currentModePage.Value]
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -408,30 +405,15 @@ partial class Dump
 
             if(!titleKey.HasValue) continue;
 
-            outputFormat.WriteSectorTag(new[]
-                                        {
-                                            titleKey.Value.CMI
-                                        },
-                                        missingKey,
-                                        SectorTagType.DvdSectorCmi);
+            outputFormat.WriteSectorTag([titleKey.Value.CMI], missingKey, SectorTagType.DvdSectorCmi);
 
             // If the CMI bit is 1, the sector is using copy protection, else it is not
             // If the decoded title key is zeroed, there should be no copy protection
             if((titleKey.Value.CMI & 0x80) >> 7 == 0 || titleKey.Value.Key.All(k => k == 0))
             {
-                outputFormat.WriteSectorTag(new byte[]
-                                            {
-                                                0, 0, 0, 0, 0
-                                            },
-                                            missingKey,
-                                            SectorTagType.DvdSectorTitleKey);
+                outputFormat.WriteSectorTag([0, 0, 0, 0, 0], missingKey, SectorTagType.DvdSectorTitleKey);
 
-                outputFormat.WriteSectorTag(new byte[]
-                                            {
-                                                0, 0, 0, 0, 0
-                                            },
-                                            missingKey,
-                                            SectorTagType.DvdTitleKeyDecrypted);
+                outputFormat.WriteSectorTag([0, 0, 0, 0, 0], missingKey, SectorTagType.DvdTitleKeyDecrypted);
 
                 _resume.MissingTitleKeys.Remove(missingKey);
 

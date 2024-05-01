@@ -159,7 +159,7 @@ public sealed partial class Symbian
         if(_compressed)
         {
             if(_files[entryNumber].originalLength == 0)
-                stream = new MemoryStream(Array.Empty<byte>());
+                stream = new MemoryStream([]);
             else
             {
                 stream = new ForcedSeekStream<ZLibStream>(_files[entryNumber].originalLength,

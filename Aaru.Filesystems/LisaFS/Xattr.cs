@@ -82,7 +82,7 @@ public sealed partial class LisaFS
         {
             if(!_debug || fileId == 0) return ErrorNumber.InvalidArgument;
 
-            xattrs = new List<string>();
+            xattrs = [];
 
             // Only MDDF contains an extended attributes
             if(fileId == FILEID_MDDF)
@@ -100,7 +100,7 @@ public sealed partial class LisaFS
 
             if(error != ErrorNumber.NoError) return error;
 
-            xattrs = new List<string>();
+            xattrs = [];
 
             // Password field is never emptied, check if valid
             if(file.password_valid > 0) xattrs.Add("com.apple.lisa.password");

@@ -41,8 +41,8 @@ public class Jfs2() : FilesystemTest("jfs")
     public override IFilesystem Plugin     => new JFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -103,5 +103,5 @@ public class Jfs2() : FilesystemTest("jfs")
             VolumeName   = "DicSetter",
             VolumeSerial = "08fc8e22-0201-894e-89c9-31ec3f546203"
         }
-    };
+    ];
 }

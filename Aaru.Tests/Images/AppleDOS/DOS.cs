@@ -40,8 +40,8 @@ public class DOS : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apple DOS Order");
     public override IMediaImage Plugin => new AppleDos();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "dos33.do.lz",
@@ -49,14 +49,14 @@ public class DOS : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "0ffcbd4180306192726926b43755db2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -106,5 +106,5 @@ public class DOS : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "a7ec980472c320da5ea6f2f0aec0f502"
         }
-    };
+    ];
 }

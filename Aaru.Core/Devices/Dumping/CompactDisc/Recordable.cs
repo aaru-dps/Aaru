@@ -48,7 +48,7 @@ partial class Dump
                                 HashSet<int> subchannelExtents, SubchannelLog subLog, bool supportsLongSectors,
                                 Dictionary<byte, byte> trackFlags, Track[] tracks)
     {
-        List<ulong> runOutSectors = new();
+        List<ulong> runOutSectors = [];
 
         if(_outputPlugin is not IWritableOpticalImage outputOptical) return;
 

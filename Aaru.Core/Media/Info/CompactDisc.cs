@@ -92,10 +92,7 @@ public static class CompactDisc
                 if(dataTrack != null)
                 {
                     // Build sync
-                    sectorSync = new byte[]
-                    {
-                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-                    };
+                    sectorSync = [0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00];
 
                     tmpBuf = new byte[sectorSync.Length];
 
@@ -303,11 +300,11 @@ public static class CompactDisc
             second ^= 0x80;
 
             // Build sync
-            sectorSync = new byte[]
-            {
+            sectorSync =
+            [
                 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, (byte)minute, (byte)second,
                 (byte)frame
-            };
+            ];
 
             tmpBuf = new byte[sectorSync.Length];
 

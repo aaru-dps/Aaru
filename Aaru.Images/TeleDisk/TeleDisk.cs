@@ -32,7 +32,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
@@ -64,8 +63,8 @@ public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiabl
     {
         _imageInfo = new ImageInfo
         {
-            ReadableSectorTags    = new List<SectorTagType>(),
-            ReadableMediaTags     = new List<MediaTagType>(),
+            ReadableSectorTags    = [],
+            ReadableMediaTags     = [],
             HasPartitions         = false,
             HasSessions           = false,
             Application           = "Sydex TeleDisk",
@@ -85,6 +84,6 @@ public sealed partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiabl
         };
 
         _aDiskCrcHasFailed        = false;
-        _sectorsWhereCrcHasFailed = new List<ulong>();
+        _sectorsWhereCrcHasFailed = [];
     }
 }

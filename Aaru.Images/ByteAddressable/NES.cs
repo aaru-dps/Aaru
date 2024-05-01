@@ -462,8 +462,8 @@ public class Nes : IByteAddressableImage
             return ErrorNumber.NotOpened;
         }
 
-        List<LinearMemoryDevice> devices = new()
-        {
+        List<LinearMemoryDevice> devices =
+        [
             new LinearMemoryDevice
             {
                 Type = LinearMemoryType.ROM,
@@ -472,7 +472,7 @@ public class Nes : IByteAddressableImage
                     Length = (ulong)_prgLen
                 }
             }
-        };
+        ];
 
         if(_chrLen > 0)
         {

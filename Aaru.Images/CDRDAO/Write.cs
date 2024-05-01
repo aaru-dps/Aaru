@@ -107,7 +107,7 @@ public sealed partial class Cdrdao
         _discimage = new CdrdaoDisc
         {
             Disktype = mediaType,
-            Tracks   = new List<CdrdaoTrack>()
+            Tracks   = []
         };
 
         _trackFlags = new Dictionary<byte, byte>();
@@ -458,12 +458,11 @@ public sealed partial class Cdrdao
         }
 
         if(_writingTracks != null && _writingStreams != null)
-        {
-            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct()) oldTrack.Close();
-        }
+            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
+                oldTrack.Close();
 
         ulong currentOffset = 0;
-        _writingTracks = new List<Track>();
+        _writingTracks = [];
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {

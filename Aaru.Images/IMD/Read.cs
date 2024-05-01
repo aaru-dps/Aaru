@@ -64,7 +64,7 @@ public sealed partial class Imd
         }
 
         _imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
-        _sectorsData        = new List<byte[]>();
+        _sectorsData        = [];
 
         byte currentCylinder = 0;
         _imageInfo.Cylinders = 1;
@@ -108,9 +108,8 @@ public sealed partial class Imd
                 for(var i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
             }
             else
-            {
-                for(var i = 0; i < spt; i++) bps[i] = (ushort)(128 << n);
-            }
+                for(var i = 0; i < spt; i++)
+                    bps[i] = (ushort)(128 << n);
 
             if(spt > _imageInfo.SectorsPerTrack) _imageInfo.SectorsPerTrack = spt;
 

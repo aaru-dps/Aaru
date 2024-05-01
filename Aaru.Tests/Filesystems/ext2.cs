@@ -41,8 +41,8 @@ public class Ext2 : FilesystemTest
     public override IFilesystem Plugin     => new ext2FS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "netbsd_6.1.5.aif",
@@ -341,5 +341,5 @@ public class Ext2 : FilesystemTest
             VolumeName   = "DicSetter",
             VolumeSerial = "10413797-43d1-6545-8fbc-6ebc9d328be9"
         }
-    };
+    ];
 }

@@ -44,8 +44,8 @@ public class Nilfs2() : FilesystemTest("nilfs2")
     public override IFilesystem Plugin     => new NILFS2();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -57,5 +57,5 @@ public class Nilfs2() : FilesystemTest("nilfs2")
             VolumeName   = "Volume label",
             VolumeSerial = "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
         }
-    };
+    ];
 }

@@ -41,8 +41,8 @@ public class MBR() : ReadOnlyFilesystemTest("fat16")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "darwin_6.0.2.aif",
@@ -1304,5 +1304,5 @@ public class MBR() : ReadOnlyFilesystemTest("fat16")
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "519F5C06"
         }
-    };
+    ];
 }

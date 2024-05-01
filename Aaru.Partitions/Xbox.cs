@@ -78,7 +78,7 @@ public sealed class Xbox : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         // Xbox partitions always start on 0
         if(sectorOffset != 0) return false;

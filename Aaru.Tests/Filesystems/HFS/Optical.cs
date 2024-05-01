@@ -41,8 +41,8 @@ public class Optical() : FilesystemTest("hfs")
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "toast_3.5.7_hfs_from_volume.aif",
@@ -103,5 +103,5 @@ public class Optical() : FilesystemTest("hfs")
             ClusterSize = 12288,
             VolumeName  = "Disk utils"
         }
-    };
+    ];
 }

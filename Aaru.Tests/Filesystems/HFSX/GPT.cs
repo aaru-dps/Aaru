@@ -41,8 +41,8 @@ public class GPT() : FilesystemTest("hfsx")
     public override IFilesystem Plugin     => new AppleHFSPlus();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -65,5 +65,5 @@ public class GPT() : FilesystemTest("hfsx")
             SystemId     = "HFSJ",
             VolumeSerial = "FB98504073464C5C"
         }
-    };
+    ];
 }

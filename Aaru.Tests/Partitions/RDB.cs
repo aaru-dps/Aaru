@@ -37,13 +37,13 @@ public class Rdb : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Rigid Disk Block");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "amigaos_3.9.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 170688,
@@ -104,13 +104,13 @@ public class Rdb : PartitionSchemeTest
                     Start    = 857504,
                     Type     = "\"RES\\86\""
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "amigaos_4.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 178624,
@@ -171,13 +171,13 @@ public class Rdb : PartitionSchemeTest
                     Start    = 802368,
                     Type     = "\"SFS\\2\""
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 16065,
@@ -208,7 +208,7 @@ public class Rdb : PartitionSchemeTest
                     Start    = 80325,
                     Type     = "\"\0\0\0\\0\""
                 }
-            }
+            ]
         }
-    };
+    ];
 }

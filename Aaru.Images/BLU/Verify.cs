@@ -48,8 +48,8 @@ public sealed partial class Blu
     public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
 
         for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 

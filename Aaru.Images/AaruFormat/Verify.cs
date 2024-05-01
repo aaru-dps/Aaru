@@ -83,7 +83,7 @@ public sealed partial class AaruFormat
 
         _imageStream.Position -= _structureBytes.Length;
 
-        List<IndexEntry> vrIndex = new();
+        List<IndexEntry> vrIndex = [];
 
         for(ushort i = 0; i < idxHeader.entries; i++)
         {
@@ -241,8 +241,8 @@ public sealed partial class AaruFormat
     public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
 
         // Right now only CompactDisc sectors are verifiable
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
@@ -258,8 +258,8 @@ public sealed partial class AaruFormat
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
 
         for(var i = 0; i < length; i++)
         {
@@ -291,16 +291,16 @@ public sealed partial class AaruFormat
         // Right now only CompactDisc sectors are verifiable
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            failingLbas = [];
+            unknownLbas = [];
 
             for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 

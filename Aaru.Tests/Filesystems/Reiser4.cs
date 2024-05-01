@@ -40,8 +40,8 @@ public class Reiser4() : FilesystemTest("reiser4")
     public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -53,5 +53,5 @@ public class Reiser4() : FilesystemTest("reiser4")
             VolumeName   = "Volume label",
             VolumeSerial = "b0c1924e-6f10-8c42-b6c5-66a457896460"
         }
-    };
+    ];
 }

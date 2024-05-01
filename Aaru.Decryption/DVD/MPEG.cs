@@ -131,17 +131,13 @@ public class Mpeg
 
 #endregion
 
-    static readonly byte[] _mpeg2PackHeaderStartCode =
-    {
-        0x0, 0x0, 0x1
-    };
+    static readonly byte[] _mpeg2PackHeaderStartCode = [0x0, 0x0, 0x1];
 
     public static bool ContainsMpegPackets(byte[] sectorData, uint blocks = 1, uint blockSize = 2048)
     {
         for(uint i = 0; i < blocks; i++)
-        {
-            if(IsMpegPacket(sectorData.Skip((int)(i * blockSize)))) return true;
-        }
+            if(IsMpegPacket(sectorData.Skip((int)(i * blockSize))))
+                return true;
 
         return false;
     }

@@ -56,33 +56,13 @@ sealed class VerifyCommand : Command
 
     public VerifyCommand() : base("verify", UI.Image_Verify_Command_Description)
     {
-        Add(new Option<bool>(new[]
-                             {
-                                 "--verify-disc", "-w"
-                             },
-                             () => true,
-                             UI.Verify_media_image_if_supported));
+        Add(new Option<bool>(["--verify-disc", "-w"], () => true, UI.Verify_media_image_if_supported));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--verify-sectors", "-s"
-                             },
-                             () => true,
-                             UI.Verify_all_sectors_if_supported));
+        Add(new Option<bool>(["--verify-sectors", "-s"], () => true, UI.Verify_all_sectors_if_supported));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--create-graph", "-g"
-                             },
-                             () => true,
-                             UI.Create_graph_of_verified_disc));
+        Add(new Option<bool>(["--create-graph", "-g"], () => true, UI.Create_graph_of_verified_disc));
 
-        Add(new Option<uint>(new[]
-                             {
-                                 "--dimensions"
-                             },
-                             () => 1080,
-                             UI.Verify_dimensions_paramater_help));
+        Add(new Option<uint>(["--dimensions"], () => 1080, UI.Verify_dimensions_paramater_help));
 
         AddArgument(new Argument<string>
         {
@@ -249,8 +229,8 @@ sealed class VerifyCommand : Command
         }
 
         var         stopwatch   = new Stopwatch();
-        List<ulong> failingLbas = new();
-        List<ulong> unknownLbas = new();
+        List<ulong> failingLbas = [];
+        List<ulong> unknownLbas = [];
         IMediaGraph mediaGraph  = null;
 
         if(verifiableSectorsImage is IOpticalMediaImage { Tracks: not null } opticalMediaImage)
@@ -324,7 +304,7 @@ sealed class VerifyCommand : Command
 
                                     if(mediaGraph != null)
                                     {
-                                        List<ulong> tempCorrectLbas = new();
+                                        List<ulong> tempCorrectLbas = [];
 
                                         for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
                                             tempCorrectLbas.Add(currentSector + l);
@@ -416,7 +396,7 @@ sealed class VerifyCommand : Command
 
                                 if(mediaGraph != null)
                                 {
-                                    List<ulong> tempCorrectLbas = new();
+                                    List<ulong> tempCorrectLbas = [];
 
                                     for(ulong l = 0; l < (remainingSectors < 512 ? remainingSectors : 512); l++)
                                         tempCorrectLbas.Add(currentSector + l);
@@ -466,16 +446,18 @@ sealed class VerifyCommand : Command
             if(failingLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[red]{UI.all_sectors}[/]");
             else
-                foreach(ulong t in failingLbas)
-                    AaruConsole.VerboseWriteLine("\t{0}", t);
+            {
+                foreach(ulong t in failingLbas) AaruConsole.VerboseWriteLine("\t{0}", t);
+            }
 
             AaruConsole.WriteLine($"[yellow3_1]{UI.LBAs_without_checksum}[/]");
 
             if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
                 AaruConsole.VerboseWriteLine($"\t[yellow3_1]{UI.all_sectors}[/]");
             else
-                foreach(ulong t in unknownLbas)
-                    AaruConsole.VerboseWriteLine("\t{0}", t);
+            {
+                foreach(ulong t in unknownLbas) AaruConsole.VerboseWriteLine("\t{0}", t);
+            }
         }
 
         // TODO: Convert to table

@@ -53,33 +53,15 @@ sealed class DecodeCommand : Command
 
     public DecodeCommand() : base("decode", UI.Image_Decode_Command_Description)
     {
-        Add(new Option<bool>(new[]
-                             {
-                                 "--disk-tags", "-f"
-                             },
-                             () => true,
-                             UI.Decode_media_tags));
+        Add(new Option<bool>(["--disk-tags", "-f"], () => true, UI.Decode_media_tags));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--length", "-l"
-                               },
+        Add(new Option<string>(["--length", "-l"],
                                () => UI.Parameter_response_all_sectors,
                                UI.How_many_sectors_to_decode_or_all));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--sector-tags", "-p"
-                             },
-                             () => true,
-                             UI.Decode_sector_tags));
+        Add(new Option<bool>(["--sector-tags", "-p"], () => true, UI.Decode_sector_tags));
 
-        Add(new Option<ulong>(new[]
-                              {
-                                  "--start", "-s"
-                              },
-                              () => 0,
-                              UI.Sector_to_start_decoding_from));
+        Add(new Option<ulong>(["--start", "-s"], () => 0, UI.Sector_to_start_decoding_from));
 
         AddArgument(new Argument<string>
         {

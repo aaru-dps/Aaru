@@ -36,7 +36,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class ImagesRootModel : RootModel
 {
-    public ImagesRootModel() => Images = new ObservableCollection<ImageModel>();
+    public ImagesRootModel() => Images = [];
 
     public ObservableCollection<ImageModel> Images { get; }
 }

@@ -1145,7 +1145,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
             Dictionary<byte, string> isrcs                     = new();
             Dictionary<byte, byte>   trackFlags                = new();
             string                   mcn                       = null;
-            HashSet<int>             subchannelExtents         = new();
+            HashSet<int>             subchannelExtents         = [];
             Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
 
             foreach(SectorTagType tag in _inputFormat.Info.ReadableSectorTags.Where(t => t == SectorTagType.CdTrackIsrc)
@@ -1436,12 +1436,7 @@ public sealed class ImageConvertViewModel : ViewModelBase
                 {
                     foreach(KeyValuePair<byte, byte> flags in trackFlags)
                     {
-                        outputOptical.WriteSectorTag(new[]
-                                                     {
-                                                         flags.Value
-                                                     },
-                                                     flags.Key,
-                                                     SectorTagType.CdTrackFlags);
+                        outputOptical.WriteSectorTag([flags.Value], flags.Key, SectorTagType.CdTrackFlags);
                     }
                 }
 
@@ -2130,10 +2125,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
             Name = UI.Dialog_Aaru_Metadata,
-            Extensions = new List<string>(new[]
-            {
-                ".json"
-            })
+            Extensions =
+            [
+                ..new[]
+                {
+                    ".json"
+                }
+            ]
         });
 
         string[] result = await dlgMetadata.ShowAsync(_view);
@@ -2178,10 +2176,13 @@ public sealed class ImageConvertViewModel : ViewModelBase
         dlgMetadata.Filters?.Add(new FileDialogFilter
         {
             Name = UI.Dialog_Choose_existing_resume_file,
-            Extensions = new List<string>(new[]
-            {
-                ".json"
-            })
+            Extensions =
+            [
+                ..new[]
+                {
+                    ".json"
+                }
+            ]
         });
 
         string[] result = await dlgMetadata.ShowAsync(_view);

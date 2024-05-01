@@ -40,8 +40,8 @@ public class MBR() : FilesystemTest("sfs")
     public override IFilesystem Plugin => new Aaru.Filesystems.SFS();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "aros.aif",
@@ -51,5 +51,5 @@ public class MBR() : FilesystemTest("sfs")
             Clusters    = 408240,
             ClusterSize = 512
         }
-    };
+    ];
 }

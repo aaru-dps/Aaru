@@ -42,8 +42,8 @@ public class Whole : FilesystemTest
     public override IFilesystem Plugin     => new FFSPlugin();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix_mf2dd.adf.lz",
@@ -268,5 +268,5 @@ public class Whole : FilesystemTest
             VolumeName  = "",
             Type        = "ufs2"
         }
-    };
+    ];
 }

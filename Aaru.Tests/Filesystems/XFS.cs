@@ -40,8 +40,8 @@ public class XFS() : FilesystemTest("xfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.XFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -64,5 +64,5 @@ public class XFS() : FilesystemTest("xfs")
             VolumeName   = "DicSetter",
             VolumeSerial = "ed6b4d35-aa66-ce4a-9d8f-c56dbc6d7c8c"
         }
-    };
+    ];
 }

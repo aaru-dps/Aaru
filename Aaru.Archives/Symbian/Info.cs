@@ -305,13 +305,13 @@ public sealed partial class Symbian
 //          description.AppendFormat("{0} = {1}", kvp.Key, kvp.Value).AppendLine();
 
         // Set instance values
-        _files      = new List<DecodedFileRecord>();
-        _conditions = new List<string>();
+        _files      = [];
+        _conditions = [];
 
         uint currentFile = 0;
         offset = sh.files_ptr;
         var conditionLevel = 0;
-        _options = new List<OptionRecord>();
+        _options = [];
 
         // Get only the options records
         do

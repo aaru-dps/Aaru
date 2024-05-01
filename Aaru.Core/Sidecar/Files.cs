@@ -51,8 +51,8 @@ public sealed partial class Sidecar
 
         if(ret != ErrorNumber.NoError) return null;
 
-        List<Directory>    directories = new();
-        List<ContentsFile> files       = new();
+        List<Directory>    directories = [];
+        List<ContentsFile> files       = [];
 
         while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
@@ -107,8 +107,8 @@ public sealed partial class Sidecar
 
         if(ret != ErrorNumber.NoError) return null;
 
-        List<Directory>    directories = new();
-        List<ContentsFile> files       = new();
+        List<Directory>    directories = [];
+        List<ContentsFile> files       = [];
 
         while(filesystem.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
@@ -208,7 +208,7 @@ public sealed partial class Sidecar
 
         if(ret != ErrorNumber.NoError) return file;
 
-        List<ExtendedAttribute> xattrTypes = new();
+        List<ExtendedAttribute> xattrTypes = [];
 
         foreach(string xattr in xattrs)
         {

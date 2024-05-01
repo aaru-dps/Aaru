@@ -275,7 +275,7 @@ public sealed partial class ISO9660
             }
         }
 
-        byte[]                 rootDir         = Array.Empty<byte>();
+        byte[]                 rootDir         = [];
         var                    rootOff         = 0;
         var                    xaExtensions    = false;
         var                    apple           = false;
@@ -284,8 +284,8 @@ public sealed partial class ISO9660
         var                    ziso            = false;
         var                    amiga           = false;
         var                    aaip            = false;
-        List<ContinuationArea> contareas       = new();
-        List<byte[]>           refareas        = new();
+        List<ContinuationArea> contareas       = [];
+        List<byte[]>           refareas        = [];
         var                    suspInformation = new StringBuilder();
 
         if(rootLocation + rootSize < imagePlugin.Info.Sectors)

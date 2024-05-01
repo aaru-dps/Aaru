@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
 using Humanizer;
@@ -105,7 +104,7 @@ public sealed partial class MediaScan
             double currentSpeed = 0;
             results.MaxSpeed          = double.MinValue;
             results.MinSpeed          = double.MaxValue;
-            results.UnreadableSectors = new List<ulong>();
+            results.UnreadableSectors = [];
             results.SeekMax           = double.MinValue;
             results.SeekMin           = double.MaxValue;
             results.SeekTotal         = 0;

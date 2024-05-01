@@ -77,10 +77,7 @@ public partial class Device
         buffer      = new byte[36];
         senseBuffer = new byte[64];
 
-        byte[] cdb =
-        {
-            (byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0
-        };
+        byte[] cdb = [(byte)ScsiCommands.Inquiry, 0, 0, 0, 36, 0];
 
         LastError = SendScsiCommand(cdb,
                                     ref buffer,
@@ -96,10 +93,7 @@ public partial class Device
 
         var pagesLength = (byte)(buffer[4] + 5);
 
-        cdb = new byte[]
-        {
-            (byte)ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0
-        };
+        cdb = [(byte)ScsiCommands.Inquiry, 0, 0, 0, pagesLength, 0];
 
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
@@ -163,10 +157,7 @@ public partial class Device
         buffer      = new byte[36];
         senseBuffer = new byte[64];
 
-        byte[] cdb =
-        {
-            (byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0
-        };
+        byte[] cdb = [(byte)ScsiCommands.Inquiry, 1, page, 0, 36, 0];
 
         LastError = SendScsiCommand(cdb,
                                     ref buffer,
@@ -185,10 +176,7 @@ public partial class Device
 
         var pagesLength = (byte)(buffer[3] + 4);
 
-        cdb = new byte[]
-        {
-            (byte)ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0
-        };
+        cdb = [(byte)ScsiCommands.Inquiry, 1, page, 0, pagesLength, 0];
 
         buffer      = new byte[pagesLength];
         senseBuffer = new byte[64];
@@ -217,12 +205,9 @@ public partial class Device
     {
         senseBuffer = new byte[64];
 
-        byte[] cdb =
-        {
-            (byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0
-        };
+        byte[] cdb = [(byte)ScsiCommands.TestUnitReady, 0, 0, 0, 0, 0];
 
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         LastError = SendScsiCommand(cdb,
                                     ref buffer,
@@ -454,7 +439,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
         cdb[4] = (byte)((byte)preventMode & 0x03);

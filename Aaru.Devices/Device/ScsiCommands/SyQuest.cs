@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Aaru.Console;
 
 // ReSharper disable UnusedMember.Global
@@ -106,7 +105,7 @@ public partial class Device
             cdb[4] = 1;
         }
         else
-            buffer = Array.Empty<byte>();
+            buffer = [];
 
         if(!inhibitDma)
         {
@@ -194,7 +193,7 @@ public partial class Device
             cdb[4] = 1;
         }
         else
-            buffer = Array.Empty<byte>();
+            buffer = [];
 
         if(!inhibitDma)
         {

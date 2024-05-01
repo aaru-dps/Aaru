@@ -108,7 +108,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         DecodeImageMediaTagsCommand = ReactiveCommand.Create(ExecuteDecodeImageMediaTagsCommand);
         RefreshDevicesCommand       = ReactiveCommand.Create(ExecuteRefreshDevicesCommand);
         _view                       = view;
-        TreeRoot                    = new ObservableCollection<RootModel>();
+        TreeRoot                    = [];
         ContentPanel                = Greeting;
 
         _imagesRoot = new ImagesRootModel

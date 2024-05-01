@@ -40,8 +40,8 @@ public class VMware6 : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VMware 6");
     public override IMediaImage Plugin => new VMware();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "vmdk6.vmdk.lz",
@@ -49,14 +49,14 @@ public class VMware6 : BlockMediaImageTest
             Sectors    = 251904,
             SectorSize = 512,
             Md5        = "1ad282643cc7f97c57dc874b3d4ece9b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

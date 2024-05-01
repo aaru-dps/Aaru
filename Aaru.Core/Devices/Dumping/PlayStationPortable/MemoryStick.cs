@@ -497,15 +497,15 @@ public partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01(pg)
                         }
-                    }
+                    ]
                 };
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -616,10 +616,7 @@ public partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
-                        currentModePage.Value
-                    }
+                    Pages  = [currentModePage.Value]
                 };
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -732,7 +729,7 @@ public partial class Dump
                     sidecar                 = _preSidecar;
                 }
 
-                List<(ulong start, string type)> filesystems = new();
+                List<(ulong start, string type)> filesystems = [];
 
                 if(sidecar.BlockMedias[0].FileSystemInformation != null)
                 {

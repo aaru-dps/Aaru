@@ -56,8 +56,8 @@ public sealed partial class Chd
     public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        unknownLbas = new List<ulong>();
-        failingLbas = new List<ulong>();
+        unknownLbas = [];
+        failingLbas = [];
 
         if(_isHdd) return null;
 
@@ -95,8 +95,8 @@ public sealed partial class Chd
     public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        unknownLbas = new List<ulong>();
-        failingLbas = new List<ulong>();
+        unknownLbas = [];
+        failingLbas = [];
 
         if(_isHdd) return null;
 

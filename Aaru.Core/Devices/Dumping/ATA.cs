@@ -103,7 +103,7 @@ public partial class Dump
                 double                  currentSpeed  = 0;
                 double                  maxSpeed      = double.MinValue;
                 double                  minSpeed      = double.MaxValue;
-                cmdBuf = Array.Empty<byte>();
+                cmdBuf = [];
 
                 // Initialize reader
                 UpdateStatus?.Invoke(Localization.Core.Initializing_reader);
@@ -895,7 +895,9 @@ public partial class Dump
                                                     $"{version.MajorVersion}.{version.MinorVersion}";
 
                                                 sidecar.BlockMedias[0].Pcmcia.AdditionalInformation =
-                                                    new List<string>(version.AdditionalInformation);
+                                                [
+                                                    ..version.AdditionalInformation
+                                                ];
                                             }
 
                                             break;
@@ -937,7 +939,7 @@ public partial class Dump
                                                    .Per(totalChkDuration.Milliseconds())
                                                    .Humanize());
 
-                        List<(ulong start, string type)> filesystems = new();
+                        List<(ulong start, string type)> filesystems = [];
 
                         if(sidecar.BlockMedias[0].FileSystemInformation != null)
                         {

@@ -255,7 +255,7 @@ public sealed partial class BlindWrite5
         _dataPath = Encoding.Unicode.GetString(dataPathBytes);
         AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Data_path_0, _dataPath);
 
-        _dataFiles = new List<DataFile>();
+        _dataFiles = [];
 
         for(var cD = 0; cD < dataBlockCount; cD++)
         {
@@ -311,7 +311,7 @@ public sealed partial class BlindWrite5
             AaruConsole.DebugWriteLine(MODULE_NAME, "dataFile.unknown3 = {0}",    dataFile.Unknown3);
         }
 
-        _bwSessions = new List<SessionDescriptor>();
+        _bwSessions = [];
 
         for(var ses = 0; ses < _header.sessions; ses++)
         {
@@ -542,7 +542,7 @@ public sealed partial class BlindWrite5
                                           .BlindWrite5_image_ends_after_expected_position_Probably_new_version_with_different_data_Errors_may_occur);
         }
 
-        _filePaths = new List<DataFileCharacteristics>();
+        _filePaths = [];
 
         foreach(DataFile dataFile in _dataFiles)
         {
@@ -706,17 +706,12 @@ public sealed partial class BlindWrite5
             _filePaths.Add(chars);
         }
 
-        Sessions   = new List<Session>();
-        Tracks     = new List<Track>();
-        Partitions = new List<Partition>();
+        Sessions   = [];
+        Tracks     = [];
+        Partitions = [];
         var fullTocStream = new MemoryStream();
 
-        fullTocStream.Write(new byte[]
-                            {
-                                0, 0
-                            },
-                            0,
-                            2);
+        fullTocStream.Write([0, 0], 0, 2);
 
         ulong offsetBytes = 0;
         _offsetMap = new Dictionary<uint, ulong>();
@@ -1684,10 +1679,7 @@ public sealed partial class BlindWrite5
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag)) return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flag
-                };
+                buffer = [flag];
 
                 return ErrorNumber.NoError;
             default:

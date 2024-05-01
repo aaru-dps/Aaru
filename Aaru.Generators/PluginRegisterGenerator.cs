@@ -280,17 +280,17 @@ public class PluginRegisterGenerator : ISourceGenerator
 
     sealed class PluginFinder : ISyntaxReceiver
     {
-        public List<string>           Archives                    { get; } = new();
-        public List<string>           Checksums                   { get; } = new();
-        public List<string>           FileSystems                 { get; } = new();
-        public List<string>           Filters                     { get; } = new();
-        public List<string>           FloppyImagePlugins          { get; } = new();
-        public List<string>           MediaImagePlugins           { get; } = new();
-        public List<string>           PartitionPlugins            { get; } = new();
-        public List<string>           ReadOnlyFileSystems         { get; } = new();
-        public List<string>           WritableFloppyImagePlugins  { get; } = new();
-        public List<string>           WritableImagePlugins        { get; } = new();
-        public List<string>           ByteAddressableImagePlugins { get; } = new();
+        public List<string>           Archives                    { get; } = [];
+        public List<string>           Checksums                   { get; } = [];
+        public List<string>           FileSystems                 { get; } = [];
+        public List<string>           Filters                     { get; } = [];
+        public List<string>           FloppyImagePlugins          { get; } = [];
+        public List<string>           MediaImagePlugins           { get; } = [];
+        public List<string>           PartitionPlugins            { get; } = [];
+        public List<string>           ReadOnlyFileSystems         { get; } = [];
+        public List<string>           WritableFloppyImagePlugins  { get; } = [];
+        public List<string>           WritableImagePlugins        { get; } = [];
+        public List<string>           ByteAddressableImagePlugins { get; } = [];
         public ClassDeclarationSyntax Register                    { get; private set; }
 
 #region ISyntaxReceiver Members
@@ -309,41 +309,36 @@ public class PluginRegisterGenerator : ISourceGenerator
                                               .ValueText ==
                                                "IArchive") ==
                true)
-            {
-                if(!Archives.Contains(plugin.Identifier.Text)) Archives.Add(plugin.Identifier.Text);
-            }
+                if(!Archives.Contains(plugin.Identifier.Text))
+                    Archives.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==
                                                "IChecksum") ==
                true)
-            {
-                if(!Checksums.Contains(plugin.Identifier.Text)) Checksums.Add(plugin.Identifier.Text);
-            }
+                if(!Checksums.Contains(plugin.Identifier.Text))
+                    Checksums.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==
                                                "IFilesystem") ==
                true)
-            {
-                if(!FileSystems.Contains(plugin.Identifier.Text)) FileSystems.Add(plugin.Identifier.Text);
-            }
+                if(!FileSystems.Contains(plugin.Identifier.Text))
+                    FileSystems.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==
                                                "IFilter") ==
                true)
-            {
-                if(!Filters.Contains(plugin.Identifier.Text)) Filters.Add(plugin.Identifier.Text);
-            }
+                if(!Filters.Contains(plugin.Identifier.Text))
+                    Filters.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==
                                                "IFloppyImage") ==
                true)
-            {
-                if(!FloppyImagePlugins.Contains(plugin.Identifier.Text)) FloppyImagePlugins.Add(plugin.Identifier.Text);
-            }
+                if(!FloppyImagePlugins.Contains(plugin.Identifier.Text))
+                    FloppyImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText is "IMediaImage"
@@ -351,17 +346,15 @@ public class PluginRegisterGenerator : ISourceGenerator
                                                          or "IFloppyImage"
                                                          or "ITapeImage") ==
                true)
-            {
-                if(!MediaImagePlugins.Contains(plugin.Identifier.Text)) MediaImagePlugins.Add(plugin.Identifier.Text);
-            }
+                if(!MediaImagePlugins.Contains(plugin.Identifier.Text))
+                    MediaImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==
                                                "IPartition") ==
                true)
-            {
-                if(!PartitionPlugins.Contains(plugin.Identifier.Text)) PartitionPlugins.Add(plugin.Identifier.Text);
-            }
+                if(!PartitionPlugins.Contains(plugin.Identifier.Text))
+                    PartitionPlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText ==

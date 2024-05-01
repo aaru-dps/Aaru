@@ -286,7 +286,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 Dictionary<byte, string> isrcs                     = new();
                 Dictionary<byte, byte>   trackFlags                = new();
                 string                   mcn                       = null;
-                HashSet<int>             subchannelExtents         = new();
+                HashSet<int>             subchannelExtents         = [];
                 Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
                 var                      tracks                    = new Track[inputFormat.Tracks.Count];
 
@@ -509,12 +509,7 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                 {
                     foreach((byte track, byte flags) in trackFlags)
                     {
-                        outputFormat.WriteSectorTag(new[]
-                                                    {
-                                                        flags
-                                                    },
-                                                    track,
-                                                    SectorTagType.CdTrackFlags);
+                        outputFormat.WriteSectorTag([flags], track, SectorTagType.CdTrackFlags);
                     }
                 }
 

@@ -73,9 +73,9 @@ public sealed partial class DiscJuggler
         var position = 1;
 
         ushort sessionSequence = 0;
-        Sessions    = new List<Session>();
-        Tracks      = new List<Track>();
-        Partitions  = new List<Partition>();
+        Sessions    = [];
+        Tracks      = [];
+        Partitions  = [];
         _offsetMap  = new Dictionary<uint, ulong>();
         _trackFlags = new Dictionary<uint, byte>();
         ushort mediumType;
@@ -993,10 +993,7 @@ public sealed partial class DiscJuggler
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue(track, out byte flag)) return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flag
-                };
+                buffer = [flag];
 
                 return ErrorNumber.NoError;
             default:

@@ -42,8 +42,8 @@ public class Whole() : FilesystemTest("coherent")
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "coherentunix_4.2.10_dsdd.img.lz",
@@ -84,5 +84,5 @@ public class Whole() : FilesystemTest("coherent")
             ClusterSize = 512,
             VolumeName  = "noname"
         }
-    };
+    ];
 }

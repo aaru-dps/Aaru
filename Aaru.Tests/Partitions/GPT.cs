@@ -38,13 +38,13 @@ public class Gpt : PartitionSchemeTest
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "GUID Partition Table");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20480,
@@ -105,13 +105,13 @@ public class Gpt : PartitionSchemeTest
                     Start    = 206848,
                     Type     = "HP-UX Data"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 83968,
@@ -142,7 +142,7 @@ public class Gpt : PartitionSchemeTest
                     Start    = 188416,
                     Type     = "Microsoft Basic data"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

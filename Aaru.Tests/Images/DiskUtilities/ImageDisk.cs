@@ -42,8 +42,8 @@ public class ImageDisk : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Imd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf2dd_acorn.imd.lz",
@@ -76,5 +76,5 @@ public class ImageDisk : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "9dea1e119a73a21a38d134f36b2e5564"
         }
-    };
+    ];
 }

@@ -41,8 +41,8 @@ public class Atheos() : FilesystemTest("atheos")
     public override IFilesystem Plugin     => new AtheOS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "syllable_0.6.7.aif",
@@ -53,5 +53,5 @@ public class Atheos() : FilesystemTest("atheos")
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

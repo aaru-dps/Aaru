@@ -134,7 +134,7 @@ public static class DI
         };
 
         var                        offset = 4;
-        List<DiscInformationUnits> units  = new();
+        List<DiscInformationUnits> units  = [];
 
         while(true)
         {

@@ -81,7 +81,7 @@ public class Dump
 
         if(cicm.Checksums is null) return dump;
 
-        dump.Checksums = new List<Checksum>();
+        dump.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) dump.Checksums.Add(chk);
 
@@ -110,7 +110,7 @@ public class Border
 
         if(cicm.Checksums is null) return border;
 
-        border.Checksums = new List<Checksum>();
+        border.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) border.Checksums.Add(chk);
 

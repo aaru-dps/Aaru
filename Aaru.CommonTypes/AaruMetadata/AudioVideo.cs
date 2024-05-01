@@ -74,7 +74,7 @@ public class AudioTrack
 
         if(cicm.Languages is null) return trk;
 
-        trk.Languages = new List<Language>();
+        trk.Languages = [];
 
         foreach(LanguagesTypeLanguage lng in cicm.Languages) trk.Languages.Add((Language)lng);
 
@@ -111,7 +111,7 @@ public class VideoTrack
 
         if(cicm.Languages is null) return trk;
 
-        trk.Languages = new List<Language>();
+        trk.Languages = [];
 
         foreach(LanguagesTypeLanguage lng in cicm.Languages) trk.Languages.Add((Language)lng);
 
@@ -138,7 +138,7 @@ public class SubtitleTrack
 
         if(cicm.Languages is null) return sub;
 
-        sub.Languages = new List<Language>();
+        sub.Languages = [];
 
         foreach(LanguagesTypeLanguage lng in cicm.Languages) sub.Languages.Add((Language)lng);
 
@@ -171,7 +171,7 @@ public class Recording
 
         if(cicm.Software is null) return recording;
 
-        recording.Software = new List<Software>();
+        recording.Software = [];
 
         foreach(SoftwareType sw in cicm.Software) recording.Software.Add(sw);
 

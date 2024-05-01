@@ -41,8 +41,8 @@ public class RDB() : FilesystemTest("ufs")
     public override IFilesystem Plugin => new BFS();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amix.aif",
@@ -53,5 +53,5 @@ public class RDB() : FilesystemTest("ufs")
             ClusterSize  = 2048,
             VolumeSerial = "UNKNOWN"
         }
-    };
+    ];
 }

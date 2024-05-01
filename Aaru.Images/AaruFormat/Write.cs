@@ -296,13 +296,13 @@ public sealed partial class AaruFormat
         _header.applicationMinorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Minor;
 
         // Initialize tables
-        _index                        = new List<IndexEntry>();
+        _index                        = [];
         _mediaTags                    = new Dictionary<MediaTagType, byte[]>();
         _checksumProvider             = SHA256.Create();
         _deduplicationTable           = new Dictionary<string, ulong>();
         _trackIsrcs                   = new Dictionary<byte, string>();
         _trackFlags                   = new Dictionary<byte, byte>();
-        _imageInfo.ReadableSectorTags = new List<SectorTagType>();
+        _imageInfo.ReadableSectorTags = [];
 
         // If there exists an index, we are appending, so read index
         if(_header.indexOffset > 0)
@@ -1091,7 +1091,7 @@ public sealed partial class AaruFormat
 
                         _imageStream.Position -= _structureBytes.Length;
 
-                        Tracks      = new List<Track>();
+                        Tracks      = [];
                         _trackFlags = new Dictionary<byte, byte>();
                         _trackIsrcs = new Dictionary<byte, string>();
 
@@ -1262,7 +1262,7 @@ public sealed partial class AaruFormat
 
                         _imageStream.Position -= _structureBytes.Length;
 
-                        DumpHardware = new List<DumpHardware>();
+                        DumpHardware = [];
 
                         for(ushort i = 0; i < dumpBlock.entries; i++)
                         {
@@ -1275,7 +1275,7 @@ public sealed partial class AaruFormat
                             var dump = new DumpHardware
                             {
                                 Software = new Software(),
-                                Extents  = new List<Extent>()
+                                Extents  = []
                             };
 
                             byte[] tmp;
@@ -1386,7 +1386,7 @@ public sealed partial class AaruFormat
                         Span<TapePartitionEntry> tapePartitions =
                             MemoryMarshal.Cast<byte, TapePartitionEntry>(tapePartitionBytes);
 
-                        TapePartitions = new List<TapePartition>();
+                        TapePartitions = [];
 
                         foreach(TapePartitionEntry tapePartition in tapePartitions)
                         {
@@ -1419,7 +1419,7 @@ public sealed partial class AaruFormat
                         var tapeFileBytes = new byte[fileHeader.length];
                         _imageStream.EnsureRead(tapeFileBytes, 0, tapeFileBytes.Length);
                         Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
-                        Files = new List<TapeFile>();
+                        Files = [];
 
                         foreach(TapeFileEntry file in tapeFiles)
                         {
@@ -1471,7 +1471,7 @@ public sealed partial class AaruFormat
 
                         _imageStream.Position -= _structureBytes.Length;
 
-                        compactDiscIndexes = new List<CompactDiscIndexEntry>();
+                        compactDiscIndexes = [];
 
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    Localization.Found_0_compact_disc_indexes_at_position_1,
@@ -1597,9 +1597,9 @@ public sealed partial class AaruFormat
 
                 if(Tracks == null || Tracks.Count == 0)
                 {
-                    Tracks = new List<Track>
-                    {
-                        new()
+                    Tracks =
+                    [
+                        new Track
                         {
                             BytesPerSector    = (int)_imageInfo.SectorSize,
                             EndSector         = _imageInfo.Sectors - 1,
@@ -1609,7 +1609,7 @@ public sealed partial class AaruFormat
                             Sequence          = 1,
                             Type              = TrackType.Data
                         }
-                    };
+                    ];
 
                     _trackFlags = new Dictionary<byte, byte>
                     {
@@ -1623,7 +1623,7 @@ public sealed partial class AaruFormat
 
                 AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
-                Sessions = new List<Session>();
+                Sessions = [];
 
                 for(var i = 1; i <= Tracks.Max(t => t.Session); i++)
                 {
@@ -1660,7 +1660,7 @@ public sealed partial class AaruFormat
                 }
 
                 ulong currentTrackOffset = 0;
-                Partitions = new List<Partition>();
+                Partitions = [];
 
                 foreach(Track track in Tracks.OrderBy(t => t.StartSector))
                 {
@@ -1908,7 +1908,7 @@ public sealed partial class AaruFormat
 
             var cmpCrc64Context = new Crc64Context();
 
-            byte[] lzmaProperties   = Array.Empty<byte>();
+            byte[] lzmaProperties   = [];
             var    compressedLength = 0;
 
             switch(_currentBlockHeader.compression)
@@ -2702,7 +2702,7 @@ public sealed partial class AaruFormat
 
             var cmpCrc64Context = new Crc64Context();
 
-            byte[] lzmaProperties   = Array.Empty<byte>();
+            byte[] lzmaProperties   = [];
             var    compressedLength = 0;
 
             switch(_currentBlockHeader.compression)
@@ -3748,7 +3748,7 @@ public sealed partial class AaruFormat
                     var cmpBuffer = new byte[ddtEntries.Length + 262144];
 
                     int    cmpLen;
-                    byte[] lzmaProperties = Array.Empty<byte>();
+                    byte[] lzmaProperties = [];
 
                     switch(_compressionAlgorithm)
                     {
@@ -4820,8 +4820,8 @@ public sealed partial class AaruFormat
                     blockStream.Close();
                 }
 
-                List<TrackEntry>            trackEntries            = new();
-                List<CompactDiscIndexEntry> compactDiscIndexEntries = new();
+                List<TrackEntry>            trackEntries            = [];
+                List<CompactDiscIndexEntry> compactDiscIndexEntries = [];
 
                 foreach(Track track in Tracks)
                 {
@@ -5126,12 +5126,7 @@ public sealed partial class AaruFormat
             metadataBlock.creatorLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.Comments))
@@ -5142,12 +5137,7 @@ public sealed partial class AaruFormat
             metadataBlock.commentsLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaTitle))
@@ -5158,12 +5148,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaTitleLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaManufacturer))
@@ -5174,12 +5159,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaModel))
@@ -5190,12 +5170,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaModelLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaSerialNumber))
@@ -5206,12 +5181,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaBarcode))
@@ -5222,12 +5192,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaBarcodeLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.MediaPartNumber))
@@ -5238,12 +5203,7 @@ public sealed partial class AaruFormat
             metadataBlock.mediaPartNumberLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.DriveManufacturer))
@@ -5254,12 +5214,7 @@ public sealed partial class AaruFormat
             metadataBlock.driveManufacturerLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.DriveModel))
@@ -5270,12 +5225,7 @@ public sealed partial class AaruFormat
             metadataBlock.driveModelLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.DriveSerialNumber))
@@ -5286,12 +5236,7 @@ public sealed partial class AaruFormat
             metadataBlock.driveSerialNumberLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         if(!string.IsNullOrWhiteSpace(_imageInfo.DriveFirmwareRevision))
@@ -5302,12 +5247,7 @@ public sealed partial class AaruFormat
             metadataBlock.driveFirmwareRevisionLength = (uint)(tmpUtf16Le.Length + 2);
             blockStream.Write(tmpUtf16Le, 0, tmpUtf16Le.Length);
 
-            blockStream.Write(new byte[]
-                              {
-                                  0, 0
-                              },
-                              0,
-                              2);
+            blockStream.Write([0, 0], 0, 2);
         }
 
         // Check if we set up any metadata earlier, then write its block

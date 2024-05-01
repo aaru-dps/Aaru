@@ -65,7 +65,7 @@ static class ConsoleHandler
         }
     }
 
-    public static ObservableCollection<LogEntry> Entries { get; } = new();
+    public static ObservableCollection<LogEntry> Entries { get; } = [];
 
     static void OnWriteExceptionEvent([NotNull] Exception ex) => Entries.Add(new LogEntry
     {

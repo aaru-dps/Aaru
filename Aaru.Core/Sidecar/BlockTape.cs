@@ -48,9 +48,9 @@ public sealed partial class Sidecar
     {
         _sidecar = new Metadata
         {
-            BlockMedias = new List<BlockMedia>
-            {
-                new()
+            BlockMedias =
+            [
+                new BlockMedia
                 {
                     Image = new Image
                     {
@@ -65,9 +65,9 @@ public sealed partial class Sidecar
                     },
                     PhysicalBlockSize = blockSize,
                     LogicalBlockSize  = blockSize,
-                    TapeInformation = new List<TapePartition>
-                    {
-                        new()
+                    TapeInformation =
+                    [
+                        new TapePartition
                         {
                             Image = new Image
                             {
@@ -75,9 +75,9 @@ public sealed partial class Sidecar
                                 Value  = folderName
                             }
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         };
 
         if(_aborted) return _sidecar;
@@ -85,7 +85,7 @@ public sealed partial class Sidecar
         ulong          currentBlock = 0;
         ulong          totalSize    = 0;
         var            tapeWorker   = new Checksum();
-        List<TapeFile> tapeFiles    = new();
+        List<TapeFile> tapeFiles    = [];
 
         UpdateStatus(Localization.Core.Hashing_files);
 

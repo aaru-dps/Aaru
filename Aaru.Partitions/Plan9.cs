@@ -63,7 +63,7 @@ public sealed class Plan9 : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 

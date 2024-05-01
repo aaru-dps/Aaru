@@ -51,7 +51,7 @@ public sealed partial class DeviceReport
     public Scsi ReportScsiInquiry()
     {
         var    sense  = true;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -96,7 +96,7 @@ public sealed partial class DeviceReport
     public List<ScsiPage> ReportEvpdPages(string vendor)
     {
         var    sense  = false;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -110,7 +110,7 @@ public sealed partial class DeviceReport
 
         if(evpdPages is not { Length: > 0 }) return null;
 
-        List<ScsiPage> evpds = new();
+        List<ScsiPage> evpds = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -487,7 +487,7 @@ public sealed partial class DeviceReport
 
         if(decMode.Value.Pages == null) return;
 
-        List<ScsiPage> modePages = new();
+        List<ScsiPage> modePages = [];
 
         foreach(Modes.ModePage page in decMode.Value.Pages)
         {
@@ -512,8 +512,8 @@ public sealed partial class DeviceReport
     {
         var    mediaTest   = new TestedMedia();
         var    sense       = true;
-        byte[] buffer      = Array.Empty<byte>();
-        byte[] senseBuffer = Array.Empty<byte>();
+        byte[] buffer      = [];
+        byte[] senseBuffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -884,8 +884,8 @@ public sealed partial class DeviceReport
     public TestedMedia ReportScsi()
     {
         var    sense       = true;
-        byte[] buffer      = Array.Empty<byte>();
-        byte[] senseBuffer = Array.Empty<byte>();
+        byte[] buffer      = [];
+        byte[] senseBuffer = [];
 
         var capabilities = new TestedMedia
         {

@@ -61,7 +61,7 @@ public sealed class DEC : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<CommonTypes.Partition>();
+        partitions = [];
 
         if(31 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 

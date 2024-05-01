@@ -42,8 +42,8 @@ public class APM() : FilesystemTest("prodos")
     public override IFilesystem Plugin     => new ProDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "macos_7.6.aif",
@@ -164,5 +164,5 @@ public class APM() : FilesystemTest("prodos")
             ClusterSize = 512,
             VolumeName  = "VOLUME.LABEL"
         }
-    };
+    ];
 }

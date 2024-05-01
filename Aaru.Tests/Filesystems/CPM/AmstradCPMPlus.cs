@@ -40,8 +40,8 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "data_filename.dsk.lz",
@@ -140,5 +140,5 @@ public class AmstradCPMPlus() : FilesystemTest("cpmfs")
             Clusters    = 359,
             ClusterSize = 1024
         }
-    };
+    ];
 }

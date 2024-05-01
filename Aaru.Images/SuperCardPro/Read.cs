@@ -507,7 +507,7 @@ public sealed partial class SuperCardPro
 
         if(captureIndex > 0) return ErrorNumber.OutOfRange;
 
-        List<byte> tmpBuffer = new();
+        List<byte> tmpBuffer = [];
 
         if(Header.flags.HasFlag(ScpFlags.StartsAtIndex)) tmpBuffer.Add(0);
 
@@ -538,7 +538,7 @@ public sealed partial class SuperCardPro
         Stream stream = _scpFilter.GetDataForkStream();
         var    br     = new BinaryReader(stream);
 
-        List<byte> tmpBuffer = new();
+        List<byte> tmpBuffer = [];
 
         for(var i = 0; i < Header.revolutions; i++)
         {

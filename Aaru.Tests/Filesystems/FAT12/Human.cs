@@ -41,8 +41,8 @@ public class Human() : ReadOnlyFilesystemTest("fat12")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "diska.aif",
@@ -65,5 +65,5 @@ public class Human() : ReadOnlyFilesystemTest("fat12")
             ClusterSize = 1024,
             SystemId    = "Hudson soft 2.00"
         }
-    };
+    ];
 }

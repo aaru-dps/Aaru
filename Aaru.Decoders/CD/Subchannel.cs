@@ -34,7 +34,7 @@ namespace Aaru.Decoders.CD;
 public static class Subchannel
 {
     static readonly string[] _isrcTable =
-    {
+    [
         // 0x00
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "", "", "", "", "", "",
 
@@ -46,7 +46,7 @@ public static class Subchannel
 
         // 0x30
         "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
-    };
+    ];
 
     public static void BinaryToBcdQ(byte[] q)
     {

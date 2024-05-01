@@ -52,7 +52,7 @@ public static class DensitySupport
 
         if(response.Length != responseLen) return null;
 
-        List<DensitySupportDescriptor> descriptors = new();
+        List<DensitySupportDescriptor> descriptors = [];
         var                            offset      = 4;
 
         while(offset < response.Length)
@@ -152,7 +152,7 @@ public static class DensitySupport
 
         if(response.Length != responseLen) return null;
 
-        List<MediaTypeSupportDescriptor> descriptors = new();
+        List<MediaTypeSupportDescriptor> descriptors = [];
         var                              offset      = 4;
 
         while(offset < response.Length)

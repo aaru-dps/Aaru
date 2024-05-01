@@ -39,8 +39,8 @@ public class Virtual98 : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Virtual98");
     public override IMediaImage Plugin     => new Aaru.Images.Virtual98();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "v98_128.hdd.lz",
@@ -97,5 +97,5 @@ public class Virtual98 : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "f5906261c390ea5c5a0e46864fb066cd"
         }
-    };
+    ];
 }

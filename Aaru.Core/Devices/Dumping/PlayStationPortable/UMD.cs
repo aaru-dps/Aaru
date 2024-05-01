@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -186,19 +185,18 @@ public partial class Dump
         _dumpStopwatch.Restart();
         double imageWriteDuration = 0;
 
-        outputOptical.SetTracks(new List<Track>
-        {
-            new()
-            {
-                BytesPerSector    = (int)blockSize,
-                EndSector         = blocks - 1,
-                Sequence          = 1,
-                RawBytesPerSector = (int)blockSize,
-                SubchannelType    = TrackSubchannelType.None,
-                Session           = 1,
-                Type              = TrackType.Data
-            }
-        });
+        outputOptical.SetTracks([
+                                    new Track
+                                    {
+                                        BytesPerSector    = (int)blockSize,
+                                        EndSector         = blocks - 1,
+                                        Sequence          = 1,
+                                        RawBytesPerSector = (int)blockSize,
+                                        SubchannelType    = TrackSubchannelType.None,
+                                        Session           = 1,
+                                        Type              = TrackType.Data
+                                    }
+                                ]);
 
         DumpHardware currentTry = null;
         ExtentsULong extents    = null;
@@ -517,15 +515,15 @@ public partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01(pg)
                         }
-                    }
+                    ]
                 };
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -635,10 +633,7 @@ public partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
-                        currentModePage.Value
-                    }
+                    Pages  = [currentModePage.Value]
                 };
 
                 md6 = Modes.EncodeMode6(md, _dev.ScsiType);

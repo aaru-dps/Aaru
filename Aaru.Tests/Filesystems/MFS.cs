@@ -41,8 +41,8 @@ public class Mfs() : ReadOnlyFilesystemTest("mfs")
     public override IFilesystem Plugin => new AppleMFS();
     public override bool Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "macos_0.1_mf1dd.img.lz",
@@ -93,5 +93,5 @@ public class Mfs() : ReadOnlyFilesystemTest("mfs")
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

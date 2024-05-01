@@ -40,8 +40,8 @@ public class Locus() : FilesystemTest("locus")
     public override IFilesystem Plugin     => new Aaru.Filesystems.Locus();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "mf2dd.img.lz",
@@ -62,5 +62,5 @@ public class Locus() : FilesystemTest("locus")
             ClusterSize = 4096,
             VolumeName  = "Label"
         }
-    };
+    ];
 }

@@ -49,7 +49,7 @@ public sealed class Dump(Device dev)
     const string MODULE_NAME    = "DVD decryption";
 
     public byte   Agid   { get; private set; }
-    public byte[] BusKey { get; private set; } = Array.Empty<byte>();
+    public byte[] BusKey { get; private set; } = [];
 
     /// <summary>Returns the Authentication Success Flag of the logical unit.</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
@@ -127,7 +127,7 @@ public sealed class Dump(Device dev)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[12];
-        buffer = Array.Empty<byte>();
+        buffer = [];
 
         cdb[0]  = (byte)ScsiCommands.ReportKey;
         cdb[7]  = (byte)keyClass;
@@ -366,7 +366,7 @@ public sealed class Dump(Device dev)
                            out double duration)
     {
         duration    = 0;
-        buffer      = Array.Empty<byte>();
+        buffer      = [];
         senseBuffer = new byte[64];
 
         var  sense     = false;
@@ -435,7 +435,7 @@ public sealed class Dump(Device dev)
 
             if(i < 31) continue;
 
-            senseBuffer = Array.Empty<byte>();
+            senseBuffer = [];
 
             return true;
         }

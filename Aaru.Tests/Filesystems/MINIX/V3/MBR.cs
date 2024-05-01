@@ -41,8 +41,8 @@ public class MBR : FilesystemTest
     public override IFilesystem Plugin => new MinixFS();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "minix_3.1.2a.aif",
@@ -63,5 +63,5 @@ public class MBR : FilesystemTest
             ClusterSize = 1024,
             Type        = "minix3"
         }
-    };
+    ];
 }

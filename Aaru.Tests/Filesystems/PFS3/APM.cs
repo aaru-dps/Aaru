@@ -43,8 +43,8 @@ public class APM() : FilesystemTest("pfs")
     public override IFilesystem Plugin     => new PFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "morphos_3.13.aif",
@@ -55,5 +55,5 @@ public class APM() : FilesystemTest("pfs")
             ClusterSize = 512,
             VolumeName  = "VolumeLabel"
         }
-    };
+    ];
 }

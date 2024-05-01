@@ -44,8 +44,8 @@ public class NoSub : OpticalMediaImageTest
 
     public override IMediaImage Plugin => new Cdrdao();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile   = "report_audiocd.toc",
@@ -54,8 +54,8 @@ public class NoSub : OpticalMediaImageTest
             SectorSize = 2352,
             Md5        = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5    = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -168,7 +168,7 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 4,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -178,8 +178,8 @@ public class NoSub : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5    = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -188,8 +188,8 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -204,9 +204,9 @@ public class NoSub : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -216,8 +216,8 @@ public class NoSub : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5    = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -226,8 +226,8 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -242,9 +242,9 @@ public class NoSub : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -254,8 +254,8 @@ public class NoSub : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5    = "3af5f943ddb9427d9c63a4ce3b704db9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -264,8 +264,8 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
@@ -274,9 +274,9 @@ public class NoSub : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -286,8 +286,8 @@ public class NoSub : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "f09312ba25a479fb81912a2965babd22",
             LongMd5    = "f48603d11883593f45ec4a3824681e4e",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -296,8 +296,8 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
@@ -305,7 +305,7 @@ public class NoSub : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -427,7 +427,7 @@ public class NoSub : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

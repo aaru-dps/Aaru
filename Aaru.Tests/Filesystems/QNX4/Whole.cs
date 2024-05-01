@@ -41,8 +41,8 @@ public class Whole() : FilesystemTest("qnx4")
     public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "qnx_4.24_dsdd.img.lz",
@@ -79,5 +79,5 @@ public class Whole() : FilesystemTest("qnx4")
             Clusters    = 2880,
             ClusterSize = 512
         }
-    };
+    ];
 }

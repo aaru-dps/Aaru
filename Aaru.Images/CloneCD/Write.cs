@@ -240,7 +240,7 @@ public sealed partial class CloneCd
         ulong currentDataOffset       = 0;
         ulong currentSubchannelOffset = 0;
 
-        Tracks = new List<Track>();
+        Tracks = [];
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {

@@ -56,33 +56,15 @@ sealed class LsCommand : Command
     {
         AddAlias("ls");
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--long-format", "-l"
-                             },
-                             () => true,
-                             UI.Use_long_format));
+        Add(new Option<bool>(["--long-format", "-l"], () => true, UI.Use_long_format));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--options", "-O"
-                               },
+        Add(new Option<string>(["--options", "-O"],
                                () => null,
                                UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--namespace", "-n"
-                               },
-                               () => null,
-                               UI.Namespace_to_use_for_filenames));
+        Add(new Option<string>(["--namespace", "-n"], () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -435,7 +417,7 @@ sealed class LsCommand : Command
 
                     foreach(string xattr in xattrs)
                     {
-                        byte[] xattrBuf = Array.Empty<byte>();
+                        byte[] xattrBuf = [];
                         error = fs.GetXattr(path + "/" + entry.Key, xattr, ref xattrBuf);
 
                         if(error == ErrorNumber.NoError)

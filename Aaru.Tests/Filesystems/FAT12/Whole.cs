@@ -42,8 +42,8 @@ public class Whole() : ReadOnlyFilesystemTest("fat12")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "concurrentdos_6.00_dshd.img.lz",
@@ -5668,5 +5668,5 @@ public class Whole() : ReadOnlyFilesystemTest("fat12")
             VolumeName   = "VolumeLabel",
             VolumeSerial = "609CA596"
         }
-    };
+    ];
 }

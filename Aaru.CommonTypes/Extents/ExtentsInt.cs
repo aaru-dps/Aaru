@@ -52,13 +52,13 @@ public sealed class ExtentsInt
     List<Tuple<int, int>> _backend;
 
     /// <summary>Initialize an empty list of extents</summary>
-    public ExtentsInt() => _backend = new List<Tuple<int, int>>();
+    public ExtentsInt() => _backend = [];
 
     /// <summary>Initializes extents with an specific list</summary>
     /// <param name="list">List of extents as tuples "start, end"</param>
     public ExtentsInt(IEnumerable<Tuple<int, int>> list)
     {
-        _backend = new List<Tuple<int, int>>();
+        _backend = [];
 
         // This ensure no overlapping extents are added on creation
         foreach(Tuple<int, int> t in list) Add(t.Item1, t.Item2);

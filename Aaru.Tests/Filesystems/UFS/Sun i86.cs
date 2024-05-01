@@ -45,8 +45,8 @@ public class Sun_i86 : FilesystemTest
     public override IFilesystem Plugin     => new FFSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "solaris_7.aif",
@@ -57,5 +57,5 @@ public class Sun_i86 : FilesystemTest
             ClusterSize = 1024,
             Type        = "ufs"
         }
-    };
+    ];
 }

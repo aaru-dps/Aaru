@@ -65,7 +65,7 @@ public sealed class Human68K : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         byte[]      sector;
         ulong       sectsPerUnit;

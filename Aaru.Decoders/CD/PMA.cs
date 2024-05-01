@@ -324,7 +324,7 @@ public static class PMA
 
                     break;
                 case 3:
-                    tracks = new List<string>();
+                    tracks = [];
 
                     if(descriptor.Min > 0) tracks.Add($"{descriptor.Min}");
 
@@ -344,7 +344,7 @@ public static class PMA
 
                     break;
                 case 4:
-                    tracks = new List<string>();
+                    tracks = [];
 
                     if(descriptor.Min > 0) tracks.Add($"{descriptor.Min}");
 

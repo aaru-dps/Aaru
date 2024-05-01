@@ -44,8 +44,8 @@ public class RayDIM : BlockMediaImageTest
 
     public override IMediaImage Plugin => new RayDim();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "5f1dd8.dim.lz",
@@ -61,14 +61,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 336,
             SectorSize = 512,
             Md5        = "59e3fecd9501694f897dbce45aa41946",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 336
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -85,14 +85,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 378,
             SectorSize = 512,
             Md5        = "d37559bca656484e2c91cee941f9d22b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 378
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -109,14 +109,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 672,
             SectorSize = 512,
             Md5        = "d865778a7b9294045d3341be57fa9278",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 672
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -133,14 +133,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 756,
             SectorSize = 512,
             Md5        = "efe65433ade25ce4d03d0f6a0c199b85",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 756
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -157,14 +157,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2460,
             SectorSize = 512,
             Md5        = "84b0b7b0b13f10b719ad3ff3ddf1b8ac",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2460
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -189,14 +189,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "95ea232f59e44db374b994cfe7f1c07f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -261,14 +261,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "2302991363cb3681cffdc4388915b51e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -293,14 +293,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "af83d011608042d35021e39aa5e10b2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -309,14 +309,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "6642c1a32d2c58e93481d664974fc202",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -325,14 +325,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "846f01b8b60cb3c775bd66419e977926",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -341,14 +341,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "5101f89850dc28efbcfb7622086a9ddf",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -357,14 +357,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "8e570be2ed1f00ddea82e50a2d9c446a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -373,14 +373,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "abba2a1ddd60a649047a9c44d94bbeae",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -389,14 +389,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "e3bc48bec81be5b35be73d41fdffd2ab",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -405,14 +405,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "43b5068af9d016d1432eb2e12d2b802a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -421,14 +421,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "5bf2ad4dc300592604b6e32f8b8e2656",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -437,14 +437,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "cb9a832ca6a4097b8ccc30d2108e1f7d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -453,14 +453,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "56d181a6bb8713e6b2854fe8887faab6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -469,14 +469,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "41aef7cff26aefda1add8d49c5b962c2",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -485,14 +485,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2460,
             SectorSize = 512,
             Md5        = "2437c5f089f1cba3866b36360b016f16",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2460
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -501,14 +501,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1280,
             SectorSize = 512,
             Md5        = "bdaa8f17373b265830fdf3a06b794367",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1280
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -517,14 +517,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "629932c285478d0540ff7936aa008351",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -533,14 +533,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1476,
             SectorSize = 512,
             Md5        = "7a2abef5d4701e2e49abb05af8d4da50",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1476
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -549,14 +549,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "e3507522c914264f44fb2c92c3170c09",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -565,14 +565,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "824fe65dbb1a42b6b94f05405ef984f2",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -581,14 +581,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "1a8c2e78e7132cf9ba5d6c2b75876be0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -597,14 +597,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "936b20bb0966fe693b4d5e2353e24846",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -613,14 +613,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "803b01a0b440c2837d37c21308f30cd5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -629,14 +629,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3280,
             SectorSize = 512,
             Md5        = "aa0d31f914760cc4cde75479779ebed6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3280
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -645,14 +645,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "31269ed6464302ae26d22b7c87bceb23",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -661,14 +661,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "5e413433c54f48978d281c6e66d1106e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -677,14 +677,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3528,
             SectorSize = 512,
             Md5        = "a9bacb3d24afd8894b4857d4ca15f1a2",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3528
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -693,14 +693,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3528,
             SectorSize = 512,
             Md5        = "24a7459d080cea3a60d131b8fd7dc5d1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3528
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -709,14 +709,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3612,
             SectorSize = 512,
             Md5        = "df4f196d4133f29e2735c05bb15ff6bf",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3612
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -725,14 +725,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 5120,
             SectorSize = 512,
             Md5        = "630f017f692e853278ab108474fc1fa5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 5120
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -741,14 +741,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "8f91482c56161ecbf5d86f42b03b9636",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -757,14 +757,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "5fc19ca552b6db957061e9a1750394d2",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -773,14 +773,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "a33b46f042b78fe3d0b3c5dbb3908a93",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -789,14 +789,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "565d3c001cbb532154aa5d3c65b2439c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -805,14 +805,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "e60442c3ebd72c99bdd7545fdba59613",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -821,14 +821,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "058a33a129539285c9b64010496af52f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -837,14 +837,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "0726ecbc38965d30a6222c3e74cd1aa3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -861,14 +861,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "c38d69ac88520f14fcc6d6ced22b065d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -877,14 +877,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "91d51964e1e64ef3f6f622fa19aa833c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -893,14 +893,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "db36d9651c952ff679ec33223c8db2d3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -909,14 +909,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3024,
             SectorSize = 512,
             Md5        = "0373d3d489e98cc1160da9b0412f6df0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3024
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -925,14 +925,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "1207a1cc7ff73d4f74c8984b4e7db33f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -941,14 +941,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3528,
             SectorSize = 512,
             Md5        = "2e9910e2d637eb88d58056b61a25401c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3528
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -957,14 +957,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 400,
             SectorSize = 512,
             Md5        = "d40a99cb549fcfb26fcf9ef01b5dfca7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -973,14 +973,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 420,
             SectorSize = 512,
             Md5        = "6433f8fbf8dda1e307b15a4203c1a4e6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 420
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -989,14 +989,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "126dfd25363c076727dfaab03955c931",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1005,14 +1005,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "386763ae9afde1a0a19eb4a54ba462aa",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1021,14 +1021,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "7973e569ed93beb1ece2e84a5ef3a8d1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1037,14 +1037,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "a793047503af08e83361427b3e2806e0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1053,14 +1053,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "f01541de322c8d6d7321084d7a245e7b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1069,14 +1069,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "ba6ec1652ff41bcc687aaf9c4e32dc18",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1085,14 +1085,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "7973e569ed93beb1ece2e84a5ef3a8d1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1101,14 +1101,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "a793047503af08e83361427b3e2806e0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1117,14 +1117,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "ba6ec1652ff41bcc687aaf9c4e32dc18",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1133,14 +1133,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "6631b66fdfd89319323771c41334c7ba",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1149,14 +1149,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3280,
             SectorSize = 512,
             Md5        = "56471a253f4d6803b634e2bbff6c0931",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3280
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1165,14 +1165,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "7d36aee5a3071ff75b979f3acb649c40",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1181,14 +1181,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "0ccb62039363ab544c69eca229a17fae",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1197,14 +1197,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "7851d31fad9302ff45d3ded4fba25387",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1213,14 +1213,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "915b08c82591e8488320e001b7303b6d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1229,14 +1229,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "5e5ea6fe9adf842221fdc60e56630405",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1245,14 +1245,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "a22e254f7e3526ec30dc4915a19fcb52",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1261,14 +1261,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "ddc6c1200c60e9f7796280f50c2e5283",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1333,14 +1333,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "be05d1ff10ef8b2220546c4db962ac9e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1349,14 +1349,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "e01d813dd6c3a49428520df40d63cadd",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1365,14 +1365,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "1c8b03a8550ed3e70e1c78316aa445aa",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1381,14 +1381,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "0bdf9130c07bb5d558a4705249f949d0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1397,14 +1397,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "2dafeddaa99e7dc0db5ef69e128f9c8e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1421,14 +1421,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "028769dc0abefab1740cc309432588b6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1437,14 +1437,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "152023525154b45ab26687190bac94db",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1453,14 +1453,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "db38ecd93f28dd065927fed21917eed5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1485,14 +1485,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "f206c0caa4e0eda37233ab6e89ab5493",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1501,14 +1501,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "63b68958663987b2281b2105e704d3ce",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1613,14 +1613,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 630,
             SectorSize = 512,
             Md5        = "ed03778299e16ace99383487bff2228a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 630
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1645,14 +1645,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "5ac0a9fc7337f761098f816359b0f6f7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1661,14 +1661,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "1ea6ec8e663218b1372048f6e25795b5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1677,14 +1677,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "77a1167b1b9043496e32b8578cde0ff0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1693,14 +1693,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1680,
             SectorSize = 512,
             Md5        = "83e62bbb301ed40d9744593b7dc05f9e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1680
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1709,14 +1709,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "32c044c5c2b0bd13806149a759c14935",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1725,14 +1725,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3040,
             SectorSize = 512,
             Md5        = "8752095abc13dba3f3467669da333891",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3040
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1741,14 +1741,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "aece7cd34bbba3e75307fa70404d9d30",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1757,14 +1757,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3280,
             SectorSize = 512,
             Md5        = "5289afb16a6e4a33213e3bcca56c6230",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3280
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1773,14 +1773,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "700eadd757992f5da3c6c984a2f9470e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1789,14 +1789,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "b96596711f4d2ee85dfda0fe3b9f26c3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1805,14 +1805,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "a4f461af7fda5e93a7ab63fcbb7e7683",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1821,14 +1821,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3528,
             SectorSize = 512,
             Md5        = "ac3f34b034b9f8f488379d3a4f277a3b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3528
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1837,14 +1837,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "4feeaf4b4ee5dad85db727fbbda4b6d1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1853,14 +1853,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 400,
             SectorSize = 512,
             Md5        = "3c77ca681df78e4cd7baa162aa9b0859",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1869,14 +1869,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "51da1f86c49657ffdb367bb2ddeb7990",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1903,14 +1903,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "f76f92dd326c99c5efad5ee58daf72e1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1919,14 +1919,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "b6f2c10e42908e334025bc4ffd81e771",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1935,14 +1935,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "f2f409ea2a62a7866fd2777cc4fc9739",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1951,14 +1951,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1512,
             SectorSize = 512,
             Md5        = "ba3045cda36dd47443ff68c10efae573",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1512
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1967,14 +1967,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "30a93f30dd4485c6fc037fe0775d3fc7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1983,14 +1983,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "e0caf02cce5597c98313bcc480366ec7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -1999,14 +1999,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "39bf5a98bcb2185d855ac06378febcfa",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2015,14 +2015,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "dc20055b6e6fd6f8e1114d4be2effeed",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2031,14 +2031,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "56af9256cf71d5aac5fd5d363674bc49",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2047,14 +2047,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 720,
             SectorSize = 512,
             Md5        = "bbba1e2d1418e05c3a4e7b4d585d160b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2063,14 +2063,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "bca3a045e81617f7f5ebb5a8818eac47",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2079,14 +2079,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "a296663cb8e75e94603221352f29cfff",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2095,14 +2095,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "ecda36ebf0e1100233cb0ec722c18583",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2111,14 +2111,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "cef2f4fe9b1a32d5c0544f814e634264",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2127,14 +2127,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "bbe58e26b8f8f822cd3edfd37a4e4924",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2143,14 +2143,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "b9b6ebdf711364c979de7cf70c3a438a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2159,14 +2159,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "d37424f367f545acbb397f2bed766843",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2175,14 +2175,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "9963dd6f19ce6bd56eabeccdfbbd821a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2191,14 +2191,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "acf6604559ae8217f7869823e2429024",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2207,14 +2207,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "23bf2139cdfdc4c16db058fd31ea6481",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2223,14 +2223,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "fa26adda0415f02057b113ad29c80c8d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2239,14 +2239,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "4f2a8d036fefd6c6c88d99eda3aa12b7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2255,14 +2255,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1404,
             SectorSize = 512,
             Md5        = "5e0ecf953104621b0465163205d8e9c7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1404
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2271,14 +2271,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "d81f5cb64fd0b99f138eab34110bbc3c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2287,14 +2287,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "a89006a75d13bee9202d1d6e52721ccb",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2303,14 +2303,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 400,
             SectorSize = 512,
             Md5        = "e1ad4a022778d7a0b24a93d8e68a59dc",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2319,14 +2319,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 420,
             SectorSize = 512,
             Md5        = "56a95fcf1d6f5c3108a17207b53ec07c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 420
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2335,14 +2335,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "beef1cdb004dc69391d6b3d508988b95",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2359,14 +2359,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "0aef12c906b744101b932d799ca88a78",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2375,14 +2375,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "e7367df9998de0030a97b5131d1bed20",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2391,14 +2391,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "1c36b819cfe355c11360bc120c9216fe",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2407,14 +2407,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "25114403c11e337480e2afc4e6e32108",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2423,14 +2423,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "3d7760ddaa55cd258057773d15106b78",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2439,14 +2439,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "29054ef703394ee3b35e849468a412ba",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2455,14 +2455,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "c91e852828c2aeee2fc94a6adbeed0ae",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2471,14 +2471,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "efb6cfe53a6770f0ae388cb2c7f46264",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2487,14 +2487,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1476,
             SectorSize = 512,
             Md5        = "6116f7c1397cadd55ba8d79c2aadc9dd",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1476
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2503,14 +2503,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "93100f8d86e5d0d0e6340f59c52a5e0d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2519,14 +2519,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "cf7b7d43aa70863bedcc4a8432a5af67",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2535,14 +2535,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "02259cd5fbcc20f8484aa6bece7a37c6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2551,14 +2551,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "073a172879a71339ef4b00ebb47b67fc",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2567,14 +2567,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "d9890897130d0fc1eee3dbf4d9b0440f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2583,14 +2583,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2788,
             SectorSize = 512,
             Md5        = "09ca721aa883d5bbaa422c7943b0782c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2788
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2607,14 +2607,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1476,
             SectorSize = 512,
             Md5        = "affca3d8a008f74e515e11ed404214c2",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1476
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2623,14 +2623,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "9827ba1b3e9cac41263caabd862e78f9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2639,14 +2639,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "67d299c6e83f3f0fbcb8faa9ffa422c1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2655,14 +2655,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "81d3bfec7b201f6a4503eb24c4394d4a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2671,14 +2671,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "d07f7ffaee89742c6477aaaf94eb5715",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2687,14 +2687,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "56af87802a9852e6e01e08d544740816",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2703,14 +2703,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1512,
             SectorSize = 512,
             Md5        = "9b194e5ec9cd4221bf42ae4eb1d0a7f3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1512
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2719,14 +2719,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "d9db52d992a76bf3bbc626ff844215a5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2735,14 +2735,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 1680,
             SectorSize = 512,
             Md5        = "aed103aaad0025f7010f73057d2d5765",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1680
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2759,14 +2759,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 5904,
             SectorSize = 512,
             Md5        = "72f6e8f92c6edb55217a897dcfd8d69a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 5904
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2783,14 +2783,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "6d505db2da80950248c66b05ab29fdd1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2807,14 +2807,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "084d4d75f5e780cb9ec66a2fa784c371",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2823,14 +2823,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "1e06f21a1c11ea3347212da115bca08f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2839,14 +2839,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "8eb8cb310feaf03c69fffd4f6e729847",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2855,14 +2855,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "3fc3a03d049416d81f81cc3b9ea8e5de",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2871,14 +2871,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "2bfd2e0a81bad704f8fc7758358cfcca",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2887,14 +2887,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "3c4becd695ed25866d39966a9a93c2d9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2911,14 +2911,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2460,
             SectorSize = 512,
             Md5        = "72282e11f7d91bf9c090b550fabfe80d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2460
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2927,14 +2927,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2720,
             SectorSize = 512,
             Md5        = "457c1126dc7f36bbbabe9e17e90372e3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2943,14 +2943,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2788,
             SectorSize = 512,
             Md5        = "852181d5913c6f290872c66bbe992314",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2788
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2959,14 +2959,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "2980cc32504c945598dc50f1db576994",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2975,14 +2975,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "c1c58d74fffb3656dd7f60f74ae8a629",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -2991,14 +2991,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3024,
             SectorSize = 512,
             Md5        = "0a72fbb53701d31125adf37eef85623f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3024
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -3007,14 +3007,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "e45d41a61fbe48f328c995fcc10a5548",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -3023,14 +3023,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "81c604e56882d8e58b855fbc8f0b7519",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -3039,14 +3039,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "15f71b92bd72aba5d80bf70eca4d5b1e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -3055,14 +3055,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3528,
             SectorSize = 512,
             Md5        = "b1326b772a804b51001ed4f5cb0e6a18",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3528
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -3079,14 +3079,14 @@ public class RayDIM : BlockMediaImageTest
             Sectors    = 3772,
             SectorSize = 512,
             Md5        = "a5bb324b948e477ca6fdeee6c429752d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3772
                 }
-            }
+            ]
         }
-    };
+    ];
 }

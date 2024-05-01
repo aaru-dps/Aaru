@@ -84,21 +84,21 @@ public class AudioMedia
 
         if(cicm.Checksums is not null)
         {
-            media.Checksums = new List<Checksum>();
+            media.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) media.Checksums.Add(chk);
         }
 
         if(cicm.Block is not null)
         {
-            media.Blocks = new List<AudioBlock>();
+            media.Blocks = [];
 
             foreach(AudioBlockType blk in cicm.Block) media.Blocks.Add(blk);
         }
 
         if(cicm.DumpHardwareArray is null) return media;
 
-        media.DumpHardware = new List<DumpHardware>();
+        media.DumpHardware = [];
 
         foreach(DumpHardwareType hw in cicm.DumpHardwareArray) media.DumpHardware.Add(hw);
 
@@ -129,7 +129,7 @@ public class AudioBlock
 
         if(cicm.Checksums is null) return blk;
 
-        blk.Checksums = new List<Checksum>();
+        blk.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) blk.Checksums.Add(chk);
 

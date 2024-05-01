@@ -71,7 +71,7 @@ public sealed class VTOC : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         uint        magic      = 0;
         ulong       pdloc      = 0;

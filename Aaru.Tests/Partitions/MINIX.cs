@@ -37,13 +37,13 @@ public class Minix : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "MINIX");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "minix_3.1.2a.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 524159,
@@ -84,7 +84,7 @@ public class Minix : PartitionSchemeTest
                     Start    = 1584576,
                     Type     = "MINIX"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

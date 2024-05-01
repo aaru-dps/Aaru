@@ -72,7 +72,7 @@ public class DumpHardware
 
         if(cicm.Extents is null) return hw;
 
-        hw.Extents = new List<Extent>();
+        hw.Extents = [];
 
         foreach(ExtentType ext in cicm.Extents) hw.Extents.Add(ext);
 

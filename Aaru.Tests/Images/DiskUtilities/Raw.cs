@@ -42,8 +42,8 @@ public class Raw : BlockMediaImageTest
 
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf2dd_acorn.img.lz",
@@ -102,5 +102,5 @@ public class Raw : BlockMediaImageTest
             MD5        = "UNKNOWN"
         }
         */
-    };
+    ];
 }

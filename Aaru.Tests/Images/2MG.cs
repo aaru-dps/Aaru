@@ -39,8 +39,8 @@ public class Apple2Mg : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "2mg");
     public override IMediaImage Plugin     => new Aaru.Images.Apple2Mg();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "blank140.2mg.lz",
@@ -56,14 +56,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 455,
             SectorSize = 256,
             Md5        = "906c1bdbf76bf089ea47aae98151df5d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 455
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -72,14 +72,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 455,
             SectorSize = 256,
             Md5        = "76f8fe4c5bc1976f99641ad7cdf53109",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 455
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -88,14 +88,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "0ffcbd4180306192726926b43755db2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -104,14 +104,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "91d020725d081500caa1fd8aad959397",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -120,14 +120,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "91d020725d081500caa1fd8aad959397",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -136,14 +136,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "0ffcbd4180306192726926b43755db2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -152,14 +152,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "91d020725d081500caa1fd8aad959397",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -168,14 +168,14 @@ public class Apple2Mg : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "0ffcbd4180306192726926b43755db2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -369,5 +369,5 @@ public class Apple2Mg : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "6f692a8fadfaa243d9f2d8d41f0e4cad"
         }
-    };
+    ];
 }

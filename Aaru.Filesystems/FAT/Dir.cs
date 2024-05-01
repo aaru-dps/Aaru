@@ -129,7 +129,7 @@ public sealed partial class FAT
                 {
                     Path     = path,
                     Position = 0,
-                    Entries  = Array.Empty<CompleteDirectoryEntry>()
+                    Entries  = []
                 };
 
                 return ErrorNumber.NoError;

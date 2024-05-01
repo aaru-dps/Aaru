@@ -400,7 +400,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.Seek6;
         cdb[1] = (byte)((lba & 0x1F0000) >> 16);
@@ -431,7 +431,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[10];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.Seek10;
         cdb[2] = (byte)((lba & 0xFF000000) >> 24);

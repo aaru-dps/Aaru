@@ -59,7 +59,7 @@ public sealed partial class AppleDOS
 
         if(filename.Length > 30) return ErrorNumber.NameTooLong;
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(_debug &&
            (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||

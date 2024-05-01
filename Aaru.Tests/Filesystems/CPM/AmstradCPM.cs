@@ -40,8 +40,8 @@ public class AmstradCPM() : ReadOnlyFilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "data_filename.imd",
@@ -82,5 +82,5 @@ public class AmstradCPM() : ReadOnlyFilesystemTest("cpmfs")
             Clusters    = 171,
             ClusterSize = 1024
         }
-    };
+    ];
 }

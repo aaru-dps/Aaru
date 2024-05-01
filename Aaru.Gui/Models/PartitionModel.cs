@@ -39,7 +39,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class PartitionModel
 {
-    public PartitionModel() => FileSystems = new ObservableCollection<FileSystemModel>();
+    public PartitionModel() => FileSystems = [];
 
     public string                                Name        { get; set; }
     public Bitmap                                Icon        { get; set; }

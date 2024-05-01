@@ -43,8 +43,8 @@ public class ULMO : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Udif();
 
-    public override BlockImageTestExpected[] Tests => new BlockImageTestExpected[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         /* TODO: Chunks compressed with lzma are not yet supported.
         new BlockImageTestExpected
         {
@@ -215,5 +215,5 @@ public class ULMO : BlockMediaImageTest
             MD5        = "b7d4ad55c7702658081b6578b588a57f"
         }
         */
-    };
+    ];
 }

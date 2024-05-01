@@ -39,8 +39,8 @@ public class Parallels : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "Parallels");
     public override IMediaImage Plugin => new Aaru.Images.Parallels();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "parallels.hdd.lz",
@@ -48,14 +48,14 @@ public class Parallels : BlockMediaImageTest
             Sectors    = 251904,
             SectorSize = 512,
             Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

@@ -167,9 +167,8 @@ public sealed partial class CPM
                 if(errno != ErrorNumber.NoError) return errno;
 
                 if(_workingDefinition.complement)
-                {
-                    for(var b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
-                }
+                    for(var b = 0; b < readSector.Length; b++)
+                        readSector[b] = (byte)(~readSector[b] & 0xFF);
 
                 deinterleavedSectors.Add((ulong)p, readSector);
             }
@@ -250,7 +249,7 @@ public sealed partial class CPM
         _statCache = new Dictionary<string, FileEntryInfo>();
         _cpmStat   = new FileSystemInfo();
         var atime = false;
-        _dirList           = new List<string>();
+        _dirList           = [];
         _labelCreationDate = null;
         _labelUpdateDate   = null;
         _passwordCache     = new Dictionary<string, byte[]>();
@@ -325,7 +324,7 @@ public sealed partial class CPM
                     if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks))
                         extentBlocks.Remove(entryNo);
                     else
-                        blocks = new List<ushort>();
+                        blocks = [];
 
                     // Attributes
                     if(hidden) fInfo.Attributes |= FileAttributes.Hidden;
@@ -433,7 +432,7 @@ public sealed partial class CPM
                     if(extentBlocks.TryGetValue(entryNo, out List<ushort> blocks))
                         extentBlocks.Remove(entryNo);
                     else
-                        blocks = new List<ushort>();
+                        blocks = [];
 
                     // Attributes
                     if(hidden) fInfo.Attributes |= FileAttributes.Hidden;

@@ -273,10 +273,7 @@ public sealed partial class A2R
         _writingStream.WriteByte(1);
         _writingStream.Write(BitConverter.GetBytes(_currentResolution), 0, 4);
 
-        byte[] reserved =
-        {
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
+        byte[] reserved = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
         _writingStream.Write(reserved, 0, 11);
 

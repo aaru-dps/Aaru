@@ -43,8 +43,8 @@ public class Whole : FilesystemTest
     public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -136,5 +136,5 @@ public class Whole : FilesystemTest
             VolumeName   = "Volume label",
             VolumeSerial = "DCC41202AppleUDF"
         }
-    };
+    ];
 }

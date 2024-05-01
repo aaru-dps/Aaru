@@ -40,8 +40,8 @@ public class GPT() : FilesystemTest("befs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "haiku_hrev51259.aif",
@@ -52,5 +52,5 @@ public class GPT() : FilesystemTest("befs")
             ClusterSize = 2048,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

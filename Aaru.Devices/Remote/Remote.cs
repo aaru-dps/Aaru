@@ -327,7 +327,7 @@ public class Remote : IDisposable
         {
             AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
@@ -338,7 +338,7 @@ public class Remote : IDisposable
         {
             AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
@@ -347,7 +347,7 @@ public class Remote : IDisposable
         {
             AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         if(hdr.packetType != AaruPacketType.ResponseListDevices)
@@ -358,7 +358,7 @@ public class Remote : IDisposable
                                               .Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
                                            hdr.packetType);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             buf = new byte[hdr.len];
@@ -368,21 +368,21 @@ public class Remote : IDisposable
             {
                 AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
             AaruConsole.ErrorWriteLine($"{nop.reason}");
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         if(hdr.version != Consts.PACKET_VERSION)
         {
             AaruConsole.ErrorWriteLine(Localization.Unrecognized_packet_version);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         buf = new byte[hdr.len];
@@ -392,13 +392,13 @@ public class Remote : IDisposable
         {
             AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         AaruPacketResponseListDevices response =
             Marshal.ByteArrayToStructureLittleEndian<AaruPacketResponseListDevices>(buf);
 
-        List<DeviceInfo> devices    = new();
+        List<DeviceInfo> devices    = [];
         int              offset     = Marshal.SizeOf<AaruPacketResponseListDevices>();
         int              devInfoLen = Marshal.SizeOf<DeviceInfo>();
 

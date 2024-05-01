@@ -81,11 +81,11 @@ public sealed class ImageInfoViewModel : ViewModelBase
         _imagePath            = imagePath;
         _filter               = filter;
         _imageFormat          = imageFormat;
-        MediaTagsList         = new ObservableCollection<string>();
-        SectorTagsList        = new ObservableCollection<string>();
-        Sessions              = new ObservableCollection<Session>();
-        Tracks                = new ObservableCollection<Track>();
-        DumpHardwareList      = new ObservableCollection<DumpHardwareModel>();
+        MediaTagsList         = [];
+        SectorTagsList        = [];
+        Sessions              = [];
+        Tracks                = [];
+        DumpHardwareList      = [];
         EntropyCommand        = ReactiveCommand.Create(ExecuteEntropyCommand);
         VerifyCommand         = ReactiveCommand.Create(ExecuteVerifyCommand);
         ChecksumCommand       = ReactiveCommand.Create(ExecuteChecksumCommand);
@@ -694,9 +694,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
             try
             {
                 if(opticalMediaImage.Sessions is { Count: > 0 })
-                {
-                    foreach(Session session in opticalMediaImage.Sessions) Sessions.Add(session);
-                }
+                    foreach(Session session in opticalMediaImage.Sessions)
+                        Sessions.Add(session);
             }
             catch
             {
@@ -706,9 +705,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
             try
             {
                 if(opticalMediaImage.Tracks is { Count: > 0 })
-                {
-                    foreach(Track track in opticalMediaImage.Tracks) Tracks.Add(track);
-                }
+                    foreach(Track track in opticalMediaImage.Tracks)
+                        Tracks.Add(track);
             }
             catch
             {

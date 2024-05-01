@@ -624,7 +624,7 @@ public sealed class Spiral : IMediaGraph
     static List<SKPoint> GetSpiralPoints(SKPoint center, float minRadius, float maxRadius, float a)
     {
         // Initialize a list to store the points of the spiral.
-        List<SKPoint> points = new();
+        List<SKPoint> points = [];
         const float   dtheta = (float)(0.5f * Math.PI / 180);
 
         for(float theta = 0;; theta += dtheta)

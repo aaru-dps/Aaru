@@ -109,7 +109,7 @@ public sealed partial class CloneCd
             byte                                    currentTrackEntry = 0;
             Dictionary<byte, int>                   trackModes        = new();
             Dictionary<byte, Dictionary<byte, int>> trackIndexes      = new();
-            List<FullTOC.TrackDataDescriptor>       entries           = new();
+            List<FullTOC.TrackDataDescriptor>       entries           = [];
             _scrambled = false;
             _catalog   = null;
 
@@ -439,7 +439,7 @@ public sealed partial class CloneCd
             var curSessionNo        = 0;
             var currentTrack        = new Track();
             var firstTrackInSession = true;
-            Tracks = new List<Track>();
+            Tracks = [];
             ulong leadOutStart = 0;
 
             _dataStream = _dataFilter.GetDataForkStream();
@@ -784,7 +784,7 @@ public sealed partial class CloneCd
 
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-            Sessions = new List<Session>();
+            Sessions = [];
 
             var currentSession = new Session
             {
@@ -793,7 +793,7 @@ public sealed partial class CloneCd
                 Sequence   = 1
             };
 
-            Partitions = new List<Partition>();
+            Partitions = [];
             _offsetMap = new Dictionary<uint, ulong>();
 
             foreach(Track track in Tracks)
@@ -1096,10 +1096,7 @@ public sealed partial class CloneCd
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue((byte)aaruTrack.Sequence, out byte flags)) return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flags
-                };
+                buffer = [flags];
 
                 return ErrorNumber.NoError;
             case SectorTagType.CdSectorSubchannel:

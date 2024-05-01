@@ -100,8 +100,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         StopCommand          = ReactiveCommand.Create(ExecuteStopCommand);
         _inputFormat         = inputFormat;
         _cancel              = false;
-        ErrorList            = new ObservableCollection<LbaModel>();
-        UnknownList          = new ObservableCollection<LbaModel>();
+        ErrorList            = [];
+        UnknownList          = [];
         VerifyImageEnabled   = true;
         VerifySectorsEnabled = true;
         CloseVisible         = true;
@@ -447,8 +447,8 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         if(VerifySectorsChecked)
         {
             var         chkStopwatch = new Stopwatch();
-            List<ulong> failingLbas  = new();
-            List<ulong> unknownLbas  = new();
+            List<ulong> failingLbas  = [];
+            List<ulong> unknownLbas  = [];
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {

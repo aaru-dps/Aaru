@@ -41,8 +41,8 @@ public class MBR() : FilesystemTest("sysv_r4")
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw.aif",
@@ -53,5 +53,5 @@ public class MBR() : FilesystemTest("sysv_r4")
             ClusterSize = 1024,
             VolumeName  = "d1150"
         }
-    };
+    ];
 }

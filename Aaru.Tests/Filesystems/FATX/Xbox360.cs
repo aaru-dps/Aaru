@@ -42,8 +42,8 @@ public class Xbox360() : ReadOnlyFilesystemTest("fatx")
     public override IFilesystem Plugin     => new XboxFatPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "microsoft256mb.img.lz",
@@ -55,5 +55,5 @@ public class Xbox360() : ReadOnlyFilesystemTest("fatx")
             VolumeName   = "",
             VolumeSerial = "66C2E9D0"
         }
-    };
+    ];
 }

@@ -172,10 +172,10 @@ public sealed partial class NintendoPlugin
         }
         else
         {
-            fields.FirstPartitions  = Array.Empty<NintendoPartition>();
-            fields.SecondPartitions = Array.Empty<NintendoPartition>();
-            fields.ThirdPartitions  = Array.Empty<NintendoPartition>();
-            fields.FourthPartitions = Array.Empty<NintendoPartition>();
+            fields.FirstPartitions  = [];
+            fields.SecondPartitions = [];
+            fields.ThirdPartitions  = [];
+            fields.FourthPartitions = [];
         }
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "discType = {0}",         fields.DiscType);

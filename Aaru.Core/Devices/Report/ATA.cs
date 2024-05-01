@@ -50,8 +50,8 @@ public sealed partial class DeviceReport
         AtaErrorRegistersChs   errorChs   = new();
         AtaErrorRegistersLba28 errorLba   = new();
         AtaErrorRegistersLba48 errorLba48 = new();
-        byte[]                 buffer     = Array.Empty<byte>();
-        byte[]                 readBuf    = Array.Empty<byte>();
+        byte[]                 buffer     = [];
+        byte[]                 readBuf    = [];
 
         var mediaTest = new TestedMedia
         {
@@ -536,7 +536,7 @@ public sealed partial class DeviceReport
     public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
     {
         var                    sense        = true;
-        byte[]                 readBuf      = Array.Empty<byte>();
+        byte[]                 readBuf      = [];
         AtaErrorRegistersChs   errorChs     = new();
         AtaErrorRegistersLba28 errorLba     = new();
         AtaErrorRegistersLba48 errorLba48   = new();

@@ -32,7 +32,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
@@ -64,8 +63,8 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
 
     public Alcohol120() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = true,
         HasSessions           = true,
         Version               = null,

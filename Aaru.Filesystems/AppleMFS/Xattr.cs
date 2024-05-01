@@ -60,7 +60,7 @@ public sealed partial class AppleMFS
 
         path = pathElements[0];
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(_debug)
         {

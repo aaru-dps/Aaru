@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
@@ -327,7 +326,7 @@ public partial class Device
     public bool Seek(out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head, byte sector, uint timeout,
                      out double               duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {
@@ -378,7 +377,7 @@ public partial class Device
     public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder, byte head,
                             byte                     sector, byte sectorCount, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {
@@ -415,7 +414,7 @@ public partial class Device
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool DoorLock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {
@@ -446,7 +445,7 @@ public partial class Device
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool DoorUnlock(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {
@@ -477,7 +476,7 @@ public partial class Device
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool MediaEject(out AtaErrorRegistersChs statusRegisters, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {

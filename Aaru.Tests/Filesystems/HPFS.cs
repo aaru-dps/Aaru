@@ -43,8 +43,8 @@ public class Hpfs() : FilesystemTest("hpfs")
     public override IFilesystem Plugin     => new HPFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "ecs.aif",
@@ -214,5 +214,5 @@ public class Hpfs() : FilesystemTest("hpfs")
             VolumeName   = "VOLUME LABE",
             VolumeSerial = "AC096014"
         }
-    };
+    ];
 }

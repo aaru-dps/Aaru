@@ -66,7 +66,7 @@ public sealed class GuidPartitionTable : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
@@ -159,7 +159,7 @@ public sealed class GuidPartitionTable : IPartition
 
         var entriesBytes = new byte[temp.Length - modulo * 512];
         Array.Copy(temp, modulo * 512, entriesBytes, 0, entriesBytes.Length);
-        List<Entry> entries = new();
+        List<Entry> entries = [];
 
         for(var i = 0; i < hdr.entries; i++)
         {

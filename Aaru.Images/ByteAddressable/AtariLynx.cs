@@ -298,8 +298,8 @@ public class AtariLynx : IByteAddressableImage
 
         mappings = new LinearMemoryMap
         {
-            Devices = new[]
-            {
+            Devices =
+            [
                 new LinearMemoryDevice
                 {
                     Type = LinearMemoryType.ROM,
@@ -309,7 +309,7 @@ public class AtariLynx : IByteAddressableImage
                         Length = (ulong)_data.Length
                     }
                 }
-            }
+            ]
         };
 
         return ErrorNumber.NoError;

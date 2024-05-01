@@ -40,8 +40,8 @@ public class APM() : FilesystemTest("befs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "beos_r3.1.aif",
@@ -72,5 +72,5 @@ public class APM() : FilesystemTest("befs")
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

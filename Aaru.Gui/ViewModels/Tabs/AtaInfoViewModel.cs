@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -117,10 +116,13 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -143,10 +145,13 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.txt"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.txt"
+                }
+            ],
             Name = UI.Dialog_Text_files
         });
 

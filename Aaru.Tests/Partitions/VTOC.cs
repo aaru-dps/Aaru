@@ -37,13 +37,13 @@ public class Vtoc : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "UNIX VTOC");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "att_unix_vtoc.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 34,
@@ -188,7 +188,7 @@ public class Vtoc : PartitionSchemeTest
                     Start    = 937818,
                     Type     = "UNIX: /usr"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

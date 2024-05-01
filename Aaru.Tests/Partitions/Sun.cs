@@ -38,13 +38,13 @@ public class Sun : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Sun");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 204800,
@@ -108,13 +108,13 @@ public class Sun : PartitionSchemeTest
                     Start    = 915705,
                     Type     = "Linux swap"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 49152,
@@ -142,7 +142,7 @@ public class Sun : PartitionSchemeTest
                     Start    = 144585,
                     Type     = "Linux"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

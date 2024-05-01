@@ -66,28 +66,28 @@ public class Scan
 
         if(cicm.Checksums is not null)
         {
-            scan.Checksums = new List<Checksum>();
+            scan.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) scan.Checksums.Add(chk);
         }
 
         if(cicm.Scanner is not null)
         {
-            scan.Scanner = new List<Scanner>();
+            scan.Scanner = [];
 
             foreach(ScannerType scanner in cicm.Scanner) scan.Scanner.Add(scanner);
         }
 
         if(cicm.ScanProcessing is not null)
         {
-            scan.ScanProcessing = new List<ScanProcessing>();
+            scan.ScanProcessing = [];
 
             foreach(ScanProcessingType processing in cicm.ScanProcessing) scan.ScanProcessing.Add(processing);
         }
 
         if(cicm.OCR is null) return scan;
 
-        scan.OCR = new List<OCR>();
+        scan.OCR = [];
 
         foreach(OCRType ocr in cicm.OCR) scan.OCR.Add(ocr);
 
@@ -114,7 +114,7 @@ public class Cover
 
         if(cicm.Checksums is null) return cover;
 
-        cover.Checksums = new List<Checksum>();
+        cover.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) cover.Checksums.Add(chk);
 
@@ -303,7 +303,7 @@ public class OCR
 
         if(cicm.Language is null) return ocr;
 
-        ocr.Language = new List<Language>();
+        ocr.Language = [];
 
         foreach(Language lng in cicm.Language) ocr.Language.Add(lng);
 

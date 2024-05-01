@@ -42,8 +42,8 @@ public class Whole() : FilesystemTest("sysv_r4")
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw_dmf.img.lz",
@@ -94,5 +94,5 @@ public class Whole() : FilesystemTest("sysv_r4")
             ClusterSize = 1024,
             VolumeName  = ""
         }
-    };
+    ];
 }

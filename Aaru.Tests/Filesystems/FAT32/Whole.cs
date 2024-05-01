@@ -42,8 +42,8 @@ public class Whole() : ReadOnlyFilesystemTest("fat32")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         /*   new FileSystemTest
            {
                TestFile     = "beos_r4.5_mf2hd.img.lz",
@@ -145,5 +145,5 @@ public class Whole() : ReadOnlyFilesystemTest("fat32")
             VolumeName   = "VolumeLabel",
             VolumeSerial = "609C5425"
         }
-    };
+    ];
 }

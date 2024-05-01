@@ -32,7 +32,6 @@
 
 // ReSharper disable VirtualMemberCallInConstructor
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
@@ -95,7 +94,7 @@ public class DeviceDto : DeviceReport
             if(ATA.RemovableMedias != null)
             {
                 TestedMedia[] medias = ATA.RemovableMedias.ToArray();
-                ATA.RemovableMedias = new List<TestedMedia>();
+                ATA.RemovableMedias = [];
 
                 foreach(TestedMedia media in medias) ATA.RemovableMedias.Add(ClearBinaries(media));
             }
@@ -109,7 +108,7 @@ public class DeviceDto : DeviceReport
             if(ATAPI.RemovableMedias != null)
             {
                 TestedMedia[] medias = ATAPI.RemovableMedias.ToArray();
-                ATAPI.RemovableMedias = new List<TestedMedia>();
+                ATAPI.RemovableMedias = [];
 
                 foreach(TestedMedia media in medias) ATAPI.RemovableMedias.Add(ClearBinaries(media));
             }
@@ -145,7 +144,7 @@ public class DeviceDto : DeviceReport
             if(SCSI.RemovableMedias != null)
             {
                 TestedMedia[] medias = SCSI.RemovableMedias.ToArray();
-                SCSI.RemovableMedias = new List<TestedMedia>();
+                SCSI.RemovableMedias = [];
 
                 foreach(TestedMedia media in medias) SCSI.RemovableMedias.Add(ClearBinaries(media));
             }
@@ -159,7 +158,7 @@ public class DeviceDto : DeviceReport
                 if(SCSI.MultiMediaDevice.TestedMedia != null)
                 {
                     TestedMedia[] medias = SCSI.MultiMediaDevice.TestedMedia.ToArray();
-                    SCSI.MultiMediaDevice.TestedMedia = new List<TestedMedia>();
+                    SCSI.MultiMediaDevice.TestedMedia = [];
 
                     foreach(TestedMedia media in medias) SCSI.MultiMediaDevice.TestedMedia.Add(ClearBinaries(media));
                 }

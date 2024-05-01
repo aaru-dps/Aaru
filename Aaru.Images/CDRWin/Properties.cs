@@ -86,7 +86,7 @@ public sealed partial class CdrWin
     {
         get
         {
-            List<Track> tracks = new();
+            List<Track> tracks = [];
 
             ulong       previousStartSector = 0;
             const ulong gdRomSession2Offset = 45000;

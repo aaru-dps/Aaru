@@ -40,8 +40,8 @@ public class V1 : TapeMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
     public override IMediaImage Plugin => new Aaru.Images.AaruFormat();
 
-    public override TapeImageTestExpected[] Tests => new[]
-    {
+    public override TapeImageTestExpected[] Tests =>
+    [
         new TapeImageTestExpected
         {
             TestFile   = "Nonstop-UX System V Release 4 B32 (Boot Tape).aif",
@@ -49,17 +49,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 1604,
             SectorSize = 10240,
             Md5        = "a6334d975523b3422fea522b0cc118a9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 1603,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -67,7 +67,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 1603,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -76,17 +76,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 15485,
             SectorSize = 512,
             Md5        = "17ef78d9e5c53b976f530d4ca44223fd",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 15484,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -94,7 +94,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 15484,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -103,17 +103,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 15,
             SectorSize = 32256,
             Md5        = "76c0ae10f4ec70ef8681b212f02a71c8",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 14,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -121,7 +121,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 14,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -130,17 +130,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 3298,
             SectorSize = 32256,
             Md5        = "e331c9d0ae7c25c81c6580bc9965e2d0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 3297,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -148,7 +148,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 3297,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -157,17 +157,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 3152,
             SectorSize = 32256,
             Md5        = "018c37c40f8df91ab9b098d643c9ae6c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 3151,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -175,7 +175,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 3151,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -184,17 +184,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 818,
             SectorSize = 32256,
             Md5        = "eb3ce36b2c3afeeec59e5b8ed802a393",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 817,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -202,7 +202,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 817,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -211,17 +211,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 7,
             SectorSize = 32256,
             Md5        = "b057656698a224187afb2bdbb8caf7f3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 6,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -229,7 +229,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 6,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -238,17 +238,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 684,
             SectorSize = 32256,
             Md5        = "8e48e388e7094f3170065718ab618b53",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 683,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -256,7 +256,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 683,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -265,17 +265,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 73525,
             SectorSize = 1024,
             Md5        = "8861f8c06a2e93ca5a81d729ad3e1de1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 73524,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -311,7 +311,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 73524,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -320,17 +320,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 290,
             SectorSize = 262144,
             Md5        = "bfc402b23af0cf1ad22d9fb2ea29b58f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 289,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -366,7 +366,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 289,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -375,17 +375,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 37587,
             SectorSize = 8192,
             Md5        = "e4a3e2fe26c72ca025ac0c017ec73ee9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 37586,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -617,7 +617,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 37586,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -626,17 +626,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 25046,
             SectorSize = 1024,
             Md5        = "e625c03d7493dc22fe49f91f731446e8",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 25045,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -679,7 +679,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 25045,
                     Partition  = 0
                 }
-            }
+            ]
         },
         new TapeImageTestExpected
         {
@@ -688,17 +688,17 @@ public class V1 : TapeMediaImageTest
             Sectors    = 102,
             SectorSize = 262144,
             Md5        = "198464b1daf8e674debf8eda0fcbf016",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new TapePartition
                 {
                     FirstBlock = 0,
                     LastBlock  = 101,
                     Number     = 0
                 }
-            },
-            Files = new[]
-            {
+            ],
+            Files =
+            [
                 new TapeFile
                 {
                     File       = 0,
@@ -741,7 +741,7 @@ public class V1 : TapeMediaImageTest
                     LastBlock  = 101,
                     Partition  = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

@@ -72,7 +72,7 @@ public sealed partial class Gdi
     {
         get
         {
-            List<Track> tracks = new();
+            List<Track> tracks = [];
 
             foreach(GdiTrack gdiTrack in _discImage.Tracks)
             {

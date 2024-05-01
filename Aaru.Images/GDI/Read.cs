@@ -71,8 +71,8 @@ public sealed partial class Gdi
             // Initialize disc
             _discImage = new GdiDisc
             {
-                Sessions = new List<Session>(),
-                Tracks   = new List<GdiTrack>()
+                Sessions = [],
+                Tracks   = []
             };
 
             ulong currentStart = 0;
@@ -283,7 +283,7 @@ public sealed partial class Gdi
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_offset_map);
 
-            Partitions = new List<Partition>();
+            Partitions = [];
             ulong byteOffset = 0;
 
             for(var i = 0; i < _discImage.Tracks.Count; i++)
@@ -549,10 +549,7 @@ public sealed partial class Gdi
 
             if(tag != SectorTagType.CdTrackFlags) return ErrorNumber.NotSupported;
 
-            buffer = new byte[]
-            {
-                0x00
-            };
+            buffer = [0x00];
 
             return ErrorNumber.NoError;
         }
@@ -894,7 +891,7 @@ public sealed partial class Gdi
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session)
     {
-        List<Track> tracks = new();
+        List<Track> tracks = [];
         bool        expectedDensity;
 
         switch(session)

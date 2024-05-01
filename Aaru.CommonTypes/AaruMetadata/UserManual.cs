@@ -66,7 +66,7 @@ public class UserManual
 
         if(cicm.Language is null) return manual;
 
-        manual.Language = new List<Language>();
+        manual.Language = [];
 
         foreach(LanguagesTypeLanguage lng in cicm.Language) manual.Language.Add((Language)lng);
 

@@ -141,7 +141,7 @@ public sealed partial class LisaFS
 
         if(!_mounted) return ErrorNumber.AccessDenied;
 
-        _catalogCache = new List<CatalogEntry>();
+        _catalogCache = [];
 
         // Do differently for V1 and V2
         if(_mddf.fsversion is LISA_V2 or LISA_V1)
@@ -151,7 +151,7 @@ public sealed partial class LisaFS
             if(error != ErrorNumber.NoError) return error;
 
             var                  offset    = 0;
-            List<CatalogEntryV2> catalogV2 = new();
+            List<CatalogEntryV2> catalogV2 = [];
 
             // For each entry on the catalog
             while(offset + 54 < buf.Length)
@@ -253,10 +253,7 @@ public sealed partial class LisaFS
 
         ulong nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
-        List<byte[]> catalogBlocks = new()
-        {
-            firstCatalogBlock
-        };
+        List<byte[]> catalogBlocks = [firstCatalogBlock];
 
         // Traverse double-linked list to read full catalog
         while(nextCatalogPointer != 0xFFFFFFFF)

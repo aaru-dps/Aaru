@@ -63,8 +63,8 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     /// <summary>Implements reading and writing raw (sector by sector) images</summary>
     public ZZZRawImage() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

@@ -52,26 +52,15 @@ sealed class MediaScanCommand : Command
 
     public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
-        Add(new Option<string>(new[]
-                               {
-                                   "--mhdd-log", "-m"
-                               },
+        Add(new Option<string>(["--mhdd-log", "-m"],
                                () => null,
                                UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--ibg-log", "-b"
-                               },
+        Add(new Option<string>(["--ibg-log", "-b"],
                                () => null,
                                UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--use-buffered-reads"
-                             },
-                             () => true,
-                             UI.OS_buffered_reads_help));
+        Add(new Option<bool>(["--use-buffered-reads"], () => true, UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {

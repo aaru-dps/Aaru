@@ -60,11 +60,11 @@ public sealed partial class FFSPlugin
             sbSizeInSectors = block_size / imagePlugin.Info.SectorSize;
 
         ulong[] locations =
-        {
+        [
             sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd,
             8192   / imagePlugin.Info.SectorSize, 65536 / imagePlugin.Info.SectorSize,
             262144 / imagePlugin.Info.SectorSize
-        };
+        ];
 
         try
         {
@@ -122,11 +122,11 @@ public sealed partial class FFSPlugin
             sb_size_in_sectors = block_size / imagePlugin.Info.SectorSize;
 
         ulong[] locations =
-        {
+        [
             sb_start_floppy, sb_start_boot, sb_start_long_boot, sb_start_piggy, sb_start_att_dsdd,
             8192   / imagePlugin.Info.SectorSize, 65536 / imagePlugin.Info.SectorSize,
             262144 / imagePlugin.Info.SectorSize
-        };
+        ];
 
         ErrorNumber errno;
 

@@ -42,8 +42,8 @@ public class ROMDOS() : FilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "d1_filename.dsk.lz",
@@ -162,5 +162,5 @@ public class ROMDOS() : FilesystemTest("cpmfs")
             Clusters    = 400,
             ClusterSize = 2048
         }
-    };
+    ];
 }

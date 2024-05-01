@@ -246,8 +246,8 @@ public class GameBoyAdvance : IByteAddressableImage
 
         mappings = new LinearMemoryMap
         {
-            Devices = new[]
-            {
+            Devices =
+            [
                 new LinearMemoryDevice
                 {
                     Type = LinearMemoryType.ROM,
@@ -257,7 +257,7 @@ public class GameBoyAdvance : IByteAddressableImage
                         Length = (ulong)_data.Length
                     }
                 }
-            }
+            ]
         };
 
         return ErrorNumber.NoError;

@@ -122,7 +122,7 @@ public sealed partial class AaruFormat
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             // Fill in-memory index
-            _index = new List<IndexEntry>();
+            _index = [];
 
             for(ulong i = 0; i < idxHeader2.entries; i++)
             {
@@ -149,7 +149,7 @@ public sealed partial class AaruFormat
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
             // Fill in-memory index
-            _index = new List<IndexEntry>();
+            _index = [];
 
             for(ushort i = 0; i < idxHeader.entries; i++)
             {
@@ -899,7 +899,7 @@ public sealed partial class AaruFormat
 
                     _imageStream.Position -= _structureBytes.Length;
 
-                    Tracks      = new List<Track>();
+                    Tracks      = [];
                     _trackFlags = new Dictionary<byte, byte>();
                     _trackIsrcs = new Dictionary<byte, string>();
 
@@ -1084,7 +1084,7 @@ public sealed partial class AaruFormat
 
                     _imageStream.Position -= _structureBytes.Length;
 
-                    DumpHardware = new List<DumpHardware>();
+                    DumpHardware = [];
 
                     for(ushort i = 0; i < dumpBlock.entries; i++)
                     {
@@ -1097,7 +1097,7 @@ public sealed partial class AaruFormat
                         var dump = new DumpHardware
                         {
                             Software = new Software(),
-                            Extents  = new List<Extent>()
+                            Extents  = []
                         };
 
                         byte[] tmp;
@@ -1212,7 +1212,7 @@ public sealed partial class AaruFormat
                     Span<TapePartitionEntry> tapePartitions =
                         MemoryMarshal.Cast<byte, TapePartitionEntry>(tapePartitionBytes);
 
-                    TapePartitions = new List<TapePartition>();
+                    TapePartitions = [];
 
                     foreach(TapePartitionEntry tapePartition in tapePartitions)
                     {
@@ -1244,7 +1244,7 @@ public sealed partial class AaruFormat
                     var tapeFileBytes = new byte[fileHeader.length];
                     _imageStream.EnsureRead(tapeFileBytes, 0, tapeFileBytes.Length);
                     Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
-                    Files = new List<TapeFile>();
+                    Files = [];
 
                     foreach(TapeFileEntry file in tapeFiles)
                     {
@@ -1296,7 +1296,7 @@ public sealed partial class AaruFormat
 
                     _imageStream.Position -= _structureBytes.Length;
 
-                    compactDiscIndexes = new List<CompactDiscIndexEntry>();
+                    compactDiscIndexes = [];
 
                     AaruConsole.DebugWriteLine(MODULE_NAME,
                                                Localization.Found_0_compact_disc_indexes_at_position_1,
@@ -1475,9 +1475,9 @@ public sealed partial class AaruFormat
 
             if(Tracks == null || Tracks.Count == 0)
             {
-                Tracks = new List<Track>
-                {
-                    new()
+                Tracks =
+                [
+                    new Track
                     {
                         BytesPerSector    = (int)_imageInfo.SectorSize,
                         EndSector         = _imageInfo.Sectors - 1,
@@ -1489,7 +1489,7 @@ public sealed partial class AaruFormat
                         Sequence          = 1,
                         Type              = TrackType.Data
                     }
-                };
+                ];
 
                 _trackFlags = new Dictionary<byte, byte>
                 {
@@ -1503,7 +1503,7 @@ public sealed partial class AaruFormat
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Memory_snapshot_0_bytes, GC.GetTotalMemory(false));
 
-            Sessions = new List<Session>();
+            Sessions = [];
 
             for(var i = 1; i <= Tracks.Max(t => t.Session); i++)
             {
@@ -1547,7 +1547,7 @@ public sealed partial class AaruFormat
             }
 
             ulong currentTrackOffset = 0;
-            Partitions = new List<Partition>();
+            Partitions = [];
 
             foreach(Track track in Tracks.OrderBy(t => t.StartSector))
             {
@@ -1896,10 +1896,7 @@ public sealed partial class AaruFormat
                 case SectorTagType.CdTrackFlags:
                     if(!_trackFlags.TryGetValue((byte)sectorAddress, out byte flags)) return ErrorNumber.NoData;
 
-                    buffer = new[]
-                    {
-                        flags
-                    };
+                    buffer = [flags];
 
                     return ErrorNumber.NoError;
                 case SectorTagType.CdTrackIsrc:

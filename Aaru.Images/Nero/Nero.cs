@@ -33,8 +33,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Aaru.CommonTypes;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
@@ -82,14 +80,14 @@ public sealed partial class Nero : IOpticalMediaImage
 
         _imageInfo = new ImageInfo
         {
-            ReadableSectorTags = new List<SectorTagType>(),
-            ReadableMediaTags  = new List<MediaTagType>()
+            ReadableSectorTags = [],
+            ReadableMediaTags  = []
         };
 
         _neroSessions = new Dictionary<ushort, uint>();
         _neroTracks   = new Dictionary<uint, NeroTrack>();
         _offsetmap    = new Dictionary<uint, ulong>();
-        Sessions      = new List<CommonTypes.Structs.Session>();
-        Partitions    = new List<Partition>();
+        Sessions      = [];
+        Partitions    = [];
     }
 }

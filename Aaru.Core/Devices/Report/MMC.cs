@@ -76,7 +76,7 @@ public sealed partial class DeviceReport
     public MmcFeatures ReportMmcFeatures()
     {
         var    sense  = true;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -580,8 +580,8 @@ public sealed partial class DeviceReport
                                       bool   tryMediaTekF106)
     {
         var    sense       = true;
-        byte[] buffer      = Array.Empty<byte>();
-        byte[] senseBuffer = Array.Empty<byte>();
+        byte[] buffer      = [];
+        byte[] senseBuffer = [];
         var    mediaTest   = new TestedMedia();
 
         Spectre.ProgressSingleSpinner(ctx =>

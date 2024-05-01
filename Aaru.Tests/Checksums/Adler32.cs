@@ -38,35 +38,20 @@ namespace Aaru.Tests.Checksums;
 [TestFixture]
 public class Adler32
 {
-    static readonly byte[] _expectedEmpty =
-    {
-        0x00, 0xf0, 0x00, 0x01
-    };
+    static readonly byte[] _expectedEmpty = [0x00, 0xf0, 0x00, 0x01];
     static readonly byte[] _expectedRandom =
-    {
+    [
         // ReSharper disable once UseUtf8StringLiteral
         0x37, 0x28, 0xd1, 0x86
-    };
+    ];
 
-    static readonly byte[] _expectedRandom15 =
-    {
-        0x34, 0xDC, 0x06, 0x7D
-    };
+    static readonly byte[] _expectedRandom15 = [0x34, 0xDC, 0x06, 0x7D];
 
-    static readonly byte[] _expectedRandom31 =
-    {
-        0xD8, 0xF1, 0x0E, 0xAA
-    };
+    static readonly byte[] _expectedRandom31 = [0xD8, 0xF1, 0x0E, 0xAA];
 
-    static readonly byte[] _expectedRandom63 =
-    {
-        0xD8, 0xAC, 0x20, 0x81
-    };
+    static readonly byte[] _expectedRandom63 = [0xD8, 0xAC, 0x20, 0x81];
 
-    static readonly byte[] _expectedRandom2352 =
-    {
-        0xEC, 0xD1, 0x73, 0x8B
-    };
+    static readonly byte[] _expectedRandom2352 = [0xEC, 0xD1, 0x73, 0x8B];
 
     [Test]
     public void EmptyData()

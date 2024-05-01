@@ -90,12 +90,12 @@ public sealed class StatisticsViewModel : ViewModelBase
     public StatisticsViewModel(StatisticsDialog view)
     {
         _view        = view;
-        Filters      = new ObservableCollection<NameCountModel>();
-        Formats      = new ObservableCollection<NameCountModel>();
-        Partitions   = new ObservableCollection<NameCountModel>();
-        Filesystems  = new ObservableCollection<NameCountModel>();
-        Devices      = new ObservableCollection<DeviceStatsModel>();
-        Medias       = new ObservableCollection<MediaStatsModel>();
+        Filters      = [];
+        Formats      = [];
+        Partitions   = [];
+        Filesystems  = [];
+        Devices      = [];
+        Medias       = [];
         CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
         using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 

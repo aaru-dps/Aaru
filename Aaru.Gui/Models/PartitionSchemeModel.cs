@@ -37,7 +37,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class PartitionSchemeModel : RootModel
 {
-    public PartitionSchemeModel() => Partitions = new ObservableCollection<PartitionModel>();
+    public PartitionSchemeModel() => Partitions = [];
 
     public Bitmap                               Icon       { get; set; }
     public ObservableCollection<PartitionModel> Partitions { get; }

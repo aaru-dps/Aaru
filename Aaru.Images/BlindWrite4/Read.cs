@@ -149,7 +149,7 @@ public sealed partial class BlindWrite4
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown3 = {0}",         _header.Unknown3);
         AaruConsole.DebugWriteLine(MODULE_NAME, "header.unknown4.Length = {0}",  _header.Unknown4.Length);
 
-        _bwTracks = new List<TrackDescriptor>();
+        _bwTracks = [];
 
         for(var i = 0; i < _header.TrackDescriptors; i++)
         {
@@ -488,8 +488,8 @@ public sealed partial class BlindWrite4
                                                                        .ToUpper(CultureInfo.CurrentCulture)));
         }
 
-        Tracks      = new List<Track>();
-        Partitions  = new List<Partition>();
+        Tracks      = [];
+        Partitions  = [];
         _offsetMap  = new Dictionary<uint, ulong>();
         _trackFlags = new Dictionary<uint, byte>();
         ushort maxSession = 0;
@@ -717,7 +717,7 @@ public sealed partial class BlindWrite4
             }
         }
 
-        Sessions = new List<Session>();
+        Sessions = [];
 
         for(ushort i = 1; i <= maxSession; i++)
         {
@@ -744,9 +744,8 @@ public sealed partial class BlindWrite4
 
         // As long as subchannel is written for any track, it is present for all tracks
         if(Tracks.Any(t => t.SubchannelType == TrackSubchannelType.Packed))
-        {
-            foreach(Track track in Tracks) track.SubchannelType = TrackSubchannelType.Packed;
-        }
+            foreach(Track track in Tracks)
+                track.SubchannelType = TrackSubchannelType.Packed;
 
         _imageInfo.MediaType = MediaType.CD;
 
@@ -1003,10 +1002,7 @@ public sealed partial class BlindWrite4
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue((uint)sectorAddress, out byte flag)) return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flag
-                };
+                buffer = [flag];
 
                 return ErrorNumber.NoError;
             default:

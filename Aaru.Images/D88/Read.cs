@@ -113,7 +113,7 @@ public sealed partial class D88
         short             spt      = sechdr.spt;
         IBMSectorSizeCode bps      = sechdr.n;
         var               allEqual = true;
-        _sectorsData = new List<byte[]>();
+        _sectorsData = [];
 
         for(var i = 0; i < trkCounter; i++)
         {

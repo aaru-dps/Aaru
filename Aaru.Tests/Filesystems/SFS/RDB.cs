@@ -41,8 +41,8 @@ public class RDB() : FilesystemTest("sfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "uae.aif",
@@ -88,5 +88,5 @@ public class RDB() : FilesystemTest("sfs")
             Clusters    = 261936,
             ClusterSize = 512
         }
-    };
+    ];
 }

@@ -58,64 +58,29 @@ sealed class ChecksumCommand : Command
     {
         AddAlias("chk");
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--adler32", "-a"
-                             },
-                             () => false,
-                             UI.Calculates_Adler_32));
+        Add(new Option<bool>(["--adler32", "-a"], () => false, UI.Calculates_Adler_32));
 
         Add(new Option<bool>("--crc16", () => true, UI.Calculates_CRC16));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--crc32", "-c"
-                             },
-                             () => true,
-                             UI.Calculates_CRC32));
+        Add(new Option<bool>(["--crc32", "-c"], () => true, UI.Calculates_CRC32));
 
         Add(new Option<bool>("--crc64",      () => true,  UI.Calculates_CRC64_ECMA));
         Add(new Option<bool>("--fletcher16", () => false, UI.Calculates_Fletcher_16));
         Add(new Option<bool>("--fletcher32", () => false, UI.Calculates_Fletcher_32));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--md5", "-m"
-                             },
-                             () => true,
-                             UI.Calculates_MD5));
+        Add(new Option<bool>(["--md5", "-m"], () => true, UI.Calculates_MD5));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--separated-tracks", "-t"
-                             },
-                             () => true,
-                             UI.Checksums_each_track_separately));
+        Add(new Option<bool>(["--separated-tracks", "-t"], () => true, UI.Checksums_each_track_separately));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--sha1", "-s"
-                             },
-                             () => true,
-                             UI.Calculates_SHA1));
+        Add(new Option<bool>(["--sha1", "-s"], () => true, UI.Calculates_SHA1));
 
         Add(new Option<bool>("--sha256", () => false, UI.Calculates_SHA256));
         Add(new Option<bool>("--sha384", () => false, UI.Calculates_SHA384));
         Add(new Option<bool>("--sha512", () => true,  UI.Calculates_SHA512));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--spamsum", "-f"
-                             },
-                             () => true,
-                             UI.Calculates_SpamSum_fuzzy_hash));
+        Add(new Option<bool>(["--spamsum", "-f"], () => true, UI.Calculates_SpamSum_fuzzy_hash));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--whole-disc", "-w"
-                             },
-                             () => true,
-                             UI.Checksums_the_whole_disc));
+        Add(new Option<bool>(["--whole-disc", "-w"], () => true, UI.Checksums_the_whole_disc));
 
         AddArgument(new Argument<string>
         {

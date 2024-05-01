@@ -37,13 +37,13 @@ public class Xbox : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Xbox");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "microsoft256mb.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Description = "System cache",
@@ -62,7 +62,7 @@ public class Xbox : PartitionSchemeTest
                     Size        = 0,
                     Start       = 16376
                 }
-            }
+            ]
         }
-    };
+    ];
 }

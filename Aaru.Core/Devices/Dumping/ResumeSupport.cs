@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Metadata;
@@ -179,9 +178,9 @@ static class ResumeSupport
         {
             resume = new Resume
             {
-                Tries        = new List<DumpHardware>(),
+                Tries        = [],
                 CreationDate = DateTime.UtcNow,
-                BadBlocks    = new List<ulong>(),
+                BadBlocks    = [],
                 LastBlock    = isTape ? 0 : blocks - 1,
                 Tape         = isTape
             };

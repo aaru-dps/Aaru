@@ -86,7 +86,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
     {
         _inputFormat             = inputFormat;
         _view                    = view;
-        TrackEntropy             = new ObservableCollection<TrackEntropyModel>();
+        TrackEntropy             = [];
         StartCommand             = ReactiveCommand.Create(ExecuteStartCommand);
         CloseCommand             = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand              = ReactiveCommand.Create(ExecuteStopCommand);

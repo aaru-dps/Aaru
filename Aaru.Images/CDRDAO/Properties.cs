@@ -87,9 +87,9 @@ public sealed partial class Cdrdao
             Track firstTrack = Tracks.First(t => t.Sequence == Tracks.Min(m => m.Sequence));
             Track lastTrack  = Tracks.First(t => t.Sequence == Tracks.Max(m => m.Sequence));
 
-            return new List<Session>
-            {
-                new()
+            return
+            [
+                new Session
                 {
                     Sequence    = 1,
                     StartSector = firstTrack.StartSector,
@@ -97,7 +97,7 @@ public sealed partial class Cdrdao
                     StartTrack  = firstTrack.Sequence,
                     EndTrack    = lastTrack.Sequence
                 }
-            };
+            ];
         }
     }
 
@@ -106,7 +106,7 @@ public sealed partial class Cdrdao
     {
         get
         {
-            List<Track> tracks = new();
+            List<Track> tracks = [];
 
             foreach(CdrdaoTrack cdrTrack in _discimage.Tracks)
             {

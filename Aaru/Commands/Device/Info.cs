@@ -68,12 +68,7 @@ sealed class DeviceInfoCommand : Command
 
     public DeviceInfoCommand() : base("info", UI.Device_Info_Command_Description)
     {
-        Add(new Option<string>(new[]
-                               {
-                                   "--output-prefix", "-w"
-                               },
-                               () => null,
-                               UI.Prefix_for_saving_binary_information));
+        Add(new Option<string>(["--output-prefix", "-w"], () => null, UI.Prefix_for_saving_binary_information));
 
         AddArgument(new Argument<string>
         {

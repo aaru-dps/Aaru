@@ -58,9 +58,9 @@ public sealed partial class Sidecar
                            List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar,
                            Encoding encoding)
     {
-        sidecar.AudioMedias = new List<AudioMedia>
-        {
-            new()
+        sidecar.AudioMedias =
+        [
+            new AudioMedia
             {
                 Checksums = imgChecksums,
                 Image = new Image
@@ -75,7 +75,7 @@ public sealed partial class Sidecar
                     Title = image.Info.MediaTitle
                 }
             }
-        };
+        ];
 
         if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {

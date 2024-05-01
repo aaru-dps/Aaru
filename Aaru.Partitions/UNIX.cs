@@ -48,8 +48,8 @@ namespace Aaru.Partitions;
 public sealed class UNIX : IPartition
 {
     readonly Partition[] RA60 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -60,7 +60,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -71,7 +71,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -82,7 +82,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -93,7 +93,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -104,7 +104,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -115,7 +115,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -126,7 +126,7 @@ public sealed class UNIX : IPartition
             Offset      = 111353856,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -137,11 +137,11 @@ public sealed class UNIX : IPartition
             Offset      = 204378112,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RA80 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -152,7 +152,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -163,7 +163,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -174,7 +174,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -185,7 +185,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -196,7 +196,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -207,11 +207,11 @@ public sealed class UNIX : IPartition
             Offset      = 120940544,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RA81 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -222,7 +222,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -233,7 +233,7 @@ public sealed class UNIX : IPartition
             Offset      = 4915200,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -244,7 +244,7 @@ public sealed class UNIX : IPartition
             Offset      = 15155200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -255,7 +255,7 @@ public sealed class UNIX : IPartition
             Offset      = 15257600,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -266,7 +266,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -277,7 +277,7 @@ public sealed class UNIX : IPartition
             Offset      = 18329600,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -288,7 +288,7 @@ public sealed class UNIX : IPartition
             Offset      = 111353856,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -299,7 +299,7 @@ public sealed class UNIX : IPartition
             Offset      = 204378112,
             Sequence    = 6
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -310,11 +310,11 @@ public sealed class UNIX : IPartition
             Offset      = 455716864,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RC25 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -325,7 +325,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -336,7 +336,7 @@ public sealed class UNIX : IPartition
             Offset      = 4608000,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -347,7 +347,7 @@ public sealed class UNIX : IPartition
             Offset      = 4710400,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -358,7 +358,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -369,7 +369,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -380,7 +380,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -391,11 +391,11 @@ public sealed class UNIX : IPartition
             Offset      = 26009600,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD31 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -406,7 +406,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -417,7 +417,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -428,7 +428,7 @@ public sealed class UNIX : IPartition
             Offset      = 5017600,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -439,7 +439,7 @@ public sealed class UNIX : IPartition
             Offset      = 6553600,
             Sequence    = 6
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -450,11 +450,11 @@ public sealed class UNIX : IPartition
             Offset      = 21262336,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD32 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -465,7 +465,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -476,7 +476,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -487,7 +487,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -498,7 +498,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -509,7 +509,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -520,11 +520,11 @@ public sealed class UNIX : IPartition
             Offset      = 42584064,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD51 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -535,7 +535,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -546,7 +546,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -557,7 +557,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -568,7 +568,7 @@ public sealed class UNIX : IPartition
             Offset      = 6758400,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -579,11 +579,11 @@ public sealed class UNIX : IPartition
             Offset      = 11042816,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD52 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -594,7 +594,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -605,7 +605,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -616,7 +616,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -627,7 +627,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -638,7 +638,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -649,11 +649,11 @@ public sealed class UNIX : IPartition
             Offset      = 30949376,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD53 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -664,7 +664,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -675,7 +675,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -686,7 +686,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -697,7 +697,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -708,7 +708,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -719,11 +719,11 @@ public sealed class UNIX : IPartition
             Offset      = 70983680,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RD54 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -734,7 +734,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -745,7 +745,7 @@ public sealed class UNIX : IPartition
             Offset      = 4966400,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -756,7 +756,7 @@ public sealed class UNIX : IPartition
             Offset      = 13824000,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -767,7 +767,7 @@ public sealed class UNIX : IPartition
             Offset      = 13875200,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -778,7 +778,7 @@ public sealed class UNIX : IPartition
             Offset      = 15411200,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.maintenance_area,
@@ -789,11 +789,11 @@ public sealed class UNIX : IPartition
             Offset      = 159318016,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RK06 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -804,7 +804,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -815,7 +815,7 @@ public sealed class UNIX : IPartition
             Offset      = 4055040,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -826,7 +826,7 @@ public sealed class UNIX : IPartition
             Offset      = 4106240,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -837,7 +837,7 @@ public sealed class UNIX : IPartition
             Offset      = 5609472,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -848,11 +848,11 @@ public sealed class UNIX : IPartition
             Offset      = 13865984,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RK07 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -863,7 +863,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -874,7 +874,7 @@ public sealed class UNIX : IPartition
             Offset      = 4055040,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -885,7 +885,7 @@ public sealed class UNIX : IPartition
             Offset      = 4106240,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -896,7 +896,7 @@ public sealed class UNIX : IPartition
             Offset      = 5609472,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -907,11 +907,11 @@ public sealed class UNIX : IPartition
             Offset      = 27517952,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RM02 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -922,7 +922,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -933,7 +933,7 @@ public sealed class UNIX : IPartition
             Offset      = 4669440,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -944,7 +944,7 @@ public sealed class UNIX : IPartition
             Offset      = 2764800,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -955,7 +955,7 @@ public sealed class UNIX : IPartition
             Offset      = 14909440,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -966,7 +966,7 @@ public sealed class UNIX : IPartition
             Offset      = 17776640,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -977,7 +977,7 @@ public sealed class UNIX : IPartition
             Offset      = 17776640,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -988,7 +988,7 @@ public sealed class UNIX : IPartition
             Offset      = 34242560,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -999,7 +999,7 @@ public sealed class UNIX : IPartition
             Offset      = 50708480,
             Sequence    = 6
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -1010,11 +1010,11 @@ public sealed class UNIX : IPartition
             Offset      = 67387392,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RM05 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -1025,7 +1025,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -1036,7 +1036,7 @@ public sealed class UNIX : IPartition
             Offset      = 5292032,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -1047,7 +1047,7 @@ public sealed class UNIX : IPartition
             Offset      = 16187392,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -1058,7 +1058,7 @@ public sealed class UNIX : IPartition
             Offset      = 16289792,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1069,7 +1069,7 @@ public sealed class UNIX : IPartition
             Offset      = 19611648,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1080,7 +1080,7 @@ public sealed class UNIX : IPartition
             Offset      = 19611648,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1091,7 +1091,7 @@ public sealed class UNIX : IPartition
             Offset      = 98369536,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1102,7 +1102,7 @@ public sealed class UNIX : IPartition
             Offset      = 98369536,
             Sequence    = 6
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -1113,11 +1113,11 @@ public sealed class UNIX : IPartition
             Offset      = 215711744,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RP02 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -1128,7 +1128,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -1139,7 +1139,7 @@ public sealed class UNIX : IPartition
             Offset      = 4300800,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -1150,7 +1150,7 @@ public sealed class UNIX : IPartition
             Offset      = 4352000,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -1161,11 +1161,11 @@ public sealed class UNIX : IPartition
             Offset      = 5939200,
             Sequence    = 2
         }
-    };
+    ];
 
     readonly Partition[] RP03 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -1176,7 +1176,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -1187,7 +1187,7 @@ public sealed class UNIX : IPartition
             Offset      = 4300800,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -1198,7 +1198,7 @@ public sealed class UNIX : IPartition
             Offset      = 4352000,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -1209,11 +1209,11 @@ public sealed class UNIX : IPartition
             Offset      = 5939200,
             Sequence    = 2
         }
-    };
+    ];
 
     readonly Partition[] RP04 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -1224,7 +1224,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -1235,7 +1235,7 @@ public sealed class UNIX : IPartition
             Offset      = 4922368,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -1246,7 +1246,7 @@ public sealed class UNIX : IPartition
             Offset      = 15195136,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -1257,7 +1257,7 @@ public sealed class UNIX : IPartition
             Offset      = 15297536,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1268,7 +1268,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -1279,11 +1279,11 @@ public sealed class UNIX : IPartition
             Offset      = 87938048,
             Sequence    = 8
         }
-    };
+    ];
 
     readonly Partition[] RP06 =
-    {
-        new()
+    [
+        new Partition
         {
             Description = null,
             Name        = "/",
@@ -1294,7 +1294,7 @@ public sealed class UNIX : IPartition
             Offset      = 0,
             Sequence    = 0
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = "/usr",
@@ -1305,7 +1305,7 @@ public sealed class UNIX : IPartition
             Offset      = 4922368,
             Sequence    = 1
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.error_log,
@@ -1316,7 +1316,7 @@ public sealed class UNIX : IPartition
             Offset      = 15195136,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.swap,
@@ -1327,7 +1327,7 @@ public sealed class UNIX : IPartition
             Offset      = 15297536,
             Sequence    = 2
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1338,7 +1338,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 3
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1349,7 +1349,7 @@ public sealed class UNIX : IPartition
             Offset      = 18405376,
             Sequence    = 4
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.user,
@@ -1360,7 +1360,7 @@ public sealed class UNIX : IPartition
             Offset      = 87960576,
             Sequence    = 5
         },
-        new()
+        new Partition
         {
             Description = null,
             Name        = Localization.bad_sector_file,
@@ -1371,7 +1371,7 @@ public sealed class UNIX : IPartition
             Offset      = 174400512,
             Sequence    = 8
         }
-    };
+    ];
 
 #region IPartition Members
 
@@ -1387,7 +1387,7 @@ public sealed class UNIX : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
         Partition[] parts;
 
         if(sectorOffset != 0) return false;

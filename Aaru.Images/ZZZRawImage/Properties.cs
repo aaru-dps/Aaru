@@ -104,10 +104,7 @@ public sealed partial class ZZZRawImage
                 if(trk.Type == TrackType.Data) trk.Type = TrackType.CdMode1;
             }
 
-            List<Track> lst = new()
-            {
-                trk
-            };
+            List<Track> lst = [trk];
 
             return lst;
         }
@@ -129,10 +126,7 @@ public sealed partial class ZZZRawImage
                 StartTrack  = 1
             };
 
-            List<Session> lst = new()
-            {
-                sess
-            };
+            List<Session> lst = [sess];
 
             return lst;
         }
@@ -145,7 +139,7 @@ public sealed partial class ZZZRawImage
         {
             if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc) return null;
 
-            List<Partition> parts = new();
+            List<Partition> parts = [];
 
             var part = new Partition
             {
@@ -187,7 +181,7 @@ public sealed partial class ZZZRawImage
     {
         get
         {
-            List<MediaType> types = new();
+            List<MediaType> types = [];
 
             foreach(MediaType type in Enum.GetValues(typeof(MediaType)))
             {

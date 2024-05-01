@@ -56,6 +56,6 @@ public class RequiredOperatingSystem
         : new RequiredOperatingSystem
         {
             Name     = cicm.Name,
-            Versions = cicm.Version is null ? null : new List<string>(cicm.Version)
+            Versions = cicm.Version is null ? null : [..cicm.Version]
         };
 }

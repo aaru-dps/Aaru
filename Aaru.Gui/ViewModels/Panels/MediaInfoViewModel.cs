@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Text;
@@ -393,10 +392,13 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 

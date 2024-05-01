@@ -145,7 +145,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 while(currentLevel.Count > 0)
                 {
                     currentDepth++;
-                    List<NextLevel> nextLevels = new();
+                    List<NextLevel> nextLevels = [];
 
                     foreach(NextLevel subLevel in currentLevel)
                     {
@@ -325,12 +325,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         foreach(string xattr in contents)
         {
-            byte[]      buffer = Array.Empty<byte>();
+            byte[]      buffer = [];
             ErrorNumber ret    = fs.GetXattr(path, xattr, ref buffer);
 
             string data = ret != ErrorNumber.NoError && ret != ErrorNumber.OutOfRange
-                              ? Md5Context.Data(Array.Empty<byte>(), out _)
-                              : Md5Context.Data(buffer,              out _);
+                              ? Md5Context.Data([],     out _)
+                              : Md5Context.Data(buffer, out _);
 
             xattrs[xattr] = data;
         }
@@ -343,7 +343,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                        int                 currentDepth)
     {
         currentDepth++;
-        nextLevels = new List<NextLevel>();
+        nextLevels = [];
         ErrorNumber ret = fs.OpenDir(path, out IDirNode node);
 
         // Directory is not readable, probably filled the volume, just ignore it
@@ -358,7 +358,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(ret != ErrorNumber.NoError) return;
 
-        List<string> contents = new();
+        List<string> contents = [];
 
         while(fs.ReadDir(node, out string filename) == ErrorNumber.NoError && filename is not null)
             contents.Add(filename);
@@ -369,7 +369,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(path == "/") path = "";
 
-        List<string> expectedNotFound = new();
+        List<string> expectedNotFound = [];
 
         foreach(KeyValuePair<string, FileData> child in children)
         {
@@ -431,7 +431,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 .BeEquivalentTo(child.Value.Info,
                                 string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
 
-            byte[] buffer = Array.Empty<byte>();
+            byte[] buffer = [];
 
             if(child.Value.Info.Attributes.HasFlag(FileAttributes.Directory))
             {
@@ -571,11 +571,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(xattrs.Count == 0 && contents.Count == 0) return;
 
-        List<string> expectedNotFound = new();
+        List<string> expectedNotFound = [];
 
         foreach(KeyValuePair<string, string> xattr in xattrs)
         {
-            byte[]      buffer = Array.Empty<byte>();
+            byte[]      buffer = [];
             ErrorNumber ret    = fs.GetXattr(path, xattr.Key, ref buffer);
 
             if(ret == ErrorNumber.NoSuchExtendedAttribute || !contents.Contains(xattr.Key))

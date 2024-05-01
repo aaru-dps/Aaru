@@ -83,7 +83,7 @@ public sealed partial class FAT
     const string FS_TYPE_FAT12    = "fat12";
 
     readonly (string hash, string name)[] _knownBootHashes =
-    {
+    [
         ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
         ("9311151f13f7611b1431593da05ddd3153370574", "Amstrad MS-DOS 3.20 (Spanish)"),
         ("55eda6a9b955f5199020e6b56a6954fa6fcb7dc6", "AT&T MS-DOS 2.11"),
@@ -173,7 +173,7 @@ public sealed partial class FAT
         ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
         ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00"),
         ("91e2b47c3cb46611249e4daa283a68ba21ba596a", "Human68k 2.00")
-    };
+    ];
 
 #region Nested type: BpbKind
 

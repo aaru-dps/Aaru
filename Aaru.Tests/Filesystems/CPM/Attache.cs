@@ -40,8 +40,8 @@ public class Attache() : FilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "filename.imd",
@@ -60,5 +60,5 @@ public class Attache() : FilesystemTest("cpmfs")
             Clusters    = 395,
             ClusterSize = 1024
         }
-    };
+    ];
 }

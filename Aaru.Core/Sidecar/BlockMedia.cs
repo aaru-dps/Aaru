@@ -69,9 +69,9 @@ public sealed partial class Sidecar
     {
         if(_aborted) return;
 
-        sidecar.BlockMedias = new List<BlockMedia>
-        {
-            new()
+        sidecar.BlockMedias =
+        [
+            new BlockMedia
             {
                 Checksums = imgChecksums,
                 Image = new Image
@@ -86,7 +86,7 @@ public sealed partial class Sidecar
                     Title = image.Info.MediaTitle
                 }
             }
-        };
+        ];
 
         if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
@@ -185,7 +185,9 @@ public sealed partial class Sidecar
                                             $"{vers.MajorVersion}.{vers.MinorVersion}";
 
                                         sidecar.BlockMedias[0].Pcmcia.AdditionalInformation =
-                                            new List<string>(vers.AdditionalInformation);
+                                        [
+                                            ..vers.AdditionalInformation
+                                        ];
                                     }
 
                                     break;
@@ -453,7 +455,7 @@ public sealed partial class Sidecar
 
         if(image is ITapeImage { IsTape: true } tapeImage)
         {
-            List<TapePartition> tapePartitions = new();
+            List<TapePartition> tapePartitions = [];
 
             foreach(CommonTypes.Structs.TapePartition tapePartition in tapeImage.TapePartitions)
             {
@@ -549,7 +551,7 @@ public sealed partial class Sidecar
                     EndProgress2();
                 }
 
-                List<TapeFile> filesInPartition = new();
+                List<TapeFile> filesInPartition = [];
 
                 foreach(CommonTypes.Structs.TapeFile tapeFile in
                         tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
@@ -675,7 +677,7 @@ public sealed partial class Sidecar
         List<Partition> partitions = Partitions.GetAll(image);
         Partitions.AddSchemesToStats(partitions);
 
-        sidecar.BlockMedias[0].FileSystemInformation = new List<CommonTypes.AaruMetadata.Partition>();
+        sidecar.BlockMedias[0].FileSystemInformation = [];
 
         if(partitions.Count > 0)
         {
@@ -693,7 +695,7 @@ public sealed partial class Sidecar
                     Type        = partition.Type
                 };
 
-                List<FileSystem> lstFs = new();
+                List<FileSystem> lstFs = [];
 
                 foreach(IFilesystem fs in plugins.Filesystems.Values)
                 {
@@ -755,7 +757,7 @@ public sealed partial class Sidecar
                 Size   = image.Info.Sectors * image.Info.SectorSize
             };
 
-            List<FileSystem> lstFs = new();
+            List<FileSystem> lstFs = [];
 
             foreach(IFilesystem fs in plugins.Filesystems.Values)
             {
@@ -992,7 +994,7 @@ public sealed partial class Sidecar
                 {
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
-                        List<BlockTrack> scpBlockTrackTypes = new();
+                        List<BlockTrack> scpBlockTrackTypes = [];
                         ulong            currentSector      = 0;
                         Stream           scpStream          = scpFilter.GetDataForkStream();
 
@@ -1106,7 +1108,7 @@ public sealed partial class Sidecar
                 {
                     if(kfImage.Info.Cylinders >= image.Info.Cylinders)
                     {
-                        List<BlockTrack> kfBlockTrackTypes = new();
+                        List<BlockTrack> kfBlockTrackTypes = [];
 
                         ulong currentSector = 0;
 
@@ -1200,7 +1202,7 @@ public sealed partial class Sidecar
         {
             if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
             {
-                List<BlockTrack> dfiBlockTrackTypes = new();
+                List<BlockTrack> dfiBlockTrackTypes = [];
                 ulong            currentSector      = 0;
                 Stream           dfiStream          = dfiFilter.GetDataForkStream();
 

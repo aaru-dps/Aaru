@@ -43,8 +43,8 @@ public class Hpofs() : FilesystemTest("hpofs")
     public override IFilesystem Plugin     => new HPOFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "rid1.img.lz",
@@ -93,5 +93,5 @@ public class Hpofs() : FilesystemTest("hpofs")
             VolumeName   = "VOLUME LABEL",
             VolumeSerial = "ABEF2C14"
         }
-    };
+    ];
 }

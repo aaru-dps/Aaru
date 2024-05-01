@@ -40,8 +40,8 @@ public class Raw : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "raw");
     public override IMediaImage Plugin     => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "raw.img.lz",
@@ -49,14 +49,14 @@ public class Raw : BlockMediaImageTest
             Sectors    = 251904,
             SectorSize = 512,
             Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

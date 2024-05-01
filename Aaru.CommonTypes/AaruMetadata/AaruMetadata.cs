@@ -94,53 +94,53 @@ public class Metadata
 
         var metadata = new Metadata
         {
-            Developers    = cicm.Developer is null ? null : new List<string>(cicm.Developer),
-            Publishers    = cicm.Publisher is null ? null : new List<string>(cicm.Publisher),
-            Authors       = cicm.Author is null ? null : new List<string>(cicm.Author),
-            Performers    = cicm.Performer is null ? null : new List<string>(cicm.Performer),
+            Developers    = cicm.Developer is null ? null : [..cicm.Developer],
+            Publishers    = cicm.Publisher is null ? null : [..cicm.Publisher],
+            Authors       = cicm.Author is null ? null : [..cicm.Author],
+            Performers    = cicm.Performer is null ? null : [..cicm.Performer],
             Name          = cicm.Name,
             Version       = cicm.Version,
             Release       = cicm.ReleaseTypeSpecified ? (ReleaseType)cicm.ReleaseType : null,
             ReleaseDate   = cicm.ReleaseDateSpecified ? cicm.ReleaseDate : null,
             PartNumber    = cicm.PartNumber,
             SerialNumber  = cicm.SerialNumber,
-            Keywords      = cicm.Keywords is null ? null : new List<string>(cicm.Keywords),
-            Categories    = cicm.Categories is null ? null : new List<string>(cicm.Categories),
-            Subcategories = cicm.Subcategories is null ? null : new List<string>(cicm.Subcategories),
-            Systems       = cicm.Systems is null ? null : new List<string>(cicm.Systems)
+            Keywords      = cicm.Keywords is null ? null : [..cicm.Keywords],
+            Categories    = cicm.Categories is null ? null : [..cicm.Categories],
+            Subcategories = cicm.Subcategories is null ? null : [..cicm.Subcategories],
+            Systems       = cicm.Systems is null ? null : [..cicm.Systems]
         };
 
         if(cicm.Barcodes is not null)
         {
-            metadata.Barcodes = new List<Barcode>();
+            metadata.Barcodes = [];
 
             foreach(Schemas.BarcodeType code in cicm.Barcodes) metadata.Barcodes.Add(code);
         }
 
         if(cicm.Magazine is not null)
         {
-            metadata.Magazines = new List<Magazine>();
+            metadata.Magazines = [];
 
             foreach(MagazineType magazine in cicm.Magazine) metadata.Magazines.Add(magazine);
         }
 
         if(cicm.Book is not null)
         {
-            metadata.Books = new List<Book>();
+            metadata.Books = [];
 
             foreach(BookType book in cicm.Book) metadata.Books.Add(book);
         }
 
         if(cicm.Languages is not null)
         {
-            metadata.Languages = new List<Language>();
+            metadata.Languages = [];
 
             foreach(LanguagesTypeLanguage lng in cicm.Languages) metadata.Languages.Add((Language)lng);
         }
 
         if(cicm.Architectures is not null)
         {
-            metadata.Architectures = new List<Architecture>();
+            metadata.Architectures = [];
 
             foreach(ArchitecturesTypeArchitecture arch in cicm.Architectures)
                 metadata.Architectures.Add((Architecture)arch);
@@ -148,7 +148,7 @@ public class Metadata
 
         if(cicm.RequiredOperatingSystems is not null)
         {
-            metadata.RequiredOperatingSystems = new List<RequiredOperatingSystem>();
+            metadata.RequiredOperatingSystems = [];
 
             foreach(RequiredOperatingSystemType os in cicm.RequiredOperatingSystems)
                 metadata.RequiredOperatingSystems.Add(os);
@@ -156,49 +156,49 @@ public class Metadata
 
         if(cicm.UserManual is not null)
         {
-            metadata.UserManuals = new List<UserManual>();
+            metadata.UserManuals = [];
 
             foreach(UserManualType manual in cicm.UserManual) metadata.UserManuals.Add(manual);
         }
 
         if(cicm.OpticalDisc is not null)
         {
-            metadata.OpticalDiscs = new List<OpticalDisc>();
+            metadata.OpticalDiscs = [];
 
             foreach(OpticalDiscType disc in cicm.OpticalDisc) metadata.OpticalDiscs.Add(disc);
         }
 
         if(cicm.Advertisement is not null)
         {
-            metadata.Advertisements = new List<Advertisement>();
+            metadata.Advertisements = [];
 
             foreach(AdvertisementType adv in cicm.Advertisement) metadata.Advertisements.Add(adv);
         }
 
         if(cicm.LinearMedia is not null)
         {
-            metadata.LinearMedias = new List<LinearMedia>();
+            metadata.LinearMedias = [];
 
             foreach(LinearMediaType media in cicm.LinearMedia) metadata.LinearMedias.Add(media);
         }
 
         if(cicm.PCICard is not null)
         {
-            metadata.PciCards = new List<Pci>();
+            metadata.PciCards = [];
 
             foreach(PCIType pci in cicm.PCICard) metadata.PciCards.Add(pci);
         }
 
         if(cicm.BlockMedia is not null)
         {
-            metadata.BlockMedias = new List<BlockMedia>();
+            metadata.BlockMedias = [];
 
             foreach(BlockMediaType media in cicm.BlockMedia) metadata.BlockMedias.Add(media);
         }
 
         if(cicm.AudioMedia is null) return metadata;
 
-        metadata.AudioMedias = new List<AudioMedia>();
+        metadata.AudioMedias = [];
 
         foreach(AudioMediaType media in cicm.AudioMedia) metadata.AudioMedias.Add(media);
 

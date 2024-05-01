@@ -53,26 +53,13 @@ sealed class FilesystemInfoCommand : Command
 
     public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--filesystems", "-f"
-                             },
+        Add(new Option<bool>(["--filesystems", "-f"],
                              () => true,
                              UI.Searches_and_prints_information_about_filesystems));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--partitions", "-p"
-                             },
-                             () => true,
-                             UI.Searches_and_interprets_partitions));
+        Add(new Option<bool>(["--partitions", "-p"], () => true, UI.Searches_and_interprets_partitions));
 
         AddArgument(new Argument<string>
         {

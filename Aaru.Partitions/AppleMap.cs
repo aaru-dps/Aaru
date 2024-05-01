@@ -77,7 +77,7 @@ public sealed class AppleMap : IPartition
     {
         uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
 
-        partitions = new List<Partition>();
+        partitions = [];
 
         if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 

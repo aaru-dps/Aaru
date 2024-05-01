@@ -68,7 +68,7 @@ public class SCSI
 
         if(cicm.EVPD is null) return cicm;
 
-        scsi.Evpds = new List<Evpd>();
+        scsi.Evpds = [];
 
         foreach(EVPDType evpd in cicm.EVPD) scsi.Evpds.Add(evpd);
 
@@ -97,7 +97,7 @@ public class Evpd
 
         if(cicm.Checksums is null) return evpd;
 
-        evpd.Checksums = new List<Checksum>();
+        evpd.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) evpd.Checksums.Add(chk);
 

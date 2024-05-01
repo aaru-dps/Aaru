@@ -167,8 +167,8 @@ public sealed partial class CdrWin
     public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
         if(errno != ErrorNumber.NoError) return null;
@@ -203,8 +203,8 @@ public sealed partial class CdrWin
     public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
         if(errno != ErrorNumber.NoError) return null;

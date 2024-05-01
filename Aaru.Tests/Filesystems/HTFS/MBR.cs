@@ -43,8 +43,8 @@ public class MBR() : FilesystemTest("HTFS")
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw.aif",
@@ -55,5 +55,5 @@ public class MBR() : FilesystemTest("HTFS")
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

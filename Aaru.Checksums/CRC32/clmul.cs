@@ -57,10 +57,10 @@ namespace Aaru.Checksums.CRC32;
 static class Clmul
 {
     static readonly uint[] _crcK =
-    {
+    [
         0xccaa009e, 0x00000000, /* rk1 */ 0x751997d0, 0x00000001, /* rk2 */ 0xccaa009e, 0x00000000, /* rk5 */
         0x63cd6124, 0x00000001, /* rk6 */ 0xf7011640, 0x00000001, /* rk7 */ 0xdb710640, 0x00000001  /* rk8 */
-    };
+    ];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void Fold4(ref Vector128<uint> xmmCRC0, ref Vector128<uint> xmmCRC1, ref Vector128<uint> xmmCRC2,

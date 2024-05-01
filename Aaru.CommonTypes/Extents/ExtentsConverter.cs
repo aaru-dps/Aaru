@@ -54,7 +54,7 @@ public static class ExtentsConverter
         if(extents == null) return null;
 
         Tuple<ulong, ulong>[] tuples = extents.ToArray();
-        List<Extent>          list   = new();
+        List<Extent>          list   = [];
 
         for(ulong i = 0; i < (ulong)tuples.LongLength; i++)
         {

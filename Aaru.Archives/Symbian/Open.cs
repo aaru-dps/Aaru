@@ -125,9 +125,9 @@ public sealed partial class Symbian
         br.BaseStream.Seek(sh.lang_ptr, SeekOrigin.Begin);
         for(var i = 0; i < sh.languages; i++) languages.Add(((LanguageCodes)br.ReadUInt16()).ToString("G"));
 
-        _files      = new List<DecodedFileRecord>();
-        _conditions = new List<string>();
-        _options    = new List<OptionRecord>();
+        _files      = [];
+        _conditions = [];
+        _options    = [];
 
         uint currentFile    = 0;
         uint offset         = sh.files_ptr;
@@ -152,7 +152,7 @@ public sealed partial class Symbian
         // Files appear on .sis in the reverse order they should be processed
         _files.Reverse();
 
-        List<DecodedFileRecord> filesWithFixedFilenames = new();
+        List<DecodedFileRecord> filesWithFixedFilenames = [];
 
         foreach(DecodedFileRecord f in _files)
         {

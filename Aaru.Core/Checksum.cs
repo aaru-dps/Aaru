@@ -370,7 +370,7 @@ public sealed class Checksum
     /// <returns>Returns the checksum results</returns>
     public List<CommonTypes.AaruMetadata.Checksum> End()
     {
-        List<CommonTypes.AaruMetadata.Checksum> chks = new();
+        List<CommonTypes.AaruMetadata.Checksum> chks = [];
 
         if(_enabled.HasFlag(EnableChecksum.Adler32))
         {
@@ -680,7 +680,7 @@ public sealed class Checksum
               f16ThreadData.IsAlive     ||
               f32ThreadData.IsAlive) {}
 
-        List<CommonTypes.AaruMetadata.Checksum> dataChecksums = new();
+        List<CommonTypes.AaruMetadata.Checksum> dataChecksums = [];
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
         {

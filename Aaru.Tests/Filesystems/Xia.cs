@@ -40,8 +40,8 @@ public class Xia() : FilesystemTest("xia")
     public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux_2.0.0.aif",
@@ -60,5 +60,5 @@ public class Xia() : FilesystemTest("xia")
             Clusters    = 131008,
             ClusterSize = 1024
         }
-    };
+    ];
 }

@@ -72,7 +72,7 @@ public class Partition
 
         if(cicm.FileSystems is null) return part;
 
-        part.FileSystems = new List<FileSystem>();
+        part.FileSystems = [];
 
         foreach(FileSystemType fs in cicm.FileSystems) part.FileSystems.Add(fs);
 

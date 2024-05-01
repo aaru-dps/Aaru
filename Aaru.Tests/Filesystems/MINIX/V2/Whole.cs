@@ -41,8 +41,8 @@ public class Whole : FilesystemTest
     public override IFilesystem Plugin     => new MinixFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "minix_3.1.2a_dsdd.img.lz",
@@ -153,5 +153,5 @@ public class Whole : FilesystemTest
             ClusterSize = 1024,
             Type        = "minix2"
         }
-    };
+    ];
 }

@@ -66,7 +66,7 @@ public sealed partial class Sidecar
         _aborted      = false;
 
         var emptyChkWorker = new Checksum();
-        emptyChkWorker.Update(Array.Empty<byte>());
+        emptyChkWorker.Update([]);
         _emptyChecksums = emptyChkWorker.End();
     }
 

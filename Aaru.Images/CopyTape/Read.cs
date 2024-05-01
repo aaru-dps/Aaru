@@ -50,7 +50,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        List<long> blockPositions = new();
+        List<long> blockPositions = [];
         var        partialBlockRx = new Regex(PARTIAL_BLOCK_REGEX);
         var        blockRx        = new Regex(BLOCK_REGEX);
         var        filemarkRx     = new Regex(FILEMARK_REGEX);
@@ -68,7 +68,7 @@ public sealed partial class CopyTape
         ulong currentFileStart = 0;
         var   inFile           = false;
 
-        Files = new List<TapeFile>();
+        Files = [];
 
         while(_imageStream.Position + 9 < _imageStream.Length)
         {
@@ -166,15 +166,15 @@ public sealed partial class CopyTape
 
         _blockPositionCache = blockPositions.ToArray();
 
-        TapePartitions = new List<TapePartition>
-        {
-            new()
+        TapePartitions =
+        [
+            new TapePartition
             {
                 FirstBlock = 0,
                 LastBlock  = currentBlock - 1,
                 Number     = 0
             }
-        };
+        ];
 
         _imageInfo.Sectors              = (ulong)_blockPositionCache.LongLength;
         _imageInfo.MediaType            = MediaType.UnknownTape;

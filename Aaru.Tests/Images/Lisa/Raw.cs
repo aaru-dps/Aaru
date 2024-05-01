@@ -42,8 +42,8 @@ public class Raw : BlockMediaImageTest
 
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "profile_los202.raw.lz",
@@ -92,5 +92,5 @@ public class Raw : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "dd146bc14be87d5ad98b961dd462f469"
         }
-    };
+    ];
 }

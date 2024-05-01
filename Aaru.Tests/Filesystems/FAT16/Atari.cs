@@ -41,8 +41,8 @@ public class Atari() : ReadOnlyFilesystemTest("fat16")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "tos_1.00_gem.aif",
@@ -175,5 +175,5 @@ public class Atari() : ReadOnlyFilesystemTest("fat16")
             VolumeName   = "VolumeLabel",
             VolumeSerial = "086A33"
         }
-    };
+    ];
 }

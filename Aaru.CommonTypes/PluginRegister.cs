@@ -266,8 +266,7 @@ public class PluginRegister
                 {
                     if(!filter.Identify(path)) continue;
 
-                    var foundFilter =
-                        (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
+                    var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke([]);
 
                     if(foundFilter?.Open(path) == ErrorNumber.NoError) return foundFilter;
                 }

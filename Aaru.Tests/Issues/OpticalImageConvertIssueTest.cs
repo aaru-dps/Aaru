@@ -191,7 +191,7 @@ public abstract class OpticalImageConvertIssueTest
         Dictionary<byte, string> isrcs                     = new();
         Dictionary<byte, byte>   trackFlags                = new();
         string                   mcn                       = null;
-        HashSet<int>             subchannelExtents         = new();
+        HashSet<int>             subchannelExtents         = [];
         Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
         var                      tracks                    = new Track[inputOptical.Tracks.Count];
 
@@ -409,12 +409,7 @@ public abstract class OpticalImageConvertIssueTest
         {
             foreach((byte track, byte flags) in trackFlags)
             {
-                outputOptical.WriteSectorTag(new[]
-                                             {
-                                                 flags
-                                             },
-                                             track,
-                                             SectorTagType.CdTrackFlags);
+                outputOptical.WriteSectorTag([flags], track, SectorTagType.CdTrackFlags);
             }
         }
 

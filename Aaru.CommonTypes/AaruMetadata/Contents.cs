@@ -63,14 +63,14 @@ public class FilesystemContents
 
         if(cicm.File is not null)
         {
-            fs.Files = new List<ContentsFile>();
+            fs.Files = [];
 
             foreach(ContentsFileType file in cicm.File) fs.Files.Add(file);
         }
 
         if(cicm.Directory is null) return fs;
 
-        fs.Directories = new List<Directory>();
+        fs.Directories = [];
 
         foreach(DirectoryType dir in cicm.Directory) fs.Directories.Add(dir);
 
@@ -122,14 +122,14 @@ public class ContentsFile
 
         if(cicm.Checksums is not null)
         {
-            file.Checksums = new List<Checksum>();
+            file.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) file.Checksums.Add(chk);
         }
 
         if(cicm.ExtendedAttributes is null) return file;
 
-        file.ExtendedAttributes = new List<ExtendedAttribute>();
+        file.ExtendedAttributes = [];
 
         foreach(ExtendedAttributeType xa in cicm.ExtendedAttributes) file.ExtendedAttributes.Add(xa);
 
@@ -156,7 +156,7 @@ public class ExtendedAttribute
 
         if(cicm.Checksums is null) return xa;
 
-        xa.Checksums = new List<Checksum>();
+        xa.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) xa.Checksums.Add(chk);
 
@@ -206,14 +206,14 @@ public class Directory
 
         if(cicm.Directory is not null)
         {
-            dir.Directories = new List<Directory>();
+            dir.Directories = [];
 
             foreach(DirectoryType d in cicm.Directory) dir.Directories.Add(d);
         }
 
         if(cicm.File is null) return dir;
 
-        dir.Files = new List<ContentsFile>();
+        dir.Files = [];
 
         foreach(ContentsFileType file in cicm.File) dir.Files.Add(file);
 

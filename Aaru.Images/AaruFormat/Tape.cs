@@ -80,8 +80,8 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public bool SetTape()
     {
-        Files          = new List<TapeFile>();
-        TapePartitions = new List<TapePartition>();
+        Files          = [];
+        TapePartitions = [];
 
         return IsTape = true;
     }

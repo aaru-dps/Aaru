@@ -79,21 +79,21 @@ public class Advertisement
 
         if(cicm.Checksums is not null)
         {
-            adv.Checksums = new List<Checksum>();
+            adv.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) adv.Checksums.Add(chk);
         }
 
         if(cicm.AudioTrack is not null)
         {
-            adv.AudioTracks = new List<AudioTrack>();
+            adv.AudioTracks = [];
 
             foreach(AudioTracksType trk in cicm.AudioTrack) adv.AudioTracks.Add(trk);
         }
 
         if(cicm.VideoTrack is not null)
         {
-            adv.VideoTracks = new List<VideoTrack>();
+            adv.VideoTracks = [];
 
             foreach(VideoTracksType trk in cicm.VideoTrack) adv.VideoTracks.Add(trk);
         }
@@ -101,7 +101,7 @@ public class Advertisement
         if(cicm.SubtitleTrack is null) return adv;
 
         {
-            adv.SubtitleTracks = new List<SubtitleTrack>();
+            adv.SubtitleTracks = [];
 
             foreach(SubtitleTracksType trk in cicm.SubtitleTrack) adv.SubtitleTracks.Add(trk);
         }

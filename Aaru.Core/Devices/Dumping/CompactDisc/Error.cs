@@ -182,15 +182,15 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
+                Pages =
+                [
                     new Modes.ModePage
                     {
                         Page         = 0x01,
                         Subpage      = 0x00,
                         PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                     }
-                }
+                ]
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -219,7 +219,7 @@ partial class Dump
         InitProgress?.Invoke();
     cdRepeatRetry:
         ulong[]     tmpArray              = _resume.BadBlocks.ToArray();
-        List<ulong> sectorsNotEvenPartial = new();
+        List<ulong> sectorsNotEvenPartial = [];
 
         for(var i = 0; i < tmpArray.Length; i++)
         {
@@ -469,9 +469,8 @@ partial class Dump
 
                 // MEDIUM ERROR, retry with ignore error below
                 if(decSense is { ASC: 0x11 })
-                {
-                    if(!sectorsNotEvenPartial.Contains(badSector)) sectorsNotEvenPartial.Add(badSector);
-                }
+                    if(!sectorsNotEvenPartial.Contains(badSector))
+                        sectorsNotEvenPartial.Add(badSector);
             }
 
             // Because one block has been partially used to fix the offset
@@ -587,15 +586,15 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
+                Pages =
+                [
                     new Modes.ModePage
                     {
                         Page         = 0x01,
                         Subpage      = 0x00,
                         PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                     }
-                }
+                ]
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -717,10 +716,7 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
-                    currentModePage.Value
-                }
+                Pages  = [currentModePage.Value]
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -778,7 +774,7 @@ partial class Dump
 
     cdRepeatRetry:
 
-        _resume.BadSubchannels = new List<int>();
+        _resume.BadSubchannels = [];
         _resume.BadSubchannels.AddRange(subchannelExtents);
         _resume.BadSubchannels.Sort();
 

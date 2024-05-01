@@ -38,7 +38,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class DeviceModel
 {
-    public DeviceModel() => Media = new ObservableCollection<MediaModel>();
+    public DeviceModel() => Media = [];
 
     public Bitmap              Icon      { get; set; }
     public string              Name      { get; set; }

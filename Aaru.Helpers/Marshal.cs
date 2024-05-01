@@ -328,12 +328,7 @@ public static class Marshal
                 var    flt   = (float)(fi.GetValue(str) ?? default(float));
                 byte[] flt_b = BitConverter.GetBytes(flt);
 
-                fi.SetValue(str,
-                            BitConverter.ToSingle(new[]
-                                                  {
-                                                      flt_b[3], flt_b[2], flt_b[1], flt_b[0]
-                                                  },
-                                                  0));
+                fi.SetValue(str, BitConverter.ToSingle([flt_b[3], flt_b[2], flt_b[1], flt_b[0]], 0));
             }
             else if(fi.FieldType == typeof(double))
             {
@@ -341,11 +336,10 @@ public static class Marshal
                 byte[] dbl_b = BitConverter.GetBytes(dbl);
 
                 fi.SetValue(str,
-                            BitConverter.ToDouble(new[]
-                                                  {
+                            BitConverter.ToDouble([
                                                       dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2],
                                                       dbl_b[1], dbl_b[0]
-                                                  },
+                                                  ],
                                                   0));
             }
             else if(fi.FieldType == typeof(byte) || fi.FieldType == typeof(sbyte))

@@ -41,8 +41,8 @@ public class MBR() : FilesystemTest("sysv_r4")
     public override IFilesystem Plugin => new SysVfs();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "att_unix_svr4v2.1.aif",
@@ -73,5 +73,5 @@ public class MBR() : FilesystemTest("sysv_r4")
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

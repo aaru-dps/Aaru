@@ -40,38 +40,38 @@ namespace Aaru.Images;
 public sealed partial class DiskDupe
 {
     readonly DiskType[] _diskTypes =
-    {
-        new()
+    [
+        new DiskType
         {
             cyl = 0,
             hd  = 0,
             spt = 0
         }, // Type 0 - invalid
-        new()
+        new DiskType
         {
             cyl = 40,
             hd  = 2,
             spt = 9
         }, // Type 1 - 360k
-        new()
+        new DiskType
         {
             cyl = 80,
             hd  = 2,
             spt = 15
         }, // Type 2 - 1.2m
-        new()
+        new DiskType
         {
             cyl = 80,
             hd  = 2,
             spt = 9
         }, // Type 3 - 720k
-        new()
+        new DiskType
         {
             cyl = 80,
             hd  = 2,
             spt = 18
         } // Type 4 - 1.44m
-    };
+    ];
 
 #region Nested type: DiskType
 

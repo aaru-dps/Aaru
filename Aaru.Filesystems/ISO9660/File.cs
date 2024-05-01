@@ -466,10 +466,7 @@ public sealed partial class ISO9660
     ErrorNumber ReadSingleExtent(long size, uint startingSector, out byte[] buffer, bool interleaved = false,
                                  byte fileNumber = 0) => ReadWithExtents(0,
                                                                          size,
-                                                                         new List<(uint extent, uint size)>
-                                                                         {
-                                                                             (startingSector, (uint)size)
-                                                                         },
+                                                                         [(startingSector, (uint)size)],
                                                                          interleaved,
                                                                          fileNumber,
                                                                          out buffer);
@@ -478,10 +475,7 @@ public sealed partial class ISO9660
     ErrorNumber ReadSingleExtent(long offset,              long size, uint startingSector, out byte[] buffer,
                                  bool interleaved = false, byte fileNumber = 0) => ReadWithExtents(offset,
         size,
-        new List<(uint extent, uint size)>
-        {
-            (startingSector, (uint)size)
-        },
+        [(startingSector, (uint)size)],
         interleaved,
         fileNumber,
         out buffer);

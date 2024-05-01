@@ -60,40 +60,10 @@ public sealed partial class UDF
 
         // All positions where anchor may reside, with the ratio between 512 and 2048bps
         ulong[][] positions =
-        {
-            new ulong[]
-            {
-                256, 1
-            },
-            new ulong[]
-            {
-                512, 1
-            },
-            new ulong[]
-            {
-                partition.End - 256, 1
-            },
-            new ulong[]
-            {
-                partition.End, 1
-            },
-            new ulong[]
-            {
-                1024, 4
-            },
-            new ulong[]
-            {
-                2048, 4
-            },
-            new ulong[]
-            {
-                partition.End - 1024, 4
-            },
-            new ulong[]
-            {
-                partition.End - 4, 4
-            }
-        };
+        [
+            [256, 1], [512, 1], [partition.End - 256, 1], [partition.End, 1], [1024, 4], [2048, 4],
+            [partition.End                     - 1024, 4], [partition.End - 4, 4]
+        ];
 
         var    anchorFound = false;
         uint   ratio       = 1;
@@ -218,40 +188,10 @@ public sealed partial class UDF
 
         // All positions where anchor may reside, with the ratio between 512 and 2048bps
         ulong[][] positions =
-        {
-            new ulong[]
-            {
-                256, 1
-            },
-            new ulong[]
-            {
-                512, 1
-            },
-            new ulong[]
-            {
-                partition.End - 256, 1
-            },
-            new ulong[]
-            {
-                partition.End, 1
-            },
-            new ulong[]
-            {
-                1024, 4
-            },
-            new ulong[]
-            {
-                2048, 4
-            },
-            new ulong[]
-            {
-                partition.End - 1024, 4
-            },
-            new ulong[]
-            {
-                partition.End - 4, 4
-            }
-        };
+        [
+            [256, 1], [512, 1], [partition.End - 256, 1], [partition.End, 1], [1024, 4], [2048, 4],
+            [partition.End                     - 1024, 4], [partition.End - 4, 4]
+        ];
 
         uint ratio = 1;
 

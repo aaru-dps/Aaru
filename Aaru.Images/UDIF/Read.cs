@@ -125,7 +125,7 @@ public sealed partial class Udif
                                    ArrayHelpers.ArrayIsNullOrEmpty(_footer.reserved4));
 
         // Block chunks and headers
-        List<byte[]> blkxList = new();
+        List<byte[]> blkxList = [];
         _chunks = new Dictionary<ulong, BlockChunk>();
 
         byte[] vers = null;

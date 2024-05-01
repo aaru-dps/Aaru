@@ -109,7 +109,7 @@ public sealed partial class Nero
             ushort currentSession = 1;
             uint   currentTrack   = 1;
 
-            Tracks      = new List<Track>();
+            Tracks      = [];
             _trackIsrCs = new Dictionary<uint, byte[]>();
 
             _imageInfo.MediaType  = CommonTypes.MediaType.CD;
@@ -147,7 +147,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Entries   = new List<CueEntryV1>()
+                            Entries   = []
                         };
 
                         var tmpBuffer = new byte[8];
@@ -223,7 +223,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Entries   = new List<CueEntryV2>()
+                            Entries   = []
                         };
 
                         var tmpBuffer = new byte[8];
@@ -296,7 +296,7 @@ public sealed partial class Nero
                         _neroDaov1.TocType    = BigEndianBitConverter.ToUInt16(tmpBuffer, 18);
                         _neroDaov1.FirstTrack = tmpBuffer[20];
                         _neroDaov1.LastTrack  = tmpBuffer[21];
-                        _neroDaov1.Tracks     = new List<DaoEntryV1>();
+                        _neroDaov1.Tracks     = [];
 
                         AaruConsole.DebugWriteLine(MODULE_NAME,
                                                    "neroDAOV1.ChunkSizeLe = {0} bytes",
@@ -431,7 +431,7 @@ public sealed partial class Nero
                         _neroDaov2.TocType    = BigEndianBitConverter.ToUInt16(tmpBuffer, 18);
                         _neroDaov2.FirstTrack = tmpBuffer[20];
                         _neroDaov2.LastTrack  = tmpBuffer[21];
-                        _neroDaov2.Tracks     = new List<DaoEntryV2>();
+                        _neroDaov2.Tracks     = [];
 
                         _upc = _neroDaov2.Upc;
 
@@ -557,7 +557,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Packs     = new List<CdTextPack>()
+                            Packs     = []
                         };
 
                         var tmpBuffer = new byte[18];
@@ -625,7 +625,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Tracks    = new List<TaoEntryV0>()
+                            Tracks    = []
                         };
 
                         var tmpBuffer = new byte[12];
@@ -696,7 +696,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Tracks    = new List<TaoEntryV1>()
+                            Tracks    = []
                         };
 
                         var tmpBuffer = new byte[20];
@@ -778,7 +778,7 @@ public sealed partial class Nero
                         {
                             ChunkId   = chunkId,
                             ChunkSize = chunkLength,
-                            Tracks    = new List<TaoEntryV2>()
+                            Tracks    = []
                         };
 
                         var tmpBuffer = new byte[32];
@@ -1911,10 +1911,7 @@ public sealed partial class Nero
             case SectorTagType.CdTrackFlags:
                 if(!_trackFlags.TryGetValue(track, out byte flag)) return ErrorNumber.NoData;
 
-                buffer = new[]
-                {
-                    flag
-                };
+                buffer = [flag];
 
                 return ErrorNumber.NoError;
             case SectorTagType.CdTrackIsrc:

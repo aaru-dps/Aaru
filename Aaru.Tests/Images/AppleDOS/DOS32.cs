@@ -42,8 +42,8 @@ public class DOS32 : BlockMediaImageTest
 
     public override IMediaImage Plugin => new AppleDos();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "alice.d13.lz",
@@ -51,14 +51,14 @@ public class DOS32 : BlockMediaImageTest
             Sectors    = 455,
             SectorSize = 256,
             Md5        = "76f8fe4c5bc1976f99641ad7cdf53109",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 455
                 }
-            }
+            ]
         }
-    };
+    ];
 }

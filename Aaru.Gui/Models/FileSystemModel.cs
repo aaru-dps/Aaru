@@ -38,7 +38,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class FileSystemModel : RootModel
 {
-    public FileSystemModel() => Roots = new ObservableCollection<SubdirectoryModel>();
+    public FileSystemModel() => Roots = [];
 
     public string                                  VolumeName         { get; set; }
     public IFilesystem                             Filesystem         { get; set; }

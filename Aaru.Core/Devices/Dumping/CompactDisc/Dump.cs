@@ -115,7 +115,7 @@ sealed partial class Dump
         var                      bcdSubchannel       = false; // Subchannel positioning is in BCD
         Dictionary<byte, string> isrcs               = new();
         string                   mcn                 = null;
-        HashSet<int>             subchannelExtents   = new();
+        HashSet<int>             subchannelExtents   = [];
         var                      cdiReadyReadAsAudio = false;
         uint                     firstLba;
         var                      outputOptical = _outputPlugin as IWritableOpticalImage;
@@ -647,8 +647,8 @@ sealed partial class Dump
                 return;
             }
 
-            List<Track> trkList = new()
-            {
+            List<Track> trkList =
+            [
                 new Track
                 {
                     Sequence          = (uint)(tracks.Any(t => t.Sequence == 1) ? 0 : 1),
@@ -660,7 +660,7 @@ sealed partial class Dump
                     SubchannelType    = subType,
                     EndSector         = tracks.First(t => t.Sequence >= 1).StartSector - 1
                 }
-            };
+            ];
 
             trkList.AddRange(tracks);
             tracks = trkList.ToArray();
@@ -1068,12 +1068,7 @@ sealed partial class Dump
             _dumpLog.WriteLine(Localization.Core.Setting_flags_for_track_0, track.Sequence);
             UpdateStatus?.Invoke(string.Format(Localization.Core.Setting_flags_for_track_0, track.Sequence));
 
-            outputOptical.WriteSectorTag(new[]
-                                         {
-                                             kvp.Value
-                                         },
-                                         kvp.Key,
-                                         SectorTagType.CdTrackFlags);
+            outputOptical.WriteSectorTag([kvp.Value], kvp.Key, SectorTagType.CdTrackFlags);
         }
 
         // Set MCN
@@ -1108,16 +1103,15 @@ sealed partial class Dump
 
         if(supportedSubchannel != MmcSubchannel.None && desiredSubchannel != MmcSubchannel.None)
         {
-            subchannelExtents = new HashSet<int>();
+            subchannelExtents = [];
 
-            _resume.BadSubchannels ??= new List<int>();
+            _resume.BadSubchannels ??= [];
 
             foreach(int sub in _resume.BadSubchannels) subchannelExtents.Add(sub);
 
             if(_resume.NextBlock < blocks)
-            {
-                for(ulong i = _resume.NextBlock; i < blocks; i++) subchannelExtents.Add((int)i);
-            }
+                for(ulong i = _resume.NextBlock; i < blocks; i++)
+                    subchannelExtents.Add((int)i);
         }
 
         if(_resume.NextBlock > 0)
@@ -1606,9 +1600,8 @@ sealed partial class Dump
                         supportsLongSectors);
 
         foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
-        {
-            for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++) subchannelExtents.Remove((int)e);
-        }
+            for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++)
+                subchannelExtents.Remove((int)e);
 
         if(subchannelExtents.Count > 0 && _retryPasses > 0 && _retrySubchannel)
         {
@@ -1655,7 +1648,7 @@ sealed partial class Dump
 
         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-        _resume.BadSubchannels = new List<int>();
+        _resume.BadSubchannels = [];
         _resume.BadSubchannels.AddRange(subchannelExtents);
         _resume.BadSubchannels.Sort();
 

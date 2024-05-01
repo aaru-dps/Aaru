@@ -41,8 +41,8 @@ public class APM : FilesystemTest
     public override IFilesystem Plugin => new FFSPlugin();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "ffs43/macosx_10.0.aif",
@@ -283,5 +283,5 @@ public class APM : FilesystemTest
             ClusterSize = 1024,
             Type        = "ufs"
         }
-    };
+    ];
 }

@@ -218,26 +218,13 @@ class MainClass
 
         var rootCommand = new RootCommand();
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[]
-                                                     {
-                                                         "--verbose", "-v"
-                                                     },
-                                                     () => false,
-                                                     UI.Shows_verbose_output));
+        rootCommand.AddGlobalOption(new Option<bool>(["--verbose", "-v"], () => false, UI.Shows_verbose_output));
 
-        rootCommand.AddGlobalOption(new Option<bool>(new[]
-                                                     {
-                                                         "--debug", "-d"
-                                                     },
+        rootCommand.AddGlobalOption(new Option<bool>(["--debug", "-d"],
                                                      () => false,
                                                      UI.Shows_debug_output_from_plugins));
 
-        Option<bool> pauseOption = new(new[]
-                                       {
-                                           "--pause"
-                                       },
-                                       () => false,
-                                       UI.Pauses_before_exiting);
+        Option<bool> pauseOption = new(["--pause"], () => false, UI.Pauses_before_exiting);
 
         rootCommand.AddGlobalOption(pauseOption);
 

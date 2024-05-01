@@ -34,9 +34,6 @@ public sealed partial class ReFS
 {
     const uint FSRS = 0x53525346;
 
-    const string FS_TYPE = "refs";
-    readonly byte[] _signature =
-    {
-        0x52, 0x65, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00
-    };
+    const    string FS_TYPE    = "refs";
+    readonly byte[] _signature = [0x52, 0x65, 0x46, 0x53, 0x00, 0x00, 0x00, 0x00];
 }

@@ -40,8 +40,8 @@ public class Raw : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "VirtualPC");
     public override IMediaImage Plugin     => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "vpc106b_fixed_150mb_fat16.lz",
@@ -81,14 +81,14 @@ public class Raw : BlockMediaImageTest
             Sectors    = 266016,
             SectorSize = 512,
             Md5        = "5f4d4c4f268ea19c91bf4fb49f4894b6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 17,
                     Length = 265727
                 }
-            }
+            ]
         }
-    };
+    ];
 }

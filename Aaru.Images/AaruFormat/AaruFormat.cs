@@ -167,8 +167,8 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
 
     public AaruFormat() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

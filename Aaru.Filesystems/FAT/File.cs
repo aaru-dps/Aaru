@@ -208,11 +208,11 @@ public sealed partial class FAT
 
     uint[] GetClusters(uint startCluster)
     {
-        if(startCluster == 0) return Array.Empty<uint>();
+        if(startCluster == 0) return [];
 
         if(startCluster >= Metadata.Clusters) return null;
 
-        List<uint> clusters = new();
+        List<uint> clusters = [];
 
         uint nextCluster = startCluster;
 

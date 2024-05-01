@@ -68,7 +68,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
 
     public DecodeMediaTagsViewModel([NotNull] IMediaImage inputFormat)
     {
-        TagsList = new ObservableCollection<MediaTagModel>();
+        TagsList = [];
 
         _mediaType = inputFormat.Info.MediaType;
 

@@ -40,8 +40,8 @@ public class D81 : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Commodore D81");
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "Strategiegames #01 (19xx)(-).d81.lz",
@@ -50,5 +50,5 @@ public class D81 : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "e84d86b63e798747c42b27b58ab88665"
         }
-    };
+    ];
 }

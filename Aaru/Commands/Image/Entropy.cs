@@ -51,26 +51,15 @@ sealed class EntropyCommand : Command
 
     public EntropyCommand() : base("entropy", UI.Image_Entropy_Command_Description)
     {
-        Add(new Option<bool>(new[]
-                             {
-                                 "--duplicated-sectors", "-p"
-                             },
+        Add(new Option<bool>(["--duplicated-sectors", "-p"],
                              () => true,
                              UI.Calculates_how_many_sectors_are_duplicated));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--separated-tracks", "-t"
-                             },
+        Add(new Option<bool>(["--separated-tracks", "-t"],
                              () => true,
                              UI.Calculates_entropy_for_each_track_separately));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--whole-disc", "-w"
-                             },
-                             () => true,
-                             UI.Calculates_entropy_for_the_whole_disc));
+        Add(new Option<bool>(["--whole-disc", "-w"], () => true, UI.Calculates_entropy_for_the_whole_disc));
 
         AddArgument(new Argument<string>
         {

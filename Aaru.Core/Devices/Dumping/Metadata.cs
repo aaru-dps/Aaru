@@ -111,7 +111,7 @@ partial class Dump
             sidecar                  = _preSidecar;
         }
 
-        List<(ulong start, string type)> filesystems = new();
+        List<(ulong start, string type)> filesystems = [];
 
         if(sidecar.OpticalDiscs[0].Track != null)
         {

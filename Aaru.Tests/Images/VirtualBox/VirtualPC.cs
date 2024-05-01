@@ -42,8 +42,8 @@ public class VirtualPc : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Vhd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "virtualbox_linux_dynamic_250mb.vhd.lz",
@@ -92,5 +92,5 @@ public class VirtualPc : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "f1c9645dbc14efddc7d8a322685f26eb"
         }
-    };
+    ];
 }

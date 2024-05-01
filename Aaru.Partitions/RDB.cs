@@ -192,7 +192,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
         ulong       rdbBlock = 0;
         var         foundRdb = false;
         ErrorNumber errno;
@@ -367,7 +367,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
         AaruConsole.DebugWriteLine(MODULE_NAME, "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
 
         // Reading BadBlock list
-        List<BadBlockList> badBlockChain = new();
+        List<BadBlockList> badBlockChain = [];
         ulong              nextBlock     = rdb.BadblockPtr;
 
         while(nextBlock != 0xFFFFFFFF)
@@ -428,7 +428,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
         }
 
         // Reading BadBlock list
-        List<PartitionEntry> partitionEntries = new();
+        List<PartitionEntry> partitionEntries = [];
         nextBlock = rdb.PartitionPtr;
 
         while(nextBlock != 0xFFFFFFFF)
@@ -610,8 +610,8 @@ public sealed class AmigaRigidDiskBlock : IPartition
         }
 
         // Reading BadBlock list
-        List<FileSystemHeader> fshdEntries    = new();
-        List<LoadSegment>      segmentEntries = new();
+        List<FileSystemHeader> fshdEntries    = [];
+        List<LoadSegment>      segmentEntries = [];
         nextBlock = rdb.FsheaderPtr;
 
         while(nextBlock != 0xFFFFFFFF)

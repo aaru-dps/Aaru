@@ -40,8 +40,8 @@ public class D64 : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Commodore D64");
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "0 Grad Nord (1985)(Ariolasoft)(de)(Side A).d64.lz",
@@ -50,5 +50,5 @@ public class D64 : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "9205f7ccdb19cfbdb0b46d10e40b2a90"
         }
-    };
+    ];
 }

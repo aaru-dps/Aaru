@@ -1205,7 +1205,7 @@ public static class Features
         decoded.Version    =  (byte)((feature[2] & 0x3C) >> 2);
 
         var           offset       = 4;
-        List<Profile> listProfiles = new();
+        List<Profile> listProfiles = [];
 
         while(offset < feature.Length)
         {
@@ -4394,7 +4394,7 @@ public static class Features
         };
 
         uint                    offset  = 8;
-        List<FeatureDescriptor> descLst = new();
+        List<FeatureDescriptor> descLst = [];
 
         while(offset + 4 < response.Length)
         {

@@ -106,8 +106,8 @@ public sealed partial class CdrWin
         _discImage = new CdrWinDisc
         {
             MediaType = mediaType,
-            Sessions  = new List<Session>(),
-            Tracks    = new List<CdrWinTrack>()
+            Sessions  = [],
+            Tracks    = []
         };
 
         var mediaTypeAsInt = (int)_discImage.MediaType;
@@ -393,11 +393,10 @@ public sealed partial class CdrWin
         }
 
         if(_writingTracks != null && _writingStreams != null)
-        {
-            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct()) oldTrack.Close();
-        }
+            foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
+                oldTrack.Close();
 
-        _writingTracks = new List<Track>();
+        _writingTracks = [];
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {

@@ -43,8 +43,8 @@ public class Whole() : FilesystemTest("HTFS")
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw_dmf.img.lz",
@@ -95,5 +95,5 @@ public class Whole() : FilesystemTest("HTFS")
             ClusterSize = 1024,
             VolumeName  = ""
         }
-    };
+    ];
 }

@@ -64,7 +64,7 @@ public class Layers
 
         if(cicm.Sectors is null) return layers;
 
-        layers.Sectors = new List<Sectors>();
+        layers.Sectors = [];
 
         foreach(SectorsType sec in cicm.Sectors) layers.Sectors.Add(sec);
 

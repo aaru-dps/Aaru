@@ -485,7 +485,7 @@ partial class Dump
                         UpdateStatus?.Invoke(Localization.Core.Building_track_map);
                         _dumpLog.WriteLine(Localization.Core.Building_track_map);
 
-                        List<Track> tracks = new();
+                        List<Track> tracks = [];
 
                         for(ushort tno = discInformation.Value.FirstTrackNumber;
                             tno <= discInformation?.LastTrackLastSession;
@@ -597,19 +597,18 @@ partial class Dump
                         }
                         else
                         {
-                            opticalPlugin.SetTracks(new List<Track>
-                            {
-                                new()
-                                {
-                                    BytesPerSector    = (int)blockSize,
-                                    EndSector         = blocks - 1,
-                                    Sequence          = 1,
-                                    RawBytesPerSector = (int)blockSize,
-                                    SubchannelType    = TrackSubchannelType.None,
-                                    Session           = 1,
-                                    Type              = TrackType.Data
-                                }
-                            });
+                            opticalPlugin.SetTracks([
+                                                        new Track
+                                                        {
+                                                            BytesPerSector    = (int)blockSize,
+                                                            EndSector         = blocks - 1,
+                                                            Sequence          = 1,
+                                                            RawBytesPerSector = (int)blockSize,
+                                                            SubchannelType    = TrackSubchannelType.None,
+                                                            Session           = 1,
+                                                            Type              = TrackType.Data
+                                                        }
+                                                    ]);
                         }
                     }
                 }
@@ -714,19 +713,18 @@ partial class Dump
                 UpdateStatus?.Invoke(Localization.Core
                                                  .Creating_single_track_as_could_not_retrieve_track_list_from_drive);
 
-                (outputFormat as IWritableOpticalImage)?.SetTracks(new List<Track>
-                {
-                    new()
-                    {
-                        BytesPerSector    = (int)blockSize,
-                        EndSector         = blocks - 1,
-                        Sequence          = 1,
-                        RawBytesPerSector = (int)blockSize,
-                        SubchannelType    = TrackSubchannelType.None,
-                        Session           = 1,
-                        Type              = TrackType.Data
-                    }
-                });
+                (outputFormat as IWritableOpticalImage)?.SetTracks([
+                                                                       new Track
+                                                                       {
+                                                                           BytesPerSector    = (int)blockSize,
+                                                                           EndSector         = blocks - 1,
+                                                                           Sequence          = 1,
+                                                                           RawBytesPerSector = (int)blockSize,
+                                                                           SubchannelType    = TrackSubchannelType.None,
+                                                                           Session           = 1,
+                                                                           Type              = TrackType.Data
+                                                                       }
+                                                                   ]);
             }
         }
 
@@ -816,7 +814,7 @@ partial class Dump
            (CopyrightType)cmi[0] == CopyrightType.CSS)
         {
             UpdateStatus?.Invoke(Localization.Core.Title_keys_dumping_is_enabled_This_will_be_very_slow);
-            _resume.MissingTitleKeys ??= new List<ulong>(Enumerable.Range(0, (int)blocks).Select(n => (ulong)n));
+            _resume.MissingTitleKeys ??= [..Enumerable.Range(0, (int)blocks).Select(n => (ulong)n)];
         }
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
@@ -1431,7 +1429,7 @@ partial class Dump
                         }
                     }
 
-                    List<(ulong start, string type)> filesystems = new();
+                    List<(ulong start, string type)> filesystems = [];
 
                     if(sidecar.BlockMedias[0].FileSystemInformation != null)
                     {

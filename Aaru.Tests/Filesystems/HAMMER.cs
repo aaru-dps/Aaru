@@ -41,8 +41,8 @@ public class Hammer() : FilesystemTest("hammer")
     public override IFilesystem Plugin     => new HAMMER();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "dflybsd_3.6.1.vdi.lz",
@@ -65,5 +65,5 @@ public class Hammer() : FilesystemTest("hammer")
             VolumeName   = "Volume label",
             VolumeSerial = "ff4dc664-6276-11e7-983f-090027c41b46"
         }
-    };
+    ];
 }

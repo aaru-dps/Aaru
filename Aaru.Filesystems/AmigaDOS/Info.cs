@@ -96,12 +96,12 @@ public sealed partial class AmigaDOSPlugin
         }
 
         ulong[] rootPtrs =
-        {
+        [
             bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
             (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
             (partition.End - partition.Start + 1) / 2 + partition.Start,
             (partition.End - partition.Start + 1) / 2 + partition.Start + 4
-        };
+        ];
 
         var rblk = new RootBlock();
 
@@ -182,12 +182,12 @@ public sealed partial class AmigaDOSPlugin
         }
 
         ulong[] rootPtrs =
-        {
+        [
             bRootPtr + partition.Start, (partition.End - partition.Start + 1) / 2 + partition.Start - 2,
             (partition.End                             - partition.Start + 1) / 2 + partition.Start - 1,
             (partition.End - partition.Start + 1) / 2 + partition.Start,
             (partition.End - partition.Start + 1) / 2 + partition.Start + 4
-        };
+        ];
 
         var    rootBlk         = new RootBlock();
         byte[] rootBlockSector = null;

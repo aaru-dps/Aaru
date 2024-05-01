@@ -36,7 +36,7 @@ namespace Aaru.Gui.Models;
 
 public sealed class DevicesRootModel : RootModel
 {
-    public DevicesRootModel() => Devices = new ObservableCollection<DeviceModel>();
+    public DevicesRootModel() => Devices = [];
 
     public ObservableCollection<DeviceModel> Devices { get; }
 }

@@ -42,8 +42,8 @@ public class NHDr0 : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "T-98 Next");
     public override IMediaImage Plugin     => new Nhdr0();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "t98n_128.nhd.lz",
@@ -100,5 +100,5 @@ public class NHDr0 : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "fe9ecc6f0b5beb9635a1595155941925"
         }
-    };
+    ];
 }

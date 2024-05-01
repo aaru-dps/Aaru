@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
@@ -58,7 +57,7 @@ public class PcmciaInfoViewModel : ViewModelBase
         if(pcmciaCis == null) return;
 
         _cis                 = pcmciaCis;
-        CisList              = new ObservableCollection<PcmciaCisModel>();
+        CisList              = [];
         SavePcmciaCisCommand = ReactiveCommand.Create(ExecuteSavePcmciaCisCommand);
 
         _view = view;
@@ -180,10 +179,13 @@ public class PcmciaInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 

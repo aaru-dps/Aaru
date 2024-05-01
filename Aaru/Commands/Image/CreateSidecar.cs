@@ -59,26 +59,11 @@ sealed class CreateSidecarCommand : Command
 
     public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
-        Add(new Option<int>(new[]
-                            {
-                                "--block-size", "-b"
-                            },
-                            () => 512,
-                            UI.Tape_block_size_argument_help));
+        Add(new Option<int>(["--block-size", "-b"], () => 512, UI.Tape_block_size_argument_help));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--tape", "-t"
-                             },
-                             () => false,
-                             UI.Tape_argument_input_help));
+        Add(new Option<bool>(["--tape", "-t"], () => false, UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {

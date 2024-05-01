@@ -41,8 +41,8 @@ public class DiskCopy42 : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Aaru.Images.DiskCopy42();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "DOS_1440.img.lz",
@@ -50,14 +50,14 @@ public class DiskCopy42 : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "ff419213080574056ebd9adf7bab3d32",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -66,14 +66,14 @@ public class DiskCopy42 : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "c2be571406cf6353269faa59a4a8c0a4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -131,5 +131,5 @@ public class DiskCopy42 : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "85574aebeef03eb355bf8541955d06ea"
         }
-    };
+    ];
 }

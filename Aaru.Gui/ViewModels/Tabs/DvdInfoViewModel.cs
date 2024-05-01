@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -129,10 +128,13 @@ public sealed class DvdInfoViewModel
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 

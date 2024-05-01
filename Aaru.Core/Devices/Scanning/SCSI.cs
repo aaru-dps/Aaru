@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
@@ -284,7 +283,7 @@ public sealed partial class MediaScan
         double currentSpeed = 0;
         results.MaxSpeed          = double.MinValue;
         results.MinSpeed          = double.MaxValue;
-        results.UnreadableSectors = new List<ulong>();
+        results.UnreadableSectors = [];
 
         if(compactDisc)
         {

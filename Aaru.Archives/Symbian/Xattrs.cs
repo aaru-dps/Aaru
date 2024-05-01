@@ -49,7 +49,7 @@ public sealed partial class Symbian
 
         if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(_files[entryNumber].mime is not null) xattrs.Add("org.iana.mime_type");
 

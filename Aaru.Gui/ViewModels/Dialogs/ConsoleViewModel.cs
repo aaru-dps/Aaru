@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reactive;
@@ -99,10 +98,13 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         dlgSave.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "log"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "log"
+                }
+            ],
             Name = UI.Dialog_Log_files
         });
 

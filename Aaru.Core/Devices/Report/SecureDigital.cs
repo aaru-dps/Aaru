@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -46,10 +45,10 @@ public sealed partial class DeviceReport
     {
         var    report = new MmcSd();
         var    sense  = true;
-        byte[] cid    = Array.Empty<byte>();
-        byte[] csd    = Array.Empty<byte>();
-        byte[] ecsd   = Array.Empty<byte>();
-        byte[] scr    = Array.Empty<byte>();
+        byte[] cid    = [];
+        byte[] csd    = [];
+        byte[] ecsd   = [];
+        byte[] scr    = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {

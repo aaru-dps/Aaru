@@ -15,8 +15,8 @@ public class _625 : WritableOpticalMediaImageTest
     public override IWritableImage OutputPlugin    => new CloneCd();
     public override string         OutputExtension => "mds";
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "alice.toc",
@@ -25,8 +25,8 @@ public class _625 : WritableOpticalMediaImageTest
             SectorSize    = 2048,
             LongMd5       = "1bea7f781be0fb3b878de96e965c53a0",
             SubchannelMd5 = "01fef9f42fe53e6256ba713ad237dc8c",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -35,7 +35,7 @@ public class _625 : WritableOpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4
                 }
-            }
+            ]
         }
-    };
+    ];
 }

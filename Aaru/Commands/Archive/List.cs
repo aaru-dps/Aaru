@@ -53,19 +53,9 @@ sealed class ArchiveListCommand : Command
     {
         AddAlias("l");
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--long-format", "-l"
-                             },
-                             () => false,
-                             UI.Use_long_format));
+        Add(new Option<bool>(["--long-format", "-l"], () => false, UI.Use_long_format));
 
         AddArgument(new Argument<string>
         {

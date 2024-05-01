@@ -46,45 +46,30 @@ namespace Aaru.Partitions;
 /// <summary>Implements decoding of Apricot partitions</summary>
 public sealed class Apricot : IPartition
 {
-    const string MODULE_NAME = "Apricot partitions plugin";
-    readonly int[] _baudRates =
-    {
-        50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200
-    };
+    const    string MODULE_NAME = "Apricot partitions plugin";
+    readonly int[]  _baudRates  = [50, 75, 110, 134, 150, 300, 600, 1200, 1800, 2400, 3600, 4800, 7200, 9600, 19200];
     readonly string[] _bootTypeCodes =
-    {
+    [
         Localization.Non_bootable, Localization.Apricot_XI_RAM_BIOS, Localization.Generic_ROM_BIOS,
         Localization.Apricot_XI_ROM_BIOS, Localization.Apricot_Portable_ROM_BIOS, Localization.Apricot_F1_ROM_BIOS
-    };
+    ];
     readonly string[] _diskTypeCodes =
-    {
+    [
         Localization.MF1DD_70_track, "MF1DD", "MF2DD", "Winchester 5M", "Winchester 10M", "Winchester 20M"
-    };
-    readonly int[] _lineModes =
-    {
-        256, 200
-    };
-    readonly int[] _lineWidths =
-    {
-        80, 40
-    };
+    ];
+    readonly int[] _lineModes  = [256, 200];
+    readonly int[] _lineWidths = [80, 40];
     readonly string[] _operatingSystemCodes =
-    {
+    [
         Localization.Invalid_operating_system, "MS-DOS", "UCSD Pascal", Localization.CPM, "Concurrent CP/M"
-    };
+    ];
     readonly string[] _parityTypes =
-    {
+    [
         Localization.None_parity, Localization.Odd_parity, Localization.Even_parity, Localization.Mark_parity,
         Localization.Space_parity
-    };
-    readonly string[] _printDevices =
-    {
-        Localization.Parallel_print_device, Localization.Serial_print_device
-    };
-    readonly double[] _stopBits =
-    {
-        1, 1.5, 2
-    };
+    ];
+    readonly string[] _printDevices = [Localization.Parallel_print_device, Localization.Serial_print_device];
+    readonly double[] _stopBits     = [1, 1.5, 2];
 
 #region IPartition Members
 
@@ -100,7 +85,7 @@ public sealed class Apricot : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         // I think Apricot can't chain partitions so.
         if(sectorOffset != 0) return false;

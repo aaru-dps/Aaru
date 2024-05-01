@@ -40,8 +40,8 @@ public class XtalDOS() : ReadOnlyFilesystemTest("cpmfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "filename.imd",
@@ -62,5 +62,5 @@ public class XtalDOS() : ReadOnlyFilesystemTest("cpmfs")
             Clusters    = 189,
             ClusterSize = 1024
         }
-    };
+    ];
 }

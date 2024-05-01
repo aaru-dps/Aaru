@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 
@@ -64,7 +63,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[10];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
         foundLba    = 0;
         foundBlocks = 0;
 

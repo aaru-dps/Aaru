@@ -43,8 +43,8 @@ public class RDB() : FilesystemTest("aofs")
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amigaos_3.9.aif",
@@ -89,5 +89,5 @@ public class RDB() : FilesystemTest("aofs")
             VolumeName   = "Volume label",
             VolumeSerial = "A5830B06"
         }
-    };
+    ];
 }

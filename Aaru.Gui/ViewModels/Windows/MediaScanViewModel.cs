@@ -108,7 +108,7 @@ public sealed class MediaScanViewModel : ViewModelBase
         StopCommand  = ReactiveCommand.Create(ExecuteStopCommand);
         StartVisible = true;
         CloseVisible = true;
-        BlockMapList = new ObservableCollection<(ulong block, double duration)>();
+        BlockMapList = [];
 
 //        ChartPoints  = new ObservableCollection<DataPoint>();
         StepsX    = double.NaN;

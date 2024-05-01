@@ -49,7 +49,7 @@ public static class DiscStructureCapabilities
 
         if(len + 2 != response.Length) return null;
 
-        List<Capability> caps = new();
+        List<Capability> caps = [];
 
         uint offset = 4;
 

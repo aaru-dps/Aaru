@@ -42,8 +42,8 @@ public class DiskDup : BlockMediaImageTest
 
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "CDROM.lz",
@@ -83,14 +83,14 @@ public class DiskDup : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "ff419213080574056ebd9adf7bab3d32",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -99,14 +99,14 @@ public class DiskDup : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "c2be571406cf6353269faa59a4a8c0a4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -115,14 +115,14 @@ public class DiskDup : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "92ea7a359957012a682ba126cfdef0ce",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -148,5 +148,5 @@ public class DiskDup : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "7fbf0251a93cb36d98e68b7d19624de5"
         }
-    };
+    ];
 }

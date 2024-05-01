@@ -42,8 +42,8 @@ public class Compressed : OpticalMediaImageTest
 
     public override IMediaImage Plugin => new Chd();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "gigarec.chd",
@@ -53,8 +53,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -63,7 +63,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -82,8 +82,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -172,7 +172,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -183,8 +183,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -313,7 +313,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -324,8 +324,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -390,7 +390,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -401,8 +401,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -515,7 +515,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -526,8 +526,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -536,7 +536,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -547,8 +547,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -557,7 +557,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -568,8 +568,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -578,7 +578,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -589,8 +589,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -679,7 +679,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -690,8 +690,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -716,7 +716,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -727,8 +727,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -737,7 +737,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -748,8 +748,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -878,7 +878,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -889,8 +889,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -931,7 +931,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -942,8 +942,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -976,7 +976,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -987,8 +987,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1005,7 +1005,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1016,8 +1016,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1034,7 +1034,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1045,8 +1045,8 @@ public class Compressed : OpticalMediaImageTest
             Md5           = "UNKNOWN",
             LongMd5       = "UNKNOWN",
             SubchannelMd5 = "UNKNOWN",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1063,7 +1063,7 @@ public class Compressed : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

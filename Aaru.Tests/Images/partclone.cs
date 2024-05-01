@@ -40,8 +40,8 @@ public class Partclone : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "partclone");
     public override IMediaImage Plugin     => new PartClone();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "ext2.partclone.lz",
@@ -57,14 +57,14 @@ public class Partclone : BlockMediaImageTest
             Sectors    = 1012032,
             SectorSize = 512,
             Md5        = "f98b1a51ca2e7bf047d84969a2392a3d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1012032
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -100,5 +100,5 @@ public class Partclone : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "61cc3faa286364e7ad5bab18120c1151"
         }
-    };
+    ];
 }

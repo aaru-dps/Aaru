@@ -103,10 +103,7 @@ public partial class Device
     {
         for(var i = 0; i < transferLength; i++)
         {
-            byte[] sectorBuffer =
-            {
-                0x0, buffer[1 + 2064 * i], buffer[2 + 2064 * i], buffer[3 + 2064 * i]
-            };
+            byte[] sectorBuffer = [0x0, buffer[1 + 2064 * i], buffer[2 + 2064 * i], buffer[3 + 2064 * i]];
 
             var sectorNumber = BigEndianBitConverter.ToUInt32(sectorBuffer, 0);
 

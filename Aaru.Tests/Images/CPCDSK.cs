@@ -42,8 +42,8 @@ public class CPCDSK : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CPCDSK");
     public override IMediaImage Plugin     => new Cpcdsk();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "3D Construction Kit (1991)(Domark)(Disk 1 of 2)[a].dsk.lz",
@@ -51,14 +51,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "ee601c0d2beade20bb5c04b3f5800ff6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -67,14 +67,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "ee601c0d2beade20bb5c04b3f5800ff6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -83,14 +83,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -99,14 +99,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "dcb039b3b2ff2d6bdef8bf6c13ef3f83",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         /* TODO: Does not open
         new BlockImageTestExpected
@@ -124,14 +124,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 387,
             SectorSize = 512,
             Md5        = "82007217a3aa6bb91468b71a6dc4bfe5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 387
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -140,14 +140,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "acd60bb0119e0b5aa1790bef344211ac",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -156,14 +156,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "0330956c2fe38f278d7cba6f7bd8aa2d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -180,14 +180,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "5dc0d482a773043d8683a84c8220df95",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -196,14 +196,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "64edd62fabb381ef49bf3a8f43435824",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -212,14 +212,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "b381bbc72ab664d658ddd5898c7ff266",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -228,14 +228,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "ad43345ac469844465da6d73369cc6b1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -244,14 +244,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "6e4ab38fcc5dc2d8173173dcbf8ca2e1",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -268,14 +268,14 @@ public class CPCDSK : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "17b79ecfd045d1d5d3526b182b32064a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         }
-    };
+    ];
 }

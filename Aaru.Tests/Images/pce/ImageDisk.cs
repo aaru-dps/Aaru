@@ -40,8 +40,8 @@ public class ImageDisk : BlockMediaImageTest
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "ImageDisk");
     public override IMediaImage Plugin => new Imd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "md1dd_8.imd.lz",
@@ -89,14 +89,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "fd54916f713d01b670c1a5df5e74a97f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -145,14 +145,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "c533488a21098a62c85f1649abda2803",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -161,14 +161,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "db9cfb6eea18820b7a7e0b5b45594471",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -177,14 +177,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "456390a9c6ab05cb458a03c47296de08",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -201,14 +201,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "de3f85896f771b7e5bc4c9e3926d64e4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -233,14 +233,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 3372,
             SectorSize = 512,
             Md5        = "7f9164dc43bffc895db751ba1d9b55a9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3372
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -257,14 +257,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 3486,
             SectorSize = 512,
             Md5        = "dbd52e9e684f97d9e2292811242bb24e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3486
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -299,14 +299,14 @@ public class ImageDisk : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "ccd4431139755c58f340681f63510642",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         }
-    };
+    ];
 }

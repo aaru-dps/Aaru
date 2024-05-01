@@ -40,8 +40,8 @@ public class V1 : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MAME", "v1");
     public override IMediaImage Plugin     => new Chd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "hdd.chd",
@@ -50,5 +50,5 @@ public class V1 : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "43476343f53a177dd57b68dd769917aa"
         }
-    };
+    ];
 }

@@ -124,28 +124,28 @@ public class BlockMedia
 
         if(cicm.Checksums is not null)
         {
-            media.Checksums = new List<Checksum>();
+            media.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) media.Checksums.Add(chk);
         }
 
         if(cicm.ContentChecksums is not null)
         {
-            media.ContentChecksums = new List<Checksum>();
+            media.ContentChecksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.ContentChecksums) media.ContentChecksums.Add(chk);
         }
 
         if(cicm.VariableBlockSize is not null)
         {
-            media.VariableBlockSize = new List<BlockSize>();
+            media.VariableBlockSize = [];
 
             foreach(BlockSizeType blkSize in cicm.VariableBlockSize) media.VariableBlockSize.Add(blkSize);
         }
 
         if(cicm.TapeInformation is not null)
         {
-            media.TapeInformation = new List<TapePartition>();
+            media.TapeInformation = [];
 
             foreach(TapePartitionType tapeInformation in cicm.TapeInformation)
                 media.TapeInformation.Add(tapeInformation);
@@ -153,14 +153,14 @@ public class BlockMedia
 
         if(cicm.FileSystemInformation is not null)
         {
-            media.FileSystemInformation = new List<Partition>();
+            media.FileSystemInformation = [];
 
             foreach(PartitionType fsInfo in cicm.FileSystemInformation) media.FileSystemInformation.Add(fsInfo);
         }
 
         if(cicm.DumpHardwareArray is null) return media;
 
-        media.DumpHardware = new List<DumpHardware>();
+        media.DumpHardware = [];
 
         foreach(DumpHardwareType hw in cicm.DumpHardwareArray) media.DumpHardware.Add(hw);
 
@@ -201,7 +201,7 @@ public class BlockTrack
 
         if(cicm.Checksums is null) return trk;
 
-        trk.Checksums = new List<Checksum>();
+        trk.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) trk.Checksums.Add(chk);
 

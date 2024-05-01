@@ -37,13 +37,13 @@ public class Acorn : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Acorn");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux_ics.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 99792,
@@ -71,7 +71,7 @@ public class Acorn : PartitionSchemeTest
                     Start    = 671328,
                     Type     = "Linux swap"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

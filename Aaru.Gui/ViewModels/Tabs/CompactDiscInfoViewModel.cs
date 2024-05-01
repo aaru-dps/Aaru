@@ -70,7 +70,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         _pmaData                    = pma;
         _cdTextLeadInData           = cdTextLeadIn;
         _view                       = view;
-        IsrcList                    = new ObservableCollection<IsrcModel>();
+        IsrcList                    = [];
         SaveCdInformationCommand    = ReactiveCommand.Create(ExecuteSaveCdInformationCommand);
         SaveCdTocCommand            = ReactiveCommand.Create(ExecuteSaveCdTocCommand);
         SaveCdFullTocCommand        = ReactiveCommand.Create(ExecuteSaveCdFullTocCommand);
@@ -153,10 +153,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -176,10 +179,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -199,10 +205,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -222,10 +231,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -245,10 +257,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -268,10 +283,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -291,10 +309,13 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 

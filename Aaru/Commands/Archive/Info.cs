@@ -58,12 +58,7 @@ sealed class ArchiveInfoCommand : Command
             Name        = "archive-path"
         });
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
 
         Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());

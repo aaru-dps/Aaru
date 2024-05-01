@@ -125,8 +125,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
         CloseCommand       = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand        = ReactiveCommand.Create(ExecuteStopCommand);
         DestinationCommand = ReactiveCommand.Create(ExecuteDestinationCommand);
-        PluginsList        = new ObservableCollection<ImagePluginModel>();
-        Encodings          = new ObservableCollection<EncodingModel>();
+        PluginsList        = [];
+        Encodings          = [];
 
         // Defaults
         StopOnError      = false;
@@ -519,10 +519,13 @@ public sealed class MediaDumpViewModel : ViewModelBase
             dlgMetadata.Filters?.Add(new FileDialogFilter
             {
                 Name = UI.Dialog_Aaru_Metadata,
-                Extensions = new List<string>(new[]
-                {
-                    ".json"
-                })
+                Extensions =
+                [
+                    ..new[]
+                    {
+                        ".json"
+                    }
+                ]
             });
 
             string[] result = dlgMetadata.ShowAsync(_view).Result;

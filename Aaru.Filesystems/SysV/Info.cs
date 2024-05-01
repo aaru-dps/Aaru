@@ -74,12 +74,12 @@ public sealed partial class SysVfs
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
-        {
+        [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 
             // Superblock can also skip one cylinder (for boot)
             spc
-        };
+        ];
 
         foreach(int i in locations.TakeWhile(i => (ulong)i + partition.Start + sb_size_in_sectors <
                                                   imagePlugin.Info.Sectors))
@@ -175,12 +175,12 @@ public sealed partial class SysVfs
 
         // Superblock can start on 0x000, 0x200, 0x600 and 0x800, not aligned, so we assume 16 (128 bytes/sector) sectors as a safe value
         int[] locations =
-        {
+        [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 
             // Superblock can also skip one cylinder (for boot)
             spc
-        };
+        ];
 
         ErrorNumber errno;
 

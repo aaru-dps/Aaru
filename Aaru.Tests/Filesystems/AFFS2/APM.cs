@@ -43,8 +43,8 @@ public class APM() : FilesystemTest("affs2")
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "morphos_3.13.aif",
@@ -56,5 +56,5 @@ public class APM() : FilesystemTest("affs2")
             VolumeName   = "Volume label",
             VolumeSerial = "6144B870"
         }
-    };
+    ];
 }

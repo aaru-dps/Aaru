@@ -41,8 +41,8 @@ public class Btrfs() : FilesystemTest("btrfs")
     public override IFilesystem Plugin     => new BTRFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -65,5 +65,5 @@ public class Btrfs() : FilesystemTest("btrfs")
             VolumeName   = "btrfs",
             VolumeSerial = "5af44541-0605-f541-af6d-c229576707ab"
         }
-    };
+    ];
 }

@@ -66,9 +66,9 @@ public sealed partial class Sidecar
     {
         if(_aborted) return;
 
-        sidecar.OpticalDiscs = new List<OpticalDisc>
-        {
-            new()
+        sidecar.OpticalDiscs =
+        [
+            new OpticalDisc
             {
                 Checksums = imgChecksums,
                 Image = new Image
@@ -83,7 +83,7 @@ public sealed partial class Sidecar
                     Title = image.Info.MediaTitle
                 }
             }
-        };
+        ];
 
         if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
@@ -234,7 +234,7 @@ public sealed partial class Sidecar
         {
             sidecar.OpticalDiscs[0].Tracks    = new uint[1];
             sidecar.OpticalDiscs[0].Tracks[0] = (uint)tracks.Count;
-            trksLst                           = new List<CommonTypes.AaruMetadata.Track>();
+            trksLst                           = [];
         }
 
         if(sidecar.OpticalDiscs[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
@@ -512,7 +512,7 @@ public sealed partial class Sidecar
 
             var trkPartitions = partitions.Where(p => p.Start >= trk.StartSector && p.End <= trk.EndSector).ToList();
 
-            xmlTrk.FileSystemInformation = new List<CommonTypes.AaruMetadata.Partition>();
+            xmlTrk.FileSystemInformation = [];
 
             if(trkPartitions.Count > 0)
             {
@@ -528,7 +528,7 @@ public sealed partial class Sidecar
                         Type        = partition.Type
                     };
 
-                    List<FileSystem> lstFs = new();
+                    List<FileSystem> lstFs = [];
 
                     foreach(IFilesystem fs in plugins.Filesystems.Values)
                     {
@@ -579,7 +579,7 @@ public sealed partial class Sidecar
                     StartSector = xmlTrk.StartSector
                 };
 
-                List<FileSystem> lstFs = new();
+                List<FileSystem> lstFs = [];
 
                 var xmlPart = new Partition
                 {
@@ -691,18 +691,18 @@ public sealed partial class Sidecar
                 !string.IsNullOrEmpty(image.Info.DriveFirmwareRevision) ||
                 !string.IsNullOrEmpty(image.Info.DriveSerialNumber))
         {
-            sidecar.OpticalDiscs[0].DumpHardware = new List<DumpHardware>
-            {
-                new()
+            sidecar.OpticalDiscs[0].DumpHardware =
+            [
+                new DumpHardware
                 {
-                    Extents = new List<Extent>
-                    {
-                        new()
+                    Extents =
+                    [
+                        new Extent
                         {
                             Start = 0,
                             End   = image.Info.Sectors
                         }
-                    },
+                    ],
                     Manufacturer = image.Info.DriveManufacturer,
                     Model        = image.Info.DriveModel,
                     Firmware     = image.Info.DriveFirmwareRevision,
@@ -713,7 +713,7 @@ public sealed partial class Sidecar
                         Version = image.Info.ApplicationVersion
                     }
                 }
-            };
+            ];
         }
     }
 }

@@ -77,14 +77,14 @@ public class Book
 
         if(cicm.Barcodes is not null)
         {
-            book.Barcodes = new List<Barcode>();
+            book.Barcodes = [];
 
             foreach(Schemas.BarcodeType code in cicm.Barcodes) book.Barcodes.Add(code);
         }
 
         if(cicm.Language is null) return book;
 
-        book.Languages = new List<Language>();
+        book.Languages = [];
 
         foreach(LanguagesTypeLanguage lng in cicm.Language) book.Languages.Add((Language)lng);
 

@@ -57,7 +57,7 @@ public sealed class MBR : IPartition
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static readonly string[] _mbrTypes =
-    {
+    [
         // 0x00
         Localization.Empty, Localization.FAT12, Localization.XENIX_root, Localization.XENIX_usr,
 
@@ -301,7 +301,7 @@ public sealed class MBR : IPartition
         // 0xFC
         Localization.VMWare_VMKCORE, Localization.Linux_RAID_FreeDOS, Localization.SpeedStor_LANStep_PS2_IML,
         Localization.Xenix_bad_block
-    };
+    ];
 
 #region IPartition Members
 
@@ -320,7 +320,7 @@ public sealed class MBR : IPartition
     {
         ulong counter = 0;
 
-        partitions = new List<Partition>();
+        partitions = [];
 
         if(imagePlugin.Info.SectorSize < 512) return false;
 
@@ -656,7 +656,7 @@ public sealed class MBR : IPartition
     static bool GetMinix(IMediaImage imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
                          out List<Partition> partitions)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         ErrorNumber errno = imagePlugin.ReadSector(start, out byte[] sector);
 

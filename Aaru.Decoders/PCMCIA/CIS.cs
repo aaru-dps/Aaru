@@ -48,7 +48,7 @@ public static class CIS
     // TODO: Handle links? Or are they removed in lower layers of the operating system drivers?
     public static Tuple[] GetTuples(byte[] data)
     {
-        List<Tuple> tuples   = new();
+        List<Tuple> tuples   = [];
         var         position = 0;
 
         while(position < data.Length)
@@ -90,7 +90,7 @@ public static class CIS
         if((data?.Length - 2) % 6 != 0) return null;
 
         var                  tuple      = new DeviceGeometryTuple();
-        List<DeviceGeometry> geometries = new();
+        List<DeviceGeometry> geometries = [];
 
         for(var position = 2; position < data.Length; position += 6)
         {
@@ -211,7 +211,7 @@ public static class CIS
 
         if(data.Length < 4) return null;
 
-        List<byte>   buffer       = new();
+        List<byte>   buffer       = [];
         List<string> strings      = null;
         var          firstString  = false;
         const bool   secondString = false;
@@ -235,7 +235,7 @@ public static class CIS
             if(!firstString)
             {
                 tuple.Manufacturer = StringHandlers.CToString(buffer.ToArray());
-                buffer             = new List<byte>();
+                buffer             = [];
                 firstString        = true;
 
                 continue;
@@ -245,16 +245,16 @@ public static class CIS
             if(!secondString)
             {
                 tuple.Product = StringHandlers.CToString(buffer.ToArray());
-                buffer        = new List<byte>();
+                buffer        = [];
                 firstString   = true;
 
                 continue;
             }
 
-            if(strings == null) strings = new List<string>();
+            if(strings == null) strings = [];
 
             strings.Add(StringHandlers.CToString(buffer.ToArray()));
-            buffer = new List<byte>();
+            buffer = [];
         }
 
         if(strings != null) tuple.AdditionalInformation = strings.ToArray();

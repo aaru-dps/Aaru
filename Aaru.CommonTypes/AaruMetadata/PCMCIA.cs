@@ -75,7 +75,6 @@ public class Pcmcia
                                                                        AdditionalInformation =
                                                                            cicm.AdditionalInformation is null
                                                                                ? null
-                                                                               : new List<string>(cicm
-                                                                                  .AdditionalInformation)
+                                                                               : [..cicm.AdditionalInformation]
                                                                    };
 }

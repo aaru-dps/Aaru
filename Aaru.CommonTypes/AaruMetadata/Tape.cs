@@ -71,14 +71,14 @@ public class TapePartition
 
         if(cicm.Checksums is not null)
         {
-            partition.Checksums = new List<Checksum>();
+            partition.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) partition.Checksums.Add(chk);
         }
 
         if(cicm.File is null) return partition;
 
-        partition.Files = new List<TapeFile>();
+        partition.Files = [];
 
         foreach(TapeFileType file in cicm.File) partition.Files.Add(file);
 
@@ -113,7 +113,7 @@ public class TapeFile
 
         if(cicm.Checksums is null) return file;
 
-        file.Checksums = new List<Checksum>();
+        file.Checksums = [];
 
         foreach(Schemas.ChecksumType chk in cicm.Checksums) file.Checksums.Add(chk);
 

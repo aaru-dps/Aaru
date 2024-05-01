@@ -45,8 +45,8 @@ public class MBR_RDB() : FilesystemTest("aofs")
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "aros.aif",
@@ -69,5 +69,5 @@ public class MBR_RDB() : FilesystemTest("aofs")
             VolumeName   = "Volume label",
             VolumeSerial = "A5833085"
         }
-    };
+    ];
 }

@@ -43,8 +43,8 @@ public class ReFsMbr() : FilesystemTest("refs")
     public override IFilesystem Plugin     => new ReFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "win10.vdi.lz",
@@ -54,5 +54,5 @@ public class ReFsMbr() : FilesystemTest("refs")
             Clusters    = 8372224,
             ClusterSize = 4096
         }
-    };
+    ];
 }

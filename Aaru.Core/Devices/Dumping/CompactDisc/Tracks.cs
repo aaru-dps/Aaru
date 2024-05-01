@@ -68,7 +68,7 @@ partial class Dump
         byte[]      cmdBuf;            // Data buffer
         const uint  sectorSize = 2352; // Full sector size
         bool        sense;             // Sense indicator
-        List<Track> trackList = new(); // Tracks in disc
+        List<Track> trackList = [];    // Tracks in disc
         byte[]      tmpBuf;            // Temporary buffer
         toc        = null;
         lastSector = 0;

@@ -98,9 +98,8 @@ public static class EVPD
         Array.Copy(page, 4, ascii, 0, page.Length - 4);
 
         for(var i = 0; i < ascii.Length - 1; i++)
-        {
-            if(ascii[i] < 0x20) return null;
-        }
+            if(ascii[i] < 0x20)
+                return null;
 
         return StringHandlers.CToString(ascii);
     }
@@ -229,7 +228,7 @@ public static class EVPD
         };
 
         var                   position    = 6;
-        List<ScsiDefinitions> definitions = new();
+        List<ScsiDefinitions> definitions = [];
 
         while(position < pageResponse.Length)
         {
@@ -385,7 +384,7 @@ public static class EVPD
         };
 
         var                           position    = 4;
-        List<IdentificatonDescriptor> descriptors = new();
+        List<IdentificatonDescriptor> descriptors = [];
 
         while(position < pageResponse.Length)
         {
@@ -836,7 +835,7 @@ public static class EVPD
         };
 
         var                      position    = 4;
-        List<SoftwareIdentifier> identifiers = new();
+        List<SoftwareIdentifier> identifiers = [];
 
         while(position < pageResponse.Length)
         {
@@ -944,7 +943,7 @@ public static class EVPD
         };
 
         var                     position    = 4;
-        List<NetworkDescriptor> descriptors = new();
+        List<NetworkDescriptor> descriptors = [];
 
         while(position < pageResponse.Length)
         {
@@ -2171,7 +2170,7 @@ public static class EVPD
 
         if(pageResponse[4] != pageResponse[3] - 1) return null;
 
-        List<byte> array = new();
+        List<byte> array = [];
 
         const string fwRegExStr = @"Firmware Rev\s+=\s+(?<fw>\d+\.\d+)\s+Build date\s+=\s+(?<date>(\w|\d|\s*.)*)\s*$";
 
@@ -2206,7 +2205,7 @@ public static class EVPD
                     decoded.Version   = Encoding.ASCII.GetBytes(servoMatch.Groups["version"].Value);
                 }
 
-                array = new List<byte>();
+                array = [];
             }
             else
                 array.Add(pageResponse[pos]);

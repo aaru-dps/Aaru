@@ -42,8 +42,8 @@ public class Whole() : FilesystemTest("bfs")
     public override IFilesystem Plugin     => new BFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix_mf2dd.adf.lz",
@@ -90,5 +90,5 @@ public class Whole() : FilesystemTest("bfs")
             Clusters    = 2880,
             ClusterSize = 512
         }
-    };
+    ];
 }

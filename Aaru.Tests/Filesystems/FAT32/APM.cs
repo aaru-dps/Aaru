@@ -41,8 +41,8 @@ public class APM() : ReadOnlyFilesystemTest("fat32")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "darwin_6.0.2.aif",
@@ -121,5 +121,5 @@ public class APM() : ReadOnlyFilesystemTest("fat32")
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "35BD1F0A"
         }
-    };
+    ];
 }

@@ -1,56 +1,56 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 
-namespace CUETools.Codecs
+namespace CUETools.Codecs;
+
+/// <summary>
+///     Localized description attribute
+/// </summary>
+[AttributeUsage(AttributeTargets.All)]
+public class SRDescriptionAttribute : DescriptionAttribute
 {
-	/// <summary>
-	/// Localized description attribute
-	/// </summary>
-	[AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-	public class SRDescriptionAttribute : DescriptionAttribute
+    /// <summary>
+    ///     Resource manager to use;
+    /// </summary>
+    readonly Type SR;
+    /// <summary>
+    ///     Store a flag indicating whether this has been localized
+    /// </summary>
+    bool localized;
+
+    /// <summary>
+    ///     Construct the description attribute
+    /// </summary>
+    /// <param name="text"></param>
+    public SRDescriptionAttribute(Type SR, string text) : base(text)
     {
-        /// <summary>
-        /// Store a flag indicating whether this has been localized
-        /// </summary>
-        private bool localized;
+        localized = false;
+        this.SR   = SR;
+    }
 
-        /// <summary>
-        /// Resource manager to use;
-        /// </summary>
-        private Type SR;
+    /// <summary>
+    ///     Override the return of the description text to localize the text
+    /// </summary>
+    public override string Description
+    {
+        get
+        {
+            if(!localized)
+            {
+                localized = true;
 
-		/// <summary>
-		/// Construct the description attribute
-		/// </summary>
-		/// <param name="text"></param>
-		public SRDescriptionAttribute(Type SR, string text)
-			: base(text)
-		{
-			this.localized = false;
-			this.SR = SR;
-		}
+                DescriptionValue = SR.InvokeMember(DescriptionValue,
+                                                   BindingFlags.GetProperty |
+                                                   BindingFlags.Static      |
+                                                   BindingFlags.Public      |
+                                                   BindingFlags.NonPublic,
+                                                   null,
+                                                   null,
+                                                   []) as string;
+            }
 
-		/// <summary>
-		/// Override the return of the description text to localize the text
-		/// </summary>
-		public override string Description
-		{
-			get
-			{
-				if (!localized)
-				{
-					localized = true;
-					this.DescriptionValue = SR.InvokeMember(
-						 this.DescriptionValue,
-						 System.Reflection.BindingFlags.GetProperty | System.Reflection.BindingFlags.Static |
-						 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
-						 null,
-						 null,
-						 new object[] { }) as string;
-				}
-
-				return base.Description;
-			}
-		}
-	}
+            return base.Description;
+        }
+    }
 }

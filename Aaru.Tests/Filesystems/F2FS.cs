@@ -41,8 +41,8 @@ public class F2Fs() : FilesystemTest("f2fs")
     public override IFilesystem Plugin     => new F2FS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -65,5 +65,5 @@ public class F2Fs() : FilesystemTest("f2fs")
             VolumeName   = "DicSetter",
             VolumeSerial = "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
         }
-    };
+    ];
 }

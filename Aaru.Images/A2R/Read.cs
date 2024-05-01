@@ -214,7 +214,7 @@ public sealed partial class A2R
             }
         }
 
-        _a2RCaptures = new List<StreamCapture>();
+        _a2RCaptures = [];
 
         while(_a2RStream.Position < _a2RStream.Length)
         {
@@ -416,11 +416,7 @@ public sealed partial class A2R
     {
         buffer = null;
 
-        List<byte> tmpBuffer = new()
-        {
-            // A2R always starts at index signal
-            0
-        };
+        List<byte> tmpBuffer = [0];
 
         StreamCapture capture = StreamCaptureAtIndex(head, track, subTrack, captureIndex);
 

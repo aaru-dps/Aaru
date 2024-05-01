@@ -32,7 +32,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.CD;
@@ -56,8 +55,8 @@ public sealed partial class DiscJuggler : IOpticalMediaImage
 
     public DiscJuggler() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = true,
         HasSessions           = true,
         Version               = null,

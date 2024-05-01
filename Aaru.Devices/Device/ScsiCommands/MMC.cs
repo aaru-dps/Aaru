@@ -637,7 +637,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
 
@@ -715,7 +715,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.StartStopUnit;
 
@@ -867,7 +867,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[12];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.SetCdRomSpeed;
         cdb[1] = (byte)((byte)rotationalControl & 0x03);

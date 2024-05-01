@@ -169,7 +169,7 @@ public partial class Device
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool SetBlockLength(uint length, out uint[] response, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         LastError = SendMmcCommand(MmcCommands.SetBlocklen,
                                    false,
@@ -437,7 +437,7 @@ public partial class Device
             argument      = transferLength,
             blockSize     = 0,
             blocks        = 0,
-            buffer        = Array.Empty<byte>()
+            buffer        = []
         };
 
         // READ_MULTIPLE_BLOCK
@@ -464,7 +464,7 @@ public partial class Device
             argument      = 0,
             blockSize     = 0,
             blocks        = 0,
-            buffer        = Array.Empty<byte>()
+            buffer        = []
         };
 
         LastError = SendMultipleMmcCommands(commands, out duration, out bool sense, timeout);

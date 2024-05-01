@@ -50,7 +50,7 @@ public sealed class EncodingsViewModel : ViewModelBase
     public EncodingsViewModel(Encodings view)
     {
         _view        = view;
-        Encodings    = new ObservableCollection<EncodingModel>();
+        Encodings    = [];
         CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
 
         Task.Run(() =>

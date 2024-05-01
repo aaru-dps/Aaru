@@ -40,8 +40,8 @@ public class Uncompressed : BlockMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CisCopy");
     public override IMediaImage Plugin     => new Aaru.Images.CisCopy();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "md1dd8_all.dcf.lz",
@@ -49,14 +49,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "95c0b76419c1c74db6dbe1d790f97dde",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -65,14 +65,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "95c0b76419c1c74db6dbe1d790f97dde",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -81,14 +81,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "6f6507e416b7320d583dc347b8e57844",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -97,14 +97,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "48b93e8619c4c13f4a3724b550e4b371",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -113,14 +113,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "48b93e8619c4c13f4a3724b550e4b371",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -129,14 +129,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "1d060d2e2543e1c2e8569f5451660060",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -145,14 +145,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "0c93155bbc5e412f5014e037d08c2745",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -161,14 +161,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "0c93155bbc5e412f5014e037d08c2745",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -177,14 +177,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "0c93155bbc5e412f5014e037d08c2745",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
 
         // TODO: False positive CP/M filesystem
@@ -221,14 +221,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "181f3bc62f0b90f74af9d8027ebf7512",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -237,14 +237,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "181f3bc62f0b90f74af9d8027ebf7512",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -253,14 +253,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "181f3bc62f0b90f74af9d8027ebf7512",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -269,14 +269,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "783559ee5e774515d5e7d2feab9c333e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -285,14 +285,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "783559ee5e774515d5e7d2feab9c333e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -301,14 +301,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "783559ee5e774515d5e7d2feab9c333e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -317,14 +317,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "91f3fde8d56a536cdda4c6758e5dbc93",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -333,14 +333,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "91f3fde8d56a536cdda4c6758e5dbc93",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -349,14 +349,14 @@ public class Uncompressed : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "91f3fde8d56a536cdda4c6758e5dbc93",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         }
-    };
+    ];
 }

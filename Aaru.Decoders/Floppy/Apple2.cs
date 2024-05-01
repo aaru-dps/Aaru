@@ -51,7 +51,7 @@ public static class Apple2
 {
     const string MODULE_NAME = "Apple ][ GCR Decoder";
     static readonly byte[] ReadTable5and3 =
-    {
+    [
         // 00h
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 
@@ -99,10 +99,10 @@ public static class Apple2
 
         // F0h
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x18, 0x19, 0x1A, 0xFF, 0xFF, 0x1B, 0x1C, 0xFF, 0x1D, 0x1E, 0x1F
-    };
+    ];
 
     static readonly byte[] ReadTable6and2 =
-    {
+    [
         // 00h
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 
@@ -150,7 +150,7 @@ public static class Apple2
 
         // F0h
         0xFF, 0xFF, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0xFF, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F
-    };
+    ];
 
     /// <summary>Decodes the 5and3 encoded data</summary>
     /// <param name="data">5and3 encoded data.</param>
@@ -274,30 +274,12 @@ public static class Apple2
                     {
                         addressField = new RawAddressField
                         {
-                            prologue = new[]
-                            {
-                                data[position], data[position + 1], data[position + 2]
-                            },
-                            volume = new[]
-                            {
-                                data[position + 3], data[position + 4]
-                            },
-                            track = new[]
-                            {
-                                data[position + 5], data[position + 6]
-                            },
-                            sector = new[]
-                            {
-                                data[position + 7], data[position + 8]
-                            },
-                            checksum = new[]
-                            {
-                                data[position + 9], data[position + 10]
-                            },
-                            epilogue = new[]
-                            {
-                                data[position + 11], data[position + 12], data[position + 13]
-                            }
+                            prologue = [data[position], data[position + 1], data[position  + 2]],
+                            volume   = [data[position                 + 3], data[position  + 4]],
+                            track    = [data[position                 + 5], data[position  + 6]],
+                            sector   = [data[position                 + 7], data[position  + 8]],
+                            checksum = [data[position                 + 9], data[position  + 10]],
+                            epilogue = [data[position                 + 11], data[position + 12], data[position + 13]]
                         }
                     };
 
@@ -476,7 +458,7 @@ public static class Apple2
         var             onSync      = false;
         var             gaps        = new MemoryStream();
         var             count       = 0;
-        List<RawSector> sectors     = new();
+        List<RawSector> sectors     = [];
         var             trackNumber = new byte[2];
         endOffset = offset;
 
@@ -556,7 +538,7 @@ public static class Apple2
     public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
     {
         endOffset = offset;
-        List<RawTrack> tracks   = new();
+        List<RawTrack> tracks   = [];
         int            position = offset;
 
         RawTrack track = MarshalTrack(data, out position, position);

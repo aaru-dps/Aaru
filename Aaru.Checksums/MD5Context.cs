@@ -73,7 +73,7 @@ public sealed class Md5Context : IChecksum
     /// <summary>Returns a byte array of the hash value.</summary>
     public byte[] Final()
     {
-        _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        _provider.TransformFinalBlock([], 0, 0);
 
         return _provider.Hash;
     }
@@ -82,7 +82,7 @@ public sealed class Md5Context : IChecksum
     /// <summary>Returns a hexadecimal representation of the hash value.</summary>
     public string End()
     {
-        _provider.TransformFinalBlock(Array.Empty<byte>(), 0, 0);
+        _provider.TransformFinalBlock([], 0, 0);
         var md5Output = new StringBuilder();
 
         if(_provider.Hash is null) return null;

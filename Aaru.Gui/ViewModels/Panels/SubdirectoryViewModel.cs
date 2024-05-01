@@ -61,8 +61,8 @@ public sealed class SubdirectoryViewModel
 
     public SubdirectoryViewModel([NotNull] SubdirectoryModel model, Window view)
     {
-        Entries             = new ObservableCollection<FileModel>();
-        SelectedEntries     = new List<FileModel>();
+        Entries             = [];
+        SelectedEntries     = [];
         ExtractFilesCommand = ReactiveCommand.Create(ExecuteExtractFilesCommand);
         _model              = model;
         _view               = view;

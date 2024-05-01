@@ -441,7 +441,7 @@ public sealed partial class Alcohol120
     {
         ulong currentDataOffset = 0;
 
-        _writingTracks = new List<CommonTypes.Structs.Track>();
+        _writingTracks = [];
 
         if(!_isDvd)
         {
@@ -518,11 +518,8 @@ public sealed partial class Alcohol120
 
         var header = new Header
         {
-            signature = _alcoholSignature,
-            version = new byte[]
-            {
-                1, 5
-            },
+            signature        = _alcoholSignature,
+            version          = [1, 5],
             type             = MediaTypeToMediumType(_imageInfo.MediaType),
             sessions         = sessions,
             structuresOffset = (uint)(_pfi == null ? 0 : 96),
@@ -806,11 +803,11 @@ public sealed partial class Alcohol120
 
                     // Alcohol seems to set that for all CD tracks
                     // Daemon Tools expect it to be like this
-                    alcTrk.unknown = new byte[]
-                    {
-                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00
-                    };
+                    alcTrk.unknown =
+                    [
+                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00
+                    ];
 
                     alcTrk.unknown2 = new byte[24];
 
@@ -945,12 +942,7 @@ public sealed partial class Alcohol120
 
                         break;
                     case 2048:
-                        _descriptorStream.Write(new byte[]
-                                                {
-                                                    0x08, 0x02, 0x00, 0x00
-                                                },
-                                                0,
-                                                4);
+                        _descriptorStream.Write([0x08, 0x02, 0x00, 0x00], 0, 4);
 
                         _descriptorStream.Write(_dmi, 0, 2048);
 
@@ -1041,12 +1033,7 @@ public sealed partial class Alcohol120
         _descriptorStream.Write(filename, 0, filename.Length);
 
         // Write filename null termination
-        _descriptorStream.Write(new byte[]
-                                {
-                                    0, 0
-                                },
-                                0,
-                                2);
+        _descriptorStream.Write([0, 0], 0, 2);
 
         _descriptorStream.Flush();
         _descriptorStream.Close();

@@ -40,8 +40,8 @@ public class APM() : FilesystemTest("exfat")
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -52,5 +52,5 @@ public class APM() : FilesystemTest("exfat")
             ClusterSize  = 4096,
             VolumeSerial = "595AC82C"
         }
-    };
+    ];
 }

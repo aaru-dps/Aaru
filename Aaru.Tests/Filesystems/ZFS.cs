@@ -42,8 +42,8 @@ public class Zfs() : FilesystemTest("zfs")
     public override IFilesystem Plugin     => new ZFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "netbsd_7.1.aif",
@@ -53,5 +53,5 @@ public class Zfs() : FilesystemTest("zfs")
             VolumeName   = "NetBSD 7.1",
             VolumeSerial = "2639895335654686206"
         }
-    };
+    ];
 }

@@ -1190,7 +1190,7 @@ public sealed partial class ZZZRawImage
             // Do nothing.
         }
 
-        _imageInfo.ReadableMediaTags = new List<MediaTagType>(_mediaTags.Keys);
+        _imageInfo.ReadableMediaTags = [.._mediaTags.Keys];
 
         if(_rawDvd)
         {
@@ -1378,10 +1378,7 @@ public sealed partial class ZZZRawImage
             Session           = 1
         };
 
-        List<Track> lst = new()
-        {
-            trk
-        };
+        List<Track> lst = [trk];
 
         return lst;
     }
@@ -1409,10 +1406,7 @@ public sealed partial class ZZZRawImage
             Session           = 1
         };
 
-        List<Track> lst = new()
-        {
-            trk
-        };
+        List<Track> lst = [trk];
 
         return lst;
     }
@@ -1480,10 +1474,7 @@ public sealed partial class ZZZRawImage
 
         if(tag == SectorTagType.CdTrackFlags)
         {
-            buffer = new byte[]
-            {
-                4
-            };
+            buffer = [4];
 
             return ErrorNumber.NoError;
         }

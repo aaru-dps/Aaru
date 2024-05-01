@@ -39,8 +39,8 @@ public class BlindWrite7 : OpticalMediaImageTest
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "BlindWrite 7");
     public override IMediaImage Plugin     => new Aaru.Images.BlindWrite5();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile   = "report_cdr.B6T",
@@ -49,8 +49,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "86b8a763ef6522fccf97f743d7bf4fa3",
             LongMd5    = "a292359cce05849dec1d06ae471ecf9e",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -59,8 +59,8 @@ public class BlindWrite7 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -75,9 +75,9 @@ public class BlindWrite7 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -87,8 +87,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5    = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -97,8 +97,8 @@ public class BlindWrite7 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
@@ -113,9 +113,9 @@ public class BlindWrite7 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -125,8 +125,8 @@ public class BlindWrite7 : OpticalMediaImageTest
             SectorSize = 2048,
             Md5        = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5    = "3af5f943ddb9427d9c63a4ce3b704db9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -135,8 +135,8 @@ public class BlindWrite7 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
@@ -145,9 +145,9 @@ public class BlindWrite7 : OpticalMediaImageTest
                             Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         }
-    };
+    ];
 }

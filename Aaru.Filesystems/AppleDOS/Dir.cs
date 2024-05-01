@@ -121,7 +121,7 @@ public sealed partial class AppleDOS
         _totalFileEntries = 0;
         _catalogCache     = new Dictionary<string, ushort>();
         _fileTypeCache    = new Dictionary<string, byte>();
-        _lockedFiles      = new List<string>();
+        _lockedFiles      = [];
 
         if(lba == 0 || lba > _device.Info.Sectors) return ErrorNumber.InvalidArgument;
 

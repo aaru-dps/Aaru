@@ -667,7 +667,7 @@ public static class FullTOC
         Dictionary<byte, byte> sessionEndingTrack = new();
         toc.FirstCompleteSession = byte.MaxValue;
         toc.LastCompleteSession  = byte.MinValue;
-        List<TrackDataDescriptor> trackDescriptors = new();
+        List<TrackDataDescriptor> trackDescriptors = [];
         byte                      currentTrack     = 0;
 
         foreach(Track track in tracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence))

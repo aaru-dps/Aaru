@@ -115,8 +115,8 @@ public sealed partial class CdrWin
             // Initialize disc
             _discImage = new CdrWinDisc
             {
-                Sessions   = new List<Session>(),
-                Tracks     = new List<CdrWinTrack>(),
+                Sessions   = [],
+                Tracks     = [],
                 Comment    = "",
                 DiscHashes = new Dictionary<string, string>()
             };
@@ -300,7 +300,7 @@ public sealed partial class CdrWin
                                                Localization.Found_REM_METADATA_DUMP_EXTENT_at_line_0,
                                                lineNumber);
 
-                    DumpHardware ??= new List<DumpHardware>();
+                    DumpHardware ??= [];
 
                     DumpHardware existingDump =
                         DumpHardware.FirstOrDefault(d =>
@@ -319,14 +319,14 @@ public sealed partial class CdrWin
                     {
                         DumpHardware.Add(new DumpHardware
                         {
-                            Extents = new List<Extent>
-                            {
-                                new()
+                            Extents =
+                            [
+                                new Extent
                                 {
                                     Start = extentStart,
                                     End   = extentEnd
                                 }
-                            },
+                            ],
                             Firmware     = matchDumpExtent.Groups["firmware"].Value,
                             Manufacturer = matchDumpExtent.Groups["manufacturer"].Value,
                             Model        = matchDumpExtent.Groups["model"].Value,
@@ -1426,7 +1426,7 @@ public sealed partial class CdrWin
 
             AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_offset_map);
 
-            Partitions = new List<Partition>();
+            Partitions = [];
 
             ulong partitionSequence = 0;
 
@@ -1990,10 +1990,7 @@ public sealed partial class CdrWin
 
                 if(aaruTrack.Flag4Ch) flags |= CdFlags.FourChannel;
 
-                buffer = new[]
-                {
-                    (byte)flags
-                };
+                buffer = [(byte)flags];
 
                 return ErrorNumber.NoError;
             }

@@ -46,7 +46,7 @@ public static class Geometry
     /// <summary>List of known disk geometries</summary>
     public static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
         encoding, bool variableSectorsPerTrack, MediaType type)[] KnownGeometries =
-        {
+        [
             (32, 1, 8, 319, MediaEncoding.FM, false, MediaType.IBM23FD),
             (35, 1, 9, 256, MediaEncoding.FM, false, MediaType.ECMA_66),
             (35, 1, 13, 256, MediaEncoding.AppleGCR, false, MediaType.Apple32SS),
@@ -118,7 +118,7 @@ public static class Geometry
             (963, 8, 32, 512, MediaEncoding.MFM, false, MediaType.LS120),
             (1021, 64, 32, 512, MediaEncoding.MFM, false, MediaType.Jaz),
             (1024, 2, 32, 512, MediaEncoding.MFM, false, MediaType.FD32MB)
-        };
+        ];
 
     /// <summary>Gets the media type for a given geometry</summary>
     /// <param name="geometry">Geometry</param>

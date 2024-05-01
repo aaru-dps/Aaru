@@ -349,8 +349,8 @@ public class MasterSystem : IByteAddressableImage
 
         mappings = new LinearMemoryMap
         {
-            Devices = new[]
-            {
+            Devices =
+            [
                 new LinearMemoryDevice
                 {
                     Type = LinearMemoryType.ROM,
@@ -360,7 +360,7 @@ public class MasterSystem : IByteAddressableImage
                         Length = (ulong)_romSize
                     }
                 }
-            }
+            ]
         };
 
         return ErrorNumber.NoError;

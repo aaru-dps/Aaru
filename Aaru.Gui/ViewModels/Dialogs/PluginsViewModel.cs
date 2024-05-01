@@ -50,14 +50,14 @@ public sealed class PluginsViewModel : ViewModelBase
     public PluginsViewModel(PluginsDialog view)
     {
         _view                = view;
-        Filters              = new ObservableCollection<PluginModel>();
-        PartitionSchemes     = new ObservableCollection<PluginModel>();
-        Filesystems          = new ObservableCollection<PluginModel>();
-        ReadOnlyFilesystems  = new ObservableCollection<PluginModel>();
-        Images               = new ObservableCollection<PluginModel>();
-        WritableImages       = new ObservableCollection<PluginModel>();
-        FloppyImages         = new ObservableCollection<PluginModel>();
-        WritableFloppyImages = new ObservableCollection<PluginModel>();
+        Filters              = [];
+        PartitionSchemes     = [];
+        Filesystems          = [];
+        ReadOnlyFilesystems  = [];
+        Images               = [];
+        WritableImages       = [];
+        FloppyImages         = [];
+        WritableFloppyImages = [];
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
 
         // TODO: Takes too much time

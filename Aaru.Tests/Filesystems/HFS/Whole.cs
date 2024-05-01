@@ -42,8 +42,8 @@ public class Whole() : FilesystemTest("hfs")
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "macos_1.1_mf2dd.img.lz",
@@ -154,5 +154,5 @@ public class Whole() : FilesystemTest("hfs")
             ClusterSize = 512,
             VolumeName  = "VolumeLabel"
         }
-    };
+    ];
 }

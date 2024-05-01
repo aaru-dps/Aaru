@@ -44,8 +44,8 @@ public class MBR() : FilesystemTest("hfsplus")
     public override IFilesystem Plugin     => new AppleHFSPlus();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.3.aif",
@@ -217,5 +217,5 @@ public class MBR() : FilesystemTest("hfsplus")
             SystemId     = "H+Lx",
             VolumeSerial = "B9BAC6856878A404"
         }
-    };
+    ];
 }

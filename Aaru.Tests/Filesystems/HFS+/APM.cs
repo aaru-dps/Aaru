@@ -43,8 +43,8 @@ public class APM() : FilesystemTest("hfsplus")
     public override IFilesystem Plugin     => new AppleHFSPlus();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -288,5 +288,5 @@ public class APM() : FilesystemTest("hfsplus")
             SystemId     = "10.0",
             VolumeSerial = "2812682CF7B8EB3B"
         }
-    };
+    ];
 }

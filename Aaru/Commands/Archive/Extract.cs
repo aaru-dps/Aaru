@@ -58,19 +58,9 @@ sealed class ArchiveExtractCommand : Command
     {
         AddAlias("x");
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--xattrs", "-x"
-                             },
-                             () => false,
-                             UI.Extract_extended_attributes_if_present));
+        Add(new Option<bool>(["--xattrs", "-x"], () => false, UI.Extract_extended_attributes_if_present));
 
         AddArgument(new Argument<string>
         {
@@ -380,7 +370,7 @@ sealed class ArchiveExtractCommand : Command
 
                 foreach(string xattrName in xattrNames)
                 {
-                    byte[] xattrBuffer = Array.Empty<byte>();
+                    byte[] xattrBuffer = [];
 
                     Core.Spectre.ProgressSingleSpinner(ctx =>
                     {

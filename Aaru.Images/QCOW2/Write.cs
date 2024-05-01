@@ -266,12 +266,7 @@ public sealed partial class Qcow2
 
         _writingStream.Seek((long)(refBlockOffset + refCountBlockIndex), SeekOrigin.Begin);
 
-        _writingStream.Write(new byte[]
-                             {
-                                 0, 1
-                             },
-                             0,
-                             2);
+        _writingStream.Write([0, 1], 0, 2);
 
         ErrorMessage = "";
 

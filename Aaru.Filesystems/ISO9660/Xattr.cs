@@ -53,7 +53,7 @@ public sealed partial class ISO9660
 
         if(err != ErrorNumber.NoError) return err;
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(entry.XattrLength > 0) xattrs.Add("org.iso.9660.ea");
 
@@ -123,7 +123,7 @@ public sealed partial class ISO9660
                                            out buf);
                 }
 
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
 
@@ -156,7 +156,7 @@ public sealed partial class ISO9660
                                            out buf);
                 }
 
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
 

@@ -220,7 +220,7 @@ public sealed partial class XboxFatPlugin
         }
         else if(startCluster >= _fat16.Length) return null;
 
-        List<uint> clusters = new();
+        List<uint> clusters = [];
 
         uint nextCluster = startCluster;
 

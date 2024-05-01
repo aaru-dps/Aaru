@@ -62,7 +62,7 @@ public sealed class DragonFlyBSD : IPartition
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
         uint nSectors = 2048 / imagePlugin.Info.SectorSize;
 
         if(2048 % imagePlugin.Info.SectorSize > 0) nSectors++;

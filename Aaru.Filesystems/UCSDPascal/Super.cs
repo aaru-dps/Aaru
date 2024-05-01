@@ -102,7 +102,7 @@ public sealed partial class PascalPlugin
 
         var offset = 26;
 
-        _fileEntries = new List<PascalFileEntry>();
+        _fileEntries = [];
 
         while(offset + 26 < _catalogBlocks.Length)
         {

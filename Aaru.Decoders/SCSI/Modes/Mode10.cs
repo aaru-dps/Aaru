@@ -178,7 +178,7 @@ public static partial class Modes
 
         if(length != modeResponse.Length) return decoded;
 
-        List<ModePage> listpages = new();
+        List<ModePage> listpages = [];
 
         while(offset < modeResponse.Length)
         {

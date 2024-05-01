@@ -43,8 +43,8 @@ public class Adfs() : FilesystemTest("adfs")
     public override IFilesystem Plugin     => new AcornADFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "adfs_d.adf.lz",
@@ -149,5 +149,5 @@ public class Adfs() : FilesystemTest("adfs")
             Clusters    = 78336,
             ClusterSize = 256
         }
-    };
+    ];
 }

@@ -72,9 +72,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         _scsiModeSense10         = scsiModeSense10;
         _configuration           = mmcConfiguration;
         _view                    = view;
-        ModeSensePages           = new ObservableCollection<ScsiPageModel>();
-        EvpdPages                = new ObservableCollection<ScsiPageModel>();
-        MmcFeatures              = new ObservableCollection<ScsiPageModel>();
+        ModeSensePages           = [];
+        EvpdPages                = [];
+        MmcFeatures              = [];
         SaveInquiryBinaryCommand = ReactiveCommand.Create(ExecuteSaveInquiryBinaryCommand);
         SaveInquiryTextCommand   = ReactiveCommand.Create(ExecuteSaveInquiryTextCommand);
         SaveModeSense6Command    = ReactiveCommand.Create(ExecuteSaveModeSense6Command);
@@ -805,10 +805,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -828,10 +831,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveText.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.txt"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.txt"
+                }
+            ],
             Name = UI.Dialog_Text_files
         });
 
@@ -851,10 +857,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -874,10 +883,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -899,10 +911,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 
@@ -922,10 +937,13 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
         dlgSaveBinary.Filters?.Add(new FileDialogFilter
         {
-            Extensions = new List<string>(new[]
-            {
-                "*.bin"
-            }),
+            Extensions =
+            [
+                ..new[]
+                {
+                    "*.bin"
+                }
+            ],
             Name = UI.Dialog_Binary_files
         });
 

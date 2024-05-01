@@ -155,7 +155,7 @@ public abstract class FsExtractIssueTest
                 {
                     foreach(string xattr in xattrs)
                     {
-                        byte[] xattrBuf = Array.Empty<byte>();
+                        byte[] xattrBuf = [];
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
                         Assert.AreEqual(ErrorNumber.NoError,

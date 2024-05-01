@@ -41,8 +41,8 @@ public class Reiser3() : FilesystemTest("reiserfs")
     public override IFilesystem Plugin     => new Reiser();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux_2.2.20_r3.5.aif",
@@ -92,5 +92,5 @@ public class Reiser3() : FilesystemTest("reiserfs")
             VolumeName   = "DicSetter",
             VolumeSerial = "8902ac3c-3e0c-4c4c-84ec-03405c1710f1"
         }
-    };
+    ];
 }

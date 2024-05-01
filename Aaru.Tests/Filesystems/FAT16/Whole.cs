@@ -42,8 +42,8 @@ public class Whole() : ReadOnlyFilesystemTest("fat16")
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "msdos_3.30A_mf2ed.img.lz",
@@ -198,5 +198,5 @@ public class Whole() : ReadOnlyFilesystemTest("fat16")
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "E3230000"
         }
-    };
+    ];
 }

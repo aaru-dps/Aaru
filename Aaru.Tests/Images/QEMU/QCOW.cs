@@ -44,8 +44,8 @@ public class QCOW : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Qcow();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "qcow.qc.lz",
@@ -53,14 +53,14 @@ public class QCOW : BlockMediaImageTest
             Sectors    = 251904,
             SectorSize = 512,
             Md5        = "4bfc9e9e2dd86aa52ef709e77d2617ed",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

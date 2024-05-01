@@ -30,7 +30,6 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Linq;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.SCSI;
@@ -48,7 +47,7 @@ public sealed partial class DeviceReport
     {
         var    report = new Ssc();
         var    sense  = true;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -156,7 +155,7 @@ public sealed partial class DeviceReport
     {
         var    seqTest = new TestedSequentialMedia();
         var    sense   = true;
-        byte[] buffer  = Array.Empty<byte>();
+        byte[] buffer  = [];
 
         Modes.DecodedMode? decMode = null;
 

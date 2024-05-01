@@ -107,8 +107,8 @@ public sealed class ImageChecksumViewModel : ViewModelBase
         Md5Checked            = true;
         Sha1Checked           = true;
         SpamsumChecked        = true;
-        TrackChecksums        = new ObservableCollection<ChecksumModel>();
-        MediaChecksums        = new ObservableCollection<ChecksumModel>();
+        TrackChecksums        = [];
+        MediaChecksums        = [];
         StartCommand          = ReactiveCommand.Create(ExecuteStartCommand);
         CloseCommand          = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand           = ReactiveCommand.Create(ExecuteStopCommand);

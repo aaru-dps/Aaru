@@ -75,7 +75,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.LoadUnload;
 
@@ -161,7 +161,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[10];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.Locate;
 
@@ -259,7 +259,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb     = new byte[16];
-        byte[] buffer  = Array.Empty<byte>();
+        byte[] buffer  = [];
         byte[] idBytes = BitConverter.GetBytes(identifier);
 
         cdb[0] = (byte)ScsiCommands.Locate16;
@@ -1015,7 +1015,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.Rewind;
 
@@ -1046,7 +1046,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.TrackSelect;
         cdb[5] = track;
@@ -1077,7 +1077,7 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
         byte[] countB = BitConverter.GetBytes(count);
 
         cdb[0] = (byte)ScsiCommands.Space;

@@ -37,13 +37,13 @@ public class Atari : PartitionSchemeTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Atari ST");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux_ahdi.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 61440,
@@ -82,13 +82,13 @@ public class Atari : PartitionSchemeTest
                     Start       = 143361,
                     Type        = "LNX"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "linux_icd.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 30720,
@@ -170,13 +170,13 @@ public class Atari : PartitionSchemeTest
                     Start    = 806913,
                     Type     = "LNX"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "tos_1.04.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 14336,
@@ -213,7 +213,7 @@ public class Atari : PartitionSchemeTest
                     Start    = 43010,
                     Type     = "GEM"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

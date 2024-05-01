@@ -42,8 +42,8 @@ public class GPT() : FilesystemTest("ntfs")
     public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "haiku_hrev51259.aif",
@@ -55,5 +55,5 @@ public class GPT() : FilesystemTest("ntfs")
             ClusterSize  = 4096,
             VolumeSerial = "2A1DF87732D3285C"
         }
-    };
+    ];
 }

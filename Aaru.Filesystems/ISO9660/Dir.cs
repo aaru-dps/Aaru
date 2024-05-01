@@ -242,7 +242,7 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = record.xattr_len,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.start_lbn, record.size));
@@ -322,7 +322,7 @@ public sealed partial class ISO9660
                 Filename             = _encoding.GetString(data, entryOff + _directoryRecordSize, record.name_len),
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = record.xattr_len,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.extent, record.size));
@@ -396,7 +396,7 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeIsoDateTime(record.date),
                 XattrLength          = record.xattr_len,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.extent, record.size));
@@ -479,7 +479,7 @@ public sealed partial class ISO9660
                     // Can appear after an associated file
                     if(entries[entry.Filename].Extents is null)
                     {
-                        entries[entry.Filename].Extents              = new List<(uint extent, uint size)>();
+                        entries[entry.Filename].Extents              = [];
                         entries[entry.Filename].Flags                = entry.Flags;
                         entries[entry.Filename].FileUnitSize         = entry.FileUnitSize;
                         entries[entry.Filename].Interleave           = entry.Interleave;
@@ -747,7 +747,7 @@ public sealed partial class ISO9660
 
                     if(amiga.flags.HasFlag(AmigaFlags.Comment))
                     {
-                        entry.AmigaComment ??= Array.Empty<byte>();
+                        entry.AmigaComment ??= [];
 
                         var newComment = new byte[entry.AmigaComment.Length +
                                                   data[systemAreaOff                +
@@ -885,7 +885,7 @@ public sealed partial class ISO9660
                         Array.Copy(data, systemAreaOff + Marshal.SizeOf<AlternateName>(), nm, 0, nm.Length);
                     }
 
-                    entry.RockRidgeAlternateName ??= Array.Empty<byte>();
+                    entry.RockRidgeAlternateName ??= [];
 
                     var newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
                     Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0, entry.RockRidgeAlternateName.Length);
@@ -935,10 +935,7 @@ public sealed partial class ISO9660
 
                     // As per RRIP 4.1.5.1, we leave name as in previous entry, substitute location with the one in
                     // the CL, and replace all other fields with the ones found in the first entry of the child
-                    entry.Extents = new List<(uint extent, uint size)>
-                    {
-                        (cl.child_dir_lba, childRecord.size)
-                    };
+                    entry.Extents = [(cl.child_dir_lba, childRecord.size)];
 
                     entry.Size                 = childRecord.size;
                     entry.Flags                = childRecord.flags;
@@ -1097,7 +1094,7 @@ public sealed partial class ISO9660
     IEnumerable<PathTableEntryInternal> GetPathTableEntries(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries;
-        List<PathTableEntryInternal>        pathTableList = new(_pathTable);
+        List<PathTableEntryInternal>        pathTableList = [.._pathTable];
 
         if(path is "" or "/")
             tableEntries = _pathTable.Where(p => p.Parent == 1 && p != _pathTable[0]);
@@ -1139,7 +1136,7 @@ public sealed partial class ISO9660
     DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry>         entries      = new();
+        List<DecodedDirectoryEntry>         entries      = [];
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
@@ -1161,7 +1158,7 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = tEntry.XattrLength,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.start_lbn, record.size));
@@ -1187,7 +1184,7 @@ public sealed partial class ISO9660
     DecodedDirectoryEntry[] GetSubdirsFromIsoPathTable(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry>         entries      = new();
+        List<DecodedDirectoryEntry>         entries      = [];
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
@@ -1212,7 +1209,7 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeIsoDateTime(record.date),
                 XattrLength          = tEntry.XattrLength,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.extent, record.size));
@@ -1237,7 +1234,7 @@ public sealed partial class ISO9660
     DecodedDirectoryEntry[] GetSubdirsFromHighSierraPathTable(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries = GetPathTableEntries(path);
-        List<DecodedDirectoryEntry>         entries      = new();
+        List<DecodedDirectoryEntry>         entries      = [];
 
         foreach(PathTableEntryInternal tEntry in tableEntries)
         {
@@ -1259,7 +1256,7 @@ public sealed partial class ISO9660
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = tEntry.XattrLength,
-                Extents              = new List<(uint extent, uint size)>()
+                Extents              = []
             };
 
             if(record.size != 0) entry.Extents.Add((record.extent, record.size));

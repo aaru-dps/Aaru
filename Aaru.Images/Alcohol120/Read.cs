@@ -387,7 +387,7 @@ public sealed partial class Alcohol120
 
         _imageInfo.MediaType = MediumTypeToMediaType(_header.type);
 
-        Sessions = new List<CommonTypes.Structs.Session>();
+        Sessions = [];
 
         foreach(Session alcSes in _alcSessions.Values)
         {
@@ -531,7 +531,7 @@ public sealed partial class Alcohol120
 
         AaruConsole.DebugWriteLine(MODULE_NAME, "ImageInfo.mediaType = {0}", _imageInfo.MediaType);
 
-        Partitions = new List<Partition>();
+        Partitions = [];
         _offsetMap = new Dictionary<uint, ulong>();
 
         foreach(Track trk in _alcTracks.Values)
@@ -678,12 +678,7 @@ public sealed partial class Alcohol120
             byte lastSession  = 0;
             var  tocMs        = new MemoryStream();
 
-            tocMs.Write(new byte[]
-                        {
-                            0, 0
-                        },
-                        0,
-                        2); // Reserved for TOC session numbers
+            tocMs.Write([0, 0], 0, 2); // Reserved for TOC session numbers
 
             foreach(KeyValuePair<int, Dictionary<int, Track>> sessionToc in _alcToc)
             {
@@ -985,10 +980,7 @@ public sealed partial class Alcohol120
             case SectorTagType.CdSectorSync:
                 break;
             case SectorTagType.CdTrackFlags:
-                buffer = new[]
-                {
-                    (byte)(alcTrack.adrCtl & 0x0F)
-                };
+                buffer = [(byte)(alcTrack.adrCtl & 0x0F)];
 
                 return ErrorNumber.NoError;
             default:
@@ -1485,7 +1477,7 @@ public sealed partial class Alcohol120
     /// <inheritdoc />
     public List<CommonTypes.Structs.Track> GetSessionTracks(ushort session)
     {
-        List<CommonTypes.Structs.Track> tracks = new();
+        List<CommonTypes.Structs.Track> tracks = [];
 
         foreach(Track alcTrack in _alcTracks.Values)
         {

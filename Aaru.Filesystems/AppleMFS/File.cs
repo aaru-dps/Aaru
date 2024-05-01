@@ -297,7 +297,7 @@ public sealed partial class AppleMFS
         {
             if(entry.flRPyLen == 0)
             {
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
             }
@@ -308,7 +308,7 @@ public sealed partial class AppleMFS
         {
             if(entry.flPyLen == 0)
             {
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
             }

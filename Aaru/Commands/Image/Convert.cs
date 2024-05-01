@@ -69,21 +69,11 @@ sealed class ConvertImageCommand : Command
 
     public ConvertImageCommand() : base("convert", UI.Image_Convert_Command_Description)
     {
-        Add(new Option<string>(new[]
-                               {
-                                   "--cicm-xml", "-x"
-                               },
-                               () => null,
-                               UI.Take_metadata_from_existing_CICM_XML_sidecar));
+        Add(new Option<string>(["--cicm-xml", "-x"], () => null, UI.Take_metadata_from_existing_CICM_XML_sidecar));
 
         Add(new Option<string>("--comments", () => null, UI.Image_comments));
 
-        Add(new Option<int>(new[]
-                            {
-                                "--count", "-c"
-                            },
-                            () => 64,
-                            UI.How_many_sectors_to_convert_at_once));
+        Add(new Option<int>(["--count", "-c"], () => 64, UI.How_many_sectors_to_convert_at_once));
 
         Add(new Option<string>("--creator", () => null, UI.Who_person_created_the_image));
 
@@ -95,16 +85,9 @@ sealed class ConvertImageCommand : Command
 
         Add(new Option<string>("--drive-serial", () => null, UI.Serial_number_of_drive_read_the_media_by_image));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--force", "-f"
-                             },
-                             UI.Continue_conversion_even_if_data_lost));
+        Add(new Option<bool>(["--force", "-f"], UI.Continue_conversion_even_if_data_lost));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--format", "-p"
-                               },
+        Add(new Option<string>(["--format", "-p"],
                                () => null,
                                UI.Format_of_the_output_image_as_plugin_name_or_plugin_id));
 
@@ -120,66 +103,23 @@ sealed class ConvertImageCommand : Command
         Add(new Option<string>("--media-serial", () => null, UI.Serial_number_of_media_by_image));
         Add(new Option<string>("--media-title",  () => null, UI.Title_of_media_represented_by_image));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--options", "-O"
-                               },
-                               () => null,
-                               UI.Comma_separated_name_value_pairs_of_image_options));
+        Add(new Option<string>(["--options", "-O"], () => null, UI.Comma_separated_name_value_pairs_of_image_options));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--resume-file", "-r"
-                               },
-                               () => null,
-                               UI.Take_dump_hardware_from_existing_resume));
+        Add(new Option<string>(["--resume-file", "-r"], () => null, UI.Take_dump_hardware_from_existing_resume));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--geometry", "-g"
-                               },
-                               () => null,
-                               UI.Force_geometry_help));
+        Add(new Option<string>(["--geometry", "-g"], () => null, UI.Force_geometry_help));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--fix-subchannel-position"
-                             },
-                             () => true,
-                             UI.Fix_subchannel_position_help));
+        Add(new Option<bool>(["--fix-subchannel-position"], () => true, UI.Fix_subchannel_position_help));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--fix-subchannel"
-                             },
-                             () => false,
-                             UI.Fix_subchannel_help));
+        Add(new Option<bool>(["--fix-subchannel"], () => false, UI.Fix_subchannel_help));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--fix-subchannel-crc"
-                             },
-                             () => false,
-                             UI.Fix_subchannel_crc_help));
+        Add(new Option<bool>(["--fix-subchannel-crc"], () => false, UI.Fix_subchannel_crc_help));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--generate-subchannels"
-                             },
-                             () => false,
-                             UI.Generates_subchannels_help));
+        Add(new Option<bool>(["--generate-subchannels"], () => false, UI.Generates_subchannels_help));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--decrypt"
-                             },
-                             () => false,
-                             UI.Decrypt_sectors_help));
+        Add(new Option<bool>(["--decrypt"], () => false, UI.Decrypt_sectors_help));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--aaru-metadata", "-m"
-                               },
+        Add(new Option<string>(["--aaru-metadata", "-m"],
                                () => null,
                                "Take metadata from existing Aaru Metadata sidecar."));
 
@@ -556,7 +496,7 @@ sealed class ConvertImageCommand : Command
             return (int)ErrorNumber.CannotOpenFormat;
         }
 
-        List<IBaseWritableImage> candidates = new();
+        List<IBaseWritableImage> candidates = [];
 
         // Try extension
         if(string.IsNullOrEmpty(format))
@@ -1122,7 +1062,7 @@ sealed class ConvertImageCommand : Command
             Dictionary<byte, string> isrcs                     = new();
             Dictionary<byte, byte>   trackFlags                = new();
             string                   mcn                       = null;
-            HashSet<int>             subchannelExtents         = new();
+            HashSet<int>             subchannelExtents         = [];
             Dictionary<byte, int>    smallestPregapLbaPerTrack = new();
             var                      tracks                    = new Track[inputOptical.Tracks.Count];
 
@@ -1486,12 +1426,7 @@ sealed class ConvertImageCommand : Command
             {
                 foreach((byte track, byte flags) in trackFlags)
                 {
-                    outputOptical.WriteSectorTag(new[]
-                                                 {
-                                                     flags
-                                                 },
-                                                 track,
-                                                 SectorTagType.CdTrackFlags);
+                    outputOptical.WriteSectorTag([flags], track, SectorTagType.CdTrackFlags);
                 }
             }
 

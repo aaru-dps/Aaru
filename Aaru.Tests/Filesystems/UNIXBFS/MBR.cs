@@ -41,8 +41,8 @@ public class MBR() : FilesystemTest("bfs")
     public override IFilesystem Plugin => new BFS();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux.aif",
@@ -53,5 +53,5 @@ public class MBR() : FilesystemTest("bfs")
             ClusterSize = 512,
             VolumeName  = "Label"
         }
-    };
+    ];
 }

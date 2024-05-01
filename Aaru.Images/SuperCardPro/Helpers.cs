@@ -77,10 +77,7 @@ public sealed partial class SuperCardPro
 
         if(over == 0)
         {
-            return new[]
-            {
-                (byte)ticks
-            };
+            return [(byte)ticks];
         }
 
         var expanded = new byte[over + 1];
@@ -95,7 +92,7 @@ public sealed partial class SuperCardPro
 
     static List<uint> FluxRepresentationsToUInt32List(IEnumerable<byte> flux)
     {
-        List<uint> scpData = new();
+        List<uint> scpData = [];
         uint       tick    = 0;
 
         foreach(byte b in flux)
@@ -116,10 +113,10 @@ public sealed partial class SuperCardPro
     static List<byte> FluxRepresentationsToUInt16List(IEnumerable<byte> flux, IReadOnlyList<uint> indices,
                                                       out uint[]        trackLengths)
     {
-        List<byte> scpData = new();
+        List<byte> scpData = [];
         ushort     tick    = 0;
 
-        List<uint> revolutionLength = new();
+        List<uint> revolutionLength = [];
         uint       revolutionTicks  = 0;
         uint       revolutionCells  = 0;
         ushort     index            = 0;

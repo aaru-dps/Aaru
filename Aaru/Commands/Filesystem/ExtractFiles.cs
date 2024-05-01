@@ -57,33 +57,15 @@ sealed class ExtractFilesCommand : Command
 
     public ExtractFilesCommand() : base("extract", UI.Filesystem_Extract_Command_Description)
     {
-        Add(new Option<string>(new[]
-                               {
-                                   "--encoding", "-e"
-                               },
-                               () => null,
-                               UI.Name_of_character_encoding_to_use));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--options", "-O"
-                               },
+        Add(new Option<string>(["--options", "-O"],
                                () => null,
                                UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--xattrs", "-x"
-                             },
-                             () => false,
-                             UI.Extract_extended_attributes_if_present));
+        Add(new Option<bool>(["--xattrs", "-x"], () => false, UI.Extract_extended_attributes_if_present));
 
-        Add(new Option<string>(new[]
-                               {
-                                   "--namespace", "-n"
-                               },
-                               () => null,
-                               UI.Namespace_to_use_for_filenames));
+        Add(new Option<string>(["--namespace", "-n"], () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
@@ -504,7 +486,7 @@ sealed class ExtractFilesCommand : Command
                     {
                         foreach(string xattr in xattrs)
                         {
-                            byte[] xattrBuf = Array.Empty<byte>();
+                            byte[] xattrBuf = [];
 
                             Core.Spectre.ProgressSingleSpinner(ctx =>
                             {

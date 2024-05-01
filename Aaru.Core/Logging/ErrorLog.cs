@@ -75,8 +75,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new();
-            List<string> status = new();
+            List<string> error  = [];
+            List<string> status = [];
 
             if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
@@ -141,8 +141,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new();
-            List<string> status = new();
+            List<string> error  = [];
+            List<string> status = [];
 
             if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
@@ -201,8 +201,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new();
-            List<string> status = new();
+            List<string> error  = [];
+            List<string> status = [];
 
             if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 
@@ -259,8 +259,8 @@ public sealed class ErrorLog
         }
         else
         {
-            List<string> error  = new();
-            List<string> status = new();
+            List<string> error  = [];
+            List<string> status = [];
 
             if((registers.Status & 0x01) == 0x01) status.Add("ERR");
 

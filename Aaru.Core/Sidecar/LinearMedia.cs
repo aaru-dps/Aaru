@@ -54,20 +54,20 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    static void LinearMedia(IByteAddressableImage image, Guid filterId, string imagePath, FileInfo fi,
-                            PluginRegister plugins, List<CommonTypes.AaruMetadata.Checksum> imgChecksums,
-                            ref Metadata sidecar, Encoding encoding) => sidecar.LinearMedias = new List<LinearMedia>
-    {
-        new()
-        {
-            Checksums = imgChecksums,
-            Image = new Image
-            {
-                Format = image.Format,
-                Offset = 0,
-                Value  = Path.GetFileName(imagePath)
-            },
-            Size = image.Info.Sectors
-        }
-    };
+    static void LinearMedia(IByteAddressableImage image,   Guid filterId, string imagePath, FileInfo fi,
+                            PluginRegister        plugins, List<CommonTypes.AaruMetadata.Checksum> imgChecksums,
+                            ref Metadata          sidecar, Encoding encoding) => sidecar.LinearMedias =
+                                                                                 [
+                                                                                     new LinearMedia
+                                                                                     {
+                                                                                         Checksums = imgChecksums,
+                                                                                         Image = new Image
+                                                                                         {
+                                                                                             Format = image.Format,
+                                                                                             Offset = 0,
+                                                                                             Value  = Path.GetFileName(imagePath)
+                                                                                         },
+                                                                                         Size = image.Info.Sectors
+                                                                                     }
+                                                                                 ];
 }

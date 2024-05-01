@@ -1254,7 +1254,7 @@ public sealed partial class Chd
         if(_isCdrom || _isGdrom)
         {
             _offsetmap  = new Dictionary<ulong, uint>();
-            _partitions = new List<Partition>();
+            _partitions = [];
             ulong partPos = 0;
 
             foreach(Track aaruTrack in _tracks.Values)

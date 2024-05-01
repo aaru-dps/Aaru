@@ -38,31 +38,16 @@ namespace Aaru.Tests.Checksums;
 [TestFixture]
 public class Crc16Ibm
 {
-    static readonly byte[] _expectedEmpty =
-    {
-        0x00, 0x00
-    };
+    static readonly byte[] _expectedEmpty = [0x00, 0x00];
     static readonly byte[] _expectedRandom =
-    {
+    [
         // ReSharper disable once UseUtf8StringLiteral
         0x2d, 0x6d
-    };
-    static readonly byte[] _expectedRandom15 =
-    {
-        0x72, 0xa6
-    };
-    static readonly byte[] _expectedRandom31 =
-    {
-        0xf4, 0x9e
-    };
-    static readonly byte[] _expectedRandom63 =
-    {
-        0xfb, 0xd9
-    };
-    static readonly byte[] _expectedRandom2352 =
-    {
-        0x23, 0xf4
-    };
+    ];
+    static readonly byte[] _expectedRandom15   = [0x72, 0xa6];
+    static readonly byte[] _expectedRandom31   = [0xf4, 0x9e];
+    static readonly byte[] _expectedRandom63   = [0xfb, 0xd9];
+    static readonly byte[] _expectedRandom2352 = [0x23, 0xf4];
 
     [Test]
     public void EmptyData()

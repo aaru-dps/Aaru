@@ -65,7 +65,7 @@ public sealed partial class FAT
 
         if(err != ErrorNumber.NoError || entry is null) return err;
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(!_fat32)
         {

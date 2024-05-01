@@ -32,7 +32,6 @@
 
 // ReSharper disable InconsistentNaming
 
-using System;
 using Aaru.Console;
 
 // ReSharper disable UnusedMember.Global
@@ -162,7 +161,7 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscStopPlay;
 
-        buffer = Array.Empty<byte>();
+        buffer = [];
 
         LastError = SendScsiCommand(cdb,
                                     ref buffer,

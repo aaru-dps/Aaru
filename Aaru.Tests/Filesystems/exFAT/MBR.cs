@@ -41,8 +41,8 @@ public class MBR() : FilesystemTest("exfat")
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -93,5 +93,5 @@ public class MBR() : FilesystemTest("exfat")
             ClusterSize  = 32768,
             VolumeSerial = "636E083B"
         }
-    };
+    ];
 }

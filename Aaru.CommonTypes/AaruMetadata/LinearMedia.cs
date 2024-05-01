@@ -94,21 +94,21 @@ public class LinearMedia
 
         if(cicm.ImageChecksums is not null)
         {
-            linearMedia.ImageChecksums = new List<Checksum>();
+            linearMedia.ImageChecksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.ImageChecksums) linearMedia.ImageChecksums.Add(chk);
         }
 
         if(cicm.Checksums is not null)
         {
-            linearMedia.Checksums = new List<Checksum>();
+            linearMedia.Checksums = [];
 
             foreach(Schemas.ChecksumType chk in cicm.Checksums) linearMedia.Checksums.Add(chk);
         }
 
         if(cicm.DumpHardwareArray is null) return linearMedia;
 
-        linearMedia.DumpHardware = new List<DumpHardware>();
+        linearMedia.DumpHardware = [];
 
         foreach(DumpHardwareType hw in cicm.DumpHardwareArray) linearMedia.DumpHardware.Add(hw);
 

@@ -76,7 +76,7 @@ public class Magazine
 
         if(cicm.Barcodes is not null)
         {
-            magazine.Barcodes = new List<Barcode>();
+            magazine.Barcodes = [];
 
             foreach(Schemas.BarcodeType code in cicm.Barcodes) magazine.Barcodes.Add(code);
         }

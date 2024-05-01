@@ -38,37 +38,37 @@ namespace Aaru.Images;
 public sealed partial class A2R
 {
     readonly byte[] _a2Rv2Signature =
-    {
+    [
         0x41, 0x32, 0x52, 0x32 // A2R2
-    };
+    ];
 
     readonly byte[] _a2Rv3Signature =
-    {
+    [
         0x41, 0x32, 0x52, 0x33 // A2R3
-    };
+    ];
 
     readonly byte[] _infoChunkSignature =
-    {
+    [
         0x49, 0x4E, 0x46, 0x4F // INFO
-    };
+    ];
 
     readonly byte[] _metaChunkSignature =
-    {
+    [
         0x4D, 0x45, 0x54, 0x41 // META
-    };
+    ];
 
     readonly byte[] _rwcpChunkSignature =
-    {
+    [
         0x52, 0x57, 0x43, 0x50 // RWCP
-    };
+    ];
 
     readonly byte[] _slvdChunkSignature =
-    {
+    [
         0x53, 0x4C, 0x56, 0x44 // SLVD
-    };
+    ];
 
     readonly byte[] _strmChunkSignature =
-    {
+    [
         0x53, 0x54, 0x52, 0x4D // STRM
-    };
+    ];
 }

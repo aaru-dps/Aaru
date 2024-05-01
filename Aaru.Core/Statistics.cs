@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -141,7 +140,7 @@ public static class Statistics
 
                     if(ctx.Commands.Any(c => !c.Synchronized))
                     {
-                        dto.Commands = new List<NameValueStats>();
+                        dto.Commands = [];
 
                         foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
@@ -155,7 +154,7 @@ public static class Statistics
 
                     if(ctx.Filesystems.Any(c => !c.Synchronized))
                     {
-                        dto.Filesystems = new List<NameValueStats>();
+                        dto.Filesystems = [];
 
                         foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized)
                                                  .Select(c => c.Name)
@@ -171,7 +170,7 @@ public static class Statistics
 
                     if(ctx.Filters.Any(c => !c.Synchronized))
                     {
-                        dto.Filters = new List<NameValueStats>();
+                        dto.Filters = [];
 
                         foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
@@ -185,7 +184,7 @@ public static class Statistics
 
                     if(ctx.MediaFormats.Any(c => !c.Synchronized))
                     {
-                        dto.MediaFormats = new List<NameValueStats>();
+                        dto.MediaFormats = [];
 
                         foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized)
                                                  .Select(c => c.Name)
@@ -201,7 +200,7 @@ public static class Statistics
 
                     if(ctx.Partitions.Any(c => !c.Synchronized))
                     {
-                        dto.Partitions = new List<NameValueStats>();
+                        dto.Partitions = [];
 
                         foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
@@ -215,7 +214,7 @@ public static class Statistics
 
                     if(ctx.Versions.Any(c => !c.Synchronized))
                     {
-                        dto.Versions = new List<NameValueStats>();
+                        dto.Versions = [];
 
                         foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                         {
@@ -229,7 +228,7 @@ public static class Statistics
 
                     if(ctx.Medias.Any(c => !c.Synchronized))
                     {
-                        dto.Medias = new List<MediaStats>();
+                        dto.Medias = [];
 
                         foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
                         {
@@ -257,7 +256,7 @@ public static class Statistics
 
                     if(ctx.SeenDevices.Any(c => !c.Synchronized))
                     {
-                        dto.Devices = new List<DeviceStats>();
+                        dto.Devices = [];
 
                         foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
                         {
@@ -274,7 +273,7 @@ public static class Statistics
 
                     if(ctx.OperatingSystems.Any(c => !c.Synchronized))
                     {
-                        dto.OperatingSystems = new List<OsStats>();
+                        dto.OperatingSystems = [];
 
                         foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
                                                     .Select(c => c.Name)
@@ -299,7 +298,7 @@ public static class Statistics
 
                     if(ctx.RemoteApplications.Any(c => !c.Synchronized))
                     {
-                        dto.RemoteApplications = new List<OsStats>();
+                        dto.RemoteApplications = [];
 
                         foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
                                                            .Select(c => c.Name)
@@ -325,7 +324,7 @@ public static class Statistics
 
                     if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
                     {
-                        dto.RemoteArchitectures = new List<NameValueStats>();
+                        dto.RemoteArchitectures = [];
 
                         foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
                                                  .Select(c => c.Name)
@@ -341,7 +340,7 @@ public static class Statistics
 
                     if(ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
                     {
-                        dto.RemoteOperatingSystems = new List<OsStats>();
+                        dto.RemoteOperatingSystems = [];
 
                         foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
                                                           .Select(c => c.Name)

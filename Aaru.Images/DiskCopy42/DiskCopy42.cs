@@ -30,10 +30,8 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
@@ -64,8 +62,8 @@ public sealed partial class DiskCopy42 : IWritableImage, IVerifiableImage
 
     public DiskCopy42() => imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = "4.2",

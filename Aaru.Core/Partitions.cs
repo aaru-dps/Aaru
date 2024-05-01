@@ -50,9 +50,9 @@ public static class Partitions
     public static List<Partition> GetAll(IMediaImage image)
     {
         PluginRegister  plugins          = PluginRegister.Singleton;
-        List<Partition> foundPartitions  = new();
-        List<Partition> childPartitions  = new();
-        List<ulong>     checkedLocations = new();
+        List<Partition> foundPartitions  = [];
+        List<Partition> childPartitions  = [];
+        List<ulong>     checkedLocations = [];
 
         var tapeImage          = image as ITapeImage;
         var partitionableImage = image as IPartitionableMediaImage;
@@ -129,7 +129,7 @@ public static class Partitions
                 continue;
             }
 
-            List<Partition> children = new();
+            List<Partition> children = [];
 
             foreach(IPartition plugin in plugins.Partitions.Values)
             {
@@ -221,7 +221,7 @@ public static class Partitions
     {
         if(partitions == null || partitions.Count == 0) return;
 
-        List<string> schemes = new();
+        List<string> schemes = [];
 
         foreach(Partition part in partitions.Where(part => !schemes.Contains(part.Scheme))) schemes.Add(part.Scheme);
 

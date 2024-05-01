@@ -44,8 +44,8 @@ public class UDRAW : BlockMediaImageTest
 
     public override IMediaImage Plugin => new Udif();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "DC6_UDRAW_DOS_1440.dmg",
@@ -53,14 +53,14 @@ public class UDRAW : BlockMediaImageTest
             Sectors    = 2884,
             SectorSize = 512,
             Md5        = "4306922864c6cf40a419fd5876b5879d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 4,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -146,5 +146,5 @@ public class UDRAW : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "e7b1de07a1f402e4663c3dee4fd3d6fe"
         }
-    };
+    ];
 }

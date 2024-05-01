@@ -43,8 +43,8 @@ public class Ext() : FilesystemTest("ext")
     public override IFilesystem Plugin     => new extFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux_2.0.37.aif",
@@ -54,5 +54,5 @@ public class Ext() : FilesystemTest("ext")
             Clusters    = 131008,
             ClusterSize = 1024
         }
-    };
+    ];
 }

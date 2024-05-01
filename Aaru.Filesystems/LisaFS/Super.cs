@@ -229,7 +229,7 @@ public sealed partial class LisaFS
 
                 if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
-                if(_debug) _printedExtents = new List<short>();
+                if(_debug) _printedExtents = [];
 
                 // Read the S-Records file
                 ErrorNumber error = ReadSRecords();

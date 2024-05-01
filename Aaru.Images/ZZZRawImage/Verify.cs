@@ -57,16 +57,16 @@ public sealed partial class ZZZRawImage
     {
         if(!_rawCompactDisc)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            failingLbas = [];
+            unknownLbas = [];
 
             for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
         if(errno != ErrorNumber.NoError) return null;
@@ -103,16 +103,16 @@ public sealed partial class ZZZRawImage
     {
         if(!_rawCompactDisc)
         {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
+            failingLbas = [];
+            unknownLbas = [];
 
             for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
 
             return null;
         }
 
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
         if(errno != ErrorNumber.NoError) return null;
