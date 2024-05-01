@@ -30,14 +30,12 @@
 // Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-using Aaru.CommonTypes.Interfaces;
-
 namespace Aaru.Filesystems;
 
 // Not a filesystem, more like an executable header
 /// <inheritdoc />
 /// <summary>Implements detection of NEC PC-FX headers</summary>
-public sealed partial class PCFX : IFilesystem
+public sealed partial class PCFX
 {
     const string IDENTIFIER = "PC-FX:Hu_CD-ROM ";
 

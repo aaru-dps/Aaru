@@ -40,7 +40,7 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of Microsoft's Resilient filesystem (ReFS)</summary>
-public sealed partial class ReFS : IFilesystem
+public sealed partial class ReFS
 {
 #region IFilesystem Members
 

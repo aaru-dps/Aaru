@@ -39,12 +39,7 @@ namespace Aaru.Images;
 
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading SuperCardPro flux images</summary>
-public sealed partial class SuperCardPro : IFluxImage,
-                                           IMediaImage,
-                                           IWritableImage,
-                                           IVerifiableImage,
-                                           IVerifiableSectorsImage,
-                                           IWritableFluxImage
+public sealed partial class SuperCardPro : IVerifiableImage, IVerifiableSectorsImage, IWritableFluxImage
 {
     const string MODULE_NAME = "SuperCardPro plugin";
     ImageInfo    _imageInfo;

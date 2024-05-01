@@ -44,7 +44,7 @@ namespace Aaru.Images;
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading A2R flux images</summary>
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public sealed partial class A2R : IFluxImage, IMediaImage, IWritableImage, IWritableFluxImage
+public sealed partial class A2R : IWritableFluxImage
 {
     const string        MODULE_NAME = "A2R plugin";
     List<StreamCapture> _a2RCaptures;
