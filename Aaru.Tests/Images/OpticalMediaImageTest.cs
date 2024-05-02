@@ -43,7 +43,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -53,10 +53,13 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError) continue;
 
@@ -64,26 +67,26 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors,
-                                        image.Info.Sectors,
-                                        string.Format(Localization.Sectors_0, testFile));
+                        Assert.That(image.Info.Sectors,
+                                    Is.EqualTo(test.Sectors),
+                                    string.Format(Localization.Sectors_0, testFile));
 
                         if(test.SectorSize > 0)
                         {
-                            Assert.AreEqual(test.SectorSize,
-                                            image.Info.SectorSize,
-                                            string.Format(Localization.Sector_size_0, testFile));
+                            Assert.That(image.Info.SectorSize,
+                                        Is.EqualTo(test.SectorSize),
+                                        string.Format(Localization.Sector_size_0, testFile));
                         }
 
-                        Assert.AreEqual(test.MediaType,
-                                        image.Info.MediaType,
-                                        string.Format(Localization.Media_type_0, testFile));
+                        Assert.That(image.Info.MediaType,
+                                    Is.EqualTo(test.MediaType),
+                                    string.Format(Localization.Media_type_0, testFile));
 
                         if(image.Info.MetadataMediaType != MetadataMediaType.OpticalDisc) return;
 
-                        Assert.AreEqual(test.Tracks.Length,
-                                        image.Tracks.Count,
-                                        string.Format(Localization.Tracks_0, testFile));
+                        Assert.That(image.Tracks,
+                                    Has.Count.EqualTo(test.Tracks.Length),
+                                    string.Format(Localization.Tracks_0, testFile));
 
                         image.Tracks.Select(t => t.Session)
                              .Should()
@@ -133,11 +136,11 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                              .BeEquivalentTo(test.Tracks.Select(s => s.Flags),
                                              string.Format(Localization.Track_flags_0, testFile));
 
-                        Assert.AreEqual(latestEndSector,
-                                        image.Info.Sectors - 1,
-                                        string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
-                                                      latestEndSector,
-                                                      image.Info.Sectors));
+                        Assert.That(image.Info.Sectors - 1,
+                                    Is.EqualTo(latestEndSector),
+                                    string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
+                                                  latestEndSector,
+                                                  image.Info.Sectors));
                     });
                 }
             }
@@ -156,7 +159,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -166,10 +169,13 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError) continue;
 
@@ -193,12 +199,12 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
 
-                            Assert.AreEqual(track.FileSystems.Length,
-                                            idPlugins.Count,
-                                            string.Format(Localization.Expected_0_filesystems_in_1_but_found_2,
-                                                          track.FileSystems.Length,
-                                                          testFile,
-                                                          idPlugins.Count));
+                            Assert.That(idPlugins,
+                                        Has.Count.EqualTo(track.FileSystems.Length),
+                                        string.Format(Localization.Expected_0_filesystems_in_1_but_found_2,
+                                                      track.FileSystems.Length,
+                                                      testFile,
+                                                      idPlugins.Count));
 
                             for(var i = 0; i < track.FileSystems.Length; i++)
                             {
@@ -209,49 +215,50 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 // It is not the case, it changes
                                 if(!found) continue;
 
-                                Assert.NotNull(fs,
-                                               string.Format(Localization.Could_not_instantiate_filesystem_for_0,
-                                                             testFile));
+                                Assert.That(fs,
+                                            Is.Not.Null,
+                                            string.Format(Localization.Could_not_instantiate_filesystem_for_0,
+                                                          testFile));
 
                                 fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                                 if(track.FileSystems[i].ApplicationId != null)
                                 {
-                                    Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fsMetadata.ApplicationIdentifier,
-                                                    string.Format(Localization.Application_ID_0, testFile));
+                                    Assert.That(fsMetadata.ApplicationIdentifier,
+                                                Is.EqualTo(track.FileSystems[i].ApplicationId),
+                                                string.Format(Localization.Application_ID_0, testFile));
                                 }
 
-                                Assert.AreEqual(track.FileSystems[i].Bootable,
-                                                fsMetadata.Bootable,
-                                                string.Format(Localization.Bootable_0, testFile));
+                                Assert.That(fsMetadata.Bootable,
+                                            Is.EqualTo(track.FileSystems[i].Bootable),
+                                            string.Format(Localization.Bootable_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Clusters,
-                                                fsMetadata.Clusters,
-                                                string.Format(Localization.Clusters_0, testFile));
+                                Assert.That(fsMetadata.Clusters,
+                                            Is.EqualTo(track.FileSystems[i].Clusters),
+                                            string.Format(Localization.Clusters_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].ClusterSize,
-                                                fsMetadata.ClusterSize,
-                                                string.Format(Localization.Cluster_size_0, testFile));
+                                Assert.That(fsMetadata.ClusterSize,
+                                            Is.EqualTo(track.FileSystems[i].ClusterSize),
+                                            string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
                                 {
-                                    Assert.AreEqual(track.FileSystems[i].SystemId,
-                                                    fsMetadata.SystemIdentifier,
-                                                    string.Format(Localization.System_ID_0, testFile));
+                                    Assert.That(fsMetadata.SystemIdentifier,
+                                                Is.EqualTo(track.FileSystems[i].SystemId),
+                                                string.Format(Localization.System_ID_0, testFile));
                                 }
 
-                                Assert.AreEqual(track.FileSystems[i].Type,
-                                                fsMetadata.Type,
-                                                string.Format(Localization.Filesystem_type_0, testFile));
+                                Assert.That(fsMetadata.Type,
+                                            Is.EqualTo(track.FileSystems[i].Type),
+                                            string.Format(Localization.Filesystem_type_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeName,
-                                                fsMetadata.VolumeName,
-                                                string.Format(Localization.Volume_name_0, testFile));
+                                Assert.That(fsMetadata.VolumeName,
+                                            Is.EqualTo(track.FileSystems[i].VolumeName),
+                                            string.Format(Localization.Volume_name_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeSerial,
-                                                fsMetadata.VolumeSerial,
-                                                string.Format(Localization.Volume_serial_0, testFile));
+                                Assert.That(fsMetadata.VolumeSerial,
+                                            Is.EqualTo(track.FileSystems[i].VolumeSerial),
+                                            string.Format(Localization.Volume_serial_0, testFile));
 
                                 if(fs is not IReadOnlyFilesystem rofs)
                                 {
@@ -259,12 +266,11 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                     {
-                                        Assert.NotNull(null,
-                                                       string.Format(Localization
-                                                                        .Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
-                                                                     testFile,
-                                                                     track.Number,
-                                                                     i));
+                                        Assert.Fail(string.Format(Localization
+                                                                     .Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
+                                                                  testFile,
+                                                                  track.Number,
+                                                                  i));
                                     }
 
                                     continue;
@@ -278,9 +284,9 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                              null,
                                                              track.FileSystems[i].Namespace);
 
-                                Assert.AreEqual(ErrorNumber.NoError,
-                                                ret,
-                                                string.Format(Localization.Unmountable_0, testFile));
+                                Assert.That(ret,
+                                            Is.EqualTo(ErrorNumber.NoError),
+                                            string.Format(Localization.Unmountable_0, testFile));
 
                                 var serializerOptions = new JsonSerializerOptions
                                 {
@@ -375,7 +381,7 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                              string testFile = Tests[i].TestFile;
 
                              bool exists = File.Exists(testFile);
-                             Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                             Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                              // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                              // It arrives here...
@@ -386,12 +392,15 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                              var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
 
-                             Assert.NotNull(image,
-                                            string.Format(Localization.Could_not_instantiate_filesystem_for_0,
-                                                          testFile));
+                             Assert.That(image,
+                                         Is.Not.Null,
+                                         string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                              ErrorNumber opened = image.Open(filter);
-                             Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+
+                             Assert.That(opened,
+                                         Is.EqualTo(ErrorNumber.NoError),
+                                         string.Format(Localization.Open_0, testFile));
 
                              if(opened != ErrorNumber.NoError) return;
 
@@ -444,15 +453,15 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                  doneSectors += sectors - doneSectors;
                                              }
 
-                                             Assert.AreEqual(ErrorNumber.NoError, errno);
+                                             Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
 
                                              ctx.Update(sector);
                                          }
                                      }
 
-                                     Assert.AreEqual(@long ? Tests[i].LongMd5 : Tests[i].Md5,
-                                                     ctx.End(),
-                                                     $"{(@long ? "Long hash" : "Hash")}: {testFile}");
+                                     Assert.That(ctx.End(),
+                                                 Is.EqualTo(@long ? Tests[i].LongMd5 : Tests[i].Md5),
+                                                 $"{(@long ? "Long hash" : "Hash")}: {testFile}");
                                  }
 
                                  if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel)) return;
@@ -489,14 +498,14 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                              doneSectors += sectors - doneSectors;
                                          }
 
-                                         Assert.AreEqual(ErrorNumber.NoError, errno);
+                                         Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
                                          ctx.Update(sector);
                                      }
                                  }
 
-                                 Assert.AreEqual(Tests[i].SubchannelMd5,
-                                                 ctx.End(),
-                                                 string.Format(Localization.Subchannel_hash_0, testFile));
+                                 Assert.That(ctx.End(),
+                                             Is.EqualTo(Tests[i].SubchannelMd5),
+                                             string.Format(Localization.Subchannel_hash_0, testFile));
                              }
                              else
                              {
@@ -521,11 +530,13 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                          doneSectors += image.Info.Sectors - doneSectors;
                                      }
 
-                                     Assert.AreEqual(ErrorNumber.NoError, errno);
+                                     Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
                                      ctx.Update(sector);
                                  }
 
-                                 Assert.AreEqual(Tests[i].Md5, ctx.End(), string.Format(Localization.Hash_0, testFile));
+                                 Assert.That(ctx.End(),
+                                             Is.EqualTo(Tests[i].Md5),
+                                             string.Format(Localization.Hash_0, testFile));
                              }
                          });
         });

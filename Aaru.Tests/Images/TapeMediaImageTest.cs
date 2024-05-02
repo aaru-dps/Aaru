@@ -34,7 +34,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -44,14 +44,17 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as ITapeImage;
-                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError) continue;
 
-                Assert.AreEqual(true, image.IsTape, string.Format(Localization.Is_tape_0, testFile));
+                Assert.That(image.IsTape, Is.True, string.Format(Localization.Is_tape_0, testFile));
 
                 using(new AssertionScope())
                 {
@@ -80,7 +83,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -90,10 +93,13 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError) continue;
 
@@ -101,17 +107,17 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors,
-                                        image.Info.Sectors,
-                                        string.Format(Localization.Sectors_0, testFile));
+                        Assert.That(image.Info.Sectors,
+                                    Is.EqualTo(test.Sectors),
+                                    string.Format(Localization.Sectors_0, testFile));
 
-                        Assert.AreEqual(test.SectorSize,
-                                        image.Info.SectorSize,
-                                        string.Format(Localization.Sector_size_0, testFile));
+                        Assert.That(image.Info.SectorSize,
+                                    Is.EqualTo(test.SectorSize),
+                                    string.Format(Localization.Sector_size_0, testFile));
 
-                        Assert.AreEqual(test.MediaType,
-                                        image.Info.MediaType,
-                                        string.Format(Localization.Media_type_0, testFile));
+                        Assert.That(image.Info.MediaType,
+                                    Is.EqualTo(test.MediaType),
+                                    string.Format(Localization.Media_type_0, testFile));
                     });
                 }
             }
@@ -131,7 +137,7 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, string.Format(Localization._0_not_found, testFile));
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
@@ -141,10 +147,13 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, string.Format(Localization.Open_0, testFile));
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
                 if(opened != ErrorNumber.NoError) continue;
 
@@ -167,11 +176,11 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                         doneSectors += image.Info.Sectors - doneSectors;
                     }
 
-                    Assert.AreEqual(ErrorNumber.NoError, errno);
+                    Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(test.Md5, ctx.End(), string.Format(Localization.Hash_0, testFile));
+                Assert.That(ctx.End(), Is.EqualTo(test.Md5), string.Format(Localization.Hash_0, testFile));
             }
         });
     }

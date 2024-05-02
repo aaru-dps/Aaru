@@ -64,24 +64,24 @@ public class AppleDoubleOsX
         str.Dispose();
         filter.Close();
         string result = Md5Context.Data(data, out _);
-        Assert.AreEqual(EXPECTED_CONTENTS, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_CONTENTS));
     }
 
     [Test]
     public void CheckCorrectFile()
     {
         string result = Md5Context.File(_location, out _);
-        Assert.AreEqual(EXPECTED_FILE, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_FILE));
 
         result = Md5Context.File(_sidecar, out _);
-        Assert.AreEqual(EXPECTED_SIDECAR, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_SIDECAR));
     }
 
     [Test]
     public void CheckFilterId()
     {
         IFilter filter = new AppleDouble();
-        Assert.AreEqual(true, filter.Identify(_location));
+        Assert.That(filter.Identify(_location), Is.True);
     }
 
     [Test]
@@ -96,19 +96,19 @@ public class AppleDoubleOsX
         str.Dispose();
         filter.Close();
         string result = Md5Context.Data(data, out _);
-        Assert.AreEqual(EXPECTED_RESOURCE, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_RESOURCE));
     }
 
     [Test]
     public void Test()
     {
         IFilter filter = new AppleDouble();
-        Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-        Assert.AreEqual(737280,              filter.DataForkLength);
-        Assert.AreNotEqual(null, filter.GetDataForkStream());
-        Assert.AreEqual(286, filter.ResourceForkLength);
-        Assert.AreNotEqual(null, filter.GetResourceForkStream());
-        Assert.AreEqual(true, filter.HasResourceFork);
+        Assert.That(filter.Open(_location),         Is.EqualTo(ErrorNumber.NoError));
+        Assert.That(filter.DataForkLength,          Is.EqualTo(737280));
+        Assert.That(filter.GetDataForkStream(),     Is.Not.Null);
+        Assert.That(filter.ResourceForkLength,      Is.EqualTo(286));
+        Assert.That(filter.GetResourceForkStream(), Is.Not.Null);
+        Assert.That(filter.HasResourceFork,         Is.True);
         filter.Close();
     }
 }

@@ -53,7 +53,7 @@ public class SpamSum
         fs.Close();
         fs.Dispose();
         string result = SpamSumContext.Data(data, out _);
-        Assert.AreEqual(EXPECTED_EMPTY, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_EMPTY));
     }
 
     [Test]
@@ -71,7 +71,7 @@ public class SpamSum
         IChecksum ctx = new SpamSumContext();
         ctx.Update(data);
         string result = ctx.End();
-        Assert.AreEqual(EXPECTED_EMPTY, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_EMPTY));
     }
 
     [Test]
@@ -87,7 +87,7 @@ public class SpamSum
         fs.Close();
         fs.Dispose();
         string result = SpamSumContext.Data(data, out _);
-        Assert.AreEqual(EXPECTED_RANDOM, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_RANDOM));
     }
 
     [Test]
@@ -105,6 +105,6 @@ public class SpamSum
         IChecksum ctx = new SpamSumContext();
         ctx.Update(data);
         string result = ctx.End();
-        Assert.AreEqual(EXPECTED_RANDOM, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_RANDOM));
     }
 }

@@ -107,14 +107,14 @@ public class Sha512
         fs.Close();
         fs.Dispose();
         Sha512Context.Data(data, out byte[] result);
-        Assert.AreEqual(_expectedRandom, result);
+        Assert.That(result, Is.EqualTo(_expectedRandom));
     }
 
     [Test]
     public void RandomFile()
     {
         byte[] result = Sha512Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
-        Assert.AreEqual(_expectedRandom, result);
+        Assert.That(result, Is.EqualTo(_expectedRandom));
     }
 
     [Test]
@@ -132,6 +132,6 @@ public class Sha512
         IChecksum ctx = new Sha512Context();
         ctx.Update(data);
         byte[] result = ctx.Final();
-        Assert.AreEqual(_expectedRandom, result);
+        Assert.That(result, Is.EqualTo(_expectedRandom));
     }
 }

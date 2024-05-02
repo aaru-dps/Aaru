@@ -65,33 +65,35 @@ public class CID
                 Assert.Multiple(() =>
                 {
                     int count = Marshal.ConvertFromHexAscii(cids[i], out byte[] response);
-                    Assert.AreEqual(16, count, string.Format(Localization.Size_0, cards[i]));
+                    Assert.That(count, Is.EqualTo(16), string.Format(Localization.Size_0, cards[i]));
                     Decoders.SecureDigital.CID cid = Decoders.SecureDigital.Decoders.DecodeCID(response);
-                    Assert.IsNotNull(cid, string.Format(Localization.Decoded_0, cards[i]));
+                    Assert.That(cid, Is.Not.Null, string.Format(Localization.Decoded_0, cards[i]));
 
-                    Assert.AreEqual(manufacturers[i],
-                                    cid.Manufacturer,
-                                    string.Format(Localization.Manufacturer_0, cards[i]));
+                    Assert.That(cid.Manufacturer,
+                                Is.EqualTo(manufacturers[i]),
+                                string.Format(Localization.Manufacturer_0, cards[i]));
 
-                    Assert.AreEqual(applications[i],
-                                    cid.ApplicationID,
-                                    string.Format(Localization.Application_ID_0, cards[i]));
+                    Assert.That(cid.ApplicationID,
+                                Is.EqualTo(applications[i]),
+                                string.Format(Localization.Application_ID_0, cards[i]));
 
-                    Assert.AreEqual(names[i], cid.ProductName, string.Format(Localization.Product_name_0, cards[i]));
+                    Assert.That(cid.ProductName,
+                                Is.EqualTo(names[i]),
+                                string.Format(Localization.Product_name_0, cards[i]));
 
-                    Assert.AreEqual(revisions[i],
-                                    cid.ProductRevision,
-                                    string.Format(Localization.Product_revision_0, cards[i]));
+                    Assert.That(cid.ProductRevision,
+                                Is.EqualTo(revisions[i]),
+                                string.Format(Localization.Product_revision_0, cards[i]));
 
-                    Assert.AreEqual(serials[i],
-                                    cid.ProductSerialNumber,
-                                    string.Format(Localization.Serial_number_0, cards[i]));
+                    Assert.That(cid.ProductSerialNumber,
+                                Is.EqualTo(serials[i]),
+                                string.Format(Localization.Serial_number_0, cards[i]));
 
-                    Assert.AreEqual(dates[i],
-                                    cid.ManufacturingDate,
-                                    string.Format(Localization.Manufacturing_date_0, cards[i]));
+                    Assert.That(cid.ManufacturingDate,
+                                Is.EqualTo(dates[i]),
+                                string.Format(Localization.Manufacturing_date_0, cards[i]));
 
-                    Assert.AreEqual(crcs[i], cid.CRC, string.Format(Localization.CRC_0, cards[i]));
+                    Assert.That(cid.CRC, Is.EqualTo(crcs[i]), string.Format(Localization.CRC_0, cards[i]));
                 });
             }
         }

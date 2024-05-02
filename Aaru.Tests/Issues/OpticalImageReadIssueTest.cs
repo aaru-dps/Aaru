@@ -27,21 +27,23 @@ public abstract class OpticalImageReadIssueTest
         Environment.CurrentDirectory = DataFolder;
 
         bool exists = File.Exists(TestFile);
-        Assert.True(exists, Localization.Test_file_not_found);
+        Assert.That(exists, Localization.Test_file_not_found);
 
         IFilter inputFilter = PluginRegister.Singleton.GetFilter(TestFile);
 
-        Assert.IsNotNull(inputFilter, Localization.Filter_for_test_file_is_not_detected);
+        Assert.That(inputFilter, Is.Not.Null, Localization.Filter_for_test_file_is_not_detected);
 
         var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.IsNotNull(image, Localization.Image_format_for_test_file_is_not_detected);
+        Assert.That(image, Is.Not.Null, Localization.Image_format_for_test_file_is_not_detected);
 
-        Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), Localization.Cannot_open_image_for_test_file);
+        Assert.That(image.Open(inputFilter),
+                    Is.EqualTo(ErrorNumber.NoError),
+                    Localization.Cannot_open_image_for_test_file);
 
         var opticalInput = image as IOpticalMediaImage;
 
-        Assert.IsNotNull(opticalInput, Localization.Image_format_for_test_file_is_not_for_an_optical_disc);
+        Assert.That(opticalInput, Is.Not.Null, Localization.Image_format_for_test_file_is_not_for_an_optical_disc);
 
         var ctx = new Crc32Context();
 
@@ -76,7 +78,7 @@ public abstract class OpticalImageReadIssueTest
                     doneSectors += sectors - doneSectors;
                 }
 
-                Assert.AreEqual(ErrorNumber.NoError, errno);
+                Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
 
                 ctx.Update(sector);
             }

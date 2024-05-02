@@ -23,9 +23,9 @@ public class Marshal
         {
             int count = Aaru.Helpers.Marshal.ConvertFromHexAscii(_testStrings[i], out byte[] buf);
 
-            Assert.AreEqual(_resultBytes[i].Length, buf.Length);
-            Assert.AreEqual(_resultBytes[i].Length, count);
-            Assert.AreEqual(_resultBytes[i],        buf);
+            Assert.That(buf,   Has.Length.EqualTo(_resultBytes[i].Length));
+            Assert.That(count, Is.EqualTo(_resultBytes[i].Length));
+            Assert.That(buf,   Is.EqualTo(_resultBytes[i]));
         }
     }
 }
