@@ -30,9 +30,9 @@
     <NrtShowRevision>true</NrtShowRevision>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.4"/>
-    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.4"/>
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4"/>
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10"/>
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.0.10"/>
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10"/>
     <PackageReference Include="Claunia.Encoding" Version="1.9.2"/>
     <PackageReference Include="Humanizer.Core" Version="2.14.1"/>
     <PackageReference Include="JetBrains.Annotations" Version="2023.2.0"/>
@@ -45,9 +45,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Avalonia" Version="11.0.4"/>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.4"/>
-    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4"/>
+    <PackageReference Include="Avalonia" Version="11.0.10"/>
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.10"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
