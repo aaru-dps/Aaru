@@ -59,7 +59,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetZip" Version="1.16.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0"/>
-    <PackageReference Include="SharpCompress" Version="0.34.0"/>
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
   </ItemGroup>
   <ItemGroup>
