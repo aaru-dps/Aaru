@@ -32,9 +32,9 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -360,31 +360,20 @@ public static class Statistics
 #else
                 Aaru.Console.AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Uploading_statistics);
 #endif
-                string json = JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default);
+                using StringContent jsonContent =
+                    new(JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default),
+                        Encoding.UTF8,
+                        "application/json");
 
-                byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
-                var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://www.aaru.app");
+                client.DefaultRequestHeaders.Add("User-Agent", $"Aaru {typeof(Version).Assembly.GetName().Version}");
 
-                ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
+                using HttpResponseMessage response = await client.PostAsync("/api/uploadstatsv2", jsonContent);
 
-                request.Method        = "POST";
-                request.ContentLength = jsonBytes.Length;
-                request.ContentType   = "application/json";
-                Stream reqStream = await request.GetRequestStreamAsync();
-                await reqStream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
+                if(response.StatusCode != HttpStatusCode.OK) return;
 
-                //jsonStream.CopyTo(reqStream);
-                reqStream.Close();
-                WebResponse response = await request.GetResponseAsync();
-
-                if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
-
-                Stream data   = response.GetResponseStream();
-                var    reader = new StreamReader(data ?? throw new InvalidOperationException());
-
-                string result = await reader.ReadToEndAsync();
-                data.Close();
-                response.Close();
+                string result = await response.Content.ReadAsStringAsync();
 
                 if(result != "ok") return;
 
