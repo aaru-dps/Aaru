@@ -37,7 +37,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -93,13 +93,13 @@ public static class Statistics
     }
 
     /// <summary>Saves statistics to disk</summary>
-    public static void SaveStats()
+    public static async Task SaveStats()
     {
         try
         {
-            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+            await using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
         }
         catch(SqliteException ex)
         {
@@ -107,562 +107,232 @@ public static class Statistics
             AaruConsole.WriteException(ex);
         }
 
-        if(Settings.Settings.Current.Stats is { ShareStats: true }) SubmitStats();
+        if(Settings.Settings.Current.Stats is { ShareStats: true }) await SubmitStats();
     }
 
     /// <summary>Submits statistics to Aaru.Server</summary>
-    static void SubmitStats()
+    static async Task SubmitStats()
     {
-        var submitThread = new Thread(() =>
+        await using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+
+        try
         {
-            using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+            if(_submitStatsLock) return;
 
-            try
+            _submitStatsLock = true;
+
+            if(ctx.Commands.Any(c => !c.Synchronized)            ||
+               ctx.Filesystems.Any(c => !c.Synchronized)         ||
+               ctx.Filters.Any(c => !c.Synchronized)             ||
+               ctx.MediaFormats.Any(c => !c.Synchronized)        ||
+               ctx.Partitions.Any(c => !c.Synchronized)          ||
+               ctx.Medias.Any(c => !c.Synchronized)              ||
+               ctx.SeenDevices.Any(c => !c.Synchronized)         ||
+               ctx.OperatingSystems.Any(c => !c.Synchronized)    ||
+               ctx.Versions.Any(c => !c.Synchronized)            ||
+               ctx.RemoteApplications.Any(c => !c.Synchronized)  ||
+               ctx.RemoteArchitectures.Any(c => !c.Synchronized) ||
+               ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
             {
-                if(_submitStatsLock) return;
+                var dto = new StatsDto();
 
-                _submitStatsLock = true;
-
-                if(ctx.Commands.Any(c => !c.Synchronized)            ||
-                   ctx.Filesystems.Any(c => !c.Synchronized)         ||
-                   ctx.Filters.Any(c => !c.Synchronized)             ||
-                   ctx.MediaFormats.Any(c => !c.Synchronized)        ||
-                   ctx.Partitions.Any(c => !c.Synchronized)          ||
-                   ctx.Medias.Any(c => !c.Synchronized)              ||
-                   ctx.SeenDevices.Any(c => !c.Synchronized)         ||
-                   ctx.OperatingSystems.Any(c => !c.Synchronized)    ||
-                   ctx.Versions.Any(c => !c.Synchronized)            ||
-                   ctx.RemoteApplications.Any(c => !c.Synchronized)  ||
-                   ctx.RemoteArchitectures.Any(c => !c.Synchronized) ||
-                   ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
+                if(ctx.Commands.Any(c => !c.Synchronized))
                 {
-                    var dto = new StatsDto();
+                    dto.Commands = [];
 
-                    if(ctx.Commands.Any(c => !c.Synchronized))
+                    foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        dto.Commands = [];
-
-                        foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        dto.Commands.Add(new NameValueStats
                         {
-                            dto.Commands.Add(new NameValueStats
+                            name  = nvs,
+                            Value = ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.Filesystems.Any(c => !c.Synchronized))
+                {
+                    dto.Filesystems = [];
+
+                    foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        dto.Filesystems.Add(new NameValueStats
+                        {
+                            name  = nvs,
+                            Value = ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.Filters.Any(c => !c.Synchronized))
+                {
+                    dto.Filters = [];
+
+                    foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        dto.Filters.Add(new NameValueStats
+                        {
+                            name  = nvs,
+                            Value = ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                {
+                    dto.MediaFormats = [];
+
+                    foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        dto.MediaFormats.Add(new NameValueStats
+                        {
+                            name  = nvs,
+                            Value = ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.Partitions.Any(c => !c.Synchronized))
+                {
+                    dto.Partitions = [];
+
+                    foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        dto.Partitions.Add(new NameValueStats
+                        {
+                            name  = nvs,
+                            Value = ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.Versions.Any(c => !c.Synchronized))
+                {
+                    dto.Versions = [];
+
+                    foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        dto.Versions.Add(new NameValueStats
+                        {
+                            name  = nvs,
+                            Value = ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
+                    }
+                }
+
+                if(ctx.Medias.Any(c => !c.Synchronized))
+                {
+                    dto.Medias = [];
+
+                    foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
+                    {
+                        if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
+                        {
+                            dto.Medias.Add(new MediaStats
                             {
-                                name  = nvs,
-                                Value = ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                real      = true,
+                                MediaType = media,
+                                Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
+                            });
+                        }
+
+                        if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
+                        {
+                            dto.Medias.Add(new MediaStats
+                            {
+                                real      = false,
+                                MediaType = media,
+                                Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
                             });
                         }
                     }
+                }
 
-                    if(ctx.Filesystems.Any(c => !c.Synchronized))
+                if(ctx.SeenDevices.Any(c => !c.Synchronized))
+                {
+                    dto.Devices = [];
+
+                    foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
                     {
-                        dto.Filesystems = [];
-
-                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
+                        dto.Devices.Add(new DeviceStats
                         {
-                            dto.Filesystems.Add(new NameValueStats
+                            Bus                   = device.Bus,
+                            Manufacturer          = device.Manufacturer,
+                            ManufacturerSpecified = device.Manufacturer is not null,
+                            Model                 = device.Model,
+                            Revision              = device.Revision
+                        });
+                    }
+                }
+
+                if(ctx.OperatingSystems.Any(c => !c.Synchronized))
+                {
+                    dto.OperatingSystems = [];
+
+                    foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                .Select(c => c.Name)
+                                                .Distinct())
+                    {
+                        foreach(string osVersion in ctx.OperatingSystems.Where(c => !c.Synchronized && c.Name == osName)
+                                                       .Select(c => c.Version)
+                                                       .Distinct())
+                        {
+                            dto.OperatingSystems.Add(new OsStats
                             {
-                                name  = nvs,
-                                Value = ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                name    = osName,
+                                version = osVersion,
+                                Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
+                                                                            c.Name    == osName &&
+                                                                            c.Version == osVersion)
                             });
                         }
                     }
+                }
 
-                    if(ctx.Filters.Any(c => !c.Synchronized))
+                if(ctx.RemoteApplications.Any(c => !c.Synchronized))
+                {
+                    dto.RemoteApplications = [];
+
+                    foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
+                                                       .Select(c => c.Name)
+                                                       .Distinct())
                     {
-                        dto.Filters = [];
-
-                        foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                        foreach(string remoteAppVersion in ctx.RemoteApplications
+                                                              .Where(c => !c.Synchronized && c.Name == remoteAppName)
+                                                              .Select(c => c.Version)
+                                                              .Distinct())
                         {
-                            dto.Filters.Add(new NameValueStats
+                            dto.RemoteApplications.Add(new OsStats
                             {
-                                name  = nvs,
-                                Value = ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                name    = remoteAppName,
+                                version = remoteAppVersion,
+                                Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
+                                                                              c.Name    == remoteAppName &&
+                                                                              c.Version == remoteAppVersion)
                             });
                         }
                     }
+                }
 
-                    if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
+                {
+                    dto.RemoteArchitectures = [];
+
+                    foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
+                                             .Select(c => c.Name)
+                                             .Distinct())
                     {
-                        dto.MediaFormats = [];
-
-                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
+                        dto.RemoteArchitectures.Add(new NameValueStats
                         {
-                            dto.MediaFormats.Add(new NameValueStats
-                            {
-                                name  = nvs,
-                                Value = ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs)
-                            });
-                        }
+                            name  = nvs,
+                            Value = ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs)
+                        });
                     }
-
-                    if(ctx.Partitions.Any(c => !c.Synchronized))
-                    {
-                        dto.Partitions = [];
-
-                        foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            dto.Partitions.Add(new NameValueStats
-                            {
-                                name  = nvs,
-                                Value = ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs)
-                            });
-                        }
-                    }
-
-                    if(ctx.Versions.Any(c => !c.Synchronized))
-                    {
-                        dto.Versions = [];
-
-                        foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            dto.Versions.Add(new NameValueStats
-                            {
-                                name  = nvs,
-                                Value = ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs)
-                            });
-                        }
-                    }
-
-                    if(ctx.Medias.Any(c => !c.Synchronized))
-                    {
-                        dto.Medias = [];
-
-                        foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
-                        {
-                            if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
-                            {
-                                dto.Medias.Add(new MediaStats
-                                {
-                                    real      = true,
-                                    MediaType = media,
-                                    Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real)
-                                });
-                            }
-
-                            if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
-                            {
-                                dto.Medias.Add(new MediaStats
-                                {
-                                    real      = false,
-                                    MediaType = media,
-                                    Value     = ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real)
-                                });
-                            }
-                        }
-                    }
-
-                    if(ctx.SeenDevices.Any(c => !c.Synchronized))
-                    {
-                        dto.Devices = [];
-
-                        foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
-                        {
-                            dto.Devices.Add(new DeviceStats
-                            {
-                                Bus                   = device.Bus,
-                                Manufacturer          = device.Manufacturer,
-                                ManufacturerSpecified = device.Manufacturer is not null,
-                                Model                 = device.Model,
-                                Revision              = device.Revision
-                            });
-                        }
-                    }
-
-                    if(ctx.OperatingSystems.Any(c => !c.Synchronized))
-                    {
-                        dto.OperatingSystems = [];
-
-                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
-                                                    .Select(c => c.Name)
-                                                    .Distinct())
-                        {
-                            foreach(string osVersion in ctx.OperatingSystems
-                                                           .Where(c => !c.Synchronized && c.Name == osName)
-                                                           .Select(c => c.Version)
-                                                           .Distinct())
-                            {
-                                dto.OperatingSystems.Add(new OsStats
-                                {
-                                    name    = osName,
-                                    version = osVersion,
-                                    Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized    &&
-                                                                               c.Name    == osName &&
-                                                                               c.Version == osVersion)
-                                });
-                            }
-                        }
-                    }
-
-                    if(ctx.RemoteApplications.Any(c => !c.Synchronized))
-                    {
-                        dto.RemoteApplications = [];
-
-                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
-                                                           .Select(c => c.Name)
-                                                           .Distinct())
-                        {
-                            foreach(string remoteAppVersion in ctx.RemoteApplications
-                                                                  .Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName)
-                                                                  .Select(c => c.Version)
-                                                                  .Distinct())
-                            {
-                                dto.RemoteApplications.Add(new OsStats
-                                {
-                                    name    = remoteAppName,
-                                    version = remoteAppVersion,
-                                    Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized           &&
-                                                                                 c.Name    == remoteAppName &&
-                                                                                 c.Version == remoteAppVersion)
-                                });
-                            }
-                        }
-                    }
-
-                    if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
-                    {
-                        dto.RemoteArchitectures = [];
-
-                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
-                        {
-                            dto.RemoteArchitectures.Add(new NameValueStats
-                            {
-                                name  = nvs,
-                                Value = ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs)
-                            });
-                        }
-                    }
-
-                    if(ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
-                    {
-                        dto.RemoteOperatingSystems = [];
-
-                        foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
-                                                          .Select(c => c.Name)
-                                                          .Distinct())
-                        {
-                            foreach(string remoteOsVersion in ctx.RemoteOperatingSystems
-                                                                 .Where(c => !c.Synchronized && c.Name == remoteOsName)
-                                                                 .Select(c => c.Version)
-                                                                 .Distinct())
-                            {
-                                dto.RemoteOperatingSystems.Add(new OsStats
-                                {
-                                    name    = remoteOsName,
-                                    version = remoteOsVersion,
-                                    Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized &&
-                                        c.Name    == remoteOsName                                     &&
-                                        c.Version == remoteOsVersion)
-                                });
-                            }
-                        }
-                    }
-
-#if DEBUG
-                    System.Console.WriteLine(Localization.Core.Uploading_statistics);
-#else
-                    Aaru.Console.AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Uploading_statistics);
-#endif
-                    string json = JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default);
-
-                    byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
-                    var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
-
-                    ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
-
-                    request.Method        = "POST";
-                    request.ContentLength = jsonBytes.Length;
-                    request.ContentType   = "application/json";
-                    Stream reqStream = request.GetRequestStream();
-                    reqStream.Write(jsonBytes, 0, jsonBytes.Length);
-
-                    //jsonStream.CopyTo(reqStream);
-                    reqStream.Close();
-                    WebResponse response = request.GetResponse();
-
-                    if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
-
-                    Stream data   = response.GetResponseStream();
-                    var    reader = new StreamReader(data ?? throw new InvalidOperationException());
-
-                    string result = reader.ReadToEnd();
-                    data.Close();
-                    response.Close();
-
-                    if(result != "ok") return;
-
-                    if(ctx.Commands.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            Command existing = ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                               new Command
-                                               {
-                                                   Name         = nvs,
-                                                   Synchronized = true
-                                               };
-
-                            existing.Count += (ulong)ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs);
-                            ctx.Commands.Update(existing);
-                            ctx.Commands.RemoveRange(ctx.Commands.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.Filesystems.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
-                        {
-                            Filesystem existing =
-                                ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                new Filesystem
-                                {
-                                    Name         = nvs,
-                                    Synchronized = true
-                                };
-
-                            existing.Count += (ulong)ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs);
-
-                            ctx.Filesystems.Update(existing);
-
-                            ctx.Filesystems.RemoveRange(ctx.Filesystems.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.Filters.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                              new Filter
-                                              {
-                                                  Name         = nvs,
-                                                  Synchronized = true
-                                              };
-
-                            existing.Count += (ulong)ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs);
-                            ctx.Filters.Update(existing);
-                            ctx.Filters.RemoveRange(ctx.Filters.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.MediaFormats.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
-                        {
-                            MediaFormat existing =
-                                ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                new MediaFormat
-                                {
-                                    Name         = nvs,
-                                    Synchronized = true
-                                };
-
-                            existing.Count += (ulong)ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs);
-
-                            ctx.MediaFormats.Update(existing);
-
-                            ctx.MediaFormats.RemoveRange(ctx.MediaFormats.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.Partitions.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            Partition existing = ctx.Partitions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                                 new Partition
-                                                 {
-                                                     Name         = nvs,
-                                                     Synchronized = true
-                                                 };
-
-                            existing.Count += (ulong)ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs);
-
-                            ctx.Partitions.Update(existing);
-                            ctx.Partitions.RemoveRange(ctx.Partitions.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.Versions.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
-                        {
-                            Version existing = ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                               new Version
-                                               {
-                                                   Name         = nvs,
-                                                   Synchronized = true
-                                               };
-
-                            existing.Count += (ulong)ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs);
-                            ctx.Versions.Update(existing);
-                            ctx.Versions.RemoveRange(ctx.Versions.Where(c => !c.Synchronized && c.Name == nvs));
-                        }
-                    }
-
-                    if(ctx.Medias.Any(c => !c.Synchronized))
-                    {
-                        foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
-                        {
-                            if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
-                            {
-                                Database.Models.Media existing =
-                                    ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
-                                    new Database.Models.Media
-                                    {
-                                        Synchronized = true,
-                                        Type         = media,
-                                        Real         = true
-                                    };
-
-                                existing.Count +=
-                                    (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real);
-
-                                ctx.Medias.Update(existing);
-
-                                ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized &&
-                                                                             c.Type == media &&
-                                                                             c.Real));
-                            }
-
-                            if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real)) continue;
-
-                            {
-                                Database.Models.Media existing =
-                                    ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
-                                    new Database.Models.Media
-                                    {
-                                        Synchronized = true,
-                                        Type         = media,
-                                        Real         = false
-                                    };
-
-                                existing.Count +=
-                                    (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real);
-
-                                ctx.Medias.Update(existing);
-
-                                ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized &&
-                                                                             c.Type == media &&
-                                                                             !c.Real));
-                            }
-                        }
-                    }
-
-                    if(ctx.SeenDevices.Any(c => !c.Synchronized))
-                    {
-                        foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
-                        {
-                            device.Synchronized = true;
-                            ctx.Update(device);
-                        }
-                    }
-
-                    if(ctx.OperatingSystems.Any(c => !c.Synchronized))
-                    {
-                        foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
-                                                    .Select(c => c.Name)
-                                                    .Distinct())
-                        {
-                            foreach(string osVersion in ctx.OperatingSystems
-                                                           .Where(c => !c.Synchronized && c.Name == osName)
-                                                           .Select(c => c.Version)
-                                                           .Distinct())
-                            {
-                                OperatingSystem existing =
-                                    ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized      &&
-                                                                             c.Name    == osName &&
-                                                                             c.Version == osVersion) ??
-                                    new OperatingSystem
-                                    {
-                                        Synchronized = true,
-                                        Version      = osVersion,
-                                        Name         = osName
-                                    };
-
-                                existing.Count +=
-                                    (ulong)ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
-                                                                               c.Name    == osName &&
-                                                                               c.Version == osVersion);
-
-                                ctx.OperatingSystems.Update(existing);
-
-                                ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c => !c.Synchronized &&
-                                                                     c.Name    == osName                         &&
-                                                                     c.Version == osVersion));
-                            }
-                        }
-                    }
-
-                    if(ctx.RemoteApplications.Any(c => !c.Synchronized))
-                    {
-                        foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
-                                                           .Select(c => c.Name)
-                                                           .Distinct())
-                        {
-                            foreach(string remoteAppVersion in ctx.RemoteApplications
-                                                                  .Where(c => !c.Synchronized &&
-                                                                              c.Name == remoteAppName)
-                                                                  .Select(c => c.Version)
-                                                                  .Distinct())
-                            {
-                                RemoteApplication existing =
-                                    ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
-                                                                               c.Name    == remoteAppName &&
-                                                                               c.Version == remoteAppVersion) ??
-                                    new RemoteApplication
-                                    {
-                                        Synchronized = true,
-                                        Version      = remoteAppVersion,
-                                        Name         = remoteAppName
-                                    };
-
-                                existing.Count +=
-                                    (ulong)ctx.RemoteApplications.LongCount(c => !c.Synchronized           &&
-                                                                                c.Name    == remoteAppName &&
-                                                                                c.Version == remoteAppVersion);
-
-                                ctx.RemoteApplications.Update(existing);
-
-                                ctx.RemoteApplications.RemoveRange(ctx.RemoteApplications.Where(c => !c.Synchronized &&
-                                                                       c.Name    == remoteAppName                    &&
-                                                                       c.Version == remoteAppVersion));
-                            }
-                        }
-                    }
-
-                    if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
-                    {
-                        foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
-                                                 .Select(c => c.Name)
-                                                 .Distinct())
-                        {
-                            RemoteArchitecture existing =
-                                ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                new RemoteArchitecture
-                                {
-                                    Name         = nvs,
-                                    Synchronized = true
-                                };
-
-                            existing.Count +=
-                                (ulong)ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs);
-
-                            ctx.RemoteArchitectures.Update(existing);
-
-                            ctx.RemoteArchitectures.RemoveRange(ctx.RemoteArchitectures.Where(c => !c.Synchronized &&
-                                                                    c.Name == nvs));
-                        }
-                    }
+                }
+
+                if(ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
+                {
+                    dto.RemoteOperatingSystems = [];
 
                     foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
                                                       .Select(c => c.Name)
@@ -673,57 +343,365 @@ public static class Statistics
                                                              .Select(c => c.Version)
                                                              .Distinct())
                         {
-                            RemoteOperatingSystem existing =
-                                ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
-                                                                               c.Name    == remoteOsName &&
-                                                                               c.Version == remoteOsVersion) ??
-                                new RemoteOperatingSystem
+                            dto.RemoteOperatingSystems.Add(new OsStats
+                            {
+                                name    = remoteOsName,
+                                version = remoteOsVersion,
+                                Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized          &&
+                                                                                 c.Name    == remoteOsName &&
+                                                                                 c.Version == remoteOsVersion)
+                            });
+                        }
+                    }
+                }
+
+#if DEBUG
+                System.Console.WriteLine(Localization.Core.Uploading_statistics);
+#else
+                Aaru.Console.AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Uploading_statistics);
+#endif
+                string json = JsonSerializer.Serialize(dto, typeof(StatsDto), StatsDtoContext.Default);
+
+                byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
+                var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
+
+                ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
+
+                request.Method        = "POST";
+                request.ContentLength = jsonBytes.Length;
+                request.ContentType   = "application/json";
+                Stream reqStream = await request.GetRequestStreamAsync();
+                await reqStream.WriteAsync(jsonBytes, 0, jsonBytes.Length);
+
+                //jsonStream.CopyTo(reqStream);
+                reqStream.Close();
+                WebResponse response = await request.GetResponseAsync();
+
+                if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
+
+                Stream data   = response.GetResponseStream();
+                var    reader = new StreamReader(data ?? throw new InvalidOperationException());
+
+                string result = await reader.ReadToEndAsync();
+                data.Close();
+                response.Close();
+
+                if(result != "ok") return;
+
+                if(ctx.Commands.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                           new Command
+                                           {
+                                               Name         = nvs,
+                                               Synchronized = true
+                                           };
+
+                        existing.Count += (ulong)ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs);
+                        ctx.Commands.Update(existing);
+                        ctx.Commands.RemoveRange(ctx.Commands.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.Filesystems.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        Filesystem existing = ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                              new Filesystem
+                                              {
+                                                  Name         = nvs,
+                                                  Synchronized = true
+                                              };
+
+                        existing.Count += (ulong)ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs);
+
+                        ctx.Filesystems.Update(existing);
+
+                        ctx.Filesystems.RemoveRange(ctx.Filesystems.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.Filters.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                          new Filter
+                                          {
+                                              Name         = nvs,
+                                              Synchronized = true
+                                          };
+
+                        existing.Count += (ulong)ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs);
+                        ctx.Filters.Update(existing);
+                        ctx.Filters.RemoveRange(ctx.Filters.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        MediaFormat existing = ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                               new MediaFormat
+                                               {
+                                                   Name         = nvs,
+                                                   Synchronized = true
+                                               };
+
+                        existing.Count += (ulong)ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs);
+
+                        ctx.MediaFormats.Update(existing);
+
+                        ctx.MediaFormats.RemoveRange(ctx.MediaFormats.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.Partitions.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        Partition existing = ctx.Partitions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                             new Partition
+                                             {
+                                                 Name         = nvs,
+                                                 Synchronized = true
+                                             };
+
+                        existing.Count += (ulong)ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs);
+
+                        ctx.Partitions.Update(existing);
+                        ctx.Partitions.RemoveRange(ctx.Partitions.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.Versions.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                    {
+                        Version existing = ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                           new Version
+                                           {
+                                               Name         = nvs,
+                                               Synchronized = true
+                                           };
+
+                        existing.Count += (ulong)ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs);
+                        ctx.Versions.Update(existing);
+                        ctx.Versions.RemoveRange(ctx.Versions.Where(c => !c.Synchronized && c.Name == nvs));
+                    }
+                }
+
+                if(ctx.Medias.Any(c => !c.Synchronized))
+                {
+                    foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type).Distinct())
+                    {
+                        if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
+                        {
+                            Database.Models.Media existing =
+                                ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
+                                new Database.Models.Media
                                 {
                                     Synchronized = true,
-                                    Version      = remoteOsVersion,
-                                    Name         = remoteOsName
+                                    Type         = media,
+                                    Real         = true
                                 };
 
                             existing.Count +=
-                                (ulong)ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized          &&
-                                                                                c.Name    == remoteOsName &&
-                                                                                c.Version == remoteOsVersion);
+                                (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && c.Real);
 
-                            ctx.RemoteOperatingSystems.Update(existing);
+                            ctx.Medias.Update(existing);
 
-                            ctx.RemoteOperatingSystems.RemoveRange(ctx.RemoteOperatingSystems.Where(c =>
-                                                                       !c.Synchronized           &&
-                                                                       c.Name    == remoteOsName &&
-                                                                       c.Version == remoteOsVersion));
+                            ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized && c.Type == media && c.Real));
+                        }
+
+                        if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real)) continue;
+
+                        {
+                            Database.Models.Media existing =
+                                ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
+                                new Database.Models.Media
+                                {
+                                    Synchronized = true,
+                                    Type         = media,
+                                    Real         = false
+                                };
+
+                            existing.Count +=
+                                (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media && !c.Real);
+
+                            ctx.Medias.Update(existing);
+
+                            ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized &&
+                                                                         c.Type == media &&
+                                                                         !c.Real));
                         }
                     }
-
-                    ctx.SaveChanges();
                 }
-            }
-            catch(WebException)
-            {
-                // Can't connect to the server, do nothing
-            }
-            catch(DbUpdateConcurrencyException)
-            {
-                // Ignore db concurrency errors
-            }
 
-            // ReSharper disable once RedundantCatchClause
-            catch
-            {
+                if(ctx.SeenDevices.Any(c => !c.Synchronized))
+                {
+                    foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
+                    {
+                        device.Synchronized = true;
+                        ctx.Update(device);
+                    }
+                }
+
+                if(ctx.OperatingSystems.Any(c => !c.Synchronized))
+                {
+                    foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                .Select(c => c.Name)
+                                                .Distinct())
+                    {
+                        foreach(string osVersion in ctx.OperatingSystems.Where(c => !c.Synchronized && c.Name == osName)
+                                                       .Select(c => c.Version)
+                                                       .Distinct())
+                        {
+                            OperatingSystem existing =
+                                ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized      &&
+                                                                         c.Name    == osName &&
+                                                                         c.Version == osVersion) ??
+                                new OperatingSystem
+                                {
+                                    Synchronized = true,
+                                    Version      = osVersion,
+                                    Name         = osName
+                                };
+
+                            existing.Count +=
+                                (ulong)ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
+                                                                           c.Name    == osName &&
+                                                                           c.Version == osVersion);
+
+                            ctx.OperatingSystems.Update(existing);
+
+                            ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c => !c.Synchronized &&
+                                                                 c.Name    == osName                         &&
+                                                                 c.Version == osVersion));
+                        }
+                    }
+                }
+
+                if(ctx.RemoteApplications.Any(c => !c.Synchronized))
+                {
+                    foreach(string remoteAppName in ctx.RemoteApplications.Where(c => !c.Synchronized)
+                                                       .Select(c => c.Name)
+                                                       .Distinct())
+                    {
+                        foreach(string remoteAppVersion in ctx.RemoteApplications
+                                                              .Where(c => !c.Synchronized && c.Name == remoteAppName)
+                                                              .Select(c => c.Version)
+                                                              .Distinct())
+                        {
+                            RemoteApplication existing =
+                                ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
+                                                                           c.Name    == remoteAppName &&
+                                                                           c.Version == remoteAppVersion) ??
+                                new RemoteApplication
+                                {
+                                    Synchronized = true,
+                                    Version      = remoteAppVersion,
+                                    Name         = remoteAppName
+                                };
+
+                            existing.Count +=
+                                (ulong)ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
+                                                                             c.Name    == remoteAppName &&
+                                                                             c.Version == remoteAppVersion);
+
+                            ctx.RemoteApplications.Update(existing);
+
+                            ctx.RemoteApplications.RemoveRange(ctx.RemoteApplications.Where(c => !c.Synchronized &&
+                                                                   c.Name    == remoteAppName                    &&
+                                                                   c.Version == remoteAppVersion));
+                        }
+                    }
+                }
+
+                if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
+                {
+                    foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized)
+                                             .Select(c => c.Name)
+                                             .Distinct())
+                    {
+                        RemoteArchitecture existing =
+                            ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                            new RemoteArchitecture
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
+
+                        existing.Count +=
+                            (ulong)ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs);
+
+                        ctx.RemoteArchitectures.Update(existing);
+
+                        ctx.RemoteArchitectures.RemoveRange(ctx.RemoteArchitectures.Where(c => !c.Synchronized &&
+                                                                c.Name == nvs));
+                    }
+                }
+
+                foreach(string remoteOsName in ctx.RemoteOperatingSystems.Where(c => !c.Synchronized)
+                                                  .Select(c => c.Name)
+                                                  .Distinct())
+                {
+                    foreach(string remoteOsVersion in ctx.RemoteOperatingSystems
+                                                         .Where(c => !c.Synchronized && c.Name == remoteOsName)
+                                                         .Select(c => c.Version)
+                                                         .Distinct())
+                    {
+                        RemoteOperatingSystem existing =
+                            ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
+                                                                           c.Name    == remoteOsName &&
+                                                                           c.Version == remoteOsVersion) ??
+                            new RemoteOperatingSystem
+                            {
+                                Synchronized = true,
+                                Version      = remoteOsVersion,
+                                Name         = remoteOsName
+                            };
+
+                        existing.Count +=
+                            (ulong)ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
+                                                                             c.Name    == remoteOsName &&
+                                                                             c.Version == remoteOsVersion);
+
+                        ctx.RemoteOperatingSystems.Update(existing);
+
+                        ctx.RemoteOperatingSystems.RemoveRange(ctx.RemoteOperatingSystems.Where(c => !c.Synchronized &&
+                                                                   c.Name    == remoteOsName                         &&
+                                                                   c.Version == remoteOsVersion));
+                    }
+                }
+
+                await ctx.SaveChangesAsync();
+            }
+        }
+        catch(WebException)
+        {
+            // Can't connect to the server, do nothing
+        }
+        catch(DbUpdateConcurrencyException)
+        {
+            // Ignore db concurrency errors
+        }
+
+        // ReSharper disable once RedundantCatchClause
+        catch
+        {
 #if DEBUG
-                _submitStatsLock = false;
-
-                if(Debugger.IsAttached) throw;
-#endif
-            }
-
             _submitStatsLock = false;
-        });
 
-        submitThread.Start();
+            if(Debugger.IsAttached) throw;
+#endif
+        }
+
+        _submitStatsLock = false;
     }
 
     /// <summary>Adds the execution of a command to statistics</summary>

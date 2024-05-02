@@ -148,8 +148,8 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
                 {
-                    ctx.Database
 #pragma warning disable EF1002
+                    ctx.Database
                        .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
                            migration}', '0.0.0')");
 #pragma warning restore EF1002
@@ -294,9 +294,9 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
         Message = UI.Saving_statistics;
         AaruConsole.WriteLine(UI.Saving_statistics);
 
-        Task.Run(() =>
+        Task.Run(async () =>
         {
-            Statistics.SaveStats();
+            await Statistics.SaveStats();
 
             Dispatcher.UIThread.Post(LoadMainWindow);
         });

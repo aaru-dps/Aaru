@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Aaru.Commands;
 using Aaru.Commands.Archive;
 using Aaru.Commands.Database;
@@ -62,7 +63,7 @@ class MainClass
     static string                                _assemblyTitle;
     static AssemblyInformationalVersionAttribute _assemblyVersion;
 
-    public static int Main([NotNull] string[] args)
+    public static async Task<int> Main([NotNull] string[] args)
     {
         IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
         {
@@ -113,14 +114,17 @@ class MainClass
         try
         {
             ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
-            ctx.Database.Migrate();
+            await ctx.Database.MigrateAsync();
         }
         catch(NotSupportedException)
         {
             try
             {
-                ctx?.Database.CloseConnection();
-                ctx?.Dispose();
+                if(ctx is not null)
+                {
+                    await ctx.Database.CloseConnectionAsync();
+                    await ctx.DisposeAsync();
+                }
             }
             catch(Exception)
             {
@@ -129,21 +133,21 @@ class MainClass
 
             File.Delete(Settings.Settings.LocalDbPath);
             ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-            ctx.Database.EnsureCreated();
+            await ctx.Database.EnsureCreatedAsync();
 
-            ctx.Database
-               .ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+            await ctx.Database
+                     .ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
-            foreach(string migration in ctx.Database.GetPendingMigrations())
+            foreach(string migration in await ctx.Database.GetPendingMigrationsAsync())
             {
-                ctx.Database
 #pragma warning disable EF1002
-                   .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
-                       migration}', '0.0.0')");
+                await ctx.Database
+                         .ExecuteSqlRawAsync($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                             migration}', '0.0.0')");
 #pragma warning restore EF1002
             }
 
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
         }
 
         // Remove duplicates
@@ -170,7 +174,7 @@ class MainClass
         // Remove nulls
         ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null && d.Revision == null));
 
-        ctx.SaveChanges();
+        await ctx.SaveChangesAsync();
 
         var mainDbUpdate = false;
 
@@ -182,7 +186,7 @@ class MainClass
 
         var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
 
-        if(mainContext.Database.GetPendingMigrations().Any())
+        if((await mainContext.Database.GetPendingMigrationsAsync()).Any())
         {
             AaruConsole.WriteLine(UI.New_database_version_updating);
 
@@ -198,8 +202,8 @@ class MainClass
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
 
-            mainContext.Database.CloseConnection();
-            mainContext.Dispose();
+            await mainContext.Database.CloseConnectionAsync();
+            await mainContext.DisposeAsync();
             UpdateCommand.DoUpdate(true);
         }
 
@@ -244,9 +248,9 @@ class MainClass
         rootCommand.AddCommand(new ListNamespacesCommand());
         rootCommand.AddCommand(new RemoteCommand());
 
-        int ret = rootCommand.Invoke(args);
+        int ret = await rootCommand.InvokeAsync(args);
 
-        Statistics.SaveStats();
+        await Statistics.SaveStats();
 
         if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption)) return ret;
 
