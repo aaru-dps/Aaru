@@ -502,14 +502,11 @@ public abstract class WritableOpticalMediaImageTest : BaseWritableMediaImageTest
                     }
                 }
 
-                if(isrcs.Count > 0)
+                foreach(KeyValuePair<byte, string> isrc in isrcs)
                 {
-                    foreach(KeyValuePair<byte, string> isrc in isrcs)
-                    {
-                        outputFormat.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value),
-                                                    isrc.Key,
-                                                    SectorTagType.CdTrackIsrc);
-                    }
+                    outputFormat.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value),
+                                                isrc.Key,
+                                                SectorTagType.CdTrackIsrc);
                 }
 
                 if(trackFlags.Count > 0)

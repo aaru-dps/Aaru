@@ -404,11 +404,8 @@ public abstract class OpticalImageConvertIssueTest
             }
         }
 
-        if(isrcs.Count > 0)
-        {
-            foreach(KeyValuePair<byte, string> isrc in isrcs)
-                outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key, SectorTagType.CdTrackIsrc);
-        }
+        foreach(KeyValuePair<byte, string> isrc in isrcs)
+            outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value), isrc.Key, SectorTagType.CdTrackIsrc);
 
         if(trackFlags.Count > 0)
         {

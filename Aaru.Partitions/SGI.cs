@@ -229,26 +229,17 @@ public sealed class SGI : IPartition
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Label
     {
-        /// <summary></summary>
-        public readonly uint magic;
-        /// <summary></summary>
+        public readonly uint  magic;
         public readonly short root_part_num;
-        /// <summary></summary>
         public readonly short swap_part_num;
-        /// <summary></summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] boot_file;
-        /// <summary></summary>
         public readonly DeviceParameters device_params;
-        /// <summary></summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
         public readonly Volume[] volume;
-        /// <summary></summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly Partition[] partitions;
-        /// <summary></summary>
         public readonly uint csum;
-        /// <summary></summary>
         public readonly uint padding;
     }
 
@@ -259,11 +250,8 @@ public sealed class SGI : IPartition
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct Partition
     {
-        /// <summary></summary>
-        public readonly uint num_blocks;
-        /// <summary></summary>
-        public readonly uint first_block;
-        /// <summary></summary>
+        public readonly uint    num_blocks;
+        public readonly uint    first_block;
         public readonly SGIType type;
     }
 
@@ -299,12 +287,9 @@ public sealed class SGI : IPartition
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Volume
     {
-        /// <summary></summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public readonly byte[] name;
-        /// <summary></summary>
         public readonly uint block_num;
-        /// <summary></summary>
         public readonly uint num_bytes;
     }
 

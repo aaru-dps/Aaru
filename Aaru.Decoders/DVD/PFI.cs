@@ -986,11 +986,13 @@ public static class PFI
 
     public static string Prettify(byte[] response, MediaType mediaType) => Prettify(Decode(response, mediaType));
 
+#pragma warning disable PH2077 // Waiting to get more information on the actual values
     public static string ManufacturerFromDVDRAM(string manufacturerId) => manufacturerId switch
                                                                           {
                                                                               _ =>
                                                                                   ManufacturerFromDVDPlusID(manufacturerId)
                                                                           };
+#pragma warning restore PH2077
 
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public static string ManufacturerFromDVDPlusID(string manufacturerId)

@@ -167,8 +167,9 @@ public sealed partial class CPM
                 if(errno != ErrorNumber.NoError) return errno;
 
                 if(_workingDefinition.complement)
-                    for(var b = 0; b < readSector.Length; b++)
-                        readSector[b] = (byte)(~readSector[b] & 0xFF);
+                {
+                    for(var b = 0; b < readSector.Length; b++) readSector[b] = (byte)(~readSector[b] & 0xFF);
+                }
 
                 deinterleavedSectors.Add((ulong)p, readSector);
             }
@@ -757,17 +758,14 @@ public sealed partial class CPM
         _decodedPasswordCache = new Dictionary<string, byte[]>();
 
         // For each stored password, store a decoded version of it
-        if(_passwordCache.Count > 0)
+        foreach(KeyValuePair<string, byte[]> kvp in _passwordCache)
         {
-            foreach(KeyValuePair<string, byte[]> kvp in _passwordCache)
-            {
-                var tmp = new byte[8];
-                Array.Copy(kvp.Value, 16, tmp, 0, 8);
+            var tmp = new byte[8];
+            Array.Copy(kvp.Value, 16, tmp, 0, 8);
 
-                for(var t = 0; t < 8; t++) tmp[t] ^= kvp.Value[13];
+            for(var t = 0; t < 8; t++) tmp[t] ^= kvp.Value[13];
 
-                _decodedPasswordCache.Add(kvp.Key, tmp);
-            }
+            _decodedPasswordCache.Add(kvp.Key, tmp);
         }
 
         // Generate statfs.

@@ -221,29 +221,21 @@ sealed class MediaScanCommand : Command
         AaruConsole.WriteLine($"[bold]{Localization.Core.Summary}:[/]");
         AaruConsole.WriteLine($"[lime]{string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A)}[/]");
 
-        AaruConsole.WriteLine($"[green]{
-            string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B)}[/]");
+        AaruConsole.WriteLine($"[green]{string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B)}[/]");
 
-        AaruConsole.WriteLine($"[darkorange]{
-            string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C)}[/]");
+        AaruConsole.WriteLine($"[darkorange]{string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C)}[/]");
 
-        AaruConsole.WriteLine($"[olive]{
-            string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D)}[/]");
+        AaruConsole.WriteLine($"[olive]{string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D)}[/]");
 
-        AaruConsole.WriteLine($"[orange3]{
-            string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E)}[/]");
+        AaruConsole.WriteLine($"[orange3]{string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E)}[/]");
 
-        AaruConsole.WriteLine($"[red]{string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F)
-        }[/]");
+        AaruConsole.WriteLine($"[red]{string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F)}[/]");
 
         AaruConsole.WriteLine($"[maroon]{string.Format(Localization.Core._0_sectors_could_not_be_read,
                                                        results.UnreadableSectors.Count)}[/]");
 
-        if(results.UnreadableSectors.Count > 0)
-        {
-            foreach(ulong bad in results.UnreadableSectors)
-                AaruConsole.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
-        }
+        foreach(ulong bad in results.UnreadableSectors)
+            AaruConsole.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
 
         AaruConsole.WriteLine();
 

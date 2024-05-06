@@ -39,7 +39,9 @@ namespace Aaru.Devices;
 
 public partial class Device
 {
+#pragma warning disable PH2070 // Risks are known. TODO: Maybe protected property?
     protected static bool _readMultipleBlockCannotSetBlockCount;
+#pragma warning restore PH2070
 
     /// <summary>Reads the CSD register from a SecureDigital or MultiMediaCard device</summary>
     /// <param name="buffer">Data buffer</param>

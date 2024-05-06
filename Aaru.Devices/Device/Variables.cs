@@ -43,20 +43,6 @@ public partial class Device
     const string SD_MODULE_NAME   = "SecureDigital Device";
     const string MMC_MODULE_NAME  = "MultiMediaCard Device";
 
-    // MMC and SecureDigital, values that need to be get with card idle, something that may
-    // not be possible to do but usually is already done by the SDHCI driver.
-    private protected byte[] CachedCid;
-    private protected byte[] CachedCsd;
-    private protected byte[] CachedOcr;
-    private protected byte[] CachedScr;
-
-    private protected string DevicePath;
-    private protected ulong  FirewireGuid;
-    private protected uint   FirewireModel;
-    private protected uint   FirewireVendor;
-    private protected ushort UsbProduct;
-    private protected ushort UsbVendor;
-
     /// <summary>Gets the Platform ID for this device</summary>
     /// <value>The Platform ID</value>
     public PlatformID PlatformId { get; private protected set; }
@@ -163,4 +149,20 @@ public partial class Device
 
     /// <summary>Contains the PCMCIA CIS if applicable</summary>
     public byte[] Cis { get; private protected set; }
+
+    // MMC and SecureDigital, values that need to be get with card idle, something that may
+    // not be possible to do but usually is already done by the SDHCI driver.
+#pragma warning disable PH2070 // Risks are known. TODO: Maybe protected property?
+    private protected byte[] CachedCid;
+    private protected byte[] CachedCsd;
+    private protected byte[] CachedOcr;
+    private protected byte[] CachedScr;
+
+    private protected string DevicePath;
+    private protected ulong  FirewireGuid;
+    private protected uint   FirewireModel;
+    private protected uint   FirewireVendor;
+    private protected ushort UsbProduct;
+    private protected ushort UsbVendor;
+#pragma warning restore PH2070
 }

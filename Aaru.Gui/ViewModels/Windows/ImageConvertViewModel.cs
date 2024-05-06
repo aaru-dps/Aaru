@@ -1423,19 +1423,15 @@ public sealed class ImageConvertViewModel : ViewModelBase
                     Progress2Value = Progress2MaxValue;
                 });
 
-                if(isrcs.Count > 0)
+                foreach(KeyValuePair<byte, string> isrc in isrcs)
                 {
-                    foreach(KeyValuePair<byte, string> isrc in isrcs)
-                    {
-                        outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value),
-                                                     isrc.Key,
-                                                     SectorTagType.CdTrackIsrc);
-                    }
+                    outputOptical.WriteSectorTag(Encoding.UTF8.GetBytes(isrc.Value),
+                                                 isrc.Key,
+                                                 SectorTagType.CdTrackIsrc);
                 }
 
-                if(trackFlags.Count > 0)
-                    foreach(KeyValuePair<byte, byte> flags in trackFlags)
-                        outputOptical.WriteSectorTag([flags.Value], flags.Key, SectorTagType.CdTrackFlags);
+                foreach(KeyValuePair<byte, byte> flags in trackFlags)
+                    outputOptical.WriteSectorTag([flags.Value], flags.Key, SectorTagType.CdTrackFlags);
 
                 if(mcn != null) outputOptical.WriteMediaTag(Encoding.UTF8.GetBytes(mcn), MediaTagType.CD_MCN);
             }

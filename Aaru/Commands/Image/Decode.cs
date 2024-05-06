@@ -415,10 +415,12 @@ sealed class DecodeCommand : Command
             {
                 switch(tag)
                 {
+#pragma warning disable PH2077 // TODO: Implement some!
                     default:
                         AaruConsole.WriteLine(UI.Decoder_for_sector_tag_type_0_not_yet_implemented_sorry, tag);
 
                         break;
+#pragma warning restore PH2077
                 }
             }
         }
