@@ -307,33 +307,6 @@ Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		Policies = $0
-		$0.StandardHeader = $1
-		$1.Text = @/***************************************************************************\nAaru Data Preservation Suite\n----------------------------------------------------------------------------\n \nFilename       : ${FileName}\nVersion        : 1.0\nAuthor(s)      : ${AuthorName}\n \nComponent      : Component\n\nRevision       : $Revision$\nLast change by : $Author$\nDate           : $Date$\n \n--[ Description ] ----------------------------------------------------------\n \nDescription\n \n--[ License ] --------------------------------------------------------------\n \n    This program is free software: you can redistribute it and/or modify\n    it under the terms of the GNU General Public License as\n    published by the Free Software Foundation, either version 3 of the\n    License, or (at your option) any later version.\n\n    This program is distributed in the hope that it will be useful,\n    but WITHOUT ANY WARRANTY; without even the implied warranty of\n    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n    GNU General Public License for more details.\n\n    You should have received a copy of the GNU General Public License\n    along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n----------------------------------------------------------------------------\nCopyright (C) 2011-2015 Claunia.com\n****************************************************************************/\n//$Id$
-		$0.TextStylePolicy = $2
-		$2.scope = text/x-csharp
-		$2.TabsToSpaces = True
-		$0.CSharpFormattingPolicy = $3
-		$3.scope = text/x-csharp
-		$3.IndentBraces = True
-		$3.IndentBlock = False
-		$3.IndentSwitchCaseSection = False
-		$0.DotNetNamingPolicy = $4
-		$4.DirectoryNamespaceAssociation = Hierarchical
-		$4.ResourceNamePolicy = MSBuild
-		$0.XmlFormattingPolicy = $5
-		$5.DefaultFormat = $6
-		$6.AlignAttributes = True
-		$5.inheritsSet = null
-		$5.inheritsScope = application/xml
-		$5.scope = application/config+xml
-		$0.NameConventionPolicy = $7
-		$7.Rules = $8
-		$8.NamingRule = $28
-		description = Aaru Data Preservation Suite.
-		version = 4.0.99.0
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4877DD55-10BF-42D2-8FA5-984A9D4F9B0E} = {AF25D4CD-0DA5-4595-99BD-FA4ADB844FD2}
 		{1E5E8A51-06D1-41B5-A876-4ED523707D16} = {4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}
