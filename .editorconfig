@@ -1452,3 +1452,31 @@ tab_width    = 4
 indent_style = space
 indent_size  = 4
 tab_width    = 4
+
+[*.{cs,vb}]
+dotnet_diagnostic.ph2006.severity = none
+dotnet_diagnostic.ph2021.severity = none
+dotnet_diagnostic.ph2026.severity = none
+dotnet_diagnostic.ph2028.severity = none
+dotnet_diagnostic.ph2029.severity = none
+dotnet_diagnostic.ph2031.severity = warning
+dotnet_diagnostic.ph2045.severity = none
+dotnet_diagnostic.ph2067.severity = none
+dotnet_diagnostic.ph2068.severity = none
+dotnet_diagnostic.ph2069.severity = warning
+dotnet_diagnostic.ph2075.severity = none
+dotnet_diagnostic.ph2079.severity = none
+dotnet_diagnostic.ph2081.severity = none
+dotnet_diagnostic.ph2082.severity = suggestion
+dotnet_diagnostic.ph2083.severity = warning
+dotnet_diagnostic.ph2086.severity = warning
+dotnet_diagnostic.ph2089.severity = warning
+dotnet_diagnostic.ph2096.severity = warning
+dotnet_diagnostic.ph2097.severity = warning
+dotnet_diagnostic.ph2098.severity = warning
+dotnet_diagnostic.ph2101.severity = warning
+dotnet_diagnostic.ph2102.severity = none
+dotnet_diagnostic.mt1001.severity = warning
+
+[*.{razor}]
+resharper_normalize_tag_names = false

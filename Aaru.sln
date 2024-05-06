@@ -67,6 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		codealike.json = codealike.json
 		release-checklist.md = release-checklist.md
 		Aaru.sln.DotSettings = Aaru.sln.DotSettings
+		.globalconfig = .globalconfig
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{4877DD55-10BF-42D2-8FA5-984A9D4F9B0E}"
