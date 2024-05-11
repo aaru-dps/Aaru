@@ -39,7 +39,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
@@ -58,55 +57,53 @@ public static class Remote
 {
     /// <summary>Submits a device report</summary>
     /// <param name="report">Device report</param>
-    public static void SubmitReport(DeviceReport report)
+    public static Task SubmitReportAsync(DeviceReport report)
     {
-        var submitThread = new Thread(() =>
-        {
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask(Localization.Core.Uploading_device_report).IsIndeterminate();
+        return AnsiConsole.Status()
+                          .StartAsync(Localization.Core.Uploading_device_report,
+                                      async _ =>
+                                      {
+                                          try
+                                          {
+                                              string json =
+                                                  JsonSerializer.Serialize(report,
+                                                                           typeof(DeviceReport),
+                                                                           DeviceReportContext.Default);
 
-                try
-                {
-                    string json = JsonSerializer.Serialize(report, typeof(DeviceReport), DeviceReportContext.Default);
+                                              var httpClient = new HttpClient();
 
-                    var httpClient = new HttpClient();
+                                              httpClient.DefaultRequestHeaders.Add("User-Agent",
+                                                  $"Aaru {typeof(Version).Assembly.GetName().Version}");
 
-                    httpClient.DefaultRequestHeaders.Add("User-Agent",
-                                                         $"Aaru {typeof(Version).Assembly.GetName().Version}");
+                                              httpClient.BaseAddress = new Uri("https://www.aaru.app");
 
-                    httpClient.BaseAddress = new Uri("https://www.aaru.app");
+                                              HttpResponseMessage response =
+                                                  await httpClient.PostAsync("/api/uploadreportv2",
+                                                                             new StringContent(json,
+                                                                                 Encoding.UTF8,
+                                                                                 "application/json"));
 
-                    HttpResponseMessage response = httpClient
-                                                  .PostAsync("/api/uploadreportv2",
-                                                             new StringContent(json, Encoding.UTF8, "application/json"))
-                                                  .GetAwaiter()
-                                                  .GetResult();
+                                              if(!response.IsSuccessStatusCode) return;
 
-                    if(!response.IsSuccessStatusCode) return;
+                                              Stream data   = await response.Content.ReadAsStreamAsync();
+                                              var    reader = new StreamReader(data);
 
-                    Stream data   = response.Content.ReadAsStream();
-                    var    reader = new StreamReader(data);
+                                              await reader.ReadToEndAsync();
+                                              data.Close();
+                                          }
+                                          catch(WebException)
+                                          {
+                                              // Can't connect to the server, do nothing
+                                          }
 
-                    reader.ReadToEnd();
-                    data.Close();
-                }
-                catch(WebException)
-                {
-                    // Can't connect to the server, do nothing
-                }
-
-                // ReSharper disable once RedundantCatchClause
-                catch
-                {
+                                          // ReSharper disable once RedundantCatchClause
+                                          catch
+                                          {
 #if DEBUG
-                    if(Debugger.IsAttached) throw;
+                                              if(Debugger.IsAttached) throw;
 #endif
-                }
-            });
-        });
-
-        submitThread.Start();
+                                          }
+                                      });
     }
 
     /// <summary>Updates the main database</summary>
@@ -243,7 +240,9 @@ public static class Remote
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
                                  .Start(ctx =>
                                   {
-                                      ProgressTask task = ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
+
                                       task.MaxValue = sync.Offsets.Count;
 
                                       foreach(CdOffsetDto offset in sync.Offsets)
@@ -292,7 +291,9 @@ public static class Remote
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
                                  .Start(ctx =>
                                   {
-                                      ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
+
                                       task.MaxValue = sync.NesHeaders?.Count ?? 0;
 
                                       foreach(NesHeaderDto header in sync.NesHeaders ?? [])

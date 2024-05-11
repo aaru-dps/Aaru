@@ -37,7 +37,7 @@ using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Metadata;
@@ -72,10 +72,10 @@ sealed class DeviceReportCommand : Command
 
         Add(new Option<bool>(["--trap-disc", "-t"], () => false, UI.Device_report_using_trap_disc));
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(InvokeAsync)) ?? throw new NullReferenceException());
     }
 
-    public static int Invoke(bool debug, bool verbose, string devicePath, bool trapDisc)
+    public static async Task<int> InvokeAsync(bool debug, bool verbose, string devicePath, bool trapDisc)
     {
         MainClass.PrintCopyright();
 
@@ -198,36 +198,30 @@ sealed class DeviceReportCommand : Command
 
         var reporter = new Core.Devices.Report.DeviceReport(dev);
 
-        if(dev.IsUsb)
+        if(dev.IsUsb && AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_USB}[/]"))
         {
-            if(AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_USB}[/]"))
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask(Localization.Core.Querying_USB_information).IsIndeterminate();
-                    report.USB = reporter.UsbReport();
-                });
+                ctx.AddTask(Localization.Core.Querying_USB_information).IsIndeterminate();
+                report.USB = reporter.UsbReport();
+            });
 
-                report.USB.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
+            report.USB.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
 
-                removable = report.USB.RemovableMedia;
-            }
+            removable = report.USB.RemovableMedia;
         }
 
-        if(dev.IsFireWire)
+        if(dev.IsFireWire && AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_FireWire}[/]"))
         {
-            if(AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_FireWire}[/]"))
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                Core.Spectre.ProgressSingleSpinner(ctx =>
-                {
-                    ctx.AddTask("Querying FireWire information...").IsIndeterminate();
-                    report.FireWire = reporter.FireWireReport();
-                });
+                ctx.AddTask("Querying FireWire information...").IsIndeterminate();
+                report.FireWire = reporter.FireWireReport();
+            });
 
-                report.FireWire.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
+            report.FireWire.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
 
-                removable = report.FireWire.RemovableMedia;
-            }
+            removable = report.FireWire.RemovableMedia;
         }
 
         if(dev.IsPcmcia)
@@ -760,105 +754,73 @@ sealed class DeviceReportCommand : Command
 
                                 var mediaIsRecognized = true;
 
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask(Localization.Core.Waiting_for_drive_to_become_ready).IsIndeterminate();
-                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                await AnsiConsole.Status()
+                                                 .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
+                                                             async ctx =>
+                                                             {
+                                                                 sense = dev.ScsiTestUnitReady(out senseBuffer,
+                                                                     dev.Timeout,
+                                                                     out _);
 
-                                    if(!sense) return;
+                                                                 if(!sense) return;
 
-                                    DecodedSense? decSense = Sense.Decode(senseBuffer);
+                                                                 DecodedSense? decSense = Sense.Decode(senseBuffer);
 
-                                    if(decSense.HasValue)
-                                    {
-                                        switch(decSense.Value.ASC)
-                                        {
-                                            case 0x3A:
-                                            {
-                                                var leftRetries = 50;
+                                                                 if(decSense.HasValue)
+                                                                 {
+                                                                     switch(decSense.Value.ASC)
+                                                                     {
+                                                                         case 0x3A:
+                                                                         // These should be trapped by the OS but seems in some cases they're not
+                                                                         case 0x04 when decSense.Value.ASCQ == 0x01:
+                                                                         case 0x28:
+                                                                         {
+                                                                             var leftRetries = 50;
 
-                                                while(leftRetries > 0)
-                                                {
-                                                    Thread.Sleep(2000);
+                                                                             while(leftRetries > 0)
+                                                                             {
+                                                                                 await Task.Delay(2000);
 
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                                                 sense =
+                                                                                     dev
+                                                                                        .ScsiTestUnitReady(out
+                                                                                             senseBuffer,
+                                                                                             dev.Timeout,
+                                                                                             out _);
 
-                                                    if(!sense) break;
+                                                                                 if(!sense) break;
 
-                                                    leftRetries--;
-                                                }
+                                                                                 leftRetries--;
+                                                                             }
 
-                                                AaruConsole.WriteLine();
+                                                                             AaruConsole.WriteLine();
 
-                                                mediaIsRecognized &= !sense;
+                                                                             mediaIsRecognized &= !sense;
 
-                                                break;
-                                            }
+                                                                             break;
+                                                                         }
+                                                                         default:
+                                                                             AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                                 Localization.Core
+                                                                                    .Device_not_ready_Sense,
+                                                                                 decSense.Value.SenseKey,
+                                                                                 decSense.Value.ASC,
+                                                                                 decSense.Value.ASCQ);
 
-                                            // These should be trapped by the OS but seems in some cases they're not
-                                            case 0x04 when decSense.Value.ASCQ == 0x01:
-                                            {
-                                                var leftRetries = 50;
+                                                                             mediaIsRecognized = false;
 
-                                                while(leftRetries > 0)
-                                                {
-                                                    Thread.Sleep(2000);
+                                                                             break;
+                                                                     }
+                                                                 }
+                                                                 else
+                                                                 {
+                                                                     AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                         Localization.Core
+                                                                            .Got_sense_status_but_no_sense_buffer);
 
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                    if(!sense) break;
-
-                                                    leftRetries--;
-                                                }
-
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-
-                                                break;
-                                            }
-                                            case 0x28:
-                                            {
-                                                var leftRetries = 50;
-
-                                                while(leftRetries > 0)
-                                                {
-                                                    Thread.Sleep(2000);
-
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                    if(!sense) break;
-
-                                                    leftRetries--;
-                                                }
-
-                                                AaruConsole.WriteLine();
-
-                                                mediaIsRecognized &= !sense;
-
-                                                break;
-                                            }
-                                            default:
-                                                AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                                           Localization.Core.Device_not_ready_Sense,
-                                                                           decSense.Value.SenseKey,
-                                                                           decSense.Value.ASC,
-                                                                           decSense.Value.ASCQ);
-
-                                                mediaIsRecognized = false;
-
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                                   Localization.Core
-                                                                      .Got_sense_status_but_no_sense_buffer);
-
-                                        mediaIsRecognized = false;
-                                    }
-                                });
+                                                                     mediaIsRecognized = false;
+                                                                 }
+                                                             });
 
                                 var mediaTest = new TestedMedia();
 
@@ -1005,106 +967,74 @@ sealed class DeviceReportCommand : Command
 
                             var mediaIsRecognized = true;
 
-                            Core.Spectre.ProgressSingleSpinner(ctx =>
-                            {
-                                ctx.AddTask(Localization.Core.Waiting_for_drive_to_become_ready).IsIndeterminate();
+                            await AnsiConsole.Status()
+                                             .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
+                                                         async ctx =>
+                                                         {
+                                                             sense = dev.ScsiTestUnitReady(out senseBuffer,
+                                                                 dev.Timeout,
+                                                                 out _);
 
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-                                AaruConsole.DebugWriteLine(MODULE_NAME, "sense = {0}", sense);
+                                                             AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                 "sense = {0}",
+                                                                 sense);
 
-                                if(!sense) return;
+                                                             if(!sense) return;
 
-                                DecodedSense? decSense = Sense.Decode(senseBuffer);
+                                                             DecodedSense? decSense = Sense.Decode(senseBuffer);
 
-                                if(decSense.HasValue)
-                                {
-                                    switch(decSense.Value.ASC)
-                                    {
-                                        case 0x3A:
-                                        {
-                                            var leftRetries = 50;
+                                                             if(decSense.HasValue)
+                                                             {
+                                                                 switch(decSense.Value.ASC)
+                                                                 {
+                                                                     case 0x3A:
+                                                                     // These should be trapped by the OS but seems in some cases they're not
+                                                                     case 0x04 when decSense.Value.ASCQ == 0x01:
+                                                                     case 0x28:
+                                                                     {
+                                                                         var leftRetries = 50;
 
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
+                                                                         while(leftRetries > 0)
+                                                                         {
+                                                                             await Task.Delay(2000);
 
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                                             sense =
+                                                                                 dev.ScsiTestUnitReady(out senseBuffer,
+                                                                                     dev.Timeout,
+                                                                                     out _);
 
-                                                if(!sense) break;
+                                                                             if(!sense) break;
 
-                                                leftRetries--;
-                                            }
+                                                                             leftRetries--;
+                                                                         }
 
-                                            AaruConsole.WriteLine();
+                                                                         AaruConsole.WriteLine();
 
-                                            mediaIsRecognized &= !sense;
+                                                                         mediaIsRecognized &= !sense;
 
-                                            break;
-                                        }
+                                                                         break;
+                                                                     }
+                                                                     default:
+                                                                         AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                             Localization.Core.Device_not_ready_Sense,
+                                                                             decSense.Value.SenseKey,
+                                                                             decSense.Value.ASC,
+                                                                             decSense.Value.ASCQ);
 
-                                        // These should be trapped by the OS but seems in some cases they're not
-                                        case 0x04 when decSense.Value.ASCQ == 0x01:
-                                        {
-                                            var leftRetries = 50;
+                                                                         mediaIsRecognized = false;
 
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
+                                                                         break;
+                                                                 }
+                                                             }
+                                                             else
+                                                             {
+                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                     Localization.Core
+                                                                        .Got_sense_status_but_no_sense_buffer);
 
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense) break;
-
-                                                leftRetries--;
-                                            }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-
-                                            break;
-                                        }
-                                        case 0x28:
-                                        {
-                                            var leftRetries = 50;
-
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
-
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense) break;
-
-                                                leftRetries--;
-                                            }
-
-                                            AaruConsole.WriteLine();
-
-                                            mediaIsRecognized &= !sense;
-
-                                            break;
-                                        }
-                                        default:
-                                            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                                       Localization.Core.Device_not_ready_Sense,
-                                                                       decSense.Value.SenseKey,
-                                                                       decSense.Value.ASC,
-                                                                       decSense.Value.ASCQ);
-
-                                            mediaIsRecognized = false;
-
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Core.Got_sense_status_but_no_sense_buffer);
-
-                                    mediaIsRecognized = false;
-                                }
-                            });
+                                                                 mediaIsRecognized = false;
+                                                             }
+                                                         });
 
                             var seqTest = new TestedSequentialMedia();
 
@@ -1156,99 +1086,68 @@ sealed class DeviceReportCommand : Command
 
                             var mediaIsRecognized = true;
 
-                            Core.Spectre.ProgressSingleSpinner(ctx =>
-                            {
-                                ctx.AddTask(Localization.Core.Waiting_for_drive_to_become_ready).IsIndeterminate();
+                            await AnsiConsole.Status()
+                                             .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
+                                                         async ctx =>
+                                                         {
+                                                             sense = dev.ScsiTestUnitReady(out senseBuffer,
+                                                                 dev.Timeout,
+                                                                 out _);
 
-                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                             if(!sense) return;
 
-                                if(!sense) return;
+                                                             DecodedSense? decSense = Sense.Decode(senseBuffer);
 
-                                DecodedSense? decSense = Sense.Decode(senseBuffer);
+                                                             if(decSense.HasValue)
+                                                             {
+                                                                 switch(decSense.Value.ASC)
+                                                                 {
+                                                                     case 0x3A:
+                                                                     // These should be trapped by the OS but seems in some cases they're not
+                                                                     case 0x04 when decSense.Value.ASCQ == 0x01:
+                                                                     case 0x28:
+                                                                     {
+                                                                         var leftRetries = 50;
 
-                                if(decSense.HasValue)
-                                {
-                                    switch(decSense.Value.ASC)
-                                    {
-                                        case 0x3A:
-                                        {
-                                            var leftRetries = 50;
+                                                                         while(leftRetries > 0)
+                                                                         {
+                                                                             await Task.Delay(2000);
 
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
+                                                                             sense =
+                                                                                 dev.ScsiTestUnitReady(out senseBuffer,
+                                                                                     dev.Timeout,
+                                                                                     out _);
 
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                                             if(!sense) break;
 
-                                                if(!sense) break;
+                                                                             leftRetries--;
+                                                                         }
 
-                                                leftRetries--;
-                                            }
+                                                                         mediaIsRecognized &= !sense;
 
-                                            mediaIsRecognized &= !sense;
+                                                                         break;
+                                                                     }
+                                                                     default:
+                                                                         AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                             Localization.Core.Device_not_ready_Sense,
+                                                                             decSense.Value.SenseKey,
+                                                                             decSense.Value.ASC,
+                                                                             decSense.Value.ASCQ);
 
-                                            break;
-                                        }
+                                                                         mediaIsRecognized = false;
 
-                                        // These should be trapped by the OS but seems in some cases they're not
-                                        case 0x04 when decSense.Value.ASCQ == 0x01:
-                                        {
-                                            var leftRetries = 50;
+                                                                         break;
+                                                                 }
+                                                             }
+                                                             else
+                                                             {
+                                                                 AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                                     Localization.Core
+                                                                        .Got_sense_status_but_no_sense_buffer);
 
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
-
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense) break;
-
-                                                leftRetries--;
-                                            }
-
-                                            mediaIsRecognized &= !sense;
-
-                                            break;
-                                        }
-                                        case 0x28:
-                                        {
-                                            var leftRetries = 50;
-
-                                            while(leftRetries > 0)
-                                            {
-                                                Thread.Sleep(2000);
-
-                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                if(!sense) break;
-
-                                                leftRetries--;
-                                            }
-
-                                            mediaIsRecognized &= !sense;
-
-                                            break;
-                                        }
-                                        default:
-                                            AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                                       Localization.Core.Device_not_ready_Sense,
-                                                                       decSense.Value.SenseKey,
-                                                                       decSense.Value.ASC,
-                                                                       decSense.Value.ASCQ);
-
-                                            mediaIsRecognized = false;
-
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    AaruConsole.DebugWriteLine(MODULE_NAME,
-                                                               Localization.Core.Got_sense_status_but_no_sense_buffer);
-
-                                    mediaIsRecognized = false;
-                                }
-                            });
+                                                                 mediaIsRecognized = false;
+                                                             }
+                                                         });
 
                             var mediaTest = new TestedMedia();
 
@@ -1401,66 +1300,56 @@ sealed class DeviceReportCommand : Command
 
                                 var mediaIsRecognized = true;
 
-                                Core.Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask(Localization.Core.Waiting_for_drive_to_become_ready).IsIndeterminate();
-                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                await AnsiConsole.Status()
+                                                 .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
+                                                             async ctx =>
+                                                             {
+                                                                 sense = dev.ScsiTestUnitReady(out senseBuffer,
+                                                                     dev.Timeout,
+                                                                     out _);
 
-                                    if(!sense) return;
+                                                                 if(!sense) return;
 
-                                    DecodedSense? decSense = Sense.Decode(senseBuffer);
+                                                                 DecodedSense? decSense = Sense.Decode(senseBuffer);
 
-                                    if(decSense.HasValue)
-                                    {
-                                        switch(decSense.Value.ASC)
-                                        {
-                                            case 0x3A:
-                                            {
-                                                var leftRetries = 20;
+                                                                 if(decSense.HasValue)
+                                                                 {
+                                                                     switch(decSense.Value.ASC)
+                                                                     {
+                                                                         case 0x3A:
+                                                                         case 0x04 when decSense.Value.ASCQ == 0x01:
+                                                                         {
+                                                                             var leftRetries = 20;
 
-                                                while(leftRetries > 0)
-                                                {
-                                                    Thread.Sleep(2000);
+                                                                             while(leftRetries > 0)
+                                                                             {
+                                                                                 await Task.Delay(2000);
 
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                                                 sense =
+                                                                                     dev
+                                                                                        .ScsiTestUnitReady(out
+                                                                                             senseBuffer,
+                                                                                             dev.Timeout,
+                                                                                             out _);
 
-                                                    if(!sense) break;
+                                                                                 if(!sense) break;
 
-                                                    leftRetries--;
-                                                }
+                                                                                 leftRetries--;
+                                                                             }
 
-                                                mediaIsRecognized &= !sense;
+                                                                             mediaIsRecognized &= !sense;
 
-                                                break;
-                                            }
-                                            case 0x04 when decSense.Value.ASCQ == 0x01:
-                                            {
-                                                var leftRetries = 20;
+                                                                             break;
+                                                                         }
+                                                                         default:
+                                                                             mediaIsRecognized = false;
 
-                                                while(leftRetries > 0)
-                                                {
-                                                    Thread.Sleep(2000);
-
-                                                    sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-
-                                                    if(!sense) break;
-
-                                                    leftRetries--;
-                                                }
-
-                                                mediaIsRecognized &= !sense;
-
-                                                break;
-                                            }
-                                            default:
-                                                mediaIsRecognized = false;
-
-                                                break;
-                                        }
-                                    }
-                                    else
-                                        mediaIsRecognized = false;
-                                });
+                                                                             break;
+                                                                     }
+                                                                 }
+                                                                 else
+                                                                     mediaIsRecognized = false;
+                                                             });
 
                                 var mediaTest = new TestedMedia();
 
@@ -1586,64 +1475,60 @@ sealed class DeviceReportCommand : Command
                             report.SCSI.ReadCapabilities = reporter.ReportScsi();
 
                             if((report.SCSI.ReadCapabilities.SupportsReadLong   == true ||
-                                report.SCSI.ReadCapabilities.SupportsReadLong16 == true) &&
-                               report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
+                                report.SCSI.ReadCapabilities.SupportsReadLong16 == true)                            &&
+                               report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize &&
+                               AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                               }[/]"))
                             {
-                                if(AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                                }[/]"))
-                                {
-                                    AnsiConsole.Progress()
-                                               .AutoClear(true)
-                                               .HideCompleted(true)
-                                               .Columns(new TaskDescriptionColumn(),
-                                                        new ProgressBarColumn(),
-                                                        new PercentageColumn())
-                                               .Start(ctx =>
+                                AnsiConsole.Progress()
+                                           .AutoClear(true)
+                                           .HideCompleted(true)
+                                           .Columns(new TaskDescriptionColumn(),
+                                                    new ProgressBarColumn(),
+                                                    new PercentageColumn())
+                                           .Start(ctx =>
+                                            {
+                                                ProgressTask task = ctx.AddTask(Localization.Core.Trying_READ_LONG);
+
+                                                task.MaxValue = ushort.MaxValue;
+
+                                                for(var i = (ushort)(report.SCSI.ReadCapabilities.BlockSize ?? 0);; i++)
                                                 {
-                                                    ProgressTask task = ctx.AddTask(Localization.Core.Trying_READ_LONG);
+                                                    task.Value = i;
 
-                                                    task.MaxValue = ushort.MaxValue;
+                                                    task.Description =
+                                                        string.Format(Localization.Core.Trying_READ_LONG_with_size_0,
+                                                                      i);
 
-                                                    for(var i = (ushort)(report.SCSI.ReadCapabilities.BlockSize ?? 0);;
-                                                        i++)
+                                                    sense = report.SCSI.ReadCapabilities.SupportsReadLong16 == true
+                                                                ? dev.ReadLong16(out buffer,
+                                                                    out senseBuffer,
+                                                                    false,
+                                                                    0,
+                                                                    i,
+                                                                    dev.Timeout,
+                                                                    out _)
+                                                                : dev.ReadLong10(out buffer,
+                                                                    out senseBuffer,
+                                                                    false,
+                                                                    false,
+                                                                    0,
+                                                                    i,
+                                                                    dev.Timeout,
+                                                                    out _);
+
+                                                    if(!sense)
                                                     {
-                                                        task.Value = i;
+                                                        report.SCSI.ReadCapabilities.LongBlockSize = i;
 
-                                                        task.Description =
-                                                            string.Format(Localization.Core
-                                                                             .Trying_READ_LONG_with_size_0,
-                                                                          i);
-
-                                                        sense = report.SCSI.ReadCapabilities.SupportsReadLong16 == true
-                                                                    ? dev.ReadLong16(out buffer,
-                                                                        out senseBuffer,
-                                                                        false,
-                                                                        0,
-                                                                        i,
-                                                                        dev.Timeout,
-                                                                        out _)
-                                                                    : dev.ReadLong10(out buffer,
-                                                                        out senseBuffer,
-                                                                        false,
-                                                                        false,
-                                                                        0,
-                                                                        i,
-                                                                        dev.Timeout,
-                                                                        out _);
-
-                                                        if(!sense)
-                                                        {
-                                                            report.SCSI.ReadCapabilities.LongBlockSize = i;
-
-                                                            break;
-                                                        }
-
-                                                        if(i == ushort.MaxValue) break;
+                                                        break;
                                                     }
 
-                                                    AaruConsole.WriteLine();
-                                                });
-                                }
+                                                    if(i == ushort.MaxValue) break;
+                                                }
+
+                                                AaruConsole.WriteLine();
+                                            });
                             }
 
                             if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
@@ -1699,18 +1584,18 @@ sealed class DeviceReportCommand : Command
 
         var jsonFs = new FileStream(jsonFile, FileMode.Create);
 
-        JsonSerializer.Serialize(jsonFs, report, typeof(DeviceReport), DeviceReportContext.Default);
+        await JsonSerializer.SerializeAsync(jsonFs, report, typeof(DeviceReport), DeviceReportContext.Default);
 
         jsonFs.Close();
 
-        using(var ctx = AaruContext.Create(Settings.Settings.LocalDbPath))
+        await using(var ctx = AaruContext.Create(Settings.Settings.LocalDbPath))
         {
             ctx.Reports.Add(new Report(report));
-            ctx.SaveChanges();
+            await ctx.SaveChangesAsync();
         }
 
         // TODO:
-        if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
+        if(Settings.Settings.Current.ShareReports) await Remote.SubmitReportAsync(report);
 
         return (int)ErrorNumber.NoError;
     }
