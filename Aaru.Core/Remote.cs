@@ -176,7 +176,7 @@ public static class Remote
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", $"Aaru {typeof(Version).Assembly.GetName().Version}");
-            httpClient.BaseAddress = new Uri("https://www.aaru.app");
+            httpClient.BaseAddress = new Uri("http://localhost:5279");
 
             HttpResponseMessage response = await httpClient.GetAsync($"/api/update?timestamp={lastUpdate}");
 
