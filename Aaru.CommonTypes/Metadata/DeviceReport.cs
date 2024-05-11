@@ -1256,6 +1256,9 @@ public class SscSupportedMedia
     public         string            Organization { get; set; }
     public         string            Name         { get; set; }
     public         string            Description  { get; set; }
+
+    [JsonIgnore]
+    public int? SscId { get; set; }
 }
 
 public class DensityCode : IEquatable<DensityCode>
@@ -1527,4 +1530,7 @@ public class SupportedDensity
     public string Organization { get; set; }
     public string Name         { get; set; }
     public string Description  { get; set; }
+
+    [JsonIgnore]
+    public int? SscId { get; set; }
 }
