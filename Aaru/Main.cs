@@ -181,7 +181,7 @@ class MainClass
         if(!File.Exists(Settings.Settings.MainDbPath))
         {
             mainDbUpdate = true;
-            UpdateCommand.DoUpdate(true);
+            await UpdateCommand.DoUpdateAsync(true);
         }
 
         var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
@@ -204,7 +204,7 @@ class MainClass
 
             await mainContext.Database.CloseConnectionAsync();
             await mainContext.DisposeAsync();
-            UpdateCommand.DoUpdate(true);
+            await UpdateCommand.DoUpdateAsync(true);
         }
 
         // GDPR level compliance does not match and there are no arguments or the arguments are neither GUI neither configure.

@@ -35,6 +35,7 @@ using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
@@ -57,10 +58,10 @@ sealed class UpdateCommand : Command
         Add(new Option<bool>("--clear",     () => false, UI.Clear_existing_main_database));
         Add(new Option<bool>("--clear-all", () => false, UI.Clear_existing_main_and_local_database));
 
-        Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
+        Handler = CommandHandler.Create((Func<bool, bool, bool, bool, Task<int>>)InvokeAsync);
     }
 
-    int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
+    async Task<int> InvokeAsync(bool debug, bool verbose, bool clear, bool clearAll)
     {
         if(_mainDbUpdate) return (int)ErrorNumber.NoError;
 
@@ -81,7 +82,7 @@ sealed class UpdateCommand : Command
                     stderrConsole.MarkupLine(format, objects);
             };
 
-            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
+            AaruConsole.WriteExceptionEvent += ex => stderrConsole.WriteException(ex);
         }
 
         if(verbose)
@@ -105,13 +106,11 @@ sealed class UpdateCommand : Command
                 File.Delete(Settings.Settings.LocalDbPath);
 
                 var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
-                ctx.Database.Migrate();
-                ctx.SaveChanges();
+                await ctx.Database.MigrateAsync();
+                await ctx.SaveChangesAsync();
             }
-            catch(Exception)
+            catch(Exception) when(!Debugger.IsAttached)
             {
-                if(Debugger.IsAttached) throw;
-
                 AaruConsole.ErrorWriteLine(UI.Could_not_remove_local_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
@@ -124,24 +123,22 @@ sealed class UpdateCommand : Command
             {
                 File.Delete(Settings.Settings.MainDbPath);
             }
-            catch(Exception)
+            catch(Exception) when(!Debugger.IsAttached)
             {
-                if(Debugger.IsAttached) throw;
-
                 AaruConsole.ErrorWriteLine(UI.Could_not_remove_main_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
         }
 
-        DoUpdate(clear || clearAll);
+        await DoUpdateAsync(clear || clearAll);
 
         return (int)ErrorNumber.NoError;
     }
 
-    internal static void DoUpdate(bool create)
+    internal static async Task DoUpdateAsync(bool create)
     {
-        Remote.UpdateMainDatabase(create);
+        await Remote.UpdateMainDatabaseAsync(create);
         Statistics.AddCommand("update");
     }
 }
