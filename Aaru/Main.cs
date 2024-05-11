@@ -250,7 +250,7 @@ class MainClass
 
         int ret = await rootCommand.InvokeAsync(args);
 
-        await Statistics.SaveStats();
+        await Statistics.SaveStatsAsync();
 
         if(!rootCommand.Parse(args).RootCommandResult.GetValueForOption(pauseOption)) return ret;
 

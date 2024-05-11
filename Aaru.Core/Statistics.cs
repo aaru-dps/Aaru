@@ -93,7 +93,7 @@ public static class Statistics
     }
 
     /// <summary>Saves statistics to disk</summary>
-    public static async Task SaveStats()
+    public static async Task SaveStatsAsync()
     {
         try
         {
@@ -107,11 +107,11 @@ public static class Statistics
             AaruConsole.WriteException(ex);
         }
 
-        if(Settings.Settings.Current.Stats is { ShareStats: true }) await SubmitStats();
+        if(Settings.Settings.Current.Stats is { ShareStats: true }) await SubmitStatsAsync();
     }
 
     /// <summary>Submits statistics to Aaru.Server</summary>
-    static async Task SubmitStats()
+    static async Task SubmitStatsAsync()
     {
         await using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
@@ -381,12 +381,13 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        Command existing = ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                           new Command
-                                           {
-                                               Name         = nvs,
-                                               Synchronized = true
-                                           };
+                        Command existing =
+                            await ctx.Commands.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
+                            new Command
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
 
                         existing.Count += (ulong)ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs);
                         ctx.Commands.Update(existing);
@@ -398,12 +399,13 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        Filesystem existing = ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                              new Filesystem
-                                              {
-                                                  Name         = nvs,
-                                                  Synchronized = true
-                                              };
+                        Filesystem existing =
+                            await ctx.Filesystems.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
+                            new Filesystem
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
 
                         existing.Count += (ulong)ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs);
 
@@ -417,7 +419,7 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        Filter existing = ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                        Filter existing = await ctx.Filters.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
                                           new Filter
                                           {
                                               Name         = nvs,
@@ -434,12 +436,13 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        MediaFormat existing = ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                               new MediaFormat
-                                               {
-                                                   Name         = nvs,
-                                                   Synchronized = true
-                                               };
+                        MediaFormat existing =
+                            await ctx.MediaFormats.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
+                            new MediaFormat
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
 
                         existing.Count += (ulong)ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs);
 
@@ -453,12 +456,13 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        Partition existing = ctx.Partitions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                             new Partition
-                                             {
-                                                 Name         = nvs,
-                                                 Synchronized = true
-                                             };
+                        Partition existing =
+                            await ctx.Partitions.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
+                            new Partition
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
 
                         existing.Count += (ulong)ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs);
 
@@ -471,12 +475,13 @@ public static class Statistics
                 {
                     foreach(string nvs in ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
                     {
-                        Version existing = ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
-                                           new Version
-                                           {
-                                               Name         = nvs,
-                                               Synchronized = true
-                                           };
+                        Version existing =
+                            await ctx.Versions.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
+                            new Version
+                            {
+                                Name         = nvs,
+                                Synchronized = true
+                            };
 
                         existing.Count += (ulong)ctx.Versions.LongCount(c => !c.Synchronized && c.Name == nvs);
                         ctx.Versions.Update(existing);
@@ -491,7 +496,9 @@ public static class Statistics
                         if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
                         {
                             Database.Models.Media existing =
-                                ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
+                                await ctx.Medias.FirstOrDefaultAsync(c => c.Synchronized  &&
+                                                                          c.Type == media &&
+                                                                          c.Real) ??
                                 new Database.Models.Media
                                 {
                                     Synchronized = true,
@@ -511,7 +518,9 @@ public static class Statistics
 
                         {
                             Database.Models.Media existing =
-                                ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
+                                await ctx.Medias.FirstOrDefaultAsync(c => c.Synchronized  &&
+                                                                          c.Type == media &&
+                                                                          !c.Real) ??
                                 new Database.Models.Media
                                 {
                                     Synchronized = true,
@@ -551,9 +560,9 @@ public static class Statistics
                                                        .Distinct())
                         {
                             OperatingSystem existing =
-                                ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized      &&
-                                                                         c.Name    == osName &&
-                                                                         c.Version == osVersion) ??
+                                await ctx.OperatingSystems.FirstOrDefaultAsync(c => c.Synchronized     &&
+                                                                                   c.Name    == osName &&
+                                                                                   c.Version == osVersion) ??
                                 new OperatingSystem
                                 {
                                     Synchronized = true,
@@ -587,9 +596,9 @@ public static class Statistics
                                                               .Distinct())
                         {
                             RemoteApplication existing =
-                                ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
-                                                                           c.Name    == remoteAppName &&
-                                                                           c.Version == remoteAppVersion) ??
+                                await ctx.RemoteApplications.FirstOrDefaultAsync(c => c.Synchronized &&
+                                    c.Name    == remoteAppName                                       &&
+                                    c.Version == remoteAppVersion) ??
                                 new RemoteApplication
                                 {
                                     Synchronized = true,
@@ -618,7 +627,7 @@ public static class Statistics
                                              .Distinct())
                     {
                         RemoteArchitecture existing =
-                            ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                            await ctx.RemoteArchitectures.FirstOrDefaultAsync(c => c.Synchronized && c.Name == nvs) ??
                             new RemoteArchitecture
                             {
                                 Name         = nvs,
@@ -645,9 +654,9 @@ public static class Statistics
                                                          .Distinct())
                     {
                         RemoteOperatingSystem existing =
-                            ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
-                                                                           c.Name    == remoteOsName &&
-                                                                           c.Version == remoteOsVersion) ??
+                            await ctx.RemoteOperatingSystems.FirstOrDefaultAsync(c => c.Synchronized &&
+                                c.Name    == remoteOsName                                            &&
+                                c.Version == remoteOsVersion) ??
                             new RemoteOperatingSystem
                             {
                                 Synchronized = true,

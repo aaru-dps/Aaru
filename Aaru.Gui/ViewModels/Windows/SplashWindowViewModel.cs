@@ -296,7 +296,7 @@ public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
 
         Task.Run(async () =>
         {
-            await Statistics.SaveStats();
+            await Statistics.SaveStatsAsync();
 
             Dispatcher.UIThread.Post(LoadMainWindow);
         });
