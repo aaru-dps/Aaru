@@ -625,6 +625,10 @@ sealed partial class Dump
                            firstTrackLastSession,
                            blocks);
 
+        // Fix CD-i discs with wrong Lead-Out type
+        if(dskType is MediaType.CDI or MediaType.CDIREADY && tracks.Length == 1 && tracks[0].Type == TrackType.Audio)
+            tracks[0].Type = TrackType.CdMode2Formless;
+
         if(hiddenTrack || firstLba > 0)
         {
             _dumpLog.WriteLine(Localization.Core.Disc_contains_a_hidden_track);
@@ -1101,9 +1105,8 @@ sealed partial class Dump
             foreach(int sub in _resume.BadSubchannels) subchannelExtents.Add(sub);
 
             if(_resume.NextBlock < blocks)
-            {
-                for(ulong i = _resume.NextBlock; i < blocks; i++) subchannelExtents.Add((int)i);
-            }
+                for(ulong i = _resume.NextBlock; i < blocks; i++)
+                    subchannelExtents.Add((int)i);
         }
 
         if(_resume.NextBlock > 0)
@@ -1592,9 +1595,8 @@ sealed partial class Dump
                         supportsLongSectors);
 
         foreach(Tuple<ulong, ulong> leadoutExtent in leadOutExtents.ToArray())
-        {
-            for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++) subchannelExtents.Remove((int)e);
-        }
+            for(ulong e = leadoutExtent.Item1; e <= leadoutExtent.Item2; e++)
+                subchannelExtents.Remove((int)e);
 
         if(subchannelExtents.Count > 0 && _retryPasses > 0 && _retrySubchannel)
         {
