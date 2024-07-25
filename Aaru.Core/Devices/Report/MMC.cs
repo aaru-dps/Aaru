@@ -2743,6 +2743,22 @@ public sealed partial class DeviceReport
             {
                 ctx.AddTask(Localization.Core.Trying_HL_DT_ST_aka_LG_trick_to_raw_read_DVDs).IsIndeterminate();
 
+                // We need to fill the buffer before reading it with the HL-DT-ST command. We don't care about sense,
+                // because the data can be wrong anyway, so we need to check the buffer data later instead.
+                _dev.Read10(out buffer,
+                            out _,
+                            0,
+                            false,
+                            false,
+                            false,
+                            false,
+                            0,
+                            2048,
+                            0,
+                            1,
+                            _dev.Timeout,
+                            out _);
+
                 mediaTest.SupportsHLDTSTReadRawDVD =
                     !_dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
             });
