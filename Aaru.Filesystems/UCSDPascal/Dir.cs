@@ -27,33 +27,33 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.UCSDPascal;
-
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        contents = null;
+        node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, Encoding)).ToList();
+        var contents = _fileEntries.Select(ent => StringHandlers.PascalToString(ent.Filename, _encoding)).ToList();
 
         if(_debug)
         {
@@ -63,6 +63,44 @@ public sealed partial class PascalPlugin
 
         contents.Sort();
 
+        node = new PascalDirNode
+        {
+            Path     = path,
+            Contents = contents.ToArray(),
+            Position = 0
+        };
+
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not PascalDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
+
+        filename = mynode.Contents[mynode.Position++];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not PascalDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode.Position = -1;
+        mynode.Contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+#endregion
 }

@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CDRWin : OpticalMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "CDRWin");
-    public override IMediaImage Plugin    => new CdrWin();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "CDRWin");
+    public override IMediaImage Plugin     => new CdrWin();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile  = "pcengine.cue",
@@ -51,8 +51,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 160956,
             Md5       = "875ea735f0d10d6fa321fb222714117b",
             LongMd5   = "0188cf74fdc367a8e370bbe236a5100c",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -69,15 +69,15 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 225,
                     Flags   = 4,
                     Number  = 2,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 34816,
                             ClusterSize = 2048,
-                            Type        = "PC Engine filesystem"
+                            Type        = "pcengine"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -191,17 +191,17 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 225,
                     Flags   = 4,
                     Number  = 16,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 32768,
                             ClusterSize = 2048,
-                            Type        = "PC Engine filesystem"
+                            Type        = "pcengine"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -210,8 +210,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 246680,
             Md5       = "d2fbcb46735a5ac90c10f81ca564c9dd",
             LongMd5   = "f10ae52c1a530ba3ed49447417d9451e",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -228,17 +228,17 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 225,
                     Flags   = 4,
                     Number  = 2,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 514,
                             ClusterSize = 2048,
-                            Type        = "PC-FX",
+                            Type        = "pcfx",
                             VolumeName  = "同級生２"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -288,7 +288,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -297,8 +297,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 247073,
             Md5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5   = "c09f408a4416634d8ac1c1ffd0ed75a5",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -411,7 +411,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -420,8 +420,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 254265,
             Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -430,25 +430,25 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -457,8 +457,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 308224,
             Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -467,19 +467,19 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -488,8 +488,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 277696,
             Md5       = "7c8fc7bb768cff15d702ac8cd10108d7",
             LongMd5   = "7c8fc7bb768cff15d702ac8cd10108d7",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -578,7 +578,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 2
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -587,8 +587,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 350134,
             Md5       = "13d4c3def37e968b2ddc5cf5a9f18fdc",
             LongMd5   = "31e772f6997eb8dbf3ecf9aca9ea6bc6",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -597,26 +597,26 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 7,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 600,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "INCD"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 402107,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -625,8 +625,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 329158,
             Md5       = "397d93a649a2a502cf831b49771a2c35",
             LongMd5   = "c92ec0c7671b1b992d94a726ea10a238",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -635,16 +635,16 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -766,7 +766,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -775,8 +775,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 65536,
             Md5       = "1b13a8f8aeb23f0b8bbc68518217e771",
             LongMd5   = "1b13a8f8aeb23f0b8bbc68518217e771",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -817,7 +817,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 1
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -826,8 +826,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 48794,
             Md5       = "0d80890beeadf3f6e2cf2f88d0067afe",
             LongMd5   = "96ac6c364e4c3cb2f043197a45a97183",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -836,16 +836,16 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1102,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "VIDEOCD"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -855,7 +855,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 4
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -865,8 +865,8 @@ public class CDRWin : OpticalMediaImageTest
             Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
             SubchannelMd5 = "1d0e4118993a75311fe774e46326306a",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -979,7 +979,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -989,8 +989,8 @@ public class CDRWin : OpticalMediaImageTest
             Md5           = "be1bdbd55883dd53397ea21715107706",
             LongMd5       = "3d3a8e2243f40201c6bdc5c10a65bb76",
             SubchannelMd5 = "f9794c8d8ab2c7bf7815e740a77b12f4",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -999,16 +999,16 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1130,7 +1130,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1140,8 +1140,8 @@ public class CDRWin : OpticalMediaImageTest
             Md5           = "215c0b3efab1b04e4f2d35b323cdbc96",
             LongMd5       = "296cfef5de90e1cfadaf2ecf41f2e184",
             SubchannelMd5 = "536ebf5b21280a721dc0604739ca7db3",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1150,16 +1150,16 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1281,7 +1281,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1290,8 +1290,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 254265,
             Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1300,25 +1300,25 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1327,8 +1327,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 308224,
             Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1337,19 +1337,19 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1358,8 +1358,8 @@ public class CDRWin : OpticalMediaImageTest
             Sectors   = 329158,
             Md5       = "bb1ace550c0a22f18c32bd053739d6ce",
             LongMd5   = "857b80195d1e29bd0bace2ef20b733ed",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1368,16 +1368,16 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1499,7 +1499,7 @@ public class CDRWin : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

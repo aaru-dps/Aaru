@@ -27,12 +27,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // TODO: Fix errors returned
-
-namespace Aaru.Commands;
 
 using System;
 using System.CommandLine;
@@ -40,12 +38,17 @@ using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
 using Remote = Aaru.Devices.Remote.Remote;
 
+namespace Aaru.Commands;
+
 sealed class RemoteCommand : Command
 {
-    public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
+    const string MODULE_NAME = "Remote command";
+
+    public RemoteCommand() : base("remote", UI.Remote_Command_Description)
     {
         AddArgument(new Argument<string>
         {
@@ -54,7 +57,7 @@ sealed class RemoteCommand : Command
             Name        = "host"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string host)
@@ -65,7 +68,7 @@ sealed class RemoteCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -75,9 +78,12 @@ sealed class RemoteCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -85,19 +91,23 @@ sealed class RemoteCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("remote");
 
-        AaruConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Remote command", "--host={0}", host);
-        AaruConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "host={0}",    Markup.Escape(host ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "verbose={0}", verbose);
 
         try
         {
             var remote = new Remote(new Uri(host));
 
-            Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
-                                 remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+            Statistics.AddRemote(remote.ServerApplication,
+                                 remote.ServerVersion,
+                                 remote.ServerOperatingSystem,
+                                 remote.ServerOperatingSystemVersion,
+                                 remote.ServerArchitecture);
 
             Table table = new()
             {
@@ -111,7 +121,8 @@ sealed class RemoteCommand : Command
             table.AddRow("Server application", $"{remote.ServerApplication} {remote.ServerVersion}");
 
             table.AddRow("Server operating system",
-                         $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({remote.ServerArchitecture})");
+                         $"{remote.ServerOperatingSystem} {remote.ServerOperatingSystemVersion} ({
+                             remote.ServerArchitecture})");
 
             table.AddRow("Server maximum protocol", $"{remote.ServerProtocolVersion}");
 

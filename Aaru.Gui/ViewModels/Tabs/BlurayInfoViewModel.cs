@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.IO;
@@ -38,9 +36,13 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Decoders.Bluray;
 using Aaru.Decoders.SCSI.MMC;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class BlurayInfoViewModel
 {
@@ -55,11 +57,11 @@ public sealed class BlurayInfoViewModel
     readonly byte[] _trackResources;
     readonly Window _view;
 
-    public BlurayInfoViewModel([CanBeNull] byte[] blurayDiscInformation, [CanBeNull] byte[] blurayBurstCuttingArea,
-                               [CanBeNull] byte[] blurayDds, [CanBeNull] byte[] blurayCartridgeStatus,
+    public BlurayInfoViewModel([CanBeNull] byte[] blurayDiscInformation,      [CanBeNull] byte[] blurayBurstCuttingArea,
+                               [CanBeNull] byte[] blurayDds,                  [CanBeNull] byte[] blurayCartridgeStatus,
                                [CanBeNull] byte[] bluraySpareAreaInformation, [CanBeNull] byte[] blurayPowResources,
-                               [CanBeNull] byte[] blurayTrackResources, [CanBeNull] byte[] blurayRawDfl,
-                               [CanBeNull] byte[] blurayPac, Window view)
+                               [CanBeNull] byte[] blurayTrackResources,       [CanBeNull] byte[] blurayRawDfl,
+                               [CanBeNull] byte[] blurayPac,                  Window             view)
     {
         _view                             = view;
         _discInformation                  = blurayDiscInformation;
@@ -155,25 +157,36 @@ public sealed class BlurayInfoViewModel
     public bool                        SaveBlurayRawDflVisible               { get; }
     public bool                        SaveBlurayPacVisible                  { get; }
 
+    public string DiscInformationLabel                => UI.Disc_information;
+    public string BurstCuttingAreaLabel               => UI.Burst_Cutting_Area;
+    public string DiscDefinitionStructureLabel        => UI.Disc_Definition_Structure;
+    public string CartridgeStatusLabel                => UI.Cartridge_Status;
+    public string SpareAreaInformationLabel           => UI.Spare_Area_Information;
+    public string PseudoOverWriteResourcesLabel       => UI.Pseudo_OverWrite_Resources;
+    public string TrackResourcesLabel                 => UI.Track_Resources;
+    public string SaveBlurayDiscInformationLabel      => UI.ButtonLabel_Save_Disc_Information;
+    public string SaveBlurayBurstCuttingAreaLabel     => UI.ButtonLabel_Save_Burst_Cutting_Area;
+    public string SaveBlurayDdsLabel                  => UI.ButtonLabel_Save_Disc_Definition_Structure;
+    public string SaveBlurayCartridgeStatusLabel      => UI.ButtonLabel_Save_Cartridge_Status;
+    public string SaveBluraySpareAreaInformationLabel => UI.ButtonLabel_Save_Spare_Area_Information;
+    public string SaveBlurayPowResourcesLabel         => UI.ButtonLabel_Save_Pseudo_OverWrite_Resources;
+    public string SaveBlurayTrackResourcesLabel       => UI.ButtonLabel_Save_Track_Resources;
+    public string SaveBlurayRawDflLabel               => UI.ButtonLabel_Save_raw_DFL;
+    public string SaveBlurayPacLabel                  => UI.ButtonLabel_Save_PAC;
+
     async Task SaveElement(byte[] data)
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(data, 0, data.Length);
 
         saveFs.Close();

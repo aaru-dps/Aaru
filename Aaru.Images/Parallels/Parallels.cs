@@ -27,23 +27,23 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing Parallels' disk images</summary>
 public sealed partial class Parallels : IWritableImage
 {
+    const string              MODULE_NAME = "Parallels plugin";
     uint[]                    _bat;
     uint                      _clusterBytes;
     long                      _currentWritingPosition;
@@ -58,8 +58,8 @@ public sealed partial class Parallels : IWritableImage
 
     public Parallels() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = "2",

@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 using System;
 using System.Collections.Generic;
@@ -40,17 +38,22 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class SubdirectoryViewModel
 {
@@ -59,38 +62,42 @@ public sealed class SubdirectoryViewModel
 
     public SubdirectoryViewModel([NotNull] SubdirectoryModel model, Window view)
     {
-        Entries             = new ObservableCollection<FileModel>();
-        SelectedEntries     = new List<FileModel>();
+        Entries             = [];
+        SelectedEntries     = [];
         ExtractFilesCommand = ReactiveCommand.Create(ExecuteExtractFilesCommand);
         _model              = model;
         _view               = view;
 
-        ErrorNumber errno = model.Plugin.ReadDir(model.Path, out List<string> dirents);
+        ErrorNumber errno = model.Plugin.OpenDir(model.Path, out IDirNode node);
 
         if(errno != ErrorNumber.NoError)
         {
-            MessageBoxManager.
-                GetMessageBoxStandardWindow("Error",
-                                            $"Error {errno} trying to read \"{model.Path}\" of chosen filesystem",
-                                            ButtonEnum.Ok, Icon.Error).ShowDialog(view);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                    string.Format(UI.Error_0_trying_to_read_1_of_chosen_filesystem,
+                                                                  errno,
+                                                                  model.Path),
+                                                    ButtonEnum.Ok,
+                                                    Icon.Error)
+                             .ShowWindowDialogAsync(view);
 
             return;
         }
 
-        foreach(string dirent in dirents)
+        while(model.Plugin.ReadDir(node, out string dirent) == ErrorNumber.NoError && dirent is not null)
         {
             errno = model.Plugin.Stat(model.Path + "/" + dirent, out FileEntryInfo stat);
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruConsole.
-                    ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
+                AaruConsole
+                   .ErrorWriteLine(string.Format(UI.Error_0_trying_to_get_information_about_filesystem_entry_named_1,
+                                                 errno,
+                                                 dirent));
 
                 continue;
             }
 
-            if(stat.Attributes.HasFlag(FileAttributes.Directory) &&
-               !model.Listed)
+            if(stat.Attributes.HasFlag(FileAttributes.Directory) && !model.Listed)
             {
                 model.Subdirectories.Add(new SubdirectoryModel
                 {
@@ -108,130 +115,141 @@ public sealed class SubdirectoryViewModel
                 Stat = stat
             });
         }
+
+        model.Plugin.CloseDir(node);
     }
 
     public ObservableCollection<FileModel> Entries             { get; }
     public List<FileModel>                 SelectedEntries     { get; }
     public ReactiveCommand<Unit, Task>     ExtractFilesCommand { get; }
 
+    public string ExtractFilesLabel => UI.ButtonLabel_Extract_to;
+    public string NameLabel         => UI.Title_Name;
+    public string LengthLabel       => UI.Title_Length;
+    public string CreationLabel     => UI.Title_Creation;
+    public string LastAccessLabel   => UI.Title_Last_access;
+    public string ChangedLabel      => UI.Title_Changed;
+    public string LastBackupLabel   => UI.Title_Last_backup;
+    public string LastWriteLabel    => UI.Title_Last_write;
+    public string AttributesLabel   => UI.Title_Attributes;
+    public string GIDLabel          => UI.Title_GID;
+    public string UIDLabel          => UI.Title_UID;
+    public string InodeLabel        => UI.Title_Inode;
+    public string LinksLabel        => UI.Title_Links;
+    public string ModeLabel         => UI.Title_Mode;
+
     async Task ExecuteExtractFilesCommand()
     {
-        if(SelectedEntries.Count == 0)
-            return;
+        if(SelectedEntries.Count == 0) return;
 
-        ButtonResult mboxResult;
+        IReadOnlyList<IStorageFolder> result =
+            await _view.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title         = UI.Dialog_Choose_destination_folder,
+                AllowMultiple = false
+            });
 
-        var saveFilesFolderDialog = new OpenFolderDialog
-        {
-            Title = "Choose destination folder..."
-        };
-
-        string result = await saveFilesFolderDialog.ShowAsync(_view);
-
-        if(result is null)
-            return;
+        if(result.Count != 1) return;
 
         Statistics.AddCommand("extract-files");
 
-        string folder = saveFilesFolderDialog.Directory;
+        string folder = result[0].Path.AbsolutePath;
 
         foreach(FileModel file in SelectedEntries)
         {
             string filename = file.Name;
 
+            ButtonResult mboxResult;
+
             if(DetectOS.IsWindows)
-                if(filename.Contains('<')                ||
-                   filename.Contains('>')                ||
-                   filename.Contains(':')                ||
-                   filename.Contains('\\')               ||
-                   filename.Contains('/')                ||
-                   filename.Contains('|')                ||
-                   filename.Contains('?')                ||
-                   filename.Contains('*')                ||
-                   filename.Any(c => c < 32)             ||
-                   filename.ToUpperInvariant() == "CON"  ||
-                   filename.ToUpperInvariant() == "PRN"  ||
-                   filename.ToUpperInvariant() == "AUX"  ||
-                   filename.ToUpperInvariant() == "COM1" ||
-                   filename.ToUpperInvariant() == "COM2" ||
-                   filename.ToUpperInvariant() == "COM3" ||
-                   filename.ToUpperInvariant() == "COM4" ||
-                   filename.ToUpperInvariant() == "COM5" ||
-                   filename.ToUpperInvariant() == "COM6" ||
-                   filename.ToUpperInvariant() == "COM7" ||
-                   filename.ToUpperInvariant() == "COM8" ||
-                   filename.ToUpperInvariant() == "COM9" ||
-                   filename.ToUpperInvariant() == "LPT1" ||
-                   filename.ToUpperInvariant() == "LPT2" ||
-                   filename.ToUpperInvariant() == "LPT3" ||
-                   filename.ToUpperInvariant() == "LPT4" ||
-                   filename.ToUpperInvariant() == "LPT5" ||
-                   filename.ToUpperInvariant() == "LPT6" ||
-                   filename.ToUpperInvariant() == "LPT7" ||
-                   filename.ToUpperInvariant() == "LPT8" ||
-                   filename.ToUpperInvariant() == "LPT9" ||
-                   filename.Last()             == '.'    ||
-                   filename.Last()             == ' ')
+            {
+                if(filename.Contains('<')                                               ||
+                   filename.Contains('>')                                               ||
+                   filename.Contains(':')                                               ||
+                   filename.Contains('\\')                                              ||
+                   filename.Contains('/')                                               ||
+                   filename.Contains('|')                                               ||
+                   filename.Contains('?')                                               ||
+                   filename.Contains('*')                                               ||
+                   filename.Any(c => c < 32)                                            ||
+                   filename.Equals("CON",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("PRN",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("AUX",  StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM1", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM2", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM3", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM4", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM5", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM6", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM7", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM8", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("COM9", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT1", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT2", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT3", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT4", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT5", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT6", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT7", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT8", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Equals("LPT9", StringComparison.InvariantCultureIgnoreCase) ||
+                   filename.Last() == '.'                                               ||
+                   filename.Last() == ' ')
                 {
                     char[] chars;
 
-                    if(filename.Last() == '.' ||
-                       filename.Last() == ' ')
+                    if(filename.Last() == '.' || filename.Last() == ' ')
                         chars = new char[filename.Length - 1];
                     else
                         chars = new char[filename.Length];
 
                     for(var ci = 0; ci < chars.Length; ci++)
-                        switch(filename[ci])
-                        {
-                            case '<':
-                            case '>':
-                            case ':':
-                            case '\\':
-                            case '/':
-                            case '|':
-                            case '?':
-                            case '*':
-                            case '\u0000':
-                            case '\u0001':
-                            case '\u0002':
-                            case '\u0003':
-                            case '\u0004':
-                            case '\u0005':
-                            case '\u0006':
-                            case '\u0007':
-                            case '\u0008':
-                            case '\u0009':
-                            case '\u000A':
-                            case '\u000B':
-                            case '\u000C':
-                            case '\u000D':
-                            case '\u000E':
-                            case '\u000F':
-                            case '\u0010':
-                            case '\u0011':
-                            case '\u0012':
-                            case '\u0013':
-                            case '\u0014':
-                            case '\u0015':
-                            case '\u0016':
-                            case '\u0017':
-                            case '\u0018':
-                            case '\u0019':
-                            case '\u001A':
-                            case '\u001B':
-                            case '\u001C':
-                            case '\u001D':
-                            case '\u001E':
-                            case '\u001F':
-                                chars[ci] = '_';
-
-                                break;
-                            default:
-                                chars[ci] = filename[ci];
-
-                                break;
-                        }
+                    {
+                        chars[ci] = filename[ci] switch
+                                    {
+                                        '<'
+                                         or '>'
+                                         or ':'
+                                         or '\\'
+                                         or '/'
+                                         or '|'
+                                         or '?'
+                                         or '*'
+                                         or '\u0000'
+                                         or '\u0001'
+                                         or '\u0002'
+                                         or '\u0003'
+                                         or '\u0004'
+                                         or '\u0005'
+                                         or '\u0006'
+                                         or '\u0007'
+                                         or '\u0008'
+                                         or '\u0009'
+                                         or '\u000A'
+                                         or '\u000B'
+                                         or '\u000C'
+                                         or '\u000D'
+                                         or '\u000E'
+                                         or '\u000F'
+                                         or '\u0010'
+                                         or '\u0011'
+                                         or '\u0012'
+                                         or '\u0013'
+                                         or '\u0014'
+                                         or '\u0015'
+                                         or '\u0016'
+                                         or '\u0017'
+                                         or '\u0018'
+                                         or '\u0019'
+                                         or '\u001A'
+                                         or '\u001B'
+                                         or '\u001C'
+                                         or '\u001D'
+                                         or '\u001E'
+                                         or '\u001F' => '_',
+                                        _ => filename[ci]
+                                    };
+                    }
 
                     if(filename.StartsWith("CON", StringComparison.InvariantCultureIgnoreCase) ||
                        filename.StartsWith("PRN", StringComparison.InvariantCultureIgnoreCase) ||
@@ -246,62 +264,92 @@ public sealed class SubdirectoryViewModel
 
                     string corrected = new(chars);
 
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Unsupported filename",
-                                     $"The file name {filename} is not supported on this platform.\nDo you want to rename it to {corrected}?",
-                                     ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
+                    mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Unsupported_filename,
+                                                                               string
+                                                                                  .Format(UI
+                                                                                          .Filename_0_not_supported_want_to_rename_to_1,
+                                                                                       filename,
+                                                                                       corrected),
+                                                                               ButtonEnum.YesNoCancel,
+                                                                               Icon.Warning)
+                                                        .ShowWindowDialogAsync(_view);
 
-                    if(mboxResult == ButtonResult.Cancel)
-                        return;
+                    switch(mboxResult)
+                    {
+                        case ButtonResult.Cancel:
+                            return;
+                        case ButtonResult.No:
+                            continue;
+                        default:
+                            filename = corrected;
 
-                    if(mboxResult == ButtonResult.No)
-                        continue;
-
-                    filename = corrected;
+                            break;
+                    }
                 }
+            }
 
             string outputPath = Path.Combine(folder, filename);
 
             if(File.Exists(outputPath))
             {
-                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Existing file",
-                                 $"A file named {filename} already exists on the destination folder.\nDo you want to overwrite it?",
-                                 ButtonEnum.YesNoCancel, Icon.Warning).ShowDialog(_view);
+                mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Existing_file,
+                                                                           string
+                                                                              .Format(UI.File_named_0_exists_overwrite_Q,
+                                                                                   filename),
+                                                                           ButtonEnum.YesNoCancel,
+                                                                           Icon.Warning)
+                                                    .ShowWindowDialogAsync(_view);
 
-                if(mboxResult == ButtonResult.Cancel)
-                    return;
-
-                if(mboxResult == ButtonResult.No)
-                    continue;
-
-                try
+                switch(mboxResult)
                 {
-                    File.Delete(outputPath);
-                }
-                catch(IOException)
-                {
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot delete",
-                                     "Could not delete existing file.\nDo you want to continue?", ButtonEnum.YesNo,
-                                     Icon.Error).ShowDialog(_view);
-
-                    if(mboxResult == ButtonResult.No)
+                    case ButtonResult.Cancel:
                         return;
+                    case ButtonResult.No:
+                        continue;
+                    default:
+                        try
+                        {
+                            File.Delete(outputPath);
+                        }
+                        catch(IOException)
+                        {
+                            mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Cannot_delete,
+                                                                     UI.Could_note_delete_existe_file_continue_Q,
+                                                                     ButtonEnum.YesNo,
+                                                                     Icon.Error)
+                                                                .ShowWindowDialogAsync(_view);
+
+                            if(mboxResult == ButtonResult.No) return;
+                        }
+
+                        break;
                 }
             }
 
             try
             {
-                byte[] outBuf = Array.Empty<byte>();
+                var outBuf = new byte[file.Stat.Length];
 
-                ErrorNumber error = _model.Plugin.Read(_model.Path + "/" + file.Name, 0, file.Stat.Length, ref outBuf);
+                ErrorNumber error = _model.Plugin.OpenFile(_model.Path + "/" + file.Name, out IFileNode fileNode);
+
+                if(error == ErrorNumber.NoError)
+                {
+                    error = _model.Plugin.ReadFile(fileNode, file.Stat.Length, outBuf, out _);
+                    _model.Plugin.CloseFile(fileNode);
+                }
 
                 if(error != ErrorNumber.NoError)
                 {
-                    mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Error reading file",
-                                     $"Error {error} reading file.\nDo you want to continue?", ButtonEnum.YesNo,
-                                     Icon.Error).ShowDialog(_view);
+                    mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Error_reading_file,
+                                                                               string
+                                                                                  .Format(UI
+                                                                                          .Error_0_reading_file_continue_Q,
+                                                                                       error),
+                                                                               ButtonEnum.YesNo,
+                                                                               Icon.Error)
+                                                        .ShowWindowDialogAsync(_view);
 
-                    if(mboxResult == ButtonResult.No)
-                        return;
+                    if(mboxResult == ButtonResult.No) return;
 
                     continue;
                 }
@@ -311,11 +359,10 @@ public sealed class SubdirectoryViewModel
                 fs.Write(outBuf, 0, outBuf.Length);
                 fs.Close();
                 var fi = new FileInfo(outputPath);
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 try
                 {
-                    if(file.Stat.CreationTimeUtc.HasValue)
-                        fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
+                    if(file.Stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
                 }
                 catch
                 {
@@ -324,8 +371,7 @@ public sealed class SubdirectoryViewModel
 
                 try
                 {
-                    if(file.Stat.LastWriteTimeUtc.HasValue)
-                        fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
+                    if(file.Stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
                 }
                 catch
                 {
@@ -334,23 +380,24 @@ public sealed class SubdirectoryViewModel
 
                 try
                 {
-                    if(file.Stat.AccessTimeUtc.HasValue)
-                        fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
+                    if(file.Stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
                 }
                 catch
                 {
                     // ignored
                 }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
             catch(IOException)
             {
-                mboxResult = await MessageBoxManager.GetMessageBoxStandardWindow("Cannot create file",
-                                 "Could not create destination file.\nDo you want to continue?", ButtonEnum.YesNo,
-                                 Icon.Error).ShowDialog(_view);
+                mboxResult = await MessageBoxManager.GetMessageBoxStandard(UI.Cannot_create_file,
+                                                                           UI
+                                                                              .Could_not_create_destination_file_continue_Q,
+                                                                           ButtonEnum.YesNo,
+                                                                           Icon.Error)
+                                                    .ShowWindowDialogAsync(_view);
 
-                if(mboxResult == ButtonResult.No)
-                    return;
+                if(mboxResult == ButtonResult.No) return;
             }
         }
     }

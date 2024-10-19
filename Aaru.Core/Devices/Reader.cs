@@ -27,20 +27,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices;
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
 using Aaru.Devices;
 
+namespace Aaru.Core.Devices;
+
 /// <summary>Reduces common code used for scanning and dumping</summary>
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 sealed partial class Reader
 {
+    const    string   ATA_MODULE_NAME  = "ATA Reader";
+    const    string   SCSI_MODULE_NAME = "SCSI Reader";
     readonly Device   _dev;
     readonly ErrorLog _errorLog;
     readonly uint     _timeout;
@@ -58,11 +62,11 @@ sealed partial class Reader
             case DeviceType.ATA:
                 Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
 
-                if(ataIdNullable.HasValue)
-                    _ataId = ataIdNullable.Value;
+                if(ataIdNullable.HasValue) _ataId = ataIdNullable.Value;
 
                 break;
-            case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
+            case DeviceType.NVMe:
+                throw new NotImplementedException(Localization.Core.NVMe_devices_not_yet_supported);
         }
     }
 
@@ -80,11 +84,13 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlocks();
+            case DeviceType.ATA:
+                return AtaGetBlocks();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlocks();
+            case DeviceType.SCSI:
+                return ScsiGetBlocks();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return 0;
         }
@@ -94,11 +100,13 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaFindReadCommand();
+            case DeviceType.ATA:
+                return AtaFindReadCommand();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiFindReadCommand();
+            case DeviceType.SCSI:
+                return ScsiFindReadCommand();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }
@@ -108,11 +116,13 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlockSize();
+            case DeviceType.ATA:
+                return AtaGetBlockSize();
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlockSize();
+            case DeviceType.SCSI:
+                return ScsiGetBlockSize();
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }
@@ -122,26 +132,24 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaGetBlocksToRead(startWithBlocks);
+            case DeviceType.ATA:
+                return AtaGetBlocksToRead(startWithBlocks);
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
+            case DeviceType.SCSI:
+                return ScsiGetBlocksToRead(startWithBlocks);
             default:
-                ErrorMessage = $"Unknown device type {_dev.Type}.";
+                ErrorMessage = string.Format(Localization.Core.Unknown_device_type_0, _dev.Type);
 
                 return true;
         }
     }
 
     internal bool ReadBlock(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                            out bool blankCheck) =>
+                            out bool   blankCheck) =>
         ReadBlocks(out buffer, block, 1, out duration, out recoveredError, out blankCheck);
 
-    internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration, out bool recoveredError,
-                             out bool blankCheck) => ReadBlocks(out buffer, block, BlocksToRead, out duration,
-                                                                out recoveredError, out blankCheck);
-
     internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
-                             out bool blankCheck)
+                             out bool   blankCheck)
     {
         switch(_dev.Type)
         {
@@ -163,7 +171,7 @@ sealed partial class Reader
     }
 
     internal bool ReadChs(out byte[] buffer, ushort cylinder, byte head, byte sector, out double duration,
-                          out bool recoveredError)
+                          out bool   recoveredError)
     {
         switch(_dev.Type)
         {
@@ -182,9 +190,11 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaSeek(block, out duration);
+            case DeviceType.ATA:
+                return AtaSeek(block, out duration);
             case DeviceType.ATAPI:
-            case DeviceType.SCSI: return ScsiSeek(block, out duration);
+            case DeviceType.SCSI:
+                return ScsiSeek(block, out duration);
             default:
                 duration = 0d;
 
@@ -196,7 +206,8 @@ sealed partial class Reader
     {
         switch(_dev.Type)
         {
-            case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
+            case DeviceType.ATA:
+                return AtaSeekChs(cylinder, head, sector, out duration);
             default:
                 duration = 0;
 

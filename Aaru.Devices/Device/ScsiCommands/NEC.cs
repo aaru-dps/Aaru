@@ -27,12 +27,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -60,12 +60,17 @@ public partial class Device
 
         buffer = new byte[2352 * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.NEC_READ_CD_DA_took_0_ms, duration);
 
         return sense;
     }

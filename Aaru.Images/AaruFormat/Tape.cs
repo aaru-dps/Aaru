@@ -27,21 +27,25 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Structs;
 
+namespace Aaru.Images;
+
 public sealed partial class AaruFormat
 {
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public List<TapeFile> Files { get; private set; }
+
     /// <inheritdoc />
     public List<TapePartition> TapePartitions { get; private set; }
+
     /// <inheritdoc />
     public bool IsTape { get; private set; }
 
@@ -76,9 +80,11 @@ public sealed partial class AaruFormat
     /// <inheritdoc />
     public bool SetTape()
     {
-        Files          = new List<TapeFile>();
-        TapePartitions = new List<TapePartition>();
+        Files          = [];
+        TapePartitions = [];
 
         return IsTape = true;
     }
+
+#endregion
 }

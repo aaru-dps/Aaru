@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Apple Lisa filesystem extents.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,10 +23,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.LisaFS;
 
 using System;
 using Aaru.CommonTypes.Enums;
@@ -38,17 +32,10 @@ using Aaru.Console;
 using Aaru.Decoders;
 using Aaru.Helpers;
 
+namespace Aaru.Filesystems;
+
 public sealed partial class LisaFS
 {
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        // TODO: Not really important.
-        return ErrorNumber.NotImplemented;
-    }
-
     /// <summary>Searches the disk for an extents file (or gets it from cache)</summary>
     /// <returns>Error.</returns>
     /// <param name="fileId">File identifier.</param>
@@ -58,25 +45,20 @@ public sealed partial class LisaFS
         file = new ExtentFile();
         ErrorNumber errno;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(fileId < 4 ||
-           fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
+        if(fileId < 4 || fileId == 4 && _mddf.fsversion != LISA_V2 && _mddf.fsversion != LISA_V1)
             return ErrorNumber.InvalidArgument;
 
-        if(_extentCache.TryGetValue(fileId, out file))
-            return ErrorNumber.NoError;
+        if(_extentCache.TryGetValue(fileId, out file)) return ErrorNumber.NoError;
 
         // A file ID that cannot be stored in the S-Records File
-        if(fileId >= _srecords.Length)
-            return ErrorNumber.InvalidArgument;
+        if(fileId >= _srecords.Length) return ErrorNumber.InvalidArgument;
 
         ulong ptr = _srecords[fileId].extent_ptr;
 
         // An invalid pointer denotes file does not exist
-        if(ptr is 0xFFFFFFFF or 0x00000000)
-            return ErrorNumber.NoSuchFile;
+        if(ptr is 0xFFFFFFFF or 0x00000000) return ErrorNumber.NoSuchFile;
 
         // Pointers are relative to MDDF
         ptr += _mddf.mddf_block + _volumePrefix;
@@ -95,13 +77,11 @@ public sealed partial class LisaFS
             {
                 errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out tag);
 
-                if(errno != ErrorNumber.NoError)
-                    continue;
+                if(errno != ErrorNumber.NoError) continue;
 
                 DecodeTag(tag, out extTag);
 
-                if(extTag.FileId != fileId * -1)
-                    continue;
+                if(extTag.FileId != fileId * -1) continue;
 
                 ptr   = i;
                 found = true;
@@ -109,32 +89,25 @@ public sealed partial class LisaFS
                 break;
             }
 
-            if(!found)
-                return ErrorNumber.InvalidArgument;
+            if(!found) return ErrorNumber.InvalidArgument;
         }
 
         // Checks that the sector tag indicates its the Extents File we are searching for
         errno = _device.ReadSectorTag(ptr, SectorTagType.AppleSectorTag, out tag);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         DecodeTag(tag, out extTag);
 
-        if(extTag.FileId != (short)(-1 * fileId))
-            return ErrorNumber.NoSuchFile;
+        if(extTag.FileId != (short)(-1 * fileId)) return ErrorNumber.NoSuchFile;
 
-        byte[] sector;
-
-        errno = _mddf.fsversion == LISA_V1 ? _device.ReadSectors(ptr, 2, out sector)
+        errno = _mddf.fsversion == LISA_V1
+                    ? _device.ReadSectors(ptr, 2, out byte[] sector)
                     : _device.ReadSector(ptr, out sector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        if(sector[0] >= 32 ||
-           sector[0] == 0)
-            return ErrorNumber.InvalidArgument;
+        if(sector[0] >= 32 || sector[0] == 0) return ErrorNumber.InvalidArgument;
 
         file.filenameLen = sector[0];
         file.filename    = new byte[file.filenameLen];
@@ -195,8 +168,7 @@ public sealed partial class LisaFS
 
         for(var j = 0; j < 41; j++)
         {
-            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0)
-                break;
+            if(BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4) == 0) break;
 
             extentsCount++;
         }
@@ -204,91 +176,130 @@ public sealed partial class LisaFS
         file.extents = new Extent[extentsCount];
 
         for(var j = 0; j < extentsCount; j++)
+        {
             file.extents[j] = new Extent
             {
                 start  = BigEndianBitConverter.ToInt32(sector, extentsOffset + j * 6),
                 length = BigEndianBitConverter.ToInt16(sector, extentsOffset + j * 6 + 4)
             };
+        }
 
         _extentCache.Add(fileId, file);
 
-        if(!_debug)
-            return ErrorNumber.NoError;
+        if(!_debug) return ErrorNumber.NoError;
 
-        if(_printedExtents.Contains(fileId))
-            return ErrorNumber.NoError;
+        if(_printedExtents.Contains(fileId)) return ErrorNumber.NoError;
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].filenameLen = {1}", fileId, file.filenameLen);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].filename = {1}", fileId,
-                                   StringHandlers.CToString(file.filename, Encoding));
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].filename = {1}",
+                                   fileId,
+                                   StringHandlers.CToString(file.filename, _encoding));
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown1 = 0x{1:X4}", fileId, file.unknown1);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown2 = 0x{1:X2}", fileId, file.unknown2);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].etype = 0x{1:X2}", fileId, file.etype);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].ftype = {1}", fileId, file.ftype);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown3 = 0x{1:X2}", fileId, file.unknown3);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtc = {1}", fileId, file.dtc);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dta = {1}", fileId, file.dta);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtm = {1}", fileId, file.dtm);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dtb = {1}", fileId, file.dtb);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].dts = {1}", fileId, file.dts);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].serial = {1}", fileId, file.serial);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown4 = 0x{1:X2}", fileId, file.unknown4);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].locked = {1}", fileId, file.locked       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].protect = {1}", fileId, file.protect     > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].master = {1}", fileId, file.master       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].scavenged = {1}", fileId, file.scavenged > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].closed = {1}", fileId, file.closed       > 0);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].open = {1}", fileId, file.open           > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown1 = 0x{1:X4}",  fileId, file.unknown1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].file_uid = 0x{1:X16}", fileId, file.file_uid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown2 = 0x{1:X2}",  fileId, file.unknown2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].etype = 0x{1:X2}",     fileId, file.etype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].ftype = {1}",          fileId, file.ftype);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown3 = 0x{1:X2}",  fileId, file.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtc = {1}",            fileId, file.dtc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dta = {1}",            fileId, file.dta);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtm = {1}",            fileId, file.dtm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dtb = {1}",            fileId, file.dtb);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].dts = {1}",            fileId, file.dts);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].serial = {1}",         fileId, file.serial);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown4 = 0x{1:X2}",  fileId, file.unknown4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].locked = {1}",         fileId, file.locked    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].protect = {1}",        fileId, file.protect   > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].master = {1}",         fileId, file.master    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].scavenged = {1}",      fileId, file.scavenged > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].closed = {1}",         fileId, file.closed    > 0);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].open = {1}",           fileId, file.open      > 0);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown5 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                   "{10:X2}{11:X2}", fileId, file.unknown5[0], file.unknown5[1], file.unknown5[2],
-                                   file.unknown5[3], file.unknown5[4], file.unknown5[5], file.unknown5[6],
-                                   file.unknown5[7], file.unknown5[8], file.unknown5[9], file.unknown5[10]);
+                                   "{10:X2}{11:X2}",
+                                   fileId,
+                                   file.unknown5[0],
+                                   file.unknown5[1],
+                                   file.unknown5[2],
+                                   file.unknown5[3],
+                                   file.unknown5[4],
+                                   file.unknown5[5],
+                                   file.unknown5[6],
+                                   file.unknown5[7],
+                                   file.unknown5[8],
+                                   file.unknown5[9],
+                                   file.unknown5[10]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].release = {1}", fileId, file.release);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].build = {1}", fileId, file.build);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].release = {1}", fileId, file.release);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].build = {1}",   fileId, file.build);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].compatibility = {1}", fileId, file.compatibility);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].revision = {1}", fileId, file.revision);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].revision = {1}",      fileId, file.revision);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown6 = 0x{1:X4}", fileId, file.unknown6);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password_valid = {1}", fileId,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].password_valid = {1}",
+                                   fileId,
                                    file.password_valid > 0);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].password = {1}", fileId,
-                                   Encoding.GetString(file.password));
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].password = {1}",
+                                   fileId,
+                                   _encoding.GetString(file.password));
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}", fileId,
-                                   file.unknown7[0], file.unknown7[1], file.unknown7[2]);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ExtentFile[{0}].unknown7 = 0x{1:X2}{2:X2}{3:X2}",
+                                   fileId,
+                                   file.unknown7[0],
+                                   file.unknown7[1],
+                                   file.unknown7[2]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].overhead = {1}", fileId, file.overhead);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
                                    "ExtentFile[{0}].unknown8 = 0x{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}" +
-                                   "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}", fileId, file.unknown8[0],
-                                   file.unknown8[1], file.unknown8[2], file.unknown8[3], file.unknown8[4],
-                                   file.unknown8[5], file.unknown8[6], file.unknown8[7], file.unknown8[8],
-                                   file.unknown8[9], file.unknown8[10], file.unknown8[11], file.unknown8[12],
-                                   file.unknown8[13], file.unknown8[14], file.unknown8[15]);
+                                   "{10:X2}{11:X2}{12:X2}{13:X2}{14:X2}{15:X2}{16:X2}",
+                                   fileId,
+                                   file.unknown8[0],
+                                   file.unknown8[1],
+                                   file.unknown8[2],
+                                   file.unknown8[3],
+                                   file.unknown8[4],
+                                   file.unknown8[5],
+                                   file.unknown8[6],
+                                   file.unknown8[7],
+                                   file.unknown8[8],
+                                   file.unknown8[9],
+                                   file.unknown8[10],
+                                   file.unknown8[11],
+                                   file.unknown8[12],
+                                   file.unknown8[13],
+                                   file.unknown8[14],
+                                   file.unknown8[15]);
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].length = {1}", fileId, file.length);
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].length = {1}",        fileId, file.length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown9 = 0x{1:X8}", fileId, file.unknown9);
 
         for(var ext = 0; ext < file.extents.Length; ext++)
         {
-            AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].start = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "ExtentFile[{0}].extents[{1}].start = {2}",
+                                       fileId,
+                                       ext,
                                        file.extents[ext].start);
 
-            AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].extents[{1}].length = {2}", fileId, ext,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "ExtentFile[{0}].extents[{1}].length = {2}",
+                                       fileId,
+                                       ext,
                                        file.extents[ext].length);
         }
 
-        AaruConsole.DebugWriteLine("LisaFS plugin", "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ExtentFile[{0}].unknown10 = 0x{1:X4}", fileId, file.unknown10);
 
         _printedExtents.Add(fileId);
 
@@ -298,20 +309,20 @@ public sealed partial class LisaFS
     /// <summary>Reads all the S-Records and caches it</summary>
     ErrorNumber ReadSRecords()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         // Searches the S-Records place using MDDF pointers
-        ErrorNumber errno = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix, _mddf.srec_len,
+        ErrorNumber errno = _device.ReadSectors(_mddf.srec_ptr + _mddf.mddf_block + _volumePrefix,
+                                                _mddf.srec_len,
                                                 out byte[] sectors);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         // Each entry takes 14 bytes
         _srecords = new SRecord[sectors.Length / 14];
 
         for(var s = 0; s < _srecords.Length; s++)
+        {
             _srecords[s] = new SRecord
             {
                 extent_ptr = BigEndianBitConverter.ToUInt32(sectors, 0x00 + 14 * s),
@@ -319,6 +330,7 @@ public sealed partial class LisaFS
                 filesize   = BigEndianBitConverter.ToUInt32(sectors, 0x08 + 14 * s),
                 flags      = BigEndianBitConverter.ToUInt16(sectors, 0x0C + 14 * s)
             };
+        }
 
         return ErrorNumber.NoError;
     }

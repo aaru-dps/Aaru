@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
@@ -40,101 +38,100 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Database;
 using Aaru.Database.Models;
 using Aaru.Dto;
-using Aaru.Settings;
-using global::Spectre.Console;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Spectre.Console;
 using CdOffset = Aaru.Database.Models.CdOffset;
 using Version = Aaru.CommonTypes.Metadata.Version;
+
+namespace Aaru.Core;
 
 /// <summary>Handles connections to Aaru.Server</summary>
 public static class Remote
 {
     /// <summary>Submits a device report</summary>
     /// <param name="report">Device report</param>
-    public static void SubmitReport(DeviceReportV2 report)
+    public static Task SubmitReportAsync(DeviceReport report)
     {
-        var submitThread = new Thread(() =>
-        {
-            Spectre.ProgressSingleSpinner(ctx =>
-            {
-                ctx.AddTask("Uploading device report").IsIndeterminate();
+        return AnsiConsole.Status()
+                          .StartAsync(Localization.Core.Uploading_device_report,
+                                      async _ =>
+                                      {
+                                          try
+                                          {
+                                              string json =
+                                                  JsonSerializer.Serialize(report,
+                                                                           typeof(DeviceReport),
+                                                                           DeviceReportContext.Default);
 
-                try
-                {
-                    string json = JsonConvert.SerializeObject(report, Formatting.Indented, new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
+                                              var httpClient = new HttpClient();
 
-                    var httpClient = new HttpClient();
+                                              httpClient.DefaultRequestHeaders.Add("User-Agent",
+                                                  $"Aaru {typeof(Version).Assembly.GetName().Version}");
 
-                    httpClient.DefaultRequestHeaders.Add("User-Agent",
-                                                         $"Aaru {typeof(Version).Assembly.GetName().Version}");
+                                              httpClient.BaseAddress = new Uri("https://www.aaru.app");
 
-                    httpClient.BaseAddress = new Uri("https://www.aaru.app");
+                                              HttpResponseMessage response =
+                                                  await httpClient.PostAsync("/api/uploadreportv2",
+                                                                             new StringContent(json,
+                                                                                 Encoding.UTF8,
+                                                                                 "application/json"));
 
-                    HttpResponseMessage response = httpClient.
-                                                   PostAsync("/api/uploadreportv2",
-                                                             new StringContent(json, Encoding.UTF8,
-                                                                               "application/json")).GetAwaiter().
-                                                   GetResult();
+                                              if(!response.IsSuccessStatusCode) return;
 
-                    if(!response.IsSuccessStatusCode)
-                        return;
+                                              Stream data   = await response.Content.ReadAsStreamAsync();
+                                              var    reader = new StreamReader(data);
 
-                    Stream data   = response.Content.ReadAsStream();
-                    var    reader = new StreamReader(data);
+                                              await reader.ReadToEndAsync();
+                                              data.Close();
+                                          }
+                                          catch(WebException)
+                                          {
+                                              // Can't connect to the server, do nothing
+                                          }
 
-                    reader.ReadToEnd();
-                    data.Close();
-                }
-                catch(WebException)
-                {
-                    // Can't connect to the server, do nothing
-                }
-
-                // ReSharper disable once RedundantCatchClause
-                catch
-                {
-                #if DEBUG
-                    if(Debugger.IsAttached)
-                        throw;
-                #endif
-                }
-            });
-        });
-
-        submitThread.Start();
+                                          // ReSharper disable once RedundantCatchClause
+                                          catch
+                                          {
+#if DEBUG
+                                              if(Debugger.IsAttached) throw;
+#endif
+                                          }
+                                      });
     }
 
     /// <summary>Updates the main database</summary>
     /// <param name="create">If <c>true</c> creates the database from scratch, otherwise updates an existing database</param>
-    public static void UpdateMainDatabase(bool create)
+    public static async Task UpdateMainDatabaseAsync(bool create)
     {
-        var mctx = AaruContext.Create(Settings.MainDbPath);
+        var mctx = AaruContext.Create(Settings.Settings.MainDbPath);
 
         if(create)
         {
-            mctx.Database.EnsureCreated();
+            await mctx.Database.EnsureCreatedAsync();
 
-            mctx.Database.
-                 ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+            await mctx.Database
+                      .ExecuteSqlRawAsync("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
-            foreach(string migration in mctx.Database.GetPendingMigrations())
-                mctx.Database.
-                     ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+            foreach(string migration in await mctx.Database.GetPendingMigrationsAsync())
+            {
+                await mctx.Database
+#pragma warning disable EF1002
+                          .ExecuteSqlRawAsync($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                              migration}', '0.0.0')");
+#pragma warning restore EF1002
+            }
         }
         else
-            mctx.Database.Migrate();
+            await mctx.Database.MigrateAsync();
 
-        mctx.SaveChanges();
+        await mctx.SaveChangesAsync();
 
         try
         {
@@ -143,19 +140,16 @@ public static class Remote
 
             if(!create)
             {
-                List<DateTime> latestAll = new();
+                List<DateTime> latestAll = [];
 
-                if(mctx.UsbVendors.Any())
-                    latestAll.Add(mctx.UsbVendors.Max(v => v.ModifiedWhen));
+                if(await mctx.UsbVendors.AnyAsync()) latestAll.Add(await mctx.UsbVendors.MaxAsync(v => v.ModifiedWhen));
 
-                if(mctx.UsbProducts.Any())
-                    latestAll.Add(mctx.UsbProducts.Max(p => p.ModifiedWhen));
+                if(await mctx.UsbProducts.AnyAsync())
+                    latestAll.Add(await mctx.UsbProducts.MaxAsync(p => p.ModifiedWhen));
 
-                if(mctx.CdOffsets.Any())
-                    latestAll.Add(mctx.CdOffsets.Max(o => o.ModifiedWhen));
+                if(await mctx.CdOffsets.AnyAsync()) latestAll.Add(await mctx.CdOffsets.MaxAsync(o => o.ModifiedWhen));
 
-                if(mctx.Devices.Any())
-                    latestAll.Add(mctx.Devices.Max(d => d.LastSynchronized));
+                if(await mctx.Devices.AnyAsync()) latestAll.Add(await mctx.Devices.MaxAsync(d => d.LastSynchronized));
 
                 if(latestAll.Any())
                 {
@@ -167,144 +161,170 @@ public static class Remote
             if(lastUpdate == 0)
             {
                 create = true;
-                AaruConsole.WriteLine("Creating main database");
+                AaruConsole.WriteLine(Localization.Core.Creating_main_database);
             }
             else
             {
-                AaruConsole.WriteLine("Updating main database");
-                AaruConsole.WriteLine("Last update: {0}", latest);
+                AaruConsole.WriteLine(Localization.Core.Updating_main_database);
+                AaruConsole.WriteLine(Localization.Core.Last_update_0, latest);
             }
 
             DateTime updateStart = DateTime.UtcNow;
 
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", $"Aaru {typeof(Version).Assembly.GetName().Version}");
-            httpClient.BaseAddress = new Uri("https://www.aaru.app");
+            httpClient.BaseAddress = new Uri("http://localhost:5279");
 
-            HttpResponseMessage response =
-                httpClient.GetAsync($"/api/update?timestamp={lastUpdate}").GetAwaiter().GetResult();
+            HttpResponseMessage response = await httpClient.GetAsync($"/api/update?timestamp={lastUpdate}");
 
             if(!response.IsSuccessStatusCode)
             {
-                AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.", response.StatusCode);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0_when_trying_to_get_updated_entities,
+                                           response.StatusCode);
 
                 return;
             }
 
-            Stream  data   = response.Content.ReadAsStream();
+            Stream  data   = await response.Content.ReadAsStreamAsync();
             var     reader = new StreamReader(data);
-            SyncDto sync   = JsonConvert.DeserializeObject<SyncDto>(reader.ReadToEnd()) ?? new SyncDto();
+            SyncDto sync   = JsonSerializer.Deserialize<SyncDto>(await reader.ReadToEndAsync()) ?? new SyncDto();
 
             if(create)
             {
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Adding USB vendors");
-                                task.MaxValue = sync.UsbVendors.Count;
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .Start(ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_vendors);
+                                      task.MaxValue = sync.UsbVendors.Count;
 
-                                foreach(UsbVendorDto vendor in sync.UsbVendors)
-                                {
-                                    task.Increment(1);
-                                    mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
-                                }
-                            });
+                                      foreach(UsbVendorDto vendor in sync.UsbVendors)
+                                      {
+                                          task.Increment(1);
+                                          mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                      }
 
-                AaruConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
+                                      return Task.CompletedTask;
+                                  });
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Adding USB products");
-                                task.MaxValue = sync.UsbProducts.Count;
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors, sync.UsbVendors.Count);
 
-                                foreach(UsbProductDto product in sync.UsbProducts)
-                                {
-                                    task.Increment(1);
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .Start(ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_products);
+                                      task.MaxValue = sync.UsbProducts.Count;
 
-                                    mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
-                                                                        product.Product));
-                                }
-                            });
+                                      foreach(UsbProductDto product in sync.UsbProducts)
+                                      {
+                                          task.Increment(1);
 
-                AaruConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
+                                          mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
+                                                                              product.ProductId,
+                                                                              product.Product));
+                                      }
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Adding CompactDisc read offsets");
-                                task.MaxValue = sync.Offsets.Count;
+                                      return Task.CompletedTask;
+                                  });
 
-                                foreach(CdOffsetDto offset in sync.Offsets)
-                                {
-                                    task.Increment(1);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products, sync.UsbProducts.Count);
 
-                                    mctx.CdOffsets.Add(new CdOffset(offset)
-                                    {
-                                        Id = offset.Id
-                                    });
-                                }
-                            });
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .Start(ctx =>
+                                  {
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
 
-                AaruConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
+                                      task.MaxValue = sync.Offsets.Count;
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Adding known devices");
-                                task.MaxValue = sync.Devices.Count;
+                                      foreach(CdOffsetDto offset in sync.Offsets)
+                                      {
+                                          task.Increment(1);
 
-                                foreach(DeviceDto device in sync.Devices)
+                                          mctx.CdOffsets.Add(new CdOffset(offset)
+                                          {
+                                              Id = offset.Id
+                                          });
+                                      }
 
-                                {
-                                    task.Increment(1);
+                                      return Task.CompletedTask;
+                                  });
 
-                                    mctx.Devices.Add(new Device(device)
-                                    {
-                                        Id = device.Id
-                                    });
-                                }
-                            });
+                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, sync.Offsets.Count);
 
-                AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .Start(ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_devices);
+                                      task.MaxValue = sync.Devices.Count;
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Adding known iNES/NES 2.0 headers");
-                                task.MaxValue = sync.NesHeaders?.Count ?? 0;
+                                      foreach(DeviceDto device in sync.Devices)
 
-                                foreach(NesHeaderDto header in sync.NesHeaders ?? new List<NesHeaderDto>())
-                                {
-                                    task.Increment(1);
+                                      {
+                                          task.Increment(1);
 
-                                    mctx.NesHeaders.Add(new NesHeaderInfo
-                                    {
-                                        Id                     = header.Id,
-                                        AddedWhen              = DateTime.UtcNow,
-                                        BatteryPresent         = header.BatteryPresent,
-                                        ConsoleType            = header.ConsoleType,
-                                        DefaultExpansionDevice = header.DefaultExpansionDevice,
-                                        ExtendedConsoleType    = header.ExtendedConsoleType,
-                                        FourScreenMode         = header.FourScreenMode,
-                                        Mapper                 = header.Mapper,
-                                        ModifiedWhen           = DateTime.UtcNow,
-                                        NametableMirroring     = header.NametableMirroring,
-                                        Sha256                 = header.Sha256,
-                                        Submapper              = header.Submapper,
-                                        TimingMode             = header.TimingMode,
-                                        VsHardwareType         = header.VsHardwareType,
-                                        VsPpuType              = header.VsPpuType
-                                    });
-                                }
-                            });
+                                          mctx.Devices.Add(new Device(device)
+                                          {
+                                              Id = device.Id
+                                          });
+                                      }
 
-                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", sync.NesHeaders?.Count ?? 0);
+                                      return Task.CompletedTask;
+                                  });
+
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices, sync.Devices.Count);
+
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .Start(ctx =>
+                                  {
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
+
+                                      task.MaxValue = sync.NesHeaders?.Count ?? 0;
+
+                                      foreach(NesHeaderDto header in sync.NesHeaders ?? [])
+                                      {
+                                          task.Increment(1);
+
+                                          mctx.NesHeaders.Add(new NesHeaderInfo
+                                          {
+                                              Id                     = header.Id,
+                                              AddedWhen              = DateTime.UtcNow,
+                                              BatteryPresent         = header.BatteryPresent,
+                                              ConsoleType            = header.ConsoleType,
+                                              DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                              ExtendedConsoleType    = header.ExtendedConsoleType,
+                                              FourScreenMode         = header.FourScreenMode,
+                                              Mapper                 = header.Mapper,
+                                              ModifiedWhen           = DateTime.UtcNow,
+                                              NametableMirroring     = header.NametableMirroring,
+                                              Sha256                 = header.Sha256,
+                                              Submapper              = header.Submapper,
+                                              TimingMode             = header.TimingMode,
+                                              VsHardwareType         = header.VsHardwareType,
+                                              VsPpuType              = header.VsPpuType
+                                          });
+                                      }
+
+                                      return Task.CompletedTask;
+                                  });
+
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers,
+                                      sync.NesHeaders?.Count ?? 0);
             }
             else
             {
@@ -319,233 +339,259 @@ public static class Remote
                 long modifiedDevices    = 0;
                 long modifiedNesHeaders = 0;
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Updating USB vendors");
-                                task.MaxValue = sync.UsbVendors.Count;
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .StartAsync(async ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_vendors);
+                                      task.MaxValue = sync.UsbVendors.Count;
 
-                                foreach(UsbVendorDto vendor in sync.UsbVendors)
-                                {
-                                    task.Increment(1);
+                                      foreach(UsbVendorDto vendor in sync.UsbVendors)
+                                      {
+                                          task.Increment(1);
 
-                                    UsbVendor existing = mctx.UsbVendors.FirstOrDefault(v => v.Id == vendor.VendorId);
+                                          UsbVendor existing =
+                                              await mctx.UsbVendors.FirstOrDefaultAsync(v => v.Id == vendor.VendorId);
 
-                                    if(existing != null)
-                                    {
-                                        modifiedVendors++;
-                                        existing.Vendor       = vendor.Vendor;
-                                        existing.ModifiedWhen = updateStart;
-                                        mctx.UsbVendors.Update(existing);
-                                    }
-                                    else
-                                    {
-                                        addedVendors++;
-                                        mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
-                                    }
-                                }
-                            });
+                                          if(existing != null)
+                                          {
+                                              modifiedVendors++;
+                                              existing.Vendor       = vendor.Vendor;
+                                              existing.ModifiedWhen = updateStart;
+                                              mctx.UsbVendors.Update(existing);
+                                          }
+                                          else
+                                          {
+                                              addedVendors++;
+                                              mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                          }
+                                      }
+                                  });
 
-                AaruConsole.WriteLine("Added {0} USB vendors", addedVendors);
-                AaruConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_vendors,    addedVendors);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_USB_vendors, modifiedVendors);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Updating USB products");
-                                task.MaxValue = sync.UsbVendors.Count;
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .StartAsync(async ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Updating_USB_products);
+                                      task.MaxValue = sync.UsbVendors.Count;
 
-                                foreach(UsbProductDto product in sync.UsbProducts)
-                                {
-                                    task.Increment(1);
+                                      foreach(UsbProductDto product in sync.UsbProducts)
+                                      {
+                                          task.Increment(1);
 
-                                    UsbProduct existing =
-                                        mctx.UsbProducts.FirstOrDefault(p => p.VendorId  == product.VendorId &&
-                                                                             p.ProductId == product.ProductId);
+                                          UsbProduct existing =
+                                              await mctx.UsbProducts.FirstOrDefaultAsync(p =>
+                                                  p.VendorId  == product.VendorId &&
+                                                  p.ProductId == product.ProductId);
 
-                                    if(existing != null)
-                                    {
-                                        modifiedProducts++;
-                                        existing.Product      = product.Product;
-                                        existing.ModifiedWhen = updateStart;
-                                        mctx.UsbProducts.Update(existing);
-                                    }
-                                    else
-                                    {
-                                        addedProducts++;
+                                          if(existing != null)
+                                          {
+                                              modifiedProducts++;
+                                              existing.Product      = product.Product;
+                                              existing.ModifiedWhen = updateStart;
+                                              mctx.UsbProducts.Update(existing);
+                                          }
+                                          else
+                                          {
+                                              addedProducts++;
 
-                                        mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId,
-                                                                            product.Product));
-                                    }
-                                }
-                            });
+                                              mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
+                                                                       product.ProductId,
+                                                                       product.Product));
+                                          }
+                                      }
+                                  });
 
-                AaruConsole.WriteLine("Added {0} USB products", addedProducts);
-                AaruConsole.WriteLine("Modified {0} USB products", modifiedProducts);
+                AaruConsole.WriteLine(Localization.Core.Added_0_usb_products,    addedProducts);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_USB_products, modifiedProducts);
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Updating CompactDisc read offsets");
-                                task.MaxValue = sync.Offsets.Count;
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .StartAsync(async ctx =>
+                                  {
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Updating_CompactDisc_read_offsets);
 
-                                foreach(CdOffsetDto offset in sync.Offsets)
-                                {
-                                    CdOffset existing = mctx.CdOffsets.FirstOrDefault(o => o.Id == offset.Id);
-                                    task.Increment(1);
+                                      task.MaxValue = sync.Offsets.Count;
 
-                                    if(existing != null)
-                                    {
-                                        modifiedOffsets++;
-                                        existing.Agreement    = offset.Agreement;
-                                        existing.Manufacturer = offset.Manufacturer;
-                                        existing.Model        = offset.Model;
-                                        existing.Submissions  = offset.Submissions;
-                                        existing.Offset       = offset.Offset;
-                                        existing.ModifiedWhen = updateStart;
-                                        mctx.CdOffsets.Update(existing);
-                                    }
-                                    else
-                                    {
-                                        addedOffsets++;
+                                      foreach(CdOffsetDto offset in sync.Offsets)
+                                      {
+                                          CdOffset existing =
+                                              await mctx.CdOffsets.FirstOrDefaultAsync(o => o.Id == offset.Id);
 
-                                        mctx.CdOffsets.Add(new CdOffset(offset)
-                                        {
-                                            Id = offset.Id
-                                        });
-                                    }
-                                }
-                            });
+                                          task.Increment(1);
 
-                AaruConsole.WriteLine("Added {0} CompactDisc read offsets", addedOffsets);
-                AaruConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
+                                          if(existing != null)
+                                          {
+                                              modifiedOffsets++;
+                                              existing.Agreement    = offset.Agreement;
+                                              existing.Manufacturer = offset.Manufacturer;
+                                              existing.Model        = offset.Model;
+                                              existing.Submissions  = offset.Submissions;
+                                              existing.Offset       = offset.Offset;
+                                              existing.ModifiedWhen = updateStart;
+                                              mctx.CdOffsets.Update(existing);
+                                          }
+                                          else
+                                          {
+                                              addedOffsets++;
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Updating known devices");
-                                task.MaxValue = sync.Offsets.Count;
+                                              mctx.CdOffsets.Add(new CdOffset(offset)
+                                              {
+                                                  Id = offset.Id
+                                              });
+                                          }
+                                      }
+                                  });
 
-                                foreach(DeviceDto device in sync.Devices)
-                                {
-                                    task.Increment(1);
-                                    Device existing = mctx.Devices.FirstOrDefault(d => d.Id == device.Id);
+                AaruConsole.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets,    addedOffsets);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_CompactDisc_read_offsets, modifiedOffsets);
 
-                                    if(existing != null)
-                                    {
-                                        modifiedDevices++;
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .StartAsync(async ctx =>
+                                  {
+                                      ProgressTask task = ctx.AddTask(Localization.Core.Updating_known_devices);
+                                      task.MaxValue = sync.Offsets.Count;
 
-                                        mctx.Remove(existing);
+                                      foreach(DeviceDto device in sync.Devices)
+                                      {
+                                          task.Increment(1);
 
-                                        existing = new Device(device)
-                                        {
-                                            Id                         = device.Id,
-                                            OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                            CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
-                                        };
+                                          Device existing =
+                                              await mctx.Devices.FirstOrDefaultAsync(d => d.Id == device.Id);
 
-                                        mctx.Devices.Add(existing);
-                                    }
-                                    else
-                                    {
-                                        addedDevices++;
+                                          if(existing != null)
+                                          {
+                                              modifiedDevices++;
 
-                                        mctx.Devices.Add(new Device(device)
-                                        {
-                                            Id                         = device.Id,
-                                            OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
-                                            CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
-                                        });
-                                    }
-                                }
-                            });
+                                              mctx.Remove(existing);
 
-                AaruConsole.WriteLine("Added {0} known devices", addedDevices);
-                AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
+                                              existing = new Device(device)
+                                              {
+                                                  Id                         = device.Id,
+                                                  OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                                  CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
+                                              };
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
-                            {
-                                ProgressTask task = ctx.AddTask("Updating known iNES/NES 2.0 headers");
-                                task.MaxValue = sync.Offsets.Count;
+                                              mctx.Devices.Add(existing);
+                                          }
+                                          else
+                                          {
+                                              addedDevices++;
 
-                                foreach(NesHeaderDto header in sync.NesHeaders)
-                                {
-                                    task.Increment(1);
-                                    NesHeaderInfo existing = mctx.NesHeaders.FirstOrDefault(d => d.Id == header.Id);
+                                              mctx.Devices.Add(new Device(device)
+                                              {
+                                                  Id                         = device.Id,
+                                                  OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
+                                                  CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
+                                              });
+                                          }
+                                      }
+                                  });
 
-                                    if(existing != null)
-                                    {
-                                        modifiedNesHeaders++;
-                                        DateTime addedDate = existing.AddedWhen;
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_devices,    addedDevices);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_known_devices, modifiedDevices);
 
-                                        mctx.Remove(existing);
+                await AnsiConsole.Progress()
+                                 .AutoClear(true)
+                                 .HideCompleted(true)
+                                 .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                                 .StartAsync(async ctx =>
+                                  {
+                                      ProgressTask task =
+                                          ctx.AddTask(Localization.Core.Updating_known_iNES_NES_2_0_headers);
 
-                                        existing = new NesHeaderInfo
-                                        {
-                                            Id                     = header.Id,
-                                            AddedWhen              = addedDate,
-                                            BatteryPresent         = header.BatteryPresent,
-                                            ConsoleType            = header.ConsoleType,
-                                            DefaultExpansionDevice = header.DefaultExpansionDevice,
-                                            ExtendedConsoleType    = header.ExtendedConsoleType,
-                                            FourScreenMode         = header.FourScreenMode,
-                                            Mapper                 = header.Mapper,
-                                            ModifiedWhen           = DateTime.UtcNow,
-                                            NametableMirroring     = header.NametableMirroring,
-                                            Sha256                 = header.Sha256,
-                                            Submapper              = header.Submapper,
-                                            TimingMode             = header.TimingMode,
-                                            VsHardwareType         = header.VsHardwareType,
-                                            VsPpuType              = header.VsPpuType
-                                        };
+                                      task.MaxValue = sync.Offsets.Count;
 
-                                        mctx.NesHeaders.Add(existing);
-                                    }
-                                    else
-                                    {
-                                        addedNesHeaders++;
+                                      sync.NesHeaders ??= [];
 
-                                        mctx.NesHeaders.Add(new NesHeaderInfo
-                                        {
-                                            Id                     = header.Id,
-                                            AddedWhen              = DateTime.UtcNow,
-                                            BatteryPresent         = header.BatteryPresent,
-                                            ConsoleType            = header.ConsoleType,
-                                            DefaultExpansionDevice = header.DefaultExpansionDevice,
-                                            ExtendedConsoleType    = header.ExtendedConsoleType,
-                                            FourScreenMode         = header.FourScreenMode,
-                                            Mapper                 = header.Mapper,
-                                            ModifiedWhen           = DateTime.UtcNow,
-                                            NametableMirroring     = header.NametableMirroring,
-                                            Sha256                 = header.Sha256,
-                                            Submapper              = header.Submapper,
-                                            TimingMode             = header.TimingMode,
-                                            VsHardwareType         = header.VsHardwareType,
-                                            VsPpuType              = header.VsPpuType
-                                        });
-                                    }
-                                }
-                            });
+                                      foreach(NesHeaderDto header in sync.NesHeaders)
+                                      {
+                                          task.Increment(1);
 
-                AaruConsole.WriteLine("Added {0} known iNES/NES 2.0 headers", addedNesHeaders);
-                AaruConsole.WriteLine("Modified {0} known iNES/NES 2.0 headers", modifiedNesHeaders);
+                                          NesHeaderInfo existing =
+                                              await mctx.NesHeaders.FirstOrDefaultAsync(d => d.Id == header.Id);
+
+                                          if(existing != null)
+                                          {
+                                              modifiedNesHeaders++;
+                                              DateTime addedDate = existing.AddedWhen;
+
+                                              mctx.Remove(existing);
+
+                                              existing = new NesHeaderInfo
+                                              {
+                                                  Id                     = header.Id,
+                                                  AddedWhen              = addedDate,
+                                                  BatteryPresent         = header.BatteryPresent,
+                                                  ConsoleType            = header.ConsoleType,
+                                                  DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                                  ExtendedConsoleType    = header.ExtendedConsoleType,
+                                                  FourScreenMode         = header.FourScreenMode,
+                                                  Mapper                 = header.Mapper,
+                                                  ModifiedWhen           = DateTime.UtcNow,
+                                                  NametableMirroring     = header.NametableMirroring,
+                                                  Sha256                 = header.Sha256,
+                                                  Submapper              = header.Submapper,
+                                                  TimingMode             = header.TimingMode,
+                                                  VsHardwareType         = header.VsHardwareType,
+                                                  VsPpuType              = header.VsPpuType
+                                              };
+
+                                              mctx.NesHeaders.Add(existing);
+                                          }
+                                          else
+                                          {
+                                              addedNesHeaders++;
+
+                                              mctx.NesHeaders.Add(new NesHeaderInfo
+                                              {
+                                                  Id                     = header.Id,
+                                                  AddedWhen              = DateTime.UtcNow,
+                                                  BatteryPresent         = header.BatteryPresent,
+                                                  ConsoleType            = header.ConsoleType,
+                                                  DefaultExpansionDevice = header.DefaultExpansionDevice,
+                                                  ExtendedConsoleType    = header.ExtendedConsoleType,
+                                                  FourScreenMode         = header.FourScreenMode,
+                                                  Mapper                 = header.Mapper,
+                                                  ModifiedWhen           = DateTime.UtcNow,
+                                                  NametableMirroring     = header.NametableMirroring,
+                                                  Sha256                 = header.Sha256,
+                                                  Submapper              = header.Submapper,
+                                                  TimingMode             = header.TimingMode,
+                                                  VsHardwareType         = header.VsHardwareType,
+                                                  VsPpuType              = header.VsPpuType
+                                              });
+                                          }
+                                      }
+                                  });
+
+                AaruConsole.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers,    addedNesHeaders);
+                AaruConsole.WriteLine(Localization.Core.Modified_0_known_iNES_NES_2_0_headers, modifiedNesHeaders);
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception {0} when updating database.", ex);
+            AaruConsole.ErrorWriteLine(Localization.Core.Exception_0_when_updating_database, ex);
+            AaruConsole.WriteException(ex);
         }
         finally
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Saving changes...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Saving_changes).IsIndeterminate();
                 mctx.SaveChanges();
             });
         }

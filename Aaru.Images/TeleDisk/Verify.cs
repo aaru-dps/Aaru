@@ -27,27 +27,33 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 
+namespace Aaru.Images;
+
 public sealed partial class TeleDisk
 {
+#region IVerifiableImage Members
+
     /// <inheritdoc />
     public bool? VerifyMediaImage() => _aDiskCrcHasFailed;
+
+#endregion
+
+#region IVerifiableSectorsImage Members
 
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress) => !_sectorsWhereCrcHasFailed.Contains(sectorAddress);
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        failingLbas = new List<ulong>();
-        unknownLbas = new List<ulong>();
+        failingLbas = [];
+        unknownLbas = [];
 
         for(ulong i = sectorAddress; i < sectorAddress + length; i++)
             if(_sectorsWhereCrcHasFailed.Contains(sectorAddress))
@@ -55,4 +61,6 @@ public sealed partial class TeleDisk
 
         return failingLbas.Count <= 0;
     }
+
+#endregion
 }

@@ -1,0 +1,64 @@
+<root>
+    <!-- ReSharper disable MarkupTextTypo -->
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Offset" xml:space="preserve">
+    <value>Compensación</value>
+  </data>
+    <data name="Length_of_value_array_must_not_be_more_than_length_of_destination" xml:space="preserve">
+    <value>La longitud de una colección no puede ser mayor que la longitud del destino</value>
+  </data>
+    <data name="Non_readable_streams_are_not_supported" xml:space="preserve">
+    <value>Las secuencias no legíbles no están soportadas.</value>
+  </data>
+    <data name="Non_seekable_streams_are_not_supported" xml:space="preserve">
+    <value>Las secuencias no posicionables no están soportadas.</value>
+  </data>
+    <data name="Cannot_read_past_stream_end" xml:space="preserve">
+    <value>No se puede leer más allá del final de la secuencia.</value>
+  </data>
+    <data name="Cannot_seek_after_stream_end" xml:space="preserve">
+    <value>No se puede posicionar después del final de la secuencia.</value>
+  </data>
+    <data name="Cannot_seek_before_stream_start" xml:space="preserve">
+    <value>No se puede posicionar antes del comienzo de la secuencia.</value>
+  </data>
+    <data name="Cannot_set_position_past_stream_end" xml:space="preserve">
+    <value>No se puede establecer la posición más allá del final de la secuencia.</value>
+  </data>
+    <data name="Cannot_write_past_stream_end" xml:space="preserve">
+    <value>No se puede escribir después del final de la secuencia.</value>
+  </data>
+    <data name="End_cant_be_a_negative_number" xml:space="preserve">
+    <value>El final no puede ser un número negativo.</value>
+  </data>
+    <data name="End_is_after_stream_end" xml:space="preserve">
+    <value>El final está después del final de la secuencia.</value>
+  </data>
+    <data name="Growing_OffsetStream_is_not_supported" xml:space="preserve">
+    <value>No se puede agrandar un OffsetStream.</value>
+  </data>
+    <data name="Asynchronous_IO_is_not_supported" xml:space="preserve">
+    <value>E/S asíncrona no soportada.</value>
+  </data>
+    <data name="Start_cant_be_a_negative_number" xml:space="preserve">
+    <value>El comienzo no puede ser un número negativo.</value>
+  </data>
+    <data name="This_stream_is_read_only" xml:space="preserve">
+    <value>Esta secuencia es de sólo lectura.</value>
+  </data>
+</root>

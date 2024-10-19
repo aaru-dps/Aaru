@@ -27,19 +27,37 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Gdi
 {
+#region Nested type: GdiDisc
+
+    struct GdiDisc
+    {
+        /// <summary>Sessions</summary>
+        public List<Session> Sessions;
+        /// <summary>Tracks</summary>
+        public List<GdiTrack> Tracks;
+        /// <summary>Disk type</summary>
+        public MediaType Disktype;
+    }
+
+#endregion
+
+#region Nested type: GdiTrack
+
     struct GdiTrack
     {
         /// <summary>Track #</summary>
@@ -66,13 +84,5 @@ public sealed partial class Gdi
         public ulong Pregap;
     }
 
-    struct GdiDisc
-    {
-        /// <summary>Sessions</summary>
-        public List<Session> Sessions;
-        /// <summary>Tracks</summary>
-        public List<GdiTrack> Tracks;
-        /// <summary>Disk type</summary>
-        public MediaType Disktype;
-    }
+#endregion
 }

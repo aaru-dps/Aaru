@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Dumping;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -42,57 +40,64 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 
+namespace Aaru.Core.Devices.Dumping;
+
 partial class Dump
 {
     void HandleCdrRunOutSectors(ulong blocks, MmcSubchannel desiredSubchannel, ExtentsULong extents,
                                 HashSet<int> subchannelExtents, SubchannelLog subLog, bool supportsLongSectors,
                                 Dictionary<byte, byte> trackFlags, Track[] tracks)
     {
-        List<ulong> runOutSectors = new();
+        List<ulong> runOutSectors = [];
 
-        if(_outputPlugin is not IWritableOpticalImage outputOptical)
-            return;
+        if(_outputPlugin is not IWritableOpticalImage outputOptical) return;
 
         // Count how many run end sectors are detected as bad blocks
         for(ulong i = blocks - 1; i > blocks - 1 - _ignoreCdrRunOuts; i--)
+        {
             if(_resume.BadBlocks.Contains(i))
                 runOutSectors.Add(i);
             else
                 break;
+        }
 
-        if(runOutSectors.Count == 0)
-            return;
+        if(runOutSectors.Count == 0) return;
 
-        _dumpLog.WriteLine($"{runOutSectors.Count} sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        _dumpLog.WriteLine(string.Format(Localization.Core._0_sectors_at_the_end_of_the_disc_are_unreadable,
+                                         runOutSectors.Count));
 
-        UpdateStatus?.
-            Invoke($"{runOutSectors.Count} sectors at the end of the disc are unreadable. This is normal in CD-R(W) discs as these sectors are created by burning software as part of the recording process. Empty ones will be generated and stored in the image.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core._0_sectors_at_the_end_of_the_disc_are_unreadable,
+                                           runOutSectors.Count));
 
         foreach(ulong s in runOutSectors)
         {
             Track track = tracks.FirstOrDefault(t => t.StartSector <= s && t.EndSector >= s);
 
-            if(track is null)
-                continue;
+            if(track is null) continue;
 
             var sector = new byte[2352];
 
             switch(track.Type)
             {
-                case TrackType.Audio: break;
+                case TrackType.Audio:
+                    break;
                 case TrackType.Data:
                     sector = new byte[2048];
 
                     break;
-                case TrackType.CdMode1:         break;
-                case TrackType.CdMode2Formless: break;
-                case TrackType.CdMode2Form1:    break;
-                case TrackType.CdMode2Form2:    break;
-                default:                        continue;
+                case TrackType.CdMode1:
+                    break;
+                case TrackType.CdMode2Formless:
+                    break;
+                case TrackType.CdMode2Form1:
+                    break;
+                case TrackType.CdMode2Form2:
+                    break;
+                default:
+                    continue;
             }
 
-            if(track.Type != TrackType.Audio &&
-               track.Type != TrackType.Data)
+            if(track.Type != TrackType.Audio && track.Type != TrackType.Data)
             {
                 SectorBuilder sb = new();
                 sb.ReconstructPrefix(ref sector, track.Type, (long)s);
@@ -107,8 +112,7 @@ partial class Dump
             _resume.BadBlocks.Remove(s);
             extents.Add(s);
 
-            if(desiredSubchannel == MmcSubchannel.None)
-                continue;
+            if(desiredSubchannel == MmcSubchannel.None) continue;
 
             // Hidden track
             ulong trackStart;

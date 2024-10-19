@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -39,19 +37,22 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Anex86
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _header = Marshal.SpanToStructureLittleEndian<Header>(hdrB);
 
@@ -59,17 +60,16 @@ public sealed partial class Anex86
                                                       (ushort)_header.spt, (uint)_header.bps, MediaEncoding.MFM,
                                                       false));
 
-        if(_imageInfo.MediaType == MediaType.Unknown)
-            _imageInfo.MediaType = MediaType.GENERIC_HDD;
+        if(_imageInfo.MediaType == MediaType.Unknown) _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-        AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", _imageInfo.MediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.MediaType_0, _imageInfo.MediaType);
 
         _imageInfo.ImageSize            = (ulong)_header.dskSize;
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)(_header.cylinders * _header.heads * _header.spt);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = (uint)_header.bps;
         _imageInfo.Cylinders            = (uint)_header.cylinders;
         _imageInfo.Heads                = (uint)_header.heads;
@@ -88,11 +88,9 @@ public sealed partial class Anex86
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -100,8 +98,10 @@ public sealed partial class Anex86
 
         stream.Seek((long)((ulong)_header.hdrSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

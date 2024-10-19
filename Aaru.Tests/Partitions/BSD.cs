@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Bsd : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "BSD slices");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "BSD slices");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 75776,
@@ -71,13 +71,13 @@ public class Bsd : PartitionSchemeTest
                     Start    = 120832,
                     Type     = "FAT"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "netbsd_1.6.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20417,
@@ -132,13 +132,13 @@ public class Bsd : PartitionSchemeTest
                     Start    = 3991680,
                     Type     = "4.2BSD Fast File System"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "netbsd_6.1.5.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20480,
@@ -229,13 +229,13 @@ public class Bsd : PartitionSchemeTest
                     Start    = 3288096,
                     Type     = "Digital LSM Public Region"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "netbsd_7.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20160,
@@ -326,7 +326,7 @@ public class Bsd : PartitionSchemeTest
                     Start    = 3288096,
                     Type     = "Digital LSM Public Region"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

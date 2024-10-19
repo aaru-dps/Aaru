@@ -27,22 +27,23 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements the CP/M filesystem</summary>
 public sealed partial class CPM : IReadOnlyFilesystem
 {
+    const string MODULE_NAME = "CP/M Plugin";
     /// <summary>True if <see cref="Identify" /> thinks this is a CP/M filesystem</summary>
     bool _cpmFound;
 
@@ -59,6 +60,7 @@ public sealed partial class CPM : IReadOnlyFilesystem
     List<string> _dirList;
     /// <summary>CP/M disc parameter block (on-memory)</summary>
     DiscParameterBlock _dpb;
+    Encoding _encoding;
     /// <summary>Cached file data</summary>
     Dictionary<string, byte[]> _fileCache;
     /// <summary>The volume label, if the CP/M filesystem contains one</summary>
@@ -81,16 +83,19 @@ public sealed partial class CPM : IReadOnlyFilesystem
     /// <summary>If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it</summary>
     CpmDefinition _workingDefinition;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Name => "CP/M File System";
+    public string Name => Localization.CPM_Name;
+
     /// <inheritdoc />
     public Guid Id => new("AA2B8585-41DF-4E3B-8A35-D1A935E2F8A1");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -98,4 +103,6 @@ public sealed partial class CPM : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
+
+#endregion
 }

@@ -27,19 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -57,8 +55,7 @@ partial class Dump
                               ref uint blocksToRead, uint subSize, ref byte[] cmdBuf, uint blockSize,
                               bool failedCrossingLeadOut)
     {
-        if(cmdBuf.Length == 0)
-            return;
+        if(cmdBuf.Length == 0) return;
 
         int offsetFix = offsetBytes < 0 ? (int)(sectorSize * sectorsForOffset + offsetBytes) : offsetBytes;
 
@@ -73,7 +70,7 @@ partial class Dump
             for(var b = 0; b < blocksToRead; b++)
             {
                 Array.Copy(cmdBuf, (int)(0          + b * blockSize), data, sectorSize * b, sectorSize);
-                Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize     * b, subSize);
+                Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub,  subSize    * b, subSize);
             }
 
             if(failedCrossingLeadOut)
@@ -100,7 +97,7 @@ partial class Dump
             for(var b = 0; b < blocksToRead; b++)
             {
                 Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + b * blockSize), sectorSize);
-                Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + b * blockSize), subSize);
+                Array.Copy(sub,  subSize    * b, cmdBuf, (int)(sectorSize + b * blockSize), subSize);
             }
         }
         else

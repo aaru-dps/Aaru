@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-AARU_VERSION=6.0.0-alpha6
+AARU_VERSION=6.0.0-alpha9
 OS_NAME=$(uname)
 
 mkdir -p build
@@ -8,21 +8,41 @@ mkdir -p build
 cd Aaru
 for conf in Debug Release;
 do
- for distro in alpine-x64 linux-arm64 linux-arm linux-x64 osx-x64 win-arm64 win-arm win-x64 win-x86 debian-arm debian-arm64 debian-x64 rhel-arm64 rhel-x64 sles-x64;
+ for distro in alpine-arm64 alpine-arm alpine-x64 linux-arm64 linux-arm linux-x64 osx-arm64 osx-x64 win-arm64 win-arm win-x64 win-x86 debian-arm debian-arm64 debian-x64 rhel-arm64 rhel-x64 sles-x64;
  do
-  dotnet publish -f net6 -r ${distro} -c ${conf}
+  dotnet publish -f net7.0 -r ${distro} -c ${conf}
 
-# Package the Linux packages
+# Package the Linux packages (stopped working)
+#  if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
+#    pkg="tarball"
+#  elif [[ ${distro} == win* ]] || [[ ${distro} == osx* ]]; then
+#    pkg="zip"
+#  elif [[ ${distro} == rhel* ]] || [[ ${distro} == sles* ]]; then
+#    pkg="rpm"
+#  else
+#    pkg="deb"
+#  fi
+#  dotnet ${pkg} -f net7.0 -r ${distro} -c ${conf} -o ../build
+#
+
+# Package the Linux packages using MSBuild
   if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
-    pkg="tarball"
+    task="CreateTarball"
+    extension="tar.gz"
   elif [[ ${distro} == win* ]] || [[ ${distro} == osx* ]]; then
-    pkg="zip"
+    task="CreateZip"
+    extension="zip"
   elif [[ ${distro} == rhel* ]] || [[ ${distro} == sles* ]]; then
-    pkg="rpm"
+    task="CreateRpm"
+    extension="rpm"
   else
-    pkg="deb"
+    task="CreateDeb"
+    extension="deb"
   fi
-  dotnet ${pkg} -f net6 -r ${distro} -c ${conf} -o ../build
+
+  dotnet msbuild Aaru.csproj /t:${task} /p:TargetFramework=net7.0 /p:RuntimeIdentifier=${distro} /p:Configuration=${conf}
+  mv bin/${conf}/net7.0/${distro}/*.${extension} ../build
+
  done
 done
 
@@ -39,7 +59,7 @@ if [[ ${OS_NAME} == Linux ]]; then
  tar --exclude-vcs --exclude="*/bin" --exclude="*/obj" --exclude="build" --exclude="pkg/pacman/*/*.tar.xz" \
   --exclude="pkg/pacman/*/src" --exclude="pkg/pacman/*/pkg"  --exclude="pkg/pacman/*/*.tar" \
   --exclude="pkg/pacman/*/*.asc" --exclude="*.user" --exclude=".idea" --exclude=".vs" --exclude=".vscode" \
-  -cvf pkg/pacman/stable/aaru-src-${AARU_VERSION}.tar .
+  --exclude="build.iso" --exclude=".DS_Store" -cvf pkg/pacman/stable/aaru-src-${AARU_VERSION}.tar .
  cd pkg/pacman/stable
  xz -v9e aaru-src-${AARU_VERSION}.tar
  gpg --armor --detach-sign aaru-src-${AARU_VERSION}.tar.xz
@@ -67,10 +87,10 @@ mkdir -p build/macos/Aaru.app/Contents/Resources
 mkdir -p build/macos/Aaru.app/Contents/MacOS
 cp Aaru/Aaru.icns build/macos/Aaru.app/Contents/Resources
 cp Aaru/Info.plist build/macos/Aaru.app/Contents
-cp -r Aaru/bin/Release/net6/osx-x64/publish/* build/macos/Aaru.app/Contents/MacOS
+cp -r Aaru/bin/Release/net7.0/osx-x64/publish/* build/macos/Aaru.app/Contents/MacOS
 rm -Rf build/macos-dbg/Aaru.app
 mkdir -p build/macos-dbg/Aaru.app/Contents/Resources
 mkdir -p build/macos-dbg/Aaru.app/Contents/MacOS
 cp Aaru/Aaru.icns build/macos-dbg/Aaru.app/Contents/Resources
 cp Aaru/Info.plist build/macos-dbg/Aaru.app/Contents
-cp -r Aaru/bin/Debug/net6/osx-x64/publish/* build/macos-dbg/Aaru.app/Contents/MacOS
+cp -r Aaru/bin/Debug/net7.0/osx-x64/publish/* build/macos-dbg/Aaru.app/Contents/MacOS

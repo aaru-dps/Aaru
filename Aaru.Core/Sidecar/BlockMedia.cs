@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
@@ -38,18 +36,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
-using Aaru.DiscImages;
 using Aaru.Filters;
-using Schemas;
+using Aaru.Helpers;
+using Aaru.Images;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 using MediaType = Aaru.CommonTypes.Metadata.MediaType;
+using Partition = Aaru.CommonTypes.Partition;
 using Tuple = Aaru.Decoders.PCMCIA.Tuple;
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -62,66 +64,61 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                    List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+    void BlockMedia(IMediaImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
+                    List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar, Encoding encoding)
     {
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
-        sidecar.BlockMedia = new[]
-        {
-            new BlockMediaType
+        sidecar.BlockMedias =
+        [
+            new BlockMedia
             {
-                Checksums = imgChecksums.ToArray(),
-                Image = new ImageType
+                Checksums = imgChecksums,
+                Image = new Image
                 {
-                    format          = image.Format,
-                    offset          = 0,
-                    offsetSpecified = true,
-                    Value           = Path.GetFileName(imagePath)
+                    Format = image.Format,
+                    Offset = 0,
+                    Value  = Path.GetFileName(imagePath)
                 },
                 Size = (ulong)fi.Length,
-                Sequence = new SequenceType
+                Sequence = new Sequence
                 {
-                    MediaTitle = image.Info.MediaTitle
+                    Title = image.Info.MediaTitle
                 }
             }
-        };
+        ];
 
-        if(image.Info.MediaSequence     != 0 &&
-           image.Info.LastMediaSequence != 0)
+        if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
-            sidecar.BlockMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
-            sidecar.BlockMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+            sidecar.BlockMedias[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+            sidecar.BlockMedias[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
         }
         else
         {
-            sidecar.BlockMedia[0].Sequence.MediaSequence = 1;
-            sidecar.BlockMedia[0].Sequence.TotalMedia    = 1;
+            sidecar.BlockMedias[0].Sequence.MediaSequence = 1;
+            sidecar.BlockMedias[0].Sequence.TotalMedia    = 1;
         }
 
-        UpdateStatus("Hashing media tags...");
+        UpdateStatus(Localization.Core.Hashing_media_tags);
         ErrorNumber errno;
         byte[]      buffer;
 
         foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
         {
-            if(_aborted)
-                return;
+            if(_aborted) return;
 
             switch(tagType)
             {
                 case MediaTagType.ATAPI_IDENTIFY:
                     errno = image.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].ATA = new ATAType
+                    sidecar.BlockMedias[0].ATA = new ATA
                     {
-                        Identify = new DumpType
+                        Identify = new Dump
                         {
-                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Checksums = Checksum.GetChecksums(buffer),
                             Size      = (ulong)buffer.Length
                         }
                     };
@@ -130,14 +127,13 @@ public sealed partial class Sidecar
                 case MediaTagType.ATA_IDENTIFY:
                     errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].ATA = new ATAType
+                    sidecar.BlockMedias[0].ATA = new ATA
                     {
-                        Identify = new DumpType
+                        Identify = new Dump
                         {
-                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Checksums = Checksum.GetChecksums(buffer),
                             Size      = (ulong)buffer.Length
                         }
                     };
@@ -146,14 +142,13 @@ public sealed partial class Sidecar
                 case MediaTagType.PCMCIA_CIS:
                     errno = image.ReadMediaTag(MediaTagType.PCMCIA_CIS, out byte[] cis);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
+                    sidecar.BlockMedias[0].Pcmcia = new Pcmcia
                     {
-                        CIS = new DumpType
+                        Cis = new Dump
                         {
-                            Checksums = Checksum.GetChecksums(cis).ToArray(),
+                            Checksums = Checksum.GetChecksums(cis),
                             Size      = (ulong)cis.Length
                         }
                     };
@@ -161,7 +156,9 @@ public sealed partial class Sidecar
                     Tuple[] tuples = CIS.GetTuples(cis);
 
                     if(tuples != null)
+                    {
                         foreach(Tuple tuple in tuples)
+                        {
                             switch(tuple.Code)
                             {
                                 case TupleCodes.CISTPL_MANFID:
@@ -170,11 +167,9 @@ public sealed partial class Sidecar
 
                                     if(manfid != null)
                                     {
-                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                                        sidecar.BlockMedias[0].Pcmcia.ManufacturerCode = manfid.ManufacturerID;
 
-                                        sidecar.BlockMedia[0].PCMCIA.CardCode                  = manfid.CardID;
-                                        sidecar.BlockMedia[0].PCMCIA.ManufacturerCodeSpecified = true;
-                                        sidecar.BlockMedia[0].PCMCIA.CardCodeSpecified         = true;
+                                        sidecar.BlockMedias[0].Pcmcia.CardCode = manfid.CardID;
                                     }
 
                                     break;
@@ -183,30 +178,34 @@ public sealed partial class Sidecar
 
                                     if(vers != null)
                                     {
-                                        sidecar.BlockMedia[0].PCMCIA.Manufacturer = vers.Manufacturer;
-                                        sidecar.BlockMedia[0].PCMCIA.ProductName  = vers.Product;
+                                        sidecar.BlockMedias[0].Pcmcia.Manufacturer = vers.Manufacturer;
+                                        sidecar.BlockMedias[0].Pcmcia.ProductName  = vers.Product;
 
-                                        sidecar.BlockMedia[0].PCMCIA.Compliance =
+                                        sidecar.BlockMedias[0].Pcmcia.Compliance =
                                             $"{vers.MajorVersion}.{vers.MinorVersion}";
 
-                                        sidecar.BlockMedia[0].PCMCIA.AdditionalInformation = vers.AdditionalInformation;
+                                        sidecar.BlockMedias[0].Pcmcia.AdditionalInformation =
+                                        [
+                                            ..vers.AdditionalInformation
+                                        ];
                                     }
 
                                     break;
                             }
+                        }
+                    }
 
                     break;
                 case MediaTagType.SCSI_INQUIRY:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SCSI = new SCSIType
+                    sidecar.BlockMedias[0].SCSI = new SCSI
                     {
-                        Inquiry = new DumpType
+                        Inquiry = new Dump
                         {
-                            Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                            Checksums = Checksum.GetChecksums(buffer),
                             Size      = (ulong)buffer.Length
                         }
                     };
@@ -215,14 +214,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_CID:
                     errno = image.ReadMediaTag(MediaTagType.SD_CID, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
+                    sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
-                    sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
+                    sidecar.BlockMedias[0].SecureDigital.CID = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -230,14 +228,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_CSD:
                     errno = image.ReadMediaTag(MediaTagType.SD_CSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
+                    sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
-                    sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
+                    sidecar.BlockMedias[0].SecureDigital.CSD = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -245,14 +242,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_SCR:
                     errno = image.ReadMediaTag(MediaTagType.SD_SCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
+                    sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
-                    sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
+                    sidecar.BlockMedias[0].SecureDigital.SCR = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -260,14 +256,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SD_OCR:
                     errno = image.ReadMediaTag(MediaTagType.SD_OCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SecureDigital ??= new SecureDigitalType();
+                    sidecar.BlockMedias[0].SecureDigital ??= new SecureDigital();
 
-                    sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
+                    sidecar.BlockMedias[0].SecureDigital.OCR = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -275,14 +270,13 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_CID:
                     errno = image.ReadMediaTag(MediaTagType.MMC_CID, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
+                    sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
-                    sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
+                    sidecar.BlockMedias[0].MultiMediaCard.CID = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -290,14 +284,13 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_CSD:
                     errno = image.ReadMediaTag(MediaTagType.MMC_CSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
+                    sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
-                    sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
+                    sidecar.BlockMedias[0].MultiMediaCard.CSD = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -305,14 +298,13 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_OCR:
                     errno = image.ReadMediaTag(MediaTagType.MMC_OCR, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
+                    sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
-                    sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
+                    sidecar.BlockMedias[0].MultiMediaCard.OCR = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -320,14 +312,13 @@ public sealed partial class Sidecar
                 case MediaTagType.MMC_ExtendedCSD:
                     errno = image.ReadMediaTag(MediaTagType.MMC_ExtendedCSD, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].MultiMediaCard ??= new MultiMediaCardType();
+                    sidecar.BlockMedias[0].MultiMediaCard ??= new MultiMediaCard();
 
-                    sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
+                    sidecar.BlockMedias[0].MultiMediaCard.ExtendedCSD = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -335,14 +326,13 @@ public sealed partial class Sidecar
                 case MediaTagType.USB_Descriptors:
                     errno = image.ReadMediaTag(MediaTagType.USB_Descriptors, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].USB ??= new USBType();
+                    sidecar.BlockMedias[0].Usb ??= new Usb();
 
-                    sidecar.BlockMedia[0].USB.Descriptors = new DumpType
+                    sidecar.BlockMedias[0].Usb.Descriptors = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -350,14 +340,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SCSI_MODESENSE_6:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SCSI ??= new SCSIType();
+                    sidecar.BlockMedias[0].SCSI ??= new SCSI();
 
-                    sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
+                    sidecar.BlockMedias[0].SCSI.ModeSense = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -365,14 +354,13 @@ public sealed partial class Sidecar
                 case MediaTagType.SCSI_MODESENSE_10:
                     errno = image.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out buffer);
 
-                    if(errno != ErrorNumber.NoError)
-                        break;
+                    if(errno != ErrorNumber.NoError) break;
 
-                    sidecar.BlockMedia[0].SCSI ??= new SCSIType();
+                    sidecar.BlockMedias[0].SCSI ??= new SCSI();
 
-                    sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
+                    sidecar.BlockMedias[0].SCSI.ModeSense10 = new Dump
                     {
-                        Checksums = Checksum.GetChecksums(buffer).ToArray(),
+                        Checksums = Checksum.GetChecksums(buffer),
                         Size      = (ulong)buffer.Length
                     };
 
@@ -383,19 +371,19 @@ public sealed partial class Sidecar
         // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
         if(image.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
            filterId == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-            sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
+            sidecar.BlockMedias[0].ContentChecksums = sidecar.BlockMedias[0].Checksums;
         else
         {
-            UpdateStatus("Hashing sectors...");
+            UpdateStatus(Localization.Core.Hashing_sectors);
 
             var contentChkWorker = new Checksum();
 
             // For fast debugging, skip checksum
             //goto skipImageChecksum;
 
-            uint  sectorsToRead = 64;
-            ulong sectors       = image.Info.Sectors;
-            ulong doneSectors   = 0;
+            const uint sectorsToRead = 64;
+            ulong      sectors       = image.Info.Sectors;
+            ulong      doneSectors   = 0;
 
             InitProgress2();
 
@@ -416,13 +404,13 @@ public sealed partial class Sidecar
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                        UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                         EndProgress2();
 
                         return;
                     }
 
-                    UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
+                    UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors, (long)sectors);
                     doneSectors += sectorsToRead;
                 }
                 else
@@ -431,13 +419,13 @@ public sealed partial class Sidecar
 
                     if(errno != ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Error {errno} reading sector {doneSectors}");
+                        UpdateStatus(string.Format(Localization.Core.Error_0_reading_sector_1, errno, doneSectors));
                         EndProgress2();
 
                         return;
                     }
 
-                    UpdateProgress2("Hashing sector {0} of {1}", (long)doneSectors, (long)sectors);
+                    UpdateProgress2(Localization.Core.Hashing_sector_0_of_1, (long)doneSectors, (long)sectors);
                     doneSectors += sectors - doneSectors;
                 }
 
@@ -447,57 +435,54 @@ public sealed partial class Sidecar
             // For fast debugging, skip checksum
             //skipImageChecksum:
 
-            List<ChecksumType> cntChecksums = contentChkWorker.End();
-
-            sidecar.BlockMedia[0].ContentChecksums = cntChecksums.ToArray();
+            sidecar.BlockMedias[0].ContentChecksums = contentChkWorker.End();
 
             EndProgress2();
         }
 
         (string type, string subType) diskType = MediaType.MediaTypeToString(image.Info.MediaType);
-        sidecar.BlockMedia[0].DiskType    = diskType.type;
-        sidecar.BlockMedia[0].DiskSubType = diskType.subType;
+        sidecar.BlockMedias[0].MediaType    = diskType.type;
+        sidecar.BlockMedias[0].MediaSubType = diskType.subType;
         Statistics.AddMedia(image.Info.MediaType, false);
 
-        sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
+        sidecar.BlockMedias[0].Dimensions = Dimensions.FromMediaType(image.Info.MediaType);
 
-        sidecar.BlockMedia[0].LogicalBlocks    = image.Info.Sectors;
-        sidecar.BlockMedia[0].LogicalBlockSize = image.Info.SectorSize;
+        sidecar.BlockMedias[0].LogicalBlocks    = image.Info.Sectors;
+        sidecar.BlockMedias[0].LogicalBlockSize = image.Info.SectorSize;
 
         // TODO: Detect it
-        sidecar.BlockMedia[0].PhysicalBlockSize = image.Info.SectorSize;
+        sidecar.BlockMedias[0].PhysicalBlockSize = image.Info.SectorSize;
 
         if(image is ITapeImage { IsTape: true } tapeImage)
         {
-            List<TapePartitionType> tapePartitions = new();
+            List<TapePartition> tapePartitions = [];
 
-            foreach(TapePartition tapePartition in tapeImage.TapePartitions)
+            foreach(CommonTypes.Structs.TapePartition tapePartition in tapeImage.TapePartitions)
             {
-                var thisPartition = new TapePartitionType
+                var thisPartition = new TapePartition
                 {
-                    Image      = sidecar.BlockMedia[0].Image,
+                    Image      = sidecar.BlockMedias[0].Image,
                     Sequence   = tapePartition.Number,
                     StartBlock = tapePartition.FirstBlock,
                     EndBlock   = tapePartition.LastBlock
                 };
 
                 if(tapeImage.TapePartitions.Count == 1)
-                    thisPartition.Checksums = sidecar.BlockMedia[0].ContentChecksums;
+                    thisPartition.Checksums = sidecar.BlockMedias[0].ContentChecksums;
                 else
                 {
-                    UpdateStatus($"Hashing partition {tapePartition.Number}...");
+                    UpdateStatus(string.Format(Localization.Core.Hashing_partition_0, tapePartition.Number));
 
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
                     var tapePartitionChk = new Checksum();
 
                     // For fast debugging, skip checksum
                     //goto skipImageChecksum;
 
-                    uint  sectorsToRead = 64;
-                    ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
-                    ulong doneSectors   = 0;
+                    const uint sectorsToRead = 64;
+                    ulong      sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
+                    ulong      doneSectors   = 0;
 
                     InitProgress2();
 
@@ -514,38 +499,42 @@ public sealed partial class Sidecar
 
                         if(sectors - doneSectors >= sectorsToRead)
                         {
-                            errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead,
+                            errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                                      sectorsToRead,
                                                       out sector);
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno,
+                                                                         tapePartition.FirstBlock + doneSectors));
 
                                 EndProgress2();
 
                                 return;
                             }
 
-                            UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                            UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors, (long)sectors);
                             doneSectors += sectorsToRead;
                         }
                         else
                         {
                             errno = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
-                                                      (uint)(sectors - doneSectors), out sector);
+                                                      (uint)(sectors - doneSectors),
+                                                      out sector);
 
                             if(errno != ErrorNumber.NoError)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine($"Error {errno} reading sector {tapePartition.FirstBlock + doneSectors}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                         errno,
+                                                                         tapePartition.FirstBlock + doneSectors));
 
                                 EndProgress2();
 
                                 return;
                             }
 
-                            UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                            UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1, (long)doneSectors, (long)sectors);
                             doneSectors += sectors - doneSectors;
                         }
 
@@ -557,23 +546,22 @@ public sealed partial class Sidecar
                     // For fast debugging, skip checksum
                     //skipImageChecksum:
 
-                    List<ChecksumType> partitionChecksums = tapePartitionChk.End();
-
-                    thisPartition.Checksums = partitionChecksums.ToArray();
+                    thisPartition.Checksums = tapePartitionChk.End();
 
                     EndProgress2();
                 }
 
-                List<TapeFileType> filesInPartition = new();
+                List<TapeFile> filesInPartition = [];
 
-                foreach(TapeFile tapeFile in tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
+                foreach(CommonTypes.Structs.TapeFile tapeFile in
+                        tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
                 {
-                    var thisFile = new TapeFileType
+                    var thisFile = new TapeFile
                     {
                         Sequence   = tapeFile.File,
                         StartBlock = tapeFile.FirstBlock,
                         EndBlock   = tapeFile.LastBlock,
-                        Image      = sidecar.BlockMedia[0].Image,
+                        Image      = sidecar.BlockMedias[0].Image,
                         Size       = 0,
                         BlockSize  = 0
                     };
@@ -585,19 +573,18 @@ public sealed partial class Sidecar
                     }
                     else
                     {
-                        UpdateStatus($"Hashing file {tapeFile.File}...");
+                        UpdateStatus(string.Format(Localization.Core.Hashing_file_0, tapeFile.File));
 
-                        if(_aborted)
-                            return;
+                        if(_aborted) return;
 
                         var tapeFileChk = new Checksum();
 
                         // For fast debugging, skip checksum
                         //goto skipImageChecksum;
 
-                        uint  sectorsToRead = 64;
-                        ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
-                        ulong doneSectors   = 0;
+                        const uint sectorsToRead = 64;
+                        ulong      sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
+                        ulong      doneSectors   = 0;
 
                         InitProgress2();
 
@@ -618,33 +605,42 @@ public sealed partial class Sidecar
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.
-                                        ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                             errno,
+                                                                             tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1,
+                                                (long)doneSectors,
+                                                (long)sectors);
+
                                 doneSectors += sectorsToRead;
                             }
                             else
                             {
                                 errno = image.ReadSectors(tapeFile.FirstBlock + doneSectors,
-                                                          (uint)(sectors - doneSectors), out sector);
+                                                          (uint)(sectors - doneSectors),
+                                                          out sector);
 
                                 if(errno != ErrorNumber.NoError)
                                 {
-                                    AaruConsole.
-                                        ErrorWriteLine($"Error {errno} reading sector {tapeFile.FirstBlock + doneSectors}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Core.Error_0_reading_sector_1,
+                                                                             errno,
+                                                                             tapeFile.FirstBlock + doneSectors));
 
                                     EndProgress2();
 
                                     return;
                                 }
 
-                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                UpdateProgress2(Localization.Core.Hashing_blocks_0_of_1,
+                                                (long)doneSectors,
+                                                (long)sectors);
+
                                 doneSectors += sectors - doneSectors;
                             }
 
@@ -659,9 +655,7 @@ public sealed partial class Sidecar
                         // For fast debugging, skip checksum
                         //skipImageChecksum:
 
-                        List<ChecksumType> fileChecksums = tapeFileChk.End();
-
-                        thisFile.Checksums = fileChecksums.ToArray();
+                        thisFile.Checksums = tapeFileChk.End();
 
                         EndProgress2();
                     }
@@ -669,85 +663,88 @@ public sealed partial class Sidecar
                     filesInPartition.Add(thisFile);
                 }
 
-                thisPartition.File = filesInPartition.ToArray();
+                thisPartition.Files = filesInPartition;
                 tapePartitions.Add(thisPartition);
             }
 
-            sidecar.BlockMedia[0].TapeInformation = tapePartitions.ToArray();
+            sidecar.BlockMedias[0].TapeInformation = tapePartitions;
         }
 
-        UpdateStatus("Checking filesystems...");
+        UpdateStatus(Localization.Core.Checking_filesystems);
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         List<Partition> partitions = Partitions.GetAll(image);
         Partitions.AddSchemesToStats(partitions);
 
-        sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[1];
+        sidecar.BlockMedias[0].FileSystemInformation = [];
 
         if(partitions.Count > 0)
         {
-            sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
-
-            for(var i = 0; i < partitions.Count; i++)
+            foreach(Partition partition in partitions)
             {
-                if(_aborted)
-                    return;
+                if(_aborted) return;
 
-                sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
+                var fsInfo = new CommonTypes.AaruMetadata.Partition
                 {
-                    Description = partitions[i].Description,
-                    EndSector   = partitions[i].End,
-                    Name        = partitions[i].Name,
-                    Sequence    = (uint)partitions[i].Sequence,
-                    StartSector = partitions[i].Start,
-                    Type        = partitions[i].Type
+                    Description = partition.Description,
+                    EndSector   = partition.End,
+                    Name        = partition.Name,
+                    Sequence    = (uint)partition.Sequence,
+                    StartSector = partition.Start,
+                    Type        = partition.Type
                 };
 
-                List<FileSystemType> lstFs = new();
+                List<FileSystem> lstFs = [];
 
-                foreach(IFilesystem plugin in plugins.PluginsList.Values)
+                foreach(IFilesystem fs in plugins.Filesystems.Values)
+                {
                     try
                     {
-                        if(_aborted)
-                            return;
+                        if(_aborted) return;
 
-                        if(!plugin.Identify(image, partitions[i]))
-                            continue;
+                        if(fs is null) continue;
 
-                        if(plugin is IReadOnlyFilesystem fsPlugin &&
-                           fsPlugin.Mount(image, partitions[i], encoding, null, null) == ErrorNumber.NoError)
+                        if(!fs.Identify(image, partition)) continue;
+
+                        if(fs is IReadOnlyFilesystem rofs &&
+                           rofs.Mount(image, partition, encoding, null, null) == ErrorNumber.NoError)
                         {
-                            UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+                            UpdateStatus(string.Format(Localization.Core.Mounting_0, rofs.Metadata.Type));
 
-                            fsPlugin.XmlFsType.Contents = Files(fsPlugin);
+                            rofs.Metadata.Contents = Files(rofs);
 
-                            fsPlugin.Unmount();
+                            lstFs.Add(rofs.Metadata);
+                            Statistics.AddFilesystem(rofs.Metadata.Type);
+
+                            rofs.Unmount();
                         }
                         else
-                            plugin.GetInformation(image, partitions[i], out _, encoding);
+                        {
+                            fs.GetInformation(image, partition, encoding, out _, out FileSystem fsMetadata);
 
-                        lstFs.Add(plugin.XmlFsType);
-                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            lstFs.Add(fsMetadata);
+                            Statistics.AddFilesystem(fsMetadata.Type);
+                        }
                     }
-                    #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                     catch
-                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
-                        //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                        //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                     }
+                }
 
-                if(lstFs.Count > 0)
-                    sidecar.BlockMedia[0].FileSystemInformation[i].FileSystems = lstFs.ToArray();
+                if(lstFs.Count > 0) fsInfo.FileSystems = lstFs;
+
+                sidecar.BlockMedias[0].FileSystemInformation.Add(fsInfo);
             }
         }
         else
         {
-            if(_aborted)
-                return;
+            if(_aborted) return;
 
-            sidecar.BlockMedia[0].FileSystemInformation[0] = new PartitionType
+            var fsInfo = new CommonTypes.AaruMetadata.Partition
             {
                 StartSector = 0,
                 EndSector   = image.Info.Sectors - 1
@@ -755,60 +752,63 @@ public sealed partial class Sidecar
 
             var wholePart = new Partition
             {
-                Name   = "Whole device",
+                Name   = Localization.Core.Whole_device,
                 Length = image.Info.Sectors,
                 Size   = image.Info.Sectors * image.Info.SectorSize
             };
 
-            List<FileSystemType> lstFs = new();
+            List<FileSystem> lstFs = [];
 
-            foreach(IFilesystem plugin in plugins.PluginsList.Values)
+            foreach(IFilesystem fs in plugins.Filesystems.Values)
+            {
                 try
                 {
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
-                    if(!plugin.Identify(image, wholePart))
-                        continue;
+                    if(fs is null) continue;
 
-                    if(plugin is IReadOnlyFilesystem fsPlugin &&
-                       fsPlugin.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
+                    if(!fs.Identify(image, wholePart)) continue;
+
+                    if(fs is IReadOnlyFilesystem rofs &&
+                       rofs.Mount(image, wholePart, encoding, null, null) == ErrorNumber.NoError)
                     {
-                        UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+                        UpdateStatus(string.Format(Localization.Core.Mounting_0, rofs.Metadata.Type));
 
-                        fsPlugin.XmlFsType.Contents = Files(fsPlugin);
+                        rofs.Metadata.Contents = Files(rofs);
 
-                        fsPlugin.Unmount();
+                        lstFs.Add(rofs.Metadata);
+                        Statistics.AddFilesystem(rofs.Metadata.Type);
+
+                        rofs.Unmount();
                     }
                     else
-                        plugin.GetInformation(image, wholePart, out _, encoding);
+                    {
+                        fs.GetInformation(image, wholePart, encoding, out _, out FileSystem fsMetadata);
 
-                    lstFs.Add(plugin.XmlFsType);
-                    Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                        lstFs.Add(fsMetadata);
+                        Statistics.AddFilesystem(fsMetadata.Type);
+                    }
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
-                    #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                 {
-                    //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                    //AaruConsole.DebugWriteLine(MODULE_NAME, "Plugin {0} crashed", _plugin.Name);
                 }
+            }
 
-            if(lstFs.Count > 0)
-                sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
+            if(lstFs.Count > 0) fsInfo.FileSystems = lstFs;
+
+            sidecar.BlockMedias[0].FileSystemInformation.Add(fsInfo);
         }
 
-        UpdateStatus("Saving metadata...");
+        UpdateStatus(Localization.Core.Saving_metadata);
 
-        if(image.Info.Cylinders       > 0 &&
-           image.Info.Heads           > 0 &&
-           image.Info.SectorsPerTrack > 0)
+        if(image.Info.Cylinders > 0 && image.Info is { Heads: > 0, SectorsPerTrack: > 0 })
         {
-            sidecar.BlockMedia[0].CylindersSpecified       = true;
-            sidecar.BlockMedia[0].HeadsSpecified           = true;
-            sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
-            sidecar.BlockMedia[0].Cylinders                = image.Info.Cylinders;
-            sidecar.BlockMedia[0].Heads                    = (ushort)image.Info.Heads;
-            sidecar.BlockMedia[0].SectorsPerTrack          = image.Info.SectorsPerTrack;
+            sidecar.BlockMedias[0].Cylinders       = image.Info.Cylinders;
+            sidecar.BlockMedias[0].Heads           = (ushort)image.Info.Heads;
+            sidecar.BlockMedias[0].SectorsPerTrack = image.Info.SectorsPerTrack;
         }
 
         if(image.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
@@ -816,36 +816,26 @@ public sealed partial class Sidecar
             Identify.IdentifyDevice? ataId = null;
             errno = image.ReadMediaTag(MediaTagType.ATA_IDENTIFY, out buffer);
 
-            if(errno == ErrorNumber.NoError)
-                ataId = Identify.Decode(buffer);
+            if(errno == ErrorNumber.NoError) ataId = Identify.Decode(buffer);
 
-            if(ataId.HasValue)
-                if(ataId.Value.CurrentCylinders       > 0 &&
-                   ataId.Value.CurrentHeads           > 0 &&
-                   ataId.Value.CurrentSectorsPerTrack > 0)
-                {
-                    sidecar.BlockMedia[0].CylindersSpecified       = true;
-                    sidecar.BlockMedia[0].HeadsSpecified           = true;
-                    sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
-                    sidecar.BlockMedia[0].Cylinders                = ataId.Value.CurrentCylinders;
-                    sidecar.BlockMedia[0].Heads                    = ataId.Value.CurrentHeads;
-                    sidecar.BlockMedia[0].SectorsPerTrack          = ataId.Value.CurrentSectorsPerTrack;
-                }
-                else if(ataId.Value.Cylinders       > 0 &&
-                        ataId.Value.Heads           > 0 &&
-                        ataId.Value.SectorsPerTrack > 0)
-                {
-                    sidecar.BlockMedia[0].CylindersSpecified       = true;
-                    sidecar.BlockMedia[0].HeadsSpecified           = true;
-                    sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
-                    sidecar.BlockMedia[0].Cylinders                = ataId.Value.Cylinders;
-                    sidecar.BlockMedia[0].Heads                    = ataId.Value.Heads;
-                    sidecar.BlockMedia[0].SectorsPerTrack          = ataId.Value.SectorsPerTrack;
-                }
+            switch(ataId)
+            {
+                case { CurrentCylinders: > 0, CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 }:
+                    sidecar.BlockMedias[0].Cylinders       = ataId.Value.CurrentCylinders;
+                    sidecar.BlockMedias[0].Heads           = ataId.Value.CurrentHeads;
+                    sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.CurrentSectorsPerTrack;
+
+                    break;
+                case { Cylinders: > 0, Heads: > 0, SectorsPerTrack: > 0 }:
+                    sidecar.BlockMedias[0].Cylinders       = ataId.Value.Cylinders;
+                    sidecar.BlockMedias[0].Heads           = ataId.Value.Heads;
+                    sidecar.BlockMedias[0].SectorsPerTrack = ataId.Value.SectorsPerTrack;
+
+                    break;
+            }
         }
 
-        if(image.DumpHardware != null)
-            sidecar.BlockMedia[0].DumpHardwareArray = image.DumpHardware.ToArray();
+        sidecar.BlockMedias[0].DumpHardware = image.DumpHardware;
 
         // TODO: This is more of a hack, redo it planned for >4.0
         string trkFormat = null;
@@ -951,7 +941,8 @@ public sealed partial class Sidecar
 
                 break;
             case CommonTypes.MediaType.SHARP_525_9:
-            case CommonTypes.MediaType.SHARP_35_9: break;
+            case CommonTypes.MediaType.SHARP_35_9:
+                break;
             case CommonTypes.MediaType.ECMA_99_15:
             case CommonTypes.MediaType.ECMA_99_26:
             case CommonTypes.MediaType.ECMA_99_8:
@@ -976,22 +967,21 @@ public sealed partial class Sidecar
                 break;
         }
 
-        #region SuperCardPro
+#region SuperCardPro
+
         string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".scp");
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         if(File.Exists(scpFilePath))
         {
-            UpdateStatus("Hashing SuperCardPro image...");
+            UpdateStatus(Localization.Core.Hashing_SuperCardPro_image);
             var scpImage  = new SuperCardPro();
             var scpFilter = new ZZZNoFilter();
             scpFilter.Open(scpFilePath);
 
-            if(image.Info.Heads <= 2 &&
-               scpImage.Identify(scpFilter))
+            if(image.Info.Heads <= 2 && scpImage.Identify(scpFilter))
             {
                 try
                 {
@@ -1001,26 +991,26 @@ public sealed partial class Sidecar
 
                 if(image.Info.Heads == 2 && scpImage.Header.heads == 0 ||
                    image.Info.Heads == 1 && scpImage.Header.heads is 1 or 2)
+                {
                     if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                     {
-                        List<BlockTrackType> scpBlockTrackTypes = new();
-                        ulong                currentSector      = 0;
-                        Stream               scpStream          = scpFilter.GetDataForkStream();
+                        List<BlockTrack> scpBlockTrackTypes = [];
+                        ulong            currentSector      = 0;
+                        Stream           scpStream          = scpFilter.GetDataForkStream();
 
                         for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
                         {
-                            if(_aborted)
-                                return;
+                            if(_aborted) return;
 
-                            var scpBlockTrackType = new BlockTrackType
+                            var scpBlockTrackType = new BlockTrack
                             {
                                 Cylinder = t / image.Info.Heads,
                                 Head     = (ushort)(t % image.Info.Heads),
-                                Image = new ImageType
+                                Image = new Image
                                 {
-                                    format = scpImage.Format,
+                                    Format = scpImage.Format,
                                     Value  = Path.GetFileName(scpFilePath),
-                                    offset = scpImage.Header.offsets[t]
+                                    Offset = scpImage.Header.offsets[t]
                                 }
                             };
 
@@ -1037,42 +1027,52 @@ public sealed partial class Sidecar
                             if(scpImage.ScpTracks.TryGetValue(t, out SuperCardPro.TrackHeader scpTrack))
                             {
                                 var trackContents =
-                                    new byte[scpTrack.Entries.Last().dataOffset + scpTrack.Entries.Last().trackLength -
-                                             scpImage.Header.offsets[t] + 1];
+                                    new byte[scpTrack.Entries.Last().dataOffset +
+                                             scpTrack.Entries.Last().trackLength -
+                                             scpImage.Header.offsets[t] +
+                                             1];
 
                                 scpStream.Position = scpImage.Header.offsets[t];
-                                scpStream.Read(trackContents, 0, trackContents.Length);
+                                scpStream.EnsureRead(trackContents, 0, trackContents.Length);
                                 scpBlockTrackType.Size      = (ulong)trackContents.Length;
-                                scpBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                                scpBlockTrackType.Checksums = Checksum.GetChecksums(trackContents);
                             }
 
                             scpBlockTrackTypes.Add(scpBlockTrackType);
                         }
 
-                        sidecar.BlockMedia[0].Track = scpBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                         ThenBy(t => t.Head).ToArray();
+                        sidecar.BlockMedias[0].Track =
+                            scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
                     }
                     else
-                        AaruConsole.
-                            ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                           scpImage.Header.end + 1, image.Info.Cylinders);
+                    {
+                        AaruConsole.ErrorWriteLine(Localization.Core
+                                                               .SCP_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                                   scpImage.Header.end + 1,
+                                                   image.Info.Cylinders);
+                    }
+                }
                 else
-                    AaruConsole.
-                        ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                       2, image.Info.Heads);
+                {
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .SCP_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                               2,
+                                               image.Info.Heads);
+                }
             }
         }
-        #endregion
 
-        #region KryoFlux
+#endregion
+
+#region KryoFlux
+
         string kfFile = null;
 
         string basename = Path.Combine(Path.GetDirectoryName(imagePath), Path.GetFileNameWithoutExtension(imagePath));
 
         var kfDir = false;
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
         if(Directory.Exists(basename))
         {
@@ -1085,20 +1085,18 @@ public sealed partial class Sidecar
             }
         }
         else if(File.Exists(basename + "00.0.raw"))
-            kfFile = basename + "00.0.raw";
-        else if(File.Exists(basename + "00.1.raw"))
-            kfFile = basename + "00.1.raw";
+            kfFile                                         = basename + "00.0.raw";
+        else if(File.Exists(basename + "00.1.raw")) kfFile = basename + "00.1.raw";
 
         if(kfFile != null)
         {
-            UpdateStatus("Hashing KryoFlux images...");
+            UpdateStatus(Localization.Core.Hashing_KryoFlux_images);
 
             var kfImage  = new KryoFlux();
             var kfFilter = new ZZZNoFilter();
             kfFilter.Open(kfFile);
 
-            if(image.Info.Heads <= 2 &&
-               kfImage.Identify(kfFilter))
+            if(image.Info.Heads <= 2 && kfImage.Identify(kfFilter))
             {
                 try
                 {
@@ -1107,29 +1105,30 @@ public sealed partial class Sidecar
                 catch(NotImplementedException) {}
 
                 if(kfImage.Info.Heads == image.Info.Heads)
+                {
                     if(kfImage.Info.Cylinders >= image.Info.Cylinders)
                     {
-                        List<BlockTrackType> kfBlockTrackTypes = new();
+                        List<BlockTrack> kfBlockTrackTypes = [];
 
                         ulong currentSector = 0;
 
                         foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                         {
-                            if(_aborted)
-                                return;
+                            if(_aborted) return;
 
-                            var kfBlockTrackType = new BlockTrackType
+                            var kfBlockTrackType = new BlockTrack
                             {
                                 Cylinder = kvp.Key / image.Info.Heads,
                                 Head     = (ushort)(kvp.Key % image.Info.Heads),
-                                Image = new ImageType
+                                Image = new Image
                                 {
-                                    format = kfImage.Format,
+                                    Format = kfImage.Format,
                                     Value = kfDir
-                                                ? Path.
-                                                    Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value.BasePath)),
-                                                            kvp.Value.Filename) : kvp.Value.Filename,
-                                    offset = 0
+                                                ? Path.Combine(Path.GetFileName(Path.GetDirectoryName(kvp.Value
+                                                                                   .BasePath)),
+                                                               kvp.Value.Filename)
+                                                : kvp.Value.Filename,
+                                    Offset = 0
                                 }
                             };
 
@@ -1146,44 +1145,50 @@ public sealed partial class Sidecar
                             Stream kfStream      = kvp.Value.GetDataForkStream();
                             var    trackContents = new byte[kfStream.Length];
                             kfStream.Position = 0;
-                            kfStream.Read(trackContents, 0, trackContents.Length);
+                            kfStream.EnsureRead(trackContents, 0, trackContents.Length);
                             kfBlockTrackType.Size      = (ulong)trackContents.Length;
-                            kfBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                            kfBlockTrackType.Checksums = Checksum.GetChecksums(trackContents);
 
                             kfBlockTrackTypes.Add(kfBlockTrackType);
                         }
 
-                        sidecar.BlockMedia[0].Track = kfBlockTrackTypes.OrderBy(t => t.Cylinder).
-                                                                        ThenBy(t => t.Head).ToArray();
+                        sidecar.BlockMedias[0].Track =
+                            kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
                     }
                     else
-                        AaruConsole.
-                            ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                           kfImage.Info.Cylinders, image.Info.Cylinders);
+                    {
+                        AaruConsole.ErrorWriteLine(Localization.Core
+                                                               .KryoFlux_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                                   kfImage.Info.Cylinders,
+                                                   image.Info.Cylinders);
+                    }
+                }
                 else
-                    AaruConsole.
-                        ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                                       kfImage.Info.Heads, image.Info.Heads);
+                {
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .KryoFlux_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                               kfImage.Info.Heads,
+                                               image.Info.Heads);
+                }
             }
         }
-        #endregion
 
-        #region DiscFerret
+#endregion
+
+#region DiscFerret
+
         string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                           Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
-        if(_aborted)
-            return;
+        if(_aborted) return;
 
-        if(!File.Exists(dfiFilePath))
-            return;
+        if(!File.Exists(dfiFilePath)) return;
 
         var dfiImage  = new DiscFerret();
         var dfiFilter = new ZZZNoFilter();
         dfiFilter.Open(dfiFilePath);
 
-        if(!dfiImage.Identify(dfiFilter))
-            return;
+        if(!dfiImage.Identify(dfiFilter)) return;
 
         try
         {
@@ -1191,27 +1196,27 @@ public sealed partial class Sidecar
         }
         catch(NotImplementedException) {}
 
-        UpdateStatus("Hashing DiscFerret image...");
+        UpdateStatus(Localization.Core.Hashing_DiscFerret_image);
 
         if(image.Info.Heads == dfiImage.Info.Heads)
+        {
             if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
             {
-                List<BlockTrackType> dfiBlockTrackTypes = new();
-                ulong                currentSector      = 0;
-                Stream               dfiStream          = dfiFilter.GetDataForkStream();
+                List<BlockTrack> dfiBlockTrackTypes = [];
+                ulong            currentSector      = 0;
+                Stream           dfiStream          = dfiFilter.GetDataForkStream();
 
                 foreach(int t in dfiImage.TrackOffsets.Keys)
                 {
-                    if(_aborted)
-                        return;
+                    if(_aborted) return;
 
-                    var dfiBlockTrackType = new BlockTrackType
+                    var dfiBlockTrackType = new BlockTrack
                     {
                         Cylinder = (uint)(t   / image.Info.Heads),
                         Head     = (ushort)(t % image.Info.Heads),
-                        Image = new ImageType
+                        Image = new Image
                         {
-                            format = dfiImage.Format,
+                            Format = dfiImage.Format,
                             Value  = Path.GetFileName(dfiFilePath)
                         }
                     };
@@ -1229,28 +1234,36 @@ public sealed partial class Sidecar
                     if(dfiImage.TrackOffsets.TryGetValue(t, out long offset) &&
                        dfiImage.TrackLengths.TryGetValue(t, out long length))
                     {
-                        dfiBlockTrackType.Image.offset = (ulong)offset;
+                        dfiBlockTrackType.Image.Offset = (ulong)offset;
                         var trackContents = new byte[length];
                         dfiStream.Position = offset;
-                        dfiStream.Read(trackContents, 0, trackContents.Length);
+                        dfiStream.EnsureRead(trackContents, 0, trackContents.Length);
                         dfiBlockTrackType.Size      = (ulong)trackContents.Length;
-                        dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
+                        dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents);
                     }
 
                     dfiBlockTrackTypes.Add(dfiBlockTrackType);
                 }
 
-                sidecar.BlockMedia[0].Track = dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
+                sidecar.BlockMedias[0].Track = dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToList();
             }
             else
-                AaruConsole.
-                    ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
-                                   dfiImage.Info.Cylinders, image.Info.Cylinders);
+            {
+                AaruConsole.ErrorWriteLine(Localization.Core
+                                                       .DiscFerret_image_do_not_same_number_tracks_0_disk_image_1_ignoring,
+                                           dfiImage.Info.Cylinders,
+                                           image.Info.Cylinders);
+            }
+        }
         else
-            AaruConsole.
-                ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
-                               dfiImage.Info.Heads, image.Info.Heads);
-        #endregion
+        {
+            AaruConsole.ErrorWriteLine(Localization.Core
+                                                   .DiscFerret_image_do_not_same_number_heads_0_disk_image_1_ignoring,
+                                       dfiImage.Info.Heads,
+                                       image.Info.Heads);
+        }
+
+#endregion
 
         // TODO: Implement support for getting CHS from SCSI mode pages
     }

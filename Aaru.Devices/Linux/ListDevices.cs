@@ -27,16 +27,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices.Linux;
 
 using System;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Text;
 
-[System.Runtime.Versioning.SupportedOSPlatform("linux")]
+namespace Aaru.Devices.Linux;
+
+[SupportedOSPlatform("linux")]
 static class ListDevices
 {
     const string PATH_SYS_DEVBLOCK = "/sys/block/";
@@ -77,8 +78,7 @@ static class ListDevices
                 devices[i].Vendor = Extern.udev_device_get_property_value(udevDev, "ID_VENDOR");
                 devices[i].Model  = Extern.udev_device_get_property_value(udevDev, "ID_MODEL");
 
-                if(!string.IsNullOrEmpty(devices[i].Model))
-                    devices[i].Model = devices[i].Model.Replace('_', ' ');
+                if(!string.IsNullOrEmpty(devices[i].Model)) devices[i].Model = devices[i].Model.Replace('_', ' ');
 
                 devices[i].Serial = Extern.udev_device_get_property_value(udevDev, "ID_SCSI_SERIAL");
 
@@ -90,8 +90,7 @@ static class ListDevices
 
             StreamReader sr;
 
-            if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) &&
-               string.IsNullOrEmpty(devices[i].Vendor))
+            if(File.Exists(Path.Combine(sysdevs[i], "device/vendor")) && string.IsNullOrEmpty(devices[i].Vendor))
             {
                 sr                = new StreamReader(Path.Combine(sysdevs[i], "device/vendor"), Encoding.ASCII);
                 devices[i].Vendor = sr.ReadLine()?.Trim();
@@ -108,15 +107,14 @@ static class ListDevices
             else if(devices[i].Path.StartsWith("/dev/loop", StringComparison.CurrentCulture))
                 devices[i].Model = "Linux";
 
-            if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) &&
-               string.IsNullOrEmpty(devices[i].Serial))
+            if(File.Exists(Path.Combine(sysdevs[i], "device/serial")) && string.IsNullOrEmpty(devices[i].Serial))
             {
                 sr                = new StreamReader(Path.Combine(sysdevs[i], "device/serial"), Encoding.ASCII);
                 devices[i].Serial = sr.ReadLine()?.Trim();
             }
 
-            if(string.IsNullOrEmpty(devices[i].Vendor) ||
-               devices[i].Vendor == "ATA")
+            if(string.IsNullOrEmpty(devices[i].Vendor) || devices[i].Vendor == "ATA")
+            {
                 if(devices[i].Model != null)
                 {
                     string[] pieces = devices[i].Model.Split(' ');
@@ -124,9 +122,10 @@ static class ListDevices
                     if(pieces.Length > 1)
                     {
                         devices[i].Vendor = pieces[0];
-                        devices[i].Model  = devices[i].Model.Substring(pieces[0].Length + 1);
+                        devices[i].Model  = devices[i].Model[(pieces[0].Length + 1)..];
                     }
                 }
+            }
 
             // TODO: Get better device type from sysfs paths
             if(string.IsNullOrEmpty(devices[i].Bus))
@@ -141,19 +140,12 @@ static class ListDevices
             else
                 devices[i].Bus = devices[i].Bus.ToUpper();
 
-            switch(devices[i].Bus)
-            {
-                case "ATA":
-                case "ATAPI":
-                case "SCSI":
-                case "USB":
-                case "PCMCIA":
-                case "FireWire":
-                case "MMC/SD":
-                    devices[i].Supported = true;
-
-                    break;
-            }
+            devices[i].Supported = devices[i].Bus switch
+                                   {
+                                       "ATA" or "ATAPI" or "SCSI" or "USB" or "PCMCIA" or "FireWire" or "MMC/SD" =>
+                                           true,
+                                       _ => devices[i].Supported
+                                   };
         }
 
         return devices;

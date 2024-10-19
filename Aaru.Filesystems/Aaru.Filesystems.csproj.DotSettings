@@ -1,13 +1,130 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applecommon/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=appledos/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applehfs/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applemfs/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=cpm/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=fat/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=fatx/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=hpofs/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660_005Cconsts/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660_005Cstructs/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=opera/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+﻿<wpf:ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:s="clr-namespace:System;assembly=mscorlib"
+                        xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xml:space="preserve">
+	<s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=acorn/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=amigados/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=aodos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=apfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applecommon/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=appledos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applehfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applehfsplus/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=applemfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=atheos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=bfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=btrfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=cbm/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=cpm/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=cram/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=dump/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ecma67/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=efs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=exfat/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ext2fs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=extfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=f2fs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=fat/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=fatx/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ffs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=fossil/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=hammer/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=hpfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=hpofs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660_005Cconsts/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=iso9660_005Cstructs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=jfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=lif/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=lisafs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=localization/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=locus/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=microdos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=minixfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=nilfs2/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=nintendo/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ntfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ods/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=opera/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=pcengine/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=pcfx/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=pfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=prodos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=qnx4/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=qnx6/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=rbf/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=refs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=reiser/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=reiser4/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=rt11/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=sfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=solarfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=squash/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=sysv/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=ucsdpascal/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=udf/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=unicos/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=unixbfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=vmfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=vxfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=xfs/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=xia/@EntryIndexedValue">True</s:Boolean>
+  <s:Boolean
+      x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=zfs/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

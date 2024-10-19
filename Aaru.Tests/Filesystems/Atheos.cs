@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Atheos : FilesystemTest
-{
-    public Atheos() : base("AtheOS filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "AtheOS (MBR)");
+[TestFixture]
+public class Atheos() : FilesystemTest("atheos")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "AtheOS (MBR)");
     public override IFilesystem Plugin     => new AtheOS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "syllable_0.6.7.aif",
@@ -55,5 +53,5 @@ public class Atheos : FilesystemTest
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

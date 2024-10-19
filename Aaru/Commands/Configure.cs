@@ -27,22 +27,23 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands;
 
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
+using Aaru.Localization;
 using Aaru.Settings;
 using Spectre.Console;
 
+namespace Aaru.Commands;
+
 sealed class ConfigureCommand : Command
 {
-    public ConfigureCommand() : base("configure", "Configures user settings and statistics.") =>
+    public ConfigureCommand() : base("configure", UI.Configure_Command_Description) =>
         Handler = CommandHandler.Create((Func<bool, bool, int>)Invoke);
 
     int Invoke(bool debug, bool verbose)
@@ -53,7 +54,7 @@ sealed class ConfigureCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -63,9 +64,12 @@ sealed class ConfigureCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -73,6 +77,7 @@ sealed class ConfigureCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         return DoConfigure(false);
     }
@@ -81,267 +86,82 @@ sealed class ConfigureCommand : Command
     {
         if(gdprChange)
         {
-            AaruConsole.
-                WriteLine("In compliance with the [bold]European Union General Data Protection Regulation 2016/679 ([italic]GDPR[/])[/],\n" +
-                          "we must give you the following information about [italic]Aaru[/] and ask if you want to opt-in\n" +
-                          "in some information sharing.");
+            AaruConsole.WriteLine(UI.GDPR_Compliance);
 
             AaruConsole.WriteLine();
 
-            AaruConsole.
-                WriteLine("Disclaimer: Because [italic]Aaru[/] is an open source software this information, and therefore,\n" +
-                          "compliance with [bold]GDPR[/] only holds true if you obtained a certificated copy from its original\n" +
-                          "authors. In case of doubt, close [italic]Aaru[/] now and ask in our IRC support channel.");
+            AaruConsole.WriteLine(UI.GDPR_Open_Source_Disclaimer);
 
             AaruConsole.WriteLine();
 
-            AaruConsole.
-                WriteLine("For any information sharing your IP address may be stored in our server, in a way that is not\n" +
-                          "possible for any person, manual, or automated process, to link with your identity, unless\n" +
-                          "specified otherwise.");
+            AaruConsole.WriteLine(UI.GDPR_Information_sharing);
         }
-
-        var pressedKey = new ConsoleKeyInfo();
 
         AaruConsole.WriteLine();
 
-        AaruConsole.
-            WriteLine("Do you want to enable the decryption of copy protected media (also known as [italic]DRM[/]),\n" +
-                      "like for example [italic]DVD Video CSS[/] encryption.\n"                                        +
-                      "[bold]Consult your local laws before enabling it, as this is illegal in some countries, or\n"   +
-                      "only legal under some circumstances[/].");
+        AaruConsole.WriteLine(UI.Configure_enable_decryption_disclaimer);
 
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
-        {
-            AaruConsole.
-                Write("[italic]Do you want to enable decryption of copy protected media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+        Settings.Settings.Current.EnableDecryption =
+            AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_enable_decryption_of_copy_protected_media_Q}[/]");
 
-            pressedKey = Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
+#region Device reports
 
-        Settings.Current.EnableDecryption = pressedKey.Key == ConsoleKey.Y;
-
-        #region Device reports
         AaruConsole.WriteLine();
 
-        AaruConsole.
-            WriteLine(
-                      "With the 'device-report' command, [italic]Aaru[/] creates a report of a device, that includes its\n" +
-                      "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n" +
-                      "The serial number of the device is not stored in the report. If used with the debug parameter,\n" +
-                      "extra information about the device will be stored in the report. This information is known to contain\n" +
-                      "the device serial number in non-standard places that prevent the automatic removal of it on a handful\n" +
-                      "of devices. A human-readable copy of the report in XML format is always created in the same directory\n" +
-                      "where [italic]Aaru[/] is being run from.");
+        AaruConsole.WriteLine(UI.Configure_Device_Report_information_disclaimer);
 
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
-        {
-            AaruConsole.
-                Write("[italic]Do you want to save device reports in shared folder of your computer? [bold]([green]Y[/]/[red]N[/]):[/] ");
+        Settings.Settings.Current.SaveReportsGlobally = AnsiConsole.Confirm($"[italic]{UI.
+            Configure_Do_you_want_to_save_device_reports_in_shared_folder_of_your_computer_Q}[/]");
 
-            pressedKey = Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
-
-        Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
-
-        pressedKey = new ConsoleKeyInfo();
         AaruConsole.WriteLine();
 
-        AaruConsole.
-            WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n" +
-                      "will be manually analyzed by an european union citizen to remove any trace of personal identification\n" +
-                      "from it. Once that is done, it will be shared in our stats website, [italic][blue]https://www.aaru.app[/][/]\n" +
-                      "These report will be used to improve [italic]Aaru[/] support, and in some cases, to provide emulation of the\n" +
-                      "devices to other open-source projects. In any case, no information linking the report to you will be stored.");
+        AaruConsole.WriteLine(UI.Configure_share_report_disclaimer);
 
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
-        {
-            AaruConsole.
-                Write("[italic]Do you want to share your device reports with us?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
+        Settings.Settings.Current.ShareReports =
+            AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_your_device_reports_with_us_Q}[/]");
 
-            pressedKey = Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
+#endregion Device reports
 
-        Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
-        #endregion Device reports
+#region Statistics
 
-        #region Statistics
         AaruConsole.WriteLine();
 
-        AaruConsole.
-            WriteLine("[italic]Aaru[/] can store some usage statistics. These statistics are limited to the number of times a\n" +
-                      "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n" +
-                      "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
-                      "pool with no way of using them to identify you.");
+        AaruConsole.WriteLine(UI.Statistics_disclaimer);
 
-        pressedKey = new ConsoleKeyInfo();
-
-        while(pressedKey.Key != ConsoleKey.Y &&
-              pressedKey.Key != ConsoleKey.N)
+        if(AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_save_stats_about_your_Aaru_usage_Q}[/]"))
         {
-            AaruConsole.
-                Write("[italic]Do you want to save stats about your Aaru usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-            pressedKey = Console.ReadKey();
-            AaruConsole.WriteLine();
-        }
-
-        if(pressedKey.Key == ConsoleKey.Y)
-        {
-            Settings.Current.Stats = new StatsSettings();
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
+            Settings.Settings.Current.Stats = new StatsSettings
             {
-                AaruConsole.
-                    Write("[italic]Do you want to share your stats (anonymously)?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about command usage?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found devices?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found filesystems?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found file filters?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found media image formats?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about scanned media?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about found partitioning schemes?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about media types?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
-
-            pressedKey = new ConsoleKeyInfo();
-
-            while(pressedKey.Key != ConsoleKey.Y &&
-                  pressedKey.Key != ConsoleKey.N)
-            {
-                AaruConsole.
-                    Write("[italic]Do you want to gather statistics about media image verifications?[/] [bold]([green]Y[/]/[red]N[/]):[/] ");
-
-                pressedKey = Console.ReadKey();
-                AaruConsole.WriteLine();
-            }
-
-            Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
+                ShareStats = AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_your_stats__anonymously_Q}[/]"),
+                CommandStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_command_usage_Q}[/]"),
+                DeviceStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_found_devices_Q}[/]"),
+                FilesystemStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_found_filesystems_Q}[/]"),
+                FilterStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_found_file_filters_Q}[/]"),
+                MediaImageStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_found_media_image_formats_Q
+                    }[/]"),
+                MediaScanStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_scanned_media_Q}[/]"),
+                PartitionStats = AnsiConsole.Confirm($"[italic]{UI.
+                    Do_you_want_to_gather_statistics_about_found_partitioning_schemes_Q}[/]"),
+                MediaStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_media_types_Q}[/]"),
+                VerifyStats =
+                    AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_gather_statistics_about_media_image_verifications_Q
+                    }[/]")
+            };
         }
         else
-            Settings.Current.Stats = null;
-        #endregion Statistics
+            Settings.Settings.Current.Stats = null;
 
-        Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
-        Settings.SaveSettings();
+#endregion Statistics
+
+        Settings.Settings.Current.GdprCompliance = DicSettings.GDPR_LEVEL;
+        Settings.Settings.SaveSettings();
 
         return (int)ErrorNumber.NoError;
     }

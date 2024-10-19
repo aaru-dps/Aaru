@@ -27,16 +27,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -61,64 +64,59 @@ public sealed partial class CisCopy
                 tracks = 160;
 
                 break;
-            default: return false;
+            default:
+                return false;
         }
 
         var trackBytes = new byte[tracks];
-        stream.Read(trackBytes, 0, tracks);
+        stream.EnsureRead(trackBytes, 0, tracks);
 
         for(var i = 0; i < tracks; i++)
+        {
             if(trackBytes[i] != (byte)TrackType.Copied  &&
                trackBytes[i] != (byte)TrackType.Omitted &&
                trackBytes[i] != (byte)TrackType.OmittedAlternate)
                 return false;
+        }
 
         var cmpr = (Compression)stream.ReadByte();
 
-        if(cmpr != Compression.None   &&
-           cmpr != Compression.Normal &&
-           cmpr != Compression.High)
-            return false;
+        if(cmpr != Compression.None && cmpr != Compression.Normal && cmpr != Compression.High) return false;
 
         switch(type)
         {
             case DiskType.MD1DD8:
-                if(stream.Length > 40 * 1 * 8 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 1 * 8 * 512 + 82) return false;
 
                 break;
             case DiskType.MD1DD:
-                if(stream.Length > 40 * 1 * 9 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 1 * 9 * 512 + 82) return false;
 
                 break;
             case DiskType.MD2DD8:
-                if(stream.Length > 40 * 2 * 8 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 2 * 8 * 512 + 82) return false;
 
                 break;
             case DiskType.MD2DD:
-                if(stream.Length > 40 * 2 * 9 * 512 + 82)
-                    return false;
+                if(stream.Length > 40 * 2 * 9 * 512 + 82) return false;
 
                 break;
             case DiskType.MF2DD:
-                if(stream.Length > 80 * 2 * 9 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 9 * 512 + 162) return false;
 
                 break;
             case DiskType.MD2HD:
-                if(stream.Length > 80 * 2 * 15 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 15 * 512 + 162) return false;
 
                 break;
             case DiskType.MF2HD:
-                if(stream.Length > 80 * 2 * 18 * 512 + 162)
-                    return false;
+                if(stream.Length > 80 * 2 * 18 * 512 + 162) return false;
 
                 break;
         }
 
         return true;
     }
+
+#endregion
 }

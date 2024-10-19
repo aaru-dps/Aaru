@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using System.Text;
@@ -39,8 +37,12 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Nhdr0
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -50,11 +52,10 @@ public sealed partial class Nhdr0
         // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
         var shiftjis = Encoding.GetEncoding("shift_jis");
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         _nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
@@ -65,7 +66,7 @@ public sealed partial class Nhdr0
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.Sectors              = (ulong)(_nhdhdr.dwCylinder * _nhdhdr.wHead * _nhdhdr.wSect);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.SectorSize           = (uint)_nhdhdr.wSectLen;
         _imageInfo.Cylinders            = (uint)_nhdhdr.dwCylinder;
         _imageInfo.Heads                = (uint)_nhdhdr.wHead;
@@ -85,11 +86,9 @@ public sealed partial class Nhdr0
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -97,8 +96,10 @@ public sealed partial class Nhdr0
 
         stream.Seek((long)((ulong)_nhdhdr.dwHeadSize + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

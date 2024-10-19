@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Chd
 {
+#region Nested type: Compression
+
     enum Compression : uint
     {
         None     = 0,
@@ -45,11 +47,9 @@ public sealed partial class Chd
         Av       = 3
     }
 
-    enum Flags : uint
-    {
-        HasParent = 1,
-        Writable  = 2
-    }
+#endregion
+
+#region Nested type: EntryFlagsV3
 
     enum EntryFlagsV3 : byte
     {
@@ -69,6 +69,31 @@ public sealed partial class Chd
         SecondCompressed = 6
     }
 
+#endregion
+
+#region Nested type: Flags
+
+    enum Flags : uint
+    {
+        HasParent = 1,
+        Writable  = 2
+    }
+
+#endregion
+
+#region Nested type: SubTypeOld
+
+    enum SubTypeOld : uint
+    {
+        Cooked = 0,
+        Raw,
+        None
+    }
+
+#endregion
+
+#region Nested type: TrackTypeOld
+
     enum TrackTypeOld : uint
     {
         Mode1 = 0,
@@ -81,10 +106,5 @@ public sealed partial class Chd
         Audio
     }
 
-    enum SubTypeOld : uint
-    {
-        Cooked = 0,
-        Raw,
-        None
-    }
+#endregion
 }

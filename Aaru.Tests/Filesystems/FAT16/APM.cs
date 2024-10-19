@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.FAT16;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class APM : ReadOnlyFilesystemTest
-{
-    public APM() : base("FAT16") {}
+namespace Aaru.Tests.Filesystems.FAT16;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (APM)");
+[TestFixture]
+public class APM() : ReadOnlyFilesystemTest("fat16")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (APM)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "darwin_6.0.2.aif",
@@ -135,5 +133,5 @@ public class APM : ReadOnlyFilesystemTest
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "519F5D1B"
         }
-    };
+    ];
 }

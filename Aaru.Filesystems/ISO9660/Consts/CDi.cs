@@ -27,18 +27,16 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -46,18 +44,7 @@ public sealed partial class ISO9660
     static readonly int    _cdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
     static readonly int    _cdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
 
-    [Flags]
-    enum CdiVolumeFlags : byte
-    {
-        // Escapes are not ISO 2375 but ISO 2022
-        NotISO2375 = 1
-    }
-
-    [Flags]
-    enum CdiFileFlags : byte
-    {
-        Hidden = 0x01
-    }
+#region Nested type: CdiAttributes
 
     [Flags]
     enum CdiAttributes : ushort
@@ -71,4 +58,27 @@ public sealed partial class ISO9660
         DigitalAudio = 1 << 14,
         Directory    = 1 << 15
     }
+
+#endregion
+
+#region Nested type: CdiFileFlags
+
+    [Flags]
+    enum CdiFileFlags : byte
+    {
+        Hidden = 0x01
+    }
+
+#endregion
+
+#region Nested type: CdiVolumeFlags
+
+    [Flags]
+    enum CdiVolumeFlags : byte
+    {
+        // Escapes are not ISO 2375 but ISO 2022
+        NotISO2375 = 1
+    }
+
+#endregion
 }

@@ -27,19 +27,19 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using Aaru.CommonTypes.Enums;
+using Aaru.Localization;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui.ViewModels.Tabs;
 
-using Aaru.Decoders.MMC;
-using JetBrains.Annotations;
-using DeviceType = Aaru.CommonTypes.Enums.DeviceType;
-
 public sealed class SdMmcInfoViewModel
 {
-    public SdMmcInfoViewModel(DeviceType deviceType, [CanBeNull] byte[] cid, [CanBeNull] byte[] csd,
-                              [CanBeNull] byte[] ocr, [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
+    public SdMmcInfoViewModel(DeviceType         deviceType, [CanBeNull] byte[] cid,         [CanBeNull] byte[] csd,
+                              [CanBeNull] byte[] ocr,        [CanBeNull] byte[] extendedCsd, [CanBeNull] byte[] scr)
     {
         switch(deviceType)
         {
@@ -47,17 +47,13 @@ public sealed class SdMmcInfoViewModel
             {
                 //Text = "MultiMediaCard";
 
-                if(cid != null)
-                    CidText = Decoders.PrettifyCID(cid);
+                if(cid != null) CidText = Decoders.MMC.Decoders.PrettifyCID(cid);
 
-                if(csd != null)
-                    CsdText = Decoders.PrettifyCSD(csd);
+                if(csd != null) CsdText = Decoders.MMC.Decoders.PrettifyCSD(csd);
 
-                if(ocr != null)
-                    OcrText = Decoders.PrettifyOCR(ocr);
+                if(ocr != null) OcrText = Decoders.MMC.Decoders.PrettifyOCR(ocr);
 
-                if(extendedCsd != null)
-                    ExtendedCsdText = Decoders.PrettifyExtendedCSD(extendedCsd);
+                if(extendedCsd != null) ExtendedCsdText = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
             }
 
                 break;
@@ -65,17 +61,13 @@ public sealed class SdMmcInfoViewModel
             {
                 //Text = "SecureDigital";
 
-                if(cid != null)
-                    CidText = Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(cid);
+                if(cid != null) CidText = Decoders.SecureDigital.Decoders.PrettifyCID(cid);
 
-                if(csd != null)
-                    CsdText = Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
+                if(csd != null) CsdText = Decoders.SecureDigital.Decoders.PrettifyCSD(csd);
 
-                if(ocr != null)
-                    OcrText = Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
+                if(ocr != null) OcrText = Decoders.SecureDigital.Decoders.PrettifyOCR(ocr);
 
-                if(scr != null)
-                    ScrText = Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(scr);
+                if(scr != null) ScrText = Decoders.SecureDigital.Decoders.PrettifySCR(scr);
             }
 
                 break;
@@ -87,4 +79,10 @@ public sealed class SdMmcInfoViewModel
     public string OcrText         { get; }
     public string ExtendedCsdText { get; }
     public string ScrText         { get; }
+
+    public string CidLabel         => UI.Title_CID;
+    public string CsdLabel         => UI.Title_CSD;
+    public string OcrLabel         => UI.Title_OCR;
+    public string ExtendedCsdLabel => UI.Title_Extended_CSD;
+    public string ScrLabel         => UI.Title_SCR;
 }

@@ -1,13 +1,13 @@
-name: Media Bug Report
+name:        Media Bug Report
 description: Bugs report on commands that handle media, like dumping or retrieving information.
-labels: ["bug", "needs triage", "media"]
+labels: [ "bug", "needs triage", "media" ]
 assignees:
   - silaslaspada
 body:
   - type: dropdown
-    id: version
+    id:   version
     attributes:
-      label: Version
+      label:       Version
       description: What version of Aaru are you running?
       options:
         - 5.3.0
@@ -18,22 +18,22 @@ body:
     validations:
       required: true
   - type: input
-    id: commit
+    id:   commit
     attributes:
-      label: Commit hash
+      label:       Commit hash
       description: If using a developmen commit, which one
   - type: checkboxes
-    id: debug
+    id:   debug
     attributes:
-      label: Tested debug version?
+      label:       Tested debug version?
       description: Have you reproduced the problem using the debug version?
       options:
-        - label: "Yes"
+        - label:    "Yes"
           required: true
   - type: checkboxes
-    id: os
+    id:   os
     attributes:
-      label: Which operating systems have you used?
+      label:       Which operating systems have you used?
       description: You may select more than one.
       options:
         - label: Windows
@@ -41,39 +41,39 @@ body:
         - label: macOS
         - label: Other
   - type: checkboxes
-    id: bitsize
+    id:   bitsize
     attributes:
-      label: What is the architectural bit size you're using?
+      label:       What is the architectural bit size you're using?
       description: You may select more than one.
       options:
         - label: 32-bit
         - label: 64-bit
         - label: Unsure or unknown
   - type: checkboxes
-    id: cpu
+    id:   cpu
     attributes:
-      label: What processor are you using?
+      label:       What processor are you using?
       description: You may select more than one.
       options:
         - label: An Intel or AMD
         - label: An ARM or Apple Silicon
         - label: Unsure or unknown
   - type: input
-    id: manufacturer
+    id:   manufacturer
     attributes:
       label: Device manufacturer
     validations:
       required: true
   - type: input
-    id: model
+    id:   model
     attributes:
       label: Device model
     validations:
       required: true
   - type: checkboxes
-    id: bus
+    id:   bus
     attributes:
-      label: Bus the device uses to attach to the computer
+      label:       Bus the device uses to attach to the computer
       description: Select the physical drive bus as well as the bus you're using if using a cable or card reader
       options:
         - label: Parallel ATA
@@ -86,19 +86,19 @@ body:
         - label: SecureDigital
         - label: MultiMediaCard
   - type: input
-    id: usb_manufacturer
+    id:   usb_manufacturer
     attributes:
-      label: USB cable or card reader manufacturer
+      label:       USB cable or card reader manufacturer
       description: Fill if using a USB cable or a USB card reader
   - type: input
-    id: usb_model
+    id:   usb_model
     attributes:
-      label: USB cable or card reader model
+      label:       USB cable or card reader model
       description: Fill if using a USB cable or a USB card reader
   - type: checkboxes
-    id: action
+    id:   action
     attributes:
-      label: What were you doing when it failed?
+      label:       What were you doing when it failed?
       description: Choose all that apply
       options:
         - label: I was dumping media (disk, tape, etc)...
@@ -106,43 +106,43 @@ body:
         - label: I was scanning media (disk, tape, etc)...
         - label: I was retrieving device information...
   - type: textarea
-    id: description
+    id:   description
     attributes:
-      label: Description
+      label:       Description
       description: Description of the bug
     validations:
       required: true
   - type: input
-    id: command_line
+    id:   command_line
     attributes:
-      label: Exact command line used
+      label:       Exact command line used
       placeholder: "`Aaru [command] [parameters]`"
     validations:
       required: true
   - type: textarea
-    id: expected
+    id:   expected
     attributes:
-      label: Expected behavior
+      label:       Expected behavior
       description: What did you expect to happen
     validations:
       required: true
   - type: textarea
-    id: actual
+    id:   actual
     attributes:
-      label: Actual behavior
+      label:       Actual behavior
       description: What actually happened
     validations:
       required: true
   - type: textarea
-    id: output
+    id:   output
     attributes:
-      label: Output of command execution with debug output enabled
+      label:       Output of command execution with debug output enabled
       placeholder: Paste the whole output of the executed command when you append '-d' to your command line parameters here
-      render: shell
+      render:      shell
     validations:
       required: true
   - type: textarea
-    id: details
+    id:   details
     attributes:
-      label: Media details
+      label:       Media details
       placeholder: Photo, EAN-13, if possible eBay link

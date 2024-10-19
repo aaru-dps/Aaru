@@ -28,39 +28,55 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.DvdInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.DvdInfo">
     <Design.DataContext>
         <tabs:DvdInfoViewModel />
     </Design.DataContext>
     <StackPanel>
-        <TextBlock IsVisible="{Binding !!DvdPfiText}" Text="Physical Format Information" />
-        <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdPfiText}" Text="{Binding DvdPfiText}" />
-        <TextBlock IsVisible="{Binding !!DvdCmiText}" Text="Copyright Management Information" />
-        <TextBox IsReadOnly="True" IsVisible="{Binding !!DvdCmiText}" Text="{Binding DvdCmiText}" />
-        <Button Command="{Binding SaveDvdPfiCommand}" IsVisible="{Binding SaveDvdPfiVisible}">
-            <TextBlock Text="Save Physical Format Information" />
+        <TextBlock IsVisible="{Binding !!DvdPfiText}"
+                   Text="Physical Format Information" />
+        <TextBox IsReadOnly="True"
+                 IsVisible="{Binding !!DvdPfiText}"
+                 Text="{Binding DvdPfiText}" />
+        <TextBlock IsVisible="{Binding !!DvdCmiText}"
+                   Text="Copyright Management Information" />
+        <TextBox IsReadOnly="True"
+                 IsVisible="{Binding !!DvdCmiText}"
+                 Text="{Binding DvdCmiText}" />
+        <Button Command="{Binding SaveDvdPfiCommand}"
+                IsVisible="{Binding SaveDvdPfiVisible}">
+            <TextBlock Text="{Binding SaveDvdPfiLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdDmiCommand}" IsVisible="{Binding SaveDvdDmiVisible}">
-            <TextBlock Text="Save Disc Manufacturer Information" />
+        <Button Command="{Binding SaveDvdDmiCommand}"
+                IsVisible="{Binding SaveDvdDmiVisible}">
+            <TextBlock Text="{Binding SaveDvdDmiLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdCmiCommand}" IsVisible="{Binding SaveDvdCmiVisible}">
-            <TextBlock Text="Save Copyright Management Information" />
+        <Button Command="{Binding SaveDvdCmiCommand}"
+                IsVisible="{Binding SaveDvdCmiVisible}">
+            <TextBlock Text="{Binding SaveDvdCmiLabel}" />
         </Button>
-        <Button Command="{Binding SaveHdDvdCmiCommand}" IsVisible="{Binding SaveHdDvdCmiVisible}">
-            <TextBlock Text="Save Copyright Management Information" />
+        <Button Command="{Binding SaveHdDvdCmiCommand}"
+                IsVisible="{Binding SaveHdDvdCmiVisible}">
+            <TextBlock Text="{Binding SaveHdDvdCmiLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdBcaCommand}" IsVisible="{Binding SaveDvdBcaVisible}">
-            <TextBlock Text="Save Burst Cutting Area" />
+        <Button Command="{Binding SaveDvdBcaCommand}"
+                IsVisible="{Binding SaveDvdBcaVisible}">
+            <TextBlock Text="{Binding SaveDvdBcaLabel}" />
         </Button>
-        <Button Command="{Binding SaveDvdAacsCommand}" IsVisible="{Binding SaveDvdAacsVisible}">
-            <TextBlock Text="Save AACS Information" />
+        <Button Command="{Binding SaveDvdAacsCommand}"
+                IsVisible="{Binding SaveDvdAacsVisible}">
+            <TextBlock Text="{Binding SaveDvdAacsLabel}" />
         </Button>
     </StackPanel>
 </UserControl>

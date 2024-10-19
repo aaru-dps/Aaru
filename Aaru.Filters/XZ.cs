@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filters;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using SharpCompress.Compressors.Xz;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress xz files while reading</summary>
@@ -45,12 +47,16 @@ public sealed class XZ : IFilter
     Stream _dataStream;
     Stream _innerStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
-    public string Name => "XZ";
+    public string Name => Localization.XZ_Name;
+
     /// <inheritdoc />
     public Guid Id => new("666A8617-0444-4C05-9F4F-DF0FD758D0D2");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()
@@ -76,9 +82,14 @@ public sealed class XZ : IFilter
     public bool HasResourceFork => false;
 
     /// <inheritdoc />
-    public bool Identify(byte[] buffer) => buffer[0]  == 0xFD && buffer[1]  == 0x37 && buffer[2] == 0x7A &&
-                                           buffer[3]  == 0x58 && buffer[4]  == 0x5A && buffer[5] == 0x00 &&
-                                           buffer[^2] == 0x59 && buffer[^1] == 0x5A;
+    public bool Identify(byte[] buffer) => buffer[0]  == 0xFD &&
+                                           buffer[1]  == 0x37 &&
+                                           buffer[2]  == 0x7A &&
+                                           buffer[3]  == 0x58 &&
+                                           buffer[4]  == 0x5A &&
+                                           buffer[5]  == 0x00 &&
+                                           buffer[^2] == 0x59 &&
+                                           buffer[^1] == 0x5A;
 
     /// <inheritdoc />
     public bool Identify(Stream stream)
@@ -86,40 +97,49 @@ public sealed class XZ : IFilter
         var buffer = new byte[6];
         var footer = new byte[2];
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 6);
+        stream.EnsureRead(buffer, 0, 6);
         stream.Seek(-2, SeekOrigin.End);
-        stream.Read(footer, 0, 2);
+        stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
-               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD &&
+               buffer[1] == 0x37 &&
+               buffer[2] == 0x7A &&
+               buffer[3] == 0x58 &&
+               buffer[4] == 0x5A &&
+               buffer[5] == 0x00 &&
+               footer[0] == 0x59 &&
+               footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[6];
         var footer = new byte[2];
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 6);
+        stream.EnsureRead(buffer, 0, 6);
         stream.Seek(-2, SeekOrigin.End);
-        stream.Read(footer, 0, 2);
+        stream.EnsureRead(footer, 0, 2);
         stream.Seek(0, SeekOrigin.Begin);
 
-        return buffer[0] == 0xFD && buffer[1] == 0x37 && buffer[2] == 0x7A && buffer[3] == 0x58 && buffer[4] == 0x5A &&
-               buffer[5] == 0x00 && footer[0] == 0x59 && footer[1] == 0x5A;
+        return buffer[0] == 0xFD &&
+               buffer[1] == 0x37 &&
+               buffer[2] == 0x7A &&
+               buffer[3] == 0x58 &&
+               buffer[4] == 0x5A &&
+               buffer[5] == 0x00 &&
+               footer[0] == 0x59 &&
+               footer[1] == 0x5A;
     }
 
     /// <inheritdoc />
@@ -183,16 +203,18 @@ public sealed class XZ : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 3);
+            if(BasePath?.EndsWith(".xz", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^3];
 
             return BasePath?.EndsWith(".xzip", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 5) : BasePath;
+                       ? BasePath[..^5]
+                       : BasePath;
         }
     }
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 
     void GuessSize()
     {
@@ -201,7 +223,7 @@ public sealed class XZ : IFilter
         // Seek to footer backwards size field
         _dataStream.Seek(-8, SeekOrigin.End);
         var tmp = new byte[4];
-        _dataStream.Read(tmp, 0, 4);
+        _dataStream.EnsureRead(tmp, 0, 4);
         uint backwardSize = (BitConverter.ToUInt32(tmp, 0) + 1) * 4;
 
         // Seek to first indexed record
@@ -209,38 +231,40 @@ public sealed class XZ : IFilter
 
         // Skip compressed size
         tmp = new byte[backwardSize - 2];
-        _dataStream.Read(tmp, 0, tmp.Length);
+        _dataStream.EnsureRead(tmp, 0, tmp.Length);
         ulong number = 0;
         int   ignore = Decode(tmp, tmp.Length, ref number);
 
         // Get compressed size
         _dataStream.Seek(-12 - (backwardSize - 2 - ignore), SeekOrigin.End);
         tmp = new byte[backwardSize - 2 - ignore];
-        _dataStream.Read(tmp, 0, tmp.Length);
+        _dataStream.EnsureRead(tmp, 0, tmp.Length);
         Decode(tmp, tmp.Length, ref number);
         DataForkLength = (long)number;
 
         _dataStream.Seek(0, SeekOrigin.Begin);
     }
 
-    int Decode(byte[] buf, int sizeMax, ref ulong num)
+    static int Decode(byte[] buf, int sizeMax, ref ulong num)
     {
-        if(sizeMax == 0)
-            return 0;
+        switch(sizeMax)
+        {
+            case 0:
+                return 0;
+            case > 9:
+                sizeMax = 9;
 
-        if(sizeMax > 9)
-            sizeMax = 9;
+                break;
+        }
 
         num = (ulong)(buf[0] & 0x7F);
         var i = 0;
 
         while((buf[i++] & 0x80) == 0x80)
         {
-            if(i      >= sizeMax ||
-               buf[i] == 0x00)
-                return 0;
+            if(i >= sizeMax || buf[i] == 0x00) return 0;
 
-            num |= (ulong)(buf[i] & 0x7F) << (i * 7);
+            num |= (ulong)(buf[i] & 0x7F) << i * 7;
         }
 
         return i;

@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Devices.SCSI;
 
 using System;
 using Aaru.Console;
@@ -36,32 +34,34 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 using Aaru.Helpers;
 
+namespace Aaru.Tests.Devices.SCSI;
+
 static class Mmc
 {
     internal static void Menu(string devPath, Device dev)
     {
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a MultiMedia Command to the device:");
-            AaruConsole.WriteLine("1.- Send GET CONFIGURATION command.");
-            AaruConsole.WriteLine("2.- Send PREVENT ALLOW MEDIUM REMOVAL command.");
-            AaruConsole.WriteLine("3.- Send READ CD command.");
-            AaruConsole.WriteLine("4.- Send READ CD MSF command.");
-            AaruConsole.WriteLine("5.- Send READ DISC INFORMATION command.");
-            AaruConsole.WriteLine("6.- Send READ DISC STRUCTURE command.");
-            AaruConsole.WriteLine("7.- Send READ TOC/PMA/ATIP command.");
-            AaruConsole.WriteLine("8.- Send START STOP UNIT command.");
-            AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
-            AaruConsole.Write("Choose: ");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_MultiMedia_Command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_GET_CONFIGURATION_command);
+            AaruConsole.WriteLine(Localization.Send_PREVENT_ALLOW_MEDIUM_REMOVAL_command);
+            AaruConsole.WriteLine(Localization.Send_READ_CD_command);
+            AaruConsole.WriteLine(Localization.Send_READ_CD_MSF_command);
+            AaruConsole.WriteLine(Localization.Send_READ_DISC_INFORMATION_command);
+            AaruConsole.WriteLine(Localization.Send_READ_DISC_STRUCTURE_command);
+            AaruConsole.WriteLine(Localization.Send_READ_TOC_PMA_ATIP_command);
+            AaruConsole.WriteLine(Localization.Send_START_STOP_UNIT_command);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_commands_menu);
+            AaruConsole.Write(Localization.Choose);
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -69,7 +69,7 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_commands_menu);
 
                     return;
                 case 1:
@@ -105,8 +105,8 @@ static class Mmc
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -124,23 +124,23 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for GET CONFIGURATION command:");
-            AaruConsole.WriteLine("RT: {0}", rt);
-            AaruConsole.WriteLine("Feature number: {0}", startingFeatureNumber);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_GET_CONFIGURATION_command);
+            AaruConsole.WriteLine(Localization.RT_0,             rt);
+            AaruConsole.WriteLine(Localization.Feature_number_0, startingFeatureNumber);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -148,76 +148,88 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.WriteLine("RT");
+                    AaruConsole.WriteLine(Localization.RT);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcGetConfigurationRt.All,
-                                          MmcGetConfigurationRt.Current, MmcGetConfigurationRt.Reserved,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcGetConfigurationRt.All,
+                                          MmcGetConfigurationRt.Current,
+                                          MmcGetConfigurationRt.Reserved,
                                           MmcGetConfigurationRt.Single);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out rt))
                     {
-                        AaruConsole.WriteLine("Not a correct object type. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_object_type_Press_any_key_to_continue);
                         rt = MmcGetConfigurationRt.All;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Feature number");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Feature_number);
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out startingFeatureNumber))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         startingFeatureNumber = 1;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.GetConfiguration(out byte[] buffer, out byte[] senseBuffer, startingFeatureNumber, rt,
-                                          dev.Timeout, out double duration);
+        bool sense = dev.GetConfiguration(out byte[] buffer,
+                                          out byte[] senseBuffer,
+                                          startingFeatureNumber,
+                                          rt,
+                                          dev.Timeout,
+                                          out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending GET CONFIGURATION to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode buffer.");
-        AaruConsole.WriteLine("3.- Print sense buffer.");
-        AaruConsole.WriteLine("4.- Decode sense buffer.");
-        AaruConsole.WriteLine("5.- Send command again.");
-        AaruConsole.WriteLine("6.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_GET_CONFIGURATION_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Decode_buffer);
+        AaruConsole.WriteLine(Localization._3_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._5_Send_command_again);
+        AaruConsole.WriteLine(Localization._6_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -225,38 +237,38 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("GET CONFIGURATION buffer:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.GET_CONFIGURATION_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("GET CONFIGURATION decoded buffer:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.GET_CONFIGURATION_decoded_buffer);
 
                 if(buffer != null)
                 {
                     Features.SeparatedFeatures ftr = Features.Separate(buffer);
-                    AaruConsole.WriteLine("GET CONFIGURATION length is {0} bytes", ftr.DataLength);
-                    AaruConsole.WriteLine("GET CONFIGURATION current profile is {0:X4}h", ftr.CurrentProfile);
+                    AaruConsole.WriteLine(Localization.GET_CONFIGURATION_length_is_0_bytes,       ftr.DataLength);
+                    AaruConsole.WriteLine(Localization.GET_CONFIGURATION_current_profile_is_0_X4, ftr.CurrentProfile);
 
                     if(ftr.Descriptors != null)
+                    {
                         foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                         {
-                            AaruConsole.WriteLine("Feature {0:X4}h", desc.Code);
+                            AaruConsole.WriteLine(Localization.Feature_0_X4, desc.Code);
 
                             switch(desc.Code)
                             {
@@ -551,54 +563,55 @@ static class Mmc
 
                                     break;
                                 default:
-                                    AaruConsole.WriteLine("Don't know how to decode feature 0x{0:X4}", desc.Code);
+                                    AaruConsole.WriteLine(Localization.Dont_know_how_to_decode_feature_0, desc.Code);
                                     PrintHex.PrintHexArray(desc.Data, 64);
 
                                     break;
                             }
                         }
+                    }
                 }
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("GET CONFIGURATION sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.GET_CONFIGURATION_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 4:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("GET CONFIGURATION decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.GET_CONFIGURATION_decoded_sense);
 
-                if(senseBuffer != null)
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                if(senseBuffer != null) AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -615,23 +628,23 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for PREVENT ALLOW MEDIUM REMOVAL command:");
-            AaruConsole.WriteLine("Prevent removal?: {0}", prevent);
-            AaruConsole.WriteLine("Persistent value?: {0}", persistent);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_PREVENT_ALLOW_MEDIUM_REMOVAL_command);
+            AaruConsole.WriteLine(Localization.Prevent_removal_0,  prevent);
+            AaruConsole.WriteLine(Localization.Persistent_value_0, persistent);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -639,67 +652,77 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Prevent removal?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Prevent_removal_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out prevent))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         prevent = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Persistent value?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Persistent_value_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out persistent))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         persistent = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.PreventAllowMediumRemoval(out byte[] senseBuffer, persistent, prevent, dev.Timeout,
-                                                   out double duration);
+        bool sense =
+            dev.PreventAllowMediumRemoval(out byte[] senseBuffer,
+                                          persistent,
+                                          prevent,
+                                          dev.Timeout,
+                                          out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending PREVENT ALLOW MEDIUM REMOVAL to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL decoded sense:");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_PREVENT_ALLOW_MEDIUM_REMOVAL_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine(Localization.PREVENT_ALLOW_MEDIUM_REMOVAL_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print sense buffer.");
-        AaruConsole.WriteLine("2.- Send command again.");
-        AaruConsole.WriteLine("3.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization._1_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._2_Send_command_again);
+        AaruConsole.WriteLine(Localization._3_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -707,29 +730,30 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("PREVENT ALLOW MEDIUM REMOVAL sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.PREVENT_ALLOW_MEDIUM_REMOVAL_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -756,33 +780,33 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ CD command:");
-            AaruConsole.WriteLine("Address relative to current position?: {0}", relative);
-            AaruConsole.WriteLine("{1}: {0}", address, relative ? "Address" : "LBA");
-            AaruConsole.WriteLine("Will transfer {0} sectors", length);
-            AaruConsole.WriteLine("Sector type: {0}", sectorType);
-            AaruConsole.WriteLine("Process audio?: {0}", dap);
-            AaruConsole.WriteLine("Retrieve sync bytes?: {0}", sync);
-            AaruConsole.WriteLine("Header mode: {0}", header);
-            AaruConsole.WriteLine("Retrieve user data?: {0}", user);
-            AaruConsole.WriteLine("Retrieve EDC/ECC data?: {0}", edc);
-            AaruConsole.WriteLine("C2 mode: {0}", c2);
-            AaruConsole.WriteLine("Subchannel mode: {0}", subchan);
-            AaruConsole.WriteLine("{0} bytes per sector", blockSize);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_command);
+            AaruConsole.WriteLine(Localization.Address_relative_to_current_position_0,    relative);
+            AaruConsole.WriteLine(relative ? Localization.Address_0 : Localization.LBA_0, address);
+            AaruConsole.WriteLine(Localization.Will_transfer_0_sectors,                   length);
+            AaruConsole.WriteLine(Localization.Sector_type_0,                             sectorType);
+            AaruConsole.WriteLine(Localization.Process_audio_0,                           dap);
+            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0,                     sync);
+            AaruConsole.WriteLine(Localization.Header_mode_0,                             header);
+            AaruConsole.WriteLine(Localization.Retrieve_user_data_0,                      user);
+            AaruConsole.WriteLine(Localization.Retrieve_EDC_ECC_data_0,                   edc);
+            AaruConsole.WriteLine(Localization.C2_mode_0,                                 c2);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,                         subchan);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector,                       blockSize);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -790,211 +814,242 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Address is relative to current position?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Address_is_relative_to_current_position);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out relative))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         relative = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("{0}?: ", relative ? "Address" : "LBA");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(relative ? Localization.Address_Q : Localization.LBA_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         address = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("How many sectors to transfer?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.How_many_sectors_to_transfer_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out length))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         length = 1;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Sector type");
+                    AaruConsole.WriteLine(Localization.Sector_type);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3} {4} {5}", MmcSectorTypes.AllTypes,
-                                          MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
-                                          MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5,
+                                          MmcSectorTypes.AllTypes,
+                                          MmcSectorTypes.Cdda,
+                                          MmcSectorTypes.Mode1,
+                                          MmcSectorTypes.Mode2,
+                                          MmcSectorTypes.Mode2Form1,
+                                          MmcSectorTypes.Mode2Form2);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out sectorType))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_sector_type_Press_any_key_to_continue);
                         sectorType = MmcSectorTypes.AllTypes;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Process audio?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Process_audio_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dap))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         dap = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve sync bytes?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_sync_bytes_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out sync))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         sync = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Header mode");
+                    AaruConsole.WriteLine(Localization.Header_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcHeaderCodes.None,
-                                          MmcHeaderCodes.HeaderOnly, MmcHeaderCodes.SubHeaderOnly,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcHeaderCodes.None,
+                                          MmcHeaderCodes.HeaderOnly,
+                                          MmcHeaderCodes.SubHeaderOnly,
                                           MmcHeaderCodes.AllHeaders);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out header))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_header_mode_Press_any_key_to_continue);
                         header = MmcHeaderCodes.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve user data?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_user_data_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out user))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         user = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve EDC/ECC?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_EDC_ECC_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out edc))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         edc = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("C2 mode");
+                    AaruConsole.WriteLine(Localization.C2_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None, MmcErrorField.C2Pointers,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          MmcErrorField.None,
+                                          MmcErrorField.C2Pointers,
                                           MmcErrorField.C2PointersAndBlock);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out c2))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_C2_mode_Press_any_key_to_continue);
                         c2 = MmcErrorField.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Subchannel mode");
+                    AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
-                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcSubchannel.None,
+                                          MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16,
+                                          MmcSubchannel.Rw);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out subchan))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_subchannel_mode_Press_any_key_to_continue);
                         subchan = MmcSubchannel.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Expected block size?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Expected_block_size_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         blockSize = 2352;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.ReadCd(out byte[] buffer, out byte[] senseBuffer, address, blockSize, length, sectorType, dap,
-                                relative, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
+        bool sense = dev.ReadCd(out byte[] buffer,
+                                out byte[] senseBuffer,
+                                address,
+                                blockSize,
+                                length,
+                                sectorType,
+                                dap,
+                                relative,
+                                sync,
+                                header,
+                                user,
+                                edc,
+                                c2,
+                                subchan,
+                                dev.Timeout,
+                                out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ CD to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Print sense buffer.");
-        AaruConsole.WriteLine("3.- Decode sense buffer.");
-        AaruConsole.WriteLine("4.- Send command again.");
-        AaruConsole.WriteLine("5.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_CD_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._3_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Send_command_again);
+        AaruConsole.WriteLine(Localization._5_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1002,54 +1057,54 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -1061,7 +1116,7 @@ static class Mmc
         byte           startSecond = 2;
         byte           startMinute = 0;
         byte           endFrame    = 0;
-        byte           endSecond   = 0;
+        const byte     endSecond   = 0;
         byte           endMinute   = 0;
         MmcSectorTypes sectorType  = MmcSectorTypes.AllTypes;
         var            dap         = false;
@@ -1079,32 +1134,32 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ CD MSF command:");
-            AaruConsole.WriteLine("Start: {0:D2}:{1:D2}:{2:D2}", startMinute, startSecond, startFrame);
-            AaruConsole.WriteLine("End: {0:D2}:{1:D2}:{2:D2}", endMinute, endSecond, endFrame);
-            AaruConsole.WriteLine("Sector type: {0}", sectorType);
-            AaruConsole.WriteLine("Process audio?: {0}", dap);
-            AaruConsole.WriteLine("Retrieve sync bytes?: {0}", sync);
-            AaruConsole.WriteLine("Header mode: {0}", header);
-            AaruConsole.WriteLine("Retrieve user data?: {0}", user);
-            AaruConsole.WriteLine("Retrieve EDC/ECC data?: {0}", edc);
-            AaruConsole.WriteLine("C2 mode: {0}", c2);
-            AaruConsole.WriteLine("Subchannel mode: {0}", subchan);
-            AaruConsole.WriteLine("{0} bytes per sector", blockSize);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_CD_MSF_command);
+            AaruConsole.WriteLine(Localization.Start_0_1_2,             startMinute, startSecond, startFrame);
+            AaruConsole.WriteLine(Localization.End_0_1_2,               endMinute,   endSecond,   endFrame);
+            AaruConsole.WriteLine(Localization.Sector_type_0,           sectorType);
+            AaruConsole.WriteLine(Localization.Process_audio_0,         dap);
+            AaruConsole.WriteLine(Localization.Retrieve_sync_bytes_0,   sync);
+            AaruConsole.WriteLine(Localization.Header_mode_0,           header);
+            AaruConsole.WriteLine(Localization.Retrieve_user_data_0,    user);
+            AaruConsole.WriteLine(Localization.Retrieve_EDC_ECC_data_0, edc);
+            AaruConsole.WriteLine(Localization.C2_mode_0,               c2);
+            AaruConsole.WriteLine(Localization.Subchannel_mode_0,       subchan);
+            AaruConsole.WriteLine(Localization._0_bytes_per_sector,     blockSize);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -1112,249 +1167,279 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Start minute?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Start_minute_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startMinute))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         startMinute = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Start second?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Start_second_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startSecond))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         startSecond = 2;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Start frame?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Start_frame_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out startFrame))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         startFrame = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("End minute?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.End_minute_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endMinute))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         endMinute = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("End second?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.End_second_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endMinute))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         endMinute = 2;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("End frame?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.End_frame_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out endFrame))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         endFrame = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Sector type");
+                    AaruConsole.WriteLine(Localization.Sector_type);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3} {4} {5}", MmcSectorTypes.AllTypes,
-                                          MmcSectorTypes.Cdda, MmcSectorTypes.Mode1, MmcSectorTypes.Mode2,
-                                          MmcSectorTypes.Mode2Form1, MmcSectorTypes.Mode2Form2);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3_4_5,
+                                          MmcSectorTypes.AllTypes,
+                                          MmcSectorTypes.Cdda,
+                                          MmcSectorTypes.Mode1,
+                                          MmcSectorTypes.Mode2,
+                                          MmcSectorTypes.Mode2Form1,
+                                          MmcSectorTypes.Mode2Form2);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out sectorType))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_sector_type_Press_any_key_to_continue);
                         sectorType = MmcSectorTypes.AllTypes;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Process audio?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Process_audio_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out dap))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         dap = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve sync bytes?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_sync_bytes_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out sync))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         sync = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Header mode");
+                    AaruConsole.WriteLine(Localization.Header_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcHeaderCodes.None,
-                                          MmcHeaderCodes.HeaderOnly, MmcHeaderCodes.SubHeaderOnly,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcHeaderCodes.None,
+                                          MmcHeaderCodes.HeaderOnly,
+                                          MmcHeaderCodes.SubHeaderOnly,
                                           MmcHeaderCodes.AllHeaders);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out header))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_header_mode_Press_any_key_to_continue);
                         header = MmcHeaderCodes.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve user data?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_user_data_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out user))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         user = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Retrieve EDC/ECC?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Retrieve_EDC_ECC_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out edc))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         edc = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("C2 mode");
+                    AaruConsole.WriteLine(Localization.C2_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcErrorField.None, MmcErrorField.C2Pointers,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          MmcErrorField.None,
+                                          MmcErrorField.C2Pointers,
                                           MmcErrorField.C2PointersAndBlock);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out c2))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_C2_mode_Press_any_key_to_continue);
                         c2 = MmcErrorField.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Subchannel mode");
+                    AaruConsole.WriteLine(Localization.Subchannel_mode);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2} {3}", MmcSubchannel.None, MmcSubchannel.Raw,
-                                          MmcSubchannel.Q16, MmcSubchannel.Rw);
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2_3,
+                                          MmcSubchannel.None,
+                                          MmcSubchannel.Raw,
+                                          MmcSubchannel.Q16,
+                                          MmcSubchannel.Rw);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out subchan))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_subchannel_mode_Press_any_key_to_continue);
                         subchan = MmcSubchannel.None;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Expected block size?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Expected_block_size_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out blockSize))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         blockSize = 2352;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
         var startMsf = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
         var endMsf   = (uint)((startMinute << 16) + (startSecond << 8) + startFrame);
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.ReadCdMsf(out byte[] buffer, out byte[] senseBuffer, startMsf, endMsf, blockSize, sectorType,
-                                   dap, sync, header, user, edc, c2, subchan, dev.Timeout, out double duration);
+        bool sense = dev.ReadCdMsf(out byte[] buffer,
+                                   out byte[] senseBuffer,
+                                   startMsf,
+                                   endMsf,
+                                   blockSize,
+                                   sectorType,
+                                   dap,
+                                   sync,
+                                   header,
+                                   user,
+                                   edc,
+                                   c2,
+                                   subchan,
+                                   dev.Timeout,
+                                   out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ CD MSF to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Print sense buffer.");
-        AaruConsole.WriteLine("3.- Decode sense buffer.");
-        AaruConsole.WriteLine("4.- Send command again.");
-        AaruConsole.WriteLine("5.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_CD_MSF_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._3_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Send_command_again);
+        AaruConsole.WriteLine(Localization._5_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1362,54 +1447,54 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD MSF response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_MSF_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD MSF sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_MSF_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ CD MSF decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_CD_MSF_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -1425,22 +1510,22 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ DISC INFORMATION command:");
-            AaruConsole.WriteLine("Information type: {0}", info);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_DISC_INFORMATION_command);
+            AaruConsole.WriteLine(Localization.Information_type_0, info);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -1448,64 +1533,74 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.WriteLine("Information type");
+                    AaruConsole.WriteLine(Localization.Information_type);
 
-                    AaruConsole.WriteLine("Available values: {0} {1} {2}", MmcDiscInformationDataTypes.DiscInformation,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1_2,
+                                          MmcDiscInformationDataTypes.DiscInformation,
                                           MmcDiscInformationDataTypes.TrackResources,
                                           MmcDiscInformationDataTypes.PowResources);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out info))
                     {
-                        AaruConsole.WriteLine("Not a correct page control. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_information_type_Press_any_key_to_continue);
                         info = MmcDiscInformationDataTypes.DiscInformation;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, info, dev.Timeout,
+        bool sense = dev.ReadDiscInformation(out byte[] buffer,
+                                             out byte[] senseBuffer,
+                                             info,
+                                             dev.Timeout,
                                              out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ DISC INFORMATION to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode buffer.");
-        AaruConsole.WriteLine("3.- Print sense buffer.");
-        AaruConsole.WriteLine("4.- Decode sense buffer.");
-        AaruConsole.WriteLine("5.- Send command again.");
-        AaruConsole.WriteLine("6.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_DISC_INFORMATION_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Decode_buffer);
+        AaruConsole.WriteLine(Localization._3_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._5_Send_command_again);
+        AaruConsole.WriteLine(Localization._6_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1513,65 +1608,65 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC INFORMATION response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC INFORMATION decoded response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_decoded_response);
                 AaruConsole.Write("{0}", DiscInformation.Prettify(buffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC INFORMATION sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 4:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC INFORMATION decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_INFORMATION_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -1591,26 +1686,26 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ DISC STRUCTURE command:");
-            AaruConsole.WriteLine("Media type: {0}", mediaType);
-            AaruConsole.WriteLine("Format: {0}", format);
-            AaruConsole.WriteLine("Address: {0}", address);
-            AaruConsole.WriteLine("Layer: {0}", layer);
-            AaruConsole.WriteLine("AGID: {0}", agid);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_DISC_STRUCTURE_command);
+            AaruConsole.WriteLine(Localization.Media_type_0, mediaType);
+            AaruConsole.WriteLine(Localization.Format_0,     format);
+            AaruConsole.WriteLine(Localization.Address_0,    address);
+            AaruConsole.WriteLine(Localization.Layer_0,      layer);
+            AaruConsole.WriteLine(Localization.AGID_0,       agid);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -1618,34 +1713,36 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.WriteLine("Media type");
+                    AaruConsole.WriteLine(Localization.Media_type);
 
-                    AaruConsole.WriteLine("Available values: {0} {1}", MmcDiscStructureMediaType.Dvd,
+                    AaruConsole.WriteLine(Localization.Available_values_0_1,
+                                          MmcDiscStructureMediaType.Dvd,
                                           MmcDiscStructureMediaType.Bd);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out mediaType))
                     {
-                        AaruConsole.WriteLine("Not a correct media type. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_media_type_Press_any_key_to_continue);
                         mediaType = MmcDiscStructureMediaType.Dvd;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.WriteLine("Format");
-                    AaruConsole.WriteLine("Available values:");
+                    AaruConsole.WriteLine(Localization.Format);
+                    AaruConsole.WriteLine(Localization.Available_values);
 
                     switch(mediaType)
                     {
                         case MmcDiscStructureMediaType.Dvd:
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.PhysicalInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.PhysicalInformation,
                                                   MmcDiscStructureFormat.CopyrightInformation,
                                                   MmcDiscStructureFormat.DiscKey,
                                                   MmcDiscStructureFormat.BurstCuttingArea);
@@ -1656,137 +1753,165 @@ static class Mmc
                                                   MmcDiscStructureFormat.MediaIdentifier,
                                                   MmcDiscStructureFormat.MediaKeyBlock);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdramDds,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DvdramDds,
                                                   MmcDiscStructureFormat.DvdramMediumStatus,
                                                   MmcDiscStructureFormat.DvdramSpareAreaInformation,
                                                   MmcDiscStructureFormat.DvdramRecordingType);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.LastBorderOutRmd,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.LastBorderOutRmd,
                                                   MmcDiscStructureFormat.SpecifiedRmd,
                                                   MmcDiscStructureFormat.PreRecordedInfo,
                                                   MmcDiscStructureFormat.DvdrMediaIdentifier);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DvdrPhysicalInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DvdrPhysicalInformation,
                                                   MmcDiscStructureFormat.Adip,
                                                   MmcDiscStructureFormat.HddvdCopyrightInformation,
                                                   MmcDiscStructureFormat.DvdAacs);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.HddvdrMediumStatus,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.HddvdrMediumStatus,
                                                   MmcDiscStructureFormat.HddvdrLastRmd,
                                                   MmcDiscStructureFormat.DvdrLayerCapacity,
                                                   MmcDiscStructureFormat.MiddleZoneStart);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.JumpIntervalSize,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.JumpIntervalSize,
                                                   MmcDiscStructureFormat.ManualLayerJumpStartLba,
-                                                  MmcDiscStructureFormat.RemapAnchorPoint, MmcDiscStructureFormat.Dcb);
+                                                  MmcDiscStructureFormat.RemapAnchorPoint,
+                                                  MmcDiscStructureFormat.Dcb);
 
                             break;
                         case MmcDiscStructureMediaType.Bd:
-                            AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.DiscInformation,
+                            AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                                  MmcDiscStructureFormat.DiscInformation,
                                                   MmcDiscStructureFormat.BdBurstCuttingArea,
-                                                  MmcDiscStructureFormat.BdDds, MmcDiscStructureFormat.CartridgeStatus);
+                                                  MmcDiscStructureFormat.BdDds,
+                                                  MmcDiscStructureFormat.CartridgeStatus);
 
-                            AaruConsole.WriteLine("\t{0} {1} {2}", MmcDiscStructureFormat.BdSpareAreaInformation,
-                                                  MmcDiscStructureFormat.RawDfl, MmcDiscStructureFormat.Pac);
+                            AaruConsole.WriteLine("\t{0} {1} {2}",
+                                                  MmcDiscStructureFormat.BdSpareAreaInformation,
+                                                  MmcDiscStructureFormat.RawDfl,
+                                                  MmcDiscStructureFormat.Pac);
 
                             break;
                     }
 
-                    AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsVolId,
-                                          MmcDiscStructureFormat.AacsMediaSerial, MmcDiscStructureFormat.AacsMediaId,
+                    AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                          MmcDiscStructureFormat.AacsVolId,
+                                          MmcDiscStructureFormat.AacsMediaSerial,
+                                          MmcDiscStructureFormat.AacsMediaId,
                                           MmcDiscStructureFormat.Aacsmkb);
 
-                    AaruConsole.WriteLine("\t{0} {1} {2} {3}", MmcDiscStructureFormat.AacsDataKeys,
-                                          MmcDiscStructureFormat.AacslbaExtents, MmcDiscStructureFormat.Aacsmkbcprm,
+                    AaruConsole.WriteLine("\t{0} {1} {2} {3}",
+                                          MmcDiscStructureFormat.AacsDataKeys,
+                                          MmcDiscStructureFormat.AacslbaExtents,
+                                          MmcDiscStructureFormat.Aacsmkbcprm,
                                           MmcDiscStructureFormat.RecognizedFormatLayers);
 
-                    AaruConsole.WriteLine("\t{0} {1}", MmcDiscStructureFormat.WriteProtectionStatus,
+                    AaruConsole.WriteLine("\t{0} {1}",
+                                          MmcDiscStructureFormat.WriteProtectionStatus,
                                           MmcDiscStructureFormat.CapabilityList);
 
-                    AaruConsole.Write("Choose?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Choose_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!Enum.TryParse(strDev, true, out format))
                     {
-                        AaruConsole.WriteLine("Not a correct media type. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_correct_structure_format_Press_any_key_to_continue);
                         format = MmcDiscStructureFormat.CapabilityList;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Address?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Address_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         address = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Layer?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Layer_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out layer))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         layer = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("AGID?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.AGID_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out agid))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         agid = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, mediaType, address, layer, format,
-                                           agid, dev.Timeout, out double duration);
+        bool sense = dev.ReadDiscStructure(out byte[] buffer,
+                                           out byte[] senseBuffer,
+                                           mediaType,
+                                           address,
+                                           layer,
+                                           format,
+                                           agid,
+                                           dev.Timeout,
+                                           out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ DISC STRUCTURE to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode buffer.");
-        AaruConsole.WriteLine("3.- Print sense buffer.");
-        AaruConsole.WriteLine("4.- Decode sense buffer.");
-        AaruConsole.WriteLine("5.- Send command again.");
-        AaruConsole.WriteLine("6.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_DISC_STRUCTURE_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Decode_buffer);
+        AaruConsole.WriteLine(Localization._3_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._5_Send_command_again);
+        AaruConsole.WriteLine(Localization._6_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1794,66 +1919,66 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC STRUCTURE response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 // TODO: Implement
-                AaruConsole.WriteLine("READ DISC STRUCTURE decoding not yet implemented:");
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_decoding_not_yet_implemented);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC STRUCTURE sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 4:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ DISC STRUCTURE decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_DISC_STRUCTURE_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -1871,24 +1996,24 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ TOC/PMA/ATIP command:");
-            AaruConsole.WriteLine("Return MSF values?: {0}", msf);
-            AaruConsole.WriteLine("Format byte: {0}", format);
-            AaruConsole.WriteLine("Session: {0}", session);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_TOC_PMA_ATIP_command);
+            AaruConsole.WriteLine(Localization.Return_MSF_values_0, msf);
+            AaruConsole.WriteLine(Localization.Format_byte_0,       format);
+            AaruConsole.WriteLine(Localization.Session_0,           session);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -1896,82 +2021,93 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Return MSF values?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Return_MSF_values_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out msf))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         msf = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Format?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Format_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out format))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         format = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Session?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Session_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out session))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         session = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, msf, format, session, dev.Timeout,
+        bool sense = dev.ReadTocPmaAtip(out byte[] buffer,
+                                        out byte[] senseBuffer,
+                                        msf,
+                                        format,
+                                        session,
+                                        dev.Timeout,
                                         out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ TOC/PMA/ATIP to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode buffer.");
-        AaruConsole.WriteLine("3.- Print sense buffer.");
-        AaruConsole.WriteLine("4.- Decode sense buffer.");
-        AaruConsole.WriteLine("5.- Send command again.");
-        AaruConsole.WriteLine("6.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_TOC_PMA_ATIP_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Decode_buffer);
+        AaruConsole.WriteLine(Localization._3_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._5_Send_command_again);
+        AaruConsole.WriteLine(Localization._6_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -1979,29 +2115,29 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ TOC/PMA/ATIP buffer:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_buffer);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ TOC/PMA/ATIP decoded buffer:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_decoded_buffer);
 
                 if(buffer != null)
+                {
                     switch(format)
                     {
                         case 0:
@@ -2035,47 +2171,48 @@ static class Mmc
 
                             break;
                     }
+                }
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ TOC/PMA/ATIP sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 4:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ TOC/PMA/ATIP decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_TOC_PMA_ATIP_decoded_sense);
 
-                if(senseBuffer != null)
-                    AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
+                if(senseBuffer != null) AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 5: goto start;
-            case 6: goto parameters;
+            case 5:
+                goto start;
+            case 6:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -2096,27 +2233,27 @@ static class Mmc
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for START STOP UNIT command:");
-            AaruConsole.WriteLine("Immediate?: {0}", immediate);
-            AaruConsole.WriteLine("Change format layer?: {0}", changeFormatLayer);
-            AaruConsole.WriteLine("Eject?: {0}", loadEject);
-            AaruConsole.WriteLine("Start?: {0}", start);
-            AaruConsole.WriteLine("Format layer: {0}", formatLayer);
-            AaruConsole.WriteLine("Power conditions: {0}", powerConditions);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_START_STOP_UNIT_command);
+            AaruConsole.WriteLine(Localization.Immediate_0,           immediate);
+            AaruConsole.WriteLine(Localization.Change_format_layer_0, changeFormatLayer);
+            AaruConsole.WriteLine(Localization.Eject_0,               loadEject);
+            AaruConsole.WriteLine(Localization.Start_0,               start);
+            AaruConsole.WriteLine(Localization.Format_layer_0,        formatLayer);
+            AaruConsole.WriteLine(Localization.Power_conditions_0,    powerConditions);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -2124,115 +2261,128 @@ static class Mmc
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Immediate?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Immediate_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out immediate))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         immediate = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Change format layer?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Change_format_layer_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out changeFormatLayer))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         changeFormatLayer = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Eject?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Eject_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out loadEject))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         loadEject = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Start?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Start_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out start))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         start = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Format layer?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Format_layer_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out formatLayer))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         formatLayer = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Power conditions?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Power_conditions_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out powerConditions))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         powerConditions = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.StartStopUnit(out byte[] senseBuffer, immediate, formatLayer, powerConditions,
-                                       changeFormatLayer, loadEject, start, dev.Timeout, out double duration);
+        bool sense = dev.StartStopUnit(out byte[] senseBuffer,
+                                       immediate,
+                                       formatLayer,
+                                       powerConditions,
+                                       changeFormatLayer,
+                                       loadEject,
+                                       start,
+                                       dev.Timeout,
+                                       out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending START STOP UNIT to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine("START STOP UNIT decoded sense:");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_START_STOP_UNIT_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine(Localization.START_STOP_UNIT_decoded_sense);
         AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print sense buffer.");
-        AaruConsole.WriteLine("2.- Send command again.");
-        AaruConsole.WriteLine("3.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to SCSI MultiMedia Commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization._1_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._2_Send_command_again);
+        AaruConsole.WriteLine(Localization._3_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_SCSI_MultiMedia_Commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -2240,29 +2390,30 @@ static class Mmc
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to SCSI MultiMedia Commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_SCSI_MultiMedia_Commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("START STOP UNIT sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.START_STOP_UNIT_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
-            case 3: goto parameters;
+            case 2:
+                goto start;
+            case 3:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

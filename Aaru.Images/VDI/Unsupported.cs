@@ -27,15 +27,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using Aaru.CommonTypes.Enums;
 
+namespace Aaru.Images;
+
 public sealed partial class Vdi
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber ReadSectorTag(ulong sectorAddress, SectorTagType tag, out byte[] buffer)
     {
@@ -75,4 +77,6 @@ public sealed partial class Vdi
 
         return ErrorNumber.NotSupported;
     }
+
+#endregion
 }

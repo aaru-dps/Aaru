@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Minix : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "MINIX");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "MINIX");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "minix_3.1.2a.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 524159,
@@ -84,7 +84,7 @@ public class Minix : PartitionSchemeTest
                     Start    = 1584576,
                     Type     = "MINIX"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

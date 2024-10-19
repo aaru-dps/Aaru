@@ -23,29 +23,27 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Compression;
 
 using System.Runtime.InteropServices;
 
+namespace Aaru.Compression;
+
 // ReSharper disable once InconsistentNaming
-/// <summary>
-/// Implements the LZFSE compression algorithm
-/// </summary>
-public class LZFSE
+/// <summary>Implements the LZFSE compression algorithm</summary>
+public partial class LZFSE
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_lzfse_decode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer, nuint srcSize,
-                                                 byte[] scratchBuffer);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial nuint AARU_lzfse_decode_buffer(byte[] dstBuffer, nuint  dstSize, byte[] srcBuffer,
+                                                          nuint  srcSize,   byte[] scratchBuffer);
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern nuint AARU_lzfse_encode_buffer(byte[] dstBuffer, nuint dstSize, byte[] srcBuffer, nuint srcSize,
-                                                 byte[] scratchBuffer);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial nuint AARU_lzfse_encode_buffer(byte[] dstBuffer, nuint  dstSize, byte[] srcBuffer,
+                                                          nuint  srcSize,   byte[] scratchBuffer);
 
     /// <summary>Decodes a buffer compressed with LZFSE</summary>
     /// <param name="source">Encoded buffer</param>
@@ -54,8 +52,11 @@ public class LZFSE
     public static int DecodeBuffer(byte[] source, byte[] destination) => Native.IsSupported
                                                                              ? (int)
                                                                              AARU_lzfse_decode_buffer(destination,
-                                                                                 (nuint)destination.Length, source,
-                                                                                 (nuint)source.Length, null) : 0;
+                                                                                                      (nuint)destination.Length,
+                                                                                                      source,
+                                                                                                      (nuint)source.Length,
+                                                                                                      null)
+                                                                             : 0;
 
     /// <summary>Compresses a buffer using BZIP2</summary>
     /// <param name="source">Data to compress</param>
@@ -64,6 +65,9 @@ public class LZFSE
     public static int EncodeBuffer(byte[] source, byte[] destination) => Native.IsSupported
                                                                              ? (int)
                                                                              AARU_lzfse_encode_buffer(destination,
-                                                                                 (nuint)destination.Length, source,
-                                                                                 (nuint)source.Length, null) : 0;
+                                                                                                      (nuint)destination.Length,
+                                                                                                      source,
+                                                                                                      (nuint)source.Length,
+                                                                                                      null)
+                                                                             : 0;
 }

@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.AOFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class RDB : FilesystemTest
-{
-    public RDB() : base("Amiga OFS") {}
+namespace Aaru.Tests.Filesystems.AOFS;
 
+[TestFixture]
+public class RDB() : FilesystemTest("aofs")
+{
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System (RDB)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (RDB)");
+
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amigaos_3.9.aif",
@@ -90,5 +89,5 @@ public class RDB : FilesystemTest
             VolumeName   = "Volume label",
             VolumeSerial = "A5830B06"
         }
-    };
+    ];
 }

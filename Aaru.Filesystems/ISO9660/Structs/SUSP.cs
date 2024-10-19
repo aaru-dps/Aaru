@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     SUSP extensions structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,20 +23,20 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedType.Local
-
-namespace Aaru.Filesystems;
 
 using System.Runtime.InteropServices;
 
+namespace Aaru.Filesystems;
+
 public sealed partial class ISO9660
 {
+#region Nested type: ContinuationArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ContinuationArea
     {
@@ -55,13 +51,9 @@ public sealed partial class ISO9660
         public readonly uint   ca_length_be;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct PaddingArea
-    {
-        public readonly ushort signature;
-        public readonly byte   length;
-        public readonly byte   version;
-    }
+#endregion
+
+#region Nested type: IndicatorArea
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct IndicatorArea
@@ -73,13 +65,21 @@ public sealed partial class ISO9660
         public readonly byte   skipped;
     }
 
+#endregion
+
+#region Nested type: PaddingArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct TerminatorArea
+    readonly struct PaddingArea
     {
         public readonly ushort signature;
         public readonly byte   length;
         public readonly byte   version;
     }
+
+#endregion
+
+#region Nested type: ReferenceArea
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ReferenceArea
@@ -97,6 +97,10 @@ public sealed partial class ISO9660
         // Follows extension source for src_len bytes
     }
 
+#endregion
+
+#region Nested type: SelectorArea
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SelectorArea
     {
@@ -105,4 +109,18 @@ public sealed partial class ISO9660
         public readonly byte   version;
         public readonly byte   sequence;
     }
+
+#endregion
+
+#region Nested type: TerminatorArea
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TerminatorArea
+    {
+        public readonly ushort signature;
+        public readonly byte   length;
+        public readonly byte   version;
+    }
+
+#endregion
 }

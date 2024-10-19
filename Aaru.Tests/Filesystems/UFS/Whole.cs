@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.UFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,16 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.UFS;
+
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem");
 
     public override IFilesystem Plugin     => new FFSPlugin();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix_mf2dd.adf.lz",
@@ -52,7 +52,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 880,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -62,7 +62,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -72,7 +72,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -82,7 +82,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 360,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -92,7 +92,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1200,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -102,7 +102,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 720,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -112,7 +112,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 1440,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -122,7 +122,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 711,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -132,7 +132,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -142,7 +142,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -152,7 +152,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -162,7 +162,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -173,7 +173,7 @@ public class Whole : FilesystemTest
             Clusters    = 2880,
             ClusterSize = 512,
             VolumeName  = "",
-            Type        = "UFS2"
+            Type        = "ufs2"
         },
         new FileSystemTest
         {
@@ -183,7 +183,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -193,7 +193,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -204,7 +204,7 @@ public class Whole : FilesystemTest
             Clusters    = 2880,
             ClusterSize = 512,
             VolumeName  = "",
-            Type        = "UFS2"
+            Type        = "ufs2"
         },
         new FileSystemTest
         {
@@ -214,7 +214,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -224,7 +224,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 2880,
             ClusterSize = 512,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -235,7 +235,7 @@ public class Whole : FilesystemTest
             Clusters    = 2880,
             ClusterSize = 512,
             VolumeName  = "",
-            Type        = "UFS2"
+            Type        = "ufs2"
         },
         new FileSystemTest
         {
@@ -245,7 +245,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 720,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -255,7 +255,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 720,
             ClusterSize = 2048,
-            Type        = "UFS"
+            Type        = "ufs"
         },
         new FileSystemTest
         {
@@ -266,7 +266,7 @@ public class Whole : FilesystemTest
             Clusters    = 720,
             ClusterSize = 2048,
             VolumeName  = "",
-            Type        = "UFS2"
+            Type        = "ufs2"
         }
-    };
+    ];
 }

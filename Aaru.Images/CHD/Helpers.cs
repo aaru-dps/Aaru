@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -42,6 +40,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
+
+namespace Aaru.Images;
 
 public sealed partial class Chd
 {
@@ -64,8 +64,7 @@ public sealed partial class Chd
 
     ErrorNumber GetHunk(ulong hunkNo, out byte[] buffer)
     {
-        if(_hunkCache.TryGetValue(hunkNo, out buffer))
-            return ErrorNumber.NoError;
+        if(_hunkCache.TryGetValue(hunkNo, out buffer)) return ErrorNumber.NoError;
 
         switch(_mapVersion)
         {
@@ -75,13 +74,14 @@ public sealed partial class Chd
 
                 var compHunk = new byte[length];
                 _imageStream.Seek((long)offset, SeekOrigin.Begin);
-                _imageStream.Read(compHunk, 0, compHunk.Length);
+                _imageStream.EnsureRead(compHunk, 0, compHunk.Length);
 
                 if(length == _sectorsPerHunk * _imageInfo.SectorSize)
                     buffer = compHunk;
                 else if((Compression)_hdrCompression > Compression.Zlib)
                 {
-                    AaruConsole.ErrorWriteLine($"Unsupported compression {(Compression)_hdrCompression}");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_compression_0,
+                                                             (Compression)_hdrCompression));
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -89,12 +89,14 @@ public sealed partial class Chd
                 {
                     var zStream = new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress);
                     buffer = new byte[_sectorsPerHunk * _imageInfo.SectorSize];
-                    int read = zStream.Read(buffer, 0, (int)(_sectorsPerHunk * _imageInfo.SectorSize));
+                    int read = zStream.EnsureRead(buffer, 0, (int)(_sectorsPerHunk * _imageInfo.SectorSize));
 
                     if(read != _sectorsPerHunk * _imageInfo.SectorSize)
                     {
-                        AaruConsole.
-                            ErrorWriteLine($"Unable to decompress hunk correctly, got {read} bytes, expected {_sectorsPerHunk * _imageInfo.SectorSize}");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                                    .Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                                 read,
+                                                                 _sectorsPerHunk * _imageInfo.SectorSize));
 
                         return ErrorNumber.InOutError;
                     }
@@ -111,31 +113,34 @@ public sealed partial class Chd
                 switch((EntryFlagsV3)(entry.flags & 0x0F))
                 {
                     case EntryFlagsV3.Invalid:
-                        AaruConsole.ErrorWriteLine("Invalid hunk found.");
+                        AaruConsole.ErrorWriteLine(Localization.Invalid_hunk_found);
 
                         return ErrorNumber.InvalidArgument;
                     case EntryFlagsV3.Compressed:
                         switch((Compression)_hdrCompression)
                         {
-                            case Compression.None: goto uncompressedV3;
+                            case Compression.None:
+                                goto uncompressedV3;
                             case Compression.Zlib:
                             case Compression.ZlibPlus:
                                 if(_isHdd)
                                 {
                                     var zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
                                     _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                                    _imageStream.Read(zHunk, 0, zHunk.Length);
+                                    _imageStream.EnsureRead(zHunk, 0, zHunk.Length);
 
                                     var zStream =
                                         new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress);
 
                                     buffer = new byte[_bytesPerHunk];
-                                    int read = zStream.Read(buffer, 0, (int)_bytesPerHunk);
+                                    int read = zStream.EnsureRead(buffer, 0, (int)_bytesPerHunk);
 
                                     if(read != _bytesPerHunk)
                                     {
-                                        AaruConsole.
-                                            ErrorWriteLine($"Unable to decompress hunk correctly, got {read} bytes, expected {_bytesPerHunk}");
+                                        AaruConsole.ErrorWriteLine(string.Format(Localization
+                                                                          .Unable_to_decompress_hunk_correctly_got_0_bytes_expected_1,
+                                                                       read,
+                                                                       _bytesPerHunk));
 
                                         return ErrorNumber.InOutError;
                                     }
@@ -146,14 +151,16 @@ public sealed partial class Chd
                                 // TODO: Guess wth is MAME doing with these hunks
                                 else
                                 {
-                                    AaruConsole.ErrorWriteLine("Compressed CD/GD-ROM hunks are not yet supported");
+                                    AaruConsole.ErrorWriteLine(Localization
+                                                                  .Compressed_CD_GD_ROM_hunks_are_not_yet_supported);
 
                                     return ErrorNumber.NotImplemented;
                                 }
 
                                 break;
                             case Compression.Av:
-                                AaruConsole.ErrorWriteLine($"Unsupported compression {(Compression)_hdrCompression}");
+                                AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_compression_0,
+                                                                         (Compression)_hdrCompression));
 
                                 return ErrorNumber.NotImplemented;
                         }
@@ -163,29 +170,29 @@ public sealed partial class Chd
                     uncompressedV3:
                         buffer = new byte[_bytesPerHunk];
                         _imageStream.Seek((long)entry.offset, SeekOrigin.Begin);
-                        _imageStream.Read(buffer, 0, buffer.Length);
+                        _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
                         break;
                     case EntryFlagsV3.Mini:
                         buffer = new byte[_bytesPerHunk];
-                        byte[] mini;
-                        mini = BigEndianBitConverter.GetBytes(entry.offset);
+                        byte[] mini = BigEndianBitConverter.GetBytes(entry.offset);
 
-                        for(var i = 0; i < _bytesPerHunk; i++)
-                            buffer[i] = mini[i % 8];
+                        for(var i = 0; i < _bytesPerHunk; i++) buffer[i] = mini[i % 8];
 
                         break;
-                    case EntryFlagsV3.SelfHunk: return GetHunk(entry.offset, out buffer);
+                    case EntryFlagsV3.SelfHunk:
+                        return GetHunk(entry.offset, out buffer);
                     case EntryFlagsV3.ParentHunk:
-                        AaruConsole.ErrorWriteLine("Parent images are not supported");
+                        AaruConsole.ErrorWriteLine(Localization.Parent_images_are_not_supported);
 
                         return ErrorNumber.NotImplemented;
                     case EntryFlagsV3.SecondCompressed:
-                        AaruConsole.ErrorWriteLine("FLAC is not supported");
+                        AaruConsole.ErrorWriteLine(Localization.FLAC_is_not_supported);
 
                         return ErrorNumber.NotImplemented;
                     default:
-                        AaruConsole.ErrorWriteLine($"Hunk type {entry.flags & 0xF} is not supported");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Hunk_type_0_is_not_supported,
+                                                                 entry.flags & 0xF));
 
                         return ErrorNumber.NotSupported;
                 }
@@ -196,24 +203,23 @@ public sealed partial class Chd
                 {
                     buffer = new byte[_bytesPerHunk];
                     _imageStream.Seek(_hunkTableSmall[hunkNo] * _bytesPerHunk, SeekOrigin.Begin);
-                    _imageStream.Read(buffer, 0, buffer.Length);
+                    _imageStream.EnsureRead(buffer, 0, buffer.Length);
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("Compressed v5 hunks not yet supported");
+                    AaruConsole.ErrorWriteLine(Localization.Compressed_v5_hunks_not_yet_supported);
 
                     return ErrorNumber.NotSupported;
                 }
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine($"Unsupported hunk map version {_mapVersion}");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_hunk_map_version_0, _mapVersion));
 
                 return ErrorNumber.NotSupported;
         }
 
-        if(_hunkCache.Count >= _maxBlockCache)
-            _hunkCache.Clear();
+        if(_hunkCache.Count >= _maxBlockCache) _hunkCache.Clear();
 
         _hunkCache.Add(hunkNo, buffer);
 

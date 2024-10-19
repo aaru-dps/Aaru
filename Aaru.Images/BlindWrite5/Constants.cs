@@ -27,21 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class BlindWrite5
 {
     /// <summary>"BWT5 STREAM FOOT"</summary>
-    readonly byte[] _bw5Footer =
-    {
-        0x42, 0x57, 0x54, 0x35, 0x20, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4D, 0x20, 0x46, 0x4F, 0x4F, 0x54
-    };
+    readonly byte[] _bw5Footer = "BWT5 STREAM FOOT"u8.ToArray();
     /// <summary>"BWT5 STREAM SIGN"</summary>
-    readonly byte[] _bw5Signature =
-    {
-        0x42, 0x57, 0x54, 0x35, 0x20, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4D, 0x20, 0x53, 0x49, 0x47, 0x4E
-    };
+    readonly byte[] _bw5Signature = "BWT5 STREAM SIGN"u8.ToArray();
 }

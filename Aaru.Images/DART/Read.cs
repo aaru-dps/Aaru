@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -45,81 +43,72 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
+namespace Aaru.Images;
+
 public sealed partial class Dart
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 84)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 84) return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
         var headerB = new byte[Marshal.SizeOf<Header>()];
 
-        stream.Read(headerB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(headerB, 0, Marshal.SizeOf<Header>());
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(headerB);
 
-        if(header.srcCmp > COMPRESS_NONE)
-            return ErrorNumber.NotSupported;
+        if(header.srcCmp > COMPRESS_NONE) return ErrorNumber.NotSupported;
 
         int expectedMaxSize = 84 + header.srcSize * 2 * 524;
 
         switch(header.srcType)
         {
             case DISK_MAC:
-                if(header.srcSize != SIZE_MAC_SS &&
-                   header.srcSize != SIZE_MAC)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_MAC_SS && header.srcSize != SIZE_MAC) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_LISA:
-                if(header.srcSize != SIZE_LISA)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_LISA) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_APPLE2:
-                if(header.srcSize != DISK_APPLE2)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != DISK_APPLE2) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_MAC_HD:
-                if(header.srcSize != SIZE_MAC_HD)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_MAC_HD) return ErrorNumber.InvalidArgument;
 
                 expectedMaxSize += 64;
 
                 break;
             case DISK_DOS:
-                if(header.srcSize != SIZE_DOS)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_DOS) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_DOS_HD:
-                if(header.srcSize != SIZE_DOS_HD)
-                    return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_DOS_HD) return ErrorNumber.InvalidArgument;
 
                 expectedMaxSize += 64;
 
                 break;
-            default: return ErrorNumber.InvalidArgument;
+            default:
+                return ErrorNumber.InvalidArgument;
         }
 
-        if(stream.Length > expectedMaxSize)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length > expectedMaxSize) return ErrorNumber.InvalidArgument;
 
-        short[] bLength;
-
-        if(header.srcType is DISK_MAC_HD or DISK_DOS_HD)
-            bLength = new short[BLOCK_ARRAY_LEN_HIGH];
-        else
-            bLength = new short[BLOCK_ARRAY_LEN_LOW];
+        var bLength =
+            new short[header.srcType is DISK_MAC_HD or DISK_DOS_HD ? BLOCK_ARRAY_LEN_HIGH : BLOCK_ARRAY_LEN_LOW];
 
         for(var i = 0; i < bLength.Length; i++)
         {
             var tmpShort = new byte[2];
-            stream.Read(tmpShort, 0, 2);
+            stream.EnsureRead(tmpShort, 0, 2);
             bLength[i] = BigEndianBitConverter.ToInt16(tmpShort, 0);
         }
 
@@ -127,42 +116,43 @@ public sealed partial class Dart
         var tagMs  = new MemoryStream();
 
         foreach(short l in bLength)
-            if(l != 0)
-            {
-                var buffer = new byte[BUFFER_SIZE];
+        {
+            if(l == 0) continue;
 
-                if(l == -1)
+            var buffer = new byte[BUFFER_SIZE];
+
+            if(l == -1)
+            {
+                stream.EnsureRead(buffer, 0, BUFFER_SIZE);
+                dataMs.Write(buffer, 0, DATA_SIZE);
+                tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
+            }
+            else
+            {
+                byte[] temp;
+
+                if(header.srcCmp == COMPRESS_RLE)
                 {
-                    stream.Read(buffer, 0, BUFFER_SIZE);
+                    temp = new byte[l * 2];
+                    stream.EnsureRead(temp, 0, temp.Length);
+                    buffer = new byte[BUFFER_SIZE];
+
+                    AppleRle.DecodeBuffer(temp, buffer);
+
                     dataMs.Write(buffer, 0, DATA_SIZE);
                     tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
                 }
                 else
                 {
-                    byte[] temp;
+                    temp = new byte[l];
+                    stream.EnsureRead(temp, 0, temp.Length);
 
-                    if(header.srcCmp == COMPRESS_RLE)
-                    {
-                        temp = new byte[l * 2];
-                        stream.Read(temp, 0, temp.Length);
-                        buffer = new byte[BUFFER_SIZE];
+                    AaruConsole.ErrorWriteLine(Localization.LZH_Compressed_images_not_yet_supported);
 
-                        AppleRle.DecodeBuffer(temp, buffer);
-
-                        dataMs.Write(buffer, 0, DATA_SIZE);
-                        tagMs.Write(buffer, DATA_SIZE, TAG_SIZE);
-                    }
-                    else
-                    {
-                        temp = new byte[l];
-                        stream.Read(temp, 0, temp.Length);
-
-                        AaruConsole.ErrorWriteLine("LZH Compressed images not yet supported");
-
-                        return ErrorNumber.NotImplemented;
-                    }
+                    return ErrorNumber.NotImplemented;
                 }
             }
+        }
 
         _dataCache = dataMs.ToArray();
 
@@ -190,37 +180,24 @@ public sealed partial class Dart
                         var version = new Version(vers);
 
                         string release = null;
-                        string dev     = null;
                         string pre     = null;
 
-                        string major = $"{version.MajorVersion}";
-                        string minor = $".{version.MinorVersion / 10}";
+                        var major = $"{version.MajorVersion}";
+                        var minor = $".{version.MinorVersion / 10}";
 
-                        if(version.MinorVersion % 10 > 0)
-                            release = $".{version.MinorVersion % 10}";
+                        if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
-                        switch(version.DevStage)
-                        {
-                            case Version.DevelopmentStage.Alpha:
-                                dev = "a";
+                        string dev = version.DevStage switch
+                                     {
+                                         Version.DevelopmentStage.Alpha    => "a",
+                                         Version.DevelopmentStage.Beta     => "b",
+                                         Version.DevelopmentStage.PreAlpha => "d",
+                                         _                                 => null
+                                     };
 
-                                break;
-                            case Version.DevelopmentStage.Beta:
-                                dev = "b";
+                        if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                                break;
-                            case Version.DevelopmentStage.PreAlpha:
-                                dev = "d";
-
-                                break;
-                        }
-
-                        if(dev                       == null &&
-                           version.PreReleaseVersion > 0)
-                            dev = "f";
-
-                        if(dev != null)
-                            pre = $"{version.PreReleaseVersion}";
+                        if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                         _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                         _imageInfo.Application        = version.VersionString;
@@ -246,7 +223,7 @@ public sealed partial class Dart
                             _imageInfo.Application        = "DART";
                             _imageInfo.ApplicationVersion = dArtMatch.Groups["version"].Value;
                             _dataChecksum                 = Convert.ToUInt32(dArtMatch.Groups["datachk"].Value, 16);
-                            _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value, 16);
+                            _tagChecksum                  = Convert.ToUInt32(dArtMatch.Groups["tagchk"].Value,  16);
                         }
                     }
                 }
@@ -272,7 +249,9 @@ public sealed partial class Dart
         }
         catch(InvalidCastException) {}
 
-        AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _imageInfo.Sectors              = (ulong)(header.srcSize * 2);
@@ -280,7 +259,7 @@ public sealed partial class Dart
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.SectorSize           = SECTOR_SIZE;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.ImageSize            = _imageInfo.Sectors * SECTOR_SIZE;
         _imageInfo.Version              = header.srcCmp == COMPRESS_NONE ? "1.4" : "1.5";
 
@@ -331,11 +310,9 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -349,18 +326,13 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(tag != SectorTagType.AppleSectorTag)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.AppleSectorTag) return ErrorNumber.NotSupported;
 
-        if(_tagCache        == null ||
-           _tagCache.Length == 0)
-            return ErrorNumber.NoData;
+        if(_tagCache == null || _tagCache.Length == 0) return ErrorNumber.NoData;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * TAG_SECTOR_SIZE];
 
@@ -378,33 +350,37 @@ public sealed partial class Dart
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         ErrorNumber errno = ReadSectors(sectorAddress, length, out byte[] data);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         errno = ReadSectorsTag(sectorAddress, length, SectorTagType.AppleSectorTag, out byte[] tags);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         buffer = new byte[data.Length + tags.Length];
 
         for(uint i = 0; i < length; i++)
         {
-            Array.Copy(data, i * _imageInfo.SectorSize, buffer, i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
+            Array.Copy(data,
+                       i * _imageInfo.SectorSize,
+                       buffer,
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE),
                        _imageInfo.SectorSize);
 
-            Array.Copy(tags, i * TAG_SECTOR_SIZE, buffer,
-                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize, TAG_SECTOR_SIZE);
+            Array.Copy(tags,
+                       i * TAG_SECTOR_SIZE,
+                       buffer,
+                       i * (_imageInfo.SectorSize + TAG_SECTOR_SIZE) + _imageInfo.SectorSize,
+                       TAG_SECTOR_SIZE);
         }
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

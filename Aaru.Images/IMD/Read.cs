@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -41,8 +39,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Imd
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -56,14 +58,13 @@ public sealed partial class Imd
         {
             var b = (byte)stream.ReadByte();
 
-            if(b == 0x1A)
-                break;
+            if(b == 0x1A) break;
 
             cmt.WriteByte(b);
         }
 
         _imageInfo.Comments = StringHandlers.CToString(cmt.ToArray());
-        _sectorsData        = new List<byte[]>();
+        _sectorsData        = [];
 
         byte currentCylinder = 0;
         _imageInfo.Cylinders = 1;
@@ -90,31 +91,27 @@ public sealed partial class Imd
                 _imageInfo.Cylinders++;
             }
 
-            if((head & 1) == 1)
-                _imageInfo.Heads = 2;
+            if((head & 1) == 1) _imageInfo.Heads = 2;
 
-            stream.Read(idmap, 0, idmap.Length);
+            stream.EnsureRead(idmap, 0, idmap.Length);
 
             if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK)
-                stream.Read(cylmap, 0, cylmap.Length);
+                stream.EnsureRead(cylmap, 0, cylmap.Length);
 
-            if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK)
-                stream.Read(headmap, 0, headmap.Length);
+            if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK) stream.EnsureRead(headmap, 0, headmap.Length);
 
             if(n == 0xFF)
             {
                 var bpsbytes = new byte[spt * 2];
-                stream.Read(bpsbytes, 0, bpsbytes.Length);
+                stream.EnsureRead(bpsbytes, 0, bpsbytes.Length);
 
-                for(var i = 0; i < spt; i++)
-                    bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
+                for(var i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
             }
             else
                 for(var i = 0; i < spt; i++)
                     bps[i] = (ushort)(128 << n);
 
-            if(spt > _imageInfo.SectorsPerTrack)
-                _imageInfo.SectorsPerTrack = spt;
+            if(spt > _imageInfo.SectorsPerTrack) _imageInfo.SectorsPerTrack = spt;
 
             SortedDictionary<byte, byte[]> track = new();
 
@@ -124,24 +121,21 @@ public sealed partial class Imd
                 var data = new byte[bps[i]];
 
                 // TODO; Handle disks with different bps in track 0
-                if(bps[i] > _imageInfo.SectorSize)
-                    _imageInfo.SectorSize = bps[i];
+                if(bps[i] > _imageInfo.SectorSize) _imageInfo.SectorSize = bps[i];
 
                 switch(type)
                 {
                     case SectorType.Unavailable:
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         break;
                     case SectorType.Normal:
                     case SectorType.Deleted:
                     case SectorType.Error:
                     case SectorType.DeletedError:
-                        stream.Read(data, 0, data.Length);
+                        stream.EnsureRead(data, 0, data.Length);
 
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         _imageInfo.ImageSize += (ulong)data.Length;
 
@@ -153,12 +147,11 @@ public sealed partial class Imd
                         var filling = (byte)stream.ReadByte();
                         ArrayHelpers.ArrayFill(data, filling);
 
-                        if(!track.ContainsKey(idmap[i]))
-                            track.Add(idmap[i], data);
+                        if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
                         break;
                     default:
-                        AaruConsole.ErrorWriteLine($"Invalid sector type {(byte)type}");
+                        AaruConsole.ErrorWriteLine(string.Format(Localization.Invalid_sector_type_0, (byte)type));
 
                         return ErrorNumber.InvalidArgument;
                 }
@@ -206,12 +199,12 @@ public sealed partial class Imd
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("IMD image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.IMD_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("IMD comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization.IMD_comments_0, _imageInfo.Comments);
 
         return ErrorNumber.NoError;
     }
@@ -224,11 +217,9 @@ public sealed partial class Imd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -239,4 +230,6 @@ public sealed partial class Imd
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

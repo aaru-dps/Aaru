@@ -23,28 +23,29 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class IPOD : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "IPOD");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "IPOD");
+
     public override IMediaImage Plugin => new Udif();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "DOS_1440.dmg.lz",
@@ -52,14 +53,14 @@ public class IPOD : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "ff419213080574056ebd9adf7bab3d32",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -68,14 +69,14 @@ public class IPOD : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "c2be571406cf6353269faa59a4a8c0a4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -84,14 +85,14 @@ public class IPOD : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "92ea7a359957012a682ba126cfdef0ce",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -100,14 +101,14 @@ public class IPOD : BlockMediaImageTest
             Sectors    = 10240,
             SectorSize = 512,
             Md5        = "df3b4331a4a5652393ff55f001998439",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 10240
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -213,5 +214,5 @@ public class IPOD : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "b7d4ad55c7702658081b6578b588a57f"
         }
-    };
+    ];
 }

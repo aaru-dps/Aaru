@@ -23,29 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.NTFS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class GPT : FilesystemTest
-{
-    public GPT() : base("NTFS") {}
+namespace Aaru.Tests.Filesystems.NTFS;
 
+[TestFixture]
+public class GPT() : FilesystemTest("ntfs")
+{
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "New Technology File System (GPT)");
-    public override IFilesystem Plugin     => new NTFS();
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (GPT)");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.NTFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "haiku_hrev51259.aif",
@@ -57,5 +55,5 @@ public class GPT : FilesystemTest
             ClusterSize  = 4096,
             VolumeSerial = "2A1DF87732D3285C"
         }
-    };
+    ];
 }

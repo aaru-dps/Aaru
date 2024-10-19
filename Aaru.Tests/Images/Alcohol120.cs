@@ -23,34 +23,34 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class Alcohol120 : OpticalMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Alcohol 120%");
-    public override IMediaImage Plugin => new DiscImages.Alcohol120();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Alcohol 120%");
+    public override IMediaImage Plugin     => new Aaru.Images.Alcohol120();
 
     public override OpticalImageTestExpected[] Tests => new[]
     {
         new OpticalImageTestExpected
         {
             TestFile      = "cdiready_the_apprentice.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 279300,
             Md5           = "556d7d32e3c01c2087cc56b25fe5f66d",
             LongMd5       = "556d7d32e3c01c2087cc56b25fe5f66d",
             SubchannelMd5 = "6ffdfdeacee7cd3caf6316f6b5f3a635",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -227,7 +227,7 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -237,8 +237,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "dc8aaff9bd1a8a6f642e15bce29cd03e",
             LongMd5       = "1ba5f0fb9f3572197a8d039fd341c0aa",
             SubchannelMd5 = "95ef603d7dc9e285929cbf3c79ba9db2",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -247,29 +247,29 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 469652,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "New Volume"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
             TestFile      = "jaguarcd.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 243587,
             Md5           = "1dee46e2fa0de388d1f225ab8fa6d0b4",
             LongMd5       = "1dee46e2fa0de388d1f225ab8fa6d0b4",
             SubchannelMd5 = "b765ee54404c081b6aa8e67181d04e17",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -358,18 +358,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
             TestFile      = "pcengine.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CD,
             Sectors       = 160956,
             Md5           = "248ff28ea147ecdf0724fdfb0e59174a",
             LongMd5       = "eb48e46f5bd085dd6f9936d89afe6e9b",
             SubchannelMd5 = "42eea856ab1bbb04d16b1efed7c54d3f",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -386,15 +386,15 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 2,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 28672,
                             ClusterSize = 2048,
-                            Type        = "PC Engine filesystem"
+                            Type        = "pcengine"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -508,18 +508,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
             TestFile      = "pcfx.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CD,
             Sectors       = 246680,
             Md5           = "64d6baf711d2e0f24499d284ac2bc580",
             LongMd5       = "f0af56f9d093b214e1b7c9148a869eb3",
             SubchannelMd5 = "e596bcd432f69758678cda1e04207de5",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -536,17 +536,17 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 2,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 514,
                             ClusterSize = 2048,
-                            Type        = "PC-FX",
+                            Type        = "pcfx",
                             VolumeName  = "同級生２"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -596,18 +596,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
             TestFile      = "report_audiocd.mds",
-            MediaType     = MediaType.CDROMXA,
+            MediaType     = MediaType.CDDA,
             Sectors       = 247073,
             Md5           = "ff35cfa013871b322ef54612e719c185",
             LongMd5       = "ff35cfa013871b322ef54612e719c185",
             SubchannelMd5 = "9da6ad8f6f0cadd92509c10809da7296",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -720,7 +720,7 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -732,8 +732,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "016e9431ca3161d427b29dbc1312a232",
             LongMd5       = "6b4e35ec371770751f26163629253015",
             SubchannelMd5 = "6ea1db8638c111b7fd45b35a138d24fe",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -748,19 +748,19 @@ public class Alcohol120 : OpticalMediaImageTest
                             {
                                 Clusters    = 63562,
                                 ClusterSize = 8192,
-                                Type        = "HFS",
+                                Type        = "hfs",
                                 VolumeName  = "Winpower"
                             },
                             new FileSystemTest
                             {
                                 Clusters    = 254265,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "Winpower"
                             }
                         }*/
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -772,8 +772,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "016e9431ca3161d427b29dbc1312a232",
             LongMd5       = "6b4e35ec371770751f26163629253015",
             SubchannelMd5 = "1994c303674718c74b35f9a4ea1d3515",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -788,19 +788,19 @@ public class Alcohol120 : OpticalMediaImageTest
                             {
                                 Clusters    = 63562,
                                 ClusterSize = 8192,
-                                Type        = "HFS",
+                                Type        = "hfs",
                                 VolumeName  = "Winpower"
                             },
                             new FileSystemTest
                             {
                                 Clusters    = 254265,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "Winpower"
                             }
                         }*/
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -810,8 +810,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5       = "a1890f71563eb9907e4a08fef6afd6bf",
             SubchannelMd5 = "337aefffca57a2d0222dabd8989f0b3f",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -820,19 +820,19 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -842,8 +842,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
             SubchannelMd5 = "6fe81a972e750c68e08f6935e4d91e34",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -852,19 +852,19 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -874,8 +874,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "fe67ffb95da123e060a1c4d278df3c5a",
             LongMd5       = "9c13c4f7dcb76feae684ba9a368094c5",
             SubchannelMd5 = "e4095cb91fa40382dcadc22433b281c3",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -884,25 +884,25 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -911,8 +911,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 3455936,
             Md5       = "692148a01b4204160b088141fb52bd70",
             LongMd5   = "692148a01b4204160b088141fb52bd70",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -920,19 +920,19 @@ public class Alcohol120 : OpticalMediaImageTest
                     End     = 3455935,
                     Pregap  = 0,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters     = 3455936,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Test DVD",
                             VolumeSerial = "483E25D50034BBB0"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -943,8 +943,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 2146368,
             Md5       = "32746029d25e430cd50c464232536d1a",
             LongMd5   = "32746029d25e430cd50c464232536d1a",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -959,12 +959,12 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -975,8 +975,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 2146368,
             Md5       = "c20217c0356fcd074c33b5f4b1355914",
             LongMd5   = "c20217c0356fcd074c33b5f4b1355914",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -991,12 +991,12 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -1007,8 +1007,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 2146368,
             Md5       = "0a49394278360f737a22e48ef125d7cd",
             LongMd5   = "0a49394278360f737a22e48ef125d7cd",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1023,12 +1023,12 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -1039,8 +1039,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 2295104,
             Md5       = "4d0cac3a6f56c581870de38682408f95",
             LongMd5   = "4d0cac3a6f56c581870de38682408f95",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1055,12 +1055,12 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -1071,8 +1071,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 2146368,
             Md5       = "4844a94a97027b0fea664a1fba3ecbb2",
             LongMd5   = "4844a94a97027b0fea664a1fba3ecbb2",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1087,12 +1087,12 @@ public class Alcohol120 : OpticalMediaImageTest
                                 Bootable    = true,
                                 Clusters    = 2146357,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = "SU1100.001"
                             }
                         }*/
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1102,8 +1102,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "7246ab63afe862677302929fb3514676",
             LongMd5       = "797e7cb29028763ab827212d8630cb50",
             SubchannelMd5 = "ceee6cf49071da484dd995c50a0b09fb",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1216,18 +1216,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 14,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 69136,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Melanie C"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1237,8 +1237,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "7c8fc7bb768cff15d702ac8cd10108d7",
             LongMd5       = "7c8fc7bb768cff15d702ac8cd10108d7",
             SubchannelMd5 = "ca781a7afc4eb77c51f7c551ed45c03c",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1327,7 +1327,7 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 2
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1337,8 +1337,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "947139fcc9924337f11040945ee8f1f7",
             LongMd5       = "5d755e3ea7c66f81a381b9c59168107a",
             SubchannelMd5 = "84cb28d835c25e51fdcb6c2291707786",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1363,18 +1363,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 3,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 18853,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "New"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1384,8 +1384,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "f95d6f978ddb4f98bbffda403f627fe1",
             LongMd5       = "6751e0ae7821f92221672b1cd5a1ff36",
             SubchannelMd5 = "65f938f7f9ac34fabd3ab94c14eb76b5",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1394,26 +1394,26 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 7,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 600,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "INCD"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 350134,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "InCD",
                             VolumeSerial = "40888C15CA13D401InCD"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
 
         // TODO: Needs redump, corrupted image
@@ -1425,8 +1425,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "064afaa489a2f402f42aaf9b546a3fef",
             LongMd5       = "4d02563f72bdfbbf5a41bacf7a0fe916",
             SubchannelMd5 = "e5e51af5f0a689f956ffc52df2949e71",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1441,7 +1441,7 @@ public class Alcohol120 : OpticalMediaImageTest
                             {
                                 Clusters    = 1587,
                                 ClusterSize = 2048,
-                                Type        = "ISO9660",
+                                Type        = "iso9660",
                                 VolumeName  = ""
                             }
                         }*/
@@ -1566,7 +1566,7 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1576,8 +1576,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "1b13a8f8aeb23f0b8bbc68518217e771",
             LongMd5       = "1b13a8f8aeb23f0b8bbc68518217e771",
             SubchannelMd5 = "25bae9e30657e2f64a45e5f690e3ae9e",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1618,7 +1618,7 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 1
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1627,8 +1627,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 230624,
             Md5       = "020993315e49ab0d36bc7248819162ea",
             LongMd5   = "020993315e49ab0d36bc7248819162ea",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1636,18 +1636,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     End     = 230623,
                     Pregap  = 0,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 22016,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1656,8 +1656,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Sectors   = 257264,
             Md5       = "dff8f2107a4ea9633a88ce38ff609b8e",
             LongMd5   = "dff8f2107a4ea9633a88ce38ff609b8e",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1665,18 +1665,18 @@ public class Alcohol120 : OpticalMediaImageTest
                     End     = 257263,
                     Pregap  = 0,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 206560,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1686,8 +1686,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "236f95016ad395ba691517d35a05b767",
             LongMd5       = "8c48c8951229fd083c1aafcb3e062f2b",
             SubchannelMd5 = "5731d17924f9fa8934c1e1ac076c6259",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1696,24 +1696,24 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 7876,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 1"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 8133,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 1",
                             VolumeSerial = "50958B61AF6A749E"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1723,24 +1723,24 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 2,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 6170,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 2"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 6427,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Session 2",
                             VolumeSerial = "50958BBBAF6A7444"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1750,24 +1750,24 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 3,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 5360,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 3"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 5618,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.00",
+                            Type         = "udf",
                             VolumeName   = "Session 3",
                             VolumeSerial = "50958C19AF6A73E6"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1777,26 +1777,26 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 4,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 45796,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Session 4"
                         },
                         new FileSystemTest
                         {
                             Clusters     = 5790,
                             ClusterSize  = 2048,
-                            Type         = "UDF v2.60",
+                            Type         = "udf",
                             VolumeName   = "Session 4",
                             VolumeSerial = "50958C82AF6A737D"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -1806,8 +1806,8 @@ public class Alcohol120 : OpticalMediaImageTest
             Md5           = "ab3cf9dfcc3e79c57e11e4675655d5e2",
             LongMd5       = "cadb31c693c0996f50ba47e262d84518",
             SubchannelMd5 = "4da6d2891fc0f916c1d6cd6eebe4586a",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -1816,16 +1816,16 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1102,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "VIDEOCD"
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -1835,9 +1835,11 @@ public class Alcohol120 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4
                 }
-            }
+            ]
         },
-        #region These test images violate the specifications and are not expected to work yet
+
+#region These test images violate the specifications and are not expected to work yet
+
         /*
         new OpticalImageTestExpected
         {
@@ -2239,6 +2241,7 @@ public class Alcohol120 : OpticalMediaImageTest
                 }
             }
         },*/
-        #endregion
+
+#endregion
     };
 }

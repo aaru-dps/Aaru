@@ -27,17 +27,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Vhd
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -51,13 +53,15 @@ public sealed partial class Vhd
         else
             imageStream.Seek(-511, SeekOrigin.End);
 
-        imageStream.Read(footerCookieBytes, 0, 8);
+        imageStream.EnsureRead(footerCookieBytes, 0, 8);
         imageStream.Seek(0, SeekOrigin.Begin);
-        imageStream.Read(headerCookieBytes, 0, 8);
+        imageStream.EnsureRead(headerCookieBytes, 0, 8);
 
         var headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
         var footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 
         return headerCookie == IMAGE_COOKIE || footerCookie == IMAGE_COOKIE;
     }
+
+#endregion
 }

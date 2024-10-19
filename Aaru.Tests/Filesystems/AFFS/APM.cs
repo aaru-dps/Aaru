@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.AFFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class APM : FilesystemTest
-{
-    public APM() : base("Amiga FFS") {}
+namespace Aaru.Tests.Filesystems.AFFS;
 
+[TestFixture]
+public class APM() : FilesystemTest("affs")
+{
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System (APM)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System (APM)");
+
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "morphos_3.13.aif",
@@ -79,5 +78,5 @@ public class APM : FilesystemTest
             VolumeName   = "VolumeLabel",
             VolumeSerial = "1D93031D"
         }
-    };
+    ];
 }

@@ -23,28 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 // TODO: Get SunOS and VTOC16 disk labels
 [TestFixture]
 public class Sun : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Sun");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Sun");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 204800,
@@ -108,13 +108,13 @@ public class Sun : PartitionSchemeTest
                     Start    = 915705,
                     Type     = "Linux swap"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 49152,
@@ -142,7 +142,7 @@ public class Sun : PartitionSchemeTest
                     Start    = 144585,
                     Type     = "Linux"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

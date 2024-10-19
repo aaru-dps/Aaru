@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.XENIX;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Whole : FilesystemTest
-{
-    public Whole() : base("XENIX fs") {}
+namespace Aaru.Tests.Filesystems.XENIX;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XENIX filesystem");
+[TestFixture]
+public class Whole() : FilesystemTest("xenixfs")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XENIX filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw_dmf.img.lz",
@@ -91,5 +89,5 @@ public class Whole : FilesystemTest
             ClusterSize = 1024,
             VolumeName  = ""
         }
-    };
+    ];
 }

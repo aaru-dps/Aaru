@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Lisa filesystem constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,12 +23,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.LisaFS;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class LisaFS
@@ -75,6 +71,10 @@ public sealed partial class LisaFS
     /// <summary>Root directory ID</summary>
     const short DIRID_ROOT = 0;
 
+    const string FS_TYPE = "lisafs";
+
+#region Nested type: FileType
+
     enum FileType : byte
     {
         /// <summary>Undefined file type</summary>
@@ -110,4 +110,6 @@ public sealed partial class LisaFS
         /// <summary>Erased?</summary>
         KilledObject = 15
     }
+
+#endregion
 }

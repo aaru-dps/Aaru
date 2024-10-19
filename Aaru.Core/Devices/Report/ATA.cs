@@ -27,18 +27,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Report;
 
 using System;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
-using global::Spectre.Console;
+using Spectre.Console;
 using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -50,19 +50,19 @@ public sealed partial class DeviceReport
         AtaErrorRegistersChs   errorChs   = new();
         AtaErrorRegistersLba28 errorLba   = new();
         AtaErrorRegistersLba48 errorLba48 = new();
-        byte[]                 buffer     = Array.Empty<byte>();
-        byte[]                 readBuf    = Array.Empty<byte>();
+        byte[]                 buffer     = [];
+        byte[]                 readBuf    = [];
 
         var mediaTest = new TestedMedia
         {
-            MediumTypeName = AnsiConsole.Ask<string>("Please write a description of the media type and press enter: "),
-            Model = AnsiConsole.Ask<string>("Please write the media model and press enter: "),
+            MediumTypeName    = AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type),
+            Model             = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model),
             MediaIsRecognized = true
         };
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying ATA IDENTIFY...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_ATA_IDENTIFY).IsIndeterminate();
             _dev.AtaIdentify(out buffer, out _, _dev.Timeout, out _);
         });
 
@@ -73,15 +73,11 @@ public sealed partial class DeviceReport
         {
             Identify.IdentifyDevice ataId = mediaTest.IdentifyDevice.Value;
 
-            if(ataId.UnformattedBPT != 0)
-                mediaTest.UnformattedBPT = ataId.UnformattedBPT;
+            if(ataId.UnformattedBPT != 0) mediaTest.UnformattedBPT = ataId.UnformattedBPT;
 
-            if(ataId.UnformattedBPS != 0)
-                mediaTest.UnformattedBPS = ataId.UnformattedBPS;
+            if(ataId.UnformattedBPS != 0) mediaTest.UnformattedBPS = ataId.UnformattedBPS;
 
-            if(ataId.Cylinders       > 0 &&
-               ataId.Heads           > 0 &&
-               ataId.SectorsPerTrack > 0)
+            if(ataId.Cylinders > 0 && ataId is { Heads: > 0, SectorsPerTrack: > 0 })
             {
                 mediaTest.CHS = new Chs
                 {
@@ -93,9 +89,7 @@ public sealed partial class DeviceReport
                 mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
             }
 
-            if(ataId.CurrentCylinders       > 0 &&
-               ataId.CurrentHeads           > 0 &&
-               ataId.CurrentSectorsPerTrack > 0)
+            if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
             {
                 mediaTest.CurrentCHS = new Chs
                 {
@@ -105,8 +99,10 @@ public sealed partial class DeviceReport
                 };
 
                 if(mediaTest.Blocks == 0)
+                {
                     mediaTest.Blocks =
                         (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                }
             }
 
             if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
@@ -121,8 +117,8 @@ public sealed partial class DeviceReport
                 mediaTest.Blocks       = ataId.LBA48Sectors;
             }
 
-            if(ataId.NominalRotationRate != 0x0000 &&
-               ataId.NominalRotationRate != 0xFFFF)
+            if(ataId.NominalRotationRate != 0x0000 && ataId.NominalRotationRate != 0xFFFF)
+            {
                 if(ataId.NominalRotationRate == 0x0001)
                     mediaTest.SolidStateDevice = true;
                 else
@@ -130,24 +126,25 @@ public sealed partial class DeviceReport
                     mediaTest.SolidStateDevice    = false;
                     mediaTest.NominalRotationRate = ataId.NominalRotationRate;
                 }
+            }
 
             uint logicalSectorSize;
             uint physicalSectorSize;
 
-            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-               (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                    if(ataId.LogicalSectorWords <= 255 ||
-                       ataId.LogicalAlignment   == 0xFFFF)
+                {
+                    if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                         logicalSectorSize = 512;
                     else
                         logicalSectorSize = ataId.LogicalSectorWords * 2;
+                }
                 else
                     logicalSectorSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    physicalSectorSize = (uint)(logicalSectorSize * ((1 << ataId.PhysLogSectorSize) & 0xF));
+                    physicalSectorSize = (uint)(logicalSectorSize * (1 << ataId.PhysLogSectorSize & 0xF));
                 else
                     physicalSectorSize = logicalSectorSize;
             }
@@ -163,13 +160,11 @@ public sealed partial class DeviceReport
             {
                 mediaTest.PhysicalBlockSize = physicalSectorSize;
 
-                if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
-                   (ataId.LogicalAlignment & 0x4000) == 0x4000)
+                if((ataId.LogicalAlignment & 0x8000) == 0x0000 && (ataId.LogicalAlignment & 0x4000) == 0x4000)
                     mediaTest.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
             }
 
-            if(ataId.EccBytes != 0x0000 &&
-               ataId.EccBytes != 0xFFFF)
+            if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                 mediaTest.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
             if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -190,163 +185,209 @@ public sealed partial class DeviceReport
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ SECTOR(S) in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_CHS_mode).IsIndeterminate();
                 sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                            readBuf.Length                     > 0;
+            mediaTest.SupportsReadSectors =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadSectorsData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ SECTOR(S) RETRY in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_SECTORS_RETRY_in_CHS_mode).IsIndeterminate();
                 sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                          readBuf.Length                     > 0;
+            mediaTest.SupportsReadRetry =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadSectorsRetryData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ DMA in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_DMA_in_CHS_mode).IsIndeterminate();
                 sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDma = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                        readBuf.Length                     > 0;
+            mediaTest.SupportsReadDma =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadDmaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ DMA RETRY in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_DMA_RETRY_in_CHS_mode).IsIndeterminate();
                 sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                             readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaRetry =
+                !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadDmaRetryData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying SEEK in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_SEEK_in_CHS_mode).IsIndeterminate();
                 sense = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
             });
 
             mediaTest.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                       errorChs.Status, errorChs.Error);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ SECTOR(S) in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_LBA_mode).IsIndeterminate();
                 sense = _dev.Read(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                        readBuf.Length                     > 0;
+            mediaTest.SupportsReadLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLbaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ SECTOR(S) RETRY in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_SECTORS_RETRY_in_LBA_mode).IsIndeterminate();
                 sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                             readBuf.Length                     > 0;
+            mediaTest.SupportsReadRetryLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadRetryLbaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ DMA in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_DMA_in_LBA_mode).IsIndeterminate();
                 sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                           readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadDmaLbaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ DMA RETRY in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_DMA_RETRY_in_LBA_mode).IsIndeterminate();
                 sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                readBuf.Length                     > 0;
+            mediaTest.SupportsReadDmaRetryLba =
+                !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadDmaRetryLbaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying SEEK in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_SEEK_in_LBA_mode).IsIndeterminate();
                 sense = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
             });
 
             mediaTest.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                       errorChs.Status, errorChs.Error);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ SECTOR(S) in LBA48 mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_LBA48_mode).IsIndeterminate();
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 _, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                          readBuf.Length                       > 0;
+            mediaTest.SupportsReadLba48 =
+                !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLba48Data = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ DMA in LBA48 mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_DMA_in_LBA48_mode).IsIndeterminate();
                 sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
             });
 
-            mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                             readBuf.Length                       > 0;
+            mediaTest.SupportsReadDmaLba48 =
+                !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadDmaLba48Data = readBuf;
 
@@ -361,8 +402,7 @@ public sealed partial class DeviceReport
             {
                 ataId = Identify.Decode(buffer).Value;
 
-                if(ataId.EccBytes != 0x0000 &&
-                   ataId.EccBytes != 0xFFFF)
+                if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                     mediaTest.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
                 if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -372,67 +412,117 @@ public sealed partial class DeviceReport
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ LONG in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_LONG_in_CHS_mode).IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf,
+                                      out errorChs,
+                                      false,
+                                      0,
+                                      0,
+                                      1,
+                                      mediaTest.LongBlockSize ?? 0,
+                                      _dev.Timeout,
+                                      out _);
             });
 
-            mediaTest.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                         readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+            mediaTest.SupportsReadLong = !sense                                    &&
+                                         (errorChs.Status & 0x01)          != 0x01 &&
+                                         errorChs.Error                    == 0    &&
+                                         readBuf.Length                    > 0     &&
+                                         BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLongData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ LONG RETRY in CHS mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_LONG_RETRY_in_CHS_mode).IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
-                                      _dev.Timeout, out _);
+                sense = _dev.ReadLong(out readBuf,
+                                      out errorChs,
+                                      true,
+                                      0,
+                                      0,
+                                      1,
+                                      mediaTest.LongBlockSize ?? 0,
+                                      _dev.Timeout,
+                                      out _);
             });
 
-            mediaTest.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                              readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                              checkCorrectRead;
+            mediaTest.SupportsReadLongRetry = !sense                                    &&
+                                              (errorChs.Status & 0x01)          != 0x01 &&
+                                              errorChs.Error                    == 0    &&
+                                              readBuf.Length                    > 0     &&
+                                              BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLongRetryData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_LONG_in_LBA_mode).IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
+                sense = _dev.ReadLong(out readBuf,
+                                      out errorLba,
+                                      false,
+                                      0,
+                                      mediaTest.LongBlockSize ?? 0,
+                                      _dev.Timeout,
                                       out _);
             });
 
-            mediaTest.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                            readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+            mediaTest.SupportsReadLongLba = !sense                                    &&
+                                            (errorLba.Status & 0x01)          != 0x01 &&
+                                            errorLba.Error                    == 0    &&
+                                            readBuf.Length                    > 0     &&
+                                            BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLongLbaData = readBuf;
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Trying READ LONG RETRY in LBA mode...").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Trying_READ_LONG_RETRY_in_LBA_mode).IsIndeterminate();
 
-                sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
+                sense = _dev.ReadLong(out readBuf,
+                                      out errorLba,
+                                      true,
+                                      0,
+                                      mediaTest.LongBlockSize ?? 0,
+                                      _dev.Timeout,
                                       out _);
             });
 
-            mediaTest.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                 readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                                 checkCorrectRead;
+            mediaTest.SupportsReadLongRetryLba = !sense                                    &&
+                                                 (errorLba.Status & 0x01)          != 0x01 &&
+                                                 errorLba.Error                    == 0    &&
+                                                 readBuf.Length                    > 0     &&
+                                                 BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
+            AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                       Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                       sense,
+                                       errorChs.Status,
+                                       errorChs.Error,
+                                       readBuf.Length);
 
             mediaTest.ReadLongRetryLbaData = readBuf;
         }
@@ -446,21 +536,17 @@ public sealed partial class DeviceReport
     public TestedMedia ReportAta(Identify.IdentifyDevice ataId)
     {
         var                    sense        = true;
-        byte[]                 readBuf      = Array.Empty<byte>();
+        byte[]                 readBuf      = [];
         AtaErrorRegistersChs   errorChs     = new();
         AtaErrorRegistersLba28 errorLba     = new();
         AtaErrorRegistersLba48 errorLba48   = new();
         var                    capabilities = new TestedMedia();
 
-        if(ataId.UnformattedBPT != 0)
-            capabilities.UnformattedBPT = ataId.UnformattedBPT;
+        if(ataId.UnformattedBPT != 0) capabilities.UnformattedBPT = ataId.UnformattedBPT;
 
-        if(ataId.UnformattedBPS != 0)
-            capabilities.UnformattedBPS = ataId.UnformattedBPS;
+        if(ataId.UnformattedBPS != 0) capabilities.UnformattedBPS = ataId.UnformattedBPS;
 
-        if(ataId.Cylinders       > 0 &&
-           ataId.Heads           > 0 &&
-           ataId.SectorsPerTrack > 0)
+        if(ataId.Cylinders > 0 && ataId is { Heads: > 0, SectorsPerTrack: > 0 })
         {
             capabilities.CHS = new Chs
             {
@@ -472,9 +558,7 @@ public sealed partial class DeviceReport
             capabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
         }
 
-        if(ataId.CurrentCylinders       > 0 &&
-           ataId.CurrentHeads           > 0 &&
-           ataId.CurrentSectorsPerTrack > 0)
+        if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
         {
             capabilities.CurrentCHS = new Chs
             {
@@ -498,8 +582,8 @@ public sealed partial class DeviceReport
             capabilities.Blocks       = ataId.LBA48Sectors;
         }
 
-        if(ataId.NominalRotationRate != 0x0000 &&
-           ataId.NominalRotationRate != 0xFFFF)
+        if(ataId.NominalRotationRate != 0x0000 && ataId.NominalRotationRate != 0xFFFF)
+        {
             if(ataId.NominalRotationRate == 0x0001)
                 capabilities.SolidStateDevice = true;
             else
@@ -507,19 +591,20 @@ public sealed partial class DeviceReport
                 capabilities.SolidStateDevice    = false;
                 capabilities.NominalRotationRate = ataId.NominalRotationRate;
             }
+        }
 
         uint logicalSectorSize;
         uint physicalSectorSize;
 
-        if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
-           (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+        if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
         {
             if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                if(ataId.LogicalSectorWords <= 255 ||
-                   ataId.LogicalAlignment   == 0xFFFF)
+            {
+                if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
                     logicalSectorSize = 512;
                 else
                     logicalSectorSize = ataId.LogicalSectorWords * 2;
+            }
             else
                 logicalSectorSize = 512;
 
@@ -540,13 +625,11 @@ public sealed partial class DeviceReport
         {
             capabilities.PhysicalBlockSize = physicalSectorSize;
 
-            if((ataId.LogicalAlignment & 0x8000) == 0x0000 &&
-               (ataId.LogicalAlignment & 0x4000) == 0x4000)
+            if((ataId.LogicalAlignment & 0x8000) == 0x0000 && (ataId.LogicalAlignment & 0x4000) == 0x4000)
                 capabilities.LogicalAlignment = (ushort)(ataId.LogicalAlignment & 0x3FFF);
         }
 
-        if(ataId.EccBytes != 0x0000 &&
-           ataId.EccBytes != 0xFFFF)
+        if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
             capabilities.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
         if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -559,171 +642,216 @@ public sealed partial class DeviceReport
         {
             capabilities.CanReadMediaSerial = true;
 
-            if(!string.IsNullOrWhiteSpace(ataId.MediaManufacturer))
-                capabilities.Manufacturer = ataId.MediaManufacturer;
+            if(!string.IsNullOrWhiteSpace(ataId.MediaManufacturer)) capabilities.Manufacturer = ataId.MediaManufacturer;
         }
 
-        ulong checkCorrectRead = 0;
+        const ulong checkCorrectRead = 0;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ SECTOR(S) in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_CHS_mode).IsIndeterminate();
             sense = _dev.Read(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                           readBuf.Length                     > 0;
+        capabilities.SupportsReadSectors =
+            !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadSectorsData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ SECTOR(S) RETRY in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_SECTORS_RETRY_in_CHS_mode).IsIndeterminate();
             sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
         capabilities.SupportsReadRetry =
             !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadSectorsRetryData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ DMA in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_DMA_in_CHS_mode).IsIndeterminate();
             sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
         capabilities.SupportsReadDma =
             !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadDmaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ DMA RETRY in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_DMA_RETRY_in_CHS_mode).IsIndeterminate();
             sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                            readBuf.Length                     > 0;
+        capabilities.SupportsReadDmaRetry =
+            !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadDmaRetryData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SEEK in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SEEK_in_CHS_mode).IsIndeterminate();
             sense = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
         });
 
         capabilities.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                   errorChs.Status, errorChs.Error);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error);
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ SECTOR(S) in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_LBA_mode).IsIndeterminate();
             sense = _dev.Read(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
         });
 
         capabilities.SupportsReadLba =
             !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLbaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ SECTOR(S) RETRY in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_SECTORS_RETRY_in_LBA_mode).IsIndeterminate();
             sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                            readBuf.Length                     > 0;
+        capabilities.SupportsReadRetryLba =
+            !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadRetryLbaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ DMA in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_DMA_in_LBA_mode).IsIndeterminate();
             sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                          readBuf.Length                     > 0;
+        capabilities.SupportsReadDmaLba =
+            !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadDmaLbaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ DMA RETRY in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_DMA_RETRY_in_LBA_mode).IsIndeterminate();
             sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
         });
 
         capabilities.SupportsReadDmaRetryLba =
             !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadDmaRetryLbaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SEEK in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SEEK_in_LBA_mode).IsIndeterminate();
             sense = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
         });
 
         capabilities.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
-                                   errorLba.Status, errorLba.Error);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error);
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ SECTOR(S) in LBA48 mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_SECTORS_in_LBA48_mode).IsIndeterminate();
             sense = _dev.Read(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                         readBuf.Length                       > 0;
+        capabilities.SupportsReadLba48 =
+            !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba48.Status,
+                                   errorLba48.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLba48Data = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ DMA in LBA48 mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_DMA_in_LBA48_mode).IsIndeterminate();
             sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
         });
 
-        capabilities.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
-                                            readBuf.Length                       > 0;
+        capabilities.SupportsReadDmaLba48 =
+            !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 && readBuf.Length > 0;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba48.Status,
+                                   errorLba48.Error,
+                                   readBuf.Length);
 
         capabilities.ReadDmaLba48Data = readBuf;
 
@@ -738,8 +866,7 @@ public sealed partial class DeviceReport
         {
             ataId = Identify.Decode(buffer).Value;
 
-            if(ataId.EccBytes != 0x0000 &&
-               ataId.EccBytes != 0xFFFF)
+            if(ataId.EccBytes != 0x0000 && ataId.EccBytes != 0xFFFF)
                 capabilities.LongBlockSize = logicalSectorSize + ataId.EccBytes;
 
             if(ataId.UnformattedBPS > logicalSectorSize &&
@@ -749,67 +876,117 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ LONG in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_LONG_in_CHS_mode).IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, capabilities.LongBlockSize ?? 0,
-                                  _dev.Timeout, out _);
+            sense = _dev.ReadLong(out readBuf,
+                                  out errorChs,
+                                  false,
+                                  0,
+                                  0,
+                                  1,
+                                  capabilities.LongBlockSize ?? 0,
+                                  _dev.Timeout,
+                                  out _);
         });
 
-        capabilities.SupportsReadLong = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                        readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+        capabilities.SupportsReadLong = !sense                                    &&
+                                        (errorChs.Status & 0x01)          != 0x01 &&
+                                        errorChs.Error                    == 0    &&
+                                        readBuf.Length                    > 0     &&
+                                        BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLongData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ LONG RETRY in CHS mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_LONG_RETRY_in_CHS_mode).IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, capabilities.LongBlockSize ?? 0,
-                                  _dev.Timeout, out _);
+            sense = _dev.ReadLong(out readBuf,
+                                  out errorChs,
+                                  true,
+                                  0,
+                                  0,
+                                  1,
+                                  capabilities.LongBlockSize ?? 0,
+                                  _dev.Timeout,
+                                  out _);
         });
 
-        capabilities.SupportsReadLongRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                             readBuf.Length                     > 0     &&
-                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
+        capabilities.SupportsReadLongRetry = !sense                                    &&
+                                             (errorChs.Status & 0x01)          != 0x01 &&
+                                             errorChs.Error                    == 0    &&
+                                             readBuf.Length                    > 0     &&
+                                             BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorChs.Status,
+                                   errorChs.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLongRetryData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ LONG in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_LONG_in_LBA_mode).IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
+            sense = _dev.ReadLong(out readBuf,
+                                  out errorLba,
+                                  false,
+                                  0,
+                                  capabilities.LongBlockSize ?? 0,
+                                  _dev.Timeout,
                                   out _);
         });
 
-        capabilities.SupportsReadLongLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                           readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
+        capabilities.SupportsReadLongLba = !sense                                    &&
+                                           (errorLba.Status & 0x01)          != 0x01 &&
+                                           errorLba.Error                    == 0    &&
+                                           readBuf.Length                    > 0     &&
+                                           BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLongLbaData = readBuf;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying READ LONG RETRY in LBA mode...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_READ_LONG_RETRY_in_LBA_mode).IsIndeterminate();
 
-            sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
+            sense = _dev.ReadLong(out readBuf,
+                                  out errorLba,
+                                  true,
+                                  0,
+                                  capabilities.LongBlockSize ?? 0,
+                                  _dev.Timeout,
                                   out _);
         });
 
-        capabilities.SupportsReadLongRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
-                                                readBuf.Length > 0 && BitConverter.ToUInt64(readBuf, 0) !=
-                                                checkCorrectRead;
+        capabilities.SupportsReadLongRetryLba = !sense                                    &&
+                                                (errorLba.Status & 0x01)          != 0x01 &&
+                                                errorLba.Error                    == 0    &&
+                                                readBuf.Length                    > 0     &&
+                                                BitConverter.ToUInt64(readBuf, 0) != checkCorrectRead;
 
-        AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
-                                   sense, errorLba.Status, errorLba.Error, readBuf.Length);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME,
+                                   Localization.Core.Sense_0_Status_1_Error_2_Length_3,
+                                   sense,
+                                   errorLba.Status,
+                                   errorLba.Error,
+                                   readBuf.Length);
 
         capabilities.ReadLongRetryLbaData = readBuf;
 
@@ -823,7 +1000,7 @@ public sealed partial class DeviceReport
     {
         var empty = new byte[512];
 
-        Array.Copy(empty, 0, buffer, 20, 20);
+        Array.Copy(empty, 0, buffer, 20,  20);
         Array.Copy(empty, 0, buffer, 216, 8);
         Array.Copy(empty, 0, buffer, 224, 8);
         Array.Copy(empty, 0, buffer, 352, 40);

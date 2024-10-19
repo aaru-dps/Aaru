@@ -1,28 +1,35 @@
-namespace Aaru.Tests.Images;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using Aaru.Tests.Filesystems;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NUnit.Framework;
+using File = System.IO.File;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Tests.Images;
 
 public abstract class OpticalMediaImageTest : BaseMediaImageTest
 {
     const           uint                       SECTORS_TO_READ = 256;
     public abstract OpticalImageTestExpected[] Tests { get; }
+
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
 
     [Test]
     public void Info()
@@ -36,52 +43,70 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
+                        Assert.That(image.Info.Sectors,
+                                    Is.EqualTo(test.Sectors),
+                                    string.Format(Localization.Sectors_0, testFile));
 
                         if(test.SectorSize > 0)
-                            Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
+                        {
+                            Assert.That(image.Info.SectorSize,
+                                        Is.EqualTo(test.SectorSize),
+                                        string.Format(Localization.Sector_size_0, testFile));
+                        }
 
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
+                        Assert.That(image.Info.MediaType,
+                                    Is.EqualTo(test.MediaType),
+                                    string.Format(Localization.Media_type_0, testFile));
 
-                        if(image.Info.XmlMediaType != XmlMediaType.OpticalDisc)
-                            return;
+                        if(image.Info.MetadataMediaType != MetadataMediaType.OpticalDisc) return;
 
-                        Assert.AreEqual(test.Tracks.Length, image.Tracks.Count, $"Tracks: {testFile}");
+                        Assert.That(image.Tracks,
+                                    Has.Count.EqualTo(test.Tracks.Length),
+                                    string.Format(Localization.Tracks_0, testFile));
 
-                        image.Tracks.Select(t => t.Session).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Session), $"Track session: {testFile}");
+                        image.Tracks.Select(t => t.Session)
+                             .Should()
+                             .BeEquivalentTo(test.Tracks.Select(s => s.Session),
+                                             string.Format(Localization.Track_session_0, testFile));
 
-                        image.Tracks.Select(t => t.StartSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Start), $"Track start: {testFile}");
+                        image.Tracks.Select(t => t.StartSector)
+                             .Should()
+                             .BeEquivalentTo(test.Tracks.Select(s => s.Start),
+                                             string.Format(Localization.Track_start_0, testFile));
 
-                        image.Tracks.Select(t => t.EndSector).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.End), $"Track end: {testFile}");
+                        image.Tracks.Select(t => t.EndSector)
+                             .Should()
+                             .BeEquivalentTo(test.Tracks.Select(s => s.End),
+                                             string.Format(Localization.Track_end_0, testFile));
 
-                        image.Tracks.Select(t => t.Pregap).Should().
-                              BeEquivalentTo(test.Tracks.Select(s => s.Pregap), $"Track pregap: {testFile}");
+                        image.Tracks.Select(t => t.Pregap)
+                             .Should()
+                             .BeEquivalentTo(test.Tracks.Select(s => s.Pregap),
+                                             string.Format(Localization.Track_pregap_0, testFile));
 
                         var trackNo = 0;
 
@@ -90,17 +115,16 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                         foreach(Track currentTrack in image.Tracks)
                         {
-                            if(currentTrack.EndSector > latestEndSector)
-                                latestEndSector = currentTrack.EndSector;
+                            if(currentTrack.EndSector > latestEndSector) latestEndSector = currentTrack.EndSector;
 
                             if(image.Info.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
                             {
                                 ErrorNumber errno =
-                                    image.ReadSectorTag(currentTrack.Sequence, SectorTagType.CdTrackFlags,
+                                    image.ReadSectorTag(currentTrack.Sequence,
+                                                        SectorTagType.CdTrackFlags,
                                                         out byte[] tmp);
 
-                                if(errno != ErrorNumber.NoError)
-                                    continue;
+                                if(errno != ErrorNumber.NoError) continue;
 
                                 flags[trackNo] = tmp[0];
                             }
@@ -108,11 +132,17 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             trackNo++;
                         }
 
-                        flags.Should().BeEquivalentTo(test.Tracks.Select(s => s.Flags), $"Track flags: {testFile}");
+                        flags.Should()
+                             .BeEquivalentTo(test.Tracks.Select(s => s.Flags),
+                                             string.Format(Localization.Track_flags_0, testFile));
 
-                        Assert.AreEqual(latestEndSector, image.Info.Sectors - 1,
-                                        $"Last sector for tracks is {latestEndSector}, but it is {image.Info.Sectors} for image");
+                        Assert.That(image.Info.Sectors - 1,
+                                    Is.EqualTo(latestEndSector),
+                                    string.Format(Localization.Last_sector_for_tracks_is_0_but_it_is_1_for_image,
+                                                  latestEndSector,
+                                                  image.Info.Sectors));
                     });
+                }
             }
         });
     }
@@ -129,39 +159,37 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
                         foreach(TrackInfoTestExpected track in test.Tracks)
                         {
-                            if(track.FileSystems is null)
-                                continue;
+                            if(track.FileSystems is null) continue;
 
                             ulong trackStart = track.Start + track.Pregap;
 
-                            if(track.Number == 1 &&
-                               track.Pregap >= 150)
-                                trackStart -= 150;
+                            if(track.Number <= 1 && track.Pregap >= 150) trackStart -= 150;
 
                             var partition = new Partition
                             {
@@ -169,113 +197,171 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                 Start  = trackStart
                             };
 
-                            Filesystems.Identify(image, out List<string> idPlugins, partition);
+                            Core.Filesystems.Identify(image, out List<string> idPlugins, partition);
 
-                            Assert.AreEqual(track.FileSystems.Length, idPlugins.Count,
-                                            $"Expected {track.FileSystems.Length} filesystems in {testFile} but found {idPlugins.Count}");
+                            Assert.That(idPlugins,
+                                        Has.Count.EqualTo(track.FileSystems.Length),
+                                        string.Format(Localization.Expected_0_filesystems_in_1_but_found_2,
+                                                      track.FileSystems.Length,
+                                                      testFile,
+                                                      idPlugins.Count));
 
                             for(var i = 0; i < track.FileSystems.Length; i++)
                             {
-                                PluginBase plugins = GetPluginBase.Instance;
-                                bool found = plugins.PluginsList.TryGetValue(idPlugins[i], out IFilesystem plugin);
+                                PluginRegister plugins = PluginRegister.Singleton;
+                                bool found = plugins.Filesystems.TryGetValue(idPlugins[i], out IFilesystem fs);
 
                                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 // It is not the case, it changes
-                                if(!found)
-                                    continue;
+                                if(!found) continue;
 
-                                var fs = Activator.CreateInstance(plugin.GetType()) as IFilesystem;
+                                Assert.That(fs,
+                                            Is.Not.Null,
+                                            string.Format(Localization.Could_not_instantiate_filesystem_for_0,
+                                                          testFile));
 
-                                Assert.NotNull(fs, $"Could not instantiate filesystem for {testFile}");
-
-                                fs.GetInformation(image, partition, out _, null);
+                                fs.GetInformation(image, partition, null, out _, out FileSystem fsMetadata);
 
                                 if(track.FileSystems[i].ApplicationId != null)
-                                    Assert.AreEqual(track.FileSystems[i].ApplicationId,
-                                                    fs.XmlFsType.ApplicationIdentifier, $"Application ID: {testFile}");
+                                {
+                                    Assert.That(fsMetadata.ApplicationIdentifier,
+                                                Is.EqualTo(track.FileSystems[i].ApplicationId),
+                                                string.Format(Localization.Application_ID_0, testFile));
+                                }
 
-                                Assert.AreEqual(track.FileSystems[i].Bootable, fs.XmlFsType.Bootable,
-                                                $"Bootable: {testFile}");
+                                Assert.That(fsMetadata.Bootable,
+                                            Is.EqualTo(track.FileSystems[i].Bootable),
+                                            string.Format(Localization.Bootable_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].Clusters, fs.XmlFsType.Clusters,
-                                                $"Clusters: {testFile}");
+                                Assert.That(fsMetadata.Clusters,
+                                            Is.EqualTo(track.FileSystems[i].Clusters),
+                                            string.Format(Localization.Clusters_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].ClusterSize, fs.XmlFsType.ClusterSize,
-                                                $"Cluster size: {testFile}");
+                                Assert.That(fsMetadata.ClusterSize,
+                                            Is.EqualTo(track.FileSystems[i].ClusterSize),
+                                            string.Format(Localization.Cluster_size_0, testFile));
 
                                 if(track.FileSystems[i].SystemId != null)
-                                    Assert.AreEqual(track.FileSystems[i].SystemId, fs.XmlFsType.SystemIdentifier,
-                                                    $"System ID: {testFile}");
+                                {
+                                    Assert.That(fsMetadata.SystemIdentifier,
+                                                Is.EqualTo(track.FileSystems[i].SystemId),
+                                                string.Format(Localization.System_ID_0, testFile));
+                                }
 
-                                Assert.AreEqual(track.FileSystems[i].Type, fs.XmlFsType.Type,
-                                                $"Filesystem type: {testFile}");
+                                Assert.That(fsMetadata.Type,
+                                            Is.EqualTo(track.FileSystems[i].Type),
+                                            string.Format(Localization.Filesystem_type_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeName, fs.XmlFsType.VolumeName,
-                                                $"Volume name: {testFile}");
+                                Assert.That(fsMetadata.VolumeName,
+                                            Is.EqualTo(track.FileSystems[i].VolumeName),
+                                            string.Format(Localization.Volume_name_0, testFile));
 
-                                Assert.AreEqual(track.FileSystems[i].VolumeSerial, fs.XmlFsType.VolumeSerial,
-                                                $"Volume serial: {testFile}");
+                                Assert.That(fsMetadata.VolumeSerial,
+                                            Is.EqualTo(track.FileSystems[i].VolumeSerial),
+                                            string.Format(Localization.Volume_serial_0, testFile));
 
-                                var rofs = Activator.CreateInstance(plugin.GetType()) as IReadOnlyFilesystem;
-
-                                if(rofs == null)
+                                if(fs is not IReadOnlyFilesystem rofs)
                                 {
                                     if(track.FileSystems[i].Contents     != null ||
                                        track.FileSystems[i].ContentsJson != null ||
                                        File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
-                                        Assert.NotNull(null,
-                                                       $"Could not instantiate filesystem for {testFile}, track {track.Number}, filesystem {i}");
+                                    {
+                                        Assert.Fail(string.Format(Localization
+                                                                     .Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
+                                                                  testFile,
+                                                                  track.Number,
+                                                                  i));
+                                    }
 
                                     continue;
                                 }
 
                                 track.FileSystems[i].Encoding ??= Encoding.ASCII;
 
-                                ErrorNumber ret = rofs.Mount(image, partition, track.FileSystems[i].Encoding, null,
+                                ErrorNumber ret = rofs.Mount(image,
+                                                             partition,
+                                                             track.FileSystems[i].Encoding,
+                                                             null,
                                                              track.FileSystems[i].Namespace);
 
-                                Assert.AreEqual(ErrorNumber.NoError, ret, $"Unmountable: {testFile}");
+                                Assert.That(ret,
+                                            Is.EqualTo(ErrorNumber.NoError),
+                                            string.Format(Localization.Unmountable_0, testFile));
 
-                                var serializer = new JsonSerializer
+                                var serializerOptions = new JsonSerializerOptions
                                 {
-                                    Formatting        = Formatting.Indented,
-                                    MaxDepth          = 16384,
-                                    NullValueHandling = NullValueHandling.Ignore
+                                    Converters =
+                                    {
+                                        new JsonStringEnumConverter()
+                                    },
+                                    MaxDepth = 1536, // More than this an we get a StackOverflowException
+                                    WriteIndented = true,
+                                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                                    PropertyNameCaseInsensitive = true
                                 };
 
-                                serializer.Converters.Add(new StringEnumConverter());
-
                                 if(track.FileSystems[i].ContentsJson != null)
+                                {
                                     track.FileSystems[i].Contents =
-                                        serializer.
-                                            Deserialize<
-                                                Dictionary<string, FileData>>(new JsonTextReader(new StringReader(track.
-                                                                                  FileSystems[i].
-                                                                                  ContentsJson)));
+                                        JsonSerializer.Deserialize<Dictionary<string, FileData>>(track.FileSystems[i]
+                                               .ContentsJson,
+                                            serializerOptions);
+                                }
                                 else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
                                 {
                                     var sr =
-                                        new StreamReader($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
+                                        new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json",
+                                                       FileMode.Open);
 
                                     track.FileSystems[i].Contents =
-                                        serializer.Deserialize<Dictionary<string, FileData>>(new JsonTextReader(sr));
+                                        JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, serializerOptions);
                                 }
 
-                                if(track.FileSystems[i].Contents is null)
-                                    continue;
+                                if(track.FileSystems[i].Contents is null) continue;
 
-                                ReadOnlyFilesystemTest.TestDirectory(rofs, "/", track.FileSystems[i].Contents, testFile,
-                                                                     false);
+                                var currentDepth = 0;
+
+                                ReadOnlyFilesystemTest.TestDirectory(rofs,
+                                                                     "/",
+                                                                     track.FileSystems[i].Contents,
+                                                                     testFile,
+                                                                     true,
+                                                                     out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                             currentLevel,
+                                                                     currentDepth);
+
+                                while(currentLevel.Count > 0)
+                                {
+                                    currentDepth++;
+                                    List<ReadOnlyFilesystemTest.NextLevel> nextLevels = new();
+
+                                    foreach(ReadOnlyFilesystemTest.NextLevel subLevel in currentLevel)
+                                    {
+                                        ReadOnlyFilesystemTest.TestDirectory(rofs,
+                                                                             subLevel.Path,
+                                                                             subLevel.Children,
+                                                                             testFile,
+                                                                             true,
+                                                                             out List<ReadOnlyFilesystemTest.NextLevel>
+                                                                                 nextLevel,
+                                                                             currentDepth);
+
+                                        nextLevels.AddRange(nextLevel);
+                                    }
+
+                                    currentLevel = nextLevels;
+                                }
 
                                 // Uncomment to generate JSON file
-                                /*    var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/");
+                                /*  var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/", 0);
 
-                                    var sw = new StreamWriter($"{testFile}.track{track.Number}.filesystem{i}.contents.json");
-                                    serializer.Serialize(sw, contents);
+                                    var sw = new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json", FileMode.Create);
+                                    JsonSerializer.Serialize(sw, contents, serializerOptions);
                                     sw.Close();*/
                             }
                         }
                     });
+                }
             }
         });
     }
@@ -288,146 +374,171 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
         Assert.Multiple(() =>
         {
-            Parallel.For(0L, Tests.Length, (i, _) =>
-            {
-                string testFile = Tests[i].TestFile;
+            Parallel.For(0L,
+                         Tests.Length,
+                         (i, _) =>
+                         {
+                             string testFile = Tests[i].TestFile;
 
-                bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                             bool exists = File.Exists(testFile);
+                             Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                // It arrives here...
-                if(!exists)
-                    return;
+                             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                             // It arrives here...
+                             if(!exists) return;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
-                filter.Open(testFile);
+                             IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
+                             filter.Open(testFile);
 
-                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+                             var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
 
-                ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                             Assert.That(image,
+                                         Is.Not.Null,
+                                         string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    return;
+                             ErrorNumber opened = image.Open(filter);
 
-                Md5Context ctx;
+                             Assert.That(opened,
+                                         Is.EqualTo(ErrorNumber.NoError),
+                                         string.Format(Localization.Open_0, testFile));
 
-                if(image.Info.XmlMediaType == XmlMediaType.OpticalDisc)
-                {
-                    foreach(bool @long in new[]
-                            {
-                                false, true
-                            })
-                    {
-                        ctx = new Md5Context();
+                             if(opened != ErrorNumber.NoError) return;
 
-                        foreach(Track currentTrack in image.Tracks)
-                        {
-                            ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
-                            ulong doneSectors = 0;
+                             Md5Context ctx;
 
-                            while(doneSectors < sectors)
-                            {
-                                byte[] sector;
+                             if(image.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
+                             {
+                                 foreach(bool @long in new[]
+                                         {
+                                             false, true
+                                         })
+                                 {
+                                     ctx = new Md5Context();
 
-                                if(sectors - doneSectors >= SECTORS_TO_READ)
-                                {
-                                    errno = @long ? image.ReadSectorsLong(doneSectors, SECTORS_TO_READ,
-                                                                          currentTrack.Sequence, out sector)
-                                                : image.ReadSectors(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
-                                                                    out sector);
+                                     foreach(Track currentTrack in image.Tracks)
+                                     {
+                                         ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
+                                         ulong doneSectors = 0;
 
-                                    doneSectors += SECTORS_TO_READ;
-                                }
-                                else
-                                {
-                                    errno = @long ? image.ReadSectorsLong(doneSectors, (uint)(sectors - doneSectors),
-                                                                          currentTrack.Sequence, out sector)
-                                                : image.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                    currentTrack.Sequence, out sector);
+                                         while(doneSectors < sectors)
+                                         {
+                                             byte[] sector;
 
-                                    doneSectors += sectors - doneSectors;
-                                }
+                                             if(sectors - doneSectors >= SECTORS_TO_READ)
+                                             {
+                                                 errno = @long
+                                                             ? image.ReadSectorsLong(doneSectors,
+                                                                 SECTORS_TO_READ,
+                                                                 currentTrack.Sequence,
+                                                                 out sector)
+                                                             : image.ReadSectors(doneSectors,
+                                                                 SECTORS_TO_READ,
+                                                                 currentTrack.Sequence,
+                                                                 out sector);
 
-                                Assert.AreEqual(ErrorNumber.NoError, errno);
+                                                 doneSectors += SECTORS_TO_READ;
+                                             }
+                                             else
+                                             {
+                                                 errno = @long
+                                                             ? image.ReadSectorsLong(doneSectors,
+                                                                 (uint)(sectors - doneSectors),
+                                                                 currentTrack.Sequence,
+                                                                 out sector)
+                                                             : image.ReadSectors(doneSectors,
+                                                                 (uint)(sectors - doneSectors),
+                                                                 currentTrack.Sequence,
+                                                                 out sector);
 
-                                ctx.Update(sector);
-                            }
-                        }
+                                                 doneSectors += sectors - doneSectors;
+                                             }
 
-                        Assert.AreEqual(@long ? Tests[i].LongMd5 : Tests[i].Md5, ctx.End(),
-                                        $"{(@long ? "Long hash" : "Hash")}: {testFile}");
-                    }
+                                             Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
 
-                    if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
-                        return;
+                                             ctx.Update(sector);
+                                         }
+                                     }
 
-                    ctx = new Md5Context();
+                                     Assert.That(ctx.End(),
+                                                 Is.EqualTo(@long ? Tests[i].LongMd5 : Tests[i].Md5),
+                                                 $"{(@long ? "Long hash" : "Hash")}: {testFile}");
+                                 }
 
-                    foreach(Track currentTrack in image.Tracks)
-                    {
-                        ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
-                        ulong doneSectors = 0;
+                                 if(!image.Info.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel)) return;
 
-                        while(doneSectors < sectors)
-                        {
-                            byte[] sector;
+                                 ctx = new Md5Context();
 
-                            if(sectors - doneSectors >= SECTORS_TO_READ)
-                            {
-                                errno = image.ReadSectorsTag(doneSectors, SECTORS_TO_READ, currentTrack.Sequence,
-                                                             SectorTagType.CdSectorSubchannel, out sector);
+                                 foreach(Track currentTrack in image.Tracks)
+                                 {
+                                     ulong sectors     = currentTrack.EndSector - currentTrack.StartSector + 1;
+                                     ulong doneSectors = 0;
 
-                                doneSectors += SECTORS_TO_READ;
-                            }
-                            else
-                            {
-                                errno = image.ReadSectorsTag(doneSectors, (uint)(sectors - doneSectors),
-                                                             currentTrack.Sequence, SectorTagType.CdSectorSubchannel,
-                                                             out sector);
+                                     while(doneSectors < sectors)
+                                     {
+                                         byte[] sector;
 
-                                doneSectors += sectors - doneSectors;
-                            }
+                                         if(sectors - doneSectors >= SECTORS_TO_READ)
+                                         {
+                                             errno = image.ReadSectorsTag(doneSectors,
+                                                                          SECTORS_TO_READ,
+                                                                          currentTrack.Sequence,
+                                                                          SectorTagType.CdSectorSubchannel,
+                                                                          out sector);
 
-                            Assert.AreEqual(ErrorNumber.NoError, errno);
-                            ctx.Update(sector);
-                        }
-                    }
+                                             doneSectors += SECTORS_TO_READ;
+                                         }
+                                         else
+                                         {
+                                             errno = image.ReadSectorsTag(doneSectors,
+                                                                          (uint)(sectors - doneSectors),
+                                                                          currentTrack.Sequence,
+                                                                          SectorTagType.CdSectorSubchannel,
+                                                                          out sector);
 
-                    Assert.AreEqual(Tests[i].SubchannelMd5, ctx.End(), $"Subchannel hash: {testFile}");
-                }
-                else
-                {
-                    ctx = new Md5Context();
-                    ulong doneSectors = 0;
+                                             doneSectors += sectors - doneSectors;
+                                         }
 
-                    while(doneSectors < image.Info.Sectors)
-                    {
-                        byte[] sector;
+                                         Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
+                                         ctx.Update(sector);
+                                     }
+                                 }
 
-                        if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
-                        {
-                            errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
-                            doneSectors += SECTORS_TO_READ;
-                        }
-                        else
-                        {
-                            errno = image.ReadSectors(doneSectors, (uint)(image.Info.Sectors - doneSectors),
-                                                      out sector);
+                                 Assert.That(ctx.End(),
+                                             Is.EqualTo(Tests[i].SubchannelMd5),
+                                             string.Format(Localization.Subchannel_hash_0, testFile));
+                             }
+                             else
+                             {
+                                 ctx = new Md5Context();
+                                 ulong doneSectors = 0;
 
-                            doneSectors += image.Info.Sectors - doneSectors;
-                        }
+                                 while(doneSectors < image.Info.Sectors)
+                                 {
+                                     byte[] sector;
 
-                        Assert.AreEqual(ErrorNumber.NoError, errno);
-                        ctx.Update(sector);
-                    }
+                                     if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
+                                     {
+                                         errno       =  image.ReadSectors(doneSectors, SECTORS_TO_READ, out sector);
+                                         doneSectors += SECTORS_TO_READ;
+                                     }
+                                     else
+                                     {
+                                         errno = image.ReadSectors(doneSectors,
+                                                                   (uint)(image.Info.Sectors - doneSectors),
+                                                                   out sector);
 
-                    Assert.AreEqual(Tests[i].Md5, ctx.End(), $"Hash: {testFile}");
-                }
-            });
+                                         doneSectors += image.Info.Sectors - doneSectors;
+                                     }
+
+                                     Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
+                                     ctx.Update(sector);
+                                 }
+
+                                 Assert.That(ctx.End(),
+                                             Is.EqualTo(Tests[i].Md5),
+                                             string.Format(Localization.Hash_0, testFile));
+                             }
+                         });
         });
     }
 }

@@ -27,11 +27,11 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 namespace Aaru.Database.Models;
 
 /// <inheritdoc />
 /// <summary>Media image format</summary>
-public class MediaFormat : NameCountModel {}
+public class MediaFormat : NameCountModel;

@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,15 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems;
+
 [TestFixture]
 public class Ext2 : FilesystemTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ext2");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext2");
     public override IFilesystem Plugin     => new ext2FS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "netbsd_6.1.5.aif",
@@ -341,5 +341,5 @@ public class Ext2 : FilesystemTest
             VolumeName   = "DicSetter",
             VolumeSerial = "10413797-43d1-6545-8fbc-6ebc9d328be9"
         }
-    };
+    ];
 }

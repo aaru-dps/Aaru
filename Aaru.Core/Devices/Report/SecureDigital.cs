@@ -27,16 +27,15 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
-using System;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Console;
-using global::Spectre.Console;
+using Spectre.Console;
+
+namespace Aaru.Core.Devices.Report;
 
 /// <summary>Implements creating a device report for a SecureDigital or MultiMediaCard flash card</summary>
 public sealed partial class DeviceReport
@@ -46,20 +45,20 @@ public sealed partial class DeviceReport
     {
         var    report = new MmcSd();
         var    sense  = true;
-        byte[] cid    = Array.Empty<byte>();
-        byte[] csd    = Array.Empty<byte>();
-        byte[] ecsd   = Array.Empty<byte>();
-        byte[] scr    = Array.Empty<byte>();
+        byte[] cid    = [];
+        byte[] csd    = [];
+        byte[] ecsd   = [];
+        byte[] scr    = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get CID...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_CID).IsIndeterminate();
             sense = _dev.ReadCid(out cid, out _, _dev.Timeout, out _);
         });
 
         if(!sense)
         {
-            AaruConsole.WriteLine("CID obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.CID_obtained_correctly);
 
             switch(_dev.Type)
             {
@@ -87,53 +86,44 @@ public sealed partial class DeviceReport
             report.CID = cid;
         }
         else
-            AaruConsole.WriteLine("Could not read CID...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_CID);
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get CSD...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_CSD).IsIndeterminate();
             sense = _dev.ReadCsd(out csd, out _, _dev.Timeout, out _);
         });
 
         if(!sense)
         {
-            AaruConsole.WriteLine("CSD obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.CSD_obtained_correctly);
             report.CSD = csd;
         }
         else
-            AaruConsole.WriteLine("Could not read CSD...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_CSD);
 
         sense = true;
         byte[] ocr = null;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying to get OCR...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_to_get_OCR).IsIndeterminate();
 
-            switch(_dev.Type)
-            {
-                case DeviceType.MMC:
-                {
-                    sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
-
-                    break;
-                }
-                case DeviceType.SecureDigital:
-                {
-                    sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
-
-                    break;
-                }
-            }
+            sense = _dev.Type switch
+                    {
+                        DeviceType.MMC           => _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _),
+                        DeviceType.SecureDigital => _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _),
+                        _                        => sense
+                    };
         });
 
         if(!sense)
         {
-            AaruConsole.WriteLine("OCR obtained correctly...");
+            AaruConsole.WriteLine(Localization.Core.OCR_obtained_correctly);
             report.OCR = ocr;
         }
         else
-            AaruConsole.WriteLine("Could not read OCR...");
+            AaruConsole.WriteLine(Localization.Core.Could_not_read_OCR);
 
         switch(_dev.Type)
         {
@@ -141,17 +131,17 @@ public sealed partial class DeviceReport
             {
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Trying to get Extended CSD...").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Trying_to_get_Extended_CSD).IsIndeterminate();
                     sense = _dev.ReadExtendedCsd(out ecsd, out _, _dev.Timeout, out _);
                 });
 
                 if(!sense)
                 {
-                    AaruConsole.WriteLine("Extended CSD obtained correctly...");
+                    AaruConsole.WriteLine(Localization.Core.Extended_CSD_obtained_correctly);
                     report.ExtendedCSD = ecsd;
                 }
                 else
-                    AaruConsole.WriteLine("Could not read Extended CSD...");
+                    AaruConsole.WriteLine(Localization.Core.Could_not_read_Extended_CSD);
 
                 break;
             }
@@ -159,17 +149,17 @@ public sealed partial class DeviceReport
             {
                 Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Trying to get SCR...").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Trying_to_get_SCR).IsIndeterminate();
                     sense = _dev.ReadScr(out scr, out _, _dev.Timeout, out _);
                 });
 
                 if(!sense)
                 {
-                    AaruConsole.WriteLine("SCR obtained correctly...");
+                    AaruConsole.WriteLine(Localization.Core.SCR_obtained_correctly);
                     report.SCR = scr;
                 }
                 else
-                    AaruConsole.WriteLine("Could not read SCR...");
+                    AaruConsole.WriteLine(Localization.Core.Could_not_read_SCR);
 
                 break;
             }

@@ -1,5 +1,5 @@
 trigger:
-- master
+  - master
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -8,77 +8,77 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- checkout: self
-  submodules: true
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/alpine-amd64'
-    zipAfterPublish: false
-  displayName: "Building for Alpine Linux (amd64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/linux-arm'
-    zipAfterPublish: false
-  displayName: "Building for Linux (armv7h)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/linux-aarch64'
-    zipAfterPublish: false
-  displayName: "Building for Linux (aarch64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
-    zipAfterPublish: false
-  displayName: "Building for Linux (amd64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/linux-x86'
-    zipAfterPublish: false
-  displayName: "Building for Linux (x86)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r osx-x64 -o $(Build.ArtifactStagingDirectory)/out/macos'
-    zipAfterPublish: false
-  displayName: "Building for macOS (amd64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r win8-arm -o $(Build.ArtifactStagingDirectory)/out/windows-arm'
-    zipAfterPublish: false
-  displayName: "Building for Windows (armv7h)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r win-x64 -o $(Build.ArtifactStagingDirectory)/out/windows-x64'
-    zipAfterPublish: false
-  displayName: "Building for Windows (x64)"
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    projects: 'Aaru/Aaru.csproj'
-    publishWebProjects: false
-    arguments: '-r win-x86 -o $(Build.ArtifactStagingDirectory)/out/windows-x86'
-    zipAfterPublish: false
-  displayName: "Building for Windows (x86)"
+  - checkout:   self
+    submodules: true
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/alpine-amd64'
+      zipAfterPublish:    false
+    displayName: "Building for Alpine Linux (amd64)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/linux-arm'
+      zipAfterPublish:    false
+    displayName: "Building for Linux (armv7h)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/linux-aarch64'
+      zipAfterPublish:    false
+    displayName: "Building for Linux (aarch64)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
+      zipAfterPublish:    false
+    displayName: "Building for Linux (amd64)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/linux-x86'
+      zipAfterPublish:    false
+    displayName: "Building for Linux (x86)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r osx-x64 -o $(Build.ArtifactStagingDirectory)/out/macos'
+      zipAfterPublish:    false
+    displayName: "Building for macOS (amd64)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r win8-arm -o $(Build.ArtifactStagingDirectory)/out/windows-arm'
+      zipAfterPublish:    false
+    displayName: "Building for Windows (armv7h)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r win-x64 -o $(Build.ArtifactStagingDirectory)/out/windows-x64'
+      zipAfterPublish:    false
+    displayName: "Building for Windows (x64)"
+  - task:        DotNetCoreCLI@2
+    inputs:
+      command:            'publish'
+      projects:           'Aaru/Aaru.csproj'
+      publishWebProjects: false
+      arguments:          '-r win-x86 -o $(Build.ArtifactStagingDirectory)/out/windows-x86'
+      zipAfterPublish:    false
+    displayName: "Building for Windows (x86)"

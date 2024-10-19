@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Lisa filesystem structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,20 +23,244 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable NotAccessedField.Local
 
-namespace Aaru.Filesystems.LisaFS;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class LisaFS
 {
+#region Nested type: CatalogEntry
+
+    /// <summary>
+    ///     An entry in the catalog from V3. The first entry is bigger than the rest, may be a header, I have not needed
+    ///     any of its values so I just ignored it. Each catalog is divided in 4-sector blocks, and if it needs more than a
+    ///     block there are previous and next block pointers, effectively making the V3 catalog a double-linked list. Garbage
+    ///     is not zeroed.
+    /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct CatalogEntry
+    {
+        /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
+        public byte marker;
+        /// <summary>0x01, parent directory ID for this file, 0 for root directory</summary>
+        public ushort parentID;
+        /// <summary>0x03, filename, 32-bytes, null-padded</summary>
+        public byte[] filename;
+        /// <summary>0x23, null-termination</summary>
+        public byte terminator;
+        /// <summary>
+        ///     At 0x24 0x01 here for subdirectories, entries 48 bytes long 0x03 here for entries 64 bytes long 0x08 here for
+        ///     entries 78 bytes long This is incomplete, may fail, mostly works...
+        /// </summary>
+        public byte fileType;
+        /// <summary>0x25, lot of values found here, unknown</summary>
+        public byte unknown;
+        /// <summary>0x26, file ID, must be positive and bigger than 4</summary>
+        public short fileID;
+        /// <summary>0x28, creation date</summary>
+        public uint dtc;
+        /// <summary>0x2C, last modification date</summary>
+        public uint dtm;
+        /// <summary>0x30, file length in bytes</summary>
+        public int length;
+        /// <summary>0x34, file length in bytes, including wasted block space</summary>
+        public int wasted;
+        /// <summary>0x38, unknown</summary>
+        public byte[] tail;
+    }
+
+#endregion
+
+#region Nested type: CatalogEntryV2
+
+    /// <summary>
+    ///     The catalog entry for the V1 and V2 volume formats. It merely contains the file name, type and ID, plus a few
+    ///     (mostly empty) unknown fields. Contrary to V3, it has no header and instead of being a double-linked list it is
+    ///     fragmented using an Extents File. The Extents File position for the root catalog is then stored in the S-Records
+    ///     File. Its entries are not filed sequentially denoting some kind of in-memory structure while at the same time
+    ///     forcing LisaOS to read the whole catalog. That or I missed the pointers. Empty entries just contain a 0-len
+    ///     filename. Garbage is not zeroed.
+    /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct CatalogEntryV2
+    {
+        /// <summary>0x00, filename, 32-bytes, null-padded</summary>
+        public byte filenameLen;
+        /// <summary>0x01, filename, 31-bytes</summary>
+        public byte[] filename;
+        /// <summary>0x21, unknown</summary>
+        public byte unknown1;
+        /// <summary>0x22, unknown</summary>
+        public byte fileType;
+        /// <summary>0x23, unknown</summary>
+        public byte unknown2;
+        /// <summary>0x24, unknown</summary>
+        public short fileID;
+        /// <summary>0x26, 16 bytes, unknown</summary>
+        public byte[] unknown3;
+    }
+
+#endregion
+
+#region Nested type: Extent
+
+    /// <summary>An extent indicating a start and a run of sectors.</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct Extent
+    {
+        public int   start;
+        public short length;
+    }
+
+#endregion
+
+#region Nested type: ExtentFile
+
+    /// <summary>
+    ///     The Extents File. There is one Extents File per each file stored on disk. The file ID present on the sectors
+    ///     tags for the Extents File is the negated value of the file ID it represents. e.g. file = 5 (0x0005) extents = -5
+    ///     (0xFFFB) It spans a single sector on V2 and V3 but 2 sectors on V1. It contains all information about a file, and
+    ///     is indexed in the S-Records file. It also contains the label. Garbage is zeroed.
+    /// </summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    struct ExtentFile
+    {
+        /// <summary>0x00, filename length</summary>
+        public byte filenameLen;
+        /// <summary>0x01, filename</summary>
+        public byte[] filename;
+        /// <summary>0x20, unknown</summary>
+        public ushort unknown1;
+        /// <summary>0x22, 8 bytes</summary>
+        public ulong file_uid;
+        /// <summary>0x2A, unknown</summary>
+        public byte unknown2;
+        /// <summary>0x2B, entry type? gets modified</summary>
+        public byte etype;
+        /// <summary>0x2C, file type</summary>
+        public FileType ftype;
+        /// <summary>0x2D, unknown</summary>
+        public byte unknown3;
+        /// <summary>0x2E, creation time</summary>
+        public uint dtc;
+        /// <summary>0x32, last access time</summary>
+        public uint dta;
+        /// <summary>0x36, modification time</summary>
+        public uint dtm;
+        /// <summary>0x3A, backup time</summary>
+        public uint dtb;
+        /// <summary>0x3E, scavenge time</summary>
+        public uint dts;
+        /// <summary>0x42, machine serial number</summary>
+        public uint serial;
+        /// <summary>0x46, unknown</summary>
+        public byte unknown4;
+        /// <summary>0x47, locked file</summary>
+        public byte locked;
+        /// <summary>0x48, protected file</summary>
+        public byte protect;
+        /// <summary>0x49, master file</summary>
+        public byte master;
+        /// <summary>0x4A, scavenged file</summary>
+        public byte scavenged;
+        /// <summary>0x4B, file closed by os</summary>
+        public byte closed;
+        /// <summary>0x4C, file left open</summary>
+        public byte open;
+        /// <summary>0x4D, 11 bytes, unknown</summary>
+        public byte[] unknown5;
+        /// <summary>0x58, Release number</summary>
+        public ushort release;
+        /// <summary>0x5A, Build number</summary>
+        public ushort build;
+        /// <summary>0x5C, Compatibility level</summary>
+        public ushort compatibility;
+        /// <summary>0x5E, Revision level</summary>
+        public ushort revision;
+        /// <summary>0x60, unknown</summary>
+        public ushort unknown6;
+        /// <summary>0x62, 0x08 set if password is valid</summary>
+        public byte password_valid;
+        /// <summary>0x63, 8 bytes, scrambled password</summary>
+        public byte[] password;
+        /// <summary>0x6B, 3 bytes, unknown</summary>
+        public byte[] unknown7;
+        /// <summary>0x6E, filesystem overhead</summary>
+        public ushort overhead;
+        /// <summary>0x70, 16 bytes, unknown</summary>
+        public byte[] unknown8;
+        /// <summary>0x80, 0x200 in v1, file length in blocks</summary>
+        public int length;
+        /// <summary>0x84, 0x204 in v1, unknown</summary>
+        public int unknown9;
+        /// <summary>
+        ///     0x88, 0x208 in v1, extents, can contain up to 41 extents (85 in v1), dunno LisaOS maximum (never seen more
+        ///     than 3)
+        /// </summary>
+        public Extent[] extents;
+        /// <summary>0x17E, unknown, empty, padding?</summary>
+        public short unknown10;
+        /// <summary>
+        ///     At 0x180, this is the label. While 1982 pre-release documentation says the label can be up to 448 bytes, v1
+        ///     onward only have space for a 128 bytes one. Any application can write whatever they want in the label, however,
+        ///     Lisa Office uses it to store its own information, something that will effectively overwrite any information a user
+        ///     application wrote there. The information written here by Lisa Office is like the information Finder writes in the
+        ///     FinderInfo structures, plus the non-unique name that is shown on the GUI. For this reason I called it LisaInfo. I
+        ///     have not tried to reverse engineer it.
+        /// </summary>
+        public byte[] LisaInfo;
+    }
+
+#endregion
+
+#region Nested type: LisaDirNode
+
+    sealed class LisaDirNode : IDirNode
+    {
+        internal string[] Contents;
+        internal int      Position;
+
+#region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: LisaFileNode
+
+    sealed class LisaFileNode : IFileNode
+    {
+        internal short FileId;
+
+#region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: MDDF
+
     /// <summary>
     ///     The MDDF is the most import block on a Lisa FS volume. It describes the volume and its contents. On
     ///     initialization the memory where it resides is not emptied so it tends to contain a lot of garbage. This has
@@ -191,6 +411,7 @@ public sealed partial class LisaFS
         public ushort vol_sequence;
         /// <summary>0x138, Volume is dirty?</summary>
         public byte vol_left_mounted;
+#pragma warning disable CS0649
         /// <summary>Is password present? (On-disk position unknown)</summary>
         public byte passwd_present;
         /// <summary>Opened files (memory-only?) (On-disk position unknown)</summary>
@@ -211,148 +432,12 @@ public sealed partial class LisaFS
         public byte copy_flag;
         /// <summary>No idea (On-disk position unknown)</summary>
         public byte scavenge_flag;
+#pragma warning restore CS0649
     }
 
-    /// <summary>
-    ///     An entry in the catalog from V3. The first entry is bigger than the rest, may be a header, I have not needed
-    ///     any of its values so I just ignored it. Each catalog is divided in 4-sector blocks, and if it needs more than a
-    ///     block there are previous and next block pointers, effectively making the V3 catalog a double-linked list. Garbage
-    ///     is not zeroed.
-    /// </summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct CatalogEntry
-    {
-        /// <summary>0x00, seems to be 0x24 when the entry is valid</summary>
-        public byte marker;
-        /// <summary>0x01, parent directory ID for this file, 0 for root directory</summary>
-        public ushort parentID;
-        /// <summary>0x03, filename, 32-bytes, null-padded</summary>
-        public byte[] filename;
-        /// <summary>0x23, null-termination</summary>
-        public byte terminator;
-        /// <summary>
-        ///     At 0x24 0x01 here for subdirectories, entries 48 bytes long 0x03 here for entries 64 bytes long 0x08 here for
-        ///     entries 78 bytes long This is incomplete, may fail, mostly works...
-        /// </summary>
-        public byte fileType;
-        /// <summary>0x25, lot of values found here, unknown</summary>
-        public byte unknown;
-        /// <summary>0x26, file ID, must be positive and bigger than 4</summary>
-        public short fileID;
-        /// <summary>0x28, creation date</summary>
-        public uint dtc;
-        /// <summary>0x2C, last modification date</summary>
-        public uint dtm;
-        /// <summary>0x30, file length in bytes</summary>
-        public int length;
-        /// <summary>0x34, file length in bytes, including wasted block space</summary>
-        public int wasted;
-        /// <summary>0x38, unknown</summary>
-        public byte[] tail;
-    }
+#endregion
 
-    /// <summary>An extent indicating a start and a run of sectors.</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct Extent
-    {
-        public int   start;
-        public short length;
-    }
-
-    /// <summary>
-    ///     The Extents File. There is one Extents File per each file stored on disk. The file ID present on the sectors
-    ///     tags for the Extents File is the negated value of the file ID it represents. e.g. file = 5 (0x0005) extents = -5
-    ///     (0xFFFB) It spans a single sector on V2 and V3 but 2 sectors on V1. It contains all information about a file, and
-    ///     is indexed in the S-Records file. It also contains the label. Garbage is zeroed.
-    /// </summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct ExtentFile
-    {
-        /// <summary>0x00, filename length</summary>
-        public byte filenameLen;
-        /// <summary>0x01, filename</summary>
-        public byte[] filename;
-        /// <summary>0x20, unknown</summary>
-        public ushort unknown1;
-        /// <summary>0x22, 8 bytes</summary>
-        public ulong file_uid;
-        /// <summary>0x2A, unknown</summary>
-        public byte unknown2;
-        /// <summary>0x2B, entry type? gets modified</summary>
-        public byte etype;
-        /// <summary>0x2C, file type</summary>
-        public FileType ftype;
-        /// <summary>0x2D, unknown</summary>
-        public byte unknown3;
-        /// <summary>0x2E, creation time</summary>
-        public uint dtc;
-        /// <summary>0x32, last access time</summary>
-        public uint dta;
-        /// <summary>0x36, modification time</summary>
-        public uint dtm;
-        /// <summary>0x3A, backup time</summary>
-        public uint dtb;
-        /// <summary>0x3E, scavenge time</summary>
-        public uint dts;
-        /// <summary>0x42, machine serial number</summary>
-        public uint serial;
-        /// <summary>0x46, unknown</summary>
-        public byte unknown4;
-        /// <summary>0x47, locked file</summary>
-        public byte locked;
-        /// <summary>0x48, protected file</summary>
-        public byte protect;
-        /// <summary>0x49, master file</summary>
-        public byte master;
-        /// <summary>0x4A, scavenged file</summary>
-        public byte scavenged;
-        /// <summary>0x4B, file closed by os</summary>
-        public byte closed;
-        /// <summary>0x4C, file left open</summary>
-        public byte open;
-        /// <summary>0x4D, 11 bytes, unknown</summary>
-        public byte[] unknown5;
-        /// <summary>0x58, Release number</summary>
-        public ushort release;
-        /// <summary>0x5A, Build number</summary>
-        public ushort build;
-        /// <summary>0x5C, Compatibility level</summary>
-        public ushort compatibility;
-        /// <summary>0x5E, Revision level</summary>
-        public ushort revision;
-        /// <summary>0x60, unknown</summary>
-        public ushort unknown6;
-        /// <summary>0x62, 0x08 set if password is valid</summary>
-        public byte password_valid;
-        /// <summary>0x63, 8 bytes, scrambled password</summary>
-        public byte[] password;
-        /// <summary>0x6B, 3 bytes, unknown</summary>
-        public byte[] unknown7;
-        /// <summary>0x6E, filesystem overhead</summary>
-        public ushort overhead;
-        /// <summary>0x70, 16 bytes, unknown</summary>
-        public byte[] unknown8;
-        /// <summary>0x80, 0x200 in v1, file length in blocks</summary>
-        public int length;
-        /// <summary>0x84, 0x204 in v1, unknown</summary>
-        public int unknown9;
-        /// <summary>
-        ///     0x88, 0x208 in v1, extents, can contain up to 41 extents (85 in v1), dunno LisaOS maximum (never seen more
-        ///     than 3)
-        /// </summary>
-        public Extent[] extents;
-        /// <summary>0x17E, unknown, empty, padding?</summary>
-        public short unknown10;
-        /// <summary>
-        ///     At 0x180, this is the label. While 1982 pre-release documentation says the label can be up to 448 bytes, v1
-        ///     onward only have space for a 128 bytes one. Any application can write whatever they want in the label, however,
-        ///     Lisa Office uses it to store its own information, something that will effectively overwrite any information a user
-        ///     application wrote there. The information written here by Lisa Office is like the information Finder writes in the
-        ///     FinderInfo structures, plus the non-unique name that is shown on the GUI. For this reason I called it LisaInfo. I
-        ///     have not tried to reverse engineer it.
-        /// </summary>
-        public byte[] LisaInfo;
-    }
+#region Nested type: SRecord
 
     /// <summary>
     ///     The S-Records File is a hashtable of S-Records, where the hash is the file ID they belong to. The S-Records
@@ -375,30 +460,5 @@ public sealed partial class LisaFS
         public ushort flags;
     }
 
-    /// <summary>
-    ///     The catalog entry for the V1 and V2 volume formats. It merely contains the file name, type and ID, plus a few
-    ///     (mostly empty) unknown fields. Contrary to V3, it has no header and instead of being a double-linked list it is
-    ///     fragmented using an Extents File. The Extents File position for the root catalog is then stored in the S-Records
-    ///     File. Its entries are not filed sequentially denoting some kind of in-memory structure while at the same time
-    ///     forcing LisaOS to read the whole catalog. That or I missed the pointers. Empty entries just contain a 0-len
-    ///     filename. Garbage is not zeroed.
-    /// </summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    struct CatalogEntryV2
-    {
-        /// <summary>0x00, filename, 32-bytes, null-padded</summary>
-        public byte filenameLen;
-        /// <summary>0x01, filename, 31-bytes</summary>
-        public byte[] filename;
-        /// <summary>0x21, unknown</summary>
-        public byte unknown1;
-        /// <summary>0x22, unknown</summary>
-        public byte fileType;
-        /// <summary>0x23, unknown</summary>
-        public byte unknown2;
-        /// <summary>0x24, unknown</summary>
-        public short fileID;
-        /// <summary>0x26, 16 bytes, unknown</summary>
-        public byte[] unknown3;
-    }
+#endregion
 }

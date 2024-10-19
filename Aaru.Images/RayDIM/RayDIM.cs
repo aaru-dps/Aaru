@@ -27,29 +27,28 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
-using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing Ray Arachellian's DIM disk images</summary>
 public sealed partial class RayDim : IWritableImage
 {
+    const string MODULE_NAME = "Ray Arachelian's Disk IMage plugin";
     MemoryStream _disk;
     ImageInfo    _imageInfo;
     FileStream   _writingStream;
 
     public RayDim() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Application           = "Ray Arachelian's Disk IMage",

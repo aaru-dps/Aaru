@@ -27,12 +27,12 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using Aaru.CommonTypes.Interop;
+
+namespace Aaru.Core;
 
 /// <summary>Prints the description of a system error number.</summary>
 public static class Error
@@ -42,85 +42,85 @@ public static class Error
     /// <returns>Error description.</returns>
     public static string Print(int errno)
     {
-        switch(DetectOS.GetRealPlatformID())
-        {
-            case PlatformID.Win32S:
-            case PlatformID.Win32Windows:
-            case PlatformID.Win32NT:
-            case PlatformID.WinCE:
-            case PlatformID.WindowsPhone:
-            case PlatformID.Xbox: return PrintWin32Error(errno);
-            case PlatformID.Unix:
-            case PlatformID.MacOSX:
-            case PlatformID.iOS:
-            case PlatformID.Linux:
-            case PlatformID.Solaris:
-            case PlatformID.NetBSD:
-            case PlatformID.OpenBSD:
-            case PlatformID.FreeBSD:
-            case PlatformID.DragonFly:
-            case PlatformID.Android:
-            case PlatformID.Tizen:
-            case PlatformID.Hurd:
-            case PlatformID.Haiku:
-            case PlatformID.HPUX:
-            case PlatformID.AIX:
-            case PlatformID.OS400:
-            case PlatformID.IRIX:
-            case PlatformID.Minix:
-            case PlatformID.QNX:
-            case PlatformID.SINIX:
-            case PlatformID.Tru64:
-            case PlatformID.Ultrix:
-            case PlatformID.OpenServer:
-            case PlatformID.UnixWare:
-            case PlatformID.zOS: return PrintUnixError(errno);
-            case PlatformID.Wii:          return $"Unknown error code {errno}";
-            case PlatformID.WiiU:         return $"Unknown error code {errno}";
-            case PlatformID.PlayStation3: return $"Unknown error code {errno}";
-            case PlatformID.PlayStation4: return $"Unknown error code {errno}";
-            case PlatformID.NonStop:      return $"Unknown error code {errno}";
-            case PlatformID.Unknown:      return $"Unknown error code {errno}";
-            default:                      return $"Unknown error code {errno}";
-        }
+        return DetectOS.GetRealPlatformID() switch
+               {
+                   PlatformID.Win32S
+                    or PlatformID.Win32Windows
+                    or PlatformID.Win32NT
+                    or PlatformID.WinCE
+                    or PlatformID.WindowsPhone
+                    or PlatformID.Xbox => PrintWin32Error(errno),
+                   PlatformID.Unix
+                    or PlatformID.MacOSX
+                    or PlatformID.iOS
+                    or PlatformID.Linux
+                    or PlatformID.Solaris
+                    or PlatformID.NetBSD
+                    or PlatformID.OpenBSD
+                    or PlatformID.FreeBSD
+                    or PlatformID.DragonFly
+                    or PlatformID.Android
+                    or PlatformID.Tizen
+                    or PlatformID.Hurd
+                    or PlatformID.Haiku
+                    or PlatformID.HPUX
+                    or PlatformID.AIX
+                    or PlatformID.OS400
+                    or PlatformID.IRIX
+                    or PlatformID.Minix
+                    or PlatformID.QNX
+                    or PlatformID.SINIX
+                    or PlatformID.Tru64
+                    or PlatformID.Ultrix
+                    or PlatformID.OpenServer
+                    or PlatformID.UnixWare
+                    or PlatformID.zOS => PrintUnixError(errno),
+                   PlatformID.Wii          => string.Format(Localization.Core.error_code_0, errno),
+                   PlatformID.WiiU         => string.Format(Localization.Core.error_code_0, errno),
+                   PlatformID.PlayStation3 => string.Format(Localization.Core.error_code_0, errno),
+                   PlatformID.PlayStation4 => string.Format(Localization.Core.error_code_0, errno),
+                   PlatformID.NonStop      => string.Format(Localization.Core.error_code_0, errno),
+                   PlatformID.Unknown      => string.Format(Localization.Core.error_code_0, errno),
+                   _                       => string.Format(Localization.Core.error_code_0, errno)
+               };
     }
 
     static string PrintUnixError(int errno)
     {
-        switch(errno)
-        {
-            case 2:  // ENOENT
-            case 19: // ENODEV
-                return "The specified device cannot be found.";
-            case 13: // EACCESS
-                return "Not enough permissions to open the device.";
-            case 16: // EBUSY
-                return "The specified device is in use by another process.";
-            case 30: // EROFS
-                return "Cannot open the device in writable mode, as needed by some commands.";
-            default: return $"Unknown error code {errno}";
-        }
+        return errno switch
+               {
+                   2 or 19 => // ENODEV
+                       // ENOENT
+                       Localization.Core.The_specified_device_cannot_be_found,
+                   13 => // EACCESS
+                       Localization.Core.Not_enough_permissions_to_open_the_device,
+                   16 => // EBUSY
+                       Localization.Core.The_specified_device_is_in_use_by_another_process,
+                   30 => // EROFS
+                       Localization.Core.Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands,
+                   _ => string.Format(Localization.Core.error_code_0, errno)
+               };
     }
 
     static string PrintWin32Error(int errno)
     {
-        switch(errno)
-        {
-            case 2: // ERROR_FILE_NOT_FOUND
-            case 3: // ERROR_PATH_NOT_FOUND
-                return "The specified device cannot be found.";
-            case 5: // ERROR_ACCESS_DENIED
-                return "Not enough permissions to open the device.";
-            case 19: // ERROR_WRITE_PROTECT
-                return "Cannot open the device in writable mode, as needed by some commands.";
-            case 32:  // ERROR_SHARING_VIOLATION
-            case 33:  // ERROR_LOCK_VIOLATION
-            case 108: // ERROR_DRIVE_LOCKED
-            case 170: // ERROR_BUSY
-                return "The specified device is in use by another process.";
-            case 130: // ERROR_DIRECT_ACCESS_HANDLE
-                return "Tried to open a file instead of a device.";
-            default: return $"Unknown error code {errno}";
-        }
+        return errno switch
+               {
+                   2 or 3 => // ERROR_PATH_NOT_FOUND
+                       // ERROR_FILE_NOT_FOUND
+                       Localization.Core.The_specified_device_cannot_be_found,
+                   5 => // ERROR_ACCESS_DENIED
+                       Localization.Core.Not_enough_permissions_to_open_the_device,
+                   19 => // ERROR_WRITE_PROTECT
+                       Localization.Core.Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands,
+                   32 or 33 or 108 or 170 => // ERROR_BUSY
+                       // ERROR_DRIVE_LOCKED
+                       // ERROR_LOCK_VIOLATION
+                       // ERROR_SHARING_VIOLATION
+                       Localization.Core.The_specified_device_is_in_use_by_another_process,
+                   130 => // ERROR_DIRECT_ACCESS_HANDLE
+                       Localization.Core.Tried_to_open_a_file_instead_of_a_device,
+                   _ => string.Format(Localization.Core.error_code_0, errno)
+               };
     }
 }

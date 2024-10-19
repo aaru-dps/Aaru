@@ -27,20 +27,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using Aaru.CommonTypes;
 using Aaru.Core.Logging;
 using Aaru.Devices;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -52,11 +50,24 @@ partial class Dump
     /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
     public static bool SupportsRwSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
     {
-        dumpLog?.WriteLine("Checking if drive supports full raw subchannel reading...");
-        updateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
+        dumpLog?.WriteLine(Localization.Core.Checking_if_drive_supports_full_raw_subchannel_reading);
+        updateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_full_raw_subchannel_reading);
 
-        return !dev.ReadCd(out _, out _, lba, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+        return !dev.ReadCd(out _,
+                           out _,
+                           lba,
+                           2352 + 96,
+                           1,
+                           MmcSectorTypes.AllTypes,
+                           false,
+                           false,
+                           true,
+                           MmcHeaderCodes.AllHeaders,
+                           true,
+                           true,
+                           MmcErrorField.None,
+                           MmcSubchannel.Raw,
+                           dev.Timeout,
                            out _);
     }
 
@@ -68,11 +79,24 @@ partial class Dump
     /// <returns><c>true</c> if read correctly, <c>false</c> otherwise</returns>
     public static bool SupportsPqSubchannel(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus, uint lba)
     {
-        dumpLog?.WriteLine("Checking if drive supports PQ subchannel reading...");
-        updateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
+        dumpLog?.WriteLine(Localization.Core.Checking_if_drive_supports_PQ_subchannel_reading);
+        updateStatus?.Invoke(Localization.Core.Checking_if_drive_supports_PQ_subchannel_reading);
 
-        return !dev.ReadCd(out _, out _, lba, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
-                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
+        return !dev.ReadCd(out _,
+                           out _,
+                           lba,
+                           2352 + 16,
+                           1,
+                           MmcSectorTypes.AllTypes,
+                           false,
+                           false,
+                           true,
+                           MmcHeaderCodes.AllHeaders,
+                           true,
+                           true,
+                           MmcErrorField.None,
+                           MmcSubchannel.Q16,
+                           dev.Timeout,
                            out _);
     }
 }

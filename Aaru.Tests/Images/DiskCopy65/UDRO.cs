@@ -23,28 +23,29 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.DiskCopy65;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.DiskCopy65;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class UDRO : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRO");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 6.5", "UDIF", "UDRO");
+
     public override IMediaImage Plugin => new Udif();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "DC6_UDRO_DOS_1440.dmg",
@@ -52,14 +53,14 @@ public class UDRO : BlockMediaImageTest
             Sectors    = 2884,
             SectorSize = 512,
             Md5        = "4306922864c6cf40a419fd5876b5879d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 4,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -145,5 +146,5 @@ public class UDRO : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "e7b1de07a1f402e4663c3dee4fd3d6fe"
         }
-    };
+    ];
 }

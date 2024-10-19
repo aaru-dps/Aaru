@@ -27,17 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using Aaru.Checksums;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Core;
 
 /// <summary>Enabled checksums</summary>
 [Flags]
@@ -130,7 +130,7 @@ public sealed class Checksum
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
         {
-            _crc16Ctx = new CRC16IBMContext();
+            _crc16Ctx = new CRC16IbmContext();
 
             _crc16Pkt = new HashPacket
             {
@@ -341,187 +341,149 @@ public sealed class Checksum
               _f16Thread.IsAlive     ||
               _f32Thread.IsAlive) {}
 
-        if(_enabled.HasFlag(EnableChecksum.Adler32))
-            _adlerThread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Adler32)) _adlerThread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc16))
-            _crc16Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc16Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc32))
-            _crc32Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc32)) _crc32Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Crc16))
-            _crc64Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc64Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Md5))
-            _md5Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Md5)) _md5Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha1))
-            _sha1Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha1)) _sha1Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha256))
-            _sha256Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha256)) _sha256Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha384))
-            _sha384Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha384)) _sha384Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Sha512))
-            _sha512Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Sha512)) _sha512Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.SpamSum))
-            _spamsumThread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.SpamSum)) _spamsumThread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Fletcher16))
-            _f16Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Fletcher16)) _f16Thread = new Thread(UpdateHash);
 
-        if(_enabled.HasFlag(EnableChecksum.Fletcher32))
-            _f32Thread = new Thread(UpdateHash);
+        if(_enabled.HasFlag(EnableChecksum.Fletcher32)) _f32Thread = new Thread(UpdateHash);
     }
 
     /// <summary>Finishes the checksums</summary>
     /// <returns>Returns the checksum results</returns>
-    public List<ChecksumType> End()
+    public List<CommonTypes.AaruMetadata.Checksum> End()
     {
-        var chks = new List<ChecksumType>();
+        List<CommonTypes.AaruMetadata.Checksum> chks = [];
 
-        ChecksumType chk;
-
-        if(_enabled.HasFlag(EnableChecksum.All))
+        if(_enabled.HasFlag(EnableChecksum.Adler32))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.adler32,
+                Type  = ChecksumType.Adler32,
                 Value = _adler32Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc16))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc16,
+                Type  = ChecksumType.CRC16,
                 Value = _crc16Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc32))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc32,
+                Type  = ChecksumType.CRC32,
                 Value = _crc32Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc64))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc64,
+                Type  = ChecksumType.CRC64,
                 Value = _crc64Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Md5))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.md5,
+                Type  = ChecksumType.Md5,
                 Value = _md5Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha1))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha1,
+                Type  = ChecksumType.Sha1,
                 Value = _sha1Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha256))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha256,
+                Type  = ChecksumType.Sha256,
                 Value = _sha256Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha384))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha384,
+                Type  = ChecksumType.Sha384,
                 Value = _sha384Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha512))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha512,
+                Type  = ChecksumType.Sha512,
                 Value = _sha512Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.SpamSum))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.spamsum,
+                Type  = ChecksumType.SpamSum,
                 Value = _ssCtx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
         if(_enabled.HasFlag(EnableChecksum.Fletcher16))
         {
-            chk = new ChecksumType
+            chks.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.fletcher16,
+                Type  = ChecksumType.Fletcher16,
                 Value = _f16Ctx.End()
-            };
-
-            chks.Add(chk);
+            });
         }
 
-        if(!_enabled.HasFlag(EnableChecksum.Fletcher32))
-            return chks;
+        if(!_enabled.HasFlag(EnableChecksum.Fletcher32)) return chks;
 
-        chk = new ChecksumType
+        chks.Add(new CommonTypes.AaruMetadata.Checksum
         {
-            type  = ChecksumTypeType.fletcher32,
+            Type  = ChecksumType.Fletcher32,
             Value = _f32Ctx.End()
-        };
-
-        chks.Add(chk);
+        });
 
         return chks;
     }
 
-    internal static List<ChecksumType> GetChecksums(byte[] data, EnableChecksum enabled = EnableChecksum.All)
+    internal static List<CommonTypes.AaruMetadata.Checksum> GetChecksums(
+        byte[] data, EnableChecksum enabled = EnableChecksum.All)
     {
         IChecksum adler32CtxData = null;
         IChecksum crc16CtxData   = null;
@@ -564,7 +526,7 @@ public sealed class Checksum
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
         {
-            crc16CtxData = new CRC16IBMContext();
+            crc16CtxData = new CRC16IbmContext();
 
             var crc16PktData = new HashPacket
             {
@@ -718,145 +680,120 @@ public sealed class Checksum
               f16ThreadData.IsAlive     ||
               f32ThreadData.IsAlive) {}
 
-        var          dataChecksums = new List<ChecksumType>();
-        ChecksumType chk;
+        List<CommonTypes.AaruMetadata.Checksum> dataChecksums = [];
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.adler32,
+                Type  = ChecksumType.Adler32,
                 Value = adler32CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc16,
+                Type  = ChecksumType.CRC16,
                 Value = crc16CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc32))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc32,
+                Type  = ChecksumType.CRC32,
                 Value = crc32CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc64))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.crc64,
+                Type  = ChecksumType.CRC64,
                 Value = crc64CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Md5))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.md5,
+                Type  = ChecksumType.Md5,
                 Value = md5CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha1))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha1,
+                Type  = ChecksumType.Sha1,
                 Value = sha1CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha256))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha256,
+                Type  = ChecksumType.Sha256,
                 Value = sha256CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha384))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha384,
+                Type  = ChecksumType.Sha384,
                 Value = sha384CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha512))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.sha512,
+                Type  = ChecksumType.Sha512,
                 Value = sha512CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.SpamSum))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.spamsum,
+                Type  = ChecksumType.SpamSum,
                 Value = ssctxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
         if(enabled.HasFlag(EnableChecksum.Fletcher16))
         {
-            chk = new ChecksumType
+            dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
             {
-                type  = ChecksumTypeType.fletcher16,
+                Type  = ChecksumType.Fletcher16,
                 Value = f16CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
+            });
         }
 
-        if(enabled.HasFlag(EnableChecksum.Fletcher32))
+        if(!enabled.HasFlag(EnableChecksum.Fletcher32)) return dataChecksums;
+
+        dataChecksums.Add(new CommonTypes.AaruMetadata.Checksum
         {
-            chk = new ChecksumType
-            {
-                type  = ChecksumTypeType.fletcher32,
-                Value = f32CtxData.End()
-            };
-
-            dataChecksums.Add(chk);
-        }
+            Type  = ChecksumType.Fletcher32,
+            Value = f32CtxData.End()
+        });
 
         return dataChecksums;
     }
 
-    #region Threading helpers
+#region Threading helpers
+
     struct HashPacket
     {
         public IChecksum Context;
@@ -864,5 +801,6 @@ public sealed class Checksum
     }
 
     static void UpdateHash(object packet) => ((HashPacket)packet).Context.Update(((HashPacket)packet).Data);
-    #endregion Threading helpers
+
+#endregion Threading helpers
 }

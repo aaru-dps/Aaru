@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class F2Fs : FilesystemTest
-{
-    public F2Fs() : base("F2FS filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "F2FS");
+[TestFixture]
+public class F2Fs() : FilesystemTest("f2fs")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "F2FS");
     public override IFilesystem Plugin     => new F2FS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -67,5 +65,5 @@ public class F2Fs : FilesystemTest
             VolumeName   = "DicSetter",
             VolumeSerial = "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
         }
-    };
+    ];
 }

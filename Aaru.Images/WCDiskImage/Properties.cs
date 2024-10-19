@@ -27,32 +27,45 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2018-2019 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2018-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "d2f disk image";
+    public string Name => Localization.WCDiskImage_Name;
+
     /// <inheritdoc />
     public Guid Id => new("DDE01493-BCA2-41C2-A269-7E56D3716D2F");
+
     /// <inheritdoc />
-    public string Author => "Michael Drüing";
+    public string Author => Authors.MichaelDruing;
+
     /// <inheritdoc />
-    public string Format => "d2f disk image";
+    public string Format => Localization.WCDiskImage_Name;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
+#endregion
 }

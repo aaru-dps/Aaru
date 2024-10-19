@@ -27,15 +27,15 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
+
+namespace Aaru.Core;
 
 /// <summary>Prints all SCSI MODE pages</summary>
 public static class PrintScsiModePages
@@ -48,26 +48,28 @@ public static class PrintScsiModePages
     {
         AaruConsole.WriteLine(Modes.PrettifyModeHeader(decMode.Header, devType));
 
-        if(decMode.Pages == null)
-            return;
+        if(decMode.Pages == null) return;
 
         foreach(Modes.ModePage page in decMode.Pages)
 
             //AaruConsole.WriteLine("Page {0:X2}h subpage {1:X2}h is {2} bytes long", page.Page, page.Subpage, page.PageResponse.Length);
+        {
             switch(page.Page)
             {
                 case 0x00:
                 {
-                    if(devType      == PeripheralDeviceTypes.MultiMediaDevice &&
-                       page.Subpage == 0)
+                    if(devType == PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                         AaruConsole.WriteLine(Modes.PrettifyModePage_00_SFF(page.PageResponse));
                     else
                     {
                         if(page.Subpage != 0)
-                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h subpage {1:X2}h", page.Page,
+                        {
+                            AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0_subpage_1,
+                                                  page.Page,
                                                   page.Subpage);
+                        }
                         else
-                            AaruConsole.WriteLine("Found unknown vendor mode page {0:X2}h", page.Page);
+                            AaruConsole.WriteLine(Localization.Core.Found_unknown_vendor_mode_page_0, page.Page);
                     }
 
                     break;
@@ -75,9 +77,11 @@ public static class PrintScsiModePages
                 case 0x01:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_01(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -131,9 +135,11 @@ public static class PrintScsiModePages
                 case 0x07:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_07(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -198,9 +204,11 @@ public static class PrintScsiModePages
                 case 0x10:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.SequentialAccess
                                                   ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                   : Modes.PrettifyModePage_10(page.PageResponse));
+                    }
                     else
                         goto default;
 
@@ -249,9 +257,11 @@ public static class PrintScsiModePages
                 case 0x1C:
                 {
                     if(page.Subpage == 0)
+                    {
                         AaruConsole.WriteLine(devType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                   : Modes.PrettifyModePage_1C(page.PageResponse));
+                    }
                     else if(page.Subpage == 1)
                         AaruConsole.WriteLine(Modes.PrettifyModePage_1C_S01(page.PageResponse));
                     else
@@ -316,7 +326,7 @@ public static class PrintScsiModePages
                 case 0x30:
                 {
                     if(Modes.IsAppleModePage_30(page.PageResponse))
-                        AaruConsole.WriteLine("Drive identifies as Apple OEM drive");
+                        AaruConsole.WriteLine(Localization.Core.Drive_identifies_as_Apple_OEM_drive);
                     else
                         goto default;
 
@@ -365,13 +375,17 @@ public static class PrintScsiModePages
                 default:
                 {
                     if(page.Subpage != 0)
-                        AaruConsole.WriteLine("Found unknown mode page {0:X2}h subpage {1:X2}h", page.Page,
+                    {
+                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0_subpage_1,
+                                              page.Page,
                                               page.Subpage);
+                    }
                     else
-                        AaruConsole.WriteLine("Found unknown mode page {0:X2}h", page.Page);
+                        AaruConsole.WriteLine(Localization.Core.Found_unknown_mode_page_0, page.Page);
 
                     break;
                 }
             }
+        }
     }
 }

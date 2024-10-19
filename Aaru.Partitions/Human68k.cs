@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -43,33 +41,39 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Partitions;
+
 /// <inheritdoc />
 /// <summary>Implements decoding of Sharp's Human68K partitions</summary>
 public sealed class Human68K : IPartition
 {
     // ReSharper disable once InconsistentNaming
-    const uint X68K_MAGIC = 0x5836384B;
+    const uint   X68K_MAGIC  = 0x5836384B;
+    const string MODULE_NAME = "Human68k partitions plugin";
+
+#region IPartition Members
 
     /// <inheritdoc />
-    public string Name => "Human 68k partitions";
+    public string Name => Localization.Human68K_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         byte[]      sector;
         ulong       sectsPerUnit;
         ErrorNumber errno;
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
-        if(sectorOffset + 4 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 4 >= imagePlugin.Info.Sectors) return false;
 
         switch(imagePlugin.Info.SectorSize)
         {
@@ -88,37 +92,39 @@ public sealed class Human68K : IPartition
                 sectsPerUnit = 1;
 
                 break;
-            default: return false;
+            default:
+                return false;
         }
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Table table = Marshal.ByteArrayToStructureBigEndian<Table>(sector);
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.magic = {0:X4}", table.magic);
 
-        if(table.magic != X68K_MAGIC)
-            return false;
+        if(table.magic != X68K_MAGIC) return false;
 
         for(var i = 0; i < table.entries.Length; i++)
             table.entries[i] = (Entry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}", table.size);
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}", table.size2);
-        AaruConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size = {0:X4}",    table.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.size2 = {0:X4}",   table.size2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "table.unknown = {0:X4}", table.unknown);
 
         ulong counter = 0;
 
         foreach(Entry entry in table.entries)
         {
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "entry.name = {0}",
                                        StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
 
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
-            AaruConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}", entry.length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.stateStart = {0}", entry.stateStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.length = {0}",     entry.length);
 
-            AaruConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "sectsPerUnit = {0} {1}",
+                                       sectsPerUnit,
                                        imagePlugin.Info.SectorSize);
 
             var part = new Partition
@@ -133,8 +139,7 @@ public sealed class Human68K : IPartition
             part.Offset = part.Start  * (ulong)sector.Length;
             part.Size   = part.Length * (ulong)sector.Length;
 
-            if(entry.length <= 0)
-                continue;
+            if(entry.length <= 0) continue;
 
             partitions.Add(part);
             counter++;
@@ -142,6 +147,23 @@ public sealed class Human68K : IPartition
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Entry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Entry
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public readonly byte[] name;
+        public readonly uint stateStart;
+        public readonly uint length;
+    }
+
+#endregion
+
+#region Nested type: Table
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Table
@@ -154,12 +176,5 @@ public sealed class Human68K : IPartition
         public readonly Entry[] entries;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Entry
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public readonly byte[] name;
-        public readonly uint stateStart;
-        public readonly uint length;
-    }
+#endregion
 }

@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,12 +38,17 @@ using System.Threading.Tasks;
 using Aaru.Console;
 using Aaru.Decoders.PCMCIA;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 public class PcmciaInfoViewModel : ViewModelBase
 {
+    const    string MODULE_NAME = "PCMCIA Information ViewModel";
     readonly byte[] _cis;
     readonly Window _view;
     string          _pcmciaCisText;
@@ -53,11 +56,10 @@ public class PcmciaInfoViewModel : ViewModelBase
 
     internal PcmciaInfoViewModel([CanBeNull] byte[] pcmciaCis, Window view)
     {
-        if(pcmciaCis == null)
-            return;
+        if(pcmciaCis == null) return;
 
         _cis                 = pcmciaCis;
-        CisList              = new ObservableCollection<PcmciaCisModel>();
+        CisList              = [];
         SavePcmciaCisCommand = ReactiveCommand.Create(ExecuteSavePcmciaCisCommand);
 
         _view = view;
@@ -65,6 +67,7 @@ public class PcmciaInfoViewModel : ViewModelBase
         Tuple[] tuples = CIS.GetTuples(_cis);
 
         if(tuples != null)
+        {
             foreach(Tuple tuple in tuples)
             {
                 string tupleCode;
@@ -73,20 +76,21 @@ public class PcmciaInfoViewModel : ViewModelBase
                 switch(tuple.Code)
                 {
                     case TupleCodes.CISTPL_NULL:
-                    case TupleCodes.CISTPL_END: continue;
+                    case TupleCodes.CISTPL_END:
+                        continue;
                     case TupleCodes.CISTPL_DEVICEGEO:
                     case TupleCodes.CISTPL_DEVICEGEO_A:
-                        tupleCode        = "Device Geometry Tuples";
+                        tupleCode        = UI.Device_Geometry_Tuples;
                         tupleDescription = CIS.PrettifyDeviceGeometryTuple(tuple);
 
                         break;
                     case TupleCodes.CISTPL_MANFID:
-                        tupleCode        = "Manufacturer Identification Tuple";
+                        tupleCode        = UI.Manufacturer_Identification_Tuple;
                         tupleDescription = CIS.PrettifyManufacturerIdentificationTuple(tuple);
 
                         break;
                     case TupleCodes.CISTPL_VERS_1:
-                        tupleCode        = "Level 1 Version / Product Information Tuple";
+                        tupleCode        = UI.Level_1_Version_Product_Information_Tuple;
                         tupleDescription = CIS.PrettifyLevel1VersionTuple(tuple);
 
                         break;
@@ -124,13 +128,13 @@ public class PcmciaInfoViewModel : ViewModelBase
                     case TupleCodes.CISTPL_SPCL:
                     case TupleCodes.CISTPL_SWIL:
                     case TupleCodes.CISTPL_VERS_2:
-                        tupleCode        = $"Undecoded tuple ID {tuple.Code}";
-                        tupleDescription = $"Undecoded tuple ID {tuple.Code}";
+                        tupleCode        = string.Format(UI.Undecoded_tuple_ID_0, tuple.Code);
+                        tupleDescription = string.Format(UI.Undecoded_tuple_ID_0, tuple.Code);
 
                         break;
                     default:
                         tupleCode        = $"0x{(byte)tuple.Code:X2}";
-                        tupleDescription = $"Found unknown tuple ID 0x{(byte)tuple.Code:X2}";
+                        tupleDescription = string.Format(Localization.Core.Found_unknown_tuple_ID_0, (byte)tuple.Code);
 
                         break;
                 }
@@ -141,9 +145,13 @@ public class PcmciaInfoViewModel : ViewModelBase
                     Description = tupleDescription
                 });
             }
+        }
         else
-            AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
+            AaruConsole.DebugWriteLine(MODULE_NAME, UI.PCMCIA_CIS_returned_no_tuples);
     }
+
+    public string CisLabel           => UI.Title_CIS;
+    public string SavePcmciaCisLabel => UI.ButtonLabel_Save_PCMCIA_CIS_to_file;
 
     public ObservableCollection<PcmciaCisModel> CisList { get; }
 
@@ -158,8 +166,7 @@ public class PcmciaInfoViewModel : ViewModelBase
         get => _selectedCis;
         set
         {
-            if(_selectedCis == value)
-                return;
+            if(_selectedCis == value) return;
 
             PcmciaCisText = value?.Description;
             this.RaiseAndSetIfChanged(ref _selectedCis, value);
@@ -170,23 +177,17 @@ public class PcmciaInfoViewModel : ViewModelBase
 
     async Task ExecuteSavePcmciaCisCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_cis, 0, _cis.Length);
 
         saveFs.Close();

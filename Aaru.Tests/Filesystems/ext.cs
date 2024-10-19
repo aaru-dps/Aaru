@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems;
+
 [TestFixture]
-public class Ext : FilesystemTest
+public class Ext() : FilesystemTest("ext")
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Linux extended File System");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Linux extended File System");
+
     public override IFilesystem Plugin     => new extFS();
     public override bool        Partitions => true;
 
-    public Ext() : base("ext") {}
-
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux_2.0.37.aif",
@@ -55,5 +54,5 @@ public class Ext : FilesystemTest
             Clusters    = 131008,
             ClusterSize = 1024
         }
-    };
+    ];
 }

@@ -23,24 +23,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class Anex86 : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Anex86");
-    public override IMediaImage Plugin    => new DiscImages.Anex86();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Anex86");
+    public override IMediaImage Plugin     => new Aaru.Images.Anex86();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "anex86_10mb.hdi.lz",
@@ -122,14 +122,14 @@ public class Anex86 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "bc1ef3236e75cb09575037b884ee9dce",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -138,14 +138,14 @@ public class Anex86 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "243036c4617b666a6c886cc23d7274e0",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -154,14 +154,14 @@ public class Anex86 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "09bb2ff964a0c5c223a1900f085e3955",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         }
-    };
+    ];
 }

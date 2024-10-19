@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Runtime.InteropServices;
 using Aaru.Decoders.Floppy;
 
+namespace Aaru.Images;
+
 public sealed partial class Cpcdsk
 {
+#region Nested type: DiskInfo
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct DiskInfo
     {
@@ -59,6 +61,37 @@ public sealed partial class Cpcdsk
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 204)]
         public readonly byte[] tracksizeTable;
     }
+
+#endregion
+
+#region Nested type: SectorInfo
+
+    /// <summary>Sector information</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SectorInfo
+    {
+        /// <summary>Track number from address mark</summary>
+        public readonly byte track;
+        /// <summary>Side number from address mark</summary>
+        public readonly byte side;
+        /// <summary>Sector ID from address mark</summary>
+        public readonly byte id;
+        /// <summary>Sector size from address mark</summary>
+        public readonly IBMSectorSizeCode size;
+        /// <summary>ST1 register from controller</summary>
+        public readonly byte st1;
+        /// <summary>ST2 register from controller</summary>
+        public readonly byte st2;
+        /// <summary>
+        ///     Length in bytes of this sector size. If it is bigger than expected sector size, it's a weak sector read
+        ///     several times.
+        /// </summary>
+        public readonly ushort len;
+    }
+
+#endregion
+
+#region Nested type: TrackInfo
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct TrackInfo
@@ -91,26 +124,5 @@ public sealed partial class Cpcdsk
         public readonly SectorInfo[] sectorsInfo;
     }
 
-    /// <summary>Sector information</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SectorInfo
-    {
-        /// <summary>Track number from address mark</summary>
-        public readonly byte track;
-        /// <summary>Side number from address mark</summary>
-        public readonly byte side;
-        /// <summary>Sector ID from address mark</summary>
-        public readonly byte id;
-        /// <summary>Sector size from address mark</summary>
-        public readonly IBMSectorSizeCode size;
-        /// <summary>ST1 register from controller</summary>
-        public readonly byte st1;
-        /// <summary>ST2 register from controller</summary>
-        public readonly byte st2;
-        /// <summary>
-        ///     Length in bytes of this sector size. If it is bigger than expected sector size, it's a weak sector read
-        ///     several times.
-        /// </summary>
-        public readonly ushort len;
-    }
+#endregion
 }

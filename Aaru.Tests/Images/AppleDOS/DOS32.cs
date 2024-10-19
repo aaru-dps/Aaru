@@ -23,26 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.AppleDOS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.AppleDOS;
 
 [TestFixture]
 public class DOS32 : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple DOS 13 sectors");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apple DOS 13 sectors");
+
     public override IMediaImage Plugin => new AppleDos();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "alice.d13.lz",
@@ -50,14 +51,14 @@ public class DOS32 : BlockMediaImageTest
             Sectors    = 455,
             SectorSize = 256,
             Md5        = "76f8fe4c5bc1976f99641ad7cdf53109",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 455
                 }
-            }
+            ]
         }
-    };
+    ];
 }

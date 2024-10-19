@@ -1,8 +1,8 @@
-Aaru Data Preservation Suite v6.0.0-alpha8
+Aaru Data Preservation Suite v6.0.0-alpha9
 
 Aaru
 
-Copyright © 2011-2022 Natalia Portillo <claunia@claunia.com>
+Copyright © 2011-2024 Natalia Portillo <claunia@claunia.com>
 
 [![Build Status](https://dev.azure.com/Aaru-dps/aaru/_apis/build/status/aaru-dps.Aaru?branchName=master)](https://dev.azure.com/Aaru-dps/aaru/_build/latest?definitionId=7&branchName=master)
 [![Build Status](https://travis-ci.org/aaru-dps/Aaru.svg?branch=master)](https://travis-ci.org/github/aaru-dps/Aaru)
@@ -28,7 +28,7 @@ Stable releases in [Github](https://github.com/aaru-dps/Aaru/releases).
 
 System requirements
 ===================
-Aaru is created using .NET 6 and can be compiled with all the major IDEs. To run it you require to use one of the stable
+Aaru is created using .NET 7 and can be compiled with all the major IDEs. To run it you require to use one of the stable
 releases, or build it yourself.
 
 Usage
@@ -47,6 +47,7 @@ Features
   filesystems inside them
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
 * Can compare two disk images, even different formats, for different sectors and/or metadata
+* Can list and extract contents from supported archives
 * Can list and extract contents from supported filesystems
 * Can read several disk image formats.
 * Can read several known sector by sector formats with variable bytes per sector.
@@ -124,6 +125,11 @@ Supported disk image formats (read and write)
 * VMware VMDK and COWD images
 * XDF disk images (as created by IBM's XDFCOPY)
 
+Supported disk image formats (read-only)
+========================================
+
+* Symbian Installation File (.SIS)
+
 Supported partitioning schemes
 ==============================
 
@@ -160,6 +166,7 @@ Supported file systems for read-only operations
 * Apple Lisa file system
 * Apple Macintosh File System (MFS)
 * CD-i file system
+* Commodore 1540/1541/1571/1581 filesystems
 * CP/M file system
 * High Sierra Format
 * ISO9660, including Apple, Amiga, Rock Ridge, Joliet and Romeo extensions
@@ -187,7 +194,6 @@ Supported file systems for identification and information only
 * BSD Unix File System 2 (UFS2)
 * B-tree file system (btrfs)
 * Coherent UNIX file system
-* Commodore 1540/1541/1571/1581 filesystems
 * Cram file system
 * DEC Files-11 (only checked with On Disk Structure 2, ODS-2)
 * DEC RT-11 file system

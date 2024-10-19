@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,8 +38,12 @@ using System.Threading.Tasks;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class CompactDiscInfoViewModel : ViewModelBase
 {
@@ -69,7 +71,7 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         _pmaData                    = pma;
         _cdTextLeadInData           = cdTextLeadIn;
         _view                       = view;
-        IsrcList                    = new ObservableCollection<IsrcModel>();
+        IsrcList                    = [];
         SaveCdInformationCommand    = ReactiveCommand.Create(ExecuteSaveCdInformationCommand);
         SaveCdTocCommand            = ReactiveCommand.Create(ExecuteSaveCdTocCommand);
         SaveCdFullTocCommand        = ReactiveCommand.Create(ExecuteSaveCdFullTocCommand);
@@ -81,32 +83,29 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
         if(decodedCompactDiscInformation.HasValue)
             CdInformationText = DiscInformation.Prettify000b(decodedCompactDiscInformation);
 
-        if(decodedToc.HasValue)
-            CdTocText = TOC.Prettify(decodedToc);
+        if(decodedToc.HasValue) CdTocText = TOC.Prettify(decodedToc);
 
-        if(fullToc.HasValue)
-            CdFullTocText = FullTOC.Prettify(fullToc);
+        if(fullToc.HasValue) CdFullTocText = FullTOC.Prettify(fullToc);
 
-        if(decodedSession.HasValue)
-            CdSessionText = Session.Prettify(decodedSession);
+        if(decodedSession.HasValue) CdSessionText = Session.Prettify(decodedSession);
 
-        if(decodedCdTextLeadIn.HasValue)
-            CdTextText = CDTextOnLeadIn.Prettify(decodedCdTextLeadIn);
+        if(decodedCdTextLeadIn.HasValue) CdTextText = CDTextOnLeadIn.Prettify(decodedCdTextLeadIn);
 
-        if(decodedAtip != null)
-            CdAtipText = ATIP.Prettify(atip);
+        if(decodedAtip != null) CdAtipText = ATIP.Prettify(atip);
 
-        if(!string.IsNullOrEmpty(mcn))
-            McnText = mcn;
+        if(!string.IsNullOrEmpty(mcn)) McnText = mcn;
 
-        if(isrcs       != null &&
-           isrcs.Count > 0)
+        if(isrcs is { Count: > 0 })
+        {
             foreach(KeyValuePair<byte, string> isrc in isrcs)
+            {
                 IsrcList.Add(new IsrcModel
                 {
                     Track = isrc.Key.ToString(),
                     Isrc  = isrc.Value
                 });
+            }
+        }
 
         MiscellaneousVisible = McnText != null || isrcs?.Count > 0 || pma != null;
         CdPmaVisible         = pma != null;
@@ -130,25 +129,38 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
     public ReactiveCommand<Unit, Task>     SaveCdPmaCommand         { get; }
     public ObservableCollection<IsrcModel> IsrcList                 { get; }
 
+    public string CdInformationLabel     => UI.Title_Information;
+    public string SaveCdInformationLabel => UI.ButtonLabel_Save_READ_DISC_INFORMATION_response;
+    public string CdTocLabel             => UI.Title_TOC;
+    public string SaveCdTocLabel         => UI.ButtonLabel_Save_READ_TOC_response;
+    public string CdFullTocLabel         => UI.Title_TOC_full;
+    public string SaveCdFullTocLabel     => UI.ButtonLabel_Save_READ_RAW_TOC_response;
+    public string CdSessionLabel         => Localization.Core.Title_Session;
+    public string SaveCdSessionLabel     => UI.ButtonLabel_Save_READ_SESSION_response;
+    public string CdTextLabel            => UI.Title_CD_TEXT;
+    public string SaveCdTextLabel        => UI.ButtonLabel_Save_Lead_In_CD_TEXT;
+    public string CdAtipLabel            => UI.Title_ATIP;
+    public string SaveCdAtipLabel        => UI.ButtonLabel_Save_READ_ATIP_response;
+    public string MiscellaneousLabel     => UI.Title_Miscellaneous;
+    public string McnLabel               => UI.Title_Media_catalog_number;
+    public string IsrCsLabel             => UI.Title_ISRCs;
+    public string TrackLabel             => Localization.Core.Title_Track;
+    public string ISRCLabel              => UI.Title_ISRC;
+    public string SaveCdPmaLabel         => UI.ButtonLabel_Save_READ_PMA_response;
+
     async Task ExecuteSaveCdInformationCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_compactDiscInformationData, 0, _compactDiscInformationData.Length);
 
         saveFs.Close();
@@ -156,23 +168,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdTocCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_tocData, 0, _tocData.Length);
 
         saveFs.Close();
@@ -180,23 +186,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdFullTocCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_rawTocData, 0, _rawTocData.Length);
 
         saveFs.Close();
@@ -204,23 +204,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdSessionCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_sessionData, 0, _sessionData.Length);
 
         saveFs.Close();
@@ -228,23 +222,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdTextCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_cdTextLeadInData, 0, _cdTextLeadInData.Length);
 
         saveFs.Close();
@@ -252,23 +240,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdAtipCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_atipData, 0, _atipData.Length);
 
         saveFs.Close();
@@ -276,23 +258,17 @@ public sealed class CompactDiscInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveCdPmaCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_pmaData, 0, _pmaData.Length);
 
         saveFs.Close();

@@ -1,13 +1,13 @@
-name: Image Bug Report
+name:        Image Bug Report
 description: Bugs report on commands that handle images, like converting or extracting.
-labels: ["bug", "needs triage", "dump image format"]
+labels: [ "bug", "needs triage", "dump image format" ]
 assignees:
   - silaslaspada
 body:
   - type: dropdown
-    id: version
+    id:   version
     attributes:
-      label: Version
+      label:       Version
       description: What version of Aaru are you running?
       options:
         - 5.3.0
@@ -18,22 +18,22 @@ body:
     validations:
       required: true
   - type: input
-    id: commit
+    id:   commit
     attributes:
-      label: Commit hash
+      label:       Commit hash
       description: If using a developmen commit, which one
   - type: checkboxes
-    id: debug
+    id:   debug
     attributes:
-      label: Tested debug version?
+      label:       Tested debug version?
       description: Have you reproduced the problem using the debug version?
       options:
-        - label: "Yes"
+        - label:    "Yes"
           required: true
   - type: checkboxes
-    id: os
+    id:   os
     attributes:
-      label: Which operating systems have you used?
+      label:       Which operating systems have you used?
       description: You may select more than one.
       options:
         - label: Windows
@@ -41,39 +41,39 @@ body:
         - label: macOS
         - label: Other
   - type: checkboxes
-    id: bitsize
+    id:   bitsize
     attributes:
-      label: What is the architectural bit size you're using?
+      label:       What is the architectural bit size you're using?
       description: You may select more than one.
       options:
         - label: 32-bit
         - label: 64-bit
         - label: Unsure or unknown
   - type: checkboxes
-    id: cpu
+    id:   cpu
     attributes:
-      label: What processor are you using?
+      label:       What processor are you using?
       description: You may select more than one.
       options:
         - label: An Intel or AMD
         - label: An ARM or Apple Silicon
         - label: Unsure or unknown
   - type: input
-    id: format
+    id:   format
     attributes:
       label: Image format
     validations:
       required: true
   - type: input
-    id: application
+    id:   application
     attributes:
       label: Application that created the image
     validations:
       required: true
   - type: checkboxes
-    id: action
+    id:   action
     attributes:
-      label: What were you doing when it failed?
+      label:       What were you doing when it failed?
       description: Choose all that apply
       options:
         - label: I was converting the image to another format...
@@ -86,54 +86,54 @@ body:
         - label: I was verifying the image...
         - label: I was calculating the image entropy...
   - type: input
-    id: target_format
+    id:   target_format
     attributes:
-      label: Destination image format
+      label:       Destination image format
       description: If you were converting the image format, what format were you trying to convert it into
   - type: input
-    id: filesystem
+    id:   filesystem
     attributes:
-      label: Filesystem
+      label:       Filesystem
       description: If you were listing information, contents, or extracting the contents of a filesystem, which filesystem is it? (leave empty if unknown)
   - type: textarea
-    id: description
+    id:   description
     attributes:
-      label: Description
+      label:       Description
       description: Description of the bug
     validations:
       required: true
   - type: input
-    id: command_line
+    id:   command_line
     attributes:
-      label: Exact command line used
+      label:       Exact command line used
       placeholder: "`Aaru [command] [parameters]`"
     validations:
       required: true
   - type: textarea
-    id: expected
+    id:   expected
     attributes:
-      label: Expected behavior
+      label:       Expected behavior
       description: What did you expect to happen
     validations:
       required: true
   - type: textarea
-    id: actual
+    id:   actual
     attributes:
-      label: Actual behavior
+      label:       Actual behavior
       description: What actually happened
     validations:
       required: true
   - type: textarea
-    id: output
+    id:   output
     attributes:
-      label: Output of command execution with debug output enabled
+      label:       Output of command execution with debug output enabled
       placeholder: Paste the whole output of the executed command when you append '-d' to your command line parameters here
-      render: shell
+      render:      shell
     validations:
       required: true
   - type: textarea
-    id: image
+    id:   image
     attributes:
-      label: Affected image
+      label:       Affected image
       placeholder: Upload the image, compressed and with the number of this issue.
                    If the image contains personal data contact the project lead, and the image contents will be handled confidentially under the GDPR requirements.

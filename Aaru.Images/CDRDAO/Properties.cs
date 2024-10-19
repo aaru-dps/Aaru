@@ -27,21 +27,25 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Images;
 
 public sealed partial class Cdrdao
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks    |
                                                            OpticalImageCapabilities.CanStoreDataTracks     |
@@ -54,16 +58,24 @@ public sealed partial class Cdrdao
                                                            OpticalImageCapabilities.CanStoreCookedData     |
                                                            OpticalImageCapabilities.CanStoreMultipleTracks |
                                                            OpticalImageCapabilities.CanStoreIndexes;
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "CDRDAO tocfile";
+    public string Name => Localization.Cdrdao_Name;
+
     /// <inheritdoc />
     public Guid Id => new("04D7BA12-1BE8-44D4-97A4-1B48A505463E");
+
     /// <inheritdoc />
     public string Format => "CDRDAO tocfile";
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
 
@@ -75,9 +87,9 @@ public sealed partial class Cdrdao
             Track firstTrack = Tracks.First(t => t.Sequence == Tracks.Min(m => m.Sequence));
             Track lastTrack  = Tracks.First(t => t.Sequence == Tracks.Max(m => m.Sequence));
 
-            return new List<Session>
-            {
-                new()
+            return
+            [
+                new Session
                 {
                     Sequence    = 1,
                     StartSector = firstTrack.StartSector,
@@ -85,7 +97,7 @@ public sealed partial class Cdrdao
                     StartTrack  = firstTrack.Sequence,
                     EndTrack    = lastTrack.Sequence
                 }
-            };
+            ];
         }
     }
 
@@ -94,7 +106,7 @@ public sealed partial class Cdrdao
     {
         get
         {
-            List<Track> tracks = new();
+            List<Track> tracks = [];
 
             foreach(CdrdaoTrack cdrTrack in _discimage.Tracks)
             {
@@ -121,7 +133,8 @@ public sealed partial class Cdrdao
 
                 if(cdrTrack.Subchannel)
                 {
-                    aaruTrack.SubchannelType = cdrTrack.Packedsubchannel ? TrackSubchannelType.PackedInterleaved
+                    aaruTrack.SubchannelType = cdrTrack.Packedsubchannel
+                                                   ? TrackSubchannelType.PackedInterleaved
                                                    : TrackSubchannelType.RawInterleaved;
 
                     aaruTrack.SubchannelFilter = cdrTrack.Trackfile.Datafilter;
@@ -149,8 +162,10 @@ public sealed partial class Cdrdao
                     }
                 }
                 else
+                {
                     foreach(KeyValuePair<int, ulong> idx in cdrTrack.Indexes.OrderBy(i => i.Key))
                         aaruTrack.Indexes[(ushort)idx.Key] = (int)idx.Value;
+                }
 
                 tracks.Add(aaruTrack);
             }
@@ -160,9 +175,10 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
 
     // TODO: Decode CD-Text to text
     /// <inheritdoc />
@@ -170,6 +186,7 @@ public sealed partial class Cdrdao
     {
         MediaTagType.CD_MCN
     };
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
@@ -177,6 +194,7 @@ public sealed partial class Cdrdao
         SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubchannel, SectorTagType.CdSectorSubHeader,
         SectorTagType.CdSectorSync, SectorTagType.CdTrackFlags, SectorTagType.CdTrackIsrc
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -188,18 +206,24 @@ public sealed partial class Cdrdao
         MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor,
         MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions => new[]
     {
-        ("separate", typeof(bool), "Write each track to a separate file.", (object)false)
+        ("separate", typeof(bool), Localization.Write_each_track_to_a_separate_file, (object)false)
     };
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
         ".toc"
     };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

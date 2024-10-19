@@ -27,35 +27,38 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Aaru.Console;
+
+namespace Aaru.Images;
 
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -71,9 +74,10 @@ public sealed partial class CisCopy
         {
             _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -111,43 +115,28 @@ public sealed partial class CisCopy
 
                 break;
             default:
-                ErrorMessage = $"Unsupported media format {mediaType}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
                 return false;
         }
 
         _writingStream.WriteByte((byte)diskType);
 
-        byte tracks = 0;
-
-        switch(diskType)
-        {
-            case DiskType.MD1DD8:
-            case DiskType.MD1DD:
-            case DiskType.MD2DD8:
-            case DiskType.MD2DD:
-                tracks = 80;
-
-                break;
-            case DiskType.MF2DD:
-            case DiskType.MD2HD:
-            case DiskType.MF2HD:
-                tracks = 160;
-
-                break;
-        }
+        byte tracks = diskType switch
+                      {
+                          DiskType.MD1DD8 or DiskType.MD1DD or DiskType.MD2DD8 or DiskType.MD2DD => 80,
+                          DiskType.MF2DD or DiskType.MD2HD or DiskType.MF2HD                     => 160
+                      };
 
         var headStep = 1;
 
-        if(diskType is DiskType.MD1DD or DiskType.MD1DD8)
-            headStep = 2;
+        if(diskType is DiskType.MD1DD or DiskType.MD1DD8) headStep = 2;
 
         for(var i = 0; i < tracks; i += headStep)
         {
             _writingStream.WriteByte((byte)TrackType.Copied);
 
-            if(headStep == 2)
-                _writingStream.WriteByte(0);
+            if(headStep == 2) _writingStream.WriteByte(0);
         }
 
         _writingStream.WriteByte((byte)Compression.None);
@@ -162,7 +151,7 @@ public sealed partial class CisCopy
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Writing media tags is not supported.";
+        ErrorMessage = Localization.Writing_media_tags_is_not_supported;
 
         return false;
     }
@@ -172,21 +161,21 @@ public sealed partial class CisCopy
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length != 512)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress >= _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -204,21 +193,21 @@ public sealed partial class CisCopy
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % 512 != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -234,7 +223,7 @@ public sealed partial class CisCopy
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -242,7 +231,7 @@ public sealed partial class CisCopy
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -252,7 +241,7 @@ public sealed partial class CisCopy
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -267,7 +256,7 @@ public sealed partial class CisCopy
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
@@ -275,7 +264,7 @@ public sealed partial class CisCopy
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -283,14 +272,16 @@ public sealed partial class CisCopy
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

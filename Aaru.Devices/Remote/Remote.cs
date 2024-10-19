@@ -27,14 +27,10 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable MemberCanBeInternal
-
-namespace Aaru.Devices.Remote;
 
 using System;
 using System.Collections.Generic;
@@ -50,6 +46,8 @@ using Aaru.Decoders.ATA;
 using Marshal = Aaru.Helpers.Marshal;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+namespace Aaru.Devices.Remote;
+
 /// <inheritdoc />
 /// <summary>Handles communication with a remote device that's connected using the AaruRemote protocol</summary>
 public class Remote : IDisposable
@@ -64,9 +62,8 @@ public class Remote : IDisposable
     /// <exception cref="IOException">Network error.</exception>
     public Remote(Uri uri)
     {
-        if(uri.Scheme != "aaru" &&
-           uri.Scheme != "dic")
-            throw new ArgumentException("Invalid remote protocol.", nameof(uri.Scheme));
+        if(uri.Scheme != "aaru" && uri.Scheme != "dic")
+            throw new ArgumentException(Localization.Invalid_remote_protocol, nameof(uri.Scheme));
 
         _host = uri.DnsSafeHost;
 
@@ -79,7 +76,7 @@ public class Remote : IDisposable
 
         if(ipAddress is null)
         {
-            AaruConsole.ErrorWriteLine("Host not found");
+            AaruConsole.ErrorWriteLine(Localization.Host_not_found);
 
             throw new SocketException(11001);
         }
@@ -89,7 +86,7 @@ public class Remote : IDisposable
 
         _socket.Connect(ipEndPoint);
 
-        AaruConsole.WriteLine("Connected to {0}", uri.Host);
+        AaruConsole.WriteLine(Localization.Connected_to_0, uri.Host);
 
         var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
@@ -97,17 +94,16 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             throw new IOException();
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             throw new ArgumentException();
         }
@@ -118,7 +114,7 @@ public class Remote : IDisposable
         {
             if(hdr.packetType != AaruPacketType.Nop)
             {
-                AaruConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
+                AaruConsole.ErrorWriteLine(Localization.Expected_Hello_Packet_got_packet_type_0, hdr.packetType);
 
                 throw new ArgumentException();
             }
@@ -128,7 +124,7 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
                 throw new IOException();
             }
@@ -142,7 +138,7 @@ public class Remote : IDisposable
 
         if(hdr.version != Consts.PACKET_VERSION)
         {
-            AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+            AaruConsole.ErrorWriteLine(Localization.Unrecognized_packet_version);
 
             throw new ArgumentException();
         }
@@ -152,7 +148,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             throw new IOException();
         }
@@ -188,24 +184,28 @@ public class Remote : IDisposable
 
         len = _socket.Send(buf, SocketFlags.None);
 
-        if(len >= buf.Length)
-            return;
+        if(len >= buf.Length) return;
 
-        AaruConsole.ErrorWriteLine("Could not write to the network...");
+        AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
         throw new IOException();
     }
 
     /// <summary>Remote server application</summary>
     public string ServerApplication { get; }
+
     /// <summary>Remote server application version</summary>
     public string ServerVersion { get; }
+
     /// <summary>Remote server operating system</summary>
     public string ServerOperatingSystem { get; }
+
     /// <summary>Remote server operating system version</summary>
     public string ServerOperatingSystemVersion { get; }
+
     /// <summary>Remote server architecture</summary>
     public string ServerArchitecture { get; }
+
     /// <summary>Remote server protocol version</summary>
     public int ServerProtocolVersion { get; }
 
@@ -232,7 +232,7 @@ public class Remote : IDisposable
 
             if(len != buf.Length)
             {
-                AaruConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
                 return false;
             }
@@ -243,24 +243,24 @@ public class Remote : IDisposable
 
             if(len < hdrBuf.Length)
             {
-                AaruConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
                 return false;
             }
 
             AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-            if(hdr.remote_id != Consts.REMOTE_ID ||
-               hdr.packet_id != Consts.PACKET_ID)
+            if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
             {
-                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+                AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
                 return false;
             }
 
             if(hdr.packetType != AaruPacketType.ResponseAmIRoot)
             {
-                AaruConsole.ErrorWriteLine("Expected Am I Root? Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine(Localization
+                                              .Remote_IsRoot_Expected_Am_I_Root_Response_Packet_got_packet_type_0,
                                            hdr.packetType);
 
                 return false;
@@ -271,7 +271,7 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
                 return false;
             }
@@ -282,8 +282,12 @@ public class Remote : IDisposable
         }
     }
 
+#region IDisposable Members
+
     /// <inheritdoc />
     public void Dispose() => Disconnect();
+
+#endregion
 
     /// <summary>Disconnects from remote</summary>
     public void Disconnect()
@@ -321,9 +325,9 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
@@ -332,29 +336,29 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         if(hdr.packetType != AaruPacketType.ResponseListDevices)
         {
             if(hdr.packetType != AaruPacketType.Nop)
             {
-                AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine(Localization
+                                              .Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
                                            hdr.packetType);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             buf = new byte[hdr.len];
@@ -362,23 +366,23 @@ public class Remote : IDisposable
 
             if(len < buf.Length)
             {
-                AaruConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
             AaruConsole.ErrorWriteLine($"{nop.reason}");
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         if(hdr.version != Consts.PACKET_VERSION)
         {
-            AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+            AaruConsole.ErrorWriteLine(Localization.Unrecognized_packet_version);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         buf = new byte[hdr.len];
@@ -386,17 +390,17 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
 
         AaruPacketResponseListDevices response =
             Marshal.ByteArrayToStructureLittleEndian<AaruPacketResponseListDevices>(buf);
 
-        var devices    = new List<DeviceInfo>();
-        int offset     = Marshal.SizeOf<AaruPacketResponseListDevices>();
-        int devInfoLen = Marshal.SizeOf<DeviceInfo>();
+        List<DeviceInfo> devices    = [];
+        int              offset     = Marshal.SizeOf<AaruPacketResponseListDevices>();
+        int              devInfoLen = Marshal.SizeOf<DeviceInfo>();
 
         for(ushort i = 0; i < response.devices; i++)
         {
@@ -440,7 +444,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
             lastError = -1;
 
             return false;
@@ -452,7 +456,7 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
             lastError = -1;
 
             return false;
@@ -460,10 +464,9 @@ public class Remote : IDisposable
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
             lastError = -1;
 
             return false;
@@ -471,7 +474,9 @@ public class Remote : IDisposable
 
         if(hdr.packetType != AaruPacketType.Nop)
         {
-            AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization
+                                          .Remote_ListDevices_Expected_List_Devices_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             lastError = -1;
 
@@ -483,7 +488,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
             lastError = -1;
 
             return false;
@@ -493,8 +498,10 @@ public class Remote : IDisposable
 
         switch(nop.reasonCode)
         {
-            case AaruNopReason.OpenOk:         return true;
-            case AaruNopReason.NotImplemented: throw new NotImplementedException($"{nop.reason}");
+            case AaruNopReason.OpenOk:
+                return true;
+            case AaruNopReason.NotImplemented:
+                throw new NotImplementedException($"{nop.reason}");
         }
 
         AaruConsole.ErrorWriteLine($"{nop.reason}");
@@ -515,8 +522,8 @@ public class Remote : IDisposable
     ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
     ///     SCSI sense
     /// </param>
-    public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
-                               ScsiDirection direction, out double duration, out bool sense)
+    public int SendScsiCommand(byte[]        cdb,       ref byte[] buffer,   out byte[] senseBuffer, uint timeout,
+                               ScsiDirection direction, out double duration, out bool   sense)
     {
         senseBuffer = null;
         duration    = 0;
@@ -535,11 +542,9 @@ public class Remote : IDisposable
             timeout   = timeout * 1000
         };
 
-        if(cdb != null)
-            cmdPkt.cdb_len = (uint)cdb.Length;
+        if(cdb != null) cmdPkt.cdb_len = (uint)cdb.Length;
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
 
@@ -548,8 +553,7 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdScsi>());
 
-        if(cdb != null)
-            Array.Copy(cdb, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>(), cmdPkt.cdb_len);
+        if(cdb != null) Array.Copy(cdb, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>(), cmdPkt.cdb_len);
 
         if(buffer != null)
             Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
@@ -558,7 +562,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -569,24 +573,23 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseScsi)
         {
-            AaruConsole.ErrorWriteLine("Expected SCSI Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_SCSI_Response_Packet_got_packet_type_0, hdr.packetType);
 
             return -1;
         }
@@ -596,7 +599,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -651,8 +654,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaChs>() + cmdPkt.buf_len);
 
@@ -661,14 +663,13 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaChs>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -679,24 +680,23 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseAtaChs)
         {
-            AaruConsole.ErrorWriteLine("Expected ATA CHS Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_ATA_CHS_Response_Packet_got_packet_type_0, hdr.packetType);
 
             return -1;
         }
@@ -706,7 +706,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -737,8 +737,8 @@ public class Remote : IDisposable
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
     public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
-                              AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                              uint timeout, bool transferBlocks, out double duration, out bool sense)
+                              AtaProtocol       protocol,  AtaTransferRegister transferRegister, ref byte[] buffer,
+                              uint              timeout,   bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = true;
@@ -760,8 +760,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba28>() + cmdPkt.buf_len);
 
@@ -770,14 +769,13 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba28>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -788,24 +786,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseAtaLba28)
         {
-            AaruConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_ATA_LBA28_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return -1;
         }
@@ -815,7 +813,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -846,8 +844,8 @@ public class Remote : IDisposable
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
     public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
-                              AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                              uint timeout, bool transferBlocks, out double duration, out bool sense)
+                              AtaProtocol       protocol,  AtaTransferRegister transferRegister, ref byte[] buffer,
+                              uint              timeout,   bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = true;
@@ -869,8 +867,7 @@ public class Remote : IDisposable
             timeout          = timeout * 1000
         };
 
-        if(buffer != null)
-            cmdPkt.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdAtaLba48>() + cmdPkt.buf_len);
 
@@ -879,14 +876,13 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba48>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -897,24 +893,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseAtaLba48)
         {
-            AaruConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_ATA_LBA48_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return -1;
         }
@@ -924,7 +920,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -984,8 +980,7 @@ public class Remote : IDisposable
             }
         };
 
-        if(buffer != null)
-            cmdPkt.command.buf_len = (uint)buffer.Length;
+        if(buffer != null) cmdPkt.command.buf_len = (uint)buffer.Length;
 
         cmdPkt.hdr.len = (uint)(Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.command.buf_len);
 
@@ -994,14 +989,13 @@ public class Remote : IDisposable
 
         Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdSdhci>());
 
-        if(buffer != null)
-            Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
+        if(buffer != null) Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.command.buf_len);
 
         int len = _socket.Send(buf, SocketFlags.None);
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -1012,24 +1006,23 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseSdhci)
         {
-            AaruConsole.ErrorWriteLine("Expected SDHCI Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_SDHCI_Response_Packet_got_packet_type_0, hdr.packetType);
 
             return -1;
         }
@@ -1039,7 +1032,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1083,7 +1076,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return DeviceType.Unknown;
         }
@@ -1094,24 +1087,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return DeviceType.Unknown;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return DeviceType.Unknown;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseGetType)
         {
-            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_Device_Type_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return DeviceType.Unknown;
         }
@@ -1121,7 +1114,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return DeviceType.Unknown;
         }
@@ -1162,7 +1155,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1173,24 +1166,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseGetSdhciRegisters)
         {
-            AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_Device_Type_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return false;
         }
@@ -1200,7 +1193,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1210,8 +1203,7 @@ public class Remote : IDisposable
 
         if(res.csd_len > 0)
         {
-            if(res.csd_len > 16)
-                res.csd_len = 16;
+            if(res.csd_len > 16) res.csd_len = 16;
 
             csd = new byte[res.csd_len];
 
@@ -1220,8 +1212,7 @@ public class Remote : IDisposable
 
         if(res.cid_len > 0)
         {
-            if(res.cid_len > 16)
-                res.cid_len = 16;
+            if(res.cid_len > 16) res.cid_len = 16;
 
             cid = new byte[res.cid_len];
 
@@ -1230,23 +1221,26 @@ public class Remote : IDisposable
 
         if(res.ocr_len > 0)
         {
-            if(res.ocr_len > 16)
-                res.ocr_len = 16;
+            if(res.ocr_len > 16) res.ocr_len = 16;
 
             ocr = new byte[res.ocr_len];
 
             Array.Copy(res.ocr, 0, ocr, 0, res.ocr_len);
         }
 
-        if(res.scr_len > 0)
+        switch(res.scr_len)
         {
-            if(res.scr_len > 16)
+            case <= 0:
+                return res.isSdhci;
+            case > 16:
                 res.scr_len = 16;
 
-            scr = new byte[res.scr_len];
-
-            Array.Copy(res.scr, 0, scr, 0, res.scr_len);
+                break;
         }
+
+        scr = new byte[res.scr_len];
+
+        Array.Copy(res.scr, 0, scr, 0, res.scr_len);
 
         return res.isSdhci;
     }
@@ -1260,7 +1254,7 @@ public class Remote : IDisposable
     /// <param name="serial">USB serial number string</param>
     /// <returns><c>true</c> if the device is attached via USB, <c>false</c> otherwise</returns>
     public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct, out string manufacturer,
-                           out string product, out string serial)
+                           out string product,     out string serial)
     {
         descriptors  = null;
         idVendor     = 0;
@@ -1287,7 +1281,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1298,24 +1292,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseGetUsbData)
         {
-            AaruConsole.ErrorWriteLine("Expected USB Data Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_USB_Data_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return false;
         }
@@ -1325,15 +1319,14 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketResGetUsbData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetUsbData>(buf);
 
-        if(!res.isUsb)
-            return false;
+        if(!res.isUsb) return false;
 
         descriptors = new byte[res.descLen];
         Array.Copy(res.descriptors, 0, descriptors, 0, res.descLen);
@@ -1353,7 +1346,7 @@ public class Remote : IDisposable
     /// <param name="model">FireWire model string</param>
     /// <param name="guid">FireWire GUID</param>
     /// <returns><c>true</c> if the device is attached via FireWire, <c>false</c> otherwise</returns>
-    public bool GetFireWireData(out uint idVendor, out uint idProduct, out ulong guid, out string vendor,
+    public bool GetFireWireData(out uint   idVendor, out uint idProduct, out ulong guid, out string vendor,
                                 out string model)
     {
         idVendor  = 0;
@@ -1380,7 +1373,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1391,24 +1384,23 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseGetFireWireData)
         {
-            AaruConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
+            AaruConsole.ErrorWriteLine(Localization.Expected_FireWire_Data_Response_Packet_got_packet_type_0,
                                        hdr.packetType);
 
             return false;
@@ -1419,15 +1411,14 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketResGetFireWireData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetFireWireData>(buf);
 
-        if(!res.isFireWire)
-            return false;
+        if(!res.isFireWire) return false;
 
         idVendor  = res.idVendor;
         idProduct = res.idModel;
@@ -1463,7 +1454,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1474,24 +1465,24 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseGetPcmciaData)
         {
-            AaruConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_PCMCIA_Data_Response_Packet_got_packet_type_0,
+                                       hdr.packetType);
 
             return false;
         }
@@ -1501,15 +1492,14 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketResGetPcmciaData res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetPcmciaData>(buf);
 
-        if(!res.isPcmcia)
-            return false;
+        if(!res.isPcmcia) return false;
 
         cis = res.cis;
 
@@ -1530,8 +1520,7 @@ public class Remote : IDisposable
         {
             int got = socket.Receive(buffer, offset, size, socketFlags);
 
-            if(got <= 0)
-                break;
+            if(got <= 0) break;
 
             offset += got;
             size   -= got;
@@ -1576,11 +1565,10 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    public int SendMultipleMmcCommands(Device.MmcSingleCommand[] commands, out double duration, out bool sense,
-                                       uint timeout = 0)
+    public int SendMultipleMmcCommands(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense,
+                                       uint                              timeout = 0)
     {
-        if(ServerProtocolVersion < 2)
-            return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
+        if(ServerProtocolVersion < 2) return SendMultipleMmcCommandsV1(commands, out duration, out sense, timeout);
 
         sense    = false;
         duration = 0;
@@ -1588,8 +1576,7 @@ public class Remote : IDisposable
         long packetSize = Marshal.SizeOf<AaruPacketMultiCmdSdhci>() +
                           Marshal.SizeOf<AaruCmdSdhci>() * commands.LongLength;
 
-        foreach(Device.MmcSingleCommand command in commands)
-            packetSize += command.buffer?.Length ?? 0;
+        packetSize = commands.Aggregate(packetSize, (current, command) => current + (command.buffer?.Length ?? 0));
 
         var packet = new AaruPacketMultiCmdSdhci
         {
@@ -1630,7 +1617,8 @@ public class Remote : IDisposable
             off += tmp.Length;
         }
 
-        foreach(Device.MmcSingleCommand command in commands.Where(command => (command.buffer?.Length ?? 0) != 0))
+        foreach(Devices.Device.MmcSingleCommand command in
+                commands.Where(command => (command.buffer?.Length ?? 0) != 0))
         {
             Array.Copy(command.buffer, 0, buf, off, command.buffer.Length);
 
@@ -1641,7 +1629,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return -1;
         }
@@ -1652,24 +1640,23 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return -1;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseMultiSdhci)
         {
-            AaruConsole.ErrorWriteLine("Expected multi MMC/SD command Response Packet, got packet type {0}...",
+            AaruConsole.ErrorWriteLine(Localization.Expected_multi_MMC_SD_command_Response_Packet_got_packet_type_0,
                                        hdr.packetType);
 
             return -1;
@@ -1680,7 +1667,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return -1;
         }
@@ -1689,8 +1676,9 @@ public class Remote : IDisposable
 
         if(res.cmd_count != (ulong)commands.Length)
         {
-            AaruConsole.ErrorWriteLine("Expected the response to {0} SD/MMC commands, but got {1} responses...",
-                                       commands.Length, res.cmd_count);
+            AaruConsole.ErrorWriteLine(Localization.Expected_the_response_to_0_SD_MMC_commands_but_got_1_responses,
+                                       commands.Length,
+                                       res.cmd_count);
 
             return -1;
         }
@@ -1699,7 +1687,7 @@ public class Remote : IDisposable
 
         var error = 0;
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
             AaruResSdhci cmdRes =
                 Marshal.ByteArrayToStructureLittleEndian<AaruResSdhci>(buf, off, Marshal.SizeOf<AaruResSdhci>());
@@ -1707,20 +1695,16 @@ public class Remote : IDisposable
             command.response =  cmdRes.response;
             duration         += cmdRes.duration;
 
-            if(cmdRes.error_no != 0 &&
-               error           == 0)
-                error = (int)cmdRes.error_no;
+            if(cmdRes.error_no != 0 && error == 0) error = (int)cmdRes.error_no;
 
-            if(cmdRes.sense != 0)
-                sense = true;
+            if(cmdRes.sense != 0) sense = true;
 
-            if(cmdRes.buf_len > 0)
-                command.buffer = new byte[cmdRes.buf_len];
+            if(cmdRes.buf_len > 0) command.buffer = new byte[cmdRes.buf_len];
 
             off += Marshal.SizeOf<AaruResSdhci>();
         }
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
             Array.Copy(buf, off, command.buffer, 0, command.buffer.Length);
             off += command.buffer.Length;
@@ -1738,20 +1722,29 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    int SendMultipleMmcCommandsV1(Device.MmcSingleCommand[] commands, out double duration, out bool sense, uint timeout)
+    int SendMultipleMmcCommandsV1(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense,
+                                  uint                              timeout)
     {
         sense    = false;
         duration = 0;
         var error = 0;
 
-        foreach(Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands)
         {
-            error = SendMmcCommand(command.command, command.write, command.isApplication, command.flags,
-                                   command.argument, command.blockSize, command.blocks, ref command.buffer,
-                                   out command.response, out double cmdDuration, out bool cmdSense, timeout);
+            error = SendMmcCommand(command.command,
+                                   command.write,
+                                   command.isApplication,
+                                   command.flags,
+                                   command.argument,
+                                   command.blockSize,
+                                   command.blocks,
+                                   ref command.buffer,
+                                   out command.response,
+                                   out double cmdDuration,
+                                   out bool cmdSense,
+                                   timeout);
 
-            if(cmdSense)
-                sense = true;
+            if(cmdSense) sense = true;
 
             duration += cmdDuration;
         }
@@ -1763,8 +1756,7 @@ public class Remote : IDisposable
     /// <returns>Returned error number if any</returns>
     public bool ReOpen()
     {
-        if(ServerProtocolVersion < 2)
-            return false;
+        if(ServerProtocolVersion < 2) return false;
 
         var cmdPkt = new AaruPacketCmdReOpen
         {
@@ -1784,7 +1776,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1795,31 +1787,30 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.Nop)
         {
-            AaruConsole.ErrorWriteLine("Expected NOP Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_NOP_Packet_got_packet_type_0, hdr.packetType);
 
             return false;
         }
 
         if(hdr.version != Consts.PACKET_VERSION)
         {
-            AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+            AaruConsole.ErrorWriteLine(Localization.Unrecognized_packet_version);
 
             return false;
         }
@@ -1829,7 +1820,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1838,14 +1829,15 @@ public class Remote : IDisposable
 
         switch(nop.reasonCode)
         {
-            case AaruNopReason.ReOpenOk: return true;
+            case AaruNopReason.ReOpenOk:
+                return true;
             case AaruNopReason.CloseError:
             case AaruNopReason.OpenError:
-                AaruConsole.ErrorWriteLine("ReOpen error closing device...");
+                AaruConsole.ErrorWriteLine(Localization.ReOpen_error_closing_device);
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine("ReOpen error {0} with reason: {1}...", nop.errno, nop.reason);
+                AaruConsole.ErrorWriteLine(Localization.ReOpen_error_0_with_reason_1, nop.errno, nop.reason);
 
                 break;
         }
@@ -1864,8 +1856,7 @@ public class Remote : IDisposable
         duration = 0;
         buffer   = null;
 
-        if(ServerProtocolVersion < 2)
-            return false;
+        if(ServerProtocolVersion < 2) return false;
 
         var cmdPkt = new AaruPacketCmdOsRead
         {
@@ -1887,7 +1878,7 @@ public class Remote : IDisposable
 
         if(len != buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_write_to_the_network);
 
             return false;
         }
@@ -1898,31 +1889,30 @@ public class Remote : IDisposable
 
         if(len < hdrBuf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
 
         AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
-        if(hdr.remote_id != Consts.REMOTE_ID ||
-           hdr.packet_id != Consts.PACKET_ID)
+        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
         {
-            AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
+            AaruConsole.ErrorWriteLine(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
 
             return false;
         }
 
         if(hdr.packetType != AaruPacketType.ResponseOsRead)
         {
-            AaruConsole.ErrorWriteLine("Expected OS Read Response Packet, got packet type {0}...", hdr.packetType);
+            AaruConsole.ErrorWriteLine(Localization.Expected_OS_Read_Response_Packet_got_packet_type_0, hdr.packetType);
 
             return false;
         }
 
         if(hdr.version != Consts.PACKET_VERSION)
         {
-            AaruConsole.ErrorWriteLine("Unrecognized packet version...");
+            AaruConsole.ErrorWriteLine(Localization.Unrecognized_packet_version);
 
             return false;
         }
@@ -1932,7 +1922,7 @@ public class Remote : IDisposable
 
         if(len < buf.Length)
         {
-            AaruConsole.ErrorWriteLine("Could not read from the network...");
+            AaruConsole.ErrorWriteLine(Localization.Could_not_read_from_the_network);
 
             return false;
         }
@@ -1943,7 +1933,7 @@ public class Remote : IDisposable
 
         if(osRead.errno != 0)
         {
-            AaruConsole.ErrorWriteLine("Remote error {0} in OS Read...", osRead.errno);
+            AaruConsole.ErrorWriteLine(Localization.Remote_error_0_in_OS_Read, osRead.errno);
 
             return false;
         }

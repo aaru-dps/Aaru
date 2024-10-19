@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interfaces;
 
+namespace Aaru.Images;
+
 public sealed partial class BlindWrite4
 {
+#region Nested type: Header
+
     struct Header
     {
         public byte[] Signature;
@@ -58,7 +60,7 @@ public sealed partial class BlindWrite4
         public byte[] Unknown4;
 
         // On memory only
-        #pragma warning disable 649
+#pragma warning disable 649
         public string  VolumeIdentifier;
         public string  SystemIdentifier;
         public string  Comments;
@@ -66,8 +68,12 @@ public sealed partial class BlindWrite4
         public IFilter SubchannelFilter;
         public string  DataFile;
         public string  SubchannelFile;
-        #pragma warning restore 649
+#pragma warning restore 649
     }
+
+#endregion
+
+#region Nested type: TrackDescriptor
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct TrackDescriptor
@@ -149,4 +155,6 @@ public sealed partial class BlindWrite4
         public string unkString11;
         public string isrcUpc;
     }
+
+#endregion
 }

@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the FATX filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,48 +23,47 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
-        Encoding      = Encoding.GetEncoding("iso-8859-15");
+        _encoding     = Encoding.GetEncoding("iso-8859-15");
         _littleEndian = true;
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return ErrorNumber.InvalidArgument;
+        if(imagePlugin.Info.SectorSize < 512) return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading superblock");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_superblock);
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _superblock = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
@@ -78,36 +73,38 @@ public sealed partial class XboxFatPlugin
             _littleEndian = false;
         }
 
-        if(_superblock.magic != FATX_MAGIC)
-            return ErrorNumber.InvalidArgument;
+        if(_superblock.magic != FATX_MAGIC) return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin",
-                                   _littleEndian ? "Filesystem is little endian" : "Filesystem is big endian");
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   _littleEndian
+                                       ? Localization.Filesystem_is_little_endian
+                                       : Localization.Filesystem_is_big_endian);
 
         int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && _littleEndian ? 8 : 1;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "logicalSectorsPerPhysicalSectors = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "logicalSectorsPerPhysicalSectors = {0}",
                                    logicalSectorsPerPhysicalSectors);
 
         string volumeLabel = StringHandlers.CToString(_superblock.volumeLabel,
                                                       !_littleEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
                                                       true);
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type = "FATX filesystem",
-            ClusterSize = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+            Type = Localization.FATX_filesystem,
+            ClusterSize = (uint)(_superblock.sectorsPerCluster    *
+                                 logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,
             VolumeSerial = $"{_superblock.id:X8}"
         };
 
-        XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                             XmlFsType.ClusterSize;
+        Metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / Metadata.ClusterSize;
 
         _statfs = new FileSystemInfo
         {
-            Blocks         = XmlFsType.Clusters,
+            Blocks         = Metadata.Clusters,
             FilenameLength = MAX_FILENAME,
             Files          = 0, // Requires traversing all directories
             FreeFiles      = 0,
@@ -121,89 +118,81 @@ public sealed partial class XboxFatPlugin
             FreeBlocks = 0 // Requires traversing the FAT
         };
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.ClusterSize: {0}", XmlFsType.ClusterSize);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeName: {0}", XmlFsType.VolumeName);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeSerial: {0}", XmlFsType.VolumeSerial);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Blocks: {0}", _statfs.Blocks);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.FilenameLength: {0}", _statfs.FilenameLength);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Id: {0}", _statfs.Id.Serial32);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "stat.Type: {0}", _statfs.Type);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "XmlFsType.ClusterSize: {0}",  Metadata.ClusterSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "XmlFsType.VolumeName: {0}",   Metadata.VolumeName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "XmlFsType.VolumeSerial: {0}", Metadata.VolumeSerial);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "stat.Blocks: {0}",            _statfs.Blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "stat.FilenameLength: {0}",    _statfs.FilenameLength);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "stat.Id: {0}",                _statfs.Id.Serial32);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "stat.Type: {0}",              _statfs.Type);
 
         byte[] buffer;
         _fatStartSector = FAT_START / imagePlugin.Info.SectorSize + partition.Start;
         uint fatSize;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "fatStartSector: {0}", _fatStartSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "fatStartSector: {0}", _fatStartSector);
 
         if(_statfs.Blocks > MAX_XFAT16_CLUSTERS)
         {
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT32");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_FAT32);
 
             fatSize = (uint)((_statfs.Blocks + 1) * sizeof(uint) / imagePlugin.Info.SectorSize);
 
-            if((uint)((_statfs.Blocks + 1) * sizeof(uint) % imagePlugin.Info.SectorSize) > 0)
-                fatSize++;
+            if((uint)((_statfs.Blocks + 1) * sizeof(uint) % imagePlugin.Info.SectorSize) > 0) fatSize++;
 
             long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
 
-            if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0)
-                fatClusters++;
+            if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0) fatClusters++;
 
             fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.FAT_is_0_sectors, fatSize);
 
             errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Casting_FAT);
             _fat32 = MemoryMarshal.Cast<byte, uint>(buffer).ToArray();
 
             if(!_littleEndian)
                 for(var i = 0; i < _fat32.Length; i++)
                     _fat32[i] = Swapping.Swap(_fat32[i]);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat32[0] == FATX32_ID = {0}", _fat32[0] == FATX32_ID);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "fat32[0] == FATX32_ID = {0}", _fat32[0] == FATX32_ID);
 
-            if(_fat32[0] != FATX32_ID)
-                return ErrorNumber.InvalidArgument;
+            if(_fat32[0] != FATX32_ID) return ErrorNumber.InvalidArgument;
         }
         else
         {
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT16");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_FAT16);
 
             fatSize = (uint)((_statfs.Blocks + 1) * sizeof(ushort) / imagePlugin.Info.SectorSize);
 
-            if((uint)((_statfs.Blocks + 1) * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0)
-                fatSize++;
+            if((uint)((_statfs.Blocks + 1) * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0) fatSize++;
 
             long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
 
-            if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0)
-                fatClusters++;
+            if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0) fatClusters++;
 
             fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.FAT_is_0_sectors, fatSize);
 
             errno = imagePlugin.ReadSectors(_fatStartSector, fatSize, out buffer);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "Casting FAT");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Casting_FAT);
             _fat16 = MemoryMarshal.Cast<byte, ushort>(buffer).ToArray();
 
             if(!_littleEndian)
                 for(var i = 0; i < _fat16.Length; i++)
                     _fat16[i] = Swapping.Swap(_fat16[i]);
 
-            AaruConsole.DebugWriteLine("Xbox FAT plugin", "fat16[0] == FATX16_ID = {0}", _fat16[0] == FATX16_ID);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "fat16[0] == FATX16_ID = {0}", _fat16[0] == FATX16_ID);
 
-            if(_fat16[0] != FATX16_ID)
-                return ErrorNumber.InvalidArgument;
+            if(_fat16[0] != FATX16_ID) return ErrorNumber.InvalidArgument;
         }
 
         _sectorsPerCluster  = (uint)(_superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors);
@@ -211,26 +200,25 @@ public sealed partial class XboxFatPlugin
         _firstClusterSector = _fatStartSector + fatSize;
         _bytesPerCluster    = _sectorsPerCluster * imagePlugin.Info.SectorSize;
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "sectorsPerCluster = {0}", _sectorsPerCluster);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "bytesPerCluster = {0}", _bytesPerCluster);
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "firstClusterSector = {0}", _firstClusterSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sectorsPerCluster = {0}",  _sectorsPerCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "bytesPerCluster = {0}",    _bytesPerCluster);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "firstClusterSector = {0}", _firstClusterSector);
 
         uint[] rootDirectoryClusters = GetClusters(_superblock.rootDirectoryCluster);
 
-        if(rootDirectoryClusters is null)
-            return ErrorNumber.InvalidArgument;
+        if(rootDirectoryClusters is null) return ErrorNumber.InvalidArgument;
 
         var rootDirectoryBuffer = new byte[_bytesPerCluster * rootDirectoryClusters.Length];
 
-        AaruConsole.DebugWriteLine("Xbox FAT plugin", "Reading root directory");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_root_directory);
 
         for(var i = 0; i < rootDirectoryClusters.Length; i++)
         {
             errno = imagePlugin.ReadSectors(_firstClusterSector + (rootDirectoryClusters[i] - 1) * _sectorsPerCluster,
-                                            _sectorsPerCluster, out buffer);
+                                            _sectorsPerCluster,
+                                            out buffer);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             Array.Copy(buffer, 0, rootDirectoryBuffer, i * _bytesPerCluster, _bytesPerCluster);
         }
@@ -243,19 +231,19 @@ public sealed partial class XboxFatPlugin
         {
             DirectoryEntry entry = _littleEndian
                                        ? Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectoryBuffer,
-                                           pos, Marshal.SizeOf<DirectoryEntry>())
-                                       : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(rootDirectoryBuffer, pos,
+                                           pos,
+                                           Marshal.SizeOf<DirectoryEntry>())
+                                       : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(rootDirectoryBuffer,
+                                           pos,
                                            Marshal.SizeOf<DirectoryEntry>());
 
             pos += Marshal.SizeOf<DirectoryEntry>();
 
-            if(entry.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY)
-                break;
+            if(entry.filenameSize is UNUSED_DIRENTRY or FINISHED_DIRENTRY) break;
 
-            if(entry.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME)
-                continue;
+            if(entry.filenameSize is DELETED_DIRENTRY or > MAX_FILENAME) continue;
 
-            string filename = Encoding.GetString(entry.filename, 0, entry.filenameSize);
+            string filename = _encoding.GetString(entry.filename, 0, entry.filenameSize);
 
             _rootDirectory.Add(filename, entry);
         }
@@ -270,8 +258,7 @@ public sealed partial class XboxFatPlugin
     /// <inheritdoc />
     public ErrorNumber Unmount()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         _fat16       = null;
         _fat32       = null;
@@ -286,11 +273,12 @@ public sealed partial class XboxFatPlugin
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _statfs.ShallowCopy();
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

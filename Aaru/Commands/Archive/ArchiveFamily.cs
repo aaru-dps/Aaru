@@ -27,20 +27,23 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021-2022 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2021-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Archive;
 
-using System.CommandLine;
-
 sealed class ArchiveFamily : Command
 {
-    internal ArchiveFamily() : base("archive", "Commands to manage archive files")
+    internal ArchiveFamily() : base("archive", UI.Archive_Command_Family_Description)
     {
         AddAlias("arc");
 
         AddCommand(new ArchiveInfoCommand());
+        AddCommand(new ArchiveListCommand());
+        AddCommand(new ArchiveExtractCommand());
     }
 }

@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.COHERENT;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.COHERENT;
+
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("coherent")
 {
-    public MBR() : base("Coherent fs") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem (MBR)");
+    public override IFilesystem Plugin => new SysVfs();
+    public override bool Partitions => true;
 
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem (MBR)");
-    public override IFilesystem Plugin     => new SysVfs();
-    public override bool        Partitions => true;
-
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "coherentunix_4.2.10.aif",
@@ -56,5 +53,5 @@ public class MBR : FilesystemTest
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +7,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Core;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Issues;
 
 /// <summary>This will extract (and discard data) all files in all filesystems detected in an image.</summary>
 public abstract class FsExtractIssueTest
@@ -22,37 +22,40 @@ public abstract class FsExtractIssueTest
     public abstract bool                       ExpectPartitions { get; }
     public abstract string                     Namespace        { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Test()
     {
         Environment.CurrentDirectory = DataFolder;
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(TestFile);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(TestFile);
 
         Dictionary<string, string> options = ParsedOptions;
         options["debug"] = Debug.ToString();
 
-        Assert.IsNotNull(inputFilter, "Cannot open specified file.");
+        Assert.That(inputFilter, Is.Not.Null, Localization.Cannot_open_specified_file);
 
         Encoding encodingClass = null;
 
-        if(Encoding != null)
-            encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
+        if(Encoding != null) encodingClass = Claunia.Encoding.Encoding.GetEncoding(Encoding);
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginRegister plugins = PluginRegister.Singleton;
 
         var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.NotNull(imageFormat, "Image format not identified, not proceeding with analysis.");
+        Assert.That(imageFormat, Is.Not.Null, Localization.Image_format_not_identified_not_proceeding_with_analysis);
 
-        Assert.AreEqual(ErrorNumber.NoError, imageFormat.Open(inputFilter), "Unable to open image format");
+        Assert.That(imageFormat.Open(inputFilter),
+                    Is.EqualTo(ErrorNumber.NoError),
+                    Localization.Unable_to_open_image_format);
 
-        List<Partition> partitions = Partitions.GetAll(imageFormat);
+        List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
 
         if(partitions.Count == 0)
         {
-            Assert.IsFalse(ExpectPartitions, "No partitions found");
+            Assert.That(ExpectPartitions, Is.False, Localization.No_partitions_found);
 
             partitions.Add(new Partition
             {
@@ -69,74 +72,71 @@ public abstract class FsExtractIssueTest
 
         for(var i = 0; i < partitions.Count; i++)
         {
-            Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
+            Core.Filesystems.Identify(imageFormat, out List<string> idPlugins, partitions[i]);
 
-            if(idPlugins.Count == 0)
-                continue;
+            if(idPlugins.Count == 0) continue;
 
-            IReadOnlyFilesystem plugin;
-            ErrorNumber         error;
+            ErrorNumber error;
 
             if(idPlugins.Count > 1)
             {
                 foreach(string pluginName in idPlugins)
-                    if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
-                    {
-                        Assert.IsNotNull(plugin, "Could not instantiate filesystem plugin");
+                {
+                    if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs)) continue;
 
-                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                             Invoke(Array.Empty<object>());
+                    Assert.That(fs,
+                                Is.Not.Null,
+                                string.Format(Localization.Could_not_instantiate_filesystem_0, pluginName));
 
-                        Assert.IsNotNull(fs, $"Could not instantiate filesystem {pluginName}");
+                    filesystemFound = true;
 
-                        filesystemFound = true;
+                    error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                        error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
+                    Assert.That(error,
+                                Is.EqualTo(ErrorNumber.NoError),
+                                string.Format(Localization.Could_not_mount_0_in_partition_1, pluginName, i));
 
-                        Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {pluginName} in partition {i}.");
-
-                        ExtractFilesInDir("/", fs, Xattrs);
-                    }
+                    ExtractFilesInDir("/", fs, Xattrs);
+                }
             }
             else
             {
-                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+                plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                if(plugin is null)
-                    continue;
-
-                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(Array.Empty<object>());
-
-                Assert.IsNotNull(fs, $"Could not instantiate filesystem {plugin.Name}");
+                Assert.That(fs, Is.Not.Null, string.Format(Localization.Could_not_instantiate_filesystem_0, fs?.Name));
 
                 filesystemFound = true;
 
                 error = fs.Mount(imageFormat, partitions[i], encodingClass, options, Namespace);
 
-                Assert.AreEqual(ErrorNumber.NoError, error, $"Could not mount {plugin.Name} in partition {i}.");
+                Assert.That(error,
+                            Is.EqualTo(ErrorNumber.NoError),
+                            string.Format(Localization.Could_not_mount_0_in_partition_1, fs.Name, i));
 
                 ExtractFilesInDir("/", fs, Xattrs);
             }
         }
 
-        Assert.IsTrue(filesystemFound, "No filesystems found.");
+        Assert.That(filesystemFound, Localization.No_filesystems_found);
     }
 
     static void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, bool doXattrs)
     {
-        if(path.StartsWith('/'))
-            path = path[1..];
+        if(path.StartsWith('/')) path = path[1..];
 
-        ErrorNumber error = fs.ReadDir(path, out List<string> directory);
+        ErrorNumber error = fs.OpenDir(path, out IDirNode node);
 
-        Assert.AreEqual(ErrorNumber.NoError, error,
-                        string.Format("Error {0} reading root directory {0}", error.ToString()));
+        Assert.That(error,
+                    Is.EqualTo(ErrorNumber.NoError),
+                    string.Format(Localization.Error_0_reading_root_directory, error.ToString()));
 
-        foreach(string entry in directory)
+        while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
         {
             error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error getting stat for entry {entry}");
+            Assert.That(error,
+                        Is.EqualTo(ErrorNumber.NoError),
+                        string.Format(Localization.Error_getting_stat_for_entry_0, entry));
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
             {
@@ -149,25 +149,46 @@ public abstract class FsExtractIssueTest
             {
                 error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
 
-                Assert.AreEqual(ErrorNumber.NoError, error,
-                                $"Error {error} getting extended attributes for entry {path + "/" + entry}");
+                Assert.That(error,
+                            Is.EqualTo(ErrorNumber.NoError),
+                            string.Format(Localization.Error_0_getting_extended_attributes_for_entry_1,
+                                          error,
+                                          path + "/" + entry));
 
                 if(error == ErrorNumber.NoError)
+                {
                     foreach(string xattr in xattrs)
                     {
-                        byte[] xattrBuf = Array.Empty<byte>();
+                        byte[] xattrBuf = [];
                         error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
 
-                        Assert.AreEqual(ErrorNumber.NoError, error,
-                                        $"Error {error} reading extended attributes for entry {path + "/" + entry}");
+                        Assert.That(error,
+                                    Is.EqualTo(ErrorNumber.NoError),
+                                    string.Format(Localization.Error_0_reading_extended_attributes_for_entry_1,
+                                                  error,
+                                                  path + "/" + entry));
                     }
+                }
             }
 
-            byte[] outBuf = Array.Empty<byte>();
+            var         buffer = new byte[stat.Length];
+            ErrorNumber ret    = fs.OpenFile(path + "/" + entry, out IFileNode fileNode);
 
-            error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
+            Assert.That(ret,
+                        Is.EqualTo(ErrorNumber.NoError),
+                        string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
 
-            Assert.AreEqual(ErrorNumber.NoError, error, $"Error {error} reading file {path + "/" + entry}");
+            ret = fs.ReadFile(fileNode, stat.Length, buffer, out long readBytes);
+
+            Assert.That(ret,
+                        Is.EqualTo(ErrorNumber.NoError),
+                        string.Format(Localization.Error_0_reading_file_1, ret, path + "/" + entry));
+
+            Assert.That(readBytes,
+                        Is.EqualTo(stat.Length),
+                        string.Format(Localization.Error_0_reading_file_1, readBytes, stat.Length, path + "/" + entry));
         }
+
+        fs.CloseDir(node);
     }
 }

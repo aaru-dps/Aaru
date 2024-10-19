@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Sgi : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "SGI");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "SGI");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 40961,
@@ -170,13 +170,13 @@ public class Sgi : PartitionSchemeTest
                     Start    = 947835,
                     Type     = "Linux"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 22528,
@@ -213,7 +213,7 @@ public class Sgi : PartitionSchemeTest
                     Start    = 196608,
                     Type     = "XFS"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

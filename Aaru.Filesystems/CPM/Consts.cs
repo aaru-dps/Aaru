@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // ReSharper disable InconsistentNaming
@@ -36,6 +36,11 @@ namespace Aaru.Filesystems;
 
 public sealed partial class CPM
 {
+    // Do not translate
+    const string FS_TYPE = "cpmfs";
+
+#region Nested type: FormatByte
+
     /// <summary>Enumerates the format identification byte used by CP/M-86</summary>
     enum FormatByte : byte
     {
@@ -60,4 +65,6 @@ public sealed partial class CPM
         /// <summary>3.5" double-density double-side 9 sectors/track</summary>
         k720Alt = 0x94
     }
+
+#endregion
 }

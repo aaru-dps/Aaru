@@ -23,27 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-[TestFixture]
-public class Xia : FilesystemTest
-{
-    public Xia() : base("Xia filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xia filesystem");
+[TestFixture]
+public class Xia() : FilesystemTest("xia")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xia filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "linux_2.0.0.aif",
@@ -62,5 +60,5 @@ public class Xia : FilesystemTest
             Clusters    = 131008,
             ClusterSize = 1024
         }
-    };
+    ];
 }

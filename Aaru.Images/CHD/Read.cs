@@ -27,13 +27,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -49,8 +48,12 @@ using Aaru.Decoders.CD;
 using Aaru.Helpers;
 using Session = Aaru.CommonTypes.Structs.Session;
 
+namespace Aaru.Images;
+
 public sealed partial class Chd
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
     public ErrorNumber Open(IFilter imageFilter)
@@ -58,24 +61,24 @@ public sealed partial class Chd
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
         var magic = new byte[8];
-        stream.Read(magic, 0, 8);
+        stream.EnsureRead(magic, 0, 8);
 
-        if(!_chdTag.SequenceEqual(magic))
-            return ErrorNumber.InvalidArgument;
+        if(!_chdTag.SequenceEqual(magic)) return ErrorNumber.InvalidArgument;
 
         // Read length
         var buffer = new byte[4];
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         var length = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
         buffer = new byte[4];
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         var version = BitConverter.ToUInt32(buffer.Reverse().ToArray(), 0);
 
         buffer = new byte[length];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, (int)length);
+        stream.EnsureRead(buffer, 0, (int)length);
 
-        ulong nextMetaOff = 0;
+        ulong nextMetaOff      = 0;
+        var   hunkMapStopwatch = new Stopwatch();
 
         switch(version)
         {
@@ -83,28 +86,30 @@ public sealed partial class Chd
             {
                 HeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<HeaderV1>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (Flags)hdrV1.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.length = {0} bytes", hdrV1.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.version = {0}",      hdrV1.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.flags = {0}",        (Flags)hdrV1.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}", (Compression)hdrV1.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.compression = {0}", (Compression)hdrV1.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}", hdrV1.cylinders);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}", hdrV1.heads);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}", hdrV1.sectors);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.hunksize = {0}", hdrV1.hunksize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.cylinders = {0}", hdrV1.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.heads = {0}", hdrV1.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.sectors = {0}", hdrV1.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV1.parentmd5 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
-                DateTime start = DateTime.UtcNow;
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
 
+                hunkMapStopwatch.Restart();
                 _hunkTable = new ulong[hdrV1.totalhunks];
 
                 var hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
@@ -113,7 +118,7 @@ public sealed partial class Chd
 
                 for(var i = 0; i < hunkSectorCount; i++)
                 {
-                    stream.Read(hunkSectorBytes, 0, 512);
+                    stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(hunkSectorBytes);
@@ -128,15 +133,18 @@ public sealed partial class Chd
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
                 }
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
 
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                _imageInfo.SectorSize   = 512;
-                _imageInfo.Version      = "1";
-                _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
+
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.Sectors           = hdrV1.hunksize * hdrV1.totalhunks;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+                _imageInfo.SectorSize        = 512;
+                _imageInfo.Version           = "1";
+                _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV1.hunksize * hdrV1.totalhunks;
 
                 _totalHunks     = hdrV1.totalhunks;
                 _sectorsPerHunk = hdrV1.hunksize;
@@ -155,29 +163,31 @@ public sealed partial class Chd
             {
                 HeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<HeaderV2>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (Flags)hdrV2.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.length = {0} bytes", hdrV2.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.version = {0}",      hdrV2.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.flags = {0}",        (Flags)hdrV2.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}", (Compression)hdrV2.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.compression = {0}", (Compression)hdrV2.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}", hdrV2.cylinders);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}", hdrV2.heads);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}", hdrV2.sectors);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.hunksize = {0}", hdrV2.hunksize);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.cylinders = {0}", hdrV2.cylinders);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.heads = {0}", hdrV2.heads);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.sectors = {0}", hdrV2.sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV2.parentmd5 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV2.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV2.seclen = {0}", hdrV2.seclen);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
-                DateTime start = DateTime.UtcNow;
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
+                hunkMapStopwatch.Restart();
 
                 _hunkTable = new ulong[hdrV2.totalhunks];
 
@@ -188,7 +198,7 @@ public sealed partial class Chd
 
                 for(var i = 0; i < hunkSectorCount; i++)
                 {
-                    stream.Read(hunkSectorBytes, 0, 512);
+                    stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(hunkSectorBytes);
@@ -203,15 +213,18 @@ public sealed partial class Chd
                         Array.Copy(hunkSector.hunkEntry, 0, _hunkTable, i * 512 / 8, _hunkTable.Length - i * 512 / 8);
                 }
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
 
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-                _imageInfo.SectorSize   = hdrV2.seclen;
-                _imageInfo.Version      = "2";
-                _imageInfo.ImageSize    = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
+
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.Sectors           = hdrV2.hunksize * hdrV2.totalhunks;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+                _imageInfo.SectorSize        = hdrV2.seclen;
+                _imageInfo.Version           = "2";
+                _imageInfo.ImageSize         = _imageInfo.SectorSize * hdrV2.hunksize * hdrV2.totalhunks;
 
                 _totalHunks     = hdrV2.totalhunks;
                 _sectorsPerHunk = hdrV2.hunksize;
@@ -230,39 +243,46 @@ public sealed partial class Chd
             {
                 HeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<HeaderV3>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (Flags)hdrV3.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.length = {0} bytes", hdrV3.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.version = {0}",      hdrV3.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.flags = {0}",        (Flags)hdrV3.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}", (Compression)hdrV3.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.compression = {0}", (Compression)hdrV3.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentmd5 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV3.parentmd5 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentmd5));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV3.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV3.parentsha1 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
-                DateTime start = DateTime.UtcNow;
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
+                hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV3.totalhunks * 16];
-                stream.Read(_hunkMap, 0, _hunkMap.Length);
+                stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV3.metaoffset;
 
@@ -281,36 +301,42 @@ public sealed partial class Chd
             {
                 HeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<HeaderV4>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (Flags)hdrV4.flags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.length = {0} bytes", hdrV4.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.version = {0}",      hdrV4.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.flags = {0}",        (Flags)hdrV4.flags);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}", (Compression)hdrV4.compression);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.compression = {0}", (Compression)hdrV4.compression);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.totalhunks = {0}",   hdrV4.totalhunks);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.metaoffset = {0}",   hdrV4.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.hunkbytes = {0}",    hdrV4.hunkbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV4.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV4.parentsha1 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV4.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV4.rawsha1 = {0}",
                                            ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
-                DateTime start = DateTime.UtcNow;
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
+                hunkMapStopwatch.Restart();
 
                 _hunkMap = new byte[hdrV4.totalhunks * 16];
-                stream.Read(_hunkMap, 0, _hunkMap.Length);
+                stream.EnsureRead(_hunkMap, 0, _hunkMap.Length);
 
-                DateTime end = DateTime.UtcNow;
-                AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                hunkMapStopwatch.Stop();
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Took_0_seconds,
+                                           hunkMapStopwatch.Elapsed.TotalSeconds);
 
                 nextMetaOff = hdrV4.metaoffset;
 
@@ -328,49 +354,56 @@ public sealed partial class Chd
             case 5:
             {
                 // TODO: Check why reading is misaligned
-                AaruConsole.ErrorWriteLine("CHD version 5 is not yet supported.");
+                AaruConsole.ErrorWriteLine(Localization.CHD_version_5_is_not_yet_supported);
 
                 return ErrorNumber.NotImplemented;
 
                 HeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<HeaderV5>(buffer);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.length = {0} bytes", hdrV5.length);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}", hdrV5.version);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.length = {0} bytes", hdrV5.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.version = {0}",      hdrV5.version);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor0 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.compressor0 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor0)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor1 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.compressor1 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor1)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor2 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.compressor2 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor2)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor3 = \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.compressor3 = \"{0}\"",
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(hdrV5.compressor3)));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.mapoffset = {0}",    hdrV5.mapoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.metaoffset = {0}",   hdrV5.metaoffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.hunkbytes = {0}",    hdrV5.hunkbytes);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.unitbytes = {0}",    hdrV5.unitbytes);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
+                AaruConsole.DebugWriteLine(MODULE_NAME, "hdrV5.sha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.parentsha1 = {0}",
-                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.parentsha1 = {0}",
+                                           ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1)
+                                               ? "null"
                                                : ArrayHelpers.ByteArrayToHex(hdrV5.parentsha1));
 
-                AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.rawsha1 = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "hdrV5.rawsha1 = {0}",
                                            ArrayHelpers.ByteArrayToHex(hdrV5.rawsha1));
 
                 // TODO: Implement compressed CHD v5
                 if(hdrV5.compressor0 == 0)
                 {
-                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
-                    DateTime start = DateTime.UtcNow;
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Hunk_map);
+                    hunkMapStopwatch.Restart();
 
                     _hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
@@ -382,7 +415,7 @@ public sealed partial class Chd
 
                     for(var i = 0; i < hunkSectorCount; i++)
                     {
-                        stream.Read(hunkSectorBytes, 0, 512);
+                        stream.EnsureRead(hunkSectorBytes, 0, 512);
 
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
@@ -396,16 +429,24 @@ public sealed partial class Chd
                         if(_hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)
                             Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4, 512 / 4);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, _hunkTableSmall, i * 512 / 4,
-                                       _hunkTableSmall.Length - i * 512            / 4);
+                        {
+                            Array.Copy(hunkSector.hunkEntry,
+                                       0,
+                                       _hunkTableSmall,
+                                       i                                * 512 / 4,
+                                       _hunkTableSmall.Length - i * 512 / 4);
+                        }
                     }
 
-                    DateTime end = DateTime.UtcNow;
-                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    hunkMapStopwatch.Stop();
+
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Took_0_seconds,
+                                               hunkMapStopwatch.Elapsed.TotalSeconds);
                 }
                 else
                 {
-                    AaruConsole.ErrorWriteLine("Cannot read compressed CHD version 5");
+                    AaruConsole.ErrorWriteLine(Localization.Cannot_read_compressed_CHD_version_5);
 
                     return ErrorNumber.NotSupported;
                 }
@@ -427,7 +468,7 @@ public sealed partial class Chd
             }
 
             default:
-                AaruConsole.ErrorWriteLine($"Unsupported CHD version {version}");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_CHD_version_0, version));
 
                 return ErrorNumber.NotSupported;
         }
@@ -440,7 +481,7 @@ public sealed partial class Chd
             _swapAudio = false;
             _tracks    = new Dictionary<uint, Track>();
 
-            AaruConsole.DebugWriteLine("CHD plugin", "Reading metadata.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_metadata);
 
             ulong currentSector = 0;
             uint  currentTrack  = 1;
@@ -449,12 +490,13 @@ public sealed partial class Chd
             {
                 var hdrBytes = new byte[16];
                 stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
-                stream.Read(hdrBytes, 0, hdrBytes.Length);
+                stream.EnsureRead(hdrBytes, 0, hdrBytes.Length);
                 MetadataHeader header = Marshal.ByteArrayToStructureBigEndian<MetadataHeader>(hdrBytes);
                 var            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
-                stream.Read(meta, 0, meta.Length);
+                stream.EnsureRead(meta, 0, meta.Length);
 
-                AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Found_metadata_0_,
                                            Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
 
                 switch(header.tag)
@@ -463,8 +505,8 @@ public sealed partial class Chd
                     case HARD_DISK_METADATA:
                         if(_isCdrom || _isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_hard_disk_and_a_CGD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -488,16 +530,16 @@ public sealed partial class Chd
                     case CDROM_OLD_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -505,8 +547,7 @@ public sealed partial class Chd
                         var chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                         // Byteswapped
-                        if(chdTracksNumber > 99)
-                            chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                        if(chdTracksNumber > 99) chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                         currentSector = 0;
 
@@ -571,7 +612,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {chdTrack.type}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             chdTrack.type));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -597,13 +639,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {chdTrack.type}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             chdTrack.type));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {i + 1}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, i + 1);
                             aaruTrack.EndSector   = currentSector + chdTrack.frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -612,8 +655,7 @@ public sealed partial class Chd
                             aaruTrack.Sequence    = i + 1;
                             aaruTrack.Session     = 1;
 
-                            if(aaruTrack.Sequence == 1)
-                                aaruTrack.Indexes.Add(0, -150);
+                            if(aaruTrack.Sequence == 1) aaruTrack.Indexes.Add(0, -150);
 
                             aaruTrack.Indexes.Add(1, (int)currentSector);
                             currentSector += chdTrack.frames + chdTrack.extraFrames;
@@ -628,16 +670,16 @@ public sealed partial class Chd
                     case CDROM_TRACK_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -657,7 +699,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -717,7 +759,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {tracktype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             tracktype));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -743,13 +786,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -758,8 +802,7 @@ public sealed partial class Chd
                             aaruTrack.Sequence    = trackNo;
                             aaruTrack.Session     = 1;
 
-                            if(aaruTrack.Sequence == 1)
-                                aaruTrack.Indexes.Add(0, -150);
+                            if(aaruTrack.Sequence == 1) aaruTrack.Indexes.Add(0, -150);
 
                             aaruTrack.Indexes.Add(1, (int)currentSector);
                             currentSector += frames;
@@ -773,16 +816,16 @@ public sealed partial class Chd
                     case CDROM_TRACK_METADATA2:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_hard_disk_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isGdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_GD_ROM_and_a_CD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -816,7 +859,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -876,7 +919,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             trackType));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -902,13 +946,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -957,16 +1002,16 @@ public sealed partial class Chd
                     case GDROM_METADATA:
                         if(_isHdd)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a hard disk and a GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_hard_disk_and_a_GD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
 
                         if(_isCdrom)
                         {
-                            AaruConsole.
-                                ErrorWriteLine("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
+                            AaruConsole.ErrorWriteLine(Localization
+                                                          .Image_cannot_be_a_CD_ROM_and_a_GD_ROM_at_the_same_time_aborting);
 
                             return ErrorNumber.NotSupported;
                         }
@@ -993,7 +1038,7 @@ public sealed partial class Chd
 
                             if(trackNo != currentTrack)
                             {
-                                AaruConsole.ErrorWriteLine("Unsorted tracks, cannot proceed.");
+                                AaruConsole.ErrorWriteLine(Localization.Unsorted_tracks_cannot_proceed);
 
                                 return ErrorNumber.NotSupported;
                             }
@@ -1053,7 +1098,8 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported track type {trackType}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_track_type_0,
+                                                                             trackType));
 
                                     return ErrorNumber.NotSupported;
                                 }
@@ -1079,13 +1125,14 @@ public sealed partial class Chd
                                     break;
                                 default:
                                 {
-                                    AaruConsole.ErrorWriteLine($"Unsupported subchannel type {subtype}");
+                                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_subchannel_type_0,
+                                                                             subtype));
 
                                     return ErrorNumber.NotSupported;
                                 }
                             }
 
-                            aaruTrack.Description = $"Track {trackNo}";
+                            aaruTrack.Description = string.Format(Localization.Track_0, trackNo);
                             aaruTrack.EndSector   = currentSector + frames - 1;
                             aaruTrack.File        = imageFilter.Filename;
                             aaruTrack.FileType    = "BINARY";
@@ -1137,9 +1184,7 @@ public sealed partial class Chd
                             _imageInfo.DriveSerialNumber     = idnt.Value.SerialNumber;
                             _imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
 
-                            if(idnt.Value.CurrentCylinders       > 0 &&
-                               idnt.Value.CurrentHeads           > 0 &&
-                               idnt.Value.CurrentSectorsPerTrack > 0)
+                            if(idnt is { CurrentCylinders: > 0, CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
                             {
                                 _imageInfo.Cylinders       = idnt.Value.CurrentCylinders;
                                 _imageInfo.Heads           = idnt.Value.CurrentHeads;
@@ -1173,17 +1218,17 @@ public sealed partial class Chd
 
             if(_isHdd)
             {
-                _sectorsPerHunk         = _bytesPerHunk        / _imageInfo.SectorSize;
-                _imageInfo.Sectors      = _imageInfo.ImageSize / _imageInfo.SectorSize;
-                _imageInfo.MediaType    = MediaType.GENERIC_HDD;
-                _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+                _sectorsPerHunk              = _bytesPerHunk        / _imageInfo.SectorSize;
+                _imageInfo.Sectors           = _imageInfo.ImageSize / _imageInfo.SectorSize;
+                _imageInfo.MediaType         = MediaType.GENERIC_HDD;
+                _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
             }
             else if(_isCdrom)
             {
                 // Hardcoded on MAME for CD-ROM
-                _sectorsPerHunk         = 8;
-                _imageInfo.MediaType    = MediaType.CDROM;
-                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                _sectorsPerHunk              = 8;
+                _imageInfo.MediaType         = MediaType.CDROM;
+                _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
                 foreach(Track aaruTrack in _tracks.Values)
                     _imageInfo.Sectors += aaruTrack.EndSector - aaruTrack.StartSector + 1;
@@ -1191,16 +1236,16 @@ public sealed partial class Chd
             else if(_isGdrom)
             {
                 // Hardcoded on MAME for GD-ROM
-                _sectorsPerHunk         = 8;
-                _imageInfo.MediaType    = MediaType.GDROM;
-                _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+                _sectorsPerHunk              = 8;
+                _imageInfo.MediaType         = MediaType.GDROM;
+                _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
                 foreach(Track aaruTrack in _tracks.Values)
                     _imageInfo.Sectors += aaruTrack.EndSector - aaruTrack.StartSector + 1;
             }
             else
             {
-                AaruConsole.ErrorWriteLine("Image does not represent a known media, aborting");
+                AaruConsole.ErrorWriteLine(Localization.Image_does_not_represent_a_known_media_aborting);
 
                 return ErrorNumber.NotSupported;
             }
@@ -1209,7 +1254,7 @@ public sealed partial class Chd
         if(_isCdrom || _isGdrom)
         {
             _offsetmap  = new Dictionary<ulong, uint>();
-            _partitions = new List<Partition>();
+            _partitions = [];
             ulong partPos = 0;
 
             foreach(Track aaruTrack in _tracks.Values)
@@ -1229,8 +1274,10 @@ public sealed partial class Chd
                 _offsetmap.Add(aaruTrack.StartSector, aaruTrack.Sequence);
 
                 if(aaruTrack.SubchannelType != TrackSubchannelType.None)
+                {
                     if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                         _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
+                }
 
                 switch(aaruTrack.Type)
                 {
@@ -1311,8 +1358,7 @@ public sealed partial class Chd
 
         // TODO: Detect CompactFlash
         // TODO: Get manufacturer and drive name from CIS if applicable
-        if(_cis != null)
-            _imageInfo.MediaType = MediaType.PCCardTypeI;
+        if(_cis != null) _imageInfo.MediaType = MediaType.PCCardTypeI;
 
         _sectorBuilder = new SectorBuilder();
 
@@ -1324,8 +1370,7 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         var  track = new Track();
         uint sectorSize;
@@ -1345,14 +1390,12 @@ public sealed partial class Chd
 
             ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             sector = new byte[_imageInfo.SectorSize];
             Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-            if(_sectorCache.Count >= _maxSectorCache)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, sector);
         }
@@ -1435,7 +1478,8 @@ public sealed partial class Chd
                 break;
             }
 
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize];
@@ -1443,11 +1487,13 @@ public sealed partial class Chd
         if(mode2)
             buffer = Sector.GetUserDataFromMode2(sector);
         else if(track.Type == TrackType.Audio && _swapAudio)
+        {
             for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
@@ -1459,11 +1505,9 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(_isHdd)
-            return ErrorNumber.NotSupported;
+        if(_isHdd) return ErrorNumber.NotSupported;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         var track = new Track();
 
@@ -1479,14 +1523,12 @@ public sealed partial class Chd
 
             ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             sector = new byte[_imageInfo.SectorSize];
             Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-            if(_sectorCache.Count >= _maxSectorCache)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, sector);
         }
@@ -1501,23 +1543,29 @@ public sealed partial class Chd
         uint sectorOffset;
 
         if(tag == SectorTagType.CdSectorSubchannel)
+        {
             switch(track.SubchannelType)
             {
-                case TrackSubchannelType.None: return ErrorNumber.NoData;
+                case TrackSubchannelType.None:
+                    return ErrorNumber.NoData;
                 case TrackSubchannelType.RawInterleaved:
                     sectorOffset = (uint)track.RawBytesPerSector;
                     sectorSize   = 96;
 
                     break;
-                default: return ErrorNumber.NotSupported;
+                default:
+                    return ErrorNumber.NotSupported;
             }
+        }
         else
+        {
             switch(track.Type)
             {
                 case TrackType.CdMode1:
                 case TrackType.CdMode2Form1:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
@@ -1536,7 +1584,8 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorSubHeader:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorEcc:
                             {
                                 sectorOffset = 2076;
@@ -1569,8 +1618,10 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
                         return ErrorNumber.NoData;
 
@@ -1580,6 +1631,7 @@ public sealed partial class Chd
                 case TrackType.CdMode2Form2:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
@@ -1614,17 +1666,20 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
                             case SectorTagType.CdSectorHeader:
-                            case SectorTagType.CdSectorSubchannel:
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorEccQ:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorSubHeader:
                             {
                                 sectorOffset = 0;
@@ -1641,8 +1696,10 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
 
                     break;
                 }
@@ -1650,13 +1707,15 @@ public sealed partial class Chd
                 case TrackType.CdMode2Formless:
                 {
                     if(track.RawBytesPerSector == 2352)
+                    {
                         switch(tag)
                         {
                             case SectorTagType.CdSectorSync:
                             case SectorTagType.CdSectorHeader:
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
-                            case SectorTagType.CdSectorEccQ: return ErrorNumber.NotSupported;
+                            case SectorTagType.CdSectorEccQ:
+                                return ErrorNumber.NotSupported;
                             case SectorTagType.CdSectorSubHeader:
                             {
                                 sectorOffset = 0;
@@ -1673,35 +1732,44 @@ public sealed partial class Chd
                                 break;
                             }
 
-                            default: return ErrorNumber.NotSupported;
+                            default:
+                                return ErrorNumber.NotSupported;
                         }
+                    }
                     else
                         return ErrorNumber.NoData;
 
                     break;
                 }
 
-                case TrackType.Audio: return ErrorNumber.NoData;
-                default:              return ErrorNumber.NotImplemented;
+                case TrackType.Audio:
+                    return ErrorNumber.NoData;
+                default:
+                    return ErrorNumber.NotImplemented;
             }
+        }
 
         buffer = new byte[sectorSize];
 
         if(track.Type == TrackType.Audio && _swapAudio)
+        {
             for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
         if(track.Type == TrackType.Audio && _swapAudio)
+        {
             for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
@@ -1713,11 +1781,9 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -1725,8 +1791,7 @@ public sealed partial class Chd
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -1741,11 +1806,9 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -1753,8 +1816,7 @@ public sealed partial class Chd
         {
             ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -1769,11 +1831,9 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(_isHdd)
-            return ReadSector(sectorAddress, out buffer);
+        if(_isHdd) return ReadSector(sectorAddress, out buffer);
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         var track = new Track();
 
@@ -1787,14 +1847,12 @@ public sealed partial class Chd
 
             ErrorNumber errno = GetHunk(hunkNo, out byte[] hunk);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             sector = new byte[_imageInfo.SectorSize];
             Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-            if(_sectorCache.Count >= _maxSectorCache)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= _maxSectorCache) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, sector);
         }
@@ -1802,11 +1860,13 @@ public sealed partial class Chd
         buffer = new byte[track.RawBytesPerSector];
 
         if(track.Type == TrackType.Audio && _swapAudio)
+        {
             for(var i = 0; i < 2352; i += 2)
             {
                 buffer[i + 1] = sector[i];
                 buffer[i]     = sector[i + 1];
             }
+        }
         else
             Array.Copy(sector, 0, buffer, 0, track.RawBytesPerSector);
 
@@ -1869,11 +1929,9 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -1881,8 +1939,7 @@ public sealed partial class Chd
         {
             ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -1905,11 +1962,11 @@ public sealed partial class Chd
 
                 return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
             case MediaTagType.PCMCIA_CIS:
-                if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
-                    buffer = _cis?.Clone() as byte[];
+                if(_imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS)) buffer = _cis?.Clone() as byte[];
 
                 return buffer == null ? ErrorNumber.NoData : ErrorNumber.NoError;
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
     }
 
@@ -1933,7 +1990,8 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorTag(GetAbsoluteSector(sectorAddress, track), tag, out buffer);
     }
 
@@ -1942,17 +2000,19 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectors(GetAbsoluteSector(sectorAddress, track), length, out buffer);
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorsTag(GetAbsoluteSector(sectorAddress, track), length, tag, out buffer);
     }
 
@@ -1969,7 +2029,10 @@ public sealed partial class Chd
     {
         buffer = null;
 
-        return _isHdd ? ErrorNumber.NotSupported
+        return _isHdd
+                   ? ErrorNumber.NotSupported
                    : ReadSectorLong(GetAbsoluteSector(sectorAddress, track), length, out buffer);
     }
+
+#endregion
 }

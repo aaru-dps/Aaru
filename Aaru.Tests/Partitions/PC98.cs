@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Pc98 : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "PC-98");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "PC-98");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "msdos330.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 19536,
@@ -124,13 +124,13 @@ public class Pc98 : PartitionSchemeTest
                     Start    = 752664,
                     Type     = "FAT16"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos330_alt.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 59136,
@@ -161,13 +161,13 @@ public class Pc98 : PartitionSchemeTest
                     Start    = 218064,
                     Type     = "FAT16"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos500_epson.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 35639,
@@ -248,13 +248,13 @@ public class Pc98 : PartitionSchemeTest
                     Start    = 887304,
                     Type     = "FAT16"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos500.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 28512,
@@ -335,13 +335,13 @@ public class Pc98 : PartitionSchemeTest
                     Start    = 869352,
                     Type     = "FAT16"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos620.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 61248,
@@ -412,7 +412,7 @@ public class Pc98 : PartitionSchemeTest
                     Start    = 697224,
                     Type     = "FAT16"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

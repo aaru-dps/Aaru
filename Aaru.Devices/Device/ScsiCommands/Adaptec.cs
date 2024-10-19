@@ -28,13 +28,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices;
 
 using System;
 using Aaru.Console;
+
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -67,15 +69,19 @@ public partial class Device
         cdb[2] = (byte)((lba & 0xFF00)   >> 8);
         cdb[3] = (byte)(lba & 0xFF);
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC TRANSLATE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_TRANSLATE_took_0_ms, duration);
 
         return sense;
     }
@@ -96,7 +102,7 @@ public partial class Device
     /// <param name="drive1">If set to <c>true</c> set the threshold from drive 1.</param>
     /// <param name="timeout">Timeout.</param>
     /// <param name="duration">Duration.</param>
-    public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, bool drive1, uint timeout,
+    public bool AdaptecSetErrorThreshold(byte       threshold, out byte[] senseBuffer, bool drive1, uint timeout,
                                          out double duration)
     {
         var buffer = new byte[1];
@@ -106,17 +112,21 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecSetErrorThreshold;
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
         cdb[4] = 1;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC SET ERROR THRESHOLD took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_SET_ERROR_THRESHOLD_took_0_ms, duration);
 
         return sense;
     }
@@ -144,17 +154,21 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
 
-        if(drive1)
-            cdb[1] += 0x20;
+        if(drive1) cdb[1] += 0x20;
 
         cdb[4] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ/RESET USAGE COUNTER took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_READ_RESET_USAGE_COUNTER_took_0_ms, duration);
 
         return sense;
     }
@@ -174,12 +188,17 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecWriteBuffer;
 
-        LastError = SendScsiCommand(cdb, ref oneKBuffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref oneKBuffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC WRITE DATA BUFFER took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_WRITE_DATA_BUFFER_took_0_ms, duration);
 
         return sense;
     }
@@ -197,12 +216,17 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.AdaptecReadBuffer;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ DATA BUFFER took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.ADAPTEC_READ_DATA_BUFFER_took_0_ms, duration);
 
         return sense;
     }

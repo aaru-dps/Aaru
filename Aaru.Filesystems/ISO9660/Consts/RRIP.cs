@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     RRIP extensions constants and enumerations.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,17 +23,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems;
-
 using System;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -51,6 +45,21 @@ public sealed partial class ISO9660
     const ushort RRIP_RELOCATED_DIR    = 0x5245; // "RE"
     const ushort RRIP_TIMESTAMPS       = 0x5446; // "TF"
     const ushort RRIP_SPARSE           = 0x5346; // "SF"
+
+#region Nested type: AlternateNameFlags
+
+    [Flags]
+    enum AlternateNameFlags : byte
+    {
+        Continue    = 1,
+        Current     = 2,
+        Parent      = 4,
+        Networkname = 32
+    }
+
+#endregion
+
+#region Nested type: PosixMode
 
     [Flags]
     enum PosixMode : uint
@@ -76,11 +85,9 @@ public sealed partial class ISO9660
         Pipe         = 0x1000
     }
 
-    [Flags]
-    enum SymlinkFlags : byte
-    {
-        Continue = 1
-    }
+#endregion
+
+#region Nested type: SymlinkComponentFlags
 
     [Flags]
     enum SymlinkComponentFlags : byte
@@ -93,14 +100,19 @@ public sealed partial class ISO9660
         Networkname = 32
     }
 
+#endregion
+
+#region Nested type: SymlinkFlags
+
     [Flags]
-    enum AlternateNameFlags : byte
+    enum SymlinkFlags : byte
     {
-        Continue    = 1,
-        Current     = 2,
-        Parent      = 4,
-        Networkname = 32
+        Continue = 1
     }
+
+#endregion
+
+#region Nested type: TimestampFlags
 
     [Flags]
     enum TimestampFlags : byte
@@ -114,4 +126,6 @@ public sealed partial class ISO9660
         Effective       = 1 << 6,
         LongFormat      = 1 << 7
     }
+
+#endregion
 }

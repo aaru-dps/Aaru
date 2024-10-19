@@ -23,25 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.VirtualPC;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.VirtualPC;
 
 [TestFixture]
 public class Raw : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualPC");
-    public override IMediaImage Plugin    => new ZZZRawImage();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "VirtualPC");
+    public override IMediaImage Plugin     => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "vpc106b_fixed_150mb_fat16.lz",
@@ -81,14 +81,14 @@ public class Raw : BlockMediaImageTest
             Sectors    = 266016,
             SectorSize = 512,
             Md5        = "5f4d4c4f268ea19c91bf4fb49f4894b6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 17,
                     Length = 265727
                 }
-            }
+            ]
         }
-    };
+    ];
 }

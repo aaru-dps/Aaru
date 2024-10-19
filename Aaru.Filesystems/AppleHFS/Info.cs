@@ -7,10 +7,6 @@
 //
 // Component      : Apple Hierarchical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the Apple Hierarchical File System and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,29 +23,30 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 public sealed partial class AppleHFS
 {
+#region IFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(2 + partition.Start >= partition.End)
-            return false;
+        if(2 + partition.Start >= partition.End) return false;
 
         byte[]      mdbSector;
         ushort      drSigWord;
@@ -59,8 +56,7 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             foreach(int offset in new[]
                     {
@@ -69,8 +65,7 @@ public sealed partial class AppleHFS
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
-                if(drSigWord != AppleCommon.HFS_MAGIC)
-                    continue;
+                if(drSigWord != AppleCommon.HFS_MAGIC) continue;
 
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
@@ -81,16 +76,13 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
-            if(mdbSector.Length < 0x7C + 2)
-                return false;
+            if(mdbSector.Length < 0x7C + 2) return false;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
-            if(drSigWord != AppleCommon.HFS_MAGIC)
-                return false;
+            if(drSigWord != AppleCommon.HFS_MAGIC) return false;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x7C); // Seek to embedded HFS+ signature
 
@@ -101,10 +93,12 @@ public sealed partial class AppleHFS
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
-        Encoding    = encoding ?? Encoding.GetEncoding("macintosh");
-        information = "";
+        encoding    ??= Encoding.GetEncoding("macintosh");
+        information =   "";
+        metadata    =   new FileSystem();
 
         var sb = new StringBuilder();
 
@@ -119,8 +113,7 @@ public sealed partial class AppleHFS
         {
             errno = imagePlugin.ReadSectors(partition.Start, 2, out byte[] tmpSector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             foreach(int offset in new[]
                     {
@@ -129,14 +122,12 @@ public sealed partial class AppleHFS
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
 
-                if(drSigWord != AppleCommon.HFS_MAGIC)
-                    continue;
+                if(drSigWord != AppleCommon.HFS_MAGIC) continue;
 
                 bbSector  = new byte[1024];
                 mdbSector = new byte[512];
 
-                if(offset >= 0x400)
-                    Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
+                if(offset >= 0x400) Array.Copy(tmpSector, offset - 0x400, bbSector, 0, 1024);
 
                 Array.Copy(tmpSector, offset, mdbSector, 0, 512);
                 apmFromHddOnCd = true;
@@ -144,15 +135,13 @@ public sealed partial class AppleHFS
                 break;
             }
 
-            if(!apmFromHddOnCd)
-                return;
+            if(!apmFromHddOnCd) return;
         }
         else
         {
             errno = imagePlugin.ReadSector(2 + partition.Start, out mdbSector);
 
-            if(errno != ErrorNumber.NoError)
-                return;
+            if(errno != ErrorNumber.NoError) return;
 
             drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
@@ -160,8 +149,7 @@ public sealed partial class AppleHFS
             {
                 errno = imagePlugin.ReadSector(partition.Start, out bbSector);
 
-                if(errno != ErrorNumber.NoError)
-                    return;
+                if(errno != ErrorNumber.NoError) return;
             }
             else
                 return;
@@ -169,151 +157,135 @@ public sealed partial class AppleHFS
 
         MasterDirectoryBlock mdb = Marshal.ByteArrayToStructureBigEndian<MasterDirectoryBlock>(mdbSector);
 
-        sb.AppendLine("Apple Hierarchical File System");
+        sb.AppendLine(Localization.Name_Apple_Hierarchical_File_System);
         sb.AppendLine();
 
         if(apmFromHddOnCd)
-            sb.AppendLine("HFS uses 512 bytes/sector while device uses 2048 bytes/sector.").AppendLine();
+            sb.AppendLine(Localization.HFS_uses_512_bytes_sector_while_device_uses_2048_bytes_sector).AppendLine();
 
-        sb.AppendLine("Master Directory Block:");
-        sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
-        sb.AppendFormat("Last modification date: {0}", DateHandlers.MacToDateTime(mdb.drLsMod)).AppendLine();
+        sb.AppendLine(Localization.Master_Directory_Block);
+        sb.AppendFormat(Localization.Creation_date_0,          DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
+        sb.AppendFormat(Localization.Last_modification_date_0, DateHandlers.MacToDateTime(mdb.drLsMod)).AppendLine();
 
         if(mdb.drVolBkUp > 0)
         {
-            sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(mdb.drVolBkUp)).AppendLine();
-            sb.AppendFormat("Backup sequence number: {0}", mdb.drVSeqNum).AppendLine();
+            sb.AppendFormat(Localization.Last_backup_date_0, DateHandlers.MacToDateTime(mdb.drVolBkUp)).AppendLine();
+            sb.AppendFormat(Localization.Backup_sequence_number_0, mdb.drVSeqNum).AppendLine();
         }
         else
-            sb.AppendLine("Volume has never been backed up");
+            sb.AppendLine(Localization.Volume_has_never_been_backed_up);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.HardwareLock))
-            sb.AppendLine("Volume is locked by hardware.");
+            sb.AppendLine(Localization.Volume_is_locked_by_hardware);
 
-        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted) ? "Volume was unmonted."
-                          : "Volume is mounted.");
+        sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted)
+                          ? Localization.Volume_was_unmonted
+                          : Localization.Volume_is_mounted);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SparedBadBlocks))
-            sb.AppendLine("Volume has spared bad blocks.");
+            sb.AppendLine(Localization.Volume_has_spared_bad_blocks);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.DoesNotNeedCache))
-            sb.AppendLine("Volume does not need cache.");
+            sb.AppendLine(Localization.Volume_does_not_need_cache);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.BootInconsistent))
-            sb.AppendLine("Boot volume is inconsistent.");
+            sb.AppendLine(Localization.Boot_volume_is_inconsistent);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.ReusedIds))
-            sb.AppendLine("There are reused CNIDs.");
+            sb.AppendLine(Localization.There_are_reused_CNIDs);
 
-        if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Journaled))
-            sb.AppendLine("Volume is journaled.");
+        if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Journaled)) sb.AppendLine(Localization.Volume_is_journaled);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Inconsistent))
-            sb.AppendLine("Volume is seriously inconsistent.");
+            sb.AppendLine(Localization.Volume_is_seriously_inconsistent);
 
         if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
-            sb.AppendLine("Volume is locked by software.");
+            sb.AppendLine(Localization.Volume_is_locked_by_software);
 
-        sb.AppendFormat("{0} files on root directory", mdb.drNmFls).AppendLine();
-        sb.AppendFormat("{0} directories on root directory", mdb.drNmRtDirs).AppendLine();
-        sb.AppendFormat("{0} files on volume", mdb.drFilCnt).AppendLine();
-        sb.AppendFormat("{0} directories on volume", mdb.drDirCnt).AppendLine();
-        sb.AppendFormat("Volume write count: {0}", mdb.drWrCnt).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_root_directory,       mdb.drNmFls).AppendLine();
+        sb.AppendFormat(Localization._0_directories_in_root_directory, mdb.drNmRtDirs).AppendLine();
+        sb.AppendFormat(Localization._0_files_in_volume,               mdb.drFilCnt).AppendLine();
+        sb.AppendFormat(Localization._0_directories_in_volume,         mdb.drDirCnt).AppendLine();
+        sb.AppendFormat(Localization.Volume_write_count_0,             mdb.drWrCnt).AppendLine();
 
-        sb.AppendFormat("Volume bitmap starting sector (in 512-bytes): {0}", mdb.drVBMSt).AppendLine();
-        sb.AppendFormat("Next allocation block: {0}.", mdb.drAllocPtr).AppendLine();
-        sb.AppendFormat("{0} volume allocation blocks.", mdb.drNmAlBlks).AppendLine();
-        sb.AppendFormat("{0} bytes per allocation block.", mdb.drAlBlkSiz).AppendLine();
-        sb.AppendFormat("{0} bytes to allocate when extending a file.", mdb.drClpSiz).AppendLine();
-        sb.AppendFormat("{0} bytes to allocate when extending a Extents B-Tree.", mdb.drXTClpSiz).AppendLine();
-        sb.AppendFormat("{0} bytes to allocate when extending a Catalog B-Tree.", mdb.drCTClpSiz).AppendLine();
-        sb.AppendFormat("Sector of first allocation block: {0}", mdb.drAlBlSt).AppendLine();
-        sb.AppendFormat("Next unused CNID: {0}", mdb.drNxtCNID).AppendLine();
-        sb.AppendFormat("{0} unused allocation blocks.", mdb.drFreeBks).AppendLine();
+        sb.AppendFormat(Localization.Volume_bitmap_starting_sector_in_512_bytes_0,         mdb.drVBMSt).AppendLine();
+        sb.AppendFormat(Localization.Next_allocation_block_0,                              mdb.drAllocPtr).AppendLine();
+        sb.AppendFormat(Localization._0_volume_allocation_blocks,                          mdb.drNmAlBlks).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_per_allocation_block,                        mdb.drAlBlkSiz).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_file,           mdb.drClpSiz).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_Extents_B_Tree, mdb.drXTClpSiz).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_to_allocate_when_extending_a_Catalog_B_Tree, mdb.drCTClpSiz).AppendLine();
+        sb.AppendFormat(Localization.Sector_of_first_allocation_block_0,                   mdb.drAlBlSt).AppendLine();
+        sb.AppendFormat(Localization.Next_unused_CNID_0,                                   mdb.drNxtCNID).AppendLine();
+        sb.AppendFormat(Localization._0_unused_allocation_blocks,                          mdb.drFreeBks).AppendLine();
 
-        sb.AppendFormat("{0} bytes in the Extents B-Tree", mdb.drXTFlSize).AppendLine();
-        sb.AppendFormat("{0} bytes in the Catalog B-Tree", mdb.drCTFlSize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_in_the_Extents_B_Tree, mdb.drXTFlSize).AppendLine();
+        sb.AppendFormat(Localization._0_bytes_in_the_Catalog_B_Tree, mdb.drCTFlSize).AppendLine();
 
-        sb.AppendFormat("Volume name: {0}", StringHandlers.PascalToString(mdb.drVN, Encoding)).AppendLine();
+        sb.AppendFormat(Localization.Volume_name_0, StringHandlers.PascalToString(mdb.drVN, encoding)).AppendLine();
 
-        sb.AppendLine("Finder info:");
-        sb.AppendFormat("CNID of bootable system's directory: {0}", mdb.drFndrInfo0).AppendLine();
-        sb.AppendFormat("CNID of first-run application's directory: {0}", mdb.drFndrInfo1).AppendLine();
-        sb.AppendFormat("CNID of previously opened directory: {0}", mdb.drFndrInfo2).AppendLine();
-        sb.AppendFormat("CNID of bootable Mac OS 8 or 9 directory: {0}", mdb.drFndrInfo3).AppendLine();
-        sb.AppendFormat("CNID of bootable Mac OS X directory: {0}", mdb.drFndrInfo5).AppendLine();
+        sb.AppendLine(Localization.Finder_info);
+        sb.AppendFormat(Localization.CNID_of_bootable_system_directory_0,        mdb.drFndrInfo0).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_first_run_application_directory_0,  mdb.drFndrInfo1).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_previously_opened_directory_0,      mdb.drFndrInfo2).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_8_or_9_directory_0, mdb.drFndrInfo3).AppendLine();
+        sb.AppendFormat(Localization.CNID_of_bootable_Mac_OS_X_directory_0,      mdb.drFndrInfo5).AppendLine();
 
-        if(mdb.drFndrInfo6 != 0 &&
-           mdb.drFndrInfo7 != 0)
-            sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", mdb.drFndrInfo6, mdb.drFndrInfo7).AppendLine();
+        if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
+            sb.AppendFormat(Localization.Mac_OS_X_Volume_ID_0_1, mdb.drFndrInfo6, mdb.drFndrInfo7).AppendLine();
 
         if(mdb.drEmbedSigWord == AppleCommon.HFSP_MAGIC)
         {
-            sb.AppendLine("Volume wraps a HFS+ volume.");
-            sb.AppendFormat("Starting block of the HFS+ volume: {0}", mdb.xdrStABNt).AppendLine();
-            sb.AppendFormat("Allocations blocks of the HFS+ volume: {0}", mdb.xdrNumABlks).AppendLine();
+            sb.AppendLine(Localization.Volume_wraps_a_HFS_Plus_volume);
+            sb.AppendFormat(Localization.Starting_block_of_the_HFS_Plus_volume_0,     mdb.xdrStABNt).AppendLine();
+            sb.AppendFormat(Localization.Allocations_blocks_of_the_HFS_Plus_volume_0, mdb.xdrNumABlks).AppendLine();
         }
         else
         {
-            sb.AppendFormat("{0} blocks in volume cache", mdb.drVCSize).AppendLine();
-            sb.AppendFormat("{0} blocks in volume bitmap cache", mdb.drVBMCSize).AppendLine();
-            sb.AppendFormat("{0} blocks in volume common cache", mdb.drCtlCSize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume_cache,        mdb.drVCSize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume_bitmap_cache, mdb.drVBMCSize).AppendLine();
+            sb.AppendFormat(Localization._0_blocks_in_volume_common_cache, mdb.drCtlCSize).AppendLine();
         }
 
-        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, Encoding);
+        string bootBlockInfo = AppleCommon.GetBootBlockInformation(bbSector, encoding);
 
         if(bootBlockInfo != null)
         {
-            sb.AppendLine("Volume is bootable.");
+            sb.AppendLine(Localization.Volume_is_bootable);
             sb.AppendLine();
             sb.AppendLine(bootBlockInfo);
         }
-        else if(mdb.drFndrInfo0 != 0 ||
-                mdb.drFndrInfo3 != 0 ||
-                mdb.drFndrInfo5 != 0)
-            sb.AppendLine("Volume is bootable.");
+        else if(mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0)
+            sb.AppendLine(Localization.Volume_is_bootable);
         else
-            sb.AppendLine("Volume is not bootable.");
+            sb.AppendLine(Localization.Volume_is_not_bootable);
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType();
+        metadata = new FileSystem();
 
-        if(mdb.drVolBkUp > 0)
-        {
-            XmlFsType.BackupDate          = DateHandlers.MacToDateTime(mdb.drVolBkUp);
-            XmlFsType.BackupDateSpecified = true;
-        }
+        if(mdb.drVolBkUp > 0) metadata.BackupDate = DateHandlers.MacToDateTime(mdb.drVolBkUp);
 
-        XmlFsType.Bootable = bootBlockInfo   != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
-                             mdb.drFndrInfo5 != 0;
+        metadata.Bootable =
+            bootBlockInfo != null || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 || mdb.drFndrInfo5 != 0;
 
-        XmlFsType.Clusters    = mdb.drNmAlBlks;
-        XmlFsType.ClusterSize = mdb.drAlBlkSiz;
+        metadata.Clusters    = mdb.drNmAlBlks;
+        metadata.ClusterSize = mdb.drAlBlkSiz;
 
-        if(mdb.drCrDate > 0)
-        {
-            XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
-            XmlFsType.CreationDateSpecified = true;
-        }
+        if(mdb.drCrDate > 0) metadata.CreationDate = DateHandlers.MacToDateTime(mdb.drCrDate);
 
-        XmlFsType.Dirty                 = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
-        XmlFsType.Files                 = mdb.drFilCnt;
-        XmlFsType.FilesSpecified        = true;
-        XmlFsType.FreeClusters          = mdb.drFreeBks;
-        XmlFsType.FreeClustersSpecified = true;
+        metadata.Dirty        = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
+        metadata.Files        = mdb.drFilCnt;
+        metadata.FreeClusters = mdb.drFreeBks;
 
-        if(mdb.drLsMod > 0)
-        {
-            XmlFsType.ModificationDate          = DateHandlers.MacToDateTime(mdb.drLsMod);
-            XmlFsType.ModificationDateSpecified = true;
-        }
+        if(mdb.drLsMod > 0) metadata.ModificationDate = DateHandlers.MacToDateTime(mdb.drLsMod);
 
-        XmlFsType.Type       = "HFS";
-        XmlFsType.VolumeName = StringHandlers.PascalToString(mdb.drVN, Encoding);
+        metadata.Type       = FS_TYPE;
+        metadata.VolumeName = StringHandlers.PascalToString(mdb.drVN, encoding);
 
-        if(mdb.drFndrInfo6 != 0 &&
-           mdb.drFndrInfo7 != 0)
-            XmlFsType.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
+        if(mdb.drFndrInfo6 != 0 && mdb.drFndrInfo7 != 0)
+            metadata.VolumeSerial = $"{mdb.drFndrInfo6:X8}{mdb.drFndrInfo7:X8}";
     }
+
+#endregion
 }

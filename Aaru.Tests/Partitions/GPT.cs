@@ -23,28 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Gpt : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "GUID Partition Table");
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "GUID Partition Table");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20480,
@@ -105,13 +105,13 @@ public class Gpt : PartitionSchemeTest
                     Start    = 206848,
                     Type     = "HP-UX Data"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 83968,
@@ -142,7 +142,7 @@ public class Gpt : PartitionSchemeTest
                     Start    = 188416,
                     Type     = "Microsoft Basic data"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

@@ -23,26 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.QEMU;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.QEMU;
 
 [TestFixture]
 public class VMware6 : BlockMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VMware 6");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VMware 6");
     public override IMediaImage Plugin => new VMware();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "vmdk6.vmdk.lz",
@@ -50,14 +49,14 @@ public class VMware6 : BlockMediaImageTest
             Sectors    = 251904,
             SectorSize = 512,
             Md5        = "1ad282643cc7f97c57dc874b3d4ece9b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

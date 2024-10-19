@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.FAT16;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Atari : ReadOnlyFilesystemTest
-{
-    public Atari() : base("FAT16") {}
+namespace Aaru.Tests.Filesystems.FAT16;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT16 (Atari)");
+[TestFixture]
+public class Atari() : ReadOnlyFilesystemTest("fat16")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT16 (Atari)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "tos_1.00_gem.aif",
@@ -177,5 +175,5 @@ public class Atari : ReadOnlyFilesystemTest
             VolumeName   = "VolumeLabel",
             VolumeSerial = "086A33"
         }
-    };
+    ];
 }

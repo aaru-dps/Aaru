@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 namespace Aaru.Core.Devices.Scanning;
@@ -36,7 +36,7 @@ public sealed partial class MediaScan
 {
     ScanResults Nvme()
     {
-        StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+        StoppingErrorMessage?.Invoke(Localization.Core.NVMe_devices_not_yet_supported);
 
         return default(ScanResults);
     }

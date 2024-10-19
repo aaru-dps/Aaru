@@ -23,28 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.BeFS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.BeFS;
+
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("befs")
 {
-    public MBR() : base("BeFS") {}
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (MBR)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => true;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (MBR)");
-    public override IFilesystem Plugin => new BeFS();
-    public override bool Partitions => true;
-
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "beos_r3.1.aif",
@@ -125,5 +122,5 @@ public class MBR : FilesystemTest
             ClusterSize = 4096,
             VolumeName  = "Volume label 4K"
         }
-    };
+    ];
 }

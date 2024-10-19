@@ -23,32 +23,31 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
-using System;
 using System.Linq;
 using Aaru.Console;
 using Aaru.Devices;
+
+namespace Aaru.Tests.Devices;
 
 static partial class MainClass
 {
     public static void Main()
     {
-        AaruConsole.WriteLineEvent        += Console.WriteLine;
-        AaruConsole.WriteEvent            += Console.Write;
-        AaruConsole.ErrorWriteLineEvent   += Console.Error.WriteLine;
-        AaruConsole.DebugWriteLineEvent   += Console.Error.WriteLine;
-        AaruConsole.VerboseWriteLineEvent += Console.WriteLine;
+        AaruConsole.WriteLineEvent        += System.Console.WriteLine;
+        AaruConsole.WriteEvent            += System.Console.Write;
+        AaruConsole.ErrorWriteLineEvent   += System.Console.Error.WriteLine;
+        AaruConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
+        AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+        AaruConsole.WriteExceptionEvent   += System.Console.Error.WriteLine;
 
         DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
 
-        if(devices        == null ||
-           devices.Length == 0)
+        if(devices == null || devices.Length == 0)
         {
-            AaruConsole.WriteLine("No known devices attached.");
+            AaruConsole.WriteLine(Localization.No_known_devices_attached);
 
             return;
         }
@@ -57,44 +56,62 @@ static partial class MainClass
 
         while(true)
         {
-            Console.Clear();
+            System.Console.Clear();
 
-            AaruConsole.WriteLine("DiscImageChef device handling tests");
+            AaruConsole.WriteLine(Localization.Aaru_device_handling_tests);
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                  "Serial", "Bus", "Supported?", "Number");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
+                                  Localization.Path,
+                                  Localization.Vendor,
+                                  Localization.Model,
+                                  Localization.Serial,
+                                  Localization.Bus,
+                                  Localization.Supported,
+                                  Localization.Number);
 
-            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                  "----------------", "------------------------", "------------------------",
-                                  "----------", "----------", "--------");
+            AaruConsole.WriteLine("{6,-8}|{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                                  "----------------------",
+                                  "----------------",
+                                  "------------------------",
+                                  "------------------------",
+                                  "----------",
+                                  "----------",
+                                  "--------");
 
             for(var i = 0; i < devices.Length; i++)
-                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", devices[i].Path,
-                                      devices[i].Vendor, devices[i].Model, devices[i].Serial, devices[i].Bus,
-                                      devices[i].Supported, i + 1);
+            {
+                AaruConsole.WriteLine("{6,-8}|{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}",
+                                      devices[i].Path,
+                                      devices[i].Vendor,
+                                      devices[i].Model,
+                                      devices[i].Serial,
+                                      devices[i].Bus,
+                                      devices[i].Supported,
+                                      i + 1);
+            }
 
-            AaruConsole.Write("Please choose which drive to test (0 to exit): ");
-            string strDev = Console.ReadLine();
+            AaruConsole.Write(Localization.Please_choose_which_drive_to_test_zero_to_exit);
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
 
             if(item == 0)
             {
-                AaruConsole.WriteLine("Exiting...");
+                AaruConsole.WriteLine(Localization.Exiting);
 
                 return;
             }
 
             if(item > devices.Length)
             {
-                AaruConsole.WriteLine("No such device. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.No_such_device_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }

@@ -27,30 +27,33 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class AaruFormat
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         _imageStream = imageFilter.GetDataForkStream();
         _imageStream.Seek(0, SeekOrigin.Begin);
 
-        if(_imageStream.Length < Marshal.SizeOf<AaruHeader>())
-            return false;
+        if(_imageStream.Length < Marshal.SizeOf<AaruHeader>()) return false;
 
         _structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
-        _imageStream.Read(_structureBytes, 0, _structureBytes.Length);
+        _imageStream.EnsureRead(_structureBytes, 0, _structureBytes.Length);
         _header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(_structureBytes);
 
         return _header.identifier is DIC_MAGIC or AARU_MAGIC && _header.imageMajorVersion <= AARUFMT_VERSION;
     }
+
+#endregion
 }

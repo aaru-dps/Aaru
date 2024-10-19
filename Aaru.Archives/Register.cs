@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -34,53 +34,15 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021-2022 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2021-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Archives;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Aaru.CommonTypes.Interfaces;
-
+// Needs to have the interface here so the source generator knows THIS IS the class
+// ReSharper disable once RedundantExtendsListEntry
 /// <inheritdoc />
-public sealed class Register : IPluginRegister
-{
-    /// <inheritdoc />
-    public List<Type> GetAllChecksumPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFilterPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllFloppyImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllMediaImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllPartitionPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableFloppyImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllWritableImagePlugins() => null;
-
-    /// <inheritdoc />
-    public List<Type> GetAllArchivePlugins() => Assembly.GetExecutingAssembly().GetTypes().
-                                                         Where(t => t.GetInterfaces().Contains(typeof(IArchive))).
-                                                         Where(t => t.IsClass).ToList();
-
-    /// <inheritdoc />
-    public List<Type> GetAllByteAddressablePlugins() => null;
-}
+public sealed partial class Register : IPluginRegister;

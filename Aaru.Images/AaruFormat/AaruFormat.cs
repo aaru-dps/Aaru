@@ -27,8 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
-// Copyright © 2020-2022 Rebecca Wallander
+// Copyright © 2011-2024 Natalia Portillo
+// Copyright © 2020-2024 Rebecca Wallander
 // ****************************************************************************/
 
 /*
@@ -69,9 +69,6 @@
  P.S.2: Support for floppy image contaning bitslices and/or fluxes will be added soon.
 */
 
-namespace Aaru.DiscImages;
-
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
@@ -80,11 +77,14 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+namespace Aaru.Images;
+
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IWritableOpticalImage" />
 /// <summary>Implements reading and writing AaruFormat media images</summary>
 public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
 {
-    bool _alreadyWrittenZero;
+    const string MODULE_NAME = "Aaru Format plugin";
+    bool         _alreadyWrittenZero;
     /// <summary>Cache of uncompressed blocks.</summary>
     Dictionary<ulong, byte[]> _blockCache;
     /// <summary>Cache of block headers.</summary>
@@ -129,8 +129,11 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
     /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
     long _outMemoryDdtPosition;
     bool   _rewinded;
-    byte[] _sectorCpiMai;
+    byte[] _sectorCprMai;
     byte[] _sectorDecryptedTitleKey;
+    byte[] _sectorEdc;
+    byte[] _sectorId;
+    byte[] _sectorIed;
     /// <summary>Cache for data that prefixes the user data on a sector (e.g. sync).</summary>
     byte[] _sectorPrefix;
     uint[]       _sectorPrefixDdt;
@@ -149,7 +152,7 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
     /// <summary>Cache for bytes to write/rad on-disk.</summary>
     byte[] _structureBytes;
     /// <summary>Cache for pointer for marshaling structures.</summary>
-    IntPtr _structurePointer;
+    nint _structurePointer;
     Dictionary<ulong, ulong> _tapeDdt;
     /// <summary>Cache of CompactDisc track's flags</summary>
     Dictionary<byte, byte> _trackFlags;
@@ -164,8 +167,8 @@ public sealed partial class AaruFormat : IWritableOpticalImage, IVerifiableImage
 
     public AaruFormat() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

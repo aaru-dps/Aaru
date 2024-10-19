@@ -28,15 +28,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Aaru.Devices.Linux;
 
-using System;
-
 [Flags]
-enum FileFlags
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+enum FileFlags : uint
 {
     /// <summary>O_RDONLY</summary>
     Readonly = 0x0,
@@ -89,6 +91,7 @@ enum ScsiIoctlDirection
     Unknown = -5
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum LinuxIoctl : uint
 {
     // SCSI IOCtls
@@ -101,6 +104,7 @@ enum LinuxIoctl : uint
 }
 
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SgInfo : uint
 {
     /// <summary>Mask to check OK</summary>
@@ -121,6 +125,7 @@ enum SgInfo : uint
 }
 
 [Flags]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SgFlags : uint
 {
     DirectIo         = 1,
@@ -131,6 +136,7 @@ enum SgFlags : uint
     QAtHead          = 0x20
 }
 
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 enum SeekWhence
 {
     Begin   = 0,

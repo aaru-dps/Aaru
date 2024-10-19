@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Dialogs;
 
 using System;
 using System.Collections.ObjectModel;
@@ -42,8 +40,11 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class AboutViewModel : ViewModelBase
 {
@@ -62,7 +63,7 @@ public sealed class AboutViewModel : ViewModelBase
         LicenseCommand = ReactiveCommand.Create(ExecuteLicenseCommand);
         CloseCommand   = ReactiveCommand.Create(ExecuteCloseCommand);
 
-        Assemblies = new ObservableCollection<AssemblyModel>();
+        Assemblies = [];
 
         Task.Run(() =>
         {
@@ -74,9 +75,7 @@ public sealed class AboutViewModel : ViewModelBase
                     (Attribute.GetCustomAttribute(assembly, typeof(AssemblyInformationalVersionAttribute)) as
                          AssemblyInformationalVersionAttribute)?.InformationalVersion;
 
-                if(name is null ||
-                   version is null)
-                    continue;
+                if(name is null || version is null) continue;
 
                 Assemblies.Add(new AssemblyModel
                 {
@@ -88,43 +87,44 @@ public sealed class AboutViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string AboutLabel => "About";
+    public string AboutLabel => UI.Label_About;
+
     [NotNull]
-    public string LibrariesLabel => "Libraries";
+    public string LibrariesLabel => UI.Label_Libraries;
+
     [NotNull]
-    public string AuthorsLabel => "Authors";
+    public string AuthorsLabel => UI.Label_Authors;
+
     [NotNull]
-    public string Title => "About Aaru";
+    public string Title => UI.Title_About_Aaru;
+
     [NotNull]
     public string SoftwareName => "Aaru";
+
     [NotNull]
     public string SuiteName => "Aaru Data Preservation Suite";
+
     [NotNull]
-    public string Copyright => "© 2011-2022 Natalia Portillo";
+    public string Copyright => "© 2011-2024 Natalia Portillo";
+
     [NotNull]
     public string Website => "https://aaru.app";
-    [NotNull]
-    public string License => "License: GNU General Public License Version 3";
-    [NotNull]
-    public string CloseLabel => "Close";
-    [NotNull]
-    public string AssembliesLibraryText => "Library";
-    [NotNull]
-    public string AssembliesVersionText => "Version";
-    [NotNull]
-    public string Authors => @"Developers:
-    Natalia Portillo
-    Michael Drüing
-    Rebecca Wallander
 
-Testers:
-    Silas Laspada
+    [NotNull]
+    public string License => UI.Label_License;
 
-Public relations:
-    Noah Bacon
+    [NotNull]
+    public string CloseLabel => UI.ButtonLabel_Close;
 
-Logo and art:
-    Juan Carlos Pastor Segura (Denymetanol)";
+    [NotNull]
+    public string AssembliesLibraryText => UI.Title_Library;
+
+    [NotNull]
+    public string AssembliesVersionText => UI.Title_Version;
+
+    [NotNull]
+    public string Authors => UI.Text_Authors;
+
     public ReactiveCommand<Unit, Unit>         WebsiteCommand { get; }
     public ReactiveCommand<Unit, Unit>         LicenseCommand { get; }
     public ReactiveCommand<Unit, Unit>         CloseCommand   { get; }
@@ -136,7 +136,7 @@ Logo and art:
         set => this.RaiseAndSetIfChanged(ref _versionText, value);
     }
 
-    void ExecuteWebsiteCommand()
+    static void ExecuteWebsiteCommand()
     {
         var process = new Process
         {

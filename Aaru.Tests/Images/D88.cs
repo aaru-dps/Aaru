@@ -23,23 +23,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class D88 : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "D88");
-    public override IMediaImage Plugin    => new DiscImages.D88();
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "D88");
+    public override IMediaImage Plugin     => new Aaru.Images.D88();
+
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "1942 (1987)(ASCII)(JP).d77.lz",
@@ -127,14 +128,14 @@ public class D88 : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "be916f25847b9cfc9776d88cc150ae7e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -143,14 +144,14 @@ public class D88 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "ccc7f98e216db35c2b7a08634a9f3e20",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -167,14 +168,14 @@ public class D88 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "62f5be96a8b8ccab9ee4aebf557cfcf7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -191,14 +192,14 @@ public class D88 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "1f73980e45a384bed331eaa33c9ef65b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -215,14 +216,14 @@ public class D88 : BlockMediaImageTest
             Sectors    = 1232,
             SectorSize = 1024,
             Md5        = "bb48546ced9c61462e1c89dca4987143",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1232
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -232,5 +233,5 @@ public class D88 : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "c7df67f4e66dad658fe856d3c8b36c7a"
         }
-    };
+    ];
 }

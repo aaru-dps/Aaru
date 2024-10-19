@@ -23,14 +23,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable StringLiteralTypo
-
-namespace Aaru.Tests.Filesystems.FATX;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -38,17 +34,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Xbox : ReadOnlyFilesystemTest
-{
-    public Xbox() : base("FATX filesystem") {}
+namespace Aaru.Tests.Filesystems.FATX;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "le");
+[TestFixture]
+public class Xbox() : ReadOnlyFilesystemTest("fatx")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "le");
     public override IFilesystem Plugin     => new XboxFatPlugin();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "fatx.img.lz",
@@ -60,5 +56,5 @@ public class Xbox : ReadOnlyFilesystemTest
             VolumeName   = "Volume láb€l",
             VolumeSerial = "4639B7D0"
         }
-    };
+    ];
 }

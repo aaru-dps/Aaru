@@ -27,14 +27,13 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -60,21 +59,25 @@ public partial class Device
     /// <param name="duration">Duration.</param>
     public bool CertanceParkUnpark(out byte[] senseBuffer, bool park, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
         var    cdb    = new byte[6];
         senseBuffer = new byte[64];
 
         cdb[0] = (byte)ScsiCommands.CertanceParkUnpark;
 
-        if(park)
-            cdb[4] = 1;
+        if(park) cdb[4] = 1;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "CERTANCE PARK UNPARK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.CERTANCE_PARK_UNPARK_took_0_ms, duration);
 
         return sense;
     }

@@ -28,10 +28,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filters;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -44,6 +42,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
+namespace Aaru.Filters;
+
 /// <inheritdoc />
 /// <summary>Decodes PCExchange files</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -55,12 +55,16 @@ public sealed class PcExchange : IFilter
     string       _dataPath;
     string       _rsrcPath;
 
+#region IFilter Members
+
     /// <inheritdoc />
-    public string Name => "PCExchange";
+    public string Name => Localization.PcExchange_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9264EB9F-D634-4F9B-BE12-C24CD44988C6");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close() {}
@@ -114,25 +118,24 @@ public sealed class PcExchange : IFilter
 
         parentFolder ??= "";
 
-        if(!File.Exists(System.IO.Path.Combine(parentFolder, FINDER_INFO)))
-            return false;
+        if(!File.Exists(System.IO.Path.Combine(parentFolder, FINDER_INFO))) return false;
 
-        if(!Directory.Exists(System.IO.Path.Combine(parentFolder, RESOURCES)))
-            return false;
+        if(!Directory.Exists(System.IO.Path.Combine(parentFolder, RESOURCES))) return false;
 
         string baseFilename = System.IO.Path.GetFileName(path);
 
         var dataFound = false;
         var rsrcFound = false;
 
-        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO),
+                                             FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
             var datEntry  = new Entry();
             var datEntryB = new byte[Marshal.SizeOf(datEntry)];
-            finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
+            finderDatStream.EnsureRead(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             // TODO: Add support for encoding on filters
@@ -141,17 +144,15 @@ public sealed class PcExchange : IFilter
             var tmpDosNameB = new byte[8];
             var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
-            Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
+            Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
-            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() +
+                             "."                                          +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName &&
-               baseFilename != dosName &&
-               baseFilename != dosNameLow)
-                continue;
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
             dataFound |=
                 File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())) ||
@@ -183,14 +184,15 @@ public sealed class PcExchange : IFilter
 
         parentFolder ??= "";
 
-        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO), FileMode.Open,
+        var finderDatStream = new FileStream(System.IO.Path.Combine(parentFolder, FINDER_INFO),
+                                             FileMode.Open,
                                              FileAccess.Read);
 
         while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
         {
             var datEntry  = new Entry();
             var datEntryB = new byte[Marshal.SizeOf(datEntry)];
-            finderDatStream.Read(datEntryB, 0, Marshal.SizeOf(datEntry));
+            finderDatStream.EnsureRead(datEntryB, 0, Marshal.SizeOf(datEntry));
             datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<Entry>(datEntryB);
 
             string macName = StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
@@ -198,17 +200,15 @@ public sealed class PcExchange : IFilter
             var tmpDosNameB = new byte[8];
             var tmpDosExtB  = new byte[3];
             Array.Copy(datEntry.dosName, 0, tmpDosNameB, 0, 8);
-            Array.Copy(datEntry.dosName, 8, tmpDosExtB, 0, 3);
+            Array.Copy(datEntry.dosName, 8, tmpDosExtB,  0, 3);
 
-            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() + "." +
+            string dosName = Encoding.ASCII.GetString(tmpDosNameB).Trim() +
+                             "."                                          +
                              Encoding.ASCII.GetString(tmpDosExtB).Trim();
 
             string dosNameLow = dosName.ToLower(CultureInfo.CurrentCulture);
 
-            if(baseFilename != macName &&
-               baseFilename != dosName &&
-               baseFilename != dosNameLow)
-                continue;
+            if(baseFilename != macName && baseFilename != dosName && baseFilename != dosNameLow) continue;
 
             if(File.Exists(System.IO.Path.Combine(parentFolder, macName ?? throw new InvalidOperationException())))
                 _dataPath = System.IO.Path.Combine(parentFolder, macName);
@@ -241,6 +241,10 @@ public sealed class PcExchange : IFilter
 
         return ErrorNumber.NoError;
     }
+
+#endregion
+
+#region Nested type: Entry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Entry
@@ -278,4 +282,6 @@ public sealed class PcExchange : IFilter
         /// <summary>Unknown, flags?</summary>
         public readonly byte unknown3;
     }
+
+#endregion
 }

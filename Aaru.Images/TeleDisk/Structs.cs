@@ -27,13 +27,45 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class TeleDisk
 {
+#region Nested type: CommentBlockHeader
+
+    struct CommentBlockHeader
+    {
+        /// <summary>CRC of comment block after crc field</summary>
+        public ushort Crc;
+        /// <summary>Length of comment</summary>
+        public ushort Length;
+        public byte Year;
+        public byte Month;
+        public byte Day;
+        public byte Hour;
+        public byte Minute;
+        public byte Second;
+    }
+
+#endregion
+
+#region Nested type: DataHeader
+
+    struct DataHeader
+    {
+        /// <summary>Size of all data (encoded) + next field (1)</summary>
+        public ushort DataSize;
+        /// <summary>Encoding used for data block</summary>
+        public byte DataEncoding;
+    }
+
+#endregion
+
+#region Nested type: Header
+
     struct Header
     {
         /// <summary>"TD" or "td" depending on compression</summary>
@@ -58,31 +90,9 @@ public sealed partial class TeleDisk
         public ushort Crc;
     }
 
-    struct CommentBlockHeader
-    {
-        /// <summary>CRC of comment block after crc field</summary>
-        public ushort Crc;
-        /// <summary>Length of comment</summary>
-        public ushort Length;
-        public byte Year;
-        public byte Month;
-        public byte Day;
-        public byte Hour;
-        public byte Minute;
-        public byte Second;
-    }
+#endregion
 
-    struct TrackHeader
-    {
-        /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
-        public byte Sectors;
-        /// <summary>Cylinder the head was on</summary>
-        public byte Cylinder;
-        /// <summary>Head/side used</summary>
-        public byte Head;
-        /// <summary>Lower byte of CRC of previous fields</summary>
-        public byte Crc;
-    }
+#region Nested type: SectorHeader
 
     struct SectorHeader
     {
@@ -100,11 +110,21 @@ public sealed partial class TeleDisk
         public byte Crc;
     }
 
-    struct DataHeader
+#endregion
+
+#region Nested type: TrackHeader
+
+    struct TrackHeader
     {
-        /// <summary>Size of all data (encoded) + next field (1)</summary>
-        public ushort DataSize;
-        /// <summary>Encoding used for data block</summary>
-        public byte DataEncoding;
+        /// <summary>Sectors in the track, 0xFF if end of disk image (there is no spoon)</summary>
+        public byte Sectors;
+        /// <summary>Cylinder the head was on</summary>
+        public byte Cylinder;
+        /// <summary>Head/side used</summary>
+        public byte Head;
+        /// <summary>Lower byte of CRC of previous fields</summary>
+        public byte Crc;
     }
+
+#endregion
 }

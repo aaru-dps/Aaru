@@ -28,55 +28,68 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace Aaru.Devices.Linux;
 
-using System;
-using System.Runtime.InteropServices;
-
-static class Extern
+static partial class Extern
 {
-    [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern int open(string pathname, [MarshalAs(UnmanagedType.U4)] FileFlags flags);
+    [LibraryImport("libc",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    internal static partial int open(string pathname, FileFlags flags);
 
-    [DllImport("libc")]
-    internal static extern int close(int fd);
+    [LibraryImport("libc")]
+    internal static partial int close(int fd);
 
-    [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static extern int ioctlInt(int fd, LinuxIoctl request, out int value);
-
-    [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static extern int ioctlSg(int fd, LinuxIoctl request, ref SgIoHdrT value);
+    [LibraryImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+    internal static partial int ioctlSg(int fd, LinuxIoctl request, ref SgIoHdrT value);
 
     [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
     internal static extern int ioctlMmc(int fd, LinuxIoctl request, ref MmcIocCmd value);
 
-    [DllImport("libc", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern int readlink(string path, IntPtr buf, int bufsize);
+    [LibraryImport("libc",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    internal static partial int readlink(string path, nint buf, int bufsize);
 
-    [DllImport("libc", CharSet = CharSet.Ansi, EntryPoint = "readlink", SetLastError = true)]
-    internal static extern long readlink64(string path, IntPtr buf, long bufsize);
+    [LibraryImport("libc",
+                   EntryPoint = "readlink",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    internal static partial long readlink64(string path, nint buf, long bufsize);
 
-    [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern IntPtr udev_new();
+    [LibraryImport("libudev", SetLastError = true)]
+    internal static partial nint udev_new();
 
-    [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern IntPtr udev_device_new_from_subsystem_sysname(IntPtr udev, string subsystem, string sysname);
+    [LibraryImport("libudev",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    internal static partial nint udev_device_new_from_subsystem_sysname(nint udev, string subsystem, string sysname);
 
-    [DllImport("libudev", CharSet = CharSet.Ansi, SetLastError = true)]
-    internal static extern string udev_device_get_property_value(IntPtr udevDevice, string key);
+    [LibraryImport("libudev",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Custom,
+                   StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
+    internal static partial string udev_device_get_property_value(nint udevDevice, string key);
 
-    [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-    internal static extern int ioctlMmcMulti(int fd, LinuxIoctl request, IntPtr value);
+    [LibraryImport("libc", EntryPoint = "ioctl", SetLastError = true)]
+    internal static partial int ioctlMmcMulti(int fd, LinuxIoctl request, nint value);
 
-    [DllImport("libc", SetLastError = true)]
-    internal static extern long lseek(int fd, long offset, SeekWhence whence);
+    [LibraryImport("libc", SetLastError = true)]
+    internal static partial long lseek(int fd, long offset, SeekWhence whence);
 
-    [DllImport("libc", SetLastError = true)]
-    internal static extern int read(int fd, byte[] buf, int count);
+    [LibraryImport("libc", SetLastError = true)]
+    internal static partial int read(int fd, byte[] buf, int count);
 
-    [DllImport("libc", EntryPoint = "read", SetLastError = true)]
-    internal static extern long read64(int fd, byte[] buf, long count);
+    [LibraryImport("libc", EntryPoint = "read", SetLastError = true)]
+    internal static partial long read64(int fd, byte[] buf, long count);
 }

@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Views.Windows;
 
 using System;
 using Aaru.Gui.ViewModels.Windows;
@@ -38,14 +36,16 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
+namespace Aaru.Gui.Views.Windows;
+
 public sealed class SplashWindow : Window
 {
     public SplashWindow()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

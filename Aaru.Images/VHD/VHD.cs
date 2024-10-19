@@ -27,17 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
-using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>
@@ -47,8 +45,16 @@ using Aaru.CommonTypes.Structs;
 /// </summary>
 public sealed partial class Vhd : IWritableImage
 {
+    const string      MODULE_NAME = "Virtual PC plugin";
     uint              _bitmapSize;
     uint[]            _blockAllocationTable;
+    bool              _blockInCache;
+    uint              _blockSize;
+    byte[]            _cachedBlock;
+    uint              _cachedBlockNumber;
+    long              _cachedBlockPosition;
+    long              _currentFooterPosition;
+    bool              _dynamic;
     ImageInfo         _imageInfo;
     byte[][]          _locatorEntriesData;
     DateTime          _parentDateTime;
@@ -61,8 +67,8 @@ public sealed partial class Vhd : IWritableImage
 
     public Vhd() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

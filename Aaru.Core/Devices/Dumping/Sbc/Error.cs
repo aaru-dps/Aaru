@@ -21,19 +21,12 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
-// Copyright © 2020-2022 Rebecca Wallander
+// Copyright © 2011-2024 Natalia Portillo
+// Copyright © 2020-2024 Rebecca Wallander
 // ****************************************************************************/
 
-using DVDDecryption = Aaru.Decryption.DVD.Dump;
-
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
-
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
@@ -44,7 +37,13 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decryption;
 using Aaru.Decryption.DVD;
 using Aaru.Devices;
-using Schemas;
+using DVDDecryption = Aaru.Decryption.DVD.Dump;
+
+// ReSharper disable JoinDeclarationAndInitializer
+// ReSharper disable InlineOutVariableDeclaration
+// ReSharper disable TooWideLocalVariableScope
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -54,7 +53,7 @@ partial class Dump
     /// <param name="totalDuration">Total time spent in commands</param>
     /// <param name="scsiReader">SCSI reader</param>
     /// <param name="blankExtents">Blank extents</param>
-    void RetrySbcData(Reader scsiReader, DumpHardwareType currentTry, ExtentsULong extents, ref double totalDuration,
+    void RetrySbcData(Reader       scsiReader, DumpHardware currentTry, ExtentsULong extents, ref double totalDuration,
                       ExtentsULong blankExtents)
     {
         var             pass              = 1;
@@ -75,12 +74,25 @@ partial class Dump
             Modes.ModePage_01_MMC pgMmc;
             Modes.ModePage_01     pg;
 
-            sense = _dev.ModeSense6(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
+            sense = _dev.ModeSense6(out buffer,
+                                    out _,
+                                    false,
+                                    ScsiModeSensePageControl.Current,
+                                    0x01,
+                                    _dev.Timeout,
                                     out _);
 
-            if(sense)
+            Modes.DecodedMode? dcMode6 = null;
+            if(!sense) dcMode6         = Modes.DecodeMode6(buffer, _dev.ScsiType);
+
+            if(sense || dcMode6 is null)
             {
-                sense = _dev.ModeSense10(out buffer, out _, false, ScsiModeSensePageControl.Current, 0x01, _dev.Timeout,
+                sense = _dev.ModeSense10(out buffer,
+                                         out _,
+                                         false,
+                                         ScsiModeSensePageControl.Current,
+                                         0x01,
+                                         _dev.Timeout,
                                          out _);
 
                 if(!sense)
@@ -88,19 +100,23 @@ partial class Dump
                     Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(buffer, _dev.ScsiType);
 
                     if(dcMode10?.Pages != null)
+                    {
                         foreach(Modes.ModePage modePage in dcMode10.Value.Pages.Where(modePage =>
-                                    modePage.Page == 0x01 && modePage.Subpage == 0x00))
+                                    modePage is { Page: 0x01, Subpage: 0x00 }))
                             currentModePage = modePage;
+                    }
                 }
             }
             else
             {
-                Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(buffer, _dev.ScsiType);
-
-                if(dcMode6?.Pages != null)
-                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage.Page == 0x01 &&
-                                modePage.Subpage                                                           == 0x00))
+                if(dcMode6.Value.Pages != null)
+                {
+                    foreach(Modes.ModePage modePage in dcMode6.Value.Pages.Where(modePage => modePage is
+                            {
+                                Page: 0x01, Subpage: 0x00
+                            }))
                         currentModePage = modePage;
+                }
             }
 
             if(currentModePage == null)
@@ -158,15 +174,15 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         }
-                    }
+                    ]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
@@ -191,36 +207,36 @@ partial class Dump
                 var md = new Modes.DecodedMode
                 {
                     Header = new Modes.ModeHeader(),
-                    Pages = new[]
-                    {
+                    Pages =
+                    [
                         new Modes.ModePage
                         {
                             Page         = 0x01,
                             Subpage      = 0x00,
                             PageResponse = Modes.EncodeModePage_01(pg)
                         }
-                    }
+                    ]
                 };
 
                 md6  = Modes.EncodeMode6(md, _dev.ScsiType);
                 md10 = Modes.EncodeMode10(md, _dev.ScsiType);
             }
 
-            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+            UpdateStatus?.Invoke(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_damaged_blocks);
             sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
 
-            if(sense)
-                sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
+            if(sense) sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
 
             if(sense)
             {
-                UpdateStatus?.
-                    Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                UpdateStatus?.Invoke(Localization.Core
+                                                 .Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
 
-                AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                AaruConsole.DebugWriteLine(Localization.Core.Error_0, Sense.PrettifySense(senseBuf));
 
-                _dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                _dumpLog.WriteLine(Localization.Core
+                                               .Drive_did_not_accept_MODE_SELECT_command_for_persistent_error_reading);
             }
             else
                 runningPersistent = true;
@@ -235,17 +251,47 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                forward ? "forward" : "reverse",
-                                                runningPersistent ? "recovering partial data, " : ""));
+            if(forward)
+            {
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.Format(Localization.Core
+                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_forward,
+                                                          badSector,
+                                                          pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                          badSector,
+                                                          pass));
+            }
+            else
+            {
+                PulseProgress?.Invoke(runningPersistent
+                                          ? string.Format(Localization.Core
+                                                                      .Retrying_sector_0_pass_1_recovering_partial_data_reverse,
+                                                          badSector,
+                                                          pass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                          badSector,
+                                                          pass));
+            }
 
-            sense = scsiReader.ReadBlock(out buffer, badSector, out double cmdDuration, out recoveredError,
+            if(scsiReader.HldtstReadRaw)
+
+                // The HL-DT-ST buffer is stored and read in 96-sector chunks. If we start to read at an LBA which is
+                // not modulo 96, the data will not be correctly fetched. Therefore, we begin every recovery read with
+                // filling the buffer at a known offset.
+                // TODO: This is very ugly and there probably exist a more elegant way to solve this issue.
+                scsiReader.ReadBlock(out _, badSector - badSector % 96 + 1, out _, out _, out _);
+
+            sense = scsiReader.ReadBlock(out buffer,
+                                         badSector,
+                                         out double cmdDuration,
+                                         out recoveredError,
                                          out blankCheck);
 
             totalDuration += cmdDuration;
@@ -256,8 +302,8 @@ partial class Dump
                 blankExtents.Add(badSector, badSector);
                 newBlank = true;
 
-                UpdateStatus?.Invoke($"Found blank block {badSector} in pass {pass}.");
-                _dumpLog.WriteLine("Found blank block {0} in pass {1}.", badSector, pass);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_blank_block_0_in_pass_1, badSector, pass));
+                _dumpLog.WriteLine(Localization.Core.Found_blank_block_0_in_pass_1, badSector, pass);
 
                 continue;
             }
@@ -267,23 +313,24 @@ partial class Dump
                 _resume.BadBlocks.Remove(badSector);
                 extents.Add(badSector);
                 outputFormat.WriteSector(buffer, badSector);
-                UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+                _mediaGraph?.PaintSectorGood(badSector);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1,
+                                                   badSector,
+                                                   pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_block_0_in_pass_1, badSector, pass);
             }
-            else if(runningPersistent)
-                outputFormat.WriteSector(buffer, badSector);
+            else if(runningPersistent) outputFormat.WriteSector(buffer, badSector);
         }
 
-        if(pass < _retryPasses &&
-           !_aborted           &&
-           _resume.BadBlocks.Count > 0)
+        if(pass < _retryPasses && !_aborted && _resume.BadBlocks.Count > 0)
         {
             pass++;
             forward = !forward;
             _resume.BadBlocks.Sort();
 
-            if(!forward)
-                _resume.BadBlocks.Reverse();
+            if(!forward) _resume.BadBlocks.Reverse();
 
             goto repeatRetry;
         }
@@ -293,25 +340,20 @@ partial class Dump
             var md = new Modes.DecodedMode
             {
                 Header = new Modes.ModeHeader(),
-                Pages = new[]
-                {
-                    currentModePage.Value
-                }
+                Pages  = [currentModePage.Value]
             };
 
             md6  = Modes.EncodeMode6(md, _dev.ScsiType);
             md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
-            UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
-            _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+            UpdateStatus?.Invoke(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
+            _dumpLog.WriteLine(Localization.Core.Sending_MODE_SELECT_to_drive_return_device_to_previous_status);
             sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
 
-            if(sense)
-                _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
+            if(sense) _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
         }
 
-        if(newBlank)
-            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+        if(newBlank) _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
 
         EndProgress?.Invoke();
     }
@@ -322,7 +364,8 @@ partial class Dump
         var    forward = true;
         bool   sense;
         byte[] buffer;
-        var    outputFormat = _outputPlugin as IWritableImage;
+
+        if(_outputPlugin is not IWritableImage outputFormat) return;
 
         InitProgress?.Invoke();
 
@@ -333,79 +376,79 @@ partial class Dump
         {
             if(_aborted)
             {
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke(string.Format("Retrying title key {0}, pass {1}, {2}", missingKey, pass,
-                                                forward ? "forward" : "reverse"));
+            PulseProgress?.Invoke(forward
+                                      ? string.Format(Localization.Core.Retrying_title_key_0_pass_1_forward,
+                                                      missingKey,
+                                                      pass)
+                                      : string.Format(Localization.Core.Retrying_title_key_0_pass_1_reverse,
+                                                      missingKey,
+                                                      pass));
 
-            sense = dvdDecrypt.ReadTitleKey(out buffer, out _, DvdCssKeyClass.DvdCssCppmOrCprm, missingKey,
-                                            _dev.Timeout, out double cmdDuration);
+            sense = dvdDecrypt.ReadTitleKey(out buffer,
+                                            out _,
+                                            DvdCssKeyClass.DvdCssCppmOrCprm,
+                                            missingKey,
+                                            _dev.Timeout,
+                                            out double cmdDuration);
 
             totalDuration += cmdDuration;
 
-            if(!sense &&
-               !_dev.Error)
+            if(sense || _dev.Error) continue;
+
+            CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+
+            if(!titleKey.HasValue) continue;
+
+            outputFormat.WriteSectorTag([titleKey.Value.CMI], missingKey, SectorTagType.DvdSectorCmi);
+
+            // If the CMI bit is 1, the sector is using copy protection, else it is not
+            // If the decoded title key is zeroed, there should be no copy protection
+            if((titleKey.Value.CMI & 0x80) >> 7 == 0 || titleKey.Value.Key.All(k => k == 0))
             {
-                CSS_CPRM.TitleKey? titleKey = CSS.DecodeTitleKey(buffer, dvdDecrypt.BusKey);
+                outputFormat.WriteSectorTag([0, 0, 0, 0, 0], missingKey, SectorTagType.DvdSectorTitleKey);
 
-                if(titleKey.HasValue)
+                outputFormat.WriteSectorTag([0, 0, 0, 0, 0], missingKey, SectorTagType.DvdTitleKeyDecrypted);
+
+                _resume.MissingTitleKeys.Remove(missingKey);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_title_key_0_in_pass_1,
+                                                   missingKey,
+                                                   pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_title_key_0_in_pass_1, missingKey, pass);
+            }
+            else
+            {
+                outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdSectorTitleKey);
+                _resume.MissingTitleKeys.Remove(missingKey);
+
+                if(discKey != null)
                 {
-                    outputFormat.WriteSectorTag(new[]
-                    {
-                        titleKey.Value.CMI
-                    }, missingKey, SectorTagType.DvdCmi);
-
-                    // If the CMI bit is 1, the sector is using copy protection, else it is not
-                    // If the decoded title key is zeroed, there should be no copy protection
-                    if((titleKey.Value.CMI & 0x80) >> 7 == 0 ||
-                       titleKey.Value.Key.All(k => k == 0))
-                    {
-                        outputFormat.WriteSectorTag(new byte[]
-                        {
-                            0, 0, 0, 0, 0
-                        }, missingKey, SectorTagType.DvdTitleKey);
-
-                        outputFormat.WriteSectorTag(new byte[]
-                        {
-                            0, 0, 0, 0, 0
-                        }, missingKey, SectorTagType.DvdTitleKeyDecrypted);
-
-                        _resume.MissingTitleKeys.Remove(missingKey);
-                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
-                    }
-                    else
-                    {
-                        outputFormat.WriteSectorTag(titleKey.Value.Key, missingKey, SectorTagType.DvdTitleKey);
-                        _resume.MissingTitleKeys.Remove(missingKey);
-
-                        if(discKey != null)
-                        {
-                            CSS.DecryptTitleKey(0, discKey, titleKey.Value.Key, out buffer);
-                            outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
-                        }
-
-                        UpdateStatus?.Invoke($"Correctly retried title key {missingKey} in pass {pass}.");
-                        _dumpLog.WriteLine("Correctly retried title key {0} in pass {1}.", missingKey, pass);
-                    }
+                    CSS.DecryptTitleKey(discKey, titleKey.Value.Key, out buffer);
+                    outputFormat.WriteSectorTag(buffer, missingKey, SectorTagType.DvdTitleKeyDecrypted);
                 }
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_title_key_0_in_pass_1,
+                                                   missingKey,
+                                                   pass));
+
+                _dumpLog.WriteLine(Localization.Core.Correctly_retried_title_key_0_in_pass_1, missingKey, pass);
             }
         }
 
-        if(pass < _retryPasses &&
-           !_aborted           &&
-           _resume.MissingTitleKeys.Count > 0)
+        if(pass < _retryPasses && !_aborted && _resume.MissingTitleKeys.Count > 0)
         {
             pass++;
             forward = !forward;
             _resume.MissingTitleKeys.Sort();
 
-            if(!forward)
-                _resume.MissingTitleKeys.Reverse();
+            if(!forward) _resume.MissingTitleKeys.Reverse();
 
             goto repeatRetry;
         }

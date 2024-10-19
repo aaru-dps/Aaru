@@ -27,17 +27,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Database.Models;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Aaru.CommonTypes.Metadata;
 
+namespace Aaru.Database.Models;
+
 /// <summary>Device report</summary>
-public class Report : DeviceReportV2
+public class Report : DeviceReport
 {
     /// <summary>Builds an empty device report</summary>
     public Report()
@@ -49,7 +49,7 @@ public class Report : DeviceReportV2
     /// <summary>Builds a device report model from a device report</summary>
     /// <param name="report">Device report</param>
     [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-    public Report(DeviceReportV2 report)
+    public Report(DeviceReport report)
     {
         ATA            = report.ATA;
         ATAPI          = report.ATAPI;
@@ -70,6 +70,7 @@ public class Report : DeviceReportV2
 
     /// <summary>Date when the device report was created</summary>
     public DateTime Created { get; set; }
+
     /// <summary>If this model has already been upload</summary>
     public bool Uploaded { get; set; }
 }

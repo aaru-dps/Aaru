@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<root>
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
+                id="root"
+                xmlns="">
+        <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Symbian_Name" xml:space="preserve">
+        <value>Symbian Installation File</value>
+    </data>
+    <data name="Symbian_Installation_File" xml:space="preserve">
+        <value>Symbian Installation File</value>
+    </data>
+    <data name="Symbian_9_1_or_later" xml:space="preserve">
+        <value>SymbianOS 9.1 or later</value>
+    </data>
+    <data name="Application_ID_0" xml:space="preserve">
+        <value>Application ID: 0x{0:X8}</value>
+    </data>
+    <data name="UIDs_checksum_0" xml:space="preserve">
+        <value>UIDs checksum: 0x{0:X8}</value>
+    </data>
+    <data name="Symbian_3_or_later" xml:space="preserve">
+        <value>SymbianOS 3 or later</value>
+    </data>
+    <data name="Symbian_6_or_later" xml:space="preserve">
+        <value>SymbianOS 6 or later</value>
+    </data>
+    <data name="Unknown_EPOC_magic_0" xml:space="preserve">
+        <value>Unknown EPOC magic 0x{0:X8}</value>
+    </data>
+    <data name="CRC16_of_header_0" xml:space="preserve">
+        <value>CRC16 of header: 0x{0:X4}</value>
+    </data>
+    <data name="SIS_contains_an_application" xml:space="preserve">
+        <value>SIS contains an application</value>
+    </data>
+    <data name="File_contains_0_languages" xml:space="preserve">
+        <value>Archive contains {0} languages:</value>
+    </data>
+    <data name="File_contains_0_files_pointer_1" xml:space="preserve">
+        <value>Archive contains {0} files (pointer: {1})</value>
+    </data>
+    <data name="File_contains_0_requisites" xml:space="preserve">
+        <value>Archive contains {0} requisites</value>
+    </data>
+    <data name="Capabilities" xml:space="preserve">
+        <value>Capabilities:</value>
+    </data>
+    <data name="Component_version_0_1" xml:space="preserve">
+        <value>Component version: {0}.{1}</value>
+    </data>
+    <data name="Component_name_for_language_with_code_0_1" xml:space="preserve">
+        <value>Component name for language with code {0}: {1}</value>
+    </data>
+    <data name="Files_for_all_languages" xml:space="preserve">
+        <value>Files for all languages:</value>
+    </data>
+    <data name="Files_for_0_language" xml:space="preserve">
+        <value>Files for `{0}` language:</value>
+    </data>
+    <data name="Requisite_0" xml:space="preserve">
+        <value>Requisite #{0}:</value>
+    </data>
+    <data name="Required_UID_0_version_1_2" xml:space="preserve">
+        <value>Required {0} version {1}.{2}</value>
+    </data>
+    <data name="Required_variant_0" xml:space="preserve">
+        <value>Required variant: {0}</value>
+    </data>
+    <data name="Requisite_for_language_0_1" xml:space="preserve">
+        <value>Requisite for language {0}: {1}</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_1st_Edition" xml:space="preserve">
+        <value>Series 60 1st Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_1st_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 1st Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition" xml:space="preserve">
+        <value>Series 60 2nd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_2" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 2</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_2nd_Edition_Feature_Pack_3" xml:space="preserve">
+        <value>Series 60 2nd Edition, Feature Pack 3</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition" xml:space="preserve">
+        <value>Series 60 3rd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_1" xml:space="preserve">
+        <value>Series 60 3rd Edition, Feature Pack 1</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_3rd_Edition_Feature_Pack_2" xml:space="preserve">
+        <value>Series 60 3rd Edition, Feature Pack 2</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_5th_Edition" xml:space="preserve">
+        <value>Series 60 5th Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Symbian_3" xml:space="preserve">
+        <value>Symbian^3</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_Belle" xml:space="preserve">
+        <value>Nokia Belle</value>
+    </data>
+    <data name="SIS_Platform_UID_0" xml:space="preserve">
+        <value>UID 0x{0:X8}</value>
+    </data>
+    <data name="Archive_options_0" xml:space="preserve">
+        <value>Archive options: {0}</value>
+    </data>
+    <data name="SIS_Platform_UID_UIQ_21" xml:space="preserve">
+        <value>UIQ v2.1</value>
+    </data>
+    <data name="SIS_Platform_UID_UIQ_30" xml:space="preserve">
+        <value>UIQ v3.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7650" xml:space="preserve">
+        <value>Nokia 7650</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_v1_0" xml:space="preserve">
+        <value>Series 60 v1.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3650" xml:space="preserve">
+        <value>Nokia 3650</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6600" xml:space="preserve">
+        <value>Nokia 6600</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6630" xml:space="preserve">
+        <value>Nokia 6630</value>
+    </data>
+    <data name="SIS_Platform_UID_SonyEricsson_P80x" xml:space="preserve">
+        <value>SonyEricsson P80x</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_60_v1_1" xml:space="preserve">
+        <value>Series 60 v1.1</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N_Gage" xml:space="preserve">
+        <value>Nokia N-Gage</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_9500" xml:space="preserve">
+        <value>Nokia 9500</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_9300" xml:space="preserve">
+        <value>Nokia 9300</value>
+    </data>
+    <data name="SIS_Platform_UID_Series_80_2nd_edition" xml:space="preserve">
+        <value>Series 80 2nd Edition</value>
+    </data>
+    <data name="SIS_Platform_UID_Siemens_SX1" xml:space="preserve">
+        <value>Siemens SX1</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6260" xml:space="preserve">
+        <value>Nokia 6260</value>
+    </data>
+    <data name="SIS_Platform_UID_SonyEricsson_P90x" xml:space="preserve">
+        <value>SonyEricsson P90x</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7710_Series_90" xml:space="preserve">
+        <value>Nokia 7710 (Series 90)</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_7610" xml:space="preserve">
+        <value>Nokia 7610</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6670" xml:space="preserve">
+        <value>Nokia 6670</value>
+    </data>
+    <data name="SIS_Platform_UID_UIQ_20" xml:space="preserve">
+        <value>UIQ v2.0</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3230" xml:space="preserve">
+        <value>Nokia 3230</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N90" xml:space="preserve">
+        <value>Nokia N90</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N70" xml:space="preserve">
+        <value>Nokia N70</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6680" xml:space="preserve">
+        <value>Nokia 6680</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6620" xml:space="preserve">
+        <value>Nokia 6620</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6682" xml:space="preserve">
+        <value>Nokia 6682</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_6681" xml:space="preserve">
+        <value>Nokia 6681</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_3250" xml:space="preserve">
+        <value>Nokia 3250</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N80" xml:space="preserve">
+        <value>Nokia N80</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N92" xml:space="preserve">
+        <value>Nokia N92</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N73" xml:space="preserve">
+        <value>Nokia N73</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N91" xml:space="preserve">
+        <value>Nokia N91</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_N71" xml:space="preserve">
+        <value>Nokia N71</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E60" xml:space="preserve">
+        <value>Nokia E60</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E70" xml:space="preserve">
+        <value>Nokia E70</value>
+    </data>
+    <data name="SIS_Platform_UID_Nokia_E61" xml:space="preserve">
+        <value>Nokia E61</value>
+    </data>
+    <data name="Option_0" xml:space="preserve">
+        <value>Option {0}:</value>
+    </data>
+    <data name="Name_for_language_0_1" xml:space="preserve">
+        <value>Name for language {0}: {1}</value>
+    </data>
+</root>

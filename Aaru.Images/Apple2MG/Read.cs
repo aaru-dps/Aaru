@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -42,8 +40,12 @@ using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Apple2Mg
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -53,11 +55,11 @@ public sealed partial class Apple2Mg
         _imageHeader = new Header();
 
         var header = new byte[64];
-        stream.Read(header, 0, 64);
+        stream.EnsureRead(header, 0, 64);
         var magic   = new byte[4];
         var creator = new byte[4];
 
-        Array.Copy(header, 0, magic, 0, 4);
+        Array.Copy(header, 0, magic,   0, 4);
         Array.Copy(header, 4, creator, 0, 4);
 
         _imageHeader = Marshal.SpanToStructureLittleEndian<Header>(header);
@@ -65,39 +67,41 @@ public sealed partial class Apple2Mg
         if(_imageHeader.DataSize == 0x00800C00)
         {
             _imageHeader.DataSize = 0x000C8000;
-            AaruConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
+
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Detected_incorrect_endian_on_data_size_field_correcting);
         }
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.magic = \"{0}\"", Encoding.ASCII.GetString(magic));
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.creator = \"{0}\"", Encoding.ASCII.GetString(creator));
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}", _imageHeader.HeaderSize);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}", _imageHeader.Version);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}", _imageHeader.ImageFormat);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}", _imageHeader.Flags);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}", _imageHeader.Blocks);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}", _imageHeader.DataOffset);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}", _imageHeader.DataSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.headerSize = {0}",      _imageHeader.HeaderSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.version = {0}",         _imageHeader.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.imageFormat = {0}",     _imageHeader.ImageFormat);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.flags = 0x{0:X8}",      _imageHeader.Flags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.blocks = {0}",          _imageHeader.Blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.dataOffset = 0x{0:X8}", _imageHeader.DataOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.dataSize = {0}",        _imageHeader.DataSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", _imageHeader.CommentOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.commentOffset = 0x{0:X8}", _imageHeader.CommentOffset);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.commentSize = {0}", _imageHeader.CommentSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
                                    _imageHeader.CreatorSpecificOffset);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ImageHeader.creatorSpecificSize = {0}",
                                    _imageHeader.CreatorSpecificSize);
 
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", _imageHeader.Reserved1);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", _imageHeader.Reserved2);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
-        AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved1 = 0x{0:X8}", _imageHeader.Reserved1);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved2 = 0x{0:X8}", _imageHeader.Reserved2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved3 = 0x{0:X8}", _imageHeader.Reserved3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.reserved4 = 0x{0:X8}", _imageHeader.Reserved4);
 
-        if(_imageHeader.DataSize    == 0 &&
-           _imageHeader.Blocks      == 0 &&
-           _imageHeader.ImageFormat != SectorOrder.ProDos)
+        if(_imageHeader is { DataSize: 0, Blocks: 0 } && _imageHeader.ImageFormat != SectorOrder.ProDos)
             return ErrorNumber.InvalidArgument;
 
         byte[] tmp;
@@ -108,15 +112,14 @@ public sealed partial class Apple2Mg
             case SectorOrder.Nibbles:
                 tmp = new byte[_imageHeader.DataSize];
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
                 var nibPlugin = new AppleNib();
                 var noFilter  = new ZZZNoFilter();
                 noFilter.Open(tmp);
                 nibPlugin.Open(noFilter);
                 ErrorNumber errno = nibPlugin.ReadSectors(0, (uint)nibPlugin.Info.Sectors, out _decodedImage);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 _imageInfo.Sectors    = nibPlugin.Info.Sectors;
                 _imageInfo.SectorSize = nibPlugin.Info.SectorSize;
@@ -126,17 +129,20 @@ public sealed partial class Apple2Mg
             case SectorOrder.ProDos when _imageHeader.DataSize == 143360:
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
                 tmp = new byte[_imageHeader.DataSize];
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
 
-                bool isDos = tmp[0x11001] == 17 && tmp[0x11002] < 16 && tmp[0x11027] <= 122 && tmp[0x11034] == 35 &&
-                             tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
+                bool isDos = tmp[0x11001] == 17  &&
+                             tmp[0x11002] < 16   &&
+                             tmp[0x11027] <= 122 &&
+                             tmp[0x11034] == 35  &&
+                             tmp[0x11035] == 16  &&
+                             tmp[0x11036] == 0   &&
+                             tmp[0x11037] == 1;
 
                 _decodedImage = new byte[_imageHeader.DataSize];
 
                 offsets = _imageHeader.ImageFormat == SectorOrder.Dos
-                              ? isDos
-                                    ? _deinterleave
-                                    : _interleave
+                              ? isDos ? _deinterleave : _interleave
                               : isDos
                                   ? _interleave
                                   : _deinterleave;
@@ -154,7 +160,7 @@ public sealed partial class Apple2Mg
             case SectorOrder.Dos when _imageHeader.DataSize == 819200:
                 stream.Seek(_imageHeader.DataOffset, SeekOrigin.Begin);
                 tmp = new byte[_imageHeader.DataSize];
-                stream.Read(tmp, 0, tmp.Length);
+                stream.EnsureRead(tmp, 0, tmp.Length);
                 _decodedImage = new byte[_imageHeader.DataSize];
                 offsets       = _interleave;
 
@@ -178,59 +184,29 @@ public sealed partial class Apple2Mg
 
         _imageInfo.ImageSize = _imageHeader.DataSize;
 
-        switch(_imageHeader.Creator)
-        {
-            case CREATOR_ASIMOV:
-                _imageInfo.Application = "ASIMOV2";
-
-                break;
-            case CREATOR_BERNIE:
-                _imageInfo.Application = "Bernie ][ the Rescue";
-
-                break;
-            case CREATOR_CATAKIG:
-                _imageInfo.Application = "Catakig";
-
-                break;
-            case CREATOR_SHEPPY:
-                _imageInfo.Application = "Sheppy's ImageMaker";
-
-                break;
-            case CREATOR_SWEET:
-                _imageInfo.Application = "Sweet16";
-
-                break;
-            case CREATOR_XGS:
-                _imageInfo.Application = "XGS";
-
-                break;
-            case CREATOR_CIDER:
-                _imageInfo.Application = "CiderPress";
-
-                break;
-            case CREATOR_DIC:
-                _imageInfo.Application = "DiscImageChef";
-
-                break;
-            case CREATOR_AARU:
-                _imageInfo.Application = "Aaru";
-
-                break;
-            default:
-                _imageInfo.Application = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
-
-                break;
-        }
+        _imageInfo.Application = _imageHeader.Creator switch
+                                 {
+                                     CREATOR_ASIMOV  => "ASIMOV2",
+                                     CREATOR_BERNIE  => "Bernie ][ the Rescue",
+                                     CREATOR_CATAKIG => "Catakig",
+                                     CREATOR_SHEPPY  => "Sheppy's ImageMaker",
+                                     CREATOR_SWEET   => "Sweet16",
+                                     CREATOR_XGS     => "XGS",
+                                     CREATOR_CIDER   => "CiderPress",
+                                     CREATOR_DIC     => "DiscImageChef",
+                                     CREATOR_AARU    => "Aaru",
+                                     _ => string.Format(Localization.Unknown_creator_code_0,
+                                                        Encoding.ASCII.GetString(creator))
+                                 };
 
         _imageInfo.Version = _imageHeader.Version.ToString();
 
-        if(_imageHeader.CommentOffset != 0 &&
-           _imageHeader.CommentSize   != 0)
+        if(_imageHeader.CommentOffset != 0 && _imageHeader.CommentSize != 0)
         {
             stream.Seek(_imageHeader.CommentOffset, SeekOrigin.Begin);
 
             var comments = new byte[_imageHeader.CommentSize];
-            stream.Read(comments, 0, (int)_imageHeader.CommentSize);
+            stream.EnsureRead(comments, 0, (int)_imageHeader.CommentSize);
             _imageInfo.Comments = Encoding.ASCII.GetString(comments);
         }
 
@@ -241,12 +217,12 @@ public sealed partial class Apple2Mg
 
         _a2MgImageFilter = imageFilter;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
-        AaruConsole.VerboseWriteLine("2MG image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization._2MG_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         if(!string.IsNullOrEmpty(_imageInfo.Comments))
-            AaruConsole.VerboseWriteLine("2MG comments: {0}", _imageInfo.Comments);
+            AaruConsole.VerboseWriteLine(Localization._2MG_comments_0, _imageInfo.Comments);
 
         switch(_imageInfo.MediaType)
         {
@@ -309,26 +285,31 @@ public sealed partial class Apple2Mg
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
         if(_decodedImage != null)
-            Array.Copy(_decodedImage, (long)(sectorAddress * _imageInfo.SectorSize), buffer, 0,
+        {
+            Array.Copy(_decodedImage,
+                       (long)(sectorAddress * _imageInfo.SectorSize),
+                       buffer,
+                       0,
                        length * _imageInfo.SectorSize);
+        }
         else
         {
             Stream stream = _a2MgImageFilter.GetDataForkStream();
 
             stream.Seek((long)(_imageHeader.DataOffset + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-            stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+            stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
         }
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -22,31 +22,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.CPM;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.CPM;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class Plus3DOS : FilesystemTest
+public class Plus3DOS() : FilesystemTest("cpmfs")
 {
-    public Plus3DOS() : base("CP/M") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "+3DOS");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "+3DOS");
-
-    public override IFilesystem Plugin     => new CPM();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "filename.dsk.lz",
@@ -67,5 +64,5 @@ public class Plus3DOS : FilesystemTest
             Clusters    = 359,
             ClusterSize = 1024
         }
-    };
+    ];
 }

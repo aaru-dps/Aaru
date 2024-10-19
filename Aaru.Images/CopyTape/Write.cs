@@ -27,19 +27,22 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Aaru.Console;
+using TapeFile = Aaru.CommonTypes.Structs.TapeFile;
+using TapePartition = Aaru.CommonTypes.Structs.TapePartition;
+
+namespace Aaru.Images;
 
 public sealed partial class CopyTape
 {
@@ -47,13 +50,15 @@ public sealed partial class CopyTape
     ulong                    _lastWrittenBlock;
     Dictionary<ulong, ulong> _writtenBlockPositions;
 
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -69,9 +74,10 @@ public sealed partial class CopyTape
         {
             _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -90,7 +96,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -100,19 +106,16 @@ public sealed partial class CopyTape
     {
         if(!_writtenBlockPositions.TryGetValue(sectorAddress, out ulong position))
         {
-            if(_dataStream.Length != 0 &&
-               _lastWrittenBlock  >= sectorAddress)
+            if(_dataStream.Length != 0 && _lastWrittenBlock >= sectorAddress)
             {
-                ErrorMessage = "Cannot write unwritten blocks";
+                ErrorMessage = Localization.Cannot_write_unwritten_blocks;
 
                 return false;
             }
 
-            if(_lastWrittenBlock + 1 != sectorAddress &&
-               sectorAddress         != 0             &&
-               _lastWrittenBlock     != 0)
+            if(_lastWrittenBlock + 1 != sectorAddress && sectorAddress != 0 && _lastWrittenBlock != 0)
             {
-                ErrorMessage = "Cannot skip blocks";
+                ErrorMessage = Localization.Cannot_skip_blocks;
 
                 return false;
             }
@@ -124,11 +127,10 @@ public sealed partial class CopyTape
 
         _writtenBlockPositions[sectorAddress] = (ulong)_dataStream.Position;
         _dataStream.Write(header, 0, header.Length);
-        _dataStream.Write(data, 0, data.Length);
+        _dataStream.Write(data,   0, data.Length);
         _dataStream.WriteByte(0x0A);
 
-        if(sectorAddress > _lastWrittenBlock)
-            _lastWrittenBlock = sectorAddress;
+        if(sectorAddress > _lastWrittenBlock) _lastWrittenBlock = sectorAddress;
 
         _dataStream.Seek(0, SeekOrigin.End);
 
@@ -142,8 +144,7 @@ public sealed partial class CopyTape
         {
             bool ret = WriteSector(data, sectorAddress + i);
 
-            if(!ret)
-                return false;
+            if(!ret) return false;
         }
 
         return true;
@@ -152,7 +153,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -160,7 +161,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -170,12 +171,12 @@ public sealed partial class CopyTape
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
-        byte[] footer = Encoding.ASCII.GetBytes("CPTP:EOT\n");
+        byte[] footer = "CPTP:EOT\n"u8.ToArray();
 
         _dataStream.Write(footer, 0, footer.Length);
         _dataStream.Flush();
@@ -187,12 +188,12 @@ public sealed partial class CopyTape
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -200,7 +201,7 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -208,28 +209,28 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
     public bool AddFile(TapeFile file)
     {
         if(file.Partition != 0)
         {
-            ErrorMessage = "Unsupported feature";
+            ErrorMessage = Localization.Unsupported_feature;
 
             return false;
         }
 
-        byte[] marker = Encoding.ASCII.GetBytes("CPTP:MRK\n");
+        byte[] marker = "CPTP:MRK\n"u8.ToArray();
 
         _dataStream.Write(marker, 0, marker.Length);
 
@@ -239,10 +240,9 @@ public sealed partial class CopyTape
     /// <inheritdoc />
     public bool AddPartition(TapePartition partition)
     {
-        if(partition.Number == 0)
-            return true;
+        if(partition.Number == 0) return true;
 
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -254,4 +254,6 @@ public sealed partial class CopyTape
 
         return true;
     }
+
+#endregion
 }

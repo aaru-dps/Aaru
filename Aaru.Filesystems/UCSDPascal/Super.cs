@@ -27,47 +27,46 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
-        _device  = imagePlugin;
-        Encoding = encoding ?? new Apple2();
+        _device   = imagePlugin;
+        _encoding = encoding ?? new Apple2();
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
-        if(_device.Info.Sectors < 3)
-            return ErrorNumber.InvalidArgument;
+        if(_device.Info.Sectors < 3) return ErrorNumber.InvalidArgument;
 
         _multiplier = (uint)(imagePlugin.Info.SectorSize == 256 ? 2 : 1);
 
         // Blocks 0 and 1 are boot code
         ErrorNumber errno = _device.ReadSectors(_multiplier * 2, _multiplier, out _catalogBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         // On Apple //, it's little endian
         // TODO: Fix
@@ -99,12 +98,11 @@ public sealed partial class PascalPlugin
                                     (uint)(_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock - 2) * _multiplier,
                                     out _catalogBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         var offset = 26;
 
-        _fileEntries = new List<PascalFileEntry>();
+        _fileEntries = [];
 
         while(offset + 26 < _catalogBlocks.Length)
         {
@@ -120,27 +118,23 @@ public sealed partial class PascalPlugin
 
             Array.Copy(_catalogBlocks, offset + 0x06, entry.Filename, 0, 16);
 
-            if(entry.Filename[0] <= 15 &&
-               entry.Filename[0] > 0)
-                _fileEntries.Add(entry);
+            if(entry.Filename[0] <= 15 && entry.Filename[0] > 0) _fileEntries.Add(entry);
 
             offset += 26;
         }
 
         errno = _device.ReadSectors(0, 2 * _multiplier, out _bootBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(_bootBlocks),
-            Clusters       = (ulong)_mountedVolEntry.Blocks,
-            ClusterSize    = _device.Info.SectorSize,
-            Files          = (ulong)_mountedVolEntry.Files,
-            FilesSpecified = true,
-            Type           = "UCSD Pascal",
-            VolumeName     = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, Encoding)
+            Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(_bootBlocks),
+            Clusters    = (ulong)_mountedVolEntry.Blocks,
+            ClusterSize = _device.Info.SectorSize,
+            Files       = (ulong)_mountedVolEntry.Files,
+            Type        = FS_TYPE,
+            VolumeName  = StringHandlers.PascalToString(_mountedVolEntry.VolumeName, _encoding)
         };
 
         _mounted = true;
@@ -167,14 +161,15 @@ public sealed partial class PascalPlugin
             Files          = (ulong)_mountedVolEntry.Files,
             FreeBlocks     = 0,
             PluginId       = Id,
-            Type           = "UCSD Pascal"
+            Type           = FS_TYPE
         };
 
         stat.FreeBlocks = (ulong)(_mountedVolEntry.Blocks - (_mountedVolEntry.LastBlock - _mountedVolEntry.FirstBlock));
 
-        foreach(PascalFileEntry entry in _fileEntries)
-            stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
+        foreach(PascalFileEntry entry in _fileEntries) stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
 
         return ErrorNumber.NotImplemented;
     }
+
+#endregion
 }

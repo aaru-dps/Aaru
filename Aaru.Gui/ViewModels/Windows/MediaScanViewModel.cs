@@ -27,12 +27,11 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,13 +39,20 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
 using Aaru.Devices;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
-using OxyPlot;
+using Humanizer;
+using Humanizer.Bytes;
+using Humanizer.Localisation;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
+
+//using OxyPlot;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaScanViewModel : ViewModelBase
 {
@@ -102,13 +108,21 @@ public sealed class MediaScanViewModel : ViewModelBase
         StopCommand  = ReactiveCommand.Create(ExecuteStopCommand);
         StartVisible = true;
         CloseVisible = true;
-        BlockMapList = new ObservableCollection<(ulong block, double duration)>();
-        ChartPoints  = new ObservableCollection<DataPoint>();
-        StepsX       = double.NaN;
-        StepsY       = double.NaN;
-        AxesColor    = Colors.Black;
-        LineColor    = Colors.Yellow;
+        BlockMapList = [];
+
+//        ChartPoints  = new ObservableCollection<DataPoint>();
+        StepsX    = double.NaN;
+        StepsY    = double.NaN;
+        AxesColor = Colors.Black;
+        LineColor = Colors.Yellow;
     }
+
+    public string SpeedLabel => UI.ButtonLabel_Stop;
+    public string KbsLabel   => UI.Kb_s;
+    public string BlockLabel => UI.Title_Block;
+    public string StartLabel => UI.ButtonLabel_Start;
+    public string CloseLabel => UI.ButtonLabel_Close;
+    public string StopLabel  => UI.ButtonLabel_Stop;
 
     public Color AxesColor
     {
@@ -123,7 +137,8 @@ public sealed class MediaScanViewModel : ViewModelBase
     }
 
     public ObservableCollection<(ulong block, double duration)> BlockMapList { get; }
-    public ObservableCollection<DataPoint>                      ChartPoints  { get; }
+
+//    public ObservableCollection<DataPoint>                      ChartPoints  { get; }
 
     public ulong Blocks
     {
@@ -316,17 +331,16 @@ public sealed class MediaScanViewModel : ViewModelBase
         CloseVisible    = false;
         ProgressVisible = true;
         ResultsVisible  = true;
-        ChartPoints.Clear();
+
+//        ChartPoints.Clear();
         new Thread(DoWork).Start();
     }
 
     // TODO: Allow to save MHDD and ImgBurn log files
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
-        if(_devicePath.Length == 2   &&
-           _devicePath[1]     == ':' &&
-           _devicePath[0]     != '/' &&
-           char.IsLetter(_devicePath[0]))
+        if(_devicePath.Length == 2 && _devicePath[1] == ':' && _devicePath[0] != '/' && char.IsLetter(_devicePath[0]))
             _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
 
         var dev = Device.Create(_devicePath, out ErrorNumber devErrno);
@@ -334,9 +348,12 @@ public sealed class MediaScanViewModel : ViewModelBase
         switch(dev)
         {
             case null:
-                await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", $"Error {devErrno} opening device.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                await MessageBoxManager
+                     .GetMessageBoxStandard(UI.Title_Error,
+                                            string.Format(UI.Error_0_opening_device, devErrno),
+                                            ButtonEnum.Ok,
+                                            Icon.Error)
+                     .ShowWindowDialogAsync(_view);
 
                 StopVisible     = false;
                 StartVisible    = true;
@@ -345,8 +362,10 @@ public sealed class MediaScanViewModel : ViewModelBase
 
                 return;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -354,9 +373,12 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         if(dev.Error)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", $"Error {dev.LastError} opening device.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+            await MessageBoxManager
+                 .GetMessageBoxStandard(UI.Title_Error,
+                                        string.Format(UI.Error_0_opening_device, dev.LastError),
+                                        ButtonEnum.Ok,
+                                        Icon.Error)
+                 .ShowWindowDialogAsync(_view);
 
             StopVisible     = false;
             StartVisible    = true;
@@ -385,18 +407,28 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
-            TotalTime = $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
+            TotalTime = string.Format(Localization.Core.Took_a_total_of_0_1_processing_commands,
+                                      results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                      results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
-            AvgSpeed          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
-            MaxSpeed          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
-            MinSpeed          = $"Slowest speed burst: {results.MinSpeed:F3} MiB/sec.";
-            A                 = $"{results.A} sectors took less than 3 ms.";
-            B                 = $"{results.B} sectors took less than 10 ms but more than 3 ms.";
-            C                 = $"{results.C} sectors took less than 50 ms but more than 10 ms.";
-            D                 = $"{results.D} sectors took less than 150 ms but more than 50 ms.";
-            E                 = $"{results.E} sectors took less than 500 ms but more than 150 ms.";
-            F                 = $"{results.F} sectors took more than 500 ms.";
-            UnreadableSectors = $"{results.UnreadableSectors.Count} sectors could not be read.";
+            AvgSpeed = string.Format(Localization.Core.Average_speed_0,
+                                     ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()).Humanize());
+
+            MaxSpeed = string.Format(Localization.Core.Fastest_speed_burst_0,
+                                     ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()).Humanize());
+
+            MinSpeed = string.Format(Localization.Core.Slowest_speed_burst_0,
+                                     ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()).Humanize());
+
+            A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms,                        results.A);
+            B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms,    results.B);
+            C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms,   results.C);
+            D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms,  results.D);
+            E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E);
+            F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms,                      results.F);
+
+            UnreadableSectors = string.Format(Localization.Core._0_sectors_could_not_be_read,
+                                              results.UnreadableSectors.Count);
         });
 
         // TODO: Show list of unreadable sectors
@@ -408,9 +440,9 @@ public sealed class MediaScanViewModel : ViewModelBase
 
         // TODO: Show results
         /*
-        
+
         if(results.SeekTotal != 0 || results.SeekMin != double.MaxValue || results.SeekMax != double.MinValue)
-            
+
             string.Format("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                  results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
                                  */
@@ -421,17 +453,20 @@ public sealed class MediaScanViewModel : ViewModelBase
         await WorkFinished();
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
+        /*  TODO: Abandoned project need to find replacement
         if(ChartPoints.Count == 0)
             ChartPoints.Add(new DataPoint(0, currentSpeed));
 
         ChartPoints.Add(new DataPoint(sector, currentSpeed));
+        */
 
-        if(currentSpeed > MaxY)
-            MaxY = currentSpeed + currentSpeed / 10d;
+        if(currentSpeed > MaxY) MaxY = currentSpeed + currentSpeed / 10d;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void InitBlockMap(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile) =>
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -450,14 +485,13 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0020:
                 case 0x0021:
                 case 0x0022:
-                    if(blocks <= 360000)
-                        MaxX = 360000;
-                    else if(blocks <= 405000)
-                        MaxX = 405000;
-                    else if(blocks <= 445500)
-                        MaxX = 445500;
-                    else
-                        MaxX = blocks;
+                    MaxX = blocks switch
+                           {
+                               <= 360000 => 360000,
+                               <= 405000 => 405000,
+                               <= 445500 => 445500,
+                               _         => blocks
+                           };
 
                     StepsX = MaxX   / 10;
                     StepsY = 150    * 4;
@@ -493,16 +527,14 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0042:
                 case 0x0043:
                 case 0x0040: // BD
-                    if(blocks <= 12219392)
-                        MaxX = 12219392;
-                    else if(blocks <= 24438784)
-                        MaxX = 24438784;
-                    else if(blocks <= 48878592)
-                        MaxX = 48878592;
-                    else if(blocks <= 62500864)
-                        MaxX = 62500864;
-                    else
-                        MaxX = blocks;
+                    MaxX = blocks switch
+                           {
+                               <= 12219392 => 12219392,
+                               <= 24438784 => 24438784,
+                               <= 48878592 => 48878592,
+                               <= 62500864 => 62500864,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -515,12 +547,12 @@ public sealed class MediaScanViewModel : ViewModelBase
                 case 0x0053:
                 case 0x0058:
                 case 0x005A:
-                    if(blocks <= 7361599)
-                        MaxX = 7361599;
-                    else if(blocks <= 16305407)
-                        MaxX = 16305407;
-                    else
-                        MaxX = blocks;
+                    MaxX = blocks switch
+                           {
+                               <= 7361599  => 7361599,
+                               <= 16305407 => 16305407,
+                               _           => blocks
+                           };
 
                     StepsX = MaxX / 10;
                     StepsY = 4394.5;
@@ -545,11 +577,10 @@ public sealed class MediaScanViewModel : ViewModelBase
         ProgressVisible = false;
     });
 
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
@@ -559,65 +590,78 @@ public sealed class MediaScanViewModel : ViewModelBase
         ProgressValue    = current;
     });
 
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void PulseProgress(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
         ProgressIndeterminate = true;
     });
 
-    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(action: async () =>
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+
+    // ReSharper disable once AsyncVoidLambda
+    async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(async () =>
     {
         ProgressText = text;
 
-        await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
-                                ShowDialog(_view);
+        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error)
+                               .ShowWindowDialogAsync(_view);
 
-        WorkFinished();
+        await WorkFinished();
     });
 
-    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        ProgressText = text;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() => { ProgressText = text; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void OnScanUnreadable(ulong sector) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         _localResults.Errored += _blocksToRead;
-        UnreadableSectors     =  $"{_localResults.Errored} sectors could not be read.";
+        UnreadableSectors     =  string.Format(Localization.Core._0_sectors_could_not_be_read, _localResults.Errored);
         BlockMapList.Add((sector / _blocksToRead, double.NaN));
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void OnScanTime(ulong sector, double duration) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         BlockMapList.Add((sector / _blocksToRead, duration));
 
-        if(duration < 3)
-            _localResults.A += _blocksToRead;
-        else if(duration >= 3 &&
-                duration < 10)
-            _localResults.B += _blocksToRead;
-        else if(duration >= 10 &&
-                duration < 50)
-            _localResults.C += _blocksToRead;
-        else if(duration >= 50 &&
-                duration < 150)
-            _localResults.D += _blocksToRead;
-        else if(duration >= 150 &&
-                duration < 500)
-            _localResults.E += _blocksToRead;
-        else if(duration >= 500)
-            _localResults.F += _blocksToRead;
+        switch(duration)
+        {
+            case < 3:
+                _localResults.A += _blocksToRead;
 
-        A = $"{_localResults.A} sectors took less than 3 ms.";
-        B = $"{_localResults.B} sectors took less than 10 ms but more than 3 ms.";
-        C = $"{_localResults.C} sectors took less than 50 ms but more than 10 ms.";
-        D = $"{_localResults.D} sectors took less than 150 ms but more than 50 ms.";
-        E = $"{_localResults.E} sectors took less than 500 ms but more than 150 ms.";
-        F = $"{_localResults.F} sectors took more than 500 ms.";
+                break;
+            case >= 3 and < 10:
+                _localResults.B += _blocksToRead;
+
+                break;
+            case >= 10 and < 50:
+                _localResults.C += _blocksToRead;
+
+                break;
+            case >= 50 and < 150:
+                _localResults.D += _blocksToRead;
+
+                break;
+            case >= 150 and < 500:
+                _localResults.E += _blocksToRead;
+
+                break;
+            case >= 500:
+                _localResults.F += _blocksToRead;
+
+                break;
+        }
+
+        A = string.Format(Localization.Core._0_sectors_took_less_than_3_ms,                        _localResults.A);
+        B = string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms,    _localResults.B);
+        C = string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms,   _localResults.C);
+        D = string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms,  _localResults.D);
+        E = string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, _localResults.E);
+        F = string.Format(Localization.Core._0_sectors_took_more_than_500_ms,                      _localResults.F);
     });
 }

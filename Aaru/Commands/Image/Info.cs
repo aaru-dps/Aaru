@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
@@ -40,21 +38,25 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class ImageInfoCommand : Command
 {
-    public ImageInfoCommand() : base("info",
-                                     "Identifies a media image and shows information about the media it represents and metadata.")
+    const string MODULE_NAME = "Image-info command";
+
+    public ImageInfoCommand() : base("info", UI.Image_Info_Command_Description)
     {
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string imagePath)
@@ -65,7 +67,7 @@ sealed class ImageInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -75,9 +77,12 @@ sealed class ImageInfoCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -85,25 +90,25 @@ sealed class ImageInfoCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("image-info");
 
-        AaruConsole.DebugWriteLine("Image-info command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Image-info command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Image-info command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",   Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
@@ -112,35 +117,36 @@ sealed class ImageInfoCommand : Command
         {
             IBaseImage imageFormat = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                 imageFormat = ImageFormat.Detect(inputFilter);
             });
 
             if(imageFormat == null)
             {
-                AaruConsole.WriteLine("Image format not identified.");
+                AaruConsole.WriteLine(UI.Image_format_not_identified);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
-            AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+            AaruConsole.WriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
             AaruConsole.WriteLine();
 
             try
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("Error {opened} opening image format");
+                    AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
@@ -153,17 +159,17 @@ sealed class ImageInfoCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
-                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-            AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, Markup.Escape(ex.Message)));
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
         }

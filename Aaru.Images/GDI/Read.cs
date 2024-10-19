@@ -27,13 +27,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -45,13 +44,17 @@ using Aaru.Console;
 using Aaru.Decoders.CD;
 using Session = Aaru.CommonTypes.Structs.Session;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Gdi
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         try
         {
@@ -68,8 +71,8 @@ public sealed partial class Gdi
             // Initialize disc
             _discImage = new GdiDisc
             {
-                Sessions = new List<Session>(),
-                Tracks   = new List<GdiTrack>()
+                Sessions = [],
+                Tracks   = []
             };
 
             ulong currentStart = 0;
@@ -83,84 +86,88 @@ public sealed partial class Gdi
 
                 if(lineNumber == 1)
                 {
-                    if(!int.TryParse(line, out _))
-                    {
-                        AaruConsole.ErrorWriteLine("Not a correct Dreamcast GDI image");
+                    if(int.TryParse(line, out _)) continue;
 
-                        return ErrorNumber.InvalidArgument;
-                    }
+                    AaruConsole.ErrorWriteLine(Localization.Not_a_correct_Dreamcast_GDI_image);
+
+                    return ErrorNumber.InvalidArgument;
                 }
-                else
+
+                Match trackMatch = regexTrack.Match(line ?? "");
+
+                if(!trackMatch.Success)
                 {
-                    Match trackMatch = regexTrack.Match(line ?? "");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unknown_line_0_at_line_1, line, lineNumber));
 
-                    if(!trackMatch.Success)
-                    {
-                        AaruConsole.ErrorWriteLine($"Unknown line \"{line}\" at line {lineNumber}");
-
-                        return ErrorNumber.InvalidArgument;
-                    }
-
-                    AaruConsole.DebugWriteLine("GDI plugin",
-                                               "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
-                                               trackMatch.Groups["track"].Value, trackMatch.Groups["start"].Value,
-                                               trackMatch.Groups["flags"].Value, trackMatch.Groups["type"].Value,
-                                               trackMatch.Groups["filename"].Value, trackMatch.Groups["offset"].Value,
-                                               lineNumber);
-
-                    var filtersList = new FiltersList();
-
-                    var currentTrack = new GdiTrack
-                    {
-                        Bps         = ushort.Parse(trackMatch.Groups["type"].Value),
-                        Flags       = byte.Parse(trackMatch.Groups["flags"].Value),
-                        Offset      = long.Parse(trackMatch.Groups["offset"].Value),
-                        Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
-                        StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                        TrackFilter = filtersList.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                         trackMatch.Groups["filename"].Value.
-                                                                             Replace("\\\"", "\"").Trim('"')))
-                    };
-
-                    currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
-
-                    if(currentTrack.StartSector - currentStart > 0)
-                        if(currentTrack.StartSector == 45000)
-                        {
-                            highDensity = true;
-                            _offsetMap.Add(0, currentStart);
-                            _densitySeparationSectors = currentTrack.StartSector - currentStart;
-                            currentStart              = currentTrack.StartSector;
-                        }
-                        else
-                        {
-                            currentTrack.Pregap      =  currentTrack.StartSector - currentStart;
-                            currentTrack.StartSector -= currentTrack.StartSector - currentStart;
-                        }
-
-                    if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
-                    {
-                        AaruConsole.ErrorWriteLine("Track size not a multiple of sector size");
-
-                        return ErrorNumber.InvalidArgument;
-                    }
-
-                    currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
-                                                   currentTrack.Bps);
-
-                    currentTrack.Sectors     += currentTrack.Pregap;
-                    currentStart             += currentTrack.Sectors;
-                    currentTrack.HighDensity =  highDensity;
-
-                    currentTrack.TrackType = (currentTrack.Flags & 0x4) == 0x4 ? TrackType.CdMode1 : TrackType.Audio;
-
-                    _discImage.Tracks.Add(currentTrack);
+                    return ErrorNumber.InvalidArgument;
                 }
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization
+                                              .Found_track_0_starts_at_1_flags_2_type_3_file_4_offset_5_at_line_6,
+                                           trackMatch.Groups["track"].Value,
+                                           trackMatch.Groups["start"].Value,
+                                           trackMatch.Groups["flags"].Value,
+                                           trackMatch.Groups["type"].Value,
+                                           trackMatch.Groups["filename"].Value,
+                                           trackMatch.Groups["offset"].Value,
+                                           lineNumber);
+
+
+                var currentTrack = new GdiTrack
+                {
+                    Bps         = ushort.Parse(trackMatch.Groups["type"].Value),
+                    Flags       = byte.Parse(trackMatch.Groups["flags"].Value),
+                    Offset      = long.Parse(trackMatch.Groups["offset"].Value),
+                    Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
+                    StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
+                    TrackFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
+                                                                         trackMatch.Groups["filename"]
+                                                                            .Value.Replace("\\\"", "\"")
+                                                                            .Trim('"')))
+                };
+
+                currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
+
+                if(currentTrack.StartSector - currentStart > 0)
+                {
+                    if(currentTrack.StartSector == 45000)
+                    {
+                        highDensity = true;
+                        _offsetMap.Add(0, currentStart);
+                        _densitySeparationSectors = currentTrack.StartSector - currentStart;
+                        currentStart              = currentTrack.StartSector;
+                    }
+                    else
+                    {
+                        currentTrack.Pregap      =  currentTrack.StartSector - currentStart;
+                        currentTrack.StartSector -= currentTrack.StartSector - currentStart;
+                    }
+                }
+
+                if((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) % currentTrack.Bps != 0)
+                {
+                    AaruConsole.ErrorWriteLine(Localization.Track_size_not_a_multiple_of_sector_size);
+
+                    return ErrorNumber.InvalidArgument;
+                }
+
+                currentTrack.Sectors = (ulong)((currentTrack.TrackFilter.DataForkLength - currentTrack.Offset) /
+                                               currentTrack.Bps);
+
+                currentTrack.Sectors     += currentTrack.Pregap;
+                currentStart             += currentTrack.Sectors;
+                currentTrack.HighDensity =  highDensity;
+
+                currentTrack.TrackType = (currentTrack.Flags & 0x4) == 0x4 ? TrackType.CdMode1 : TrackType.Audio;
+
+                _discImage.Tracks.Add(currentTrack);
             }
 
             var sessions = new Session[2];
 
             for(var s = 0; s < sessions.Length; s++)
+            {
                 if(s == 0)
                 {
                     sessions[s].Sequence = 1;
@@ -168,15 +175,12 @@ public sealed partial class Gdi
                     foreach(GdiTrack trk in _discImage.Tracks.Where(trk => !trk.HighDensity))
                     {
                         if(sessions[s].StartTrack == 0)
-                            sessions[s].StartTrack = trk.Sequence;
-                        else if(sessions[s].StartTrack > trk.Sequence)
-                            sessions[s].StartTrack = trk.Sequence;
+                            sessions[s].StartTrack                                            = trk.Sequence;
+                        else if(sessions[s].StartTrack > trk.Sequence) sessions[s].StartTrack = trk.Sequence;
 
-                        if(sessions[s].EndTrack < trk.Sequence)
-                            sessions[s].EndTrack = trk.Sequence;
+                        if(sessions[s].EndTrack < trk.Sequence) sessions[s].EndTrack = trk.Sequence;
 
-                        if(sessions[s].StartSector > trk.StartSector)
-                            sessions[s].StartSector = trk.StartSector;
+                        if(sessions[s].StartSector > trk.StartSector) sessions[s].StartSector = trk.StartSector;
 
                         if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
                             sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
@@ -189,20 +193,18 @@ public sealed partial class Gdi
                     foreach(GdiTrack trk in _discImage.Tracks.Where(trk => trk.HighDensity))
                     {
                         if(sessions[s].StartTrack == 0)
-                            sessions[s].StartTrack = trk.Sequence;
-                        else if(sessions[s].StartTrack > trk.Sequence)
-                            sessions[s].StartTrack = trk.Sequence;
+                            sessions[s].StartTrack                                            = trk.Sequence;
+                        else if(sessions[s].StartTrack > trk.Sequence) sessions[s].StartTrack = trk.Sequence;
 
-                        if(sessions[s].EndTrack < trk.Sequence)
-                            sessions[s].EndTrack = trk.Sequence;
+                        if(sessions[s].EndTrack < trk.Sequence) sessions[s].EndTrack = trk.Sequence;
 
-                        if(sessions[s].StartSector > trk.StartSector)
-                            sessions[s].StartSector = trk.StartSector;
+                        if(sessions[s].StartSector > trk.StartSector) sessions[s].StartSector = trk.StartSector;
 
                         if(sessions[s].EndSector < trk.Sectors                    + trk.StartSector - 1)
                             sessions[s].EndSector = trk.Sectors + trk.StartSector - 1;
                     }
                 }
+            }
 
             _discImage.Sessions.Add(sessions[0]);
             _discImage.Sessions.Add(sessions[1]);
@@ -210,63 +212,85 @@ public sealed partial class Gdi
             _discImage.Disktype = MediaType.GDROM;
 
             // DEBUG information
-            AaruConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Disc_image_parsing_results);
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Session information:");
-            AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Session_information);
+
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "\t" + Localization.Disc_contains_0_sessions,
+                                       _discImage.Sessions.Count);
 
             for(var i = 0; i < _discImage.Sessions.Count; i++)
             {
-                AaruConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "\t" + Localization.Session_0_information, i + 1);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}", _discImage.Sessions[i].StartTrack);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization.Starting_track_0,
+                                           _discImage.Sessions[i].StartTrack);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting sector: {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization.Starting_sector_0,
                                            _discImage.Sessions[i].StartSector);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}", _discImage.Sessions[i].EndTrack);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization.Ending_track_0,
+                                           _discImage.Sessions[i].EndTrack);
 
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding sector: {0}", _discImage.Sessions[i].EndSector);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization.Ending_sector_0,
+                                           _discImage.Sessions[i].EndSector);
             }
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Track information:");
-            AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Track_information);
+
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "\t" + Localization.Disc_contains_0_tracks,
+                                       _discImage.Tracks.Count);
 
             for(var i = 0; i < _discImage.Tracks.Count; i++)
             {
-                AaruConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", _discImage.Tracks[i].Sequence);
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
-                AaruConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t" + Localization.Track_0_information,
+                                           _discImage.Tracks[i].Sequence);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization._0_bytes_per_sector,
+                                           _discImage.Tracks[i].Bps);
+
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" + Localization.Pregap_0_sectors,
+                                           _discImage.Tracks[i].Pregap);
 
                 if((_discImage.Tracks[i].Flags & 0x8) == 0x8)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Track_is_flagged_as_quadraphonic);
 
                 if((_discImage.Tracks[i].Flags & 0x4) == 0x4)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Track_is_data);
 
                 if((_discImage.Tracks[i].Flags & 0x2) == 0x2)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Track_allows_digital_copy);
 
                 if((_discImage.Tracks[i].Flags & 0x1) == 0x1)
-                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "\t\t" + Localization.Track_has_pre_emphasis_applied);
 
-                AaruConsole.DebugWriteLine("GDI plugin",
-                                           "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
-                                           _discImage.Tracks[i].TrackFilter, _discImage.Tracks[i].TrackType,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "\t\t" +
+                                           Localization.Track_resides_in_file_0_type_defined_as_1_starting_at_byte_2,
+                                           _discImage.Tracks[i].TrackFilter,
+                                           _discImage.Tracks[i].TrackType,
                                            _discImage.Tracks[i].Offset);
             }
 
-            AaruConsole.DebugWriteLine("GDI plugin", "Building offset map");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Building_offset_map);
 
-            Partitions = new List<Partition>();
+            Partitions = [];
             ulong byteOffset = 0;
 
             for(var i = 0; i < _discImage.Tracks.Count; i++)
             {
-                if(_discImage.Tracks[i].Sequence == 1 &&
-                   i                             != 0)
+                if(_discImage.Tracks[i].Sequence == 1 && i != 0)
                 {
-                    AaruConsole.ErrorWriteLine("Unordered tracks");
+                    AaruConsole.ErrorWriteLine(Localization.Unordered_tracks);
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -274,7 +298,7 @@ public sealed partial class Gdi
                 // Index 01
                 var partition = new Partition
                 {
-                    Description = $"Track {_discImage.Tracks[i].Sequence}.",
+                    Description = string.Format(Localization.Track_0, _discImage.Tracks[i].Sequence),
                     Name        = null,
                     Start       = _discImage.Tracks[i].StartSector,
                     Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps,
@@ -289,11 +313,9 @@ public sealed partial class Gdi
                 Partitions.Add(partition);
             }
 
-            foreach(GdiTrack track in _discImage.Tracks)
-                _imageInfo.ImageSize += track.Bps * track.Sectors;
+            foreach(GdiTrack track in _discImage.Tracks) _imageInfo.ImageSize += track.Bps * track.Sectors;
 
-            foreach(GdiTrack track in _discImage.Tracks)
-                _imageInfo.Sectors += track.Sectors;
+            foreach(GdiTrack track in _discImage.Tracks) _imageInfo.Sectors += track.Sectors;
 
             _imageInfo.Sectors += _densitySeparationSectors;
 
@@ -318,9 +340,9 @@ public sealed partial class Gdi
 
             _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
-            _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
+            _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
 
-            AaruConsole.VerboseWriteLine("GDI image describes a disc of type {0}", _imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine(Localization.GDI_image_describes_a_disc_of_type_0, _imageInfo.MediaType);
 
             _sectorBuilder = new SectorBuilder();
 
@@ -328,8 +350,8 @@ public sealed partial class Gdi
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.BasePath);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -355,15 +377,17 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         _offsetMap.TryGetValue(0, out ulong transitionStart);
 
-        if(sectorAddress < transitionStart ||
-           sectorAddress >= _densitySeparationSectors + transitionStart)
+        if(sectorAddress < transitionStart || sectorAddress >= _densitySeparationSectors + transitionStart)
             return ErrorNumber.SectorNotFound;
 
         return ReadSectors(sectorAddress - transitionStart, length, 0, out buffer);
@@ -374,15 +398,17 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
 
         _offsetMap.TryGetValue(0, out ulong transitionStart);
 
-        if(sectorAddress < transitionStart ||
-           sectorAddress >= _densitySeparationSectors + transitionStart)
+        if(sectorAddress < transitionStart || sectorAddress >= _densitySeparationSectors + transitionStart)
             return ErrorNumber.SectorNotFound;
 
         return ReadSectorsTag(sectorAddress - transitionStart, length, 0, tag, out buffer);
@@ -395,8 +421,7 @@ public sealed partial class Gdi
 
         if(track == 0)
         {
-            if(sectorAddress + length > _densitySeparationSectors)
-                return ErrorNumber.OutOfRange;
+            if(sectorAddress + length > _densitySeparationSectors) return ErrorNumber.OutOfRange;
 
             buffer = new byte[length * 2352];
 
@@ -415,11 +440,9 @@ public sealed partial class Gdi
             break;
         }
 
-        if(aaruTrack.Sequence == 0)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(sectorAddress + length > aaruTrack.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
@@ -452,56 +475,60 @@ public sealed partial class Gdi
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
 
         ulong remainingSectors = length;
 
-        if(aaruTrack.Pregap > 0 &&
-           sectorAddress    < aaruTrack.Pregap)
+        if(aaruTrack.Pregap > 0 && sectorAddress < aaruTrack.Pregap)
         {
             ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
             remainingSectors -= length > remainingPregap ? remainingPregap : length;
         }
 
-        if(remainingSectors == 0)
-            return ErrorNumber.NoError;
+        if(remainingSectors == 0) return ErrorNumber.NoError;
 
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
-                                             aaruTrack.Pregap * aaruTrack.Bps);
+        long pos = aaruTrack.Offset +
+                   (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) - aaruTrack.Pregap * aaruTrack.Bps);
 
-        if(pos < 0)
-            pos = 0;
+        if(pos < 0) pos = 0;
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 
@@ -509,26 +536,20 @@ public sealed partial class Gdi
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag,
+    public ErrorNumber ReadSectorsTag(ulong      sectorAddress, uint length, uint track, SectorTagType tag,
                                       out byte[] buffer)
     {
         buffer = null;
 
-        if(tag == SectorTagType.CdTrackFlags)
-            track = (uint)sectorAddress;
+        if(tag == SectorTagType.CdTrackFlags) track = (uint)sectorAddress;
 
         if(track == 0)
         {
-            if(sectorAddress + length > _densitySeparationSectors)
-                return ErrorNumber.OutOfRange;
+            if(sectorAddress + length > _densitySeparationSectors) return ErrorNumber.OutOfRange;
 
-            if(tag != SectorTagType.CdTrackFlags)
-                return ErrorNumber.NotSupported;
+            if(tag != SectorTagType.CdTrackFlags) return ErrorNumber.NotSupported;
 
-            buffer = new byte[]
-            {
-                0x00
-            };
+            buffer = [0x00];
 
             return ErrorNumber.NoError;
         }
@@ -545,15 +566,13 @@ public sealed partial class Gdi
             break;
         }
 
-        if(aaruTrack.Sequence == 0)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
-        uint sectorOffset;
-        uint sectorSize;
-        uint sectorSkip;
+        uint sectorOffset = 0;
+        uint sectorSize   = 0;
+        uint sectorSkip   = 0;
 
         switch(tag)
         {
@@ -562,7 +581,8 @@ public sealed partial class Gdi
             case SectorTagType.CdSectorEccQ:
             case SectorTagType.CdSectorEdc:
             case SectorTagType.CdSectorHeader:
-            case SectorTagType.CdSectorSync: break;
+            case SectorTagType.CdSectorSync:
+                break;
             case SectorTagType.CdTrackFlags:
             {
                 buffer = new byte[1];
@@ -571,17 +591,18 @@ public sealed partial class Gdi
 
                 return ErrorNumber.NoError;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         switch(aaruTrack.TrackType)
         {
-            case TrackType.Audio: return ErrorNumber.NoData;
+            case TrackType.Audio:
+                return ErrorNumber.NoData;
             case TrackType.CdMode1:
             {
                 // TODO: Build
-                if(aaruTrack.Bps != 2352)
-                    return ErrorNumber.NoData;
+                if(aaruTrack.Bps != 2352) return ErrorNumber.NoData;
 
                 switch(tag)
                 {
@@ -601,8 +622,6 @@ public sealed partial class Gdi
 
                         break;
                     }
-                    case SectorTagType.CdSectorSubchannel:
-                    case SectorTagType.CdSectorSubHeader: return ErrorNumber.NotSupported;
                     case SectorTagType.CdSectorEcc:
                     {
                         sectorOffset = 2076;
@@ -635,61 +654,64 @@ public sealed partial class Gdi
 
                         break;
                     }
-                    default: return ErrorNumber.NotSupported;
                 }
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
 
         ulong remainingSectors = length;
 
-        if(aaruTrack.Pregap > 0 &&
-           sectorAddress    < aaruTrack.Pregap)
+        if(aaruTrack.Pregap > 0 && sectorAddress < aaruTrack.Pregap)
         {
             ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
             remainingSectors -= length > remainingPregap ? remainingPregap : length;
         }
 
-        if(remainingSectors == 0)
-            return ErrorNumber.NoError;
+        if(remainingSectors == 0) return ErrorNumber.NoError;
 
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
-                                             aaruTrack.Pregap * aaruTrack.Bps);
+        long pos = aaruTrack.Offset +
+                   (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) - aaruTrack.Pregap * aaruTrack.Bps);
 
-        if(pos < 0)
-            pos = 0;
+        if(pos < 0) pos = 0;
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 
@@ -709,9 +731,12 @@ public sealed partial class Gdi
     {
         buffer = null;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap where sectorAddress >= kvp.Value
-                                                 from gdiTrack in _discImage.Tracks where gdiTrack.Sequence == kvp.Key
-                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors select kvp)
+        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
+                                                 where sectorAddress >= kvp.Value
+                                                 from gdiTrack in _discImage.Tracks
+                                                 where gdiTrack.Sequence         == kvp.Key
+                                                 where sectorAddress - kvp.Value < gdiTrack.Sectors
+                                                 select kvp)
             return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer);
 
         return ErrorNumber.SectorNotFound;
@@ -724,8 +749,7 @@ public sealed partial class Gdi
 
         if(track == 0)
         {
-            if(sectorAddress + length > _densitySeparationSectors)
-                return ErrorNumber.OutOfRange;
+            if(sectorAddress + length > _densitySeparationSectors) return ErrorNumber.OutOfRange;
 
             buffer = new byte[length * 2352];
 
@@ -744,11 +768,9 @@ public sealed partial class Gdi
             break;
         }
 
-        if(aaruTrack.Sequence == 0)
-            return ErrorNumber.SectorNotFound;
+        if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(sectorAddress + length > aaruTrack.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         uint sectorOffset;
         uint sectorSize;
@@ -781,56 +803,60 @@ public sealed partial class Gdi
 
                 break;
             }
-            default: return ErrorNumber.NotSupported;
+            default:
+                return ErrorNumber.NotSupported;
         }
 
         buffer = new byte[sectorSize * length];
 
         ulong remainingSectors = length;
 
-        if(aaruTrack.Pregap > 0 &&
-           sectorAddress    < aaruTrack.Pregap)
+        if(aaruTrack.Pregap > 0 && sectorAddress < aaruTrack.Pregap)
         {
             ulong remainingPregap = aaruTrack.Pregap - sectorAddress;
 
             remainingSectors -= length > remainingPregap ? remainingPregap : length;
         }
 
-        if(remainingSectors == 0)
-            return ErrorNumber.NoError;
+        if(remainingSectors == 0) return ErrorNumber.NoError;
 
         _imageStream = aaruTrack.TrackFilter.GetDataForkStream();
         var br = new BinaryReader(_imageStream);
 
-        long pos = aaruTrack.Offset + (long)(sectorAddress    * (sectorOffset + sectorSize + sectorSkip) -
-                                             aaruTrack.Pregap * aaruTrack.Bps);
+        long pos = aaruTrack.Offset +
+                   (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip) - aaruTrack.Pregap * aaruTrack.Bps);
 
-        if(pos < 0)
-            pos = 0;
+        if(pos < 0) pos = 0;
 
         br.BaseStream.Seek(pos, SeekOrigin.Begin);
 
-        if(sectorOffset     == 0 &&
-           sectorSkip       == 0 &&
-           remainingSectors == length)
-            buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
-        else if(sectorOffset == 0 &&
-                sectorSkip   == 0)
+        switch(sectorOffset)
         {
-            byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
-            Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
-        }
-        else
-        {
-            var bufferPos = (int)((length - remainingSectors) * sectorSize);
+            case 0 when sectorSkip == 0 && remainingSectors == length:
+                buffer = br.ReadBytes((int)(sectorSize * remainingSectors));
 
-            for(ulong i = 0; i < remainingSectors; i++)
+                break;
+            case 0 when sectorSkip == 0:
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
-                bufferPos += (int)sectorSize;
+                byte[] tmp = br.ReadBytes((int)(sectorSize * remainingSectors));
+                Array.Copy(tmp, 0, buffer, (int)((length - remainingSectors) * sectorSize), tmp.Length);
+
+                break;
+            }
+            default:
+            {
+                var bufferPos = (int)((length - remainingSectors) * sectorSize);
+
+                for(ulong i = 0; i < remainingSectors; i++)
+                {
+                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
+                    byte[] sector = br.ReadBytes((int)sectorSize);
+                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
+                    Array.Copy(sector, 0, buffer, bufferPos, sectorSize);
+                    bufferPos += (int)sectorSize;
+                }
+
+                break;
             }
         }
 
@@ -859,18 +885,13 @@ public sealed partial class Gdi
     }
 
     /// <inheritdoc />
-    public List<Track> GetSessionTracks(Session session)
-    {
-        if(_discImage.Sessions.Contains(session))
-            return GetSessionTracks(session.Sequence);
-
-        return null;
-    }
+    public List<Track> GetSessionTracks(Session session) =>
+        _discImage.Sessions.Contains(session) ? GetSessionTracks(session.Sequence) : null;
 
     /// <inheritdoc />
     public List<Track> GetSessionTracks(ushort session)
     {
-        List<Track> tracks = new();
+        List<Track> tracks = [];
         bool        expectedDensity;
 
         switch(session)
@@ -883,34 +904,38 @@ public sealed partial class Gdi
                 expectedDensity = true;
 
                 break;
-            default: return null;
+            default:
+                return null;
         }
 
         foreach(GdiTrack gdiTrack in _discImage.Tracks)
-            if(gdiTrack.HighDensity == expectedDensity)
+        {
+            if(gdiTrack.HighDensity != expectedDensity) continue;
+
+            var track = new Track
             {
-                var track = new Track
-                {
-                    Description       = null,
-                    StartSector       = gdiTrack.StartSector,
-                    Pregap            = gdiTrack.Pregap,
-                    Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
-                    Sequence          = gdiTrack.Sequence,
-                    Type              = gdiTrack.TrackType,
-                    Filter            = gdiTrack.TrackFilter,
-                    File              = gdiTrack.TrackFile,
-                    FileOffset        = (ulong)gdiTrack.Offset,
-                    FileType          = "BINARY",
-                    RawBytesPerSector = gdiTrack.Bps,
-                    BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
-                    SubchannelType    = TrackSubchannelType.None
-                };
+                Description       = null,
+                StartSector       = gdiTrack.StartSector,
+                Pregap            = gdiTrack.Pregap,
+                Session           = (ushort)(gdiTrack.HighDensity ? 2 : 1),
+                Sequence          = gdiTrack.Sequence,
+                Type              = gdiTrack.TrackType,
+                Filter            = gdiTrack.TrackFilter,
+                File              = gdiTrack.TrackFile,
+                FileOffset        = (ulong)gdiTrack.Offset,
+                FileType          = "BINARY",
+                RawBytesPerSector = gdiTrack.Bps,
+                BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                SubchannelType    = TrackSubchannelType.None
+            };
 
-                track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
+            track.EndSector = track.StartSector + gdiTrack.Sectors - 1;
 
-                tracks.Add(track);
-            }
+            tracks.Add(track);
+        }
 
         return tracks;
     }
+
+#endregion
 }

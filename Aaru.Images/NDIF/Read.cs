@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -46,14 +44,16 @@ using Claunia.Encoding;
 using Claunia.RsrcFork;
 using Version = Resources.Version;
 
+namespace Aaru.Images;
+
 public sealed partial class Ndif
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork ||
-           imageFilter.ResourceForkLength == 0)
-            return ErrorNumber.InvalidArgument;
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0) return ErrorNumber.InvalidArgument;
 
         ResourceFork rsrcFork;
         Resource     rsrc;
@@ -63,21 +63,18 @@ public sealed partial class Ndif
         {
             rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
-            if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                return ErrorNumber.InvalidArgument;
+            if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return ErrorNumber.InvalidArgument;
 
             rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
             bcems = rsrc.GetIds();
 
-            if(bcems        == null ||
-               bcems.Length == 0)
-                return ErrorNumber.InvalidArgument;
+            if(bcems == null || bcems.Length == 0) return ErrorNumber.InvalidArgument;
         }
         catch(InvalidCastException ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to open image file {0}", imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_open_image_file_0, imageFilter.BasePath);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.UnexpectedException;
         }
@@ -86,34 +83,34 @@ public sealed partial class Ndif
 
         foreach(byte[] bcem in bcems.Select(_ => rsrc.GetResource(NDIF_RESOURCEID)))
         {
-            if(bcem.Length < 128)
-                return ErrorNumber.InvalidArgument;
+            if(bcem.Length < 128) return ErrorNumber.InvalidArgument;
 
             _header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}", _header.version);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", _header.driver);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.type = {0}",   _header.version);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.driver = {0}", _header.driver);
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}",
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "footer.name = {0}",
                                        StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh")));
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}", _header.sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.sectors = {0}", _header.sectors);
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", _header.maxSectorsPerChunk);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.maxSectorsPerChunk = {0}", _header.maxSectorsPerChunk);
 
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}", _header.dataOffset);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}", _header.crc);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}", _header.segmented);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}", _header.p1);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}", _header.p2);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}", _header.unknown[0]);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}", _header.unknown[1]);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}", _header.unknown[2]);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}", _header.unknown[3]);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}", _header.unknown[4]);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}", _header.encrypted);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}", _header.hash);
-            AaruConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}", _header.chunks);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.dataOffset = {0}",      _header.dataOffset);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.crc = 0x{0:X7}",        _header.crc);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.segmented = {0}",       _header.segmented);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.p1 = 0x{0:X8}",         _header.p1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.p2 = 0x{0:X8}",         _header.p2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown[0] = 0x{0:X8}", _header.unknown[0]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown[1] = 0x{0:X8}", _header.unknown[1]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown[2] = 0x{0:X8}", _header.unknown[2]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown[3] = 0x{0:X8}", _header.unknown[3]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.unknown[4] = 0x{0:X8}", _header.unknown[4]);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.encrypted = {0}",       _header.encrypted);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.hash = 0x{0:X8}",       _header.hash);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "footer.chunks = {0}",          _header.chunks);
 
             // Block chunks and headers
             _chunks = new Dictionary<ulong, BlockChunk>();
@@ -130,13 +127,12 @@ public sealed partial class Ndif
                 bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
                 bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
 
-                AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
-                AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}", i, bChnk.sector);
-                AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}", i, bChnk.offset);
-                AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}", i, bChnk.length);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
-                if(bChnk.type == CHUNK_TYPE_END)
-                    break;
+                if(bChnk.type == CHUNK_TYPE_END) break;
 
                 bChnk.offset += _header.dataOffset;
                 bChnk.sector += (uint)_imageInfo.Sectors;
@@ -145,26 +141,26 @@ public sealed partial class Ndif
                 switch(bChnk.type)
                 {
                     case CHUNK_TYPE_KENCODE:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with KenCode are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_KenCode_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_LZH:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with LZH are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_LZH_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                     case CHUNK_TYPE_STUFFIT:
-                        AaruConsole.ErrorWriteLine("Chunks compressed with StuffIt! are not yet supported.");
+                        AaruConsole.ErrorWriteLine(Localization.Chunks_compressed_with_StuffIt_are_not_yet_supported);
 
                         return ErrorNumber.NotImplemented;
                 }
 
                 // TODO: Handle compressed chunks
-                if(bChnk.type > CHUNK_TYPE_COPY    && bChnk.type < CHUNK_TYPE_KENCODE ||
-                   bChnk.type > CHUNK_TYPE_ADC     && bChnk.type < CHUNK_TYPE_STUFFIT ||
-                   bChnk.type > CHUNK_TYPE_STUFFIT && bChnk.type < CHUNK_TYPE_END     ||
-                   bChnk.type == 1)
+                if(bChnk.type is > CHUNK_TYPE_COPY and < CHUNK_TYPE_KENCODE
+                              or > CHUNK_TYPE_ADC and < CHUNK_TYPE_STUFFIT
+                              or > CHUNK_TYPE_STUFFIT and < CHUNK_TYPE_END
+                              or 1)
                 {
-                    AaruConsole.ErrorWriteLine($"Unsupported chunk type 0x{bChnk.type:X8} found");
+                    AaruConsole.ErrorWriteLine(string.Format(Localization.Unsupported_chunk_type_0_found, bChnk.type));
 
                     return ErrorNumber.InvalidArgument;
                 }
@@ -177,41 +173,26 @@ public sealed partial class Ndif
 
         if(_header.segmented > 0)
         {
-            AaruConsole.ErrorWriteLine("Segmented images are not yet supported.");
+            AaruConsole.ErrorWriteLine(Localization.Segmented_images_are_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
 
         if(_header.encrypted > 0)
         {
-            AaruConsole.ErrorWriteLine("Encrypted images are not yet supported.");
+            AaruConsole.ErrorWriteLine(Localization.Encrypted_images_are_not_yet_supported);
 
             return ErrorNumber.NotImplemented;
         }
 
-        switch(_imageInfo.Sectors)
-        {
-            case 1440:
-                _imageInfo.MediaType = MediaType.DOS_35_DS_DD_9;
-
-                break;
-            case 1600:
-                _imageInfo.MediaType = MediaType.AppleSonyDS;
-
-                break;
-            case 2880:
-                _imageInfo.MediaType = MediaType.DOS_35_HD;
-
-                break;
-            case 3360:
-                _imageInfo.MediaType = MediaType.DMF;
-
-                break;
-            default:
-                _imageInfo.MediaType = MediaType.GENERIC_HDD;
-
-                break;
-        }
+        _imageInfo.MediaType = _imageInfo.Sectors switch
+                               {
+                                   1440 => MediaType.DOS_35_DS_DD_9,
+                                   1600 => MediaType.AppleSonyDS,
+                                   2880 => MediaType.DOS_35_HD,
+                                   3360 => MediaType.DMF,
+                                   _    => MediaType.GENERIC_HDD
+                               };
 
         if(rsrcFork.ContainsKey(0x76657273))
         {
@@ -224,50 +205,41 @@ public sealed partial class Ndif
                 var version = new Version(vers);
 
                 string release = null;
-                string dev     = null;
                 string pre     = null;
 
-                string major = $"{version.MajorVersion}";
-                string minor = $".{version.MinorVersion / 10}";
+                var major = $"{version.MajorVersion}";
+                var minor = $".{version.MinorVersion / 10}";
 
-                if(version.MinorVersion % 10 > 0)
-                    release = $".{version.MinorVersion % 10}";
+                if(version.MinorVersion % 10 > 0) release = $".{version.MinorVersion % 10}";
 
-                switch(version.DevStage)
-                {
-                    case Version.DevelopmentStage.Alpha:
-                        dev = "a";
+                string dev = version.DevStage switch
+                             {
+                                 Version.DevelopmentStage.Alpha    => "a",
+                                 Version.DevelopmentStage.Beta     => "b",
+                                 Version.DevelopmentStage.PreAlpha => "d",
+                                 _                                 => null
+                             };
 
-                        break;
-                    case Version.DevelopmentStage.Beta:
-                        dev = "b";
+                if(dev == null && version.PreReleaseVersion > 0) dev = "f";
 
-                        break;
-                    case Version.DevelopmentStage.PreAlpha:
-                        dev = "d";
-
-                        break;
-                }
-
-                if(dev                       == null &&
-                   version.PreReleaseVersion > 0)
-                    dev = "f";
-
-                if(dev != null)
-                    pre = $"{version.PreReleaseVersion}";
+                if(dev != null) pre = $"{version.PreReleaseVersion}";
 
                 _imageInfo.ApplicationVersion = $"{major}{minor}{release}{dev}{pre}";
                 _imageInfo.Application        = version.VersionString;
                 _imageInfo.Comments           = version.VersionMessage;
 
-                if(version.MajorVersion == 3)
-                    _imageInfo.Application = "ShrinkWrap™";
-                else if(version.MajorVersion == 6)
-                    _imageInfo.Application = "DiskCopy";
+                _imageInfo.Application = version.MajorVersion switch
+                                         {
+                                             3 => "ShrinkWrap™",
+                                             6 => "DiskCopy",
+                                             _ => _imageInfo.Application
+                                         };
             }
         }
 
-        AaruConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", _imageInfo.Application,
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Image_application_0_version_1,
+                                   _imageInfo.Application,
                                    _imageInfo.ApplicationVersion);
 
         _sectorCache           = new Dictionary<ulong, byte[]>();
@@ -282,7 +254,7 @@ public sealed partial class Ndif
         _imageInfo.MediaTitle = StringHandlers.PascalToString(_header.name, Encoding.GetEncoding("macintosh"));
 
         _imageInfo.SectorSize         = SECTOR_SIZE;
-        _imageInfo.XmlMediaType       = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType  = MetadataMediaType.BlockMedia;
         _imageInfo.ImageSize          = _imageInfo.Sectors * SECTOR_SIZE;
         _imageInfo.ApplicationVersion = "6";
         _imageInfo.Application        = "Apple DiskCopy";
@@ -330,11 +302,9 @@ public sealed partial class Ndif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         var   currentChunk     = new BlockChunk();
         var   chunkFound       = false;
@@ -349,11 +319,9 @@ public sealed partial class Ndif
 
         long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
 
-        if(relOff < 0)
-            return ErrorNumber.InvalidArgument;
+        if(relOff < 0) return ErrorNumber.InvalidArgument;
 
-        if(!chunkFound)
-            return ErrorNumber.SectorNotFound;
+        if(!chunkFound) return ErrorNumber.SectorNotFound;
 
         if((currentChunk.type & CHUNK_TYPE_COMPRESSED_MASK) == CHUNK_TYPE_COMPRESSED_MASK)
         {
@@ -361,7 +329,7 @@ public sealed partial class Ndif
             {
                 var cmpBuffer = new byte[currentChunk.length];
                 _imageStream.Seek(currentChunk.offset, SeekOrigin.Begin);
-                _imageStream.Read(cmpBuffer, 0, cmpBuffer.Length);
+                _imageStream.EnsureRead(cmpBuffer, 0, cmpBuffer.Length);
                 int realSize;
 
                 switch(currentChunk.type)
@@ -386,7 +354,8 @@ public sealed partial class Ndif
                         break;
                     }
 
-                    default: return ErrorNumber.NotSupported;
+                    default:
+                        return ErrorNumber.NotSupported;
                 }
 
                 if(_currentChunkCacheSize + realSize > MAX_CACHE_SIZE)
@@ -402,8 +371,7 @@ public sealed partial class Ndif
             buffer = new byte[SECTOR_SIZE];
             Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
 
-            if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                _sectorCache.Clear();
+            if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
             _sectorCache.Add(sectorAddress, buffer);
 
@@ -415,8 +383,7 @@ public sealed partial class Ndif
             case CHUNK_TYPE_NOCOPY:
                 buffer = new byte[SECTOR_SIZE];
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -424,10 +391,9 @@ public sealed partial class Ndif
             case CHUNK_TYPE_COPY:
                 _imageStream.Seek(currentChunk.offset + relOff, SeekOrigin.Begin);
                 buffer = new byte[SECTOR_SIZE];
-                _imageStream.Read(buffer, 0, buffer.Length);
+                _imageStream.EnsureRead(buffer, 0, buffer.Length);
 
-                if(_sectorCache.Count >= MAX_CACHED_SECTORS)
-                    _sectorCache.Clear();
+                if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
                 _sectorCache.Add(sectorAddress, buffer);
 
@@ -442,11 +408,9 @@ public sealed partial class Ndif
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -454,8 +418,7 @@ public sealed partial class Ndif
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -464,4 +427,6 @@ public sealed partial class Ndif
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

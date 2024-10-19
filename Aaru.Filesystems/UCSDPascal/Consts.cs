@@ -27,17 +27,21 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.UCSDPascal;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class PascalPlugin
 {
+    const string FS_TYPE = "ucsd";
+
+#region Nested type: PascalFileKind
+
     enum PascalFileKind : short
     {
         /// <summary>Disk volume entry</summary>
@@ -59,4 +63,6 @@ public sealed partial class PascalPlugin
         /// <summary>Security, not used</summary>
         Secure
     }
+
+#endregion
 }

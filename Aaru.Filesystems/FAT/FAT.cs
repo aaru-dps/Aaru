@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the Microsoft FAT filesystem and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,18 +23,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
 // X68K uses cdate/adate from direntry for extending filename
@@ -46,18 +42,22 @@ using Schemas;
 /// <summary>Implements the File Allocation Table, aka FAT, filesystem (FAT12, FAT16 and FAT32 variants).</summary>
 public sealed partial class FAT : IReadOnlyFilesystem
 {
+    const string                                                   MODULE_NAME = "FAT plugin";
     uint                                                           _bytesPerCluster;
     byte[]                                                         _cachedEaData;
     CultureInfo                                                    _cultureInfo;
     bool                                                           _debug;
     Dictionary<string, Dictionary<string, CompleteDirectoryEntry>> _directoryCache;
     DirectoryEntry                                                 _eaDirEntry;
+    Encoding                                                       _encoding;
     bool                                                           _fat12;
     bool                                                           _fat16;
     bool                                                           _fat32;
     ushort[]                                                       _fatEntries;
+    uint                                                           _fatEntriesPerSector;
     ulong                                                          _fatFirstSector;
     ulong                                                          _firstClusterSector;
+    IMediaImage                                                    _image;
     bool                                                           _mounted;
     Namespace                                                      _namespace;
     uint                                                           _reservedSectors;
@@ -67,16 +67,19 @@ public sealed partial class FAT : IReadOnlyFilesystem
     FileSystemInfo                                                 _statfs;
     bool                                                           _useFirstFat;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Name => "Microsoft File Allocation Table";
+    public string Name => Localization.FAT_Name;
+
     /// <inheritdoc />
     public Guid Id => new("33513B2C-0D26-0D2D-32C3-79D8611158E0");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -86,21 +89,23 @@ public sealed partial class FAT : IReadOnlyFilesystem
     public Dictionary<string, string> Namespaces => new()
     {
         {
-            "dos", "DOS (8.3 all uppercase)"
+            "dos", Localization.DOS_8_3_all_uppercase
         },
         {
-            "nt", "Windows NT (8.3 mixed case)"
+            "nt", Localization.Windows_NT_8_3_mixed_case
         },
         {
-            "os2", "OS/2 .LONGNAME extended attribute"
+            "os2", Localization.OS2_LONGNAME_extended_attribute
         },
         {
-            "ecs", "Use LFN when available with fallback to .LONGNAME (default)"
+            "ecs", Localization.Use_LFN_when_available_with_fallback_to_LONGNAME_default
         },
         {
-            "lfn", "Long file names"
+            "lfn", Localization.Long_file_names
         }
     };
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {

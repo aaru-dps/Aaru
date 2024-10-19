@@ -32,27 +32,29 @@
 //     THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2016-2022 Natalia Portillo
+// Copyright © 2016-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Compression;
 
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Compression;
+
 /// <summary>Implements the Apple version of RLE</summary>
+
 // ReSharper disable once InconsistentNaming
-public static class ADC
+public static partial class ADC
 {
     const int PLAIN      = 1;
     const int TWO_BYTE   = 2;
     const int THREE_BYTE = 3;
+
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_adc_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static int GetChunkType(byte byt) => (byt & 0x80) == 0x80
@@ -86,29 +88,28 @@ public static class ADC
     [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     public static int DecodeBuffer(byte[] source, byte[] destination)
     {
-        if(Native.IsSupported)
-            return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
+        if(Native.IsSupported) return AARU_adc_decode_buffer(destination, destination.Length, source, source.Length);
 
         var        inputPosition = 0;
-        int        chunkSize;
-        int        offset;
-        int        chunkType;
-        var        outPosition = 0;
-        Span<byte> temp        = stackalloc byte[3];
+        var        outPosition   = 0;
+        Span<byte> temp          = stackalloc byte[3];
 
         while(inputPosition < source.Length)
         {
             byte readByte = source[inputPosition++];
 
-            chunkType = GetChunkType(readByte);
+            int chunkType = GetChunkType(readByte);
+
+            int chunkSize;
+
+            int offset;
 
             switch(chunkType)
             {
                 case PLAIN:
                     chunkSize = GetChunkSize(readByte);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     Array.Copy(source, inputPosition, destination, outPosition, chunkSize);
                     outPosition   += chunkSize;
@@ -121,8 +122,7 @@ public static class ADC
                     temp[1]   = source[inputPosition++];
                     offset    = GetOffset(temp);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     if(offset == 0)
                     {
@@ -135,11 +135,13 @@ public static class ADC
                         }
                     }
                     else
+                    {
                         for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = destination[outPosition - offset - 1];
                             outPosition++;
                         }
+                    }
 
                     break;
                 case THREE_BYTE:
@@ -149,8 +151,7 @@ public static class ADC
                     temp[2]   = source[inputPosition++];
                     offset    = GetOffset(temp);
 
-                    if(outPosition + chunkSize > destination.Length)
-                        goto finished;
+                    if(outPosition + chunkSize > destination.Length) goto finished;
 
                     if(offset == 0)
                     {
@@ -163,11 +164,13 @@ public static class ADC
                         }
                     }
                     else
+                    {
                         for(var i = 0; i < chunkSize; i++)
                         {
                             destination[outPosition] = destination[outPosition - offset - 1];
                             outPosition++;
                         }
+                    }
 
                     break;
             }

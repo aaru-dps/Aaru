@@ -27,18 +27,20 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Nero
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,26 +50,26 @@ public sealed partial class Nero
 
         _imageStream.Seek(-8, SeekOrigin.End);
         var buffer = new byte[8];
-        _imageStream.Read(buffer, 0, 8);
+        _imageStream.EnsureRead(buffer, 0, 8);
         footerV1.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV1.FirstChunkOffset = BigEndianBitConverter.ToUInt32(buffer, 4);
 
         _imageStream.Seek(-12, SeekOrigin.End);
         buffer = new byte[12];
-        _imageStream.Read(buffer, 0, 12);
+        _imageStream.EnsureRead(buffer, 0, 12);
         footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
         footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-        AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}", _imageStream.Length);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}", footerV1.ChunkId);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}", footerV2.ChunkId);
-        AaruConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "imageStream.Length = {0}",        _imageStream.Length);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV1.ChunkID = 0x{0:X8}",     footerV1.ChunkId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.ChunkID = 0x{0:X8}",     footerV2.ChunkId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
-        if(footerV2.ChunkId          == NERO_FOOTER_V2 &&
-           footerV2.FirstChunkOffset < (ulong)_imageStream.Length)
-            return true;
+        if(footerV2.ChunkId == NERO_FOOTER_V2 && footerV2.FirstChunkOffset < (ulong)_imageStream.Length) return true;
 
         return footerV1.ChunkId == NERO_FOOTER_V1 && footerV1.FirstChunkOffset < (ulong)_imageStream.Length;
     }
+
+#endregion
 }

@@ -27,15 +27,20 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
+
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
 public partial class Device
 {
     /// <summary>Enables media card pass through</summary>
@@ -44,7 +49,7 @@ public partial class Device
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                           out double duration) =>
+                                           out double               duration) =>
         CheckMediaCardType(1, out statusRegisters, timeout, out duration);
 
     /// <summary>Disables media card pass through</summary>
@@ -53,7 +58,7 @@ public partial class Device
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                            out double duration) =>
+                                            out double               duration) =>
         CheckMediaCardType(0, out statusRegisters, timeout, out duration);
 
     /// <summary>Checks media card pass through</summary>
@@ -62,10 +67,10 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds</param>
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool CheckMediaCardType(byte feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
+    public bool CheckMediaCardType(byte       feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                    out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersChs
         {
@@ -73,12 +78,19 @@ public partial class Device
             Feature = feature
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "CHECK MEDIA CARD TYPE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.CHECK_MEDIA_CARD_TYPE_took_0_ms, duration);
 
         return sense;
     }

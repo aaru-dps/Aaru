@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Dumping;
 
 using System;
 using System.Linq;
@@ -40,16 +38,12 @@ using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 
+namespace Aaru.Core.Devices.Dumping;
+
 public partial class Dump
 {
-    static readonly byte[] _fatSignature =
-    {
-        0x46, 0x41, 0x54, 0x31, 0x36, 0x20, 0x20, 0x20
-    };
-    static readonly byte[] _isoExtension =
-    {
-        0x49, 0x53, 0x4F
-    };
+    static readonly byte[] _fatSignature = "FAT16   "u8.ToArray();
+    static readonly byte[] _isoExtension = "ISO"u8.ToArray();
 
     /// <summary>Dumps a CFW PlayStation Portable UMD</summary>
     void PlayStationPortable()
@@ -58,24 +52,30 @@ public partial class Dump
            !_outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickProDuo) &&
            !_outputPlugin.SupportedMediaTypes.Contains(MediaType.UMD))
         {
-            _dumpLog.WriteLine("Selected output plugin does not support MemoryStick Duo or UMD, cannot dump...");
+            _dumpLog.WriteLine(Localization.Core
+                                           .Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
-            StoppingErrorMessage?.
-                Invoke("Selected output plugin does not support MemoryStick Duo or UMD, cannot dump...");
+            StoppingErrorMessage?.Invoke(Localization.Core
+                                                     .Selected_output_format_does_not_support_MemoryStick_Duo_or_UMD_cannot_dump);
 
             return;
         }
 
-        UpdateStatus?.Invoke("Checking if media is UMD or MemoryStick...");
-        _dumpLog.WriteLine("Checking if media is UMD or MemoryStick...");
+        UpdateStatus?.Invoke(Localization.Core.Checking_if_media_is_UMD_or_MemoryStick);
+        _dumpLog.WriteLine(Localization.Core.Checking_if_media_is_UMD_or_MemoryStick);
 
-        bool sense = _dev.ModeSense6(out byte[] buffer, out _, false, ScsiModeSensePageControl.Current, 0, _dev.Timeout,
+        bool sense = _dev.ModeSense6(out byte[] buffer,
+                                     out _,
+                                     false,
+                                     ScsiModeSensePageControl.Current,
+                                     0,
+                                     _dev.Timeout,
                                      out _);
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not get MODE SENSE...");
-            StoppingErrorMessage?.Invoke("Could not get MODE SENSE...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_get_MODE_SENSE);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_get_MODE_SENSE);
 
             return;
         }
@@ -84,8 +84,8 @@ public partial class Dump
 
         if(!decoded.HasValue)
         {
-            _dumpLog.WriteLine("Could not decode MODE SENSE...");
-            StoppingErrorMessage?.Invoke("Could not decode MODE SENSE...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_decode_MODE_SENSE);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_decode_MODE_SENSE);
 
             return;
         }
@@ -102,8 +102,8 @@ public partial class Dump
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not read...");
-            StoppingErrorMessage?.Invoke("Could not read...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
 
             return;
         }
@@ -124,16 +124,28 @@ public partial class Dump
         var sectorsPerFat = (ushort)((buffer[0x17] << 8) + buffer[0x16]);
         var rootStart     = (ushort)(sectorsPerFat * 2   + fatStart);
 
-        UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
-        _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
+        _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
 
-        sense = _dev.Read12(out buffer, out _, 0, false, true, false, false, rootStart, 512, 0, 1, false, _dev.Timeout,
+        sense = _dev.Read12(out buffer,
+                            out _,
+                            0,
+                            false,
+                            true,
+                            false,
+                            false,
+                            rootStart,
+                            512,
+                            0,
+                            1,
+                            false,
+                            _dev.Timeout,
                             out _);
 
         if(sense)
         {
-            StoppingErrorMessage?.Invoke("Could not read...");
-            _dumpLog.WriteLine("Could not read...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
 
             return;
         }
@@ -148,11 +160,14 @@ public partial class Dump
             return;
         }
 
-        UpdateStatus?.Invoke($"FAT starts at sector {fatStart} and runs for {sectorsPerFat} sectors...");
-        _dumpLog.WriteLine("FAT starts at sector {0} and runs for {1} sectors...", fatStart, sectorsPerFat);
+        UpdateStatus?.Invoke(string.Format(Localization.Core.FAT_starts_at_sector_0_and_runs_for_1_sectors,
+                                           fatStart,
+                                           sectorsPerFat));
 
-        UpdateStatus?.Invoke("Reading FAT...");
-        _dumpLog.WriteLine("Reading FAT...");
+        _dumpLog.WriteLine(Localization.Core.FAT_starts_at_sector_0_and_runs_for_1_sectors, fatStart, sectorsPerFat);
+
+        UpdateStatus?.Invoke(Localization.Core.Reading_FAT);
+        _dumpLog.WriteLine(Localization.Core.Reading_FAT);
 
         var fat = new byte[sectorsPerFat * 512];
 
@@ -162,16 +177,27 @@ public partial class Dump
         {
             uint transfer = 64;
 
-            if(transfer + position > sectorsPerFat)
-                transfer = sectorsPerFat - position;
+            if(transfer + position > sectorsPerFat) transfer = sectorsPerFat - position;
 
-            sense = _dev.Read12(out buffer, out _, 0, false, true, false, false, position + fatStart, 512, 0, transfer,
-                                false, _dev.Timeout, out _);
+            sense = _dev.Read12(out buffer,
+                                out _,
+                                0,
+                                false,
+                                true,
+                                false,
+                                false,
+                                position + fatStart,
+                                512,
+                                0,
+                                transfer,
+                                false,
+                                _dev.Timeout,
+                                out _);
 
             if(sense)
             {
-                StoppingErrorMessage?.Invoke("Could not read...");
-                _dumpLog.WriteLine("Could not read...");
+                StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
+                _dumpLog.WriteLine(Localization.Core.Could_not_read);
 
                 return;
             }
@@ -181,8 +207,8 @@ public partial class Dump
             position += transfer;
         }
 
-        UpdateStatus?.Invoke("Traversing FAT...");
-        _dumpLog.WriteLine("Traversing FAT...");
+        UpdateStatus?.Invoke(Localization.Core.Traversing_FAT);
+        _dumpLog.WriteLine(Localization.Core.Traversing_FAT);
 
         var previousCluster = BitConverter.ToUInt16(fat, 4);
 
@@ -197,8 +223,7 @@ public partial class Dump
                 continue;
             }
 
-            if(nextCluster == 0xFFFF)
-                break;
+            if(nextCluster == 0xFFFF) break;
 
             DumpMs();
 
@@ -208,6 +233,6 @@ public partial class Dump
         if(_outputPlugin is IWritableOpticalImage)
             DumpUmd();
         else
-            StoppingErrorMessage?.Invoke("The specified plugin does not support storing optical disc images.");
+            StoppingErrorMessage?.Invoke(Localization.Core.The_specified_image_format_cannot_represent_optical_discs);
     }
 }

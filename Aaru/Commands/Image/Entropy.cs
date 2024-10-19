@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
@@ -40,38 +38,37 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
+
+namespace Aaru.Commands.Image;
 
 sealed class EntropyCommand : Command
 {
+    const  string       MODULE_NAME = "Entropy command";
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
-    public EntropyCommand() : base("entropy", "Calculates entropy and/or duplicated sectors of an image.")
+    public EntropyCommand() : base("entropy", UI.Image_Entropy_Command_Description)
     {
-        Add(new Option<bool>(new[]
-        {
-            "--duplicated-sectors", "-p"
-        }, () => true, "Calculates how many sectors are duplicated (have same exact data in user area)."));
+        Add(new Option<bool>(["--duplicated-sectors", "-p"],
+                             () => true,
+                             UI.Calculates_how_many_sectors_are_duplicated));
 
-        Add(new Option<bool>(new[]
-        {
-            "--separated-tracks", "-t"
-        }, () => true, "Calculates entropy for each track separately."));
+        Add(new Option<bool>(["--separated-tracks", "-t"],
+                             () => true,
+                             UI.Calculates_entropy_for_each_track_separately));
 
-        Add(new Option<bool>(new[]
-        {
-            "--whole-disc", "-w"
-        }, () => true, "Calculates entropy for the whole disc."));
+        Add(new Option<bool>(["--whole-disc", "-w"], () => true, UI.Calculates_entropy_for_the_whole_disc));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath, bool separatedTracks,
@@ -83,7 +80,7 @@ sealed class EntropyCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -93,9 +90,12 @@ sealed class EntropyCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -103,58 +103,59 @@ sealed class EntropyCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("entropy");
 
-        AaruConsole.DebugWriteLine("Entropy command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", duplicatedSectors);
-        AaruConsole.DebugWriteLine("Entropy command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", separatedTracks);
-        AaruConsole.DebugWriteLine("Entropy command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", wholeDisc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",              debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--duplicated-sectors={0}", duplicatedSectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",              Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--separated-tracks={0}",   separatedTracks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--whole-disc={0}",         wholeDisc);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
 
         IBaseImage inputFormat = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying image format...").IsIndeterminate();
+            ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
             inputFormat = ImageFormat.Detect(inputFilter);
         });
 
         if(inputFormat == null)
         {
-            AaruConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
+            AaruConsole.ErrorWriteLine(UI.Unable_to_recognize_image_format_not_checksumming);
 
             return (int)ErrorNumber.UnrecognizedFormat;
         }
 
         ErrorNumber opened = ErrorNumber.NoData;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Opening image file...").IsIndeterminate();
+            ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
             opened = inputFormat.Open(inputFilter);
         });
 
         if(opened != ErrorNumber.NoError)
         {
-            AaruConsole.WriteLine("Error {opened} opening image format");
+            AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+            AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
             return (int)opened;
         }
@@ -165,18 +166,15 @@ sealed class EntropyCommand : Command
 
         var entropyCalculator = new Entropy(debug, inputFormat);
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
+        AnsiConsole.Progress()
+                   .AutoClear(true)
+                   .HideCompleted(true)
+                   .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                   .Start(ctx =>
                     {
-                        entropyCalculator.InitProgressEvent += () =>
-                        {
-                            _progressTask1 = ctx.AddTask("Progress");
-                        };
+                        entropyCalculator.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                        entropyCalculator.InitProgress2Event += () =>
-                        {
-                            _progressTask2 = ctx.AddTask("Progress");
-                        };
+                        entropyCalculator.InitProgress2Event += () => { _progressTask2 = ctx.AddTask("Progress"); };
 
                         entropyCalculator.UpdateProgressEvent += (text, current, maximum) =>
                         {
@@ -210,14 +208,14 @@ sealed class EntropyCommand : Command
                         {
                             if(opticalFormat.Sessions?.Count > 1)
                             {
-                                AaruConsole.
-                                    ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+                                AaruConsole
+                                   .ErrorWriteLine(UI
+                                                      .Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented);
 
                                 wholeDisc = false;
                             }
 
-                            if(opticalFormat.Tracks?.Count == 1)
-                                separatedTracks = false;
+                            if(opticalFormat.Tracks?.Count == 1) separatedTracks = false;
                         }
 
                         if(separatedTracks)
@@ -227,30 +225,34 @@ sealed class EntropyCommand : Command
 
                             foreach(EntropyResults trackEntropy in tracksEntropy)
                             {
-                                AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
+                                AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1,
+                                                      trackEntropy.Track,
                                                       trackEntropy.Entropy);
 
                                 if(trackEntropy.UniqueSectors != null)
-                                    AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})",
-                                                          trackEntropy.Track, trackEntropy.UniqueSectors,
+                                {
+                                    AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2,
+                                                          trackEntropy.Track,
+                                                          trackEntropy.UniqueSectors,
                                                           (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
+                                }
                             }
                         }
 
-                        if(!wholeDisc)
-                            return;
+                        if(!wholeDisc) return;
 
-                        EntropyResults entropy;
+                        EntropyResults entropy = inputFormat.Info.MetadataMediaType == MetadataMediaType.LinearMedia
+                                                     ? entropyCalculator.CalculateLinearMediaEntropy()
+                                                     : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
-                        entropy = inputFormat.Info.XmlMediaType == XmlMediaType.LinearMedia
-                                      ? entropyCalculator.CalculateLinearMediaEntropy()
-                                      : entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
-
-                        AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
+                        AaruConsole.WriteLine(UI.Entropy_for_disk_is_0, entropy.Entropy);
 
                         if(entropy.UniqueSectors != null)
-                            AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
+                        {
+                            AaruConsole.WriteLine(UI.Disk_has_0_unique_sectors_1,
+                                                  entropy.UniqueSectors,
                                                   (double)entropy.UniqueSectors / entropy.Sectors);
+                        }
                     });
 
         return (int)ErrorNumber.NoError;

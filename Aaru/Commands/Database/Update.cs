@@ -27,42 +27,43 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Database;
 
 using System;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Database;
-using Aaru.Settings;
+using Aaru.Localization;
 using Microsoft.EntityFrameworkCore;
 using Spectre.Console;
 
+namespace Aaru.Commands.Database;
+
 sealed class UpdateCommand : Command
 {
-    readonly bool _mainDbUpdate;
+    const    string MODULE_NAME = "Update command";
+    readonly bool   _mainDbUpdate;
 
-    public UpdateCommand(bool mainDbUpdate) : base("update", "Updates the database.")
+    public UpdateCommand(bool mainDbUpdate) : base("update", UI.Database_Update_Command_Description)
     {
         _mainDbUpdate = mainDbUpdate;
 
-        Add(new Option<bool>("--clear", () => false, "Clear existing main database."));
-        Add(new Option<bool>("--clear-all", () => false, "Clear existing main and local database."));
+        Add(new Option<bool>("--clear",     () => false, UI.Clear_existing_main_database));
+        Add(new Option<bool>("--clear-all", () => false, UI.Clear_existing_main_and_local_database));
 
-        Handler = CommandHandler.Create((Func<bool, bool, bool, bool, int>)Invoke);
+        Handler = CommandHandler.Create((Func<bool, bool, bool, bool, Task<int>>)InvokeAsync);
     }
 
-    int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
+    async Task<int> InvokeAsync(bool debug, bool verbose, bool clear, bool clearAll)
     {
-        if(_mainDbUpdate)
-            return (int)ErrorNumber.NoError;
+        if(_mainDbUpdate) return (int)ErrorNumber.NoError;
 
         MainClass.PrintCopyright();
 
@@ -70,7 +71,7 @@ sealed class UpdateCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -80,9 +81,12 @@ sealed class UpdateCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => stderrConsole.WriteException(ex);
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -90,52 +94,51 @@ sealed class UpdateCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
-        AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
         if(clearAll)
+        {
             try
             {
-                File.Delete(Settings.LocalDbPath);
+                File.Delete(Settings.Settings.LocalDbPath);
 
-                var ctx = AaruContext.Create(Settings.LocalDbPath);
-                ctx.Database.Migrate();
-                ctx.SaveChanges();
+                var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
+                await ctx.Database.MigrateAsync();
+                await ctx.SaveChangesAsync();
             }
-            catch(Exception)
+            catch(Exception) when(!Debugger.IsAttached)
             {
-                if(Debugger.IsAttached)
-                    throw;
-
-                AaruConsole.ErrorWriteLine("Could not remove local database.");
+                AaruConsole.ErrorWriteLine(UI.Could_not_remove_local_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
+        }
 
         if(clear || clearAll)
+        {
             try
             {
-                File.Delete(Settings.MainDbPath);
+                File.Delete(Settings.Settings.MainDbPath);
             }
-            catch(Exception)
+            catch(Exception) when(!Debugger.IsAttached)
             {
-                if(Debugger.IsAttached)
-                    throw;
-
-                AaruConsole.ErrorWriteLine("Could not remove main database.");
+                AaruConsole.ErrorWriteLine(UI.Could_not_remove_main_database);
 
                 return (int)ErrorNumber.CannotRemoveDatabase;
             }
+        }
 
-        DoUpdate(clear || clearAll);
+        await DoUpdateAsync(clear || clearAll);
 
         return (int)ErrorNumber.NoError;
     }
 
-    internal static void DoUpdate(bool create)
+    internal static async Task DoUpdateAsync(bool create)
     {
-        Remote.UpdateMainDatabase(create);
+        await Remote.UpdateMainDatabaseAsync(create);
         Statistics.AddCommand("update");
     }
 }

@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Logging;
 
 using System;
 using System.IO;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Interop;
 using Aaru.Devices;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Creates a dump log</summary>
 public sealed class DumpLog
@@ -52,12 +52,11 @@ public sealed class DumpLog
     /// <param name="private">Disable saving paths or serial numbers in log</param>
     public DumpLog(string outputFile, Device dev, bool @private)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _logSw = new StreamWriter(outputFile, true);
 
-        _logSw.WriteLine("Start logging at {0}", DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Start_logging_at_0, DateTime.Now);
 
         PlatformID platId  = DetectOS.GetRealPlatformID();
         string     platVer = DetectOS.GetVersion();
@@ -66,9 +65,11 @@ public sealed class DumpLog
             Attribute.GetCustomAttribute(typeof(DumpLog).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
                 AssemblyInformationalVersionAttribute;
 
-        _logSw.WriteLine("################# System information #################");
+        _logSw.WriteLine(Localization.Core.System_information);
 
-        _logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
+        _logSw.WriteLine("{0} {1} ({2}-bit)",
+                         DetectOS.GetPlatformName(platId, platVer),
+                         platVer,
                          Environment.Is64BitOperatingSystem ? 64 : 32);
 
         if(DetectOS.IsMono)
@@ -80,20 +81,23 @@ public sealed class DumpLog
 
         _logSw.WriteLine();
 
-        _logSw.WriteLine("################# Program information ################");
-        _logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
-        _logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
-        _logSw.WriteLine("Running as superuser: {0}", DetectOS.IsAdmin ? "Yes" : "No");
-    #if DEBUG
-        _logSw.WriteLine("DEBUG version");
-    #endif
+        _logSw.WriteLine(Localization.Core.Program_information);
+        _logSw.WriteLine("Aaru {0}",                         assemblyVersion?.InformationalVersion);
+        _logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
+
+        _logSw.WriteLine(DetectOS.IsAdmin
+                             ? Localization.Core.Running_as_superuser_Yes
+                             : Localization.Core.Running_as_superuser_No);
+#if DEBUG
+        _logSw.WriteLine(Localization.Core.DEBUG_version);
+#endif
         if(@private)
         {
             string[] args = Environment.GetCommandLineArgs();
 
             for(var i = 0; i < args.Length; i++)
             {
-                if(args[i].StartsWith("/dev", StringComparison.OrdinalIgnoreCase) ||
+                if(args[i].StartsWith("/dev",    StringComparison.OrdinalIgnoreCase) ||
                    args[i].StartsWith("aaru://", StringComparison.OrdinalIgnoreCase))
                     continue;
 
@@ -107,72 +111,74 @@ public sealed class DumpLog
                 }
             }
 
-            _logSw.WriteLine("Command line: {0}", string.Join(" ", args));
+            _logSw.WriteLine(Localization.Core.Command_line_0, string.Join(" ", args));
         }
         else
-            _logSw.WriteLine("Command line: {0}", Environment.CommandLine);
+            _logSw.WriteLine(Localization.Core.Command_line_0, Environment.CommandLine);
 
         _logSw.WriteLine();
 
         if(dev is Aaru.Devices.Remote.Device remoteDev)
         {
-            _logSw.WriteLine("################# Remote information #################");
-            _logSw.WriteLine("Server: {0}", remoteDev.RemoteApplication);
-            _logSw.WriteLine("Version: {0}", remoteDev.RemoteVersion);
+            _logSw.WriteLine(Localization.Core.Remote_information);
+            _logSw.WriteLine(Localization.Core.Server_0,  remoteDev.RemoteApplication);
+            _logSw.WriteLine(Localization.Core.Version_0, remoteDev.RemoteVersion);
 
-            _logSw.WriteLine("Operating system: {0} {1}", remoteDev.RemoteOperatingSystem,
+            _logSw.WriteLine(Localization.Core.Operating_system_0_1,
+                             remoteDev.RemoteOperatingSystem,
                              remoteDev.RemoteOperatingSystemVersion);
 
-            _logSw.WriteLine("Architecture: {0}", remoteDev.RemoteArchitecture);
-            _logSw.WriteLine("Protocol version: {0}", remoteDev.RemoteProtocolVersion);
-            _logSw.WriteLine("Running as superuser: {0}", remoteDev.IsAdmin ? "Yes" : "No");
-            _logSw.WriteLine("######################################################");
+            _logSw.WriteLine(Localization.Core.Architecture_0,     remoteDev.RemoteArchitecture);
+            _logSw.WriteLine(Localization.Core.Protocol_version_0, remoteDev.RemoteProtocolVersion);
+
+            _logSw.WriteLine(DetectOS.IsAdmin
+                                 ? Localization.Core.Running_as_superuser_Yes
+                                 : Localization.Core.Running_as_superuser_No);
+
+            _logSw.WriteLine(Localization.Core.Log_section_separator);
         }
 
-        _logSw.WriteLine("################# Device information #################");
-        _logSw.WriteLine("Manufacturer: {0}", dev.Manufacturer);
-        _logSw.WriteLine("Model: {0}", dev.Model);
-        _logSw.WriteLine("Firmware revision: {0}", dev.FirmwareRevision);
+        _logSw.WriteLine(Localization.Core.Device_information);
+        _logSw.WriteLine(Localization.Core.Manufacturer_0,      dev.Manufacturer);
+        _logSw.WriteLine(Localization.Core.Model_0,             dev.Model);
+        _logSw.WriteLine(Localization.Core.Firmware_revision_0, dev.FirmwareRevision);
 
-        if(!@private)
-            _logSw.WriteLine("Serial number: {0}", dev.Serial);
+        if(!@private) _logSw.WriteLine(Localization.Core.Serial_number_0, dev.Serial);
 
-        _logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
-        _logSw.WriteLine("Device type: {0}", dev.Type);
-        _logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
-        _logSw.WriteLine("PCMCIA device: {0}", dev.IsPcmcia);
-        _logSw.WriteLine("USB device: {0}", dev.IsUsb);
+        _logSw.WriteLine(Localization.Core.Removable_device_0,    dev.IsRemovable);
+        _logSw.WriteLine(Localization.Core.Device_type_0,         dev.Type);
+        _logSw.WriteLine(Localization.Core.CompactFlash_device_0, dev.IsCompactFlash);
+        _logSw.WriteLine(Localization.Core.PCMCIA_device_0,       dev.IsPcmcia);
+        _logSw.WriteLine(Localization.Core.USB_device_0,          dev.IsUsb);
 
         if(dev.IsUsb)
         {
-            _logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
-            _logSw.WriteLine("USB product: {0}", dev.UsbProductString);
+            _logSw.WriteLine(Localization.Core.USB_manufacturer_0, dev.UsbManufacturerString);
+            _logSw.WriteLine(Localization.Core.USB_product_0,      dev.UsbProductString);
 
-            if(!@private)
-                _logSw.WriteLine("USB serial: {0}", dev.UsbSerialString);
+            if(!@private) _logSw.WriteLine(Localization.Core.USB_serial_0, dev.UsbSerialString);
 
-            _logSw.WriteLine("USB vendor ID: {0:X4}h", dev.UsbVendorId);
-            _logSw.WriteLine("USB product ID: {0:X4}h", dev.UsbProductId);
+            _logSw.WriteLine(Localization.Core.USB_vendor_ID_0,  dev.UsbVendorId);
+            _logSw.WriteLine(Localization.Core.USB_product_ID_0, dev.UsbProductId);
         }
 
-        _logSw.WriteLine("FireWire device: {0}", dev.IsFireWire);
+        _logSw.WriteLine(Localization.Core.FireWire_device_0, dev.IsFireWire);
 
         if(dev.IsFireWire)
         {
-            _logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
-            _logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
+            _logSw.WriteLine(Localization.Core.FireWire_vendor_0, dev.FireWireVendorName);
+            _logSw.WriteLine(Localization.Core.FireWire_model_0,  dev.FireWireModelName);
 
-            if(!@private)
-                _logSw.WriteLine("FireWire GUID: 0x{0:X16}", dev.FireWireGuid);
+            if(!@private) _logSw.WriteLine(Localization.Core.FireWire_GUID_0, dev.FireWireGuid);
 
-            _logSw.WriteLine("FireWire vendor ID: 0x{0:X8}", dev.FireWireVendor);
-            _logSw.WriteLine("FireWire product ID: 0x{0:X8}", dev.FireWireModel);
+            _logSw.WriteLine(Localization.Core.FireWire_vendor_ID_0,  dev.FireWireVendor);
+            _logSw.WriteLine(Localization.Core.FireWire_product_ID_0, dev.FireWireModel);
         }
 
-        _logSw.WriteLine("######################################################");
+        _logSw.WriteLine(Localization.Core.Log_section_separator);
 
         _logSw.WriteLine();
-        _logSw.WriteLine("################ Dumping progress log ################");
+        _logSw.WriteLine(Localization.Core.Dumping_progress_log);
         _logSw.Flush();
     }
 
@@ -181,8 +187,7 @@ public sealed class DumpLog
     /// <param name="args">Arguments</param>
     public void WriteLine(string format, params object[] args)
     {
-        if(_logSw == null)
-            return;
+        if(_logSw == null) return;
 
         var text = string.Format(format, args);
         _logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
@@ -192,8 +197,8 @@ public sealed class DumpLog
     /// <summary>Finishes and closes the dump log</summary>
     public void Close()
     {
-        _logSw?.WriteLine("######################################################");
-        _logSw?.WriteLine("End logging at {0}", DateTime.Now);
+        _logSw?.WriteLine(Localization.Core.Log_section_separator);
+        _logSw?.WriteLine(Localization.Core.End_logging_on_0, DateTime.Now);
         _logSw?.Close();
     }
 }

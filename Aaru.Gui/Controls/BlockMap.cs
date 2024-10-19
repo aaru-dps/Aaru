@@ -27,14 +27,14 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.Controls;
-
+/* TODO: Doesn't compile with Avalonia 11.0, but it didn't work previously so pending rewriting
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.LogicalTree;
@@ -44,6 +44,8 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using Avalonia.Visuals.Media.Imaging;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui.Controls;
 
 // TODO: Partially fill clusters
 // TODO: React to size changes
@@ -246,16 +248,16 @@ public sealed class BlockMap : ItemsControl
             case NotifyCollectionChangedAction.Add:
             case NotifyCollectionChangedAction.Replace:
             {
-                if(!(e.NewItems is {} items))
-                    throw new ArgumentException("Invalid list of items");
+                if(e.NewItems is not {} items)
+                    throw new ArgumentException(UI.Invalid_list_of_items);
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
                 using var                 ctx  = new DrawingContext(ctxi, false);
 
                 foreach(object item in items)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                    if(item is not ValueTuple<ulong, double> block)
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
@@ -267,25 +269,25 @@ public sealed class BlockMap : ItemsControl
             case NotifyCollectionChangedAction.Remove:
             case NotifyCollectionChangedAction.Move:
             {
-                if(!(e.NewItems is {} newItems) ||
-                   !(e.OldItems is {} oldItems))
-                    throw new ArgumentException("Invalid list of items");
+                if(e.NewItems is not {} newItems ||
+                   e.OldItems is not {} oldItems)
+                    throw new ArgumentException(UI.Invalid_list_of_items);
 
                 using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
                 using var                 ctx  = new DrawingContext(ctxi, false);
 
                 foreach(object item in oldItems)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                    if(item is not ValueTuple<ulong, double> block)
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
 
                 foreach(object item in newItems)
                 {
-                    if(!(item is ValueTuple<ulong, double> block))
-                        throw new ArgumentException("Invalid item in list", nameof(Items));
+                    if(item is not ValueTuple<ulong, double> block)
+                        throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
                     DrawCluster(block.Item1, block.Item2, false, ctx);
                 }
@@ -314,8 +316,8 @@ public sealed class BlockMap : ItemsControl
 
         foreach(object item in Items)
         {
-            if(!(item is ValueTuple<ulong, double> block))
-                throw new ArgumentException("Invalid item in list", nameof(Items));
+            if(item is not ValueTuple<ulong, double> block)
+                throw new ArgumentException(UI.Invalid_item_in_list, nameof(Items));
 
             DrawCluster(block.Item1, block.Item2, false, ctx);
         }
@@ -327,7 +329,7 @@ public sealed class BlockMap : ItemsControl
     {
         if(double.IsNegative(duration) ||
            double.IsInfinity(duration))
-            throw new ArgumentException("Duration cannot be negative or infinite", nameof(duration));
+            throw new ArgumentException(UI.Duration_cannot_be_negative_or_infinite, nameof(duration));
 
         bool  newContext     = ctx is null;
         ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
@@ -384,9 +386,8 @@ public sealed class BlockMap : ItemsControl
     protected override void ItemsChanged([NotNull] AvaloniaPropertyChangedEventArgs e)
     {
         if(e.NewValue != null &&
-           !(e.NewValue is IList<(ulong, double)>))
-            throw new
-                ArgumentException("Items must be a IList<(ulong, double)> with ulong being the block and double being the time spent reading it, or NaN for an error.");
+           e.NewValue is not IList<(ulong, double)>)
+            throw new ArgumentException(UI.Items_must_be_a_IList_ulong_double);
 
         base.ItemsChanged(e);
 
@@ -418,13 +419,13 @@ public sealed class BlockMap : ItemsControl
 
         ulong clustersPerRow = (ulong)Width / BLOCK_SIZE;
 
-        var allBlocksDrawn = false;
+        bool allBlocksDrawn = false;
 
         for(ulong y = 0; y < Height && !allBlocksDrawn; y += BLOCK_SIZE)
         {
             for(ulong x = 0; x < Width; x += BLOCK_SIZE)
             {
-                ulong currentBlockValue = y * clustersPerRow / BLOCK_SIZE + x / BLOCK_SIZE;
+                ulong currentBlockValue = (y * clustersPerRow / BLOCK_SIZE) + (x / BLOCK_SIZE);
 
                 if(currentBlockValue >= _maxBlocks ||
                    currentBlockValue >= Blocks)
@@ -444,21 +445,20 @@ public sealed class BlockMap : ItemsControl
         using IDrawingContextImpl ctxi = _bitmap.CreateDrawingContext(null);
         using var                 ctx  = new DrawingContext(ctxi, false);
 
-        int squareWidth  = (sideLength - 2 * borderWidth) / colors.Length;
-        int squareHeight = squareWidth;
-        var x            = 0;
-        var y            = 0;
+        int squareWidth = (sideLength - (2 * borderWidth)) / colors.Length;
+        int x           = 0;
+        int y           = 0;
 
         foreach(Color color in colors)
         {
-            ctx.FillRectangle(new SolidColorBrush(color), new Rect(x, y, squareWidth, squareHeight));
-            x += squareWidth + 2 * borderWidth;
+            ctx.FillRectangle(new SolidColorBrush(color), new Rect(x, y, squareWidth, squareWidth));
+            x += squareWidth + (2 * borderWidth);
 
-            if(x >= sideLength)
-            {
-                x =  0;
-                y += squareHeight + 2 * borderWidth;
-            }
+            if(x < sideLength)
+                continue;
+
+            x =  0;
+            y += squareWidth + (2 * borderWidth);
         }
     }
 
@@ -487,3 +487,5 @@ public sealed class BlockMap : ItemsControl
         base.OnDetachedFromLogicalTree(e);
     }
 }
+*/
+

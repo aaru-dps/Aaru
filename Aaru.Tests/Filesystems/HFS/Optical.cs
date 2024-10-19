@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.HFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Optical : FilesystemTest
-{
-    public Optical() : base("HFS") {}
+namespace Aaru.Tests.Filesystems.HFS;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS (CD-ROM)");
+[TestFixture]
+public class Optical() : FilesystemTest("hfs")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (CD-ROM)");
     public override IFilesystem Plugin     => new AppleHFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "toast_3.5.7_hfs_from_volume.aif",
@@ -105,5 +103,5 @@ public class Optical : FilesystemTest
             ClusterSize = 12288,
             VolumeName  = "Disk utils"
         }
-    };
+    ];
 }

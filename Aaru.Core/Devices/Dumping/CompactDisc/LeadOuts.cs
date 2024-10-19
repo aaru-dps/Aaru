@@ -27,25 +27,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Devices;
-using Schemas;
+using Humanizer;
+using Humanizer.Bytes;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -75,7 +78,10 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+
+    // TODO: Use it
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    void DumpCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                         IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                         MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
                         bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
@@ -89,62 +95,113 @@ partial class Dump
         byte[]     senseBuf      = null;
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
-        UpdateStatus?.Invoke("Reading lead-outs");
-        _dumpLog.WriteLine("Reading lead-outs");
+        UpdateStatus?.Invoke(Localization.Core.Reading_lead_outs);
+        _dumpLog.WriteLine(Localization.Core.Reading_lead_outs);
 
         InitProgress?.Invoke();
 
         foreach((ulong item1, ulong item2) in leadOutExtents.ToArray())
+        {
             for(ulong i = item1; i <= item2; i++)
             {
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1,
+                                                    i,
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        (uint)i,
+                                        blockSize,
+                                        1,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
-                                        _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read16(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read12)
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, false, _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read12(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read10)
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read10(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -161,9 +218,25 @@ partial class Dump
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
+                            desiredSubchannel,
+                            sub,
+                            i,
+                            _maximumReadable,
+                            subLog,
+                            isrcs,
+                            0xAA,
+                            ref mcn,
+                            tracks,
+                            subchannelExtents,
+                            _fixSubchannelPosition,
+                            outputOptical,
+                            _fixSubchannel,
+                            _fixSubchannelCrc,
+                            _dumpLog,
+                            UpdateStatus,
+                            smallestPregapLbaPerTrack,
+                            true,
+                            out _);
 
                         // Set tracks and go back
                         if(indexesChanged)
@@ -177,43 +250,45 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 }
                 else
                 {
                     _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
                     // Write empty data
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
                         outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
-                        outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                        outputOptical.WriteSectorsTag(new byte[subSize * _skip],
+                                                      i,
+                                                      1,
                                                       SectorTagType.CdSectorSubchannel);
                     }
                     else
                         outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                     ibgLog.Write(i, 0);
                 }
 
+                _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
-                if(!double.IsInfinity(newSpeed))
-                    currentSpeed = newSpeed;
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
 
                 _resume.NextBlock = i + 1;
             }
+        }
 
         EndProgress?.Invoke();
     }
@@ -244,7 +319,10 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+
+    // TODO: Use it
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
+    void RetryCdLeadOuts(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                          IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                          MhddLog mhddLog, ref double minSpeed, bool read6, bool read10, bool read12, bool read16,
                          bool readcd, MmcSubchannel supportedSubchannel, uint subSize, ref double totalDuration,
@@ -263,56 +341,107 @@ partial class Dump
         InitProgress?.Invoke();
 
         foreach((ulong item1, ulong item2) in leadOutExtents.ToArray())
+        {
             for(ulong i = item1; i <= item2; i++)
             {
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    _dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
 
                 double cmdDuration = 0;
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                PulseProgress?.Invoke($"Reading sector {i} at lead-out ({currentSpeed:F3} MiB/sec.)");
+                PulseProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_at_lead_out_1,
+                                                    i,
+                                                    ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()));
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        (uint)i,
+                                        blockSize,
+                                        1,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     totalDuration += cmdDuration;
                 }
                 else if(read16)
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0, 1, false,
-                                        _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read16(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read12)
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, false, _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read12(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        false,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read10)
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        1, _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.Read10(out cmdBuf,
+                                        out senseBuf,
+                                        0,
+                                        false,
+                                        true,
+                                        false,
+                                        false,
+                                        (uint)i,
+                                        blockSize,
+                                        0,
+                                        1,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else if(read6)
                     sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, 1, _dev.Timeout, out cmdDuration);
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration);
+                    mhddLog.Write(i, cmdDuration, _maximumReadable);
                     ibgLog.Write(i, currentSpeed * 1024);
                     extents.Add(i, _maximumReadable, true);
                     leadOutExtents.Remove(i);
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -329,9 +458,25 @@ partial class Dump
                         outputOptical.WriteSectorsLong(data, i, _maximumReadable);
 
                         bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                            desiredSubchannel, sub, i, _maximumReadable, subLog, isrcs, 0xAA, ref mcn, tracks,
-                            subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                            _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true, out _);
+                            desiredSubchannel,
+                            sub,
+                            i,
+                            _maximumReadable,
+                            subLog,
+                            isrcs,
+                            0xAA,
+                            ref mcn,
+                            tracks,
+                            subchannelExtents,
+                            _fixSubchannelPosition,
+                            outputOptical,
+                            _fixSubchannel,
+                            _fixSubchannelCrc,
+                            _dumpLog,
+                            UpdateStatus,
+                            smallestPregapLbaPerTrack,
+                            true,
+                            out _);
 
                         // Set tracks and go back
                         if(indexesChanged)
@@ -345,42 +490,46 @@ partial class Dump
                     else
                         outputOptical.WriteSectors(cmdBuf, i, _maximumReadable);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 }
                 else
                 {
                     _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
                     // Write empty data
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
                         outputOptical.WriteSectorsLong(new byte[sectorSize * _skip], i, 1);
 
                         if(desiredSubchannel != MmcSubchannel.None)
-                            outputOptical.WriteSectorsTag(new byte[subSize * _skip], i, 1,
+                        {
+                            outputOptical.WriteSectorsTag(new byte[subSize * _skip],
+                                                          i,
+                                                          1,
                                                           SectorTagType.CdSectorSubchannel);
+                        }
                     }
                     else
                         outputOptical.WriteSectors(new byte[blockSize * _skip], i, 1);
 
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);
                 }
 
+                _writeStopwatch.Stop();
                 double newSpeed = (double)blockSize * _maximumReadable / 1048576 / (cmdDuration / 1000);
 
-                if(!double.IsInfinity(newSpeed))
-                    currentSpeed = newSpeed;
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
             }
+        }
 
         EndProgress?.Invoke();
     }

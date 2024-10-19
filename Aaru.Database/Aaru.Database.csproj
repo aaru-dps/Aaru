@@ -1,198 +1,101 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <SchemaVersion>2.0</SchemaVersion>
-        <OutputType>Library</OutputType>
-        <RootNamespace>Aaru.Database</RootNamespace>
-        <AssemblyName>Aaru.Database</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru.Database</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>10</LangVersion>
-        <Description>Database models used by the Aaru Data Preservation Suite.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-    </PropertyGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug</OutputPath>
-        <DefineConstants>DEBUG;</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <DebugType>full</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release</OutputPath>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-        </EmbeddedResource>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="EntityFramework" Version="6.4.4"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.2"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="2.0.0-preview1-final"/>
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Include="Context.cs"/>
-        <Compile Include="ContextFactory.cs"/>
-        <Compile Include="Migrations\20181126222301_DeviceReportV2.cs"/>
-        <Compile Include="Migrations\20181126222301_DeviceReportV2.Designer.cs"/>
-        <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.cs"/>
-        <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.Designer.cs"/>
-        <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.cs"/>
-        <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.Designer.cs"/>
-        <Compile Include="Migrations\20181221015906_NameValueStatistics.cs"/>
-        <Compile Include="Migrations\20181221015906_NameValueStatistics.Designer.cs"/>
-        <Compile Include="Migrations\20181221032605_MediaStatistics.cs"/>
-        <Compile Include="Migrations\20181221032605_MediaStatistics.Designer.cs"/>
-        <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.cs"/>
-        <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.Designer.cs"/>
-        <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.cs"/>
-        <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.Designer.cs"/>
-        <Compile Include="Migrations\20181221041242_VersionStatistics.cs"/>
-        <Compile Include="Migrations\20181221041242_VersionStatistics.Designer.cs"/>
-        <Compile Include="Migrations\20181221125353_AddStatsCounters.cs"/>
-        <Compile Include="Migrations\20181221125353_AddStatsCounters.Designer.cs"/>
-        <Compile Include="Migrations\20181223183913_FixUnsignedFields.cs"/>
-        <Compile Include="Migrations\20181223183913_FixUnsignedFields.Designer.cs"/>
-        <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs"/>
-        <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs"/>
-        <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.cs"/>
-        <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.Designer.cs"/>
-        <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.cs"/>
-        <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.Designer.cs"/>
-        <Compile Include="Migrations\20181225002740_AddCdOffsets.cs"/>
-        <Compile Include="Migrations\20181225002740_AddCdOffsets.Designer.cs"/>
-        <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.cs"/>
-        <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.Designer.cs"/>
-        <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.cs"/>
-        <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.Designer.cs"/>
-        <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.cs"/>
-        <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.Designer.cs"/>
-        <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.cs"/>
-        <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.Designer.cs"/>
-        <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.cs"/>
-        <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.Designer.cs"/>
-        <Compile Include="Migrations\20190525183723_IdForDensityCode.cs"/>
-        <Compile Include="Migrations\20190525183723_IdForDensityCode.Designer.cs"/>
-        <Compile Include="Migrations\20191103000828_MakeFieldsUnsigned.cs"/>
-        <Compile Include="Migrations\20191103000828_MakeFieldsUnsigned.Designer.cs"/>
-        <Compile Include="Migrations\20191207175444_SyncWithServerChanges.cs"/>
-        <Compile Include="Migrations\20191207175444_SyncWithServerChanges.Designer.cs"/>
-        <Compile Include="Migrations\20191207183522_AddNameCountModel.cs"/>
-        <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs"/>
-        <Compile Include="Migrations\20191207184342_AddRemoteStats.cs"/>
-        <Compile Include="Migrations\20191207184342_AddRemoteStats.Designer.cs"/>
-        <Compile Include="Migrations\20200710140320_FixIndexes.cs"/>
-        <Compile Include="Migrations\20200710140320_FixIndexes.Designer.cs"/>
-        <Compile Include="Migrations\20200710164101_AddCanReadGdRomUsingSwapDisc.cs"/>
-        <Compile Include="Migrations\20200710164101_AddCanReadGdRomUsingSwapDisc.Designer.cs"/>
-        <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.cs"/>
-        <Compile Include="Migrations\20200710170129_AddGdRomSwapDiscCapabilities.Designer.cs"/>
-        <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.cs"/>
-        <Compile Include="Migrations\20200710192426_MakeCanReadGdRomUsingSwapDiscNullable.Designer.cs"/>
-        <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.cs"/>
-        <Compile Include="Migrations\20200710194507_AddAudioFieldsToGdromReadCapabilities.Designer.cs"/>
-        <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.cs"/>
-        <Compile Include="Migrations\20200711182425_AddFieldsForF1hCommand06hSubcommand.Designer.cs"/>
-        <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.cs"/>
-        <Compile Include="Migrations\20200711230202_FixGdRomCapabilitiesFieldName.Designer.cs"/>
-        <Compile Include="Migrations\20211208214543_AddNesHeaders.cs"/>
-        <Compile Include="Migrations\20211208214543_AddNesHeaders.Designer.cs"/>
-        <Compile Include="Migrations\AaruContextModelSnapshot.cs"/>
-        <Compile Include="Models\BaseModel.cs"/>
-        <Compile Include="Models\BaseOperatingSystem.cs"/>
-        <Compile Include="Models\CdOffset.cs"/>
-        <Compile Include="Models\Command.cs"/>
-        <Compile Include="Models\Device.cs"/>
-        <Compile Include="Models\DeviceStat.cs"/>
-        <Compile Include="Models\Filesystem.cs"/>
-        <Compile Include="Models\Filter.cs"/>
-        <Compile Include="Models\Media.cs"/>
-        <Compile Include="Models\MediaFormat.cs"/>
-        <Compile Include="Models\NameCountModel.cs"/>
-        <Compile Include="Models\NesHeaderInfo.cs"/>
-        <Compile Include="Models\OperatingSystem.cs"/>
-        <Compile Include="Models\Partition.cs"/>
-        <Compile Include="Models\RemoteApplication.cs"/>
-        <Compile Include="Models\RemoteArchitecture.cs"/>
-        <Compile Include="Models\RemoteOperatingSystem.cs"/>
-        <Compile Include="Models\Report.cs"/>
-        <Compile Include="Models\UsbProduct.cs"/>
-        <Compile Include="Models\UsbVendor.cs"/>
-        <Compile Include="Models\Version.cs"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
-    </ItemGroup>
-    <ProjectExtensions>
-        <MonoDevelop>
-            <Properties>
-                <Policies>
-                    <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/"/>
-                    <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp"/>
-                    <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp"/>
-                </Policies>
-            </Properties>
-        </MonoDevelop>
-    </ProjectExtensions>
-    <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
-        <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
-        <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->
-        <!-- Look in the standard install locations -->
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')">/usr/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>
-        <!-- If we found Mono reference assemblies, then use them -->
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net40'">$(BaseFrameworkPathOverrideForMono)/4.0-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net45'">$(BaseFrameworkPathOverrideForMono)/4.5-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net451'">$(BaseFrameworkPathOverrideForMono)/4.5.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net452'">$(BaseFrameworkPathOverrideForMono)/4.5.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net46'">$(BaseFrameworkPathOverrideForMono)/4.6-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net461'">$(BaseFrameworkPathOverrideForMono)/4.6.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net462'">$(BaseFrameworkPathOverrideForMono)/4.6.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net47'">$(BaseFrameworkPathOverrideForMono)/4.7-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net471'">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>
-        <EnableFrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">true</EnableFrameworkPathOverride>
-        <!-- Add the Facades directory.  Not sure how else to do this. Necessary at least for .NET 4.5 -->
-        <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
-    </PropertyGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Database</RootNamespace>
+    <AssemblyName>Aaru.Database</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2024 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Database</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Description>Database models used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="EntityFramework" Version="6.4.4"/>
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="8.0.4"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="2.0.0-preview1-final"/>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+    <PackageReference Include="Text.Analyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+  </ItemGroup>
 </Project>

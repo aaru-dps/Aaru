@@ -27,66 +27,53 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Dumping;
 
 using System;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
+using Aaru.Core.Graphics;
+using Humanizer;
+using Humanizer.Bytes;
+using Humanizer.Localisation;
 using Version = Aaru.CommonTypes.Interop.Version;
+
+namespace Aaru.Core.Devices.Dumping;
 
 public partial class Dump
 {
-    static readonly byte[] _sfcExtension =
-    {
-        0x53, 0x46, 0x43
-    };
-
-    static readonly byte[] _genesisExtension =
-    {
-        0x42, 0x49, 0x4E
-    };
-
-    static readonly byte[] _smsExtension =
-    {
-        0x53, 0x4D, 0x53
-    };
-
-    static readonly byte[] _z64Extension =
-    {
-        0x5A, 0x36, 0x34
-    };
-
-    static readonly byte[] _gbExtension =
-    {
-        0x47, 0x42, 0x20
-    };
-
-    static readonly byte[] _gbcExtension =
-    {
-        0x47, 0x42, 0x43
-    };
-
-    static readonly byte[] _gbaExtension =
-    {
-        0x47, 0x42, 0x41
-    };
+    static readonly byte[] _sfcExtension     = "SFC"u8.ToArray();
+    static readonly byte[] _genesisExtension = "BIN"u8.ToArray();
+    static readonly byte[] _smsExtension     = "SMS"u8.ToArray();
+    static readonly byte[] _z64Extension     = "Z64"u8.ToArray();
+    static readonly byte[] _gbExtension      = "GB "u8.ToArray();
+    static readonly byte[] _gbcExtension     = "GBC"u8.ToArray();
+    static readonly byte[] _gbaExtension     = "GBA"u8.ToArray();
 
     /// <summary>Dumps a game cartridge using a Retrode adapter</summary>
     void Retrode()
     {
-        bool sense = _dev.Read10(out byte[] buffer, out _, 0, false, true, false, false, 0, 512, 0, 1, _dev.Timeout,
+        bool sense = _dev.Read10(out byte[] buffer,
+                                 out _,
+                                 0,
+                                 false,
+                                 true,
+                                 false,
+                                 false,
+                                 0,
+                                 512,
+                                 0,
+                                 1,
+                                 _dev.Timeout,
                                  out _);
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not read...");
-            StoppingErrorMessage?.Invoke("Could not read...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
 
             return;
         }
@@ -98,8 +85,8 @@ public partial class Dump
         // UMDs are stored inside a FAT16 volume
         if(!tmp.SequenceEqual(_fatSignature))
         {
-            _dumpLog.WriteLine("Retrode partition not recognized, not dumping...");
-            StoppingErrorMessage?.Invoke("Retrode partition not recognized, not dumping...");
+            _dumpLog.WriteLine(Localization.Core.Retrode_partition_not_recognized_not_dumping);
+            StoppingErrorMessage?.Invoke(Localization.Core.Retrode_partition_not_recognized_not_dumping);
 
             return;
         }
@@ -110,15 +97,15 @@ public partial class Dump
         var  rootSize          = (ushort)(((buffer[0x12] << 8) + buffer[0x11]) * 32 / 512);
         byte sectorsPerCluster = buffer[0x0D];
 
-        UpdateStatus?.Invoke($"Reading root directory in sector {rootStart}...");
-        _dumpLog.WriteLine("Reading root directory in sector {0}...", rootStart);
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_root_directory_in_sector_0, rootStart));
+        _dumpLog.WriteLine(Localization.Core.Reading_root_directory_in_sector_0, rootStart);
 
         sense = _dev.Read10(out buffer, out _, 0, false, true, false, false, rootStart, 512, 0, 1, _dev.Timeout, out _);
 
         if(sense)
         {
-            StoppingErrorMessage?.Invoke("Could not read...");
-            _dumpLog.WriteLine("Could not read...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
 
             return;
         }
@@ -179,21 +166,17 @@ public partial class Dump
                 break;
             }
 
-            if(tmp.SequenceEqual(_gbaExtension))
-            {
-                gbaFound = true;
+            if(!tmp.SequenceEqual(_gbaExtension)) continue;
 
-                break;
-            }
+            gbaFound = true;
+
+            break;
         }
 
-        if(!sfcFound     &&
-           !genesisFound &&
-           !smsFound     &&
-           !n64Found)
+        if(!sfcFound && !genesisFound && !smsFound && !n64Found && !gbaFound && !gbFound && !gbcFound)
         {
-            StoppingErrorMessage?.Invoke("No cartridge found, not dumping...");
-            _dumpLog.WriteLine("No cartridge found, not dumping...");
+            StoppingErrorMessage?.Invoke(Localization.Core.No_cartridge_found_not_dumping);
+            _dumpLog.WriteLine(Localization.Core.No_cartridge_found_not_dumping);
 
             return;
         }
@@ -220,22 +203,34 @@ public partial class Dump
         double minSpeed      = double.MaxValue;
         byte[] senseBuf;
 
-        if(_outputPlugin is not IByteAddressableImage outputBai ||
-           !outputBai.SupportedMediaTypes.Contains(mediaType))
+        if(_outputPlugin is not IByteAddressableImage outputBai || !outputBai.SupportedMediaTypes.Contains(mediaType))
         {
-            _dumpLog.WriteLine("The specified format does not support the inserted cartridge...");
-            StoppingErrorMessage?.Invoke("The specified format does not support the inserted cartridge...");
+            _dumpLog.WriteLine(Localization.Core.The_specified_format_does_not_support_the_inserted_cartridge);
+
+            StoppingErrorMessage?.Invoke(Localization.Core
+                                                     .The_specified_format_does_not_support_the_inserted_cartridge);
 
             return;
         }
 
-        sense = _dev.Read10(out byte[] readBuffer, out _, 0, false, true, false, false, 0, 512, 0, 1, _dev.Timeout,
+        sense = _dev.Read10(out byte[] readBuffer,
+                            out _,
+                            0,
+                            false,
+                            true,
+                            false,
+                            false,
+                            0,
+                            512,
+                            0,
+                            1,
+                            _dev.Timeout,
                             out _);
 
         if(sense)
         {
-            _dumpLog.WriteLine("Could not read...");
-            StoppingErrorMessage?.Invoke("Could not read...");
+            _dumpLog.WriteLine(Localization.Core.Could_not_read);
+            StoppingErrorMessage?.Invoke(Localization.Core.Could_not_read);
 
             return;
         }
@@ -244,183 +239,243 @@ public partial class Dump
         uint romSectors   = romSize / 512;
         uint romRemaining = romSize % 512;
 
-        if(romSize > 1073741824)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1073741824d:F3} GiB)");
-        else if(romSize > 1048576)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1048576d:F3} MiB)");
-        else if(romSize > 1024)
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes ({romSize / 1024d:F3} KiB)");
-        else
-            UpdateStatus?.Invoke($"Cartridge has {romSize} bytes");
+        switch(romSize)
+        {
+            case > 1073741824:
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Cartridge_has_0_bytes_1_GiB,
+                                                   romSize,
+                                                   romSize / 1073741824d));
 
-        UpdateStatus?.Invoke($"Media identified as {mediaType}.");
-        _dumpLog.WriteLine("Media identified as {0}.", mediaType);
+                break;
+            case > 1048576:
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Cartridge_has_0_bytes_1_MiB,
+                                                   romSize,
+                                                   romSize / 1048576d));
+
+                break;
+            case > 1024:
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Cartridge_has_0_bytes_1_KiB,
+                                                   romSize,
+                                                   romSize / 1024d));
+
+                break;
+            default:
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Cartridge_has_0_bytes, romSize));
+
+                break;
+        }
+
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Media_identified_as_0, mediaType));
+        _dumpLog.WriteLine(Localization.Core.Media_identified_as_0, mediaType);
 
         ErrorNumber ret = outputBai.Create(_outputPath, mediaType, _formatOptions, romSize);
 
         // Cannot create image
         if(ret != ErrorNumber.NoError)
         {
-            _dumpLog.WriteLine("Error {0} creating output image, not continuing.", ret);
+            _dumpLog.WriteLine(Localization.Core.Error_0_creating_output_image_not_continuing, ret);
             _dumpLog.WriteLine(outputBai.ErrorMessage);
 
-            StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+            StoppingErrorMessage?.Invoke(Localization.Core.Error_creating_output_image_not_continuing +
+                                         Environment.NewLine                                          +
                                          outputBai.ErrorMessage);
 
             return;
         }
 
-        DateTime start              = DateTime.UtcNow;
-        double   imageWriteDuration = 0;
+        if(_createGraph) _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, romSectors);
 
-        DateTime timeSpeedStart   = DateTime.UtcNow;
-        ulong    sectorSpeedStart = 0;
+        _dumpStopwatch.Restart();
+        double imageWriteDuration = 0;
+
+        _speedStopwatch.Restart();
+        ulong sectorSpeedStart = 0;
         InitProgress?.Invoke();
 
         for(ulong i = 0; i < romSectors; i += blocksToRead)
         {
             if(_aborted)
             {
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            if(romSectors - i < blocksToRead)
-                blocksToRead = (uint)(romSectors - i);
+            if(romSectors - i < blocksToRead) blocksToRead = (uint)(romSectors - i);
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading byte {i * 512} of {romSize} ({currentSpeed:F3} MiB/sec.)", (long)i * 512,
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2,
+                                                 i * 512,
+                                                 romSize,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i * 512,
                                    romSize);
 
-            sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, (uint)(startSector + i),
-                                512, 0, (ushort)blocksToRead, _dev.Timeout, out double cmdDuration);
+            _speedStopwatch.Start();
 
+            sense = _dev.Read10(out readBuffer,
+                                out senseBuf,
+                                0,
+                                false,
+                                true,
+                                false,
+                                false,
+                                (uint)(startSector + i),
+                                512,
+                                0,
+                                (ushort)blocksToRead,
+                                _dev.Timeout,
+                                out double cmdDuration);
+
+            _speedStopwatch.Stop();
             totalDuration += cmdDuration;
 
-            if(!sense &&
-               !_dev.Error)
+            _writeStopwatch.Restart();
+
+            if(!sense && !_dev.Error)
             {
-                DateTime writeStart = DateTime.Now;
                 outputBai.WriteBytes(readBuffer, 0, readBuffer.Length, out _);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+                _mediaGraph.PaintSectorsGood(i, blocksToRead);
             }
             else
             {
                 _errorLog?.WriteLine(i, _dev.Error, _dev.LastError, senseBuf);
 
                 // TODO: Reset device after X errors
-                if(_stopOnError)
-                    return; // TODO: Return more cleanly
+                if(_stopOnError) return; // TODO: Return more cleanly
 
-                _dumpLog.WriteLine("Skipping {0} bytes from errored byte {1}.", _skip * 512, i * 512);
+                _dumpLog.WriteLine(Localization.Core.Skipping_0_bytes_from_errored_byte_1, _skip * 512, i * 512);
                 i += _skip - blocksToRead;
             }
 
+            _writeStopwatch.Stop();
+
             sectorSpeedStart += blocksToRead;
 
-            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
-                continue;
+            if(elapsed <= 0 || sectorSpeedStart * 512 < 524288) continue;
 
             currentSpeed     = sectorSpeedStart * 512 / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Reset();
         }
 
-        if(romRemaining > 0 &&
-           !_aborted)
+        _speedStopwatch.Stop();
+
+        if(romRemaining > 0 && !_aborted)
         {
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading byte {romSectors * 512} of {romSize} ({currentSpeed:F3} MiB/sec.)",
-                                   (long)romSectors * 512, romSize);
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_byte_0_of_1_2,
+                                                 romSectors * 512,
+                                                 romSize,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)romSectors * 512,
+                                   romSize);
 
-            sense = _dev.Read10(out readBuffer, out senseBuf, 0, false, true, false, false, romSectors, 512, 0, 1,
-                                _dev.Timeout, out double cmdDuration);
+            sense = _dev.Read10(out readBuffer,
+                                out senseBuf,
+                                0,
+                                false,
+                                true,
+                                false,
+                                false,
+                                romSectors,
+                                512,
+                                0,
+                                1,
+                                _dev.Timeout,
+                                out double cmdDuration);
 
             totalDuration += cmdDuration;
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
                 outputBai.WriteBytes(readBuffer, 0, (int)romRemaining, out _);
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+                _writeStopwatch.Stop();
             }
             else
             {
                 _errorLog?.WriteLine(romSectors, _dev.Error, _dev.LastError, senseBuf);
 
                 // TODO: Reset device after X errors
-                if(_stopOnError)
-                    return; // TODO: Return more cleanly
+                if(_stopOnError) return; // TODO: Return more cleanly
 
-                _dumpLog.WriteLine("Skipping {0} bytes from errored byte {1}.", _skip * 512, romSectors * 512);
+                _dumpLog.WriteLine(Localization.Core.Skipping_0_bytes_from_errored_byte_1,
+                                   _skip      * 512,
+                                   romSectors * 512);
             }
         }
 
-        DateTime end = DateTime.UtcNow;
         EndProgress?.Invoke();
 
-        UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        UpdateStatus?.
-            Invoke($"Average dump speed {512 * (double)(romSectors + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
+                                           ByteSize.FromBytes(512 * (romSectors + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
-        UpdateStatus?.
-            Invoke($"Average write speed {512 * (double)(romSectors + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_write_speed_0,
+                                           ByteSize.FromBytes(512 * (romSectors + 1))
+                                                   .Per(imageWriteDuration.Seconds())
+                                                   .Humanize()));
 
-        _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+        _dumpLog.WriteLine(string.Format(Localization.Core.Dump_finished_in_0,
+                                         _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                           512 * (double)(romSectors + 1) / 1024 / (totalDuration / 1000));
+        _dumpLog.WriteLine(string.Format(Localization.Core.Average_dump_speed_0,
+                                         ByteSize.FromBytes(512 * (romSectors + 1))
+                                                 .Per(totalDuration.Milliseconds())
+                                                 .Humanize()));
 
-        _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                           512 * (double)(romSectors + 1) / 1024 / imageWriteDuration);
+        _dumpLog.WriteLine(string.Format(Localization.Core.Average_write_speed_0,
+                                         ByteSize.FromBytes(512 * (romSectors + 1))
+                                                 .Per(imageWriteDuration.Seconds())
+                                                 .Humanize()));
 
-        var metadata = new ImageInfo
+        var metadata = new CommonTypes.Structs.ImageInfo
         {
             Application        = "Aaru",
             ApplicationVersion = Version.GetVersion()
         };
 
-        if(!outputBai.SetMetadata(metadata))
-            ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+        if(!outputBai.SetImageInfo(metadata))
+        {
+            ErrorMessage?.Invoke(Localization.Core.Error_0_setting_metadata +
+                                 Environment.NewLine                        +
                                  outputBai.ErrorMessage);
+        }
 
         // TODO: Set dump hardware
         //outputBAI.SetDumpHardware();
 
-        if(_preSidecar != null)
-            outputBai.SetCicmMetadata(_preSidecar);
+        if(_preSidecar != null) outputBai.SetMetadata(_preSidecar);
 
-        _dumpLog.WriteLine("Closing output file.");
-        UpdateStatus?.Invoke("Closing output file.");
-        DateTime closeStart = DateTime.Now;
+        _dumpLog.WriteLine(Localization.Core.Closing_output_file);
+        UpdateStatus?.Invoke(Localization.Core.Closing_output_file);
+        _imageCloseStopwatch.Restart();
         outputBai.Close();
-        DateTime closeEnd = DateTime.Now;
-        _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
+        _imageCloseStopwatch.Stop();
+
+        _dumpLog.WriteLine(Localization.Core.Closed_in_0,
+                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
         if(_aborted)
         {
-            UpdateStatus?.Invoke("Aborted!");
-            _dumpLog.WriteLine("Aborted!");
+            UpdateStatus?.Invoke(Localization.Core.Aborted);
+            _dumpLog.WriteLine(Localization.Core.Aborted);
 
             return;
         }
@@ -433,17 +488,30 @@ public partial class Dump
         */
         UpdateStatus?.Invoke("");
 
-        UpdateStatus?.
-            Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+        UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                       .Took_a_total_of_0_1_processing_commands_2_checksumming_3_writing_4_closing,
+                                           _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second),
+                                           totalDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           totalChkDuration.Milliseconds().Humanize(minUnit: TimeUnit.Second),
+                                           imageWriteDuration.Seconds().Humanize(minUnit: TimeUnit.Second),
+                                           _imageCloseStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
-        UpdateStatus?.
-            Invoke($"Average speed: {512 * (double)(romSectors + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+        UpdateStatus?.Invoke(string.Format(Localization.Core.Average_speed_0,
+                                           ByteSize.FromBytes(512 * (romSectors + 1))
+                                                   .Per(totalDuration.Milliseconds())
+                                                   .Humanize()));
 
         if(maxSpeed > 0)
-            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+        {
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Fastest_speed_burst_0,
+                                               ByteSize.FromMegabytes(maxSpeed).Per(_oneSecond).Humanize()));
+        }
 
         if(minSpeed is > 0 and < double.MaxValue)
-            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+        {
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Slowest_speed_burst_0,
+                                               ByteSize.FromMegabytes(minSpeed).Per(_oneSecond).Humanize()));
+        }
 
         UpdateStatus?.Invoke("");
 

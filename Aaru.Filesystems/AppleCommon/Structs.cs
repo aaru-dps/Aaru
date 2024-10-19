@@ -7,10 +7,6 @@
 //
 // Component      : Common Apple file systems.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Common Apple file systems structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,21 +23,21 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Filesystems;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 static partial class AppleCommon
 {
+#region Nested type: BootBlock
+
     /// <summary>Should be sectors 0 and 1 in volume, followed by boot code</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BootBlock // Should be sectors 0 and 1 in volume
@@ -93,19 +89,43 @@ static partial class AppleCommon
         public readonly uint bbSysHeapFract;
     }
 
-    internal struct Rect
+#endregion
+
+#region Nested type: DInfo
+
+    internal struct DInfo
     {
-        public ushort top;
-        public ushort left;
-        public ushort bottom;
-        public ushort right;
+        /// <summary>Position and dimensions of the folder's window.</summary>
+        public Rect frRect;
+        /// <summary>Flags.</summary>
+        public FinderFlags frFlags;
+        /// <summary>Folder's location in the parent folder.</summary>
+        public Point frLocation;
+        /// <summary>Finder view selected for folder.</summary>
+        public ushort frView;
     }
 
-    internal struct Point
+#endregion
+
+#region Nested type: DXInfo
+
+    internal struct DXInfo
     {
-        public ushort v;
-        public ushort h;
+        /// <summary>Scroll position for icon views.</summary>
+        public Point frScroll;
+        /// <summary>Directory ID chain of open folders.</summary>
+        public uint frOpenChain;
+        /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
+        public ExtendedFinderFlags frXFlags;
+        /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
+        public ushort frComment;
+        /// <summary>Put away folder ID.</summary>
+        public uint frPutAway;
     }
+
+#endregion
+
+#region Nested type: FInfo
 
     internal struct FInfo
     {
@@ -121,6 +141,10 @@ static partial class AppleCommon
         public FinderFolder fdFldr;
     }
 
+#endregion
+
+#region Nested type: FXInfo
+
     internal struct FXInfo
     {
         /// <summary>Resource fork ID of file icon.</summary>
@@ -135,29 +159,27 @@ static partial class AppleCommon
         public uint fdPutAway;
     }
 
-    internal struct DInfo
+#endregion
+
+#region Nested type: Point
+
+    internal struct Point
     {
-        /// <summary>Position and dimensions of the folder's window.</summary>
-        public Rect frRect;
-        /// <summary>Flags.</summary>
-        public FinderFlags frFlags;
-        /// <summary>Folder's location in the parent folder.</summary>
-        public Point frLocation;
-        /// <summary>Finder view selected for folder.</summary>
-        public ushort frView;
+        public ushort v;
+        public ushort h;
     }
 
-    internal struct DXInfo
+#endregion
+
+#region Nested type: Rect
+
+    internal struct Rect
     {
-        /// <summary>Scroll position for icon views.</summary>
-        public Point frScroll;
-        /// <summary>Directory ID chain of open folders.</summary>
-        public uint frOpenChain;
-        /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
-        public ExtendedFinderFlags frXFlags;
-        /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
-        public ushort frComment;
-        /// <summary>Put away folder ID.</summary>
-        public uint frPutAway;
+        public ushort top;
+        public ushort left;
+        public ushort bottom;
+        public ushort right;
     }
+
+#endregion
 }

@@ -23,26 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.QEMU;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.QEMU;
 
 [TestFixture]
 public class VirtualPC : BlockMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "QEMU", "VirtualPC");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "QEMU", "VirtualPC");
     public override IMediaImage Plugin => new Vhd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "qemu_dynamic_250mb.vhd.lz",
@@ -50,14 +49,14 @@ public class VirtualPC : BlockMediaImageTest
             Sectors    = 512064,
             SectorSize = 512,
             Md5        = "26d2745c1d614207b4bce4ee003c326d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 512064
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -66,14 +65,14 @@ public class VirtualPC : BlockMediaImageTest
             Sectors    = 20536,
             SectorSize = 512,
             Md5        = "adfad4fb019f157e868baa39e7753db7",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 20536
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -82,14 +81,14 @@ public class VirtualPC : BlockMediaImageTest
             Sectors    = 251940,
             SectorSize = 512,
             Md5        = "7126d647c1cefc5a81b4140e10f50269",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 251841
                 }
-            }
+            ]
         }
-    };
+    ];
 }

@@ -27,19 +27,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
 using Aaru.Decoders.ATA;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class AtaInfoViewModel : ViewModelBase
 {
@@ -48,7 +50,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
     readonly Window _view;
 
     public AtaInfoViewModel([CanBeNull] byte[] ataIdentify, byte[] atapiIdentify, AtaErrorRegistersChs? ataMcptError,
-                            Window view)
+                            Window             view)
     {
         SaveAtaBinaryCommand = ReactiveCommand.Create(ExecuteSaveAtaBinaryCommand);
         SaveAtaTextCommand   = ReactiveCommand.Create(ExecuteSaveAtaTextCommand);
@@ -57,9 +59,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
         _atapi = atapiIdentify;
         _view  = view;
 
-        if(ataIdentify   == null &&
-           atapiIdentify == null)
-            return;
+        if(ataIdentify == null && atapiIdentify == null) return;
 
         if(ataIdentify != null)
         {
@@ -69,39 +69,22 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
             if(ataMcptError.HasValue)
             {
-                switch(ataMcptError.Value.DeviceHead & 0x7)
-                {
-                    case 0:
-                        AtaMcptText = "Device reports incorrect media card type";
-
-                        break;
-                    case 1:
-                        AtaMcptText = "Device contains a Secure Digital card";
-
-                        break;
-                    case 2:
-                        AtaMcptText = "Device contains a MultiMediaCard ";
-
-                        break;
-                    case 3:
-                        AtaMcptText = "Device contains a Secure Digital I/O card";
-
-                        break;
-                    case 4:
-                        AtaMcptText = "Device contains a Smart Media card";
-
-                        break;
-                    default:
-                        AtaMcptText = $"Device contains unknown media card type {ataMcptError.Value.DeviceHead & 0x07}";
-
-                        break;
-                }
+                AtaMcptText = (ataMcptError.Value.DeviceHead & 0x7) switch
+                              {
+                                  0 => Localization.Core.Device_reports_incorrect_media_card_type,
+                                  1 => Localization.Core.Device_contains_SD_card,
+                                  2 => Localization.Core.Device_contains_MMC,
+                                  3 => Localization.Core.Device_contains_SDIO_card,
+                                  4 => Localization.Core.Device_contains_SM_card,
+                                  _ => string.Format(Localization.Core.Device_contains_unknown_media_card_type_0,
+                                                     ataMcptError.Value.DeviceHead & 0x07)
+                              };
 
                 AtaMcptWriteProtectionChecked = (ataMcptError.Value.DeviceHead & 0x08) == 0x08;
 
                 var specificData = (ushort)(ataMcptError.Value.CylinderHigh * 0x100 + ataMcptError.Value.CylinderLow);
 
-                AtaMcptSpecificDataText = $"Card specific data: 0x{specificData:X4}";
+                AtaMcptSpecificDataText = string.Format(Localization.Core.Card_specific_data_0, specificData);
             }
 
             AtaIdentifyText = Identify.Prettify(_ata);
@@ -124,55 +107,47 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
     public string AtaOrAtapiText { get; }
 
+    public string AtaMcptLabel                => Localization.Core.Device_supports_MCPT_Command_Set;
+    public string AtaMcptWriteProtectionLabel => Localization.Core.Media_card_is_write_protected;
+    public string SaveAtaBinaryLabel          => UI.ButtonLabel_Save_binary_to_file;
+    public string SaveAtaTextLabel            => UI.ButtonLabel_Save_text_to_file;
+
     async Task ExecuteSaveAtaBinaryCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
 
         if(_ata != null)
-            saveFs.Write(_ata, 0, _ata.Length);
-        else if(_atapi != null)
-            saveFs.Write(_atapi, 0, _atapi.Length);
+            saveFs.Write(_ata,                       0, _ata.Length);
+        else if(_atapi != null) saveFs.Write(_atapi, 0, _atapi.Length);
 
         saveFs.Close();
     }
 
     async Task ExecuteSaveAtaTextCommand()
     {
-        var dlgSaveText = new SaveFileDialog();
-
-        dlgSaveText.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.txt"
-            }),
-            Name = "Text"
+                FilePickerFileTypes.PlainText
+            }
         });
 
-        string result = await dlgSaveText.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
-        saveSw.Write(AtaIdentifyText);
+        await saveSw.WriteAsync(AtaIdentifyText);
         saveFs.Close();
     }
 }

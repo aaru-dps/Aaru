@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple extensions structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,58 +23,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
-    // Little-endian
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AppleProDOSSystemUse
-    {
-        public readonly ushort  signature;
-        public readonly byte    length;
-        public readonly AppleId id;
-        public readonly byte    type;
-        public readonly ushort  aux_type;
-    }
-
-    // Big-endian
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AppleHFSSystemUse
-    {
-        public readonly ushort                  signature;
-        public readonly byte                    length;
-        public readonly AppleId                 id;
-        public readonly uint                    type;
-        public readonly uint                    creator;
-        public readonly AppleCommon.FinderFlags finder_flags;
-    }
-
-    // Little-endian
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AppleProDOSOldSystemUse
-    {
-        public readonly ushort     signature;
-        public readonly AppleOldId id;
-        public readonly byte       type;
-        public readonly ushort     aux_type;
-    }
-
-    // Big-endian
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct AppleHFSTypeCreatorSystemUse
-    {
-        public readonly ushort     signature;
-        public readonly AppleOldId id;
-        public readonly uint       type;
-        public readonly uint       creator;
-    }
+#region Nested type: AppleHFSIconSystemUse
 
     // Big-endian
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -92,6 +47,10 @@ public sealed partial class ISO9660
         public readonly byte[] icon;
     }
 
+#endregion
+
+#region Nested type: AppleHFSOldSystemUse
+
     // Big-endian
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AppleHFSOldSystemUse
@@ -102,4 +61,65 @@ public sealed partial class ISO9660
         public readonly uint       creator;
         public readonly ushort     finder_flags;
     }
+
+#endregion
+
+#region Nested type: AppleHFSSystemUse
+
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSSystemUse
+    {
+        public readonly ushort                  signature;
+        public readonly byte                    length;
+        public readonly AppleId                 id;
+        public readonly uint                    type;
+        public readonly uint                    creator;
+        public readonly AppleCommon.FinderFlags finder_flags;
+    }
+
+#endregion
+
+#region Nested type: AppleHFSTypeCreatorSystemUse
+
+    // Big-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleHFSTypeCreatorSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly uint       type;
+        public readonly uint       creator;
+    }
+
+#endregion
+
+#region Nested type: AppleProDOSOldSystemUse
+
+    // Little-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleProDOSOldSystemUse
+    {
+        public readonly ushort     signature;
+        public readonly AppleOldId id;
+        public readonly byte       type;
+        public readonly ushort     aux_type;
+    }
+
+#endregion
+
+#region Nested type: AppleProDOSSystemUse
+
+    // Little-endian
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct AppleProDOSSystemUse
+    {
+        public readonly ushort  signature;
+        public readonly byte    length;
+        public readonly AppleId id;
+        public readonly byte    type;
+        public readonly ushort  aux_type;
+    }
+
+#endregion
 }

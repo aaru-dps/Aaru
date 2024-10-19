@@ -28,39 +28,58 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:models="clr-namespace:Aaru.Gui.Models;assembly=Aaru.Gui"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.MainWindow" Icon="/Assets/aaru-logo.png" Title="Aaru.Gui">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.MainWindow"
+        Icon="/Assets/aaru-logo.png"
+        Title="Aaru.Gui">
     <Design.DataContext>
         <windows:MainWindowViewModel />
     </Design.DataContext>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Open" Command="{Binding OpenCommand}" /> <Separator />
-                <MenuItem Header="_Settings" IsVisible="{Binding !NativeMenuSupported}"
+            <MenuItem Header="{Binding FileLabel}">
+                <MenuItem Header="{Binding OpenLabel}"
+                          Command="{Binding OpenCommand}" />
+                <Separator />
+                <MenuItem Header="{Binding SettingsLabel}"
+                          IsVisible="{Binding !NativeMenuSupported}"
                           Command="{Binding SettingsCommand}" />
                 <Separator />
-                <MenuItem Header="E_xit" IsVisible="{Binding !NativeMenuSupported}" Command="{Binding ExitCommand}" />
+                <MenuItem Header="{Binding ExitLabel}"
+                          IsVisible="{Binding !NativeMenuSupported}"
+                          Command="{Binding ExitCommand}" />
             </MenuItem>
-            <MenuItem Header="_Devices" IsVisible="{Binding DevicesSupported}">
-                <MenuItem Header="_Refresh" Command="{Binding RefreshDevicesCommand}" />
+            <MenuItem Header="{Binding DevicesLabel}"
+                      IsVisible="{Binding DevicesSupported}">
+                <MenuItem Header="{Binding RefreshDevicesLabel}"
+                          Command="{Binding RefreshDevicesCommand}" />
             </MenuItem>
-            <MenuItem Header="_Window">
-                <MenuItem Header="_Console" Command="{Binding ConsoleCommand}" />
+            <MenuItem Header="{Binding WindowLabel}">
+                <MenuItem Header="{Binding ConsoleLabel}"
+                          Command="{Binding ConsoleCommand}" />
             </MenuItem>
-            <MenuItem Header="_Help">
-                <MenuItem Header="_Encodings" Command="{Binding EncodingsCommand}" />
-                <MenuItem Header="_Plugins" Command="{Binding PluginsCommand}" />
-                <MenuItem Header="_Statistics" Command="{Binding StatisticsCommand}" />
+            <MenuItem Header="{Binding HelpLabel}">
+                <MenuItem Header="{Binding EncodingsLabel}"
+                          Command="{Binding EncodingsCommand}" />
+                <MenuItem Header="{Binding PluginsLabel}"
+                          Command="{Binding PluginsCommand}" />
+                <MenuItem Header="{Binding StatisticsLabel}"
+                          Command="{Binding StatisticsCommand}" />
                 <Separator IsVisible="{Binding !NativeMenuSupported}" />
-                <MenuItem Header="_About" Name="AboutMenuItem" IsVisible="{Binding !NativeMenuSupported}"
+                <MenuItem Header="{Binding AboutLabel}"
+                          Name="AboutMenuItem"
+                          IsVisible="{Binding !NativeMenuSupported}"
                           Command="{Binding AboutCommand}" />
             </MenuItem>
         </Menu>
@@ -68,27 +87,36 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" /><ColumnDefinition Width="5" /><ColumnDefinition Width="6*" />
             </Grid.ColumnDefinitions>
-            <TreeView Items="{Binding TreeRoot}" SelectedItem="{Binding TreeViewSelectedItem}">
+            <TreeView ItemsSource="{Binding TreeRoot}"
+                      SelectedItem="{Binding TreeViewSelectedItem}">
                 <TreeView.DataTemplates>
-                    <TreeDataTemplate DataType="models:DevicesRootModel" ItemsSource="{Binding Devices}">
+                    <TreeDataTemplate DataType="models:DevicesRootModel"
+                                      ItemsSource="{Binding Devices}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="_Refresh devices" Command="{Binding RefreshDevicesCommand}" />
+                                    <MenuItem Header="{Binding RefreshDevicesFullLabel}"
+                                              Command="{Binding RefreshDevicesCommand}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
-                            <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/computer.png" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="/Assets/Icons/oxygen/32x32/computer.png" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:ImagesRootModel" ItemsSource="{Binding Images}">
+                    <TreeDataTemplate DataType="models:ImagesRootModel"
+                                      ItemsSource="{Binding Images}">
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="_Close all images" Command="{Binding CloseAllImages}" />
+                                    <MenuItem Header="{Binding CloseAllImagesLabel}"
+                                              Command="{Binding CloseAllImages}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
-                            <Image Width="24" Height="24" Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="/Assets/Icons/oxygen/32x32/inode-directory.png" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
@@ -97,62 +125,91 @@
                         <StackPanel Orientation="Horizontal">
                             <StackPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Command="{Binding CalculateEntropyCommand}" Header="Calculate entropy" />
-                                    <MenuItem Command="{Binding VerifyImageCommand}" Header="Verify" />
-                                    <MenuItem Command="{Binding ChecksumImageCommand}" Header="Checksum" />
-                                    <MenuItem Command="{Binding ConvertImageCommand}" Header="Convert to..." />
+                                    <MenuItem Command="{Binding CalculateEntropyCommand}"
+                                              Header="{Binding CalculateEntropyLabel}" />
+                                    <MenuItem Command="{Binding VerifyImageCommand}"
+                                              Header="{Binding VerifyImageLabel}" />
+                                    <MenuItem Command="{Binding ChecksumImageCommand}"
+                                              Header="{Binding ChecksumImageLabel}" />
+                                    <MenuItem Command="{Binding ConvertImageCommand}"
+                                              Header="{Binding ConvertImageLabel}" />
                                     <MenuItem Command="{Binding CreateSidecarCommand}"
-                                              Header="Create CICM XML sidecar..." />
-                                    <MenuItem Command="{Binding ViewImageSectorsCommand}" Header="View sectors" />
+                                              Header="{Binding CreateSidecarLabel}" />
+                                    <MenuItem Command="{Binding ViewImageSectorsCommand}"
+                                              Header="{Binding ViewImageSectorsLabel}" />
                                     <MenuItem Command="{Binding DecodeImageMediaTagsCommand}"
-                                              Header="Decode media tags" />
+                                              Header="{Binding DecodeImageMediaTagsLabel}" />
                                 </ContextMenu>
                             </StackPanel.ContextMenu>
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding FileName}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:PartitionSchemeModel" ItemsSource="{Binding Partitions}">
+                    <TreeDataTemplate DataType="models:PartitionSchemeModel"
+                                      ItemsSource="{Binding Partitions}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:PartitionModel" ItemsSource="{Binding FileSystems}">
+                    <TreeDataTemplate DataType="models:PartitionModel"
+                                      ItemsSource="{Binding FileSystems}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:FileSystemModel" ItemsSource="{Binding Roots}">
+                    <TreeDataTemplate DataType="models:FileSystemModel"
+                                      ItemsSource="{Binding Roots}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding VolumeName}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:SubdirectoryModel" ItemsSource="{Binding Subdirectories}">
+                    <TreeDataTemplate DataType="models:SubdirectoryModel"
+                                      ItemsSource="{Binding Subdirectories}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
-                    <TreeDataTemplate DataType="models:DeviceModel" ItemsSource="{Binding Media}">
+                    <TreeDataTemplate DataType="models:DeviceModel"
+                                      ItemsSource="{Binding Media}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
                     <TreeDataTemplate DataType="models:MediaModel">
                         <StackPanel Orientation="Horizontal">
-                            <Image Width="24" Height="24" Source="{Binding Icon}" />
+                            <Image Width="24"
+                                   Height="24"
+                                   Source="{Binding Icon}" />
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </TreeDataTemplate>
                 </TreeView.DataTemplates>
             </TreeView>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-            <ContentControl Grid.Column="2" Content="{Binding ContentPanel}" HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch"
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Stretch" />
+            <ContentControl Grid.Column="2"
+                            Content="{Binding ContentPanel}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             VerticalContentAlignment="Stretch" />
         </Grid>
     </DockPanel>

@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -38,12 +36,17 @@ using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.DVD;
+
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing raw (sector by sector) images</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public sealed partial class ZZZRawImage : IWritableOpticalImage
 {
+    const    string                  MODULE_NAME = "ZZZRawImage Plugin";
+    readonly Sector                  _decoding   = new();
     string                           _basePath;
     bool                             _differentTrackZeroSize;
     string                           _extension;
@@ -52,14 +55,16 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     Dictionary<MediaTagType, byte[]> _mediaTags;
     bool                             _mode2;
     bool                             _rawCompactDisc;
+    bool                             _rawDvd;
     IFilter                          _rawImageFilter;
+    bool                             _toastXa;
     FileStream                       _writingStream;
 
     /// <summary>Implements reading and writing raw (sector by sector) images</summary>
     public ZZZRawImage() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

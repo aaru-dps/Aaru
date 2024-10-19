@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Media;
 
 using System;
 using System.Collections.Generic;
@@ -40,6 +38,8 @@ using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Core.Media;
 
 /// <summary>Operations over CD based media</summary>
 public static class CompactDisc
@@ -64,6 +64,10 @@ public static class CompactDisc
     /// <param name="updateStatus">Status update callback</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest known pregap per track</param>
     /// <param name="dumping">Set if we are dumping, otherwise converting</param>
+    /// <param name="newPregapSectors">
+    ///     Gets a list of the new sectors that should be considered part of a pregap, and then
+    ///     re-read
+    /// </param>
     /// <returns><c>true</c> if indexes have changed, <c>false</c> otherwise</returns>
     public static bool WriteSubchannelToImage(MmcSubchannel supportedSubchannel, MmcSubchannel desiredSubchannel,
                                               byte[] sub, ulong sectorAddress, uint length, SubchannelLog subLog,
@@ -76,25 +80,29 @@ public static class CompactDisc
                                               out List<ulong> newPregapSectors)
     {
         // We need to work in PW raw subchannels
-        if(supportedSubchannel == MmcSubchannel.Q16)
-            sub = Subchannel.ConvertQToRaw(sub);
+        if(supportedSubchannel == MmcSubchannel.Q16) sub = Subchannel.ConvertQToRaw(sub);
 
         // If not desired to fix, or to save, the subchannel, just save as is (or none)
-        if(!fixSubchannelPosition &&
-           desiredSubchannel != MmcSubchannel.None)
+        if(!fixSubchannelPosition && desiredSubchannel != MmcSubchannel.None)
             outputPlugin.WriteSectorsTag(sub, sectorAddress, length, SectorTagType.CdSectorSubchannel);
 
         subLog?.WriteEntry(sub, supportedSubchannel == MmcSubchannel.Raw, (long)sectorAddress, length, false, false);
 
         byte[] deSub = Subchannel.Deinterleave(sub);
 
-        bool indexesChanged = CheckIndexesFromSubchannel(deSub, isrcs, currentTrack, ref mcn, tracks, dumpLog,
-                                                         updateStatus, smallestPregapLbaPerTrack, dumping,
-                                                         out newPregapSectors, sectorAddress);
+        bool indexesChanged = CheckIndexesFromSubchannel(deSub,
+                                                         isrcs,
+                                                         currentTrack,
+                                                         ref mcn,
+                                                         tracks,
+                                                         dumpLog,
+                                                         updateStatus,
+                                                         smallestPregapLbaPerTrack,
+                                                         dumping,
+                                                         out newPregapSectors,
+                                                         sectorAddress);
 
-        if(!fixSubchannelPosition ||
-           desiredSubchannel == MmcSubchannel.None)
-            return indexesChanged;
+        if(!fixSubchannelPosition || desiredSubchannel == MmcSubchannel.None) return indexesChanged;
 
         int prePos = int.MinValue;
 
@@ -111,7 +119,7 @@ public static class CompactDisc
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
             // Check Q CRC
-            CRC16CCITTContext.Data(q, 10, out byte[] crc);
+            CRC16CcittContext.Data(q, 10, out byte[] crc);
             bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
             // Start considering P to be OK
@@ -121,12 +129,10 @@ public static class CompactDisc
             // Check P and weight
             for(int p = subPos; p < subPos + 12; p++)
             {
-                if(deSub[p] != 0 &&
-                   deSub[p] != 255)
-                    pOk = false;
+                if(deSub[p] != 0 && deSub[p] != 255) pOk = false;
 
                 for(var w = 0; w < 8; w++)
-                    if(((deSub[p] >> w) & 1) > 0)
+                    if((deSub[p] >> w & 1) > 0)
                         pWeight++;
             }
 
@@ -162,11 +168,9 @@ public static class CompactDisc
                 DetectRwPackets(sectorSub, out _, out rwPacket, out cdtextPacket);
 
                 // TODO: CD+G reed solomon
-                if(rwPacket && !cdtextPacket)
-                    rwOk = true;
+                if(rwPacket && !cdtextPacket) rwOk = true;
 
-                if(cdtextPacket)
-                    rwOk = CheckCdTextPackets(sectorSub);
+                if(cdtextPacket) rwOk = CheckCdTextPackets(sectorSub);
             }
 
             // Fix P
@@ -186,13 +190,9 @@ public static class CompactDisc
             }
 
             // RW is not a known pattern or packet, fix it
-            if(!rwOk         &&
-               !rwPacket     &&
-               !cdtextPacket &&
-               fixSubchannel)
+            if(!rwOk && !rwPacket && !cdtextPacket && fixSubchannel)
             {
-                for(int rw = subPos + 24; rw < subPos + 96; rw++)
-                    deSub[rw] = 0;
+                for(int rw = subPos + 24; rw < subPos + 96; rw++) deSub[rw] = 0;
 
                 rwOk   = true;
                 @fixed = true;
@@ -200,20 +200,28 @@ public static class CompactDisc
                 subLog.WriteRwFix(lba);
             }
 
-            byte smin, ssec, amin, asec, aframe;
-            int  aPos;
+            int aPos;
 
             // Fix Q
-            if(!crcOk        &&
-               fixSubchannel &&
-               subPos > 0    &&
-               subPos < deSub.Length - 96)
+            if(!crcOk && fixSubchannel && subPos > 0 && subPos < deSub.Length - 96)
             {
                 isrcs.TryGetValue(currentTrack, out string knownGoodIsrc);
 
-                crcOk = FixQSubchannel(deSub, q, subPos, mcn, knownGoodIsrc, fixSubchannelCrc, out bool fixedAdr,
-                                       out bool controlFix, out bool fixedZero, out bool fixedTno, out bool fixedIndex,
-                                       out bool fixedRelPos, out bool fixedAbsPos, out bool fixedCrc, out bool fixedMcn,
+                crcOk = FixQSubchannel(deSub,
+                                       q,
+                                       subPos,
+                                       mcn,
+                                       knownGoodIsrc,
+                                       fixSubchannelCrc,
+                                       out bool fixedAdr,
+                                       out bool controlFix,
+                                       out bool fixedZero,
+                                       out bool fixedTno,
+                                       out bool fixedIndex,
+                                       out bool fixedRelPos,
+                                       out bool fixedAbsPos,
+                                       out bool fixedCrc,
+                                       out bool fixedMcn,
                                        out bool fixedIsrc);
 
                 if(crcOk)
@@ -221,68 +229,53 @@ public static class CompactDisc
                     Array.Copy(q, 0, deSub, subPos + 12, 12);
                     @fixed = true;
 
-                    if(fixedAdr)
-                        subLog?.WriteQAdrFix(lba);
+                    if(fixedAdr) subLog?.WriteQAdrFix(lba);
 
-                    if(controlFix)
-                        subLog?.WriteQCtrlFix(lba);
+                    if(controlFix) subLog?.WriteQCtrlFix(lba);
 
-                    if(fixedZero)
-                        subLog?.WriteQZeroFix(lba);
+                    if(fixedZero) subLog?.WriteQZeroFix(lba);
 
-                    if(fixedTno)
-                        subLog?.WriteQTnoFix(lba);
+                    if(fixedTno) subLog?.WriteQTnoFix(lba);
 
-                    if(fixedIndex)
-                        subLog?.WriteQIndexFix(lba);
+                    if(fixedIndex) subLog?.WriteQIndexFix(lba);
 
-                    if(fixedRelPos)
-                        subLog?.WriteQRelPosFix(lba);
+                    if(fixedRelPos) subLog?.WriteQRelPosFix(lba);
 
-                    if(fixedAbsPos)
-                        subLog?.WriteQAbsPosFix(lba);
+                    if(fixedAbsPos) subLog?.WriteQAbsPosFix(lba);
 
-                    if(fixedCrc)
-                        subLog?.WriteQCrcFix(lba);
+                    if(fixedCrc) subLog?.WriteQCrcFix(lba);
 
-                    if(fixedMcn)
-                        subLog?.WriteQMcnFix(lba);
+                    if(fixedMcn) subLog?.WriteQMcnFix(lba);
 
-                    if(fixedIsrc)
-                        subLog?.WriteQIsrcFix(lba);
+                    if(fixedIsrc) subLog?.WriteQIsrcFix(lba);
                 }
             }
 
-            if(!pOk   ||
-               !crcOk ||
-               !rwOk)
-                continue;
+            if(!pOk || !crcOk || !rwOk) continue;
 
-            aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
+            var aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
 
             if((q[0] & 0x3) == 1)
             {
-                amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+                var amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
+                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
                 aPos = amin * 60 * 75 + asec * 75 + aframe - 150;
             }
             else
             {
                 ulong expectedSectorAddress = sectorAddress + (ulong)(subPos / 96) + 150;
-                smin                  =  (byte)(expectedSectorAddress / 60 / 75);
-                expectedSectorAddress -= (ulong)(smin                 * 60 * 75);
-                ssec                  =  (byte)(expectedSectorAddress / 75);
+                var   smin                  = (byte)(expectedSectorAddress / 60 / 75);
+                expectedSectorAddress -= (ulong)(smin * 60 * 75);
+                var ssec = (byte)(expectedSectorAddress / 75);
 
                 aPos = smin * 60 * 75 + ssec * 75 + aframe - 150;
 
                 // Next second
-                if(aPos < prePos)
-                    aPos += 75;
+                if(aPos < prePos) aPos += 75;
             }
 
             // TODO: Negative sectors
-            if(aPos < 0)
-                continue;
+            if(aPos < 0) continue;
 
             prePos = aPos;
 
@@ -293,8 +286,7 @@ public static class CompactDisc
 
             subchannelExtents.Remove(aPos);
 
-            if(@fixed)
-                subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1, false, true);
+            if(@fixed) subLog?.WriteEntry(posSub, supportedSubchannel == MmcSubchannel.Raw, lba, 1, false, true);
         }
 
         return indexesChanged;
@@ -310,6 +302,11 @@ public static class CompactDisc
     /// <param name="updateStatus">Status update callback</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest known pregap per track</param>
     /// <param name="dumping">Set if we are dumping, otherwise converting</param>
+    /// <param name="newPregapSectors">
+    ///     Gets a list of the new sectors that should be considered part of a pregap, and then
+    ///     re-read
+    /// </param>
+    /// <param name="sectorAddress">Sector address the subchannel was read from</param>
     /// <returns><c>true</c> if indexes have changed, <c>false</c> otherwise</returns>
     static bool CheckIndexesFromSubchannel(byte[] deSub, Dictionary<byte, string> isrcs, byte currentTrackNumber,
                                            ref string mcn, Track[] tracks, DumpLog dumpLog,
@@ -318,7 +315,7 @@ public static class CompactDisc
                                            out List<ulong> newPregapSectors, ulong sectorAddress)
     {
         var status = false;
-        newPregapSectors = new List<ulong>();
+        newPregapSectors = [];
 
         // Check subchannel
         for(var subPos = 0; subPos < deSub.Length; subPos += 96)
@@ -326,7 +323,7 @@ public static class CompactDisc
             var q = new byte[12];
             Array.Copy(deSub, subPos + 12, q, 0, 12);
 
-            CRC16CCITTContext.Data(q, 10, out byte[] crc);
+            CRC16CcittContext.Data(q, 10, out byte[] crc);
             bool crcOk = crc[0] == q[10] && crc[1] == q[11];
 
             switch(q[0] & 0x3)
@@ -336,16 +333,19 @@ public static class CompactDisc
                 {
                     string isrc = Subchannel.DecodeIsrc(q);
 
-                    if(isrc is null or "000000000000")
-                        continue;
+                    if(isrc is null or "000000000000") continue;
 
-                    if(!crcOk)
-                        continue;
+                    if(!crcOk) continue;
 
                     if(!isrcs.ContainsKey(currentTrackNumber))
                     {
-                        dumpLog?.WriteLine($"Found new ISRC {isrc} for track {currentTrackNumber}.");
-                        updateStatus?.Invoke($"Found new ISRC {isrc} for track {currentTrackNumber}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1,
+                                                         isrc,
+                                                         currentTrackNumber));
+
+                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_ISRC_0_for_track_1,
+                                                           isrc,
+                                                           currentTrackNumber));
 
                         isrcs[currentTrackNumber] = isrc;
                     }
@@ -356,11 +356,15 @@ public static class CompactDisc
 
                         if(currentTrack?.Sequence == currentTrackNumber)
                         {
-                            dumpLog?.
-                                WriteLine($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+                            dumpLog?.WriteLine(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
+                                                             currentTrackNumber,
+                                                             isrcs[currentTrackNumber],
+                                                             isrc));
 
-                            updateStatus?.
-                                Invoke($"ISRC for track {currentTrackNumber} changed from {isrcs[currentTrackNumber]} to {isrc}.");
+                            updateStatus?.Invoke(string.Format(Localization.Core.ISRC_for_track_0_changed_from_1_to_2,
+                                                               currentTrackNumber,
+                                                               isrcs[currentTrackNumber],
+                                                               isrc));
 
                             isrcs[currentTrackNumber] = isrc;
                         }
@@ -374,21 +378,19 @@ public static class CompactDisc
                 {
                     string newMcn = Subchannel.DecodeMcn(q);
 
-                    if(newMcn is null or "0000000000000")
-                        continue;
+                    if(newMcn is null or "0000000000000") continue;
 
-                    if(!crcOk)
-                        continue;
+                    if(!crcOk) continue;
 
                     if(mcn is null)
                     {
-                        dumpLog?.WriteLine($"Found new MCN {newMcn}.");
-                        updateStatus?.Invoke($"Found new MCN {newMcn}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Found_new_MCN_0,   newMcn));
+                        updateStatus?.Invoke(string.Format(Localization.Core.Found_new_MCN_0, newMcn));
                     }
                     else if(mcn != newMcn)
                     {
-                        dumpLog?.WriteLine($"MCN changed from {mcn} to {newMcn}.");
-                        updateStatus?.Invoke($"MCN changed from {mcn} to {newMcn}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.MCN_changed_from_0_to_1,   mcn, newMcn));
+                        updateStatus?.Invoke(string.Format(Localization.Core.MCN_changed_from_0_to_1, mcn, newMcn));
                     }
 
                     mcn = newMcn;
@@ -397,19 +399,18 @@ public static class CompactDisc
                 }
 
                 // Positioning
-                case 1 when !crcOk: continue;
+                case 1 when !crcOk:
+                    continue;
                 case 1:
                 {
                     var trackNo = (byte)(q[1] / 16 * 10 + (q[1] & 0x0F));
 
                     for(var i = 0; i < tracks.Length; i++)
                     {
-                        if(tracks[i].Sequence != trackNo)
-                            continue;
+                        if(tracks[i].Sequence != trackNo) continue;
 
                         // Pregap
-                        if(q[2]    == 0 &&
-                           trackNo > 1)
+                        if(q[2] == 0 && trackNo > 1)
                         {
                             var pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
                             var psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
@@ -418,15 +419,12 @@ public static class CompactDisc
 
                             // When we are dumping we calculate the pregap in reverse from index 1 back.
                             // When we are not, we go from index 0.
-                            if(!smallestPregapLbaPerTrack.ContainsKey(trackNo))
-                                smallestPregapLbaPerTrack[trackNo] = dumping ? 1 : 0;
+                            smallestPregapLbaPerTrack.TryAdd(trackNo, dumping ? 1 : 0);
 
-                            uint firstTrackNumberInSameSession = tracks.
-                                                                 Where(t => t.Session == tracks[i].Session).
-                                                                 Min(t => t.Sequence);
+                            uint firstTrackNumberInSameSession =
+                                tracks.Where(t => t.Session == tracks[i].Session).Min(t => t.Sequence);
 
-                            if(tracks[i].Sequence == firstTrackNumberInSameSession)
-                                continue;
+                            if(tracks[i].Sequence == firstTrackNumberInSameSession) continue;
 
                             if(qPos < smallestPregapLbaPerTrack[trackNo])
                             {
@@ -435,35 +433,40 @@ public static class CompactDisc
                                 tracks[i].StartSector              -= (ulong)dif;
                                 smallestPregapLbaPerTrack[trackNo] =  qPos;
 
-                                if(i                       > 0 &&
-                                   tracks[i - 1].EndSector >= tracks[i].StartSector)
-                                    tracks[i - 1].EndSector = tracks[i].StartSector - 1;
+                                if(i > 0 && tracks[i - 1].EndSector >= tracks[i].StartSector)
+                                    tracks[i         - 1].EndSector = tracks[i].StartSector - 1;
 
-                                dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                                dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                                 trackNo,
+                                                                 tracks[i].Pregap));
 
-                                updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                                updateStatus?.Invoke(string.Format(Localization.Core
+                                                                      .Pregap_for_track_0_set_to_1_sectors,
+                                                                   trackNo,
+                                                                   tracks[i].Pregap));
 
-                                for(var p = 0; p < dif; p++)
-                                    newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
+                                for(var p = 0; p < dif; p++) newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
 
                                 status = true;
                             }
 
-                            if(tracks[i].Pregap >= (ulong)qPos)
-                                continue;
+                            if(tracks[i].Pregap >= (ulong)qPos) continue;
 
                             ulong oldPregap = tracks[i].Pregap;
 
                             tracks[i].Pregap      =  (ulong)qPos;
                             tracks[i].StartSector -= tracks[i].Pregap - oldPregap;
 
-                            if(i                       > 0 &&
-                               tracks[i - 1].EndSector >= tracks[i].StartSector)
-                                tracks[i - 1].EndSector = tracks[i].StartSector - 1;
+                            if(i > 0 && tracks[i - 1].EndSector >= tracks[i].StartSector)
+                                tracks[i         - 1].EndSector = tracks[i].StartSector - 1;
 
-                            dumpLog?.WriteLine($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                            dumpLog?.WriteLine(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                             trackNo,
+                                                             tracks[i].Pregap));
 
-                            updateStatus?.Invoke($"Pregap for track {trackNo} set to {tracks[i].Pregap} sectors.");
+                            updateStatus?.Invoke(string.Format(Localization.Core.Pregap_for_track_0_set_to_1_sectors,
+                                                               trackNo,
+                                                               tracks[i].Pregap));
 
                             for(var p = 0; p < (int)(tracks[i].Pregap - oldPregap); p++)
                                 newPregapSectors.Add(tracks[i].StartSector + (ulong)p);
@@ -473,8 +476,7 @@ public static class CompactDisc
                             continue;
                         }
 
-                        if(q[2] == 0)
-                            continue;
+                        if(q[2] == 0) continue;
 
                         var amin   = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
                         var asec   = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
@@ -482,16 +484,19 @@ public static class CompactDisc
                         int aPos   = amin * 60 * 75 + asec * 75 + aframe - 150;
 
                         // Do not set INDEX 1 to a value higher than what the TOC already said.
-                        if(q[2] == 1 &&
-                           aPos > (int)tracks[i].StartSector)
-                            continue;
+                        if(q[2] == 1 && aPos > (int)tracks[i].StartSector) continue;
 
-                        if(tracks[i].Indexes.ContainsKey(q[2]) &&
-                           aPos >= tracks[i].Indexes[q[2]])
-                            continue;
+                        if(tracks[i].Indexes.ContainsKey(q[2]) && aPos >= tracks[i].Indexes[q[2]]) continue;
 
-                        dumpLog?.WriteLine($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
-                        updateStatus?.Invoke($"Setting index {q[2]} for track {trackNo} to LBA {aPos}.");
+                        dumpLog?.WriteLine(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2,
+                                                         q[2],
+                                                         trackNo,
+                                                         aPos));
+
+                        updateStatus?.Invoke(string.Format(Localization.Core.Setting_index_0_for_track_1_to_LBA_2,
+                                                           q[2],
+                                                           trackNo,
+                                                           aPos));
 
                         tracks[i].Indexes[q[2]] = aPos;
 
@@ -530,93 +535,73 @@ public static class CompactDisc
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
         }
 
         i = 0;
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
 
-        for(var j = 0; j < 24; j++)
-            cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
+        for(var j = 0; j < 24; j++) cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
         {
@@ -698,17 +683,13 @@ public static class CompactDisc
                 break;
         }
 
-        if((cdTextPack1[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack1[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack2[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack2[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack3[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack3[0] & 0x80) == 0x80) cdtextPacket = true;
 
-        if((cdTextPack4[0] & 0x80) == 0x80)
-            cdtextPacket = true;
+        if((cdTextPack4[0] & 0x80) == 0x80) cdtextPacket = true;
     }
 
     /// <summary>Checks if subchannel contains a TEXT packet</summary>
@@ -725,78 +706,62 @@ public static class CompactDisc
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack1[j] = (byte)(cdTextPack1[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack1[j] = (byte)(cdTextPack1[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack2[j] = (byte)(cdTextPack2[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack2[j] = (byte)(cdTextPack2[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack3[j] = (byte)(cdTextPack3[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack3[j] = (byte)(cdTextPack3[j] | subchannel[i++] & 0x3F);
         }
 
         for(var j = 0; j < 18; j++)
         {
-            cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x3F) << 2));
+            cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F) << 2);
 
-            cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0xC0) >> 4));
+            cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0xC0) >> 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x0F) << 4));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x0F) << 4);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j++] | ((subchannel[i] & 0x3C) >> 2));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j++] | (subchannel[i] & 0x3C) >> 2);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | ((subchannel[i++] & 0x03) << 6));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x03) << 6);
 
-            if(j < 18)
-                cdTextPack4[j] = (byte)(cdTextPack4[j] | (subchannel[i++] & 0x3F));
+            if(j < 18) cdTextPack4[j] = (byte)(cdTextPack4[j] | subchannel[i++] & 0x3F);
         }
 
         var status = true;
@@ -806,11 +771,9 @@ public static class CompactDisc
             var cdTextPack1Crc    = BigEndianBitConverter.ToUInt16(cdTextPack1, 16);
             var cdTextPack1ForCrc = new byte[16];
             Array.Copy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
-            ushort calculatedCdtp1Crc = CRC16CCITTContext.Calculate(cdTextPack1ForCrc);
+            ushort calculatedCdtp1Crc = CRC16CcittContext.Calculate(cdTextPack1ForCrc);
 
-            if(cdTextPack1Crc != calculatedCdtp1Crc &&
-               cdTextPack1Crc != 0)
-                status = false;
+            if(cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0) status = false;
         }
 
         if((cdTextPack2[0] & 0x80) == 0x80)
@@ -818,11 +781,9 @@ public static class CompactDisc
             var cdTextPack2Crc    = BigEndianBitConverter.ToUInt16(cdTextPack2, 16);
             var cdTextPack2ForCrc = new byte[16];
             Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
-            ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
+            ushort calculatedCdtp2Crc = CRC16CcittContext.Calculate(cdTextPack2ForCrc);
 
-            if(cdTextPack2Crc != calculatedCdtp2Crc &&
-               cdTextPack2Crc != 0)
-                status = false;
+            if(cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0) status = false;
         }
 
         if((cdTextPack3[0] & 0x80) == 0x80)
@@ -830,24 +791,19 @@ public static class CompactDisc
             var cdTextPack3Crc    = BigEndianBitConverter.ToUInt16(cdTextPack3, 16);
             var cdTextPack3ForCrc = new byte[16];
             Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
-            ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
+            ushort calculatedCdtp3Crc = CRC16CcittContext.Calculate(cdTextPack3ForCrc);
 
-            if(cdTextPack3Crc != calculatedCdtp3Crc &&
-               cdTextPack3Crc != 0)
-                status = false;
+            if(cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0) status = false;
         }
 
-        if((cdTextPack4[0] & 0x80) != 0x80)
-            return status;
+        if((cdTextPack4[0] & 0x80) != 0x80) return status;
 
         var cdTextPack4Crc    = BigEndianBitConverter.ToUInt16(cdTextPack4, 16);
         var cdTextPack4ForCrc = new byte[16];
         Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
-        ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
+        ushort calculatedCdtp4Crc = CRC16CcittContext.Calculate(cdTextPack4ForCrc);
 
-        if(cdTextPack4Crc == calculatedCdtp4Crc ||
-           cdTextPack4Crc == 0)
-            return status;
+        if(cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0) return status;
 
         return false;
     }
@@ -870,14 +826,13 @@ public static class CompactDisc
     /// <param name="fixedMcn">Set to <c>true</c> if we fixed the MCN, <c>false</c> otherwise</param>
     /// <param name="fixedIsrc">Set to <c>true</c> if we fixed the ISRC, <c>false</c> otherwise</param>
     /// <returns><c>true</c> if it was fixed correctly, <c>false</c> otherwise</returns>
-    static bool FixQSubchannel(byte[] deSub, byte[] q, int subPos, string mcn, string isrc, bool fixCrc,
-                               out bool fixedAdr, out bool controlFix, out bool fixedZero, out bool fixedTno,
+    static bool FixQSubchannel(byte[]   deSub,      byte[]   q, int subPos, string mcn, string isrc, bool fixCrc,
+                               out bool fixedAdr,   out bool controlFix, out bool fixedZero, out bool fixedTno,
                                out bool fixedIndex, out bool fixedRelPos, out bool fixedAbsPos, out bool fixedCrc,
-                               out bool fixedMcn, out bool fixedIsrc)
+                               out bool fixedMcn,   out bool fixedIsrc)
     {
-        byte amin, asec, aframe, pmin, psec, pframe;
-        byte rmin, rsec, rframe;
-        int  aPos, rPos, pPos, dPos;
+        byte aframe;
+        byte rframe;
         controlFix  = false;
         fixedZero   = false;
         fixedTno    = false;
@@ -890,14 +845,13 @@ public static class CompactDisc
 
         var preQ  = new byte[12];
         var nextQ = new byte[12];
-        Array.Copy(deSub, subPos + 12 - 96, preQ, 0, 12);
+        Array.Copy(deSub, subPos + 12 - 96,      preQ,  0, 12);
         Array.Copy(deSub, subPos      + 12 + 96, nextQ, 0, 12);
-        bool status;
 
-        CRC16CCITTContext.Data(preQ, 10, out byte[] preCrc);
+        CRC16CcittContext.Data(preQ, 10, out byte[] preCrc);
         bool preCrcOk = preCrc[0] == preQ[10] && preCrc[1] == preQ[11];
 
-        CRC16CCITTContext.Data(nextQ, 10, out byte[] nextCrc);
+        CRC16CcittContext.Data(nextQ, 10, out byte[] nextCrc);
         bool nextCrcOk = nextCrc[0] == nextQ[10] && nextCrc[1] == nextQ[11];
 
         fixedAdr = false;
@@ -909,17 +863,16 @@ public static class CompactDisc
             fixedAdr =  true;
         }
 
-        CRC16CCITTContext.Data(q, 10, out byte[] qCrc);
-        status = qCrc[0] == q[10] && qCrc[1] == q[11];
+        CRC16CcittContext.Data(q, 10, out byte[] qCrc);
+        bool status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-        if(fixedAdr && status)
-            return true;
+        if(fixedAdr && status) return true;
 
         int oldAdr = q[0] & 0x3;
 
         // Try Q-Mode 1
         q[0] = (byte)((q[0] & 0xF0) + 1);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -931,7 +884,7 @@ public static class CompactDisc
 
         // Try Q-Mode 2
         q[0] = (byte)((q[0] & 0xF0) + 2);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -943,7 +896,7 @@ public static class CompactDisc
 
         // Try Q-Mode 3
         q[0] = (byte)((q[0] & 0xF0) + 3);
-        CRC16CCITTContext.Data(q, 10, out qCrc);
+        CRC16CcittContext.Data(q, 10, out qCrc);
         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
         if(status)
@@ -962,7 +915,7 @@ public static class CompactDisc
         {
             q[0] = (byte)((q[0] & 0x03) + (preQ[0] & 0xF0));
 
-            CRC16CCITTContext.Data(q, 10, out qCrc);
+            CRC16CcittContext.Data(q, 10, out qCrc);
             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
             if(status)
@@ -980,7 +933,7 @@ public static class CompactDisc
         {
             q[0] = (byte)((q[0] & 0x03) + (nextQ[0] & 0xF0));
 
-            CRC16CCITTContext.Data(q, 10, out qCrc);
+            CRC16CcittContext.Data(q, 10, out qCrc);
             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
             if(status)
@@ -993,10 +946,7 @@ public static class CompactDisc
             q[0] = (byte)oldAdr;
         }
 
-        if(preCrcOk                               &&
-           nextCrcOk                              &&
-           (nextQ[0] & 0xF0) == (preQ[0]  & 0xF0) &&
-           (q[0]     & 0xF0) != (nextQ[0] & 0xF0))
+        if(preCrcOk && nextCrcOk && (nextQ[0] & 0xF0) == (preQ[0] & 0xF0) && (q[0] & 0xF0) != (nextQ[0] & 0xF0))
         {
             q[0] = (byte)((q[0] & 0x03) + (nextQ[0] & 0xF0));
 
@@ -1014,53 +964,60 @@ public static class CompactDisc
                     q[6]      = 0;
                     fixedZero = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
                 if(preCrcOk && nextCrcOk)
-                    if(preQ[1] == nextQ[1] &&
-                       preQ[1] != q[1])
+                {
+                    if(preQ[1] == nextQ[1] && preQ[1] != q[1])
                     {
                         q[1]     = preQ[1];
                         fixedTno = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
+                }
 
                 if(preCrcOk && nextCrcOk)
-                    if(preQ[2] == nextQ[2] &&
-                       preQ[2] != q[2])
+                {
+                    if(preQ[2] == nextQ[2] && preQ[2] != q[2])
                     {
                         q[2]       = preQ[2];
                         fixedIndex = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
+                }
 
-                amin   = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
-                asec   = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
-                aframe = (byte)(q[9] / 16 * 10 + (q[9] & 0x0F));
-                aPos   = amin * 60 * 75 + asec * 75 + aframe - 150;
+                var amin = (byte)(q[7] / 16 * 10 + (q[7] & 0x0F));
+                var asec = (byte)(q[8] / 16 * 10 + (q[8] & 0x0F));
+                aframe = (byte)(q[9] / 16 * 10                      + (q[9] & 0x0F));
+                int aPos = amin      * 60 * 75 + asec * 75 + aframe - 150;
 
-                pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
-                psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
-                pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
-                pPos   = pmin * 60 * 75 + psec * 75 + pframe;
+                var pmin   = (byte)(q[3] / 16 * 10 + (q[3] & 0x0F));
+                var psec   = (byte)(q[4] / 16 * 10 + (q[4] & 0x0F));
+                var pframe = (byte)(q[5] / 16 * 10 + (q[5] & 0x0F));
+                int pPos   = pmin * 60 * 75 + psec * 75 + pframe;
 
                 // TODO: pregap
                 // Not pregap
+                byte rmin;
+
+                byte rsec;
+
+                int rPos;
+
+                int dPos;
+
                 if(q[2] > 0)
                 {
                     // Previous was not pregap either
@@ -1110,18 +1067,15 @@ public static class CompactDisc
 
                             fixedRelPos = true;
 
-                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                            if(status)
-                                return true;
+                            if(status) return true;
                         }
                     }
 
                     // Next is not pregap and we didn't fix relative position with previous
-                    if(nextQ[2] > 0 &&
-                       nextCrcOk    &&
-                       !fixedRelPos)
+                    if(nextQ[2] > 0 && nextCrcOk && !fixedRelPos)
                     {
                         rmin   = (byte)(nextQ[3] / 16 * 10 + (nextQ[3] & 0x0F));
                         rsec   = (byte)(nextQ[4] / 16 * 10 + (nextQ[4] & 0x0F));
@@ -1171,11 +1125,10 @@ public static class CompactDisc
 
                             fixedRelPos = true;
 
-                            CRC16CCITTContext.Data(q, 10, out qCrc);
+                            CRC16CcittContext.Data(q, 10, out qCrc);
                             status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                            if(status)
-                                return true;
+                            if(status) return true;
                         }
                     }
                 }
@@ -1227,18 +1180,15 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
                 // Next is not pregap and we didn't fix relative position with previous
-                if(nextQ[2] > 0 &&
-                   nextCrcOk    &&
-                   !fixedAbsPos)
+                if(nextQ[2] > 0 && nextCrcOk && !fixedAbsPos)
                 {
                     rmin   = (byte)(nextQ[7] / 16 * 10 + (nextQ[7] & 0x0F));
                     rsec   = (byte)(nextQ[8] / 16 * 10 + (nextQ[8] & 0x0F));
@@ -1288,20 +1238,18 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
                 // Game Over
-                if(!fixCrc || status)
-                    return false;
+                if(!fixCrc || status) return false;
 
                 // Previous Q's CRC is correct
                 if(preCrcOk)
@@ -1324,15 +1272,10 @@ public static class CompactDisc
 
                     bool relOk = dPos == 1;
 
-                    if(q[0] != preQ[0] ||
-                       q[1] != preQ[1] ||
-                       q[2] != preQ[2] ||
-                       q[6] != 0       ||
-                       !absOk          ||
-                       !relOk)
+                    if(q[0] != preQ[0] || q[1] != preQ[1] || q[2] != preQ[2] || q[6] != 0 || !absOk || !relOk)
                         return false;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     q[10] = qCrc[0];
                     q[11] = qCrc[1];
 
@@ -1362,15 +1305,10 @@ public static class CompactDisc
 
                     bool relOk = dPos == 1;
 
-                    if(q[0] != nextQ[0] ||
-                       q[1] != nextQ[1] ||
-                       q[2] != nextQ[2] ||
-                       q[6] != 0        ||
-                       !absOk           ||
-                       !relOk)
+                    if(q[0] != nextQ[0] || q[1] != nextQ[1] || q[2] != nextQ[2] || q[6] != 0 || !absOk || !relOk)
                         return false;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     q[10] = qCrc[0];
                     q[11] = qCrc[1];
 
@@ -1401,16 +1339,14 @@ public static class CompactDisc
                         else
                             q[9]++;
 
-                        if(q[9] >= 0x74)
-                            q[9] = 0;
+                        if(q[9] >= 0x74) q[9] = 0;
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1433,41 +1369,36 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
                 // We know the MCN
                 if(mcn != null)
                 {
-                    q[1] = (byte)(((mcn[0]  - 0x30) & 0x0F) * 16 + ((mcn[1]  - 0x30) & 0x0F));
-                    q[2] = (byte)(((mcn[2]  - 0x30) & 0x0F) * 16 + ((mcn[3]  - 0x30) & 0x0F));
-                    q[3] = (byte)(((mcn[4]  - 0x30) & 0x0F) * 16 + ((mcn[5]  - 0x30) & 0x0F));
-                    q[4] = (byte)(((mcn[6]  - 0x30) & 0x0F) * 16 + ((mcn[7]  - 0x30) & 0x0F));
-                    q[5] = (byte)(((mcn[8]  - 0x30) & 0x0F) * 16 + ((mcn[9]  - 0x30) & 0x0F));
-                    q[6] = (byte)(((mcn[10] - 0x30) & 0x0F) * 16 + ((mcn[11] - 0x30) & 0x0F));
-                    q[7] = (byte)(((mcn[12]                                  - 0x30) & 0x0F) * 8);
+                    q[1] = (byte)((mcn[0]  - 0x30 & 0x0F) * 16 + (mcn[1]  - 0x30 & 0x0F));
+                    q[2] = (byte)((mcn[2]  - 0x30 & 0x0F) * 16 + (mcn[3]  - 0x30 & 0x0F));
+                    q[3] = (byte)((mcn[4]  - 0x30 & 0x0F) * 16 + (mcn[5]  - 0x30 & 0x0F));
+                    q[4] = (byte)((mcn[6]  - 0x30 & 0x0F) * 16 + (mcn[7]  - 0x30 & 0x0F));
+                    q[5] = (byte)((mcn[8]  - 0x30 & 0x0F) * 16 + (mcn[9]  - 0x30 & 0x0F));
+                    q[6] = (byte)((mcn[10] - 0x30 & 0x0F) * 16 + (mcn[11] - 0x30 & 0x0F));
+                    q[7] = (byte)((mcn[12]                                - 0x30 & 0x0F) * 8);
                     q[8] = 0;
 
                     fixedMcn = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
-                if(!fixCrc    ||
-                   !nextCrcOk ||
-                   !preCrcOk)
-                    return false;
+                if(!fixCrc || !nextCrcOk || !preCrcOk) return false;
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
                 q[11] = qCrc[1];
 
@@ -1494,16 +1425,14 @@ public static class CompactDisc
                         else
                             q[9]++;
 
-                        if(q[9] >= 0x74)
-                            q[9] = 0;
+                        if(q[9] >= 0x74) q[9] = 0;
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1526,11 +1455,10 @@ public static class CompactDisc
 
                         fixedAbsPos = true;
 
-                        CRC16CCITTContext.Data(q, 10, out qCrc);
+                        CRC16CcittContext.Data(q, 10, out qCrc);
                         status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                        if(status)
-                            return true;
+                        if(status) return true;
                     }
                 }
 
@@ -1547,26 +1475,22 @@ public static class CompactDisc
                     q[2] = (byte)(((i2             & 0xF)  << 4) + (i3 >> 2));
                     q[3] = (byte)(((i3             & 0x3)  << 6) + i4);
                     q[4] = (byte)(i5 << 2);
-                    q[5] = (byte)(((isrc[5] - 0x30) & 0x0F) * 16 + ((isrc[6]  - 0x30) & 0x0F));
-                    q[6] = (byte)(((isrc[7] - 0x30) & 0x0F) * 16 + ((isrc[8]  - 0x30) & 0x0F));
-                    q[7] = (byte)(((isrc[9] - 0x30) & 0x0F) * 16 + ((isrc[10] - 0x30) & 0x0F));
-                    q[8] = (byte)(((isrc[11]                                  - 0x30) & 0x0F) * 16);
+                    q[5] = (byte)((isrc[5] - 0x30 & 0x0F) * 16 + (isrc[6]  - 0x30 & 0x0F));
+                    q[6] = (byte)((isrc[7] - 0x30 & 0x0F) * 16 + (isrc[8]  - 0x30 & 0x0F));
+                    q[7] = (byte)((isrc[9] - 0x30 & 0x0F) * 16 + (isrc[10] - 0x30 & 0x0F));
+                    q[8] = (byte)((isrc[11]                                - 0x30 & 0x0F) * 16);
 
                     fixedIsrc = true;
 
-                    CRC16CCITTContext.Data(q, 10, out qCrc);
+                    CRC16CcittContext.Data(q, 10, out qCrc);
                     status = qCrc[0] == q[10] && qCrc[1] == q[11];
 
-                    if(status)
-                        return true;
+                    if(status) return true;
                 }
 
-                if(!fixCrc    ||
-                   !nextCrcOk ||
-                   !preCrcOk)
-                    return false;
+                if(!fixCrc || !nextCrcOk || !preCrcOk) return false;
 
-                CRC16CCITTContext.Data(q, 10, out qCrc);
+                CRC16CcittContext.Data(q, 10, out qCrc);
                 q[10] = qCrc[0];
                 q[11] = qCrc[1];
 
@@ -1590,24 +1514,22 @@ public static class CompactDisc
     /// <param name="updateProgress">Progress update callback</param>
     /// <param name="endProgress">Progress finalization callback</param>
     /// <param name="outputPlugin">Output image</param>
-    public static void GenerateSubchannels(HashSet<int> subchannelExtents, Track[] tracks,
-                                           Dictionary<byte, byte> trackFlags, ulong blocks, SubchannelLog subLog,
-                                           DumpLog dumpLog, InitProgressHandler initProgress,
-                                           UpdateProgressHandler updateProgress, EndProgressHandler endProgress,
-                                           IWritableImage outputPlugin)
+    public static void GenerateSubchannels(HashSet<int>           subchannelExtents, Track[] tracks,
+                                           Dictionary<byte, byte> trackFlags,        ulong blocks, SubchannelLog subLog,
+                                           DumpLog                dumpLog,           InitProgressHandler initProgress,
+                                           UpdateProgressHandler  updateProgress,    EndProgressHandler endProgress,
+                                           IWritableImage         outputPlugin)
     {
         initProgress?.Invoke();
 
         foreach(int sector in subchannelExtents)
         {
             Track track = tracks.LastOrDefault(t => (int)t.StartSector <= sector);
-            byte  trkFlags;
             byte  flags;
             ulong trackStart;
             ulong pregap;
 
-            if(track == null)
-                continue;
+            if(track == null) continue;
 
             // Hidden track
             if(track.Sequence == 0)
@@ -1622,7 +1544,7 @@ public static class CompactDisc
                 pregap     = track.Pregap;
             }
 
-            if(!trackFlags.TryGetValue((byte)(track?.Sequence ?? 0), out trkFlags) &&
+            if(!trackFlags.TryGetValue((byte)(track?.Sequence ?? 0), out byte trkFlags) &&
                track?.Type != TrackType.Audio)
                 flags = (byte)CdFlags.DataTrack;
             else
@@ -1635,7 +1557,10 @@ public static class CompactDisc
             else
                 index = 0;
 
-            updateProgress?.Invoke($"Generating subchannel for sector {sector}...", sector, (long)blocks);
+            updateProgress?.Invoke(string.Format(Localization.Core.Generating_subchannel_for_sector_0, sector),
+                                   sector,
+                                   (long)blocks);
+
             dumpLog?.WriteLine($"Generating subchannel for sector {sector}.");
 
             byte[] sub = Subchannel.Generate(sector, track?.Sequence ?? 0, (int)pregap, (int)trackStart, flags, index);

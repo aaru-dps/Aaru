@@ -27,36 +27,48 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Images;
 
 public sealed partial class SaveDskF
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
-    public string Name => "IBM SaveDskF";
+    public string Name => Localization.SaveDskF_Name;
+
     /// <inheritdoc />
     public Guid Id => new("288CE058-1A51-4034-8C45-5A256CAE1461");
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public string Format => "IBM SaveDskF";
+    public string Format => Localization.SaveDskF_Name;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
@@ -72,9 +84,11 @@ public sealed partial class SaveDskF
         MediaType.FDFORMAT_35_HD, MediaType.FDFORMAT_525_DD, MediaType.FDFORMAT_525_HD, MediaType.RX50,
         MediaType.XDF_35, MediaType.XDF_525, MediaType.MetaFloppy_Mod_I, MediaType.MetaFloppy_Mod_II
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
@@ -83,6 +97,9 @@ public sealed partial class SaveDskF
 
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

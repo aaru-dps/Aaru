@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     FATX filesystem structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,27 +23,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.Runtime.InteropServices;
+using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Filesystems;
 
-using System.Runtime.InteropServices;
-
 public sealed partial class XboxFatPlugin
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Superblock
-    {
-        public readonly uint magic;
-        public readonly uint id;
-        public readonly uint sectorsPerCluster;
-        public readonly uint rootDirectoryCluster;
-
-        // TODO: Undetermined size
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] volumeLabel;
-    }
+#region Nested type: DirectoryEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct DirectoryEntry
@@ -65,4 +51,62 @@ public sealed partial class XboxFatPlugin
         public readonly ushort creationTime;
         public readonly ushort creationDate;
     }
+
+#endregion
+
+#region Nested type: FatxDirNode
+
+    sealed class FatxDirNode : IDirNode
+    {
+        internal DirectoryEntry[] Entries;
+        internal int              Position;
+
+#region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: FatxFileNode
+
+    sealed class FatxFileNode : IFileNode
+    {
+        internal uint[] Clusters;
+
+#region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: Superblock
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Superblock
+    {
+        public readonly uint magic;
+        public readonly uint id;
+        public readonly uint sectorsPerCluster;
+        public readonly uint rootDirectoryCluster;
+
+        // TODO: Undetermined size
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] volumeLabel;
+    }
+
+#endregion
 }

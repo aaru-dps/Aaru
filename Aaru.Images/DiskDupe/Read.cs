@@ -27,11 +27,9 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021-2022 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2021-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -39,9 +37,14 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class DiskDupe
 {
+#region IMediaImage Members
+
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
@@ -50,12 +53,12 @@ public sealed partial class DiskDupe
         TrackInfo[] trackMap     = null;
         long[]      trackOffsets = null;
 
-        if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets))
-            return ErrorNumber.InvalidArgument;
+        if(!TryReadHeader(stream, ref fHeader, ref trackMap, ref trackOffsets)) return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("DiskDupe Plugin",
-                                   "Detected DiskDupe DDI image with {0} tracks and {1} sectors per track.",
-                                   _diskTypes[fHeader.diskType].cyl, _diskTypes[fHeader.diskType].spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Detected_DiskDupe_DDI_image_with_0_tracks_and_1_sectors_per_track,
+                                   _diskTypes[fHeader.diskType].cyl,
+                                   _diskTypes[fHeader.diskType].spt);
 
         _imageInfo.Cylinders       = _diskTypes[fHeader.diskType].cyl;
         _imageInfo.Heads           = _diskTypes[fHeader.diskType].hd;
@@ -64,7 +67,7 @@ public sealed partial class DiskDupe
         _imageInfo.Sectors         = _imageInfo.Heads   * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
         _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
@@ -89,11 +92,9 @@ public sealed partial class DiskDupe
         var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
         var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(trackNum > 2 * _imageInfo.Cylinders)
-            return ErrorNumber.SectorNotFound;
+        if(trackNum > 2 * _imageInfo.Cylinders) return ErrorNumber.SectorNotFound;
 
         buffer = new byte[_imageInfo.SectorSize];
 
@@ -105,7 +106,7 @@ public sealed partial class DiskDupe
 
             strm.Seek(_trackOffsets[trackNum] + sectorOffset * _imageInfo.SectorSize, SeekOrigin.Begin);
 
-            strm.Read(buffer, 0, (int)_imageInfo.SectorSize);
+            strm.EnsureRead(buffer, 0, (int)_imageInfo.SectorSize);
         }
 
         return ErrorNumber.NoError;
@@ -115,11 +116,9 @@ public sealed partial class DiskDupe
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -127,8 +126,7 @@ public sealed partial class DiskDupe
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -137,4 +135,6 @@ public sealed partial class DiskDupe
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

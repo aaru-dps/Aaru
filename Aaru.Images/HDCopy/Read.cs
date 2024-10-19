@@ -27,11 +27,9 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2017 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2017-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -39,9 +37,14 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class HdCopy
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -52,11 +55,12 @@ public sealed partial class HdCopy
         // the start offset of the track data
         long currentOffset = 0;
 
-        if(!TryReadHeader(stream, ref fheader, ref currentOffset))
-            return ErrorNumber.InvalidArgument;
+        if(!TryReadHeader(stream, ref fheader, ref currentOffset)) return ErrorNumber.InvalidArgument;
 
-        AaruConsole.DebugWriteLine("HDCP plugin", "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
-                                   fheader.lastCylinder + 1, fheader.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Detected_HD_Copy_image_with_0_tracks_and_1_sectors_per_track,
+                                   fheader.lastCylinder + 1,
+                                   fheader.sectorsPerTrack);
 
         _imageInfo.Cylinders       = (uint)fheader.lastCylinder + 1;
         _imageInfo.SectorsPerTrack = fheader.sectorsPerTrack;
@@ -65,7 +69,7 @@ public sealed partial class HdCopy
         _imageInfo.Sectors         = 2                  * _imageInfo.Cylinders * _imageInfo.SectorsPerTrack;
         _imageInfo.ImageSize       = _imageInfo.Sectors * _imageInfo.SectorSize;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
@@ -77,23 +81,25 @@ public sealed partial class HdCopy
 
         // build table of track offsets
         for(var i = 0; i < _imageInfo.Cylinders * 2; i++)
+        {
             if(fheader.trackMap[i] == 0)
                 _trackOffset[i] = -1;
             else
             {
                 // track is present, read the block header
-                if(currentOffset + 3 >= stream.Length)
-                    return ErrorNumber.InvalidArgument;
+                if(currentOffset + 3 >= stream.Length) return ErrorNumber.InvalidArgument;
 
                 var blkHeader = new byte[2];
-                stream.Read(blkHeader, 0, 2);
+                stream.EnsureRead(blkHeader, 0, 2);
                 var blkLength = BitConverter.ToInt16(blkHeader, 0);
 
                 // assume block sizes are positive
-                if(blkLength < 0)
-                    return ErrorNumber.InvalidArgument;
+                if(blkLength < 0) return ErrorNumber.InvalidArgument;
 
-                AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Track_0_offset_1_size_equals_2,
+                                           i,
+                                           currentOffset,
                                            blkLength);
 
                 _trackOffset[i] = currentOffset;
@@ -103,10 +109,10 @@ public sealed partial class HdCopy
                 // skip the block data
                 stream.Seek(blkLength, SeekOrigin.Current);
             }
+        }
 
         // ensure that the last track is present completely
-        if(currentOffset > stream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(currentOffset > stream.Length) return ErrorNumber.InvalidArgument;
 
         // save some variables for later use
         _fileHeader      = fheader;
@@ -122,11 +128,9 @@ public sealed partial class HdCopy
         var trackNum     = (int)(sectorAddress / _imageInfo.SectorsPerTrack);
         var sectorOffset = (int)(sectorAddress % _imageInfo.SectorsPerTrack);
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(trackNum > 2 * _imageInfo.Cylinders)
-            return ErrorNumber.SectorNotFound;
+        if(trackNum > 2 * _imageInfo.Cylinders) return ErrorNumber.SectorNotFound;
 
         buffer = new byte[_imageInfo.SectorSize];
 
@@ -139,8 +143,7 @@ public sealed partial class HdCopy
             {
                 ErrorNumber errno = ReadTrackIntoCache(_hdcpImageFilter.GetDataForkStream(), trackNum);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
             }
 
             Array.Copy(_trackCache[trackNum], sectorOffset * _imageInfo.SectorSize, buffer, 0, _imageInfo.SectorSize);
@@ -154,11 +157,9 @@ public sealed partial class HdCopy
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -166,8 +167,7 @@ public sealed partial class HdCopy
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -176,4 +176,6 @@ public sealed partial class HdCopy
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

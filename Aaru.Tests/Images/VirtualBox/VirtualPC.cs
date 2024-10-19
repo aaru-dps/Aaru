@@ -23,26 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.VirtualBox;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.VirtualBox;
 
 [TestFixture]
 public class VirtualPc : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualBox", "VirtualPC");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "VirtualBox", "VirtualPC");
+
     public override IMediaImage Plugin => new Vhd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "virtualbox_linux_dynamic_250mb.vhd.lz",
@@ -91,5 +92,5 @@ public class VirtualPc : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "f1c9645dbc14efddc7d8a322685f26eb"
         }
-    };
+    ];
 }

@@ -27,37 +27,53 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Images;
 
 public sealed partial class DiscJuggler
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
-    public string Name => "DiscJuggler";
+    public string Name => Localization.DiscJuggler_Name;
+
     /// <inheritdoc />
     public Guid Id => new("2444DBC6-CD35-424C-A227-39B0C4DB01B2");
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Format => "DiscJuggler";
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public List<Partition> Partitions { get; private set; }
+
     /// <inheritdoc />
     public List<Track> Tracks { get; private set; }
+
     /// <inheritdoc />
     public List<Session> Sessions { get; private set; }
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
+#endregion
 }

@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -40,8 +38,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class CisCopy
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -67,52 +69,34 @@ public sealed partial class CisCopy
 
                 break;
             default:
-                AaruConsole.ErrorWriteLine($"Incorrect disk type {(byte)type}");
+                AaruConsole.ErrorWriteLine(string.Format(Localization.Incorrect_disk_type_0, (byte)type));
 
                 return ErrorNumber.InvalidArgument;
         }
 
         var trackBytes = new byte[tracks];
-        stream.Read(trackBytes, 0, tracks);
+        stream.EnsureRead(trackBytes, 0, tracks);
 
         var cmpr = (Compression)stream.ReadByte();
 
         if(cmpr != Compression.None)
         {
-            AaruConsole.ErrorWriteLine("Compressed images are not supported.");
+            AaruConsole.ErrorWriteLine(Localization.Compressed_images_are_not_supported);
 
             return ErrorNumber.NotImplemented;
         }
 
-        var trackSize = 0;
-
-        switch(type)
-        {
-            case DiskType.MD1DD8:
-            case DiskType.MD2DD8:
-                trackSize = 8 * 512;
-
-                break;
-            case DiskType.MD1DD:
-            case DiskType.MD2DD:
-            case DiskType.MF2DD:
-                trackSize = 9 * 512;
-
-                break;
-            case DiskType.MD2HD:
-                trackSize = 15 * 512;
-
-                break;
-            case DiskType.MF2HD:
-                trackSize = 18 * 512;
-
-                break;
-        }
+        int trackSize = type switch
+                        {
+                            DiskType.MD1DD8 or DiskType.MD2DD8                 => 8  * 512,
+                            DiskType.MD1DD or DiskType.MD2DD or DiskType.MF2DD => 9  * 512,
+                            DiskType.MD2HD                                     => 15 * 512,
+                            DiskType.MF2HD                                     => 18 * 512
+                        };
 
         var headStep = 1;
 
-        if(type is DiskType.MD1DD or DiskType.MD1DD8)
-            headStep = 2;
+        if(type is DiskType.MD1DD or DiskType.MD1DD8) headStep = 2;
 
         var decodedImage = new MemoryStream();
 
@@ -121,7 +105,7 @@ public sealed partial class CisCopy
             var track = new byte[trackSize];
 
             if((TrackType)trackBytes[i] == TrackType.Copied)
-                stream.Read(track, 0, trackSize);
+                stream.EnsureRead(track, 0, trackSize);
             else
                 ArrayHelpers.ArrayFill(track, (byte)0xF6);
 
@@ -195,12 +179,12 @@ public sealed partial class CisCopy
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-        _decodedDisk            = decodedImage.ToArray();
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
+        _decodedDisk                 = decodedImage.ToArray();
 
         decodedImage.Close();
 
-        AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.CisCopy_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         return ErrorNumber.NoError;
     }
@@ -213,11 +197,9 @@ public sealed partial class CisCopy
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -225,4 +207,6 @@ public sealed partial class CisCopy
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

@@ -27,12 +27,14 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -47,7 +49,7 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort blockBytes,
-                           bool pba, uint timeout, out double duration) =>
+                           bool       pba,    uint       timeout,     out double duration) =>
         HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
 
     /// <summary>Sends the HP READ LONG vendor command</summary>
@@ -66,15 +68,14 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address, ushort transferLen,
-                           ushort blockBytes, bool pba, bool sectorCount, uint timeout, out double duration)
+                           ushort     blockBytes, bool pba, bool sectorCount, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.ReadLong;
 
-        if(relAddr)
-            cdb[1] += 0x01;
+        if(relAddr) cdb[1] += 0x01;
 
         cdb[2] = (byte)((address & 0xFF000000) >> 24);
         cdb[3] = (byte)((address & 0xFF0000)   >> 16);
@@ -83,20 +84,23 @@ public partial class Device
         cdb[7] = (byte)((transferLen & 0xFF00) >> 8);
         cdb[8] = (byte)(transferLen & 0xFF);
 
-        if(pba)
-            cdb[9] += 0x80;
+        if(pba) cdb[9] += 0x80;
 
-        if(sectorCount)
-            cdb[9] += 0x40;
+        if(sectorCount) cdb[9] += 0x40;
 
         buffer = sectorCount ? new byte[blockBytes * transferLen] : new byte[transferLen];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "HP READ LONG took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.HP_READ_LONG_took_0_ms, duration);
 
         return sense;
     }

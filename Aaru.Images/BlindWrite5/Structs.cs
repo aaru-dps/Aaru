@@ -27,18 +27,62 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.SCSI.MMC;
 
+namespace Aaru.Images;
+
 public sealed partial class BlindWrite5
 {
+#region Nested type: DataFile
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DataFile
+    {
+        public uint Type;
+        public uint Length;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public uint[] Unknown1;
+        public uint Offset;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public uint[] Unknown2;
+        public int    StartLba;
+        public int    Sectors;
+        public uint   FilenameLen;
+        public byte[] FilenameBytes;
+        public uint   Unknown3;
+
+        public string Filename;
+
+        /// <inheritdoc />
+        public readonly override string ToString() => Filename;
+    }
+
+#endregion
+
+#region Nested type: DataFileCharacteristics
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DataFileCharacteristics
+    {
+        public IFilter             FileFilter;
+        public string              FilePath;
+        public TrackSubchannelType Subchannel;
+        public long                SectorSize;
+        public int                 StartLba;
+        public int                 Sectors;
+        public uint                Offset;
+    }
+
+#endregion
+
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -85,24 +129,26 @@ public sealed partial class BlindWrite5
         public readonly uint dpmLen;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DataFile
-    {
-        public uint Type;
-        public uint Length;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public uint[] Unknown1;
-        public uint Offset;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public uint[] Unknown2;
-        public int    StartLba;
-        public int    Sectors;
-        public uint   FilenameLen;
-        public byte[] FilenameBytes;
-        public uint   Unknown3;
+#endregion
 
-        public string Filename;
+#region Nested type: SessionDescriptor
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct SessionDescriptor
+    {
+        public ushort            Sequence;
+        public byte              Entries;
+        public byte              Unknown;
+        public int               Start;
+        public int               End;
+        public ushort            FirstTrack;
+        public ushort            LastTrack;
+        public TrackDescriptor[] Tracks;
     }
+
+#endregion
+
+#region Nested type: TrackDescriptor
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct TrackDescriptor
@@ -140,28 +186,5 @@ public sealed partial class BlindWrite5
         public readonly uint[] unknown9;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct SessionDescriptor
-    {
-        public ushort            Sequence;
-        public byte              Entries;
-        public byte              Unknown;
-        public int               Start;
-        public int               End;
-        public ushort            FirstTrack;
-        public ushort            LastTrack;
-        public TrackDescriptor[] Tracks;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct DataFileCharacteristics
-    {
-        public IFilter             FileFilter;
-        public string              FilePath;
-        public TrackSubchannelType Subchannel;
-        public long                SectorSize;
-        public int                 StartLba;
-        public int                 Sectors;
-        public uint                Offset;
-    }
+#endregion
 }

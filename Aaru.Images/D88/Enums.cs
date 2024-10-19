@@ -27,16 +27,29 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class D88
 {
+#region Nested type: DensityType
+
+    enum DensityType : byte
+    {
+        Mfm = 0x00,
+        Fm  = 0x40
+    }
+
+#endregion
+
+#region Nested type: DiskType
+
     enum DiskType : byte
     {
         D2  = 0x00,
@@ -44,11 +57,9 @@ public sealed partial class D88
         Hd2 = 0x20
     }
 
-    enum DensityType : byte
-    {
-        Mfm = 0x00,
-        Fm  = 0x40
-    }
+#endregion
+
+#region Nested type: StatusType
 
     /// <summary>Status as returned by PC-98 BIOS ステータスは、PC-98x1 のBIOS が返してくるステータスで、</summary>
     enum StatusType : byte
@@ -66,4 +77,6 @@ public sealed partial class D88
         /// <summary>Data mark not found データマークなし</summary>
         DataMarkNotFound = 0xF0
     }
+
+#endregion
 }

@@ -27,69 +27,59 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using Aaru.CommonTypes;
 using Aaru.Decoders.SCSI.MMC;
 
+namespace Aaru.Images;
+
 public sealed partial class BlindWrite5
 {
-    static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType)
-    {
-        switch(trackType)
+    static CommonTypes.Enums.TrackType BlindWriteTrackTypeToTrackType(TrackType trackType) => trackType switch
         {
-            case TrackType.Mode1:   return CommonTypes.Enums.TrackType.CdMode1;
-            case TrackType.Mode2F1: return CommonTypes.Enums.TrackType.CdMode2Form1;
-            case TrackType.Mode2F2: return CommonTypes.Enums.TrackType.CdMode2Form2;
-            case TrackType.Mode2:   return CommonTypes.Enums.TrackType.CdMode2Formless;
-            case TrackType.Audio:   return CommonTypes.Enums.TrackType.Audio;
-            default:                return CommonTypes.Enums.TrackType.Data;
-        }
-    }
+            TrackType.Mode1   => CommonTypes.Enums.TrackType.CdMode1,
+            TrackType.Mode2F1 => CommonTypes.Enums.TrackType.CdMode2Form1,
+            TrackType.Mode2F2 => CommonTypes.Enums.TrackType.CdMode2Form2,
+            TrackType.Mode2   => CommonTypes.Enums.TrackType.CdMode2Formless,
+            TrackType.Audio   => CommonTypes.Enums.TrackType.Audio,
+            _                 => CommonTypes.Enums.TrackType.Data
+        };
 
     static MediaType BlindWriteProfileToMediaType(ProfileNumber profile)
     {
-        switch(profile)
-        {
-            case ProfileNumber.BDRE:  return MediaType.BDRE;
-            case ProfileNumber.BDROM: return MediaType.BDROM;
-            case ProfileNumber.BDRRdm:
-            case ProfileNumber.BDRSeq: return MediaType.BDR;
-            case ProfileNumber.CDR:
-            case ProfileNumber.HDBURNR: return MediaType.CDR;
-            case ProfileNumber.CDROM:
-            case ProfileNumber.HDBURNROM: return MediaType.CDROM;
-            case ProfileNumber.CDRW:
-            case ProfileNumber.HDBURNRW: return MediaType.CDRW;
-            case ProfileNumber.DDCDR:       return MediaType.DDCDR;
-            case ProfileNumber.DDCDROM:     return MediaType.DDCD;
-            case ProfileNumber.DDCDRW:      return MediaType.DDCDRW;
-            case ProfileNumber.DVDDownload: return MediaType.DVDDownload;
-            case ProfileNumber.DVDRAM:      return MediaType.DVDRAM;
-            case ProfileNumber.DVDRDLJump:
-            case ProfileNumber.DVDRDLSeq: return MediaType.DVDRDL;
-            case ProfileNumber.DVDRDLPlus:  return MediaType.DVDPRDL;
-            case ProfileNumber.DVDROM:      return MediaType.DVDROM;
-            case ProfileNumber.DVDRPlus:    return MediaType.DVDPR;
-            case ProfileNumber.DVDRSeq:     return MediaType.DVDR;
-            case ProfileNumber.DVDRWDL:     return MediaType.DVDRWDL;
-            case ProfileNumber.DVDRWDLPlus: return MediaType.DVDPRWDL;
-            case ProfileNumber.DVDRWPlus:   return MediaType.DVDPRW;
-            case ProfileNumber.DVDRWRes:
-            case ProfileNumber.DVDRWSeq: return MediaType.DVDRW;
-            case ProfileNumber.HDDVDR:    return MediaType.HDDVDR;
-            case ProfileNumber.HDDVDRAM:  return MediaType.HDDVDRAM;
-            case ProfileNumber.HDDVDRDL:  return MediaType.HDDVDRDL;
-            case ProfileNumber.HDDVDROM:  return MediaType.HDDVDROM;
-            case ProfileNumber.HDDVDRW:   return MediaType.HDDVDRW;
-            case ProfileNumber.HDDVDRWDL: return MediaType.HDDVDRWDL;
-            case ProfileNumber.ASMO:
-            case ProfileNumber.MOErasable: return MediaType.UnknownMO;
-            case ProfileNumber.NonRemovable: return MediaType.GENERIC_HDD;
-            default:                         return MediaType.CD;
-        }
+        return profile switch
+               {
+                   ProfileNumber.BDRE                                  => MediaType.BDRE,
+                   ProfileNumber.BDROM                                 => MediaType.BDROM,
+                   ProfileNumber.BDRRdm or ProfileNumber.BDRSeq        => MediaType.BDR,
+                   ProfileNumber.CDR or ProfileNumber.HDBURNR          => MediaType.CDR,
+                   ProfileNumber.CDROM or ProfileNumber.HDBURNROM      => MediaType.CDROM,
+                   ProfileNumber.CDRW or ProfileNumber.HDBURNRW        => MediaType.CDRW,
+                   ProfileNumber.DDCDR                                 => MediaType.DDCDR,
+                   ProfileNumber.DDCDROM                               => MediaType.DDCD,
+                   ProfileNumber.DDCDRW                                => MediaType.DDCDRW,
+                   ProfileNumber.DVDDownload                           => MediaType.DVDDownload,
+                   ProfileNumber.DVDRAM                                => MediaType.DVDRAM,
+                   ProfileNumber.DVDRDLJump or ProfileNumber.DVDRDLSeq => MediaType.DVDRDL,
+                   ProfileNumber.DVDRDLPlus                            => MediaType.DVDPRDL,
+                   ProfileNumber.DVDROM                                => MediaType.DVDROM,
+                   ProfileNumber.DVDRPlus                              => MediaType.DVDPR,
+                   ProfileNumber.DVDRSeq                               => MediaType.DVDR,
+                   ProfileNumber.DVDRWDL                               => MediaType.DVDRWDL,
+                   ProfileNumber.DVDRWDLPlus                           => MediaType.DVDPRWDL,
+                   ProfileNumber.DVDRWPlus                             => MediaType.DVDPRW,
+                   ProfileNumber.DVDRWRes or ProfileNumber.DVDRWSeq    => MediaType.DVDRW,
+                   ProfileNumber.HDDVDR                                => MediaType.HDDVDR,
+                   ProfileNumber.HDDVDRAM                              => MediaType.HDDVDRAM,
+                   ProfileNumber.HDDVDRDL                              => MediaType.HDDVDRDL,
+                   ProfileNumber.HDDVDROM                              => MediaType.HDDVDROM,
+                   ProfileNumber.HDDVDRW                               => MediaType.HDDVDRW,
+                   ProfileNumber.HDDVDRWDL                             => MediaType.HDDVDRWDL,
+                   ProfileNumber.ASMO or ProfileNumber.MOErasable      => MediaType.UnknownMO,
+                   ProfileNumber.NonRemovable                          => MediaType.GENERIC_HDD,
+                   _                                                   => MediaType.CD
+               };
     }
 }

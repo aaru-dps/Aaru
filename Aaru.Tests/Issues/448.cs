@@ -1,18 +1,20 @@
-namespace Aaru.Tests.Issues;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Tests.Images;
-using BlindWrite5 = Aaru.DiscImages.BlindWrite5;
+using BlindWrite5 = Aaru.Images.BlindWrite5;
 
+namespace Aaru.Tests.Issues;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _448 : OpticalMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Pending", "issue448");
-    public override IMediaImage Plugin    => new BlindWrite5();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Pending", "issue448");
+    public override IMediaImage Plugin     => new BlindWrite5();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "B6T_ISO-BlindWrite7.B6T",
@@ -21,8 +23,8 @@ public class _448 : OpticalMediaImageTest
             SectorSize    = 2048,
             LongMd5       = "1bea7f781be0fb3b878de96e965c53a0",
             SubchannelMd5 = "01fef9f42fe53e6256ba713ad237dc8c",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -31,7 +33,7 @@ public class _448 : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4
                 }
-            }
+            ]
         }
-    };
+    ];
 }

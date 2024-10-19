@@ -28,100 +28,124 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Tabs.ScsiInfo">
+             xmlns:tabs="clr-namespace:Aaru.Gui.ViewModels.Tabs"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Tabs.ScsiInfo">
     <Design.DataContext>
         <tabs:ScsiInfoViewModel />
     </Design.DataContext>
     <TabControl>
         <TabItem IsVisible="{Binding !!InquiryData}">
             <TabItem.Header>
-                <TextBlock Text="INQUIRY" />
+                <TextBlock Text="{Binding InquiryLabel}" />
             </TabItem.Header>
             <StackPanel>
-                <TextBlock Text="SCSI INQUIRY" HorizontalAlignment="Center" />
-                <TextBox Text="{Binding ScsiInquiryText}" IsReadOnly="True" />
+                <TextBlock Text="{Binding ScsiInquiryLabel}"
+                           HorizontalAlignment="Center" />
+                <TextBox Text="{Binding ScsiInquiryText}"
+                         IsReadOnly="True" />
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding SaveInquiryBinaryCommand}">
-                        <TextBlock Text="Save binary to file" />
+                        <TextBlock Text="{Binding SaveInquiryBinaryLabel}" />
                     </Button>
                     <Button Command="{Binding SaveInquiryTextCommand}">
-                        <TextBlock Text="Save text to file" />
+                        <TextBlock Text="{Binding SaveInquiryTextLabel}" />
                     </Button>
                 </StackPanel>
             </StackPanel>
         </TabItem>
         <TabItem IsVisible="{Binding !!ModeSensePages.Count}">
             <TabItem.Header>
-                <TextBlock Text="MODE SENSE" />
+                <TextBlock Text="{Binding ModeSenseLabel}" />
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" Items="{Binding ModeSensePages}"
-                              SelectedItem="{Binding SelectedModeSensePage}" IsReadOnly="True">
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
+                              ItemsSource="{Binding ModeSensePages}"
+                              SelectedItem="{Binding SelectedModeSensePage}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Page" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding PageLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding ModeSensePageText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding ModeSensePageText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding SaveModeSense6Command}">
-                        <TextBlock Text="Save MODE SENSE (6) response to file" />
+                        <TextBlock Text="{Binding SaveModeSense6Label}" />
                     </Button>
                     <Button Command="{Binding SaveModeSense10Command}">
-                        <TextBlock Text="Save MODE SENSE (10) response to file" />
+                        <TextBlock Text="{Binding SaveModeSense10Label}" />
                     </Button>
                 </StackPanel>
             </StackPanel>
         </TabItem>
         <TabItem IsVisible="{Binding !!EvpdPages.Count}">
             <TabItem.Header>
-                <TextBlock Text="EVPD" />
+                <TextBlock Text="{Binding EvpdLabel}" />
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" Items="{Binding EvpdPages}"
-                              SelectedItem="{Binding SelectedEvpdPage}" IsReadOnly="True">
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
+                              ItemsSource="{Binding EvpdPages}"
+                              SelectedItem="{Binding SelectedEvpdPage}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Page" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding PageLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding EvpdPageText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding EvpdPageText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding SaveEvpdPageCommand}">
-                        <TextBlock Text="Save EVPD page to file" />
+                        <TextBlock Text="{Binding SaveEvpdPageLabel}" />
                     </Button>
                 </StackPanel>
             </StackPanel>
         </TabItem>
         <TabItem IsVisible="{Binding !!MmcFeatures.Count}">
             <TabItem.Header>
-                <TextBlock Text="MMC FEATURES" />
+                <TextBlock Text="{Binding MmcFeaturesLabel}" />
             </TabItem.Header>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <DataGrid HorizontalAlignment="Left" VerticalAlignment="Stretch" Items="{Binding MmcFeatures}"
-                              SelectedItem="{Binding SelectedMmcFeature}" IsReadOnly="True">
+                    <DataGrid HorizontalAlignment="Left"
+                              VerticalAlignment="Stretch"
+                              ItemsSource="{Binding MmcFeatures}"
+                              SelectedItem="{Binding SelectedMmcFeature}"
+                              IsReadOnly="True">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Feature" Binding="{Binding Page}" />
+                            <DataGridTextColumn Header="{Binding FeatureLabel}"
+                                                Binding="{Binding Page}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <TextBox HorizontalAlignment="Right" VerticalAlignment="Stretch" Text="{Binding MmcFeatureText}"
+                    <TextBox HorizontalAlignment="Right"
+                             VerticalAlignment="Stretch"
+                             Text="{Binding MmcFeatureText}"
                              IsReadOnly="True" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding SaveMmcFeaturesCommand}">
-                        <TextBlock Text="Save MMC GET CONFIGURATION response to file" />
+                        <TextBlock Text="{Binding SaveMmcFeaturesLabel}" />
                     </Button>
                 </StackPanel>
             </StackPanel>

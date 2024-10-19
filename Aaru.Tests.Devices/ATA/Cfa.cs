@@ -23,16 +23,15 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.ATA;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.ATA;
 
 static class Cfa
 {
@@ -40,21 +39,21 @@ static class Cfa
     {
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a CompactFlash command to the device:");
-            AaruConsole.WriteLine("1.- Send REQUEST EXTENDED ERROR CODE command.");
-            AaruConsole.WriteLine("2.- Send CHS TRANSLATE SECTOR command.");
-            AaruConsole.WriteLine("3.- Send LBA TRANSLATE SECTOR command.");
-            AaruConsole.WriteLine("0.- Return to ATA commands menu.");
-            AaruConsole.Write("Choose: ");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_CompactFlash_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_REQUEST_EXTENDED_ERROR_CODE_command);
+            AaruConsole.WriteLine(Localization.Send_CHS_TRANSLATE_SECTOR_command);
+            AaruConsole.WriteLine(Localization.Send_LBA_TRANSLATE_SECTOR_command);
+            AaruConsole.WriteLine(Localization.Return_to_ATA_commands_menu);
+            AaruConsole.Write(Localization.Choose);
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -62,7 +61,7 @@ static class Cfa
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to ATA commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_ATA_commands_menu);
 
                     return;
                 case 1:
@@ -78,8 +77,8 @@ static class Cfa
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -89,31 +88,33 @@ static class Cfa
     static void RequestExtendedErrorCode(string devPath, Device dev)
     {
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.RequestExtendedErrorCode(out byte errorCode, out AtaErrorRegistersLba28 errorRegisters,
-                                                  dev.Timeout, out double duration);
+        bool sense = dev.RequestExtendedErrorCode(out byte errorCode,
+                                                  out AtaErrorRegistersLba28 errorRegisters,
+                                                  dev.Timeout,
+                                                  out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending REQUEST EXTENDED ERROR CODE to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Error code is {0}.", errorCode);
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_REQUEST_EXTENDED_ERROR_CODE_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0,        sense);
+        AaruConsole.WriteLine(Localization.Error_code_is_0,   errorCode);
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Decode error registers.");
-        AaruConsole.WriteLine("2.- Send command again.");
-        AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization._1_Decode_error_registers);
+        AaruConsole.WriteLine(Localization._2_Send_command_again);
+        AaruConsole.WriteLine(Localization.Return_to_CompactFlash_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
-        string strDev = Console.ReadLine();
+        string strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out int item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -121,25 +122,26 @@ static class Cfa
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to CompactFlash commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_CompactFlash_commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("REQUEST EXTENDED ERROR CODE status registers:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.REQUEST_EXTENDED_ERROR_CODE_status_registers);
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 2: goto start;
+            case 2:
+                goto start;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -157,24 +159,24 @@ static class Cfa
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for TRANSLATE SECTOR command:");
-            AaruConsole.WriteLine("Cylinder: {0}", cylinder);
-            AaruConsole.WriteLine("Head: {0}", head);
-            AaruConsole.WriteLine("Sector: {0}", sector);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_TRANSLATE_SECTOR_command);
+            AaruConsole.WriteLine(Localization.Cylinder_0, cylinder);
+            AaruConsole.WriteLine(Localization.Head_0,     head);
+            AaruConsole.WriteLine(Localization.Sector_0,   sector);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_CompactFlash_commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -182,84 +184,90 @@ static class Cfa
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to CompactFlash commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_CompactFlash_commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("What cylinder?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.What_cylinder);
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out cylinder))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         cylinder = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("What head?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.What_head);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out head))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         head = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     if(head > 15)
                     {
-                        AaruConsole.WriteLine("Head cannot be bigger than 15. Setting it to 15...");
+                        AaruConsole.WriteLine(Localization.Head_cannot_be_bigger_than_15_Setting_it_to_15);
                         head = 15;
                     }
 
-                    AaruConsole.Write("What sector?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.What_sector);
+                    strDev = System.Console.ReadLine();
 
                     if(!byte.TryParse(strDev, out sector))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         sector = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersChs errorRegisters, cylinder, head,
-                                         sector, dev.Timeout, out double duration);
+        bool sense = dev.TranslateSector(out byte[] buffer,
+                                         out AtaErrorRegistersChs errorRegisters,
+                                         cylinder,
+                                         head,
+                                         sector,
+                                         dev.Timeout,
+                                         out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_TRANSLATE_SECTOR_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode error registers.");
-        AaruConsole.WriteLine("3.- Send command again.");
-        AaruConsole.WriteLine("4.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization.Decode_error_registers);
+        AaruConsole.WriteLine(Localization.Send_command_again);
+        AaruConsole.WriteLine(Localization._1_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_CompactFlash_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -267,40 +275,41 @@ static class Cfa
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to CompactFlash commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_CompactFlash_commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("TRANSLATE SECTOR response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("TRANSLATE SECTOR status registers:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_status_registers);
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }
@@ -316,22 +325,22 @@ static class Cfa
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for TRANSLATE SECTOR command:");
-            AaruConsole.WriteLine("LBA: {0}", lba);
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_TRANSLATE_SECTOR_command);
+            AaruConsole.WriteLine(Localization.LBA_0, lba);
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_CompactFlash_commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -339,64 +348,69 @@ static class Cfa
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to CompactFlash commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_CompactFlash_commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("What logical block address?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.What_logical_block_address);
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out lba))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         lba = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     if(lba > 0xFFFFFFF)
                     {
-                        AaruConsole.WriteLine("Logical block address cannot be bigger than {0}. Setting it to {0}...",
+                        AaruConsole.WriteLine(Localization
+                                                 .Logical_block_address_cannot_be_bigger_than_0_Setting_it_to_0,
                                               0xFFFFFFF);
 
                         lba = 0xFFFFFFF;
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.TranslateSector(out byte[] buffer, out AtaErrorRegistersLba28 errorRegisters, lba, dev.Timeout,
+        bool sense = dev.TranslateSector(out byte[] buffer,
+                                         out AtaErrorRegistersLba28 errorRegisters,
+                                         lba,
+                                         dev.Timeout,
                                          out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending TRANSLATE SECTOR to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_TRANSLATE_SECTOR_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
         AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Decode error registers.");
-        AaruConsole.WriteLine("3.- Send command again.");
-        AaruConsole.WriteLine("4.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to CompactFlash commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization.Decode_error_registers);
+        AaruConsole.WriteLine(Localization.Send_command_again);
+        AaruConsole.WriteLine(Localization._1_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_CompactFlash_commands_menu);
+        AaruConsole.Write(Localization.Choose);
 
-        strDev = Console.ReadLine();
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -404,40 +418,41 @@ static class Cfa
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to CompactFlash commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_CompactFlash_commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("TRANSLATE SECTOR response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("TRANSLATE SECTOR status registers:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.TRANSLATE_SECTOR_status_registers);
                 AaruConsole.Write("{0}", MainClass.DecodeAtaRegisters(errorRegisters));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 3: goto start;
-            case 4: goto parameters;
+            case 3:
+                goto start;
+            case 4:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

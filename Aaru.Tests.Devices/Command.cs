@@ -23,15 +23,14 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
-using System;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Devices;
+
+namespace Aaru.Tests.Devices;
 
 static partial class MainClass
 {
@@ -39,26 +38,26 @@ static partial class MainClass
     {
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a command to the device:");
-            AaruConsole.WriteLine("1.- Send a SCSI command.");
-            AaruConsole.WriteLine("2.- Send an ATA command.");
-            AaruConsole.WriteLine("3.- Send a SecureDigital/MultiMediaCard command.");
-            AaruConsole.WriteLine("4.- Send a NVMe command.");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_SCSI_command);
+            AaruConsole.WriteLine(Localization.Send_an_ATA_command);
+            AaruConsole.WriteLine(Localization.Send_a_SecureDigital_MultiMediaCard_command);
+            AaruConsole.WriteLine(Localization.Send_a_NVMe_command);
 
             if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
-                AaruConsole.WriteLine("5.- Send a special sequence of commands for SCSI Multimedia devices.");
+                AaruConsole.WriteLine(Localization.Send_a_special_sequence_of_commands_for_SCSI_Multimedia_devices);
 
-            AaruConsole.WriteLine("0.- Return to device menu.");
-            AaruConsole.Write("Choose: ");
+            AaruConsole.WriteLine(Localization.Return_to_device_menu);
+            AaruConsole.Write(Localization.Choose);
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -66,7 +65,7 @@ static partial class MainClass
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to device menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_device_menu);
 
                     return;
                 case 1:
@@ -91,8 +90,8 @@ static partial class MainClass
                     continue;
 
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                    System.Console.ReadKey();
 
                     continue;
             }

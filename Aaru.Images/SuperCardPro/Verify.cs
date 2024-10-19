@@ -27,40 +27,47 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class SuperCardPro
 {
+#region IVerifiableImage Members
+
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
-        if(Header.flags.HasFlag(ScpFlags.Writable))
-            return null;
+        if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
 
         var  wholeFile = new byte[_scpStream.Length];
         uint sum       = 0;
 
         _scpStream.Position = 0;
-        _scpStream.Read(wholeFile, 0, wholeFile.Length);
+        _scpStream.EnsureRead(wholeFile, 0, wholeFile.Length);
 
-        for(var i = 0x10; i < wholeFile.Length; i++)
-            sum += wholeFile[i];
+        for(var i = 0x10; i < wholeFile.Length; i++) sum += wholeFile[i];
 
         return Header.checksum == sum;
     }
 
-    /// <inheritdoc />
-    public bool? VerifySector(ulong sectorAddress) =>
-        throw new NotImplementedException("Flux decoding is not yet implemented.");
+#endregion
+
+#region IVerifiableSectorsImage Members
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySector(ulong sectorAddress) =>
+        throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas) =>
-        throw new NotImplementedException("Flux decoding is not yet implemented.");
+        throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
+
+#endregion
 }

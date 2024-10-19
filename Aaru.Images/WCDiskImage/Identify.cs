@@ -27,49 +27,47 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2018-2019 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2018-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 32)
-            return false;
+        if(stream.Length < 32) return false;
 
         var header = new byte[32];
-        stream.Read(header, 0, 32);
+        stream.EnsureRead(header, 0, 32);
 
         FileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<FileHeader>(header);
 
         /* check the signature */
-        if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != FILE_SIGNATURE)
-            return false;
+        if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != FILE_SIGNATURE) return false;
 
         /* Some sanity checks on the values we just read. */
-        if(fheader.version > 1)
-            return false;
+        if(fheader.version > 1) return false;
 
-        if(fheader.heads is < 1 or > 2)
-            return false;
+        if(fheader.heads is < 1 or > 2) return false;
 
-        if(fheader.sectorsPerTrack is < 8 or > 18)
-            return false;
+        if(fheader.sectorsPerTrack is < 8 or > 18) return false;
 
-        if(fheader.cylinders is < 1 or > 80)
-            return false;
+        if(fheader.cylinders is < 1 or > 80) return false;
 
         if(fheader.extraTracks[0] > 1 ||
            fheader.extraTracks[1] > 1 ||
@@ -81,4 +79,6 @@ public sealed partial class WCDiskImage
         // For now, having a valid header will suffice.
         return ((byte)fheader.extraFlags & ~0x03) == 0;
     }
+
+#endregion
 }

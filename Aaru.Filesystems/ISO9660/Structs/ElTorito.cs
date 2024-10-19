@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     El Torito extensions structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,16 +23,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region Nested type: ElToritoBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ElToritoBootRecord
     {
@@ -53,17 +51,9 @@ public sealed partial class ISO9660
         public readonly byte[] boot_use;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ElToritoValidationEntry
-    {
-        public readonly ElToritoIndicator header_id;
-        public readonly ElToritoPlatform  platform_id;
-        public readonly ushort            reserved;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        public readonly byte[] developer_id;
-        public readonly ushort checksum;
-        public readonly ushort signature;
-    }
+#endregion
+
+#region Nested type: ElToritoInitialEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct ElToritoInitialEntry
@@ -79,15 +69,9 @@ public sealed partial class ISO9660
         public readonly byte[] reserved2;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ElToritoSectionHeaderEntry
-    {
-        public readonly ElToritoIndicator header_id;
-        public readonly ElToritoPlatform  platform_id;
-        public readonly ushort            entries;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-        public readonly byte[] identifier;
-    }
+#endregion
+
+#region Nested type: ElToritoSectionEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ElToritoSectionEntry
@@ -104,6 +88,10 @@ public sealed partial class ISO9660
         public readonly byte[] selection_criterias;
     }
 
+#endregion
+
+#region Nested type: ElToritoSectionEntryExtension
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ElToritoSectionEntryExtension
     {
@@ -112,4 +100,36 @@ public sealed partial class ISO9660
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
         public readonly byte[] selection_criterias;
     }
+
+#endregion
+
+#region Nested type: ElToritoSectionHeaderEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ElToritoSectionHeaderEntry
+    {
+        public readonly ElToritoIndicator header_id;
+        public readonly ElToritoPlatform  platform_id;
+        public readonly ushort            entries;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
+        public readonly byte[] identifier;
+    }
+
+#endregion
+
+#region Nested type: ElToritoValidationEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ElToritoValidationEntry
+    {
+        public readonly ElToritoIndicator header_id;
+        public readonly ElToritoPlatform  platform_id;
+        public readonly ushort            reserved;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
+        public readonly byte[] developer_id;
+        public readonly ushort checksum;
+        public readonly ushort signature;
+    }
+
+#endregion
 }

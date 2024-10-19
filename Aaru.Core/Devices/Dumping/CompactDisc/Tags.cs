@@ -27,16 +27,12 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
-
-namespace Aaru.Core.Devices.Dumping;
 
 using System;
 using System.Collections.Generic;
@@ -46,6 +42,8 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
 
+namespace Aaru.Core.Devices.Dumping;
+
 partial class Dump
 {
     /// <summary>Reads media tags from Compact Disc media</summary>
@@ -54,7 +52,7 @@ partial class Dump
     /// <param name="sessions">Sessions</param>
     /// <param name="firstTrackLastSession">First track in last session</param>
     void ReadCdTags(ref MediaType mediaType, Dictionary<MediaTagType, byte[]> mediaTags, out int sessions,
-                    out int firstTrackLastSession)
+                    out int       firstTrackLastSession)
     {
         byte[] cmdBuf; // Data buffer
         bool   sense;  // Sense indicator
@@ -63,8 +61,8 @@ partial class Dump
         firstTrackLastSession = 1;
 
         // ATIP exists on blank CDs
-        _dumpLog.WriteLine("Reading ATIP");
-        UpdateStatus?.Invoke("Reading ATIP");
+        _dumpLog.WriteLine(Localization.Core.Reading_ATIP);
+        UpdateStatus?.Invoke(Localization.Core.Reading_ATIP);
         sense = _dev.ReadAtip(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(!sense)
@@ -79,48 +77,48 @@ partial class Dump
                 tmpBuf = new byte[cmdBuf.Length - 4];
                 Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                 mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
+                _mediaGraph?.PaintRecordableInformationGood();
             }
         }
 
-        _dumpLog.WriteLine("Reading Disc Information");
-        UpdateStatus?.Invoke("Reading Disc Information");
+        _dumpLog.WriteLine(Localization.Core.Reading_Disc_Information);
+        UpdateStatus?.Invoke(Localization.Core.Reading_Disc_Information);
 
-        sense = _dev.ReadDiscInformation(out cmdBuf, out _, MmcDiscInformationDataTypes.DiscInformation, _dev.Timeout,
+        sense = _dev.ReadDiscInformation(out cmdBuf,
+                                         out _,
+                                         MmcDiscInformationDataTypes.DiscInformation,
+                                         _dev.Timeout,
                                          out _);
 
         if(!sense)
         {
             DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
 
-            if(discInfo.HasValue &&
-               mediaType == MediaType.CD)
-                switch(discInfo.Value.DiscType)
-                {
-                    case 0x10:
-                        mediaType = MediaType.CDI;
-
-                        break;
-                    case 0x20:
-                        mediaType = MediaType.CDROMXA;
-
-                        break;
-                }
+            if(discInfo.HasValue && mediaType == MediaType.CD)
+            {
+                mediaType = discInfo.Value.DiscType switch
+                            {
+                                0x10 => MediaType.CDI,
+                                0x20 => MediaType.CDROMXA,
+                                _    => mediaType
+                            };
+            }
         }
 
-        _dumpLog.WriteLine("Reading PMA");
-        UpdateStatus?.Invoke("Reading PMA");
+        _dumpLog.WriteLine(Localization.Core.Reading_PMA);
+        UpdateStatus?.Invoke(Localization.Core.Reading_PMA);
         sense = _dev.ReadPma(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(!sense &&
-           PMA.Decode(cmdBuf).HasValue)
+        if(!sense && PMA.Decode(cmdBuf).HasValue)
         {
             tmpBuf = new byte[cmdBuf.Length - 4];
             Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
             mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
+            _mediaGraph?.PaintRecordableInformationGood();
         }
 
-        _dumpLog.WriteLine("Reading Session Information");
-        UpdateStatus?.Invoke("Reading Session Information");
+        _dumpLog.WriteLine(Localization.Core.Reading_Session_Information);
+        UpdateStatus?.Invoke(Localization.Core.Reading_Session_Information);
         sense = _dev.ReadSessionInfo(out cmdBuf, out _, _dev.Timeout, out _);
 
         if(!sense)
@@ -134,12 +132,11 @@ partial class Dump
             }
         }
 
-        _dumpLog.WriteLine("Reading CD-Text from Lead-In");
-        UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
+        _dumpLog.WriteLine(Localization.Core.Reading_CD_Text_from_Lead_In);
+        UpdateStatus?.Invoke(Localization.Core.Reading_CD_Text_from_Lead_In);
         sense = _dev.ReadCdText(out cmdBuf, out _, _dev.Timeout, out _);
 
-        if(sense || !CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-            return;
+        if(sense || !CDTextOnLeadIn.Decode(cmdBuf).HasValue) return;
 
         tmpBuf = new byte[cmdBuf.Length - 4];
         Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);

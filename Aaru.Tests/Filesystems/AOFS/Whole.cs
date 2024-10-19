@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.AOFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Whole : FilesystemTest
-{
-    public Whole() : base("Amiga OFS") {}
+namespace Aaru.Tests.Filesystems.AOFS;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Old File System");
+[TestFixture]
+public class Whole() : FilesystemTest("aofs")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amigaos_3.9.adf.lz",
@@ -68,5 +66,5 @@ public class Whole : FilesystemTest
             VolumeName   = "Volume label",
             VolumeSerial = "A5D9F14F"
         }
-    };
+    ];
 }

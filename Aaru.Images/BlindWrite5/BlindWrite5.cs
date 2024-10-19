@@ -27,22 +27,22 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Images;
 
 // TODO: Too many unknowns to make this writable
 /// <inheritdoc />
 /// <summary>Implements reading BlindWrite 5/6/7 disc images</summary>
 public sealed partial class BlindWrite5 : IOpticalMediaImage
 {
+    const string                  MODULE_NAME = "BlindWrite5 plugin";
     byte[]                        _atip;
     byte[]                        _bca;
     List<SessionDescriptor>       _bwSessions;
@@ -66,8 +66,8 @@ public sealed partial class BlindWrite5 : IOpticalMediaImage
 
     public BlindWrite5() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = true,
         HasSessions           = true,
         Version               = null,

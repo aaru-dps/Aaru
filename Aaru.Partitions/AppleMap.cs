@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -43,6 +41,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Partitions;
 
 // Information about structures learnt from Inside Macintosh
 // Constants from image testing
@@ -59,59 +59,63 @@ public sealed class AppleMap : IPartition
     const ushort APM_MAGIC_OLD = 0x5453;
     /// <summary>Old indicator for HFS partition, "TFS1"</summary>
     const uint HFS_MAGIC_OLD = 0x54465331;
+    const string MODULE_NAME = "Apple Partition Map (APM) Plugin";
+
+#region IPartition Members
 
     /// <inheritdoc />
-    public string Name => "Apple Partition Map";
+    public string Name => Localization.AppleMap_Name;
+
     /// <inheritdoc />
     public Guid Id => new("36405F8D-4F1A-07F5-209C-223D735D6D22");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        uint sectorSize;
+        uint sectorSize = imagePlugin.Info.SectorSize is 2352 or 2448 ? 2048 : imagePlugin.Info.SectorSize;
 
-        if(imagePlugin.Info.SectorSize is 2352 or 2448)
-            sectorSize = 2048;
-        else
-            sectorSize = imagePlugin.Info.SectorSize;
+        partitions = [];
 
-        partitions = new List<Partition>();
-
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] ddmSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         ushort maxDrivers = 61;
 
-        if(sectorSize == 256)
+        switch(sectorSize)
         {
-            var tmp = new byte[512];
-            Array.Copy(ddmSector, 0, tmp, 0, 256);
-            ddmSector  = tmp;
-            maxDrivers = 29;
+            case 256:
+            {
+                var tmp = new byte[512];
+                Array.Copy(ddmSector, 0, tmp, 0, 256);
+                ddmSector  = tmp;
+                maxDrivers = 29;
+
+                break;
+            }
+            case < 256:
+                return false;
         }
-        else if(sectorSize < 256)
-            return false;
 
         AppleDriverDescriptorMap ddm = Marshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}", ddm.sbSig);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}", ddm.sbBlocks);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}", ddm.sbDevType);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}", ddm.sbDevId);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbSig = 0x{0:X4}",  ddm.sbSig);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbBlocks = {0}",    ddm.sbBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbDevType = {0}",   ddm.sbDevType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbDevId = {0}",     ddm.sbDevId);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbData = 0x{0:X8}", ddm.sbData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
 
         uint sequence = 0;
 
         if(ddm.sbSig == DDM_MAGIC)
+        {
             if(ddm.sbDrvrCount < maxDrivers)
             {
                 ddm.sbMap = new AppleDriverEntry[ddm.sbDrvrCount];
@@ -122,17 +126,13 @@ public sealed class AppleMap : IPartition
                     Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
                     ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddBlock = {0}", ddm.sbMap[i].ddBlock, i);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize, i);
 
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType,
-                                               i);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType, i);
 
-                    if(ddm.sbMap[i].ddSize == 0)
-                        continue;
+                    if(ddm.sbMap[i].ddSize == 0) continue;
 
                     var part = new Partition
                     {
@@ -144,19 +144,18 @@ public sealed class AppleMap : IPartition
                         Type     = "Apple_Driver"
                     };
 
-                    if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0)
-                        part.Length++;
+                    if(ddm.sbMap[i].ddSize * 512 % sectorSize > 0) part.Length++;
 
                     partitions.Add(part);
 
                     sequence++;
                 }
             }
+        }
 
         errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] partSector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         AppleOldDevicePartitionMap oldMap =
             Marshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
@@ -172,20 +171,24 @@ public sealed class AppleMap : IPartition
                 AppleMapOldPartitionEntry oldEntry =
                     Marshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
 
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdStart = {0}",
+                                           oldEntry.pdStart,
                                            (i - 2) / 12);
 
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdSize = {0}",
+                                           oldEntry.pdSize,
                                            (i - 2) / 12);
 
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}", oldEntry.pdFSID,
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
+                                           oldEntry.pdFSID,
                                            (i - 2) / 12);
 
-                if(oldEntry.pdSize == 0 &&
-                   oldEntry.pdFSID == 0)
+                if(oldEntry is { pdSize: 0, pdFSID: 0 })
                 {
-                    if(oldEntry.pdStart == 0)
-                        break;
+                    if(oldEntry.pdStart == 0) break;
 
                     continue;
                 }
@@ -225,7 +228,7 @@ public sealed class AppleMap : IPartition
             // Check for a partition entry that's 512-byte aligned
             if(entry.signature == APM_MAGIC)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_misaligned_entry);
                 entrySize     = 512;
                 entryCount    = entry.entries;
                 skipDdm       = 512;
@@ -237,7 +240,7 @@ public sealed class AppleMap : IPartition
 
                 if(entry.signature == APM_MAGIC)
                 {
-                    AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_aligned_entry);
                     entrySize     = sectorSize;
                     entryCount    = entry.entries;
                     skipDdm       = sectorSize;
@@ -253,7 +256,7 @@ public sealed class AppleMap : IPartition
 
             if(entry.signature == APM_MAGIC)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_aligned_entry);
                 entrySize     = sectorSize;
                 entryCount    = entry.entries;
                 skipDdm       = sectorSize;
@@ -265,13 +268,12 @@ public sealed class AppleMap : IPartition
 
         errno = imagePlugin.ReadSectors(sectorOffset, sectorsToRead, out byte[] entries);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}", entrySize);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}", entryCount);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}", skipDdm);
-        AaruConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "entry_size = {0}",      entrySize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "entry_count = {0}",     entryCount);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "skip_ddm = {0}",        skipDdm);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "sectors_to_read = {0}", sectorsToRead);
 
         var copy = new byte[entries.Length - skipDdm];
         Array.Copy(entries, skipDdm, copy, 0, copy.Length);
@@ -283,52 +285,53 @@ public sealed class AppleMap : IPartition
             Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
 
-            if(entry.signature != APM_MAGIC)
-                continue;
+            if(entry.signature != APM_MAGIC) continue;
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}", i, entry.entries);
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}", i, entry.start);
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}", i, entry.sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].entries = {1}",        i, entry.entries);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].start = {1}",          i, entry.start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].sectors = {1}",        i, entry.sectors);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].name = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.name));
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].type = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.type));
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
-                                       entry.first_data_block);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_data_block = {1}", i, entry.first_data_block);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i, (AppleMapFlags)entry.flags);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].flags = {1}",        i, (AppleMapFlags)entry.flags);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
-                                       entry.first_boot_block);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].first_boot_block = {1}", i, entry.first_boot_block);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].boot_size = {1}", i, entry.boot_size);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i, entry.load_address);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].load_address = 0x{1:X8}", i, entry.load_address);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i, entry.load_address2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].load_address2 = 0x{1:X8}", i, entry.load_address2);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i, entry.entry_point2);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].entry_point2 = 0x{1:X8}", i, entry.entry_point2);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
 
-            AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i,
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       "dpme[{0}].processor = \"{1}\"",
+                                       i,
                                        StringHandlers.CToString(entry.processor));
 
             var flags = (AppleMapFlags)entry.flags;
 
             // BeOS doesn't mark its partitions as valid
             //if(flags.HasFlag(AppleMapFlags.Valid) &&
-            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" ||
-               entry.sectors                        <= 0)
-                continue;
+            if(StringHandlers.CToString(entry.type) == "Apple_partition_map" || entry.sectors <= 0) continue;
 
             var sb = new StringBuilder();
 
@@ -344,44 +347,38 @@ public sealed class AppleMap : IPartition
                 Scheme   = Name
             };
 
-            sb.AppendLine("Partition flags:");
+            sb.AppendLine(Localization.Partition_flags);
 
-            if(flags.HasFlag(AppleMapFlags.Valid))
-                sb.AppendLine("Partition is valid.");
+            if(flags.HasFlag(AppleMapFlags.Valid)) sb.AppendLine(Localization.Partition_is_valid);
 
-            if(flags.HasFlag(AppleMapFlags.Allocated))
-                sb.AppendLine("Partition entry is allocated.");
+            if(flags.HasFlag(AppleMapFlags.Allocated)) sb.AppendLine(Localization.Partition_entry_is_allocated);
 
-            if(flags.HasFlag(AppleMapFlags.InUse))
-                sb.AppendLine("Partition is in use.");
+            if(flags.HasFlag(AppleMapFlags.InUse)) sb.AppendLine(Localization.Partition_is_in_use);
 
-            if(flags.HasFlag(AppleMapFlags.Bootable))
-                sb.AppendLine("Partition is bootable.");
+            if(flags.HasFlag(AppleMapFlags.Bootable)) sb.AppendLine(Localization.Partition_is_bootable);
 
-            if(flags.HasFlag(AppleMapFlags.Readable))
-                sb.AppendLine("Partition is readable.");
+            if(flags.HasFlag(AppleMapFlags.Readable)) sb.AppendLine(Localization.Partition_is_readable);
 
-            if(flags.HasFlag(AppleMapFlags.Writable))
-                sb.AppendLine("Partition is writable.");
+            if(flags.HasFlag(AppleMapFlags.Writable)) sb.AppendLine(Localization.Partition_is_writable);
 
             if(flags.HasFlag(AppleMapFlags.Bootable))
             {
-                sb.AppendFormat("First boot sector: {0}", entry.first_boot_block * entrySize / sectorSize).AppendLine();
+                sb.AppendFormat(Localization.First_boot_sector_0, entry.first_boot_block * entrySize / sectorSize)
+                  .AppendLine();
 
-                sb.AppendFormat("Boot is {0} bytes.", entry.boot_size).AppendLine();
-                sb.AppendFormat("Boot load address: 0x{0:X8}", entry.load_address).AppendLine();
-                sb.AppendFormat("Boot entry point: 0x{0:X8}", entry.entry_point).AppendLine();
-                sb.AppendFormat("Boot code checksum: 0x{0:X8}", entry.checksum).AppendLine();
-                sb.AppendFormat("Processor: {0}", StringHandlers.CToString(entry.processor)).AppendLine();
+                sb.AppendFormat(Localization.Boot_is_0_bytes, entry.boot_size).AppendLine();
+                sb.AppendFormat(Localization.Boot_load_address_0_X8, entry.load_address).AppendLine();
+                sb.AppendFormat(Localization.Boot_entry_point_0_X8, entry.entry_point).AppendLine();
+                sb.AppendFormat(Localization.Boot_code_checksum_0_X8, entry.checksum).AppendLine();
+                sb.AppendFormat(Localization.Processor_0, StringHandlers.CToString(entry.processor)).AppendLine();
 
                 if(flags.HasFlag(AppleMapFlags.PicCode))
-                    sb.AppendLine("Partition's boot code is position independent.");
+                    sb.AppendLine(Localization.Partition_boot_code_is_position_independent);
             }
 
             partition.Description = sb.ToString();
 
-            if(partition.Start < imagePlugin.Info.Sectors &&
-               partition.End   < imagePlugin.Info.Sectors)
+            if(partition.Start < imagePlugin.Info.Sectors && partition.End < imagePlugin.Info.Sectors)
             {
                 partitions.Add(partition);
                 sequence++;
@@ -390,21 +387,30 @@ public sealed class AppleMap : IPartition
             // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
             else if(partition.Start < imagePlugin.Info.Sectors)
             {
-                AaruConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
-                                           partition.End, imagePlugin.Info.Sectors - 1);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Cutting_last_partition_end_0_to_media_size_1,
+                                           partition.End,
+                                           imagePlugin.Info.Sectors - 1);
 
                 partition.Length = imagePlugin.Info.Sectors - partition.Start;
                 partitions.Add(partition);
                 sequence++;
             }
             else
-                AaruConsole.DebugWriteLine("AppleMap Plugin",
-                                           "Not adding partition because start ({0}) is outside media size ({1})",
-                                           partition.Start, imagePlugin.Info.Sectors - 1);
+            {
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           Localization.Not_adding_partition_because_start_0_is_outside_media_size_1,
+                                           partition.Start,
+                                           imagePlugin.Info.Sectors - 1);
+            }
         }
 
         return partitions.Count > 0;
     }
+
+#endregion
+
+#region Nested type: AppleDriverDescriptorMap
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct AppleDriverDescriptorMap
@@ -428,6 +434,10 @@ public sealed class AppleMap : IPartition
         public AppleDriverEntry[] sbMap;
     }
 
+#endregion
+
+#region Nested type: AppleDriverEntry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct AppleDriverEntry
     {
@@ -439,26 +449,9 @@ public sealed class AppleMap : IPartition
         public readonly ushort ddType;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AppleOldDevicePartitionMap
-    {
-        /// <summary>Signature <see cref="APM_MAGIC_OLD" /></summary>
-        public readonly ushort pdSig;
-        /// <summary>Entries of the driver descriptor</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
-        public readonly AppleMapOldPartitionEntry[] pdMap;
-    }
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AppleMapOldPartitionEntry
-    {
-        /// <summary>First sector of the partition</summary>
-        public readonly uint pdStart;
-        /// <summary>Number of sectors of the partition</summary>
-        public readonly uint pdSize;
-        /// <summary>Partition type</summary>
-        public readonly uint pdFSID;
-    }
+#region Nested type: AppleMapFlags
 
     [Flags]
     enum AppleMapFlags : uint
@@ -488,6 +481,25 @@ public sealed class AppleMap : IPartition
         /// <summary>Reserved, not seen in the wild</summary>
         Reserved = 0xBFFFFC00
     }
+
+#endregion
+
+#region Nested type: AppleMapOldPartitionEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AppleMapOldPartitionEntry
+    {
+        /// <summary>First sector of the partition</summary>
+        public readonly uint pdStart;
+        /// <summary>Number of sectors of the partition</summary>
+        public readonly uint pdSize;
+        /// <summary>Partition type</summary>
+        public readonly uint pdFSID;
+    }
+
+#endregion
+
+#region Nested type: AppleMapPartitionEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct AppleMapPartitionEntry
@@ -535,4 +547,20 @@ public sealed class AppleMap : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
         public readonly uint[] boot_arguments;
     }
+
+#endregion
+
+#region Nested type: AppleOldDevicePartitionMap
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct AppleOldDevicePartitionMap
+    {
+        /// <summary>Signature <see cref="APM_MAGIC_OLD" /></summary>
+        public readonly ushort pdSig;
+        /// <summary>Entries of the driver descriptor</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
+        public readonly AppleMapOldPartitionEntry[] pdMap;
+    }
+
+#endregion
 }

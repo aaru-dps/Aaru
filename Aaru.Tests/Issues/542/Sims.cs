@@ -1,11 +1,10 @@
-
-
 // ReSharper disable StringLiteralTypo
 
-namespace Aaru.Tests.Issues._542;
-
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+
+namespace Aaru.Tests.Issues._542;
 
 /* https://github.com/aaru-dps/Aaru/issues/542
  *
@@ -14,9 +13,10 @@ using System.IO;
  * When extracting an image of a SafeDisc protected CD, most files aren't properly extracted.
  */
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class Sims : FsExtractHashIssueTest
 {
-    protected override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue542", "sims");
+    protected override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue542", "sims");
     protected override string TestFile => "The Sims.aaruf";
     protected override Dictionary<string, string> ParsedOptions => new();
     protected override bool Debug => false;

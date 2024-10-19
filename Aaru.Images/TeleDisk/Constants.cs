@@ -27,12 +27,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class TeleDisk
@@ -73,14 +73,6 @@ public sealed partial class TeleDisk
     const byte SECTOR_SIZE_256 = 0x01;
     const byte SECTOR_SIZE_512 = 0x02;
 
-    // ReSharper disable InconsistentNaming
-    const byte SECTOR_SIZE_1K = 0x03;
-    const byte SECTOR_SIZE_2K = 0x04;
-    const byte SECTOR_SIZE_4K = 0x05;
-    const byte SECTOR_SIZE_8K = 0x06;
-
-    // ReSharper restore InconsistentNaming
-
     // Flags
     // Address mark repeats inside same track
     const byte FLAGS_SECTOR_DUPLICATE = 0x01;
@@ -111,4 +103,12 @@ public sealed partial class TeleDisk
     const byte DATA_BLOCK_RLE = 0x02;
 
     const int BUFSZ = 512;
+
+    // ReSharper disable InconsistentNaming
+    const byte SECTOR_SIZE_1K = 0x03;
+    const byte SECTOR_SIZE_2K = 0x04;
+    const byte SECTOR_SIZE_4K = 0x05;
+    const byte SECTOR_SIZE_8K = 0x06;
+
+    // ReSharper restore InconsistentNaming
 }

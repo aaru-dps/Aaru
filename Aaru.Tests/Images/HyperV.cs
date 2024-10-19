@@ -23,25 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 [TestFixture]
 public class HyperV : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Hyper-V");
-    public override IMediaImage Plugin    => new Vhdx();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "Hyper-V");
+    public override IMediaImage Plugin     => new Vhdx();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "dynamic_exfat.vhdx.lz",
@@ -57,8 +57,8 @@ public class HyperV : BlockMediaImageTest
             Sectors    = 409600,
             SectorSize = 512,
             Md5        = "f2a720176adb4cf70c04c56b58339024",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 34,
@@ -69,7 +69,7 @@ public class HyperV : BlockMediaImageTest
                     Start  = 65664,
                     Length = 339968
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -119,5 +119,5 @@ public class HyperV : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "338ba2043d7f9cb2693c35e3194e6c9c"
         }
-    };
+    ];
 }

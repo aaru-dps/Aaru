@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,19 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Adfs : FilesystemTest
-{
-    public Adfs() : base("Acorn Advanced Disc Filing System") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "Acorn Advanced Disc Filing System");
+[TestFixture]
+public class Adfs() : FilesystemTest("adfs")
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acorn Advanced Disc Filing System");
 
     public override IFilesystem Plugin     => new AcornADFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "adfs_d.adf.lz",
@@ -151,5 +149,5 @@ public class Adfs : FilesystemTest
             Clusters    = 78336,
             ClusterSize = 256
         }
-    };
+    ];
 }

@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Apple Macintosh File System.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,56 +23,53 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
     const int BYTES_BEFORE_BLOCK_MAP = 64;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         _device         = imagePlugin;
         _partitionStart = partition.Start;
-        Encoding        = encoding ?? Encoding.GetEncoding("macintosh");
-        ErrorNumber errno;
+        _encoding       = encoding ?? Encoding.GetEncoding("macintosh");
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         _volMdb = new MasterDirectoryBlock();
 
-        errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
+        ErrorNumber errno = _device.ReadSector(2 + _partitionStart, out _mdbBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         errno = _device.ReadSector(0 + _partitionStart, out _bootBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _volMdb.drSigWord = BigEndianBitConverter.ToUInt16(_mdbBlocks, 0x000);
 
-        if(_volMdb.drSigWord != MFS_MAGIC)
-            return ErrorNumber.InvalidArgument;
+        if(_volMdb.drSigWord != MFS_MAGIC) return ErrorNumber.InvalidArgument;
 
         _volMdb.drCrDate   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x002);
         _volMdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(_mdbBlocks, 0x006);
@@ -93,12 +86,11 @@ public sealed partial class AppleMFS
         _volMdb.drVNSiz    = _mdbBlocks[0x024];
         var variableSize = new byte[_volMdb.drVNSiz + 1];
         Array.Copy(_mdbBlocks, 0x024, variableSize, 0, _volMdb.drVNSiz + 1);
-        _volMdb.drVN = StringHandlers.PascalToString(variableSize, Encoding);
+        _volMdb.drVN = StringHandlers.PascalToString(variableSize, _encoding);
 
         errno = _device.ReadSectors(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, out _directoryBlocks);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         int bytesInBlockMap = _volMdb.drNmAlBlks * 12 / 8 + _volMdb.drNmAlBlks * 12 % 8;
         int bytesInWholeMdb = bytesInBlockMap             + BYTES_BEFORE_BLOCK_MAP;
@@ -108,8 +100,7 @@ public sealed partial class AppleMFS
 
         errno = _device.ReadSectors(_partitionStart + 2, (uint)sectorsInWholeMdb, out byte[] wholeMdb);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         _blockMapBytes = new byte[bytesInBlockMap];
         Array.Copy(wholeMdb, BYTES_BEFORE_BLOCK_MAP, _blockMapBytes, 0, _blockMapBytes.Length);
@@ -123,8 +114,7 @@ public sealed partial class AppleMFS
             uint tmp2 = 0;
             uint tmp3 = 0;
 
-            if(offset + 4 <= _blockMapBytes.Length)
-                tmp1 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset);
+            if(offset + 4 <= _blockMapBytes.Length) tmp1 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset);
 
             if(offset + 4 + 4 <= _blockMapBytes.Length)
                 tmp2 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset + 4);
@@ -132,29 +122,21 @@ public sealed partial class AppleMFS
             if(offset + 8 + 4 <= _blockMapBytes.Length)
                 tmp3 = BigEndianBitConverter.ToUInt32(_blockMapBytes, offset + 8);
 
-            if(i < _blockMap.Length)
-                _blockMap[i] = (tmp1 & 0xFFF00000) >> 20;
+            if(i < _blockMap.Length) _blockMap[i] = (tmp1 & 0xFFF00000) >> 20;
 
-            if(i + 2 < _blockMap.Length)
-                _blockMap[i + 1] = (tmp1 & 0xFFF00) >> 8;
+            if(i + 2 < _blockMap.Length) _blockMap[i + 1] = (tmp1 & 0xFFF00) >> 8;
 
-            if(i + 3 < _blockMap.Length)
-                _blockMap[i + 2] = ((tmp1 & 0xFF) << 4) + ((tmp2 & 0xF0000000) >> 28);
+            if(i + 3 < _blockMap.Length) _blockMap[i + 2] = ((tmp1 & 0xFF) << 4) + ((tmp2 & 0xF0000000) >> 28);
 
-            if(i + 4 < _blockMap.Length)
-                _blockMap[i + 3] = (tmp2 & 0xFFF0000) >> 16;
+            if(i + 4 < _blockMap.Length) _blockMap[i + 3] = (tmp2 & 0xFFF0000) >> 16;
 
-            if(i + 5 < _blockMap.Length)
-                _blockMap[i + 4] = (tmp2 & 0xFFF0) >> 4;
+            if(i + 5 < _blockMap.Length) _blockMap[i + 4] = (tmp2 & 0xFFF0) >> 4;
 
-            if(i + 6 < _blockMap.Length)
-                _blockMap[i + 5] = ((tmp2 & 0xF) << 8) + ((tmp3 & 0xFF000000) >> 24);
+            if(i + 6 < _blockMap.Length) _blockMap[i + 5] = ((tmp2 & 0xF) << 8) + ((tmp3 & 0xFF000000) >> 24);
 
-            if(i + 7 < _blockMap.Length)
-                _blockMap[i + 6] = (tmp3 & 0xFFF000) >> 12;
+            if(i + 7 < _blockMap.Length) _blockMap[i + 6] = (tmp3 & 0xFFF000) >> 12;
 
-            if(i + 8 < _blockMap.Length)
-                _blockMap[i + 7] = tmp3 & 0xFFF;
+            if(i + 8 < _blockMap.Length) _blockMap[i + 7] = tmp3 & 0xFFF;
 
             offset += 12;
         }
@@ -164,49 +146,41 @@ public sealed partial class AppleMFS
             _device.ReadSectorTag(2 + _partitionStart, SectorTagType.AppleSectorTag, out _mdbTags);
             _device.ReadSectorTag(0 + _partitionStart, SectorTagType.AppleSectorTag, out _bootTags);
 
-            _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart, _volMdb.drBlLen, SectorTagType.AppleSectorTag,
+            _device.ReadSectorsTag(_volMdb.drDirSt + _partitionStart,
+                                   _volMdb.drBlLen,
+                                   SectorTagType.AppleSectorTag,
                                    out _directoryTags);
 
-            _device.ReadSectorsTag(_partitionStart + 2, (uint)sectorsInWholeMdb, SectorTagType.AppleSectorTag,
+            _device.ReadSectorsTag(_partitionStart + 2,
+                                   (uint)sectorsInWholeMdb,
+                                   SectorTagType.AppleSectorTag,
                                    out _bitmapTags);
         }
 
         _sectorsPerBlock = (int)(_volMdb.drAlBlkSiz / _device.Info.SectorSize);
 
-        if(!FillDirectory())
-            return ErrorNumber.InvalidArgument;
+        if(!FillDirectory()) return ErrorNumber.InvalidArgument;
 
         _mounted = true;
 
         var bbSig = BigEndianBitConverter.ToUInt16(_bootBlocks, 0x000);
 
-        if(bbSig != AppleCommon.BB_MAGIC)
-            _bootBlocks = null;
+        if(bbSig != AppleCommon.BB_MAGIC) _bootBlocks = null;
 
-        XmlFsType = new FileSystemType();
+        Metadata = new FileSystem();
 
-        if(_volMdb.drLsBkUp > 0)
-        {
-            XmlFsType.BackupDate          = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
-            XmlFsType.BackupDateSpecified = true;
-        }
+        if(_volMdb.drLsBkUp > 0) Metadata.BackupDate = DateHandlers.MacToDateTime(_volMdb.drLsBkUp);
 
-        XmlFsType.Bootable    = bbSig == AppleCommon.BB_MAGIC;
-        XmlFsType.Clusters    = _volMdb.drNmAlBlks;
-        XmlFsType.ClusterSize = _volMdb.drAlBlkSiz;
+        Metadata.Bootable    = bbSig == AppleCommon.BB_MAGIC;
+        Metadata.Clusters    = _volMdb.drNmAlBlks;
+        Metadata.ClusterSize = _volMdb.drAlBlkSiz;
 
-        if(_volMdb.drCrDate > 0)
-        {
-            XmlFsType.CreationDate          = DateHandlers.MacToDateTime(_volMdb.drCrDate);
-            XmlFsType.CreationDateSpecified = true;
-        }
+        if(_volMdb.drCrDate > 0) Metadata.CreationDate = DateHandlers.MacToDateTime(_volMdb.drCrDate);
 
-        XmlFsType.Files                 = _volMdb.drNmFls;
-        XmlFsType.FilesSpecified        = true;
-        XmlFsType.FreeClusters          = _volMdb.drFreeBks;
-        XmlFsType.FreeClustersSpecified = true;
-        XmlFsType.Type                  = "MFS";
-        XmlFsType.VolumeName            = _volMdb.drVN;
+        Metadata.Files        = _volMdb.drNmFls;
+        Metadata.FreeClusters = _volMdb.drFreeBks;
+        Metadata.Type         = FS_TYPE;
+        Metadata.VolumeName   = _volMdb.drVN;
 
         return ErrorNumber.NoError;
     }
@@ -233,11 +207,13 @@ public sealed partial class AppleMFS
             Files          = _volMdb.drNmFls,
             FreeBlocks     = _volMdb.drFreeBks,
             PluginId       = Id,
-            Type           = "Apple MFS"
+            Type           = FS_TYPE
         };
 
         stat.FreeFiles = uint.MaxValue - stat.Files;
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

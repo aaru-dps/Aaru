@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Amiga extensions constants and enumerations.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,21 +23,38 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems;
-
 using System;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
     const ushort AMIGA_MAGIC = 0x4153; // "AS"
+
+#region Nested type: AmigaAttributes
+
+    [Flags]
+    enum AmigaAttributes : byte
+    {
+        OwnerDelete = 1 << 0,
+        OwnerExec   = 1 << 1,
+        OwnerWrite  = 1 << 2,
+        OwnerRead   = 1 << 3,
+        Archive     = 1 << 4,
+        Reentrant   = 1 << 5,
+        Script      = 1 << 6,
+        Reserved    = 1 << 7
+    }
+
+#endregion
+
+#region Nested type: AmigaFlags
 
     [Flags]
     enum AmigaFlags : byte
@@ -50,6 +63,10 @@ public sealed partial class ISO9660
         Comment          = 1 << 1,
         CommentContinues = 1 << 2
     }
+
+#endregion
+
+#region Nested type: AmigaMultiuser
 
     [Flags]
     enum AmigaMultiuser : byte
@@ -64,16 +81,5 @@ public sealed partial class ISO9660
         OtherRead   = 1 << 7
     }
 
-    [Flags]
-    enum AmigaAttributes : byte
-    {
-        OwnerDelete = 1 << 0,
-        OwnerExec   = 1 << 1,
-        OwnerWrite  = 1 << 2,
-        OwnerRead   = 1 << 3,
-        Archive     = 1 << 4,
-        Reentrant   = 1 << 5,
-        Script      = 1 << 6,
-        Reserved    = 1 << 7
-    }
+#endregion
 }

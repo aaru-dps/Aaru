@@ -27,25 +27,30 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class DiscFerret
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
-        stream.Read(magicB, 0, 4);
+        stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
         return magic is DFI_MAGIC or DFI_MAGIC2;
     }
+
+#endregion
 }

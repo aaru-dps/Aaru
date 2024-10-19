@@ -28,94 +28,107 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-static class Extern
+namespace Aaru.Devices.Windows;
+
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+static partial class Extern
 {
-    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern SafeFileHandle CreateFile([MarshalAs(UnmanagedType.LPTStr)] string filename,
-                                                     [MarshalAs(UnmanagedType.U4)] FileAccess access,
-                                                     [MarshalAs(UnmanagedType.U4)] FileShare share,
-                                                     IntPtr securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
-                                                     [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
-                                                     [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
-                                                     IntPtr templateFile);
+    [LibraryImport("kernel32.dll",
+                   EntryPoint = "CreateFileW",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Utf16)]
+    internal static partial SafeFileHandle CreateFile([MarshalAs(UnmanagedType.LPTStr)] string filename,
+                                                      FileAccess access, FileShare share,
+                                                      nint securityAttributes, // optional SECURITY_ATTRIBUTES struct or IntPtr.Zero
+                                                      FileMode creationDisposition, FileAttributes flagsAndAttributes,
+                                                      nint templateFile);
 
     [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
     internal static extern bool DeviceIoControlScsi(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
                                                     ref ScsiPassThroughDirectAndSenseBuffer inBuffer,
                                                     uint nInBufferSize,
                                                     ref ScsiPassThroughDirectAndSenseBuffer outBuffer,
-                                                    uint nOutBufferSize, ref uint pBytesReturned, IntPtr overlapped);
+                                                    uint nOutBufferSize, ref uint pBytesReturned, nint overlapped);
 
-    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-    internal static extern bool DeviceIoControlAta(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                   ref AtaPassThroughDirect inBuffer, uint nInBufferSize,
-                                                   ref AtaPassThroughDirect outBuffer, uint nOutBufferSize,
-                                                   ref uint pBytesReturned, IntPtr overlapped);
+    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool DeviceIoControlAta(SafeFileHandle           hDevice,        WindowsIoctl ioControlCode,
+                                                    ref AtaPassThroughDirect inBuffer,       uint nInBufferSize,
+                                                    ref AtaPassThroughDirect outBuffer,      uint nOutBufferSize,
+                                                    ref uint                 pBytesReturned, nint overlapped);
 
     [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
     internal static extern bool DeviceIoControlStorageQuery(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
                                                             ref StoragePropertyQuery inBuffer, uint nInBufferSize,
-                                                            IntPtr outBuffer, uint nOutBufferSize,
-                                                            ref uint pBytesReturned, IntPtr overlapped);
+                                                            nint outBuffer, uint nOutBufferSize,
+                                                            ref uint pBytesReturned, nint overlapped);
 
     [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-    internal static extern bool DeviceIoControlIde(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                   ref IdePassThroughDirect inBuffer, uint nInBufferSize,
-                                                   ref IdePassThroughDirect outBuffer, uint nOutBufferSize,
-                                                   ref uint pBytesReturned, IntPtr overlapped);
+    internal static extern bool DeviceIoControlIde(SafeFileHandle           hDevice,        WindowsIoctl ioControlCode,
+                                                   ref IdePassThroughDirect inBuffer,       uint         nInBufferSize,
+                                                   ref IdePassThroughDirect outBuffer,      uint         nOutBufferSize,
+                                                   ref uint                 pBytesReturned, nint         overlapped);
 
-    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-    internal static extern bool DeviceIoControlGetDeviceNumber(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
-                                                               IntPtr inBuffer, uint nInBufferSize,
-                                                               ref StorageDeviceNumber outBuffer, uint nOutBufferSize,
-                                                               ref uint pBytesReturned, IntPtr overlapped);
+    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool DeviceIoControlGetDeviceNumber(SafeFileHandle hDevice, WindowsIoctl ioControlCode,
+                                                                nint inBuffer, uint nInBufferSize,
+                                                                ref StorageDeviceNumber outBuffer, uint nOutBufferSize,
+                                                                ref uint pBytesReturned, nint overlapped);
 
-    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-    internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, IntPtr inBuffer,
-                                                uint nInBufferSize, ref SffdiskQueryDeviceProtocolData outBuffer,
-                                                uint nOutBufferSize, out uint pBytesReturned, IntPtr overlapped);
+    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, nint inBuffer,
+                                                 uint nInBufferSize, ref SffdiskQueryDeviceProtocolData outBuffer,
+                                                 uint nOutBufferSize, out uint pBytesReturned, nint overlapped);
 
-    [DllImport("Kernel32.dll", SetLastError = true, EntryPoint = "DeviceIoControl", CharSet = CharSet.Auto)]
-    internal static extern bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, byte[] inBuffer,
-                                                uint nInBufferSize, byte[] outBuffer, uint nOutBufferSize,
-                                                out uint pBytesReturned, IntPtr overlapped);
+    [LibraryImport("Kernel32.dll", EntryPoint = "DeviceIoControl", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool DeviceIoControl(SafeFileHandle hDevice, WindowsIoctl ioControlCode, byte[] inBuffer,
+                                                 uint           nInBufferSize, byte[] outBuffer, uint nOutBufferSize,
+                                                 out uint       pBytesReturned, nint overlapped);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    internal static extern SafeFileHandle SetupDiGetClassDevs(ref Guid classGuid, IntPtr enumerator, IntPtr hwndParent,
-                                                              DeviceGetClassFlags flags);
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetClassDevsW")]
+    internal static partial SafeFileHandle SetupDiGetClassDevs(ref Guid classGuid, nint enumerator, nint hwndParent,
+                                                               DeviceGetClassFlags flags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool SetupDiEnumDeviceInterfaces(SafeFileHandle hDevInfo, IntPtr devInfo,
-                                                          ref Guid interfaceClassGuid, uint memberIndex,
-                                                          ref DeviceInterfaceData deviceInterfaceData);
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetupDiEnumDeviceInterfaces(SafeFileHandle          hDevInfo,           nint devInfo,
+                                                           ref Guid                interfaceClassGuid, uint memberIndex,
+                                                           ref DeviceInterfaceData deviceInterfaceData);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool SetupDiGetDeviceInterfaceDetail(SafeFileHandle hDevInfo,
-                                                              ref DeviceInterfaceData deviceInterfaceData,
-                                                              IntPtr deviceInterfaceDetailData,
-                                                              uint deviceInterfaceDetailDataSize, ref uint requiredSize,
-                                                              IntPtr deviceInfoData);
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetDeviceInterfaceDetailW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetupDiGetDeviceInterfaceDetail(SafeFileHandle hDevInfo,
+                                                               ref DeviceInterfaceData deviceInterfaceData,
+                                                               nint deviceInterfaceDetailData,
+                                                               uint deviceInterfaceDetailDataSize,
+                                                               ref uint requiredSize, nint deviceInfoData);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool SetupDiDestroyDeviceInfoList(SafeFileHandle hDevInfo);
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetupDiDestroyDeviceInfoList(SafeFileHandle hDevInfo);
 
-    [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    internal static extern bool CloseHandle(SafeFileHandle hDevice);
+    [LibraryImport("Kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static partial bool CloseHandle(SafeFileHandle hDevice);
 
-    [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    public static extern bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove, out long lpNewFilePointer,
-                                               MoveMethod dwMoveMethod);
+    [LibraryImport("Kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetFilePointerEx(SafeFileHandle hFile, long liDistanceToMove, out long lpNewFilePointer,
+                                                MoveMethod     dwMoveMethod);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    public static extern bool ReadFile(SafeFileHandle hFile, byte[] lpBuffer, uint nNumberOfBytesToRead,
-                                       out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool ReadFile(SafeFileHandle hFile,               byte[] lpBuffer, uint nNumberOfBytesToRead,
+                                        out uint       lpNumberOfBytesRead, nint   lpOverlapped);
 }

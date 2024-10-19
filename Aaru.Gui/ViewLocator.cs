@@ -27,33 +27,34 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+using Aaru.Gui.ViewModels;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml.Templates;
+using JetBrains.Annotations;
 
 namespace Aaru.Gui;
 
-using System;
-using Aaru.Gui.ViewModels;
-using Avalonia.Controls;
-using Avalonia.Controls.Templates;
-using JetBrains.Annotations;
-
-public sealed class ViewLocator : IDataTemplate
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
+public sealed class ViewLocator : DataTemplate
 {
     public bool SupportsRecycling => false;
 
     [CanBeNull]
-    public IControl Build([NotNull] object data)
+    public Control Build([JetBrains.Annotations.NotNull] object data)
     {
         string name = data.GetType().FullName?.Replace("ViewModel", "View");
 
-        if(name is null)
-            return null;
+        if(name is null) return null;
 
         var type = Type.GetType(name);
 
-        if(type != null)
-            return (Control)Activator.CreateInstance(type);
+        if(type != null) return (Control)Activator.CreateInstance(type);
 
         return new TextBlock
         {

@@ -27,19 +27,30 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
-// Copyright © 2021 Rebecca Wallander
+// Copyright © 2011-2024 Natalia Portillo
+// Copyright © 2021-2024 Rebecca Wallander
 // ****************************************************************************/
-
-namespace Aaru.Settings;
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 using Aaru.CommonTypes.Interop;
 using Claunia.PropertyList;
 using Microsoft.Win32;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+
+namespace Aaru.Settings;
+
+[JsonSourceGenerationOptions(WriteIndented = true,
+                             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                             IncludeFields = true)]
+[JsonSerializable(typeof(DicSettings))]
+
+// ReSharper disable once PartialTypeWithSinglePart
+public partial class SettingsContext : JsonSerializerContext;
 
 /// <summary>Settings</summary>
 public class DicSettings
@@ -60,16 +71,6 @@ public class DicSettings
     public bool ShareReports;
     /// <summary>Statistics</summary>
     public StatsSettings Stats;
-}
-
-// TODO: Use this
-/// <summary>User settings, for media dumps, completely unused</summary>
-public class UserSettings
-{
-    /// <summary>User email</summary>
-    public string Email;
-    /// <summary>User name or nick</summary>
-    public string Name;
 }
 
 /// <summary>Statistics settings</summary>
@@ -117,6 +118,7 @@ public static class Settings
 
     /// <summary>Local database path</summary>
     public static string LocalDbPath { get; private set; }
+
     /// <summary>Main database path</summary>
     public static string MainDbPath { get; private set; }
 
@@ -139,21 +141,19 @@ public static class Settings
                 case PlatformID.iOS:
                 {
                     string appSupportPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
-                                     "Application Support", "Claunia.com");
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
+                                     "Application Support",
+                                     "Claunia.com");
 
-                    if(!Directory.Exists(appSupportPath))
-                        Directory.CreateDirectory(appSupportPath);
+                    if(!Directory.Exists(appSupportPath)) Directory.CreateDirectory(appSupportPath);
 
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -161,13 +161,11 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
@@ -183,18 +181,14 @@ public static class Settings
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                                      "Claunia.com");
 
-                    if(!Directory.Exists(appSupportPath))
-                        Directory.CreateDirectory(appSupportPath);
+                    if(!Directory.Exists(appSupportPath)) Directory.CreateDirectory(appSupportPath);
 
                     string dicPath  = Path.Combine(appSupportPath, "DiscImageChef");
                     string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -202,13 +196,11 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
@@ -216,27 +208,23 @@ public static class Settings
                 // Otherwise, statistics and reports will be saved in ~/.claunia.com/Aaru
                 default:
                 {
-                    string xdgDataPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_DATA_HOME) ?? XDG_DATA_HOME_RESOLVED);
+                    string xdgDataPath = Path.Combine(homePath,
+                                                      Environment.GetEnvironmentVariable(XDG_DATA_HOME) ??
+                                                      XDG_DATA_HOME_RESOLVED);
 
-                    string oldDicPath = Path.Combine(homePath, ".claunia.com", "DiscImageChef");
+                    string oldDicPath = Path.Combine(homePath,    ".claunia.com", "DiscImageChef");
                     string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
                     string aaruPath   = Path.Combine(xdgDataPath, "Aaru");
 
-                    if(Directory.Exists(oldDicPath) &&
-                       !Directory.Exists(aaruPath))
+                    if(Directory.Exists(oldDicPath) && !Directory.Exists(aaruPath))
                     {
                         Directory.Move(oldDicPath, aaruPath);
                         Directory.Delete(Path.Combine(homePath, ".claunia.com"));
                     }
 
-                    if(Directory.Exists(dicPath) &&
-                       !Directory.Exists(aaruPath))
-                        Directory.Move(dicPath, aaruPath);
+                    if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath)) Directory.Move(dicPath, aaruPath);
 
-                    if(!Directory.Exists(aaruPath))
-                        Directory.CreateDirectory(aaruPath);
+                    if(!Directory.Exists(aaruPath)) Directory.CreateDirectory(aaruPath);
 
                     LocalDbPath   = Path.Combine(aaruPath, LocalDbPath);
                     MainDbPath    = Path.Combine(aaruPath, MainDbPath);
@@ -244,20 +232,17 @@ public static class Settings
 
                     ReportsPath = Path.Combine(aaruPath, "Reports");
 
-                    if(!Directory.Exists(ReportsPath))
-                        Directory.CreateDirectory(ReportsPath);
+                    if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
 
                     StatsPath = Path.Combine(aaruPath, "Statistics");
 
-                    if(!Directory.Exists(StatsPath))
-                        Directory.CreateDirectory(StatsPath);
+                    if(!Directory.Exists(StatsPath)) Directory.CreateDirectory(StatsPath);
                 }
 
                     break;
             }
 
-            if(File.Exists(oldMainDbPath))
-                File.Move(oldMainDbPath, MainDbPath);
+            if(File.Exists(oldMainDbPath)) File.Move(oldMainDbPath, MainDbPath);
         }
         catch
         {
@@ -276,15 +261,15 @@ public static class Settings
                 case PlatformID.iOS:
                 {
                     string preferencesPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
                                      "Preferences");
 
                     string dicPreferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
 
                     string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
 
-                    if(File.Exists(dicPreferencesFilePath))
-                        File.Move(dicPreferencesFilePath, preferencesFilePath);
+                    if(File.Exists(dicPreferencesFilePath)) File.Move(dicPreferencesFilePath, preferencesFilePath);
 
                     if(!File.Exists(preferencesFilePath))
                     {
@@ -313,34 +298,37 @@ public static class Settings
                             var stats = (NSDictionary)obj;
 
                             if(stats != null)
+                            {
                                 Current.Stats = new StatsSettings
                                 {
-                                    ShareStats = stats.TryGetValue("ShareStats", out NSObject obj2) &&
-                                                 ((NSNumber)obj2).ToBool(),
-                                    CommandStats = stats.TryGetValue("CommandStats", out obj2) &&
-                                                   ((NSNumber)obj2).ToBool(),
-                                    DeviceStats = stats.TryGetValue("DeviceStats", out obj2) &&
-                                                  ((NSNumber)obj2).ToBool(),
-                                    FilesystemStats = stats.TryGetValue("FilesystemStats", out obj2) &&
-                                                      ((NSNumber)obj2).ToBool(),
-                                    FilterStats = stats.TryGetValue("FilterStats", out obj2) &&
-                                                  ((NSNumber)obj2).ToBool(),
-                                    MediaImageStats = stats.TryGetValue("MediaImageStats", out obj2) &&
-                                                      ((NSNumber)obj2).ToBool(),
-                                    MediaScanStats = stats.TryGetValue("MediaScanStats", out obj2) &&
-                                                     ((NSNumber)obj2).ToBool(),
-                                    PartitionStats = stats.TryGetValue("PartitionStats", out obj2) &&
-                                                     ((NSNumber)obj2).ToBool(),
+                                    ShareStats =
+                                        stats.TryGetValue("ShareStats", out NSObject obj2) && ((NSNumber)obj2).ToBool(),
+                                    CommandStats =
+                                        stats.TryGetValue("CommandStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    DeviceStats =
+                                        stats.TryGetValue("DeviceStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    FilesystemStats =
+                                        stats.TryGetValue("FilesystemStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    FilterStats =
+                                        stats.TryGetValue("FilterStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    MediaImageStats =
+                                        stats.TryGetValue("MediaImageStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    MediaScanStats =
+                                        stats.TryGetValue("MediaScanStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                    PartitionStats =
+                                        stats.TryGetValue("PartitionStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                     MediaStats = stats.TryGetValue("MediaStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                     VerifyStats = stats.TryGetValue("VerifyStats", out obj2) &&
                                                   ((NSNumber)obj2).ToBool()
                                 };
+                            }
                         }
                         else
                             Current.Stats = null;
 
                         Current.GdprCompliance = parsedPreferences.TryGetValue("GdprCompliance", out obj)
-                                                     ? (ulong)((NSNumber)obj).ToLong() : 0;
+                                                     ? (ulong)((NSNumber)obj).ToLong()
+                                                     : 0;
 
                         prefsFs.Close();
                     }
@@ -354,14 +342,14 @@ public static class Settings
                 }
 
                     break;
-            #if !NETSTANDARD2_0
+#if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                case PlatformID.WindowsPhone:
+                case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32S when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32Windows when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WinCE when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WindowsPhone when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 {
                     RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE")?.OpenSubKey("Claunia.com");
 
@@ -377,8 +365,7 @@ public static class Settings
                     RegistryKey key    = parentKey.OpenSubKey("Aaru");
                     bool        stats;
 
-                    if(dicKey != null &&
-                       key    == null)
+                    if(dicKey != null && key == null)
                     {
                         Current.SaveReportsGlobally = Convert.ToBoolean(dicKey.GetValue("SaveReportsGlobally"));
                         Current.ShareReports        = Convert.ToBoolean(dicKey.GetValue("ShareReports"));
@@ -388,6 +375,7 @@ public static class Settings
                         stats = Convert.ToBoolean(dicKey.GetValue("Statistics"));
 
                         if(stats)
+                        {
                             Current.Stats = new StatsSettings
                             {
                                 ShareStats      = Convert.ToBoolean(dicKey.GetValue("ShareStats")),
@@ -401,6 +389,7 @@ public static class Settings
                                 MediaStats      = Convert.ToBoolean(dicKey.GetValue("MediaStats")),
                                 VerifyStats     = Convert.ToBoolean(dicKey.GetValue("VerifyStats"))
                             };
+                        }
 
                         SaveSettings();
 
@@ -425,6 +414,7 @@ public static class Settings
                     stats = Convert.ToBoolean(key.GetValue("Statistics"));
 
                     if(stats)
+                    {
                         Current.Stats = new StatsSettings
                         {
                             ShareStats      = Convert.ToBoolean(key.GetValue("ShareStats")),
@@ -438,10 +428,11 @@ public static class Settings
                             MediaStats      = Convert.ToBoolean(key.GetValue("MediaStats")),
                             VerifyStats     = Convert.ToBoolean(key.GetValue("VerifyStats"))
                         };
+                    }
                 }
 
                     break;
-            #endif
+#endif
 
                 // Otherwise, settings will be saved in ~/.config/Aaru.xml
                 default:
@@ -451,25 +442,41 @@ public static class Settings
 
                     string oldSettingsPath = Path.Combine(oldConfigPath, "DiscImageChef.xml");
 
-                    string xdgConfigPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
+                    string xdgConfigPath = Path.Combine(homePath,
+                                                        Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                                        XDG_CONFIG_HOME_RESOLVED);
 
                     string dicSettingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
-                    string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string xmlSettingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string settingsPath    = Path.Combine(xdgConfigPath, "Aaru.json");
 
-                    if(File.Exists(oldSettingsPath) &&
-                       !File.Exists(settingsPath))
+                    if(File.Exists(oldSettingsPath) && !File.Exists(xmlSettingsPath))
                     {
-                        if(!Directory.Exists(xdgConfigPath))
-                            Directory.CreateDirectory(xdgConfigPath);
+                        if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
 
-                        File.Move(oldSettingsPath, settingsPath);
+                        File.Move(oldSettingsPath, xmlSettingsPath);
                     }
 
-                    if(File.Exists(dicSettingsPath) &&
-                       !File.Exists(settingsPath))
-                        File.Move(dicSettingsPath, settingsPath);
+                    if(File.Exists(dicSettingsPath) && !File.Exists(xmlSettingsPath))
+                        File.Move(dicSettingsPath, xmlSettingsPath);
+
+                    if(File.Exists(xmlSettingsPath))
+                    {
+                        // Should be working due to source generator for json below
+#pragma warning disable IL2026
+                        var xs = new XmlSerializer(Current.GetType());
+#pragma warning restore IL2026
+
+                        prefsSr = new StreamReader(xmlSettingsPath);
+
+                        // Should be working due to source generator for json below
+#pragma warning disable IL2026
+                        Current = (DicSettings)xs.Deserialize(prefsSr);
+#pragma warning restore IL2026
+
+                        prefsSr.Close();
+                        File.Delete(xmlSettingsPath);
+                    }
 
                     if(!File.Exists(settingsPath))
                     {
@@ -479,9 +486,12 @@ public static class Settings
                         return;
                     }
 
-                    var xs = new XmlSerializer(Current.GetType());
-                    prefsSr = new StreamReader(settingsPath);
-                    Current = (DicSettings)xs.Deserialize(prefsSr);
+                    var fs = new FileStream(settingsPath, FileMode.Open);
+
+                    Current =
+                        JsonSerializer.Deserialize(fs, typeof(DicSettings), SettingsContext.Default) as DicSettings;
+
+                    fs.Close();
                 }
 
                     break;
@@ -565,7 +575,8 @@ public static class Settings
                     }
 
                     string preferencesPath =
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                                     "Library",
                                      "Preferences");
 
                     string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
@@ -576,89 +587,87 @@ public static class Settings
                 }
 
                     break;
-            #if !NETSTANDARD2_0
+#if !NETSTANDARD2_0
 
                 // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                case PlatformID.WindowsPhone:
+                case PlatformID.Win32NT when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32S when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.Win32Windows when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WinCE when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
+                case PlatformID.WindowsPhone when RuntimeInformation.IsOSPlatform(OSPlatform.Windows):
                 {
-                    RegistryKey parentKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.
-                                                     CreateSubKey("Claunia.com");
+                    RegistryKey parentKey =
+                        Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.CreateSubKey("Claunia.com");
 
                     RegistryKey key = parentKey?.CreateSubKey("Aaru");
 
                     if(key != null)
                     {
                         key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
-                        key.SetValue("ShareReports", Current.ShareReports);
-                        key.SetValue("GdprCompliance", Current.GdprCompliance);
-                        key.SetValue("EnableDecryption", Current.EnableDecryption);
+                        key.SetValue("ShareReports",        Current.ShareReports);
+                        key.SetValue("GdprCompliance",      Current.GdprCompliance);
+                        key.SetValue("EnableDecryption",    Current.EnableDecryption);
 
                         if(Current.Stats != null)
                         {
-                            key.SetValue("Statistics", true);
-                            key.SetValue("ShareStats", Current.Stats.ShareStats);
-                            key.SetValue("CommandStats", Current.Stats.CommandStats);
-                            key.SetValue("DeviceStats", Current.Stats.DeviceStats);
+                            key.SetValue("Statistics",      true);
+                            key.SetValue("ShareStats",      Current.Stats.ShareStats);
+                            key.SetValue("CommandStats",    Current.Stats.CommandStats);
+                            key.SetValue("DeviceStats",     Current.Stats.DeviceStats);
                             key.SetValue("FilesystemStats", Current.Stats.FilesystemStats);
-                            key.SetValue("FilterStats", Current.Stats.FilterStats);
+                            key.SetValue("FilterStats",     Current.Stats.FilterStats);
                             key.SetValue("MediaImageStats", Current.Stats.MediaImageStats);
-                            key.SetValue("MediaScanStats", Current.Stats.MediaScanStats);
-                            key.SetValue("PartitionStats", Current.Stats.PartitionStats);
-                            key.SetValue("MediaStats", Current.Stats.MediaStats);
-                            key.SetValue("VerifyStats", Current.Stats.VerifyStats);
+                            key.SetValue("MediaScanStats",  Current.Stats.MediaScanStats);
+                            key.SetValue("PartitionStats",  Current.Stats.PartitionStats);
+                            key.SetValue("MediaStats",      Current.Stats.MediaStats);
+                            key.SetValue("VerifyStats",     Current.Stats.VerifyStats);
                         }
                         else
                         {
                             key.SetValue("Statistics", true);
-                            key.DeleteValue("ShareStats", false);
-                            key.DeleteValue("CommandStats", false);
-                            key.DeleteValue("DeviceStats", false);
+                            key.DeleteValue("ShareStats",      false);
+                            key.DeleteValue("CommandStats",    false);
+                            key.DeleteValue("DeviceStats",     false);
                             key.DeleteValue("FilesystemStats", false);
                             key.DeleteValue("MediaImageStats", false);
-                            key.DeleteValue("MediaScanStats", false);
-                            key.DeleteValue("PartitionStats", false);
-                            key.DeleteValue("MediaStats", false);
-                            key.DeleteValue("VerifyStats", false);
+                            key.DeleteValue("MediaScanStats",  false);
+                            key.DeleteValue("PartitionStats",  false);
+                            key.DeleteValue("MediaStats",      false);
+                            key.DeleteValue("VerifyStats",     false);
                         }
                     }
                 }
 
                     break;
-            #endif
+#endif
 
                 // Otherwise, settings will be saved in ~/.config/Aaru.xml
                 default:
                 {
                     string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-                    string xdgConfigPath =
-                        Path.Combine(homePath,
-                                     Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ?? XDG_CONFIG_HOME_RESOLVED);
+                    string xdgConfigPath = Path.Combine(homePath,
+                                                        Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
+                                                        XDG_CONFIG_HOME_RESOLVED);
 
-                    string settingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
+                    string settingsPath = Path.Combine(xdgConfigPath, "Aaru.json");
 
-                    if(!Directory.Exists(xdgConfigPath))
-                        Directory.CreateDirectory(xdgConfigPath);
+                    if(!Directory.Exists(xdgConfigPath)) Directory.CreateDirectory(xdgConfigPath);
 
-                    var fs = new FileStream(settingsPath, FileMode.Create);
-                    var xs = new XmlSerializer(Current.GetType());
-                    xs.Serialize(fs, Current);
+                    var fs = new FileStream(settingsPath, FileMode.Create, FileAccess.ReadWrite);
+                    JsonSerializer.Serialize(fs, Current, Current.GetType(), SettingsContext.Default);
                     fs.Close();
                 }
 
                     break;
             }
         }
-        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
         catch
         {
             // ignored
         }
-        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
     }
 
     /// <summary>Sets default settings as all statistics, share everything</summary>

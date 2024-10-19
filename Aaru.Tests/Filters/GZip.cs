@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -23,31 +23,32 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filters;
 
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filters;
 
 [TestFixture]
 public class GZip
 {
     static readonly byte[] _expectedFile =
-    {
+    [
         0x35, 0xe2, 0x9c, 0x9d, 0x05, 0x1b, 0x6d, 0xa6, 0x6c, 0x24, 0xeb, 0x30, 0xe8, 0xd2, 0xa6, 0x6b
-    };
+    ];
     static readonly byte[] _expectedContents =
-    {
+    [
         0x18, 0x90, 0x5a, 0xf9, 0x83, 0xd8, 0x2b, 0xdd, 0x1a, 0xcc, 0x69, 0x75, 0x4f, 0x0f, 0x81, 0x5e
-    };
+    ];
     readonly string _location;
 
-    public GZip() => _location = Path.Combine(Consts.TEST_FILES_ROOT, "Filters", "gzip.gz");
+    public GZip() => _location = Path.Combine(Consts.TestFilesRoot, "Filters", "gzip.gz");
 
     [Test]
     public void CheckContents()
@@ -56,38 +57,38 @@ public class GZip
         filter.Open(_location);
         Stream str  = filter.GetDataForkStream();
         var    data = new byte[1048576];
-        str.Read(data, 0, 1048576);
+        str.EnsureRead(data, 0, 1048576);
         str.Close();
         str.Dispose();
         filter.Close();
         Md5Context.Data(data, out byte[] result);
-        Assert.AreEqual(_expectedContents, result);
+        Assert.That(result, Is.EqualTo(_expectedContents));
     }
 
     [Test]
     public void CheckCorrectFile()
     {
         byte[] result = Md5Context.File(_location);
-        Assert.AreEqual(_expectedFile, result);
+        Assert.That(result, Is.EqualTo(_expectedFile));
     }
 
     [Test]
     public void CheckFilterId()
     {
         IFilter filter = new Aaru.Filters.GZip();
-        Assert.AreEqual(true, filter.Identify(_location));
+        Assert.That(filter.Identify(_location), Is.True);
     }
 
     [Test]
     public void Test()
     {
         IFilter filter = new Aaru.Filters.GZip();
-        Assert.AreEqual(ErrorNumber.NoError, filter.Open(_location));
-        Assert.AreEqual(1048576, filter.DataForkLength);
-        Assert.AreNotEqual(null, filter.GetDataForkStream());
-        Assert.AreEqual(0, filter.ResourceForkLength);
-        Assert.AreEqual(null, filter.GetResourceForkStream());
-        Assert.AreEqual(false, filter.HasResourceFork);
+        Assert.That(filter.Open(_location),         Is.EqualTo(ErrorNumber.NoError));
+        Assert.That(filter.DataForkLength,          Is.EqualTo(1048576));
+        Assert.That(filter.GetDataForkStream(),     Is.Not.Null);
+        Assert.That(filter.ResourceForkLength,      Is.EqualTo(0));
+        Assert.That(filter.GetResourceForkStream(), Is.EqualTo(null));
+        Assert.That(filter.HasResourceFork,         Is.EqualTo(false));
         filter.Close();
     }
 }

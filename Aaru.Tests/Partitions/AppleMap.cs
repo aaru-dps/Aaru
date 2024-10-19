@@ -23,27 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class AppleMap : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Apple Partition Map");
-    public override PartitionTest[] Tests => new[]
-    {
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Apple Partition Map");
+
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "d2_driver.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 2,
@@ -83,13 +84,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 256,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "hdt_1.8_encrypted1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 14,
@@ -119,13 +120,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 1088,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "hdt_1.8_encrypted2.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 14,
@@ -155,13 +156,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 1088,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "hdt_1.8_password.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 14,
@@ -191,13 +192,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 1088,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "hdt_1.8.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 14,
@@ -227,13 +228,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 1088,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 1,
@@ -304,13 +305,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 247426,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_1.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -330,13 +331,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 16,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_2.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -356,13 +357,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 16,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_4.2.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 11,
@@ -382,13 +383,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 16,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_4.3.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 11,
@@ -408,13 +409,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 16,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.2.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -564,13 +565,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 43678,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.3.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -690,13 +691,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 51796,
                     Type     = "Apple_UNIX_SVR2"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.4.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -816,13 +817,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 51602,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.5.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -972,13 +973,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 48157,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.7.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -1118,13 +1119,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 50440,
                     Type     = "Apple_UNIX_SVR2"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.8.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -1274,13 +1275,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 50755,
                     Type     = "Apple_UNIX_SVR2"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_6.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -1400,13 +1401,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 41812,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_7.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 10,
@@ -1506,13 +1507,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 44562,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_7.1.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 17,
@@ -1622,13 +1623,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 47034,
                     Type     = "Apple_UNIX_SVR2"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macos_7.5.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 18,
@@ -1658,13 +1659,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 96,
                     Type     = "Apple_HFS"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 4032,
@@ -1695,13 +1696,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 96256,
                     Type     = "Apple_UNIX_SVR2"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "silverlining_2.2.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 6,
@@ -1760,13 +1761,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 50720,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "speedtools_3.6.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 27,
@@ -1806,13 +1807,13 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 49316,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "vcpformatter_2.1.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 24,
@@ -1862,7 +1863,7 @@ public class AppleMap : PartitionSchemeTest
                     Start    = 54838,
                     Type     = "Apple_Free"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

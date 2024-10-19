@@ -23,40 +23,42 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Checksums;
 
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using FluentAssertions;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Checksums;
 
 [TestFixture]
 public class Sha1
 {
     static readonly byte[] _expectedEmpty =
-    {
+    [
         0x3b, 0x71, 0xf4, 0x3f, 0xf3, 0x0f, 0x4b, 0x15, 0xb5, 0xcd, 0x85, 0xdd, 0x9e, 0x95, 0xeb, 0xc7, 0xe8, 0x4e,
         0xb5, 0xa3
-    };
+    ];
     static readonly byte[] _expectedRandom =
-    {
+    [
         0x72, 0x0d, 0x3b, 0x71, 0x7d, 0xe0, 0xc7, 0x4c, 0x77, 0xdd, 0x9c, 0xaa, 0x9e, 0xba, 0x50, 0x60, 0xdc, 0xbd,
         0x28, 0x8d
-    };
+    ];
 
     [Test]
     public void EmptyData()
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Sha1Context.Data(data, out byte[] result);
@@ -66,7 +68,7 @@ public class Sha1
     [Test]
     public void EmptyFile()
     {
-        byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"));
+        byte[] result = Sha1Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"));
         result.Should().BeEquivalentTo(_expectedEmpty);
     }
 
@@ -75,10 +77,11 @@ public class Sha1
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Sha1Context();
@@ -92,10 +95,11 @@ public class Sha1
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         Sha1Context.Data(data, out byte[] result);
@@ -105,7 +109,7 @@ public class Sha1
     [Test]
     public void RandomFile()
     {
-        byte[] result = Sha1Context.File(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"));
+        byte[] result = Sha1Context.File(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"));
         result.Should().BeEquivalentTo(_expectedRandom);
     }
 
@@ -114,10 +118,11 @@ public class Sha1
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new Sha1Context();

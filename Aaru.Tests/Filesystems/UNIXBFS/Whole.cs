@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.UNIXBFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Whole : FilesystemTest
-{
-    public Whole() : base("BFS") {}
+namespace Aaru.Tests.Filesystems.UNIXBFS;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Boot File System");
+[TestFixture]
+public class Whole() : FilesystemTest("bfs")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System");
 
     public override IFilesystem Plugin     => new BFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix_mf2dd.adf.lz",
@@ -92,5 +90,5 @@ public class Whole : FilesystemTest
             Clusters    = 2880,
             ClusterSize = 512
         }
-    };
+    ];
 }

@@ -27,16 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Device;
 
-using System.CommandLine;
-
 sealed class DeviceFamily : Command
 {
-    public DeviceFamily() : base("device", "Commands that talks to devices")
+    public DeviceFamily() : base("device", UI.Device_Command_Family_Description)
     {
         AddAlias("dev");
 

@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filters;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -40,54 +38,42 @@ using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decodes AppleSingle files</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed class AppleSingle : IFilter
 {
-    const uint MAGIC    = 0x00051600;
-    const uint VERSION  = 0x00010000;
-    const uint VERSION2 = 0x00020000;
-    readonly byte[] _dosHome =
-    {
-        0x4D, 0x53, 0x2D, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
+    const    uint   MAGIC          = 0x00051600;
+    const    uint   VERSION        = 0x00010000;
+    const    uint   VERSION2       = 0x00020000;
+    readonly byte[] _dosHome       = "MS-DOS          "u8.ToArray();
+    readonly byte[] _macintoshHome = "Macintosh       "u8.ToArray();
+    readonly byte[] _osxHome       = "Mac OS X        "u8.ToArray();
+    readonly byte[] _proDosHome    = "ProDOS          "u8.ToArray();
+    readonly byte[] _unixHome      = "Unix            "u8.ToArray();
+    readonly byte[] _vmsHome       = "VAX VMS         "u8.ToArray();
+    byte[]          _bytes;
+    Entry           _dataFork;
+    Header          _header;
+    bool            _isBytes, _isStream, _isPath;
+    Entry           _rsrcFork;
+    Stream          _stream;
 
-    readonly byte[] _macintoshHome =
-    {
-        0x4D, 0x61, 0x63, 0x69, 0x6E, 0x74, 0x6F, 0x73, 0x68, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _osxHome =
-    {
-        0x4D, 0x61, 0x63, 0x20, 0x4F, 0x53, 0x20, 0x58, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _proDosHome =
-    {
-        0x50, 0x72, 0x6F, 0x44, 0x4F, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _unixHome =
-    {
-        0x55, 0x6E, 0x69, 0x78, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    readonly byte[] _vmsHome =
-    {
-        0x56, 0x41, 0x58, 0x20, 0x56, 0x4D, 0x53, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
-    };
-    byte[] _bytes;
-    Entry  _dataFork;
-    Header _header;
-    bool   _isBytes, _isStream, _isPath;
-    Entry  _rsrcFork;
-    Stream _stream;
+#region IFilter Members
 
     /// <inheritdoc />
-    public string Name => "AppleSingle";
+    public string Name => Localization.AppleSingle_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A69B20E8-F4D3-42BB-BD2B-4A7263394A05");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()
@@ -111,18 +97,20 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public Stream GetDataForkStream()
     {
-        if(_dataFork.length == 0)
-            return null;
+        if(_dataFork.length == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
+        if(_isStream) return new OffsetStream(_stream, _dataFork.offset, _dataFork.offset + _dataFork.length - 1);
 
         if(_isPath)
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _dataFork.offset,
+        {
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _dataFork.offset,
                                     _dataFork.offset + _dataFork.length - 1);
+        }
 
         return null;
     }
@@ -148,18 +136,20 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public Stream GetResourceForkStream()
     {
-        if(_rsrcFork.length == 0)
-            return null;
+        if(_rsrcFork.length == 0) return null;
 
-        if(_isBytes)
-            return new OffsetStream(_bytes, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
+        if(_isBytes) return new OffsetStream(_bytes, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
-        if(_isStream)
-            return new OffsetStream(_stream, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
+        if(_isStream) return new OffsetStream(_stream, _rsrcFork.offset, _rsrcFork.offset + _rsrcFork.length - 1);
 
         if(_isPath)
-            return new OffsetStream(BasePath, FileMode.Open, FileAccess.Read, _rsrcFork.offset,
+        {
+            return new OffsetStream(BasePath,
+                                    FileMode.Open,
+                                    FileAccess.Read,
+                                    _rsrcFork.offset,
                                     _rsrcFork.offset + _rsrcFork.length - 1);
+        }
 
         return null;
     }
@@ -170,50 +160,44 @@ public sealed class AppleSingle : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer        == null ||
-           buffer.Length < 26)
-            return false;
+        if(buffer == null || buffer.Length < 26) return false;
 
         var hdrB = new byte[26];
         Array.Copy(buffer, 0, hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
+        return _header is { magic: MAGIC, version: VERSION or VERSION2 };
     }
 
     /// <inheritdoc />
     public bool Identify(Stream stream)
     {
-        if(stream        == null ||
-           stream.Length < 26)
-            return false;
+        if(stream == null || stream.Length < 26) return false;
 
         var hdrB = new byte[26];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(hdrB, 0, 26);
+        stream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
-        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
+        return _header is { magic: MAGIC, version: VERSION or VERSION2 };
     }
 
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var fstream = new FileStream(path, FileMode.Open, FileAccess.Read);
 
-        if(fstream.Length < 26)
-            return false;
+        if(fstream.Length < 26) return false;
 
         var hdrB = new byte[26];
-        fstream.Read(hdrB, 0, 26);
+        fstream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         fstream.Close();
 
-        return _header.magic == MAGIC && _header.version is VERSION or VERSION2;
+        return _header is { magic: MAGIC, version: VERSION or VERSION2 };
     }
 
     /// <inheritdoc />
@@ -223,7 +207,7 @@ public sealed class AppleSingle : IFilter
         ms.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        ms.Read(hdrB, 0, 26);
+        ms.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -231,7 +215,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            ms.Read(entry, 0, 12);
+            ms.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -239,6 +223,7 @@ public sealed class AppleSingle : IFilter
         LastWriteTime = CreationTime;
 
         foreach(Entry entry in entries)
+        {
             switch((AppleSingleEntryID)entry.id)
             {
                 case AppleSingleEntryID.DataFork:
@@ -248,7 +233,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    ms.Read(datesB, 0, 16);
+                    ms.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -259,7 +244,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     ms.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    ms.Read(finfo, 0, finfo.Length);
+                    ms.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {
@@ -295,6 +280,7 @@ public sealed class AppleSingle : IFilter
 
                     break;
             }
+        }
 
         ms.Close();
         _isBytes = true;
@@ -309,7 +295,7 @@ public sealed class AppleSingle : IFilter
         stream.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        stream.Read(hdrB, 0, 26);
+        stream.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -317,7 +303,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            stream.Read(entry, 0, 12);
+            stream.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -325,6 +311,7 @@ public sealed class AppleSingle : IFilter
         LastWriteTime = CreationTime;
 
         foreach(Entry entry in entries)
+        {
             switch((AppleSingleEntryID)entry.id)
             {
                 case AppleSingleEntryID.DataFork:
@@ -334,7 +321,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    stream.Read(datesB, 0, 16);
+                    stream.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -345,7 +332,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     stream.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    stream.Read(finfo, 0, finfo.Length);
+                    stream.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {
@@ -381,6 +368,7 @@ public sealed class AppleSingle : IFilter
 
                     break;
             }
+        }
 
         stream.Seek(0, SeekOrigin.Begin);
         _isStream = true;
@@ -396,7 +384,7 @@ public sealed class AppleSingle : IFilter
         fs.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[26];
-        fs.Read(hdrB, 0, 26);
+        fs.EnsureRead(hdrB, 0, 26);
         _header = Marshal.ByteArrayToStructureBigEndian<Header>(hdrB);
 
         var entries = new Entry[_header.entries];
@@ -404,7 +392,7 @@ public sealed class AppleSingle : IFilter
         for(var i = 0; i < _header.entries; i++)
         {
             var entry = new byte[12];
-            fs.Read(entry, 0, 12);
+            fs.EnsureRead(entry, 0, 12);
             entries[i] = Marshal.ByteArrayToStructureBigEndian<Entry>(entry);
         }
 
@@ -412,6 +400,7 @@ public sealed class AppleSingle : IFilter
         LastWriteTime = CreationTime;
 
         foreach(Entry entry in entries)
+        {
             switch((AppleSingleEntryID)entry.id)
             {
                 case AppleSingleEntryID.DataFork:
@@ -421,7 +410,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileDates:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var datesB = new byte[16];
-                    fs.Read(datesB, 0, 16);
+                    fs.EnsureRead(datesB, 0, 16);
 
                     FileDates dates = Marshal.ByteArrayToStructureBigEndian<FileDates>(datesB);
 
@@ -432,7 +421,7 @@ public sealed class AppleSingle : IFilter
                 case AppleSingleEntryID.FileInfo:
                     fs.Seek(entry.offset, SeekOrigin.Begin);
                     var finfo = new byte[entry.length];
-                    fs.Read(finfo, 0, finfo.Length);
+                    fs.EnsureRead(finfo, 0, finfo.Length);
 
                     if(_macintoshHome.SequenceEqual(_header.homeFilesystem))
                     {
@@ -468,6 +457,7 @@ public sealed class AppleSingle : IFilter
 
                     break;
             }
+        }
 
         fs.Close();
         _isPath  = true;
@@ -475,6 +465,10 @@ public sealed class AppleSingle : IFilter
 
         return ErrorNumber.NoError;
     }
+
+#endregion
+
+#region Nested type: AppleSingleEntryID
 
     enum AppleSingleEntryID : uint
     {
@@ -496,15 +490,21 @@ public sealed class AppleSingle : IFilter
         DirectoryID    = 15
     }
 
+#endregion
+
+#region Nested type: DOSFileInfo
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Header
+    readonly struct DOSFileInfo
     {
-        public readonly uint magic;
-        public readonly uint version;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly byte[] homeFilesystem;
-        public readonly ushort entries;
+        public readonly ushort modificationDate;
+        public readonly ushort modificationTime;
+        public readonly ushort attributes;
     }
+
+#endregion
+
+#region Nested type: Entry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Entry
@@ -513,6 +513,10 @@ public sealed class AppleSingle : IFilter
         public readonly uint offset;
         public readonly uint length;
     }
+
+#endregion
+
+#region Nested type: FileDates
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct FileDates
@@ -523,6 +527,24 @@ public sealed class AppleSingle : IFilter
         public readonly uint accessDate;
     }
 
+#endregion
+
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Header
+    {
+        public readonly uint magic;
+        public readonly uint version;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public readonly byte[] homeFilesystem;
+        public readonly ushort entries;
+    }
+
+#endregion
+
+#region Nested type: MacFileInfo
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MacFileInfo
     {
@@ -532,21 +554,9 @@ public sealed class AppleSingle : IFilter
         public readonly uint accessDate;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct UnixFileInfo
-    {
-        public readonly uint creationDate;
-        public readonly uint accessDate;
-        public readonly uint modificationDate;
-    }
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DOSFileInfo
-    {
-        public readonly ushort modificationDate;
-        public readonly ushort modificationTime;
-        public readonly ushort attributes;
-    }
+#region Nested type: ProDOSFileInfo
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ProDOSFileInfo
@@ -558,4 +568,18 @@ public sealed class AppleSingle : IFilter
         public readonly ushort fileType;
         public readonly uint   auxType;
     }
+
+#endregion
+
+#region Nested type: UnixFileInfo
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct UnixFileInfo
+    {
+        public readonly uint creationDate;
+        public readonly uint accessDate;
+        public readonly uint modificationDate;
+    }
+
+#endregion
 }

@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -38,13 +36,16 @@ using System.Linq;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Enums;
 
+namespace Aaru.Images;
+
 public sealed partial class Chd
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
     public bool? VerifySector(ulong sectorAddress)
     {
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorLong(sectorAddress, out byte[] buffer);
 
@@ -52,19 +53,17 @@ public sealed partial class Chd
     }
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        unknownLbas = new List<ulong>();
-        failingLbas = new List<ulong>();
+        unknownLbas = [];
+        failingLbas = [];
 
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -87,26 +86,23 @@ public sealed partial class Chd
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+    public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas)
     {
-        unknownLbas = new List<ulong>();
-        failingLbas = new List<ulong>();
+        unknownLbas = [];
+        failingLbas = [];
 
-        if(_isHdd)
-            return null;
+        if(_isHdd) return null;
 
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] buffer);
 
-        if(errno != ErrorNumber.NoError)
-            return null;
+        if(errno != ErrorNumber.NoError) return null;
 
         var bps    = (int)(buffer.Length / length);
         var sector = new byte[bps];
@@ -129,11 +125,14 @@ public sealed partial class Chd
             }
         }
 
-        if(unknownLbas.Count > 0)
-            return null;
+        if(unknownLbas.Count > 0) return null;
 
         return failingLbas.Count <= 0;
     }
+
+#endregion
+
+#region IVerifiableImage Members
 
     /// <inheritdoc />
     public bool? VerifyMediaImage()
@@ -148,8 +147,7 @@ public sealed partial class Chd
             {
                 ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return null;
+                if(errno != ErrorNumber.NoError) return null;
 
                 sha1Ctx.Update(buffer);
             }
@@ -164,8 +162,7 @@ public sealed partial class Chd
             {
                 ErrorNumber errno = GetHunk(i, out byte[] buffer);
 
-                if(errno != ErrorNumber.NoError)
-                    return null;
+                if(errno != ErrorNumber.NoError) return null;
 
                 md5Ctx.Update(buffer);
             }
@@ -175,4 +172,6 @@ public sealed partial class Chd
 
         return _expectedChecksum.SequenceEqual(calculated);
     }
+
+#endregion
 }

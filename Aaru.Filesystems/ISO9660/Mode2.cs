@@ -27,11 +27,9 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.IO;
@@ -39,21 +37,20 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Decoders.CD;
 
+namespace Aaru.Filesystems;
+
 public sealed partial class ISO9660
 {
     ErrorNumber ReadSector(ulong sector, out byte[] buffer, bool interleaved = false, byte fileNumber = 0)
     {
-        ulong       realSector;
-        uint        sectorCount;
         ErrorNumber errno;
         buffer = null;
 
-        sectorCount = (uint)_blockSize / 2048;
+        uint sectorCount = (uint)_blockSize / 2048;
 
-        if(_blockSize % 2048 > 0)
-            sectorCount++;
+        if(_blockSize % 2048 > 0) sectorCount++;
 
-        realSector = sector * _blockSize / 2048;
+        ulong realSector = sector * _blockSize / 2048;
 
         ulong offset = sector * _blockSize % 2048;
 
@@ -63,52 +60,80 @@ public sealed partial class ISO9660
         {
             errno = _image.ReadSectorLong(realSector, out data);
 
-            if(errno != ErrorNumber.NoError)
-                errno = _image.ReadSector(realSector, out data);
+            if(errno != ErrorNumber.NoError) errno = _image.ReadSector(realSector, out data);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             if(_debug)
+            {
                 switch(data.Length)
                 {
                     case 2048:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                    realSector);
 
                         break;
                     case 2324:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2", realSector);
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
+                                                   realSector);
 
                         break;
                     case 2336:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                   "Sector {0}, Cooked, Mode 2 Form {1}, File Number {2}, Channel Number {3}, Submode {4}, Coding Information {5}",
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization
+                                                      .tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                    realSector,
-                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1, data[0],
-                                                   data[1], (Mode2Submode)data[2], data[3]);
+                                                   ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
+                                                   data[0],
+                                                   data[1],
+                                                   (Mode2Submode)data[2],
+                                                   data[3]);
 
                         break;
-                    case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
-                                   data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                                   data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Raw, Audio", realSector);
+                    case 2352 when data[0]  != 0x00 ||
+                                   data[1]  != 0xFF ||
+                                   data[2]  != 0xFF ||
+                                   data[3]  != 0xFF ||
+                                   data[4]  != 0xFF ||
+                                   data[5]  != 0xFF ||
+                                   data[6]  != 0xFF ||
+                                   data[7]  != 0xFF ||
+                                   data[8]  != 0xFF ||
+                                   data[9]  != 0xFF ||
+                                   data[10] != 0xFF ||
+                                   data[11] != 0x00:
+                        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio, realSector);
 
                         break;
                     case 2352 when data[15] != 2:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}",
-                                                   realSector, data[12], data[13], data[14], data[15]);
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                                                   realSector,
+                                                   data[12],
+                                                   data[13],
+                                                   data[14],
+                                                   data[15]);
 
                         break;
                     case 2352:
-                        AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                   "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode 2 Form {4}, File Number {5}, Channel Number {6}, Submode {7}, Coding Information {8}",
-                                                   realSector, data[12], data[13], data[14],
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization
+                                                      .tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
+                                                   realSector,
+                                                   data[12],
+                                                   data[13],
+                                                   data[14],
                                                    ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                   data[16], data[17], (Mode2Submode)data[18], data[19]);
+                                                   data[16],
+                                                   data[17],
+                                                   (Mode2Submode)data[18],
+                                                   data[19]);
 
                         break;
                 }
+            }
 
             if(_blockSize == 2048)
             {
@@ -134,54 +159,80 @@ public sealed partial class ISO9660
 
                 errno = _image.ReadSectorLong(dstSector, out data);
 
-                if(errno != ErrorNumber.NoError)
-                    errno = _image.ReadSector(dstSector, out data);
+                if(errno != ErrorNumber.NoError) errno = _image.ReadSector(dstSector, out data);
 
-                if(errno != ErrorNumber.NoError)
-                    return errno;
+                if(errno != ErrorNumber.NoError) return errno;
 
                 if(_debug)
+                {
                     switch(data.Length)
                     {
                         case 2048:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 0/1 / Mode 2 Form 1",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization.tor_Sector_0_Cooked_Mode_zero_one_Mode_two_Form_one,
                                                        dstSector);
 
                             break;
                         case 2324:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Cooked, Mode 2 Form 2",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization.tor_Sector_0_Cooked_Mode_two_Form_two,
                                                        dstSector);
 
                             break;
                         case 2336:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0}, Cooked, Mode 2 Form {1}, File Number {2}, Channel Number {3}, Submode {4}, Coding Information {5}",
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization
+                                                          .tor_Sector_0_Cooked_Mode_two_Form_1_File_Number_2_Channel_Number_3_Submode_4_Coding_Information_5,
                                                        dstSector,
                                                        ((Mode2Submode)data[2]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                       data[0], data[1], (Mode2Submode)data[2], data[3]);
+                                                       data[0],
+                                                       data[1],
+                                                       (Mode2Submode)data[2],
+                                                       data[3]);
 
                             break;
-                        case 2352 when data[0] != 0x00 || data[1] != 0xFF || data[2]  != 0xFF || data[3]  != 0xFF ||
-                                       data[4] != 0xFF || data[5] != 0xFF || data[6]  != 0xFF || data[7]  != 0xFF ||
-                                       data[8] != 0xFF || data[9] != 0xFF || data[10] != 0xFF || data[11] != 0x00:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin", "Sector {0}, Raw, Audio", dstSector);
+                        case 2352 when data[0]  != 0x00 ||
+                                       data[1]  != 0xFF ||
+                                       data[2]  != 0xFF ||
+                                       data[3]  != 0xFF ||
+                                       data[4]  != 0xFF ||
+                                       data[5]  != 0xFF ||
+                                       data[6]  != 0xFF ||
+                                       data[7]  != 0xFF ||
+                                       data[8]  != 0xFF ||
+                                       data[9]  != 0xFF ||
+                                       data[10] != 0xFF ||
+                                       data[11] != 0x00:
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.tor_Sector_0_Raw_Audio, dstSector);
 
                             break;
                         case 2352 when data[15] != 2:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode {4}", dstSector,
-                                                       data[12], data[13], data[14], data[15]);
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization.tor_Sector_0_1_2_3_Raw_Mode_4,
+                                                       dstSector,
+                                                       data[12],
+                                                       data[13],
+                                                       data[14],
+                                                       data[15]);
 
                             break;
                         case 2352:
-                            AaruConsole.DebugWriteLine("ISO9660 Plugin",
-                                                       "Sector {0} ({1:X2}:{2:X2}:{3:X2}), Raw, Mode 2 Form {4}, File Number {5}, Channel Number {6}, Submode {7}, Coding Information {8}",
-                                                       dstSector, data[12], data[13], data[14],
+                            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                       Localization
+                                                          .tor_Sector_0_1_2_3_Raw_Mode_two_Form_4_File_Number_5_Channel_Number_6_Submode_7_Coding_Information_8,
+                                                       dstSector,
+                                                       data[12],
+                                                       data[13],
+                                                       data[14],
                                                        ((Mode2Submode)data[18]).HasFlag(Mode2Submode.Form2) ? 2 : 1,
-                                                       data[16], data[17], (Mode2Submode)data[18], data[19]);
+                                                       data[16],
+                                                       data[17],
+                                                       (Mode2Submode)data[18],
+                                                       data[19]);
 
                             break;
                     }
+                }
 
                 byte[] sectorData = Sector.GetUserData(data, interleaved, fileNumber);
 

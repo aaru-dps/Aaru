@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Media;
 
 using System;
 using System.CommandLine;
@@ -39,38 +37,39 @@ using Aaru.CommonTypes.Enums;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Core.Devices.Scanning;
-using Aaru.Devices;
+using Aaru.Localization;
+using Humanizer;
+using Humanizer.Bytes;
+using Humanizer.Localisation;
 using Spectre.Console;
+
+namespace Aaru.Commands.Media;
 
 sealed class MediaScanCommand : Command
 {
+    const  string       MODULE_NAME = "Media-Scan command";
     static ProgressTask _progressTask1;
 
-    public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
+    public MediaScanCommand() : base("scan", UI.Media_Scan_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--mhdd-log", "-m"
-        }, () => null, "Write a log of the scan in the format used by MHDD."));
+        Add(new Option<string>(["--mhdd-log", "-m"],
+                               () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_MHDD));
 
-        Add(new Option<string>(new[]
-        {
-            "--ibg-log", "-b"
-        }, () => null, "Write a log of the scan in the format used by ImgBurn."));
+        Add(new Option<string>(["--ibg-log", "-b"],
+                               () => null,
+                               UI.Write_a_log_of_the_scan_in_the_format_used_by_ImgBurn));
 
-        Add(new Option<bool>(new[]
-        {
-            "--use-buffered-reads"
-        }, () => true, "For MMC/SD, use OS buffered reads if CMD23 is not supported."));
+        Add(new Option<bool>(["--use-buffered-reads"], () => true, UI.OS_buffered_reads_help));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Device path",
+            Description = UI.Device_path,
             Name        = "device-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
     public static int Invoke(bool debug, bool verbose, string devicePath, string ibgLog, string mhddLog,
@@ -82,7 +81,7 @@ sealed class MediaScanCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -92,9 +91,12 @@ sealed class MediaScanCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -102,40 +104,40 @@ sealed class MediaScanCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("media-scan");
 
-        AaruConsole.DebugWriteLine("Media-Scan command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--device={0}", devicePath);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
-        AaruConsole.DebugWriteLine("Media-Scan command", "--use-buffered-reads={0}", useBufferedReads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",              debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--device={0}",             Markup.Escape(devicePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--ibg-log={0}",            Markup.Escape(ibgLog     ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--mhdd-log={0}",           Markup.Escape(mhddLog    ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",            verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--use-buffered-reads={0}", useBufferedReads);
 
-        if(devicePath.Length == 2   &&
-           devicePath[1]     == ':' &&
-           devicePath[0]     != '/' &&
-           char.IsLetter(devicePath[0]))
+        if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-        Device      dev      = null;
-        ErrorNumber devErrno = ErrorNumber.NoError;
+        Devices.Device dev      = null;
+        ErrorNumber    devErrno = ErrorNumber.NoError;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Opening device...").IsIndeterminate();
-            dev = Device.Create(devicePath, out devErrno);
+            ctx.AddTask(UI.Opening_device).IsIndeterminate();
+            dev = Devices.Device.Create(devicePath, out devErrno);
         });
 
         switch(dev)
         {
             case null:
-                AaruConsole.ErrorWriteLine($"Could not open device, error {devErrno}.");
+                AaruConsole.ErrorWriteLine(string.Format(UI.Could_not_open_device_error_0, devErrno));
 
                 return (int)devErrno;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -153,18 +155,18 @@ sealed class MediaScanCommand : Command
         var         scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev, useBufferedReads);
         ScanResults results = new();
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
+        AnsiConsole.Progress()
+                   .AutoClear(true)
+                   .HideCompleted(true)
+                   .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                   .Start(ctx =>
                     {
-                        scanner.UpdateStatus += text =>
-                        {
-                            AaruConsole.WriteLine(Markup.Escape(text));
-                        };
+                        scanner.UpdateStatus += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
                         scanner.StoppingErrorMessage += text =>
-                        {
-                            AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
-                        };
+                            {
+                                AaruConsole.ErrorWriteLine($"[red]{Markup.Escape(text)}[/]");
+                            };
 
                         scanner.UpdateProgress += (text, current, maximum) =>
                         {
@@ -185,10 +187,7 @@ sealed class MediaScanCommand : Command
                             }
                         };
 
-                        scanner.InitProgress += () =>
-                        {
-                            _progressTask1 = ctx.AddTask("Progress");
-                        };
+                        scanner.InitProgress += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
                         scanner.EndProgress += () =>
                         {
@@ -196,7 +195,7 @@ sealed class MediaScanCommand : Command
                             _progressTask1 = null;
                         };
 
-                        Console.CancelKeyPress += (_, e) =>
+                        System.Console.CancelKeyPress += (_, e) =>
                         {
                             e.Cancel = true;
                             scanner.Abort();
@@ -205,35 +204,51 @@ sealed class MediaScanCommand : Command
                         results = scanner.Scan();
                     });
 
-        AaruConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
-                              results.ProcessingTime);
+        AaruConsole.WriteLine(Localization.Core.Took_a_total_of_0_1_processing_commands,
+                              results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
+                              results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));
 
-        AaruConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
-        AaruConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
-        AaruConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("[bold]Summary:[/]");
-        AaruConsole.WriteLine("[lime]{0} sectors took less than 3 ms.[/]", results.A);
-        AaruConsole.WriteLine("[green]{0} sectors took less than 10 ms but more than 3 ms.[/]", results.B);
-        AaruConsole.WriteLine("[darkorange]{0} sectors took less than 50 ms but more than 10 ms.[/]", results.C);
-        AaruConsole.WriteLine("[olive]{0} sectors took less than 150 ms but more than 50 ms.[/]", results.D);
-        AaruConsole.WriteLine("[orange3]{0} sectors took less than 500 ms but more than 150 ms.[/]", results.E);
-        AaruConsole.WriteLine("[red]{0} sectors took more than 500 ms.[/]", results.F);
-        AaruConsole.WriteLine("[maroon]{0} sectors could not be read.[/]", results.UnreadableSectors.Count);
+        AaruConsole.WriteLine(Localization.Core.Average_speed_0,
+                              ByteSize.FromBytes(results.AvgSpeed).Per(1.Seconds()).Humanize());
 
-        if(results.UnreadableSectors.Count > 0)
-            foreach(ulong bad in results.UnreadableSectors)
-                AaruConsole.WriteLine("Sector {0} could not be read", bad);
+        AaruConsole.WriteLine(Localization.Core.Fastest_speed_burst_0,
+                              ByteSize.FromBytes(results.MaxSpeed).Per(1.Seconds()).Humanize());
+
+        AaruConsole.WriteLine(Localization.Core.Slowest_speed_burst_0,
+                              ByteSize.FromBytes(results.MinSpeed).Per(1.Seconds()).Humanize());
 
         AaruConsole.WriteLine();
+        AaruConsole.WriteLine($"[bold]{Localization.Core.Summary}:[/]");
+        AaruConsole.WriteLine($"[lime]{string.Format(Localization.Core._0_sectors_took_less_than_3_ms, results.A)}[/]");
 
-        if(results.SeekTotal > 0               ||
-           results.SeekMin   < double.MaxValue ||
-           results.SeekMax   > double.MinValue)
+        AaruConsole.WriteLine($"[green]{string.Format(Localization.Core._0_sectors_took_less_than_10_ms_but_more_than_3_ms, results.B)}[/]");
 
-            AaruConsole.
-                WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
-                          results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
+        AaruConsole.WriteLine($"[darkorange]{string.Format(Localization.Core._0_sectors_took_less_than_50_ms_but_more_than_10_ms, results.C)}[/]");
+
+        AaruConsole.WriteLine($"[olive]{string.Format(Localization.Core._0_sectors_took_less_than_150_ms_but_more_than_50_ms, results.D)}[/]");
+
+        AaruConsole.WriteLine($"[orange3]{string.Format(Localization.Core._0_sectors_took_less_than_500_ms_but_more_than_150_ms, results.E)}[/]");
+
+        AaruConsole.WriteLine($"[red]{string.Format(Localization.Core._0_sectors_took_more_than_500_ms, results.F)}[/]");
+
+        AaruConsole.WriteLine($"[maroon]{string.Format(Localization.Core._0_sectors_could_not_be_read,
+                                                       results.UnreadableSectors.Count)}[/]");
+
+        foreach(ulong bad in results.UnreadableSectors)
+            AaruConsole.WriteLine(Localization.Core.Sector_0_could_not_be_read, bad);
+
+        AaruConsole.WriteLine();
+
+        if(results.SeekTotal > 0 || results.SeekMin < double.MaxValue || results.SeekMax > double.MinValue)
+
+        {
+            AaruConsole.WriteLine(Localization.Core
+                                              .Testing_0_seeks_longest_seek_took_1_ms_fastest_one_took_2_ms_3_ms_average,
+                                  results.SeekTimes,
+                                  results.SeekMax,
+                                  results.SeekMin,
+                                  results.SeekTotal / 1000);
+        }
 
         dev.Close();
 

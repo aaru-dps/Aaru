@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Hpofs : FilesystemTest
-{
-    public Hpofs() : base("HPOFS") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "High Performance Optical File System");
+[TestFixture]
+public class Hpofs() : FilesystemTest("hpofs")
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance Optical File System");
+
     public override IFilesystem Plugin     => new HPOFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "rid1.img.lz",
@@ -94,5 +93,5 @@ public class Hpofs : FilesystemTest
             VolumeName   = "VOLUME LABEL",
             VolumeSerial = "ABEF2C14"
         }
-    };
+    ];
 }

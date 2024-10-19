@@ -27,20 +27,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using System;
-using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 
+namespace Aaru.Core;
+
 /// <summary>Core media image format operations</summary>
 public static class ImageFormat
 {
+    const string MODULE_NAME = "Format detection";
+
     /// <summary>Detects the image plugin that recognizes the data inside a filter</summary>
     /// <param name="imageFilter">Filter</param>
     /// <returns>Detected image plugin</returns>
@@ -48,75 +49,85 @@ public static class ImageFormat
     {
         try
         {
-            PluginBase plugins = GetPluginBase.Instance;
+            PluginRegister plugins = PluginRegister.Singleton;
 
             IBaseImage imageFormat = null;
 
             // Check all but RAW plugin
-            foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                        imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(IMediaImage imagePlugin in plugins.MediaImages.Values)
+            {
+                if(imagePlugin is null) continue;
+
+                if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")) continue;
+
                 try
                 {
-                    AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imagePlugin.Name);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_plugin_0, imagePlugin.Name);
 
-                    if(!imagePlugin.Identify(imageFilter))
-                        continue;
+                    if(!imagePlugin.Identify(imageFilter)) continue;
 
                     imageFormat = imagePlugin;
 
                     break;
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored
                 }
+            }
 
-            if(imageFormat != null)
-                return imageFormat;
+            if(imageFormat != null) return imageFormat;
 
             // Check all but RAW plugin
-            foreach(IByteAddressableImage imagePlugin in plugins.ByteAddressableImages.Values.Where(imagePlugin =>
-                        imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(IByteAddressableImage imagePlugin in plugins.ByteAddressableImages.Values)
+            {
                 try
                 {
-                    AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imagePlugin.Name);
+                    if(imagePlugin is null) continue;
 
-                    if(!imagePlugin.Identify(imageFilter))
-                        continue;
+                    if(imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")) continue;
+
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_plugin_0, imagePlugin.Name);
+
+                    if(!imagePlugin.Identify(imageFilter)) continue;
 
                     imageFormat = imagePlugin;
 
                     break;
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored
                 }
+            }
 
-            if(imageFormat != null)
-                return imageFormat;
+            if(imageFormat != null) return imageFormat;
 
             // Check only RAW plugin
-            foreach(IMediaImage imagePlugin in plugins.ImagePluginsList.Values.Where(imagePlugin =>
-                        imagePlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000")))
+            foreach(IMediaImage imagePlugin in plugins.MediaImages.Values)
+            {
+                if(imagePlugin is null) continue;
+
+                if(imagePlugin.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000")) continue;
+
                 try
                 {
-                    AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imagePlugin.Name);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Trying_plugin_0, imagePlugin.Name);
 
-                    if(!imagePlugin.Identify(imageFilter))
-                        continue;
+                    if(!imagePlugin.Identify(imageFilter)) continue;
 
                     imageFormat = imagePlugin;
 
                     break;
                 }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+#pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
                 {
                     // ignored
                 }
+            }
 
             // Still not recognized
             return imageFormat;

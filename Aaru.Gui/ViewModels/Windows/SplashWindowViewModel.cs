@@ -27,12 +27,11 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -43,19 +42,19 @@ using Aaru.Database;
 using Aaru.Gui.ViewModels.Dialogs;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Windows;
+using Aaru.Localization;
 using Aaru.Settings;
 using Avalonia.Threading;
 using Microsoft.EntityFrameworkCore;
 using ReactiveUI;
 
-public sealed class SplashWindowViewModel : ViewModelBase
-{
-    readonly SplashWindow _view;
-    double                _currentProgress;
-    double                _maxProgress;
-    string                _message;
+namespace Aaru.Gui.ViewModels.Windows;
 
-    public SplashWindowViewModel(SplashWindow view) => _view = view;
+public sealed class SplashWindowViewModel(SplashWindow view) : ViewModelBase
+{
+    double _currentProgress;
+    double _maxProgress;
+    string _message;
 
     public string Message
     {
@@ -77,8 +76,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
     internal void OnOpened()
     {
-        Message         = "Welcome to Aaru!";
-        MaxProgress     = 9;
+        Message         = UI.Welcome_to_Aaru;
+        MaxProgress     = 10;
         CurrentProgress = 0;
 
         Dispatcher.UIThread.Post(InitializeConsole);
@@ -87,12 +86,12 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void InitializeConsole()
     {
         CurrentProgress++;
-        Message = "Initializing console...";
+        Message = UI.Initializing_console;
 
         Task.Run(() =>
         {
             ConsoleHandler.Init();
-            AaruConsole.WriteLine("Aaru started!");
+            AaruConsole.WriteLine(UI.Aaru_started);
 
             Dispatcher.UIThread.Post(LoadSettings);
         });
@@ -101,13 +100,13 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadSettings()
     {
         CurrentProgress++;
-        Message = "Loading settings...";
-        AaruConsole.WriteLine("Loading settings...");
+        Message = UI.Loading_settings;
+        AaruConsole.WriteLine(UI.Loading_settings);
 
         Task.Run(() =>
         {
             // TODO: Detect there are no settings yet
-            Settings.LoadSettings();
+            Settings.Settings.LoadSettings();
 
             Dispatcher.UIThread.Post(MigrateLocalDatabase);
         });
@@ -116,8 +115,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void MigrateLocalDatabase()
     {
         CurrentProgress++;
-        Message = "Migrating local database...";
-        AaruConsole.WriteLine("Migrating local database...");
+        Message = UI.Migrating_local_database;
+        AaruConsole.WriteLine(UI.Migrating_local_database);
 
         Task.Run(() =>
         {
@@ -125,7 +124,7 @@ public sealed class SplashWindowViewModel : ViewModelBase
 
             try
             {
-                ctx = AaruContext.Create(Settings.LocalDbPath, false);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath, false);
                 ctx.Database.Migrate();
             }
             catch(NotSupportedException)
@@ -140,35 +139,50 @@ public sealed class SplashWindowViewModel : ViewModelBase
                     // Should not ever arrive here, but if it does, keep trying to replace it anyway
                 }
 
-                File.Delete(Settings.LocalDbPath);
-                ctx = AaruContext.Create(Settings.LocalDbPath);
+                File.Delete(Settings.Settings.LocalDbPath);
+                ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
                 ctx.Database.EnsureCreated();
 
-                ctx.Database.
-                    ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
+                ctx.Database
+                   .ExecuteSqlRaw("CREATE TABLE IF NOT EXISTS \"__EFMigrationsHistory\" (\"MigrationId\" TEXT PRIMARY KEY, \"ProductVersion\" TEXT)");
 
                 foreach(string migration in ctx.Database.GetPendingMigrations())
-                    ctx.Database.
-                        ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{migration}', '0.0.0')");
+                {
+#pragma warning disable EF1002
+                    ctx.Database
+                       .ExecuteSqlRaw($"INSERT INTO \"__EFMigrationsHistory\" (MigrationId, ProductVersion) VALUES ('{
+                           migration}', '0.0.0')");
+#pragma warning restore EF1002
+                }
 
                 ctx.SaveChanges();
             }
 
             // Remove duplicates
-            foreach(var duplicate in ctx.SeenDevices.AsEnumerable().GroupBy(a => new
-                    {
-                        a.Manufacturer,
-                        a.Model,
-                        a.Revision,
-                        a.Bus
-                    }).Where(a => a.Count() > 1).Distinct().Select(a => a.Key))
-                ctx.RemoveRange(ctx.SeenDevices.
-                                    Where(d => d.Manufacturer == duplicate.Manufacturer && d.Model == duplicate.Model &&
-                                               d.Revision     == duplicate.Revision && d.Bus == duplicate.Bus).Skip(1));
+            foreach(var duplicate in ctx.SeenDevices.AsEnumerable()
+                                        .GroupBy(a => new
+                                         {
+                                             a.Manufacturer,
+                                             a.Model,
+                                             a.Revision,
+                                             a.Bus
+                                         })
+                                        .Where(a => a.Count() > 1)
+                                        .Distinct()
+                                        .Select(a => a.Key))
+            {
+                ctx.RemoveRange(ctx.SeenDevices
+                                   .Where(d => d.Manufacturer == duplicate.Manufacturer &&
+                                               d.Model        == duplicate.Model        &&
+                                               d.Revision     == duplicate.Revision     &&
+                                               d.Bus          == duplicate.Bus)
+                                   .Skip(1));
+            }
 
             // Remove nulls
-            ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null && d.Model == null &&
-                                                        d.Revision     == null));
+            ctx.RemoveRange(ctx.SeenDevices.Where(d => d.Manufacturer == null &&
+                                                       d.Model        == null &&
+                                                       d.Revision     == null));
 
             ctx.SaveChanges();
 
@@ -179,33 +193,30 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void UpdateMainDatabase()
     {
         CurrentProgress++;
-        Message = "Updating main database...";
-        AaruConsole.WriteLine("Updating main database...");
+        Message = UI.Updating_main_database;
+        AaruConsole.WriteLine(UI.Updating_main_database);
 
         Task.Run(() =>
         {
-            var mainDbUpdate = false;
-
-            if(!File.Exists(Settings.MainDbPath))
-                mainDbUpdate = true;
+            bool mainDbUpdate = !File.Exists(Settings.Settings.MainDbPath);
 
             // TODO: Update database
 
-            var mainContext = AaruContext.Create(Settings.MainDbPath, false);
+            var mainContext = AaruContext.Create(Settings.Settings.MainDbPath, false);
 
             if(mainContext.Database.GetPendingMigrations().Any())
             {
-                AaruConsole.WriteLine("New database version, updating...");
+                AaruConsole.WriteLine(UI.New_database_version_updating);
 
                 try
                 {
-                    File.Delete(Settings.MainDbPath);
+                    File.Delete(Settings.Settings.MainDbPath);
                 }
                 catch(Exception)
                 {
-                    AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
+                    AaruConsole.ErrorWriteLine(UI.Exception_trying_to_remove_old_database_version);
 
-                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.MainDbPath);
+                    AaruConsole.ErrorWriteLine(UI.Please_manually_remove_file_at_0, Settings.Settings.MainDbPath);
 
                     return;
                 }
@@ -217,18 +228,19 @@ public sealed class SplashWindowViewModel : ViewModelBase
         });
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void CheckGdprCompliance()
     {
         CurrentProgress++;
-        Message = "Checking GDPR compliance...";
-        AaruConsole.WriteLine("Checking GDPR compliance...");
+        Message = UI.Checking_GDPR_compliance;
+        AaruConsole.WriteLine(UI.Checking_GDPR_compliance);
 
-        if(Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
+        if(Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL)
         {
             var settingsDialog          = new SettingsDialog();
             var settingsDialogViewModel = new SettingsViewModel(settingsDialog, true);
             settingsDialog.DataContext = settingsDialogViewModel;
-            await settingsDialog.ShowDialog(_view);
+            await settingsDialog.ShowDialog(view);
         }
 
         LoadStatistics();
@@ -237,8 +249,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadStatistics()
     {
         CurrentProgress++;
-        Message = "Loading statistics...";
-        AaruConsole.WriteLine("Loading statistics...");
+        Message = UI.Loading_statistics;
+        AaruConsole.WriteLine(UI.Loading_statistics);
 
         Task.Run(() =>
         {
@@ -251,13 +263,27 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void RegisterEncodings()
     {
         CurrentProgress++;
-        Message = "Registering encodings...";
-        AaruConsole.WriteLine("Registering encodings...");
+        Message = UI.Registering_encodings;
+        AaruConsole.WriteLine(UI.Registering_encodings);
 
         Task.Run(() =>
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+            Dispatcher.UIThread.Post(RegisterPlugins);
+        });
+    }
+
+    // There are too many places that depend on this being inited to be sure all are covered, so init it here.
+    void RegisterPlugins()
+    {
+        CurrentProgress++;
+        Message = UI.Registering_plugins;
+        AaruConsole.WriteLine(UI.Registering_plugins);
+
+        Task.Run(() =>
+        {
+            PluginBase.Init();
             Dispatcher.UIThread.Post(SaveStatistics);
         });
     }
@@ -265,12 +291,12 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void SaveStatistics()
     {
         CurrentProgress++;
-        Message = "Saving statistics...";
-        AaruConsole.WriteLine("Saving statistics...");
+        Message = UI.Saving_statistics;
+        AaruConsole.WriteLine(UI.Saving_statistics);
 
-        Task.Run(() =>
+        Task.Run(async () =>
         {
-            Statistics.SaveStats();
+            await Statistics.SaveStatsAsync();
 
             Dispatcher.UIThread.Post(LoadMainWindow);
         });
@@ -279,8 +305,8 @@ public sealed class SplashWindowViewModel : ViewModelBase
     void LoadMainWindow()
     {
         CurrentProgress++;
-        Message = "Loading main window...";
-        AaruConsole.WriteLine("Loading main window...");
+        Message = UI.Loading_main_window;
+        AaruConsole.WriteLine(UI.Loading_main_window);
         WorkFinished?.Invoke(this, EventArgs.Empty);
     }
 

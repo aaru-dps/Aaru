@@ -23,26 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.UltraISO;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.UltraISO;
 
 [TestFixture]
 public class Cuesheet : OpticalMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "Cuesheet");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "Cuesheet");
+
     public override IMediaImage Plugin => new CdrWin();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile  = "cdiready_the_apprentice.cue",
@@ -50,8 +51,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 279300,
             Md5       = "d3b069721052a1093151c6f7504ca593",
             LongMd5   = "d3b069721052a1093151c6f7504ca593",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -228,7 +229,7 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -237,8 +238,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 247073,
             Md5       = "c041297aca68c206d95d20aa9435e01b",
             LongMd5   = "c041297aca68c206d95d20aa9435e01b",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -351,7 +352,7 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -360,8 +361,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 254265,
             Md5       = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5   = "3d3f9cf7d1ba2249b1e7960071e5af46",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -370,25 +371,25 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -397,8 +398,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 308224,
             Md5       = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5   = "3af5f943ddb9427d9c63a4ce3b704db9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -407,19 +408,19 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -428,8 +429,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 471090,
             Md5       = "35cb08dd5fedfb8e9ad2918292e51791",
             LongMd5   = "c7ee3dc509bb40948c383686b6f66da9",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -438,19 +439,19 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 471090,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "12_2_RELEASE_AMD64_CD"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -459,8 +460,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 3455920,
             Md5       = "ea4cfa28a4e449d7b59251b98394c7f4",
             LongMd5   = "282de41e0118781f8a9216b0a4a31088",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -469,19 +470,19 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters     = 3455920,
                             ClusterSize  = 2048,
-                            Type         = "UDF v1.02",
+                            Type         = "udf",
                             VolumeName   = "Test DVD",
                             VolumeSerial = "483E25D50034BBB0"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -490,8 +491,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 2146357,
             Md5       = "5e1841b7cd6ac0a95b8ae6f110fd89f2",
             LongMd5   = "8325ba263cfa419f9566de93e55248d5",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -500,19 +501,19 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 2146357,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "SU1100.001"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         /* This image is invalid an impossible to process properly due to a bug in UltraISO
         new OpticalImageTestExpected
@@ -645,8 +646,8 @@ public class Cuesheet : OpticalMediaImageTest
             Sectors   = 329158,
             Md5       = "9a19aa0df066732a8ec34025e8160248",
             LongMd5   = "e981f7dfdb522ba937fe75474e23a446",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -655,16 +656,16 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -786,7 +787,7 @@ public class Cuesheet : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

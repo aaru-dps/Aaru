@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Btrfs : FilesystemTest
-{
-    public Btrfs() : base("B-tree file system") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "btrfs");
+[TestFixture]
+public class Btrfs() : FilesystemTest("btrfs")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "btrfs");
     public override IFilesystem Plugin     => new BTRFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -67,5 +65,5 @@ public class Btrfs : FilesystemTest
             VolumeName   = "btrfs",
             VolumeSerial = "5af44541-0605-f541-af6d-c229576707ab"
         }
-    };
+    ];
 }

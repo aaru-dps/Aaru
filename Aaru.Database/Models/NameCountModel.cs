@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 namespace Aaru.Database.Models;
@@ -38,8 +38,10 @@ public abstract class NameCountModel : BaseModel
 {
     /// <summary>Value name</summary>
     public string Name { get; set; }
+
     /// <summary>Has already been synchronized with Aaru's server</summary>
     public bool Synchronized { get; set; }
+
     /// <summary>Value count</summary>
     public ulong Count { get; set; }
 }

@@ -27,14 +27,14 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+
+namespace Aaru.Core;
 
 /// <summary>Option parsing</summary>
 public static class Options
@@ -44,16 +44,15 @@ public static class Options
     /// <returns>Options name-value dictionary</returns>
     public static Dictionary<string, string> Parse(string options)
     {
-        var    parsed  = new Dictionary<string, string>();
-        var    escaped = false;
-        var    quoted  = false;
-        var    inValue = false;
-        string name    = null;
-        string value;
-        var    sb = new StringBuilder();
+        Dictionary<string, string> parsed  = new();
+        var                        escaped = false;
+        var                        quoted  = false;
+        var                        inValue = false;
+        string                     name    = null;
+        string                     value;
+        var                        sb = new StringBuilder();
 
-        if(options == null)
-            return parsed;
+        if(options == null) return parsed;
 
         for(var index = 0; index < options.Length; index++)
         {
@@ -88,18 +87,16 @@ public static class Options
                     sb      = new StringBuilder();
                     inValue = false;
 
-                    if(string.IsNullOrEmpty(name) ||
-                       string.IsNullOrEmpty(value))
-                        continue;
+                    if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) continue;
 
-                    if(parsed.ContainsKey(name))
-                        parsed.Remove(name);
+                    if(parsed.ContainsKey(name)) parsed.Remove(name);
 
                     parsed.Add(name, value);
 
                     break;
                 default:
                     if(escaped)
+                    {
                         switch(c)
                         {
                             case 'a':
@@ -177,6 +174,7 @@ public static class Options
 
                                 break;
                         }
+                    }
                     else
                         sb.Append(c);
 
@@ -184,17 +182,13 @@ public static class Options
             }
         }
 
-        if(!inValue)
-            return parsed;
+        if(!inValue) return parsed;
 
         value = sb.ToString();
 
-        if(string.IsNullOrEmpty(name) ||
-           string.IsNullOrEmpty(value))
-            return parsed;
+        if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value)) return parsed;
 
-        if(parsed.ContainsKey(name))
-            parsed.Remove(name);
+        if(parsed.ContainsKey(name)) parsed.Remove(name);
 
         parsed.Add(name, value);
 

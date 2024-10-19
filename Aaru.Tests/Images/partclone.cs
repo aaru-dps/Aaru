@@ -23,25 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 [TestFixture]
 public class Partclone : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "partclone");
-    public override IMediaImage Plugin    => new PartClone();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "partclone");
+    public override IMediaImage Plugin     => new PartClone();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "ext2.partclone.lz",
@@ -57,14 +57,14 @@ public class Partclone : BlockMediaImageTest
             Sectors    = 1012032,
             SectorSize = 512,
             Md5        = "f98b1a51ca2e7bf047d84969a2392a3d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1012032
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -100,5 +100,5 @@ public class Partclone : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "61cc3faa286364e7ad5bab18120c1151"
         }
-    };
+    ];
 }

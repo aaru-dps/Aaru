@@ -27,15 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices;
 
 using System;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 /// <summary>Contains device information</summary>
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -89,7 +89,7 @@ public partial class Device
     /// <param name="aaruRemote">Remote URI</param>
     /// <returns>List of devices</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication, out string serverVersion,
+    public static DeviceInfo[] ListDevices(out bool   isRemote, out string serverApplication, out string serverVersion,
                                            out string serverOperatingSystem, out string serverOperatingSystemVersion,
                                            out string serverArchitecture, string aaruRemote = null)
     {
@@ -102,25 +102,23 @@ public partial class Device
 
         if(aaruRemote is null)
         {
-            if(OperatingSystem.IsWindows())
-                return Windows.ListDevices.GetList();
+            if(OperatingSystem.IsWindows()) return Windows.ListDevices.GetList();
 
-            if(OperatingSystem.IsLinux())
-                return Linux.ListDevices.GetList();
+            if(OperatingSystem.IsLinux()) return Linux.ListDevices.GetList();
 
-            throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+            throw new InvalidOperationException(string.Format(Localization.Platform_0_not_yet_supported,
+                                                              DetectOS.GetRealPlatformID()));
         }
 
         try
         {
             var aaruUri = new Uri(aaruRemote);
 
-            if(aaruUri.Scheme != "aaru" &&
-               aaruUri.Scheme != "dic")
+            if(aaruUri.Scheme != "aaru" && aaruUri.Scheme != "dic")
             {
-                AaruConsole.ErrorWriteLine("Invalid remote URI.");
+                AaruConsole.ErrorWriteLine(Localization.Invalid_remote_URI);
 
-                return Array.Empty<DeviceInfo>();
+                return [];
             }
 
             using var remote = new Remote.Remote(aaruUri);
@@ -136,9 +134,9 @@ public partial class Device
         }
         catch(Exception)
         {
-            AaruConsole.ErrorWriteLine("Error connecting to host.");
+            AaruConsole.ErrorWriteLine(Localization.Error_connecting_to_host);
 
-            return Array.Empty<DeviceInfo>();
+            return [];
         }
     }
 }

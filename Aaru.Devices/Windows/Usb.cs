@@ -27,11 +27,9 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
-
-namespace Aaru.Devices.Windows;
 
 using System;
 using System.Collections.Generic;
@@ -40,9 +38,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
+namespace Aaru.Devices.Windows;
+
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local"), SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 static partial class Usb
 {
     /// <summary>Return a list of USB Host Controllers</summary>
@@ -56,8 +58,7 @@ static partial class Usb
         // devices that match the interface GUID of a Hub Controller
         IntPtr h = SetupDiGetClassDevs(ref hostGuid, 0, IntPtr.Zero, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 
-        if(h == _invalidHandleValue)
-            return new ReadOnlyCollection<UsbController>(hostList);
+        if(h == _invalidHandleValue) return new ReadOnlyCollection<UsbController>(hostList);
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
         bool   success;
@@ -67,7 +68,7 @@ static partial class Usb
         {
             var host = new UsbController
             {
-                _controllerIndex = i
+                ControllerIndex = i
             };
 
             // create a Device Interface Data structure
@@ -86,30 +87,39 @@ static partial class Usb
                 // build a Device Interface Detail Data structure
                 var didd = new SpDeviceInterfaceDetailData
                 {
-                    cbSize = 4 + Marshal.SystemDefaultCharSize
+                    cbSize = IntPtr.Size == 8 ? 8 : 4 + Marshal.SystemDefaultCharSize
                 };
 
                 // trust me :)
 
                 // now we can get some more detailed information
-                var       nRequiredSize = 0;
-                const int nBytes       = BUFFER_SIZE;
+                var nRequiredSize = 0;
 
-                if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
                 {
-                    host._controllerDevicePath = didd.DevicePath;
+                    host.ControllerDevicePath = didd.DevicePath;
 
                     // get the Device Description and DriverKeyName
                     var requiredSize = 0;
                     int regType      = REG_SZ;
 
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DEVICEDESC,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
-                        host._controllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
+                        host.ControllerDeviceDesc = Marshal.PtrToStringAuto(ptrBuf);
 
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DRIVER,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
-                        host._controllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
+                        host.ControllerDriverKeyName = Marshal.PtrToStringAuto(ptrBuf);
                 }
 
                 hostList.Add(host);
@@ -130,15 +140,13 @@ static partial class Usb
     /// <returns>USB device description</returns>
     static string GetDescriptionByKeyName(string driverKeyName)
     {
-        var          ans      = "";
-        const string devEnum = REGSTR_KEY_USB;
+        var ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
-        IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+        IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -160,14 +168,24 @@ static partial class Usb
                 int regType      = REG_SZ;
                 var keyName      = "";
 
-                if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                if(SetupDiGetDeviceRegistryProperty(h,
+                                                    ref da,
+                                                    SPDRP_DRIVER,
+                                                    ref regType,
+                                                    ptrBuf,
+                                                    BUFFER_SIZE,
                                                     ref requiredSize))
                     keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                 // is it a match?
                 if(keyName == driverKeyName)
                 {
-                    if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DEVICEDESC, ref regType, ptrBuf, BUFFER_SIZE,
+                    if(SetupDiGetDeviceRegistryProperty(h,
+                                                        ref da,
+                                                        SPDRP_DEVICEDESC,
+                                                        ref regType,
+                                                        ptrBuf,
+                                                        BUFFER_SIZE,
                                                         ref requiredSize))
                         ans = Marshal.PtrToStringAuto(ptrBuf);
 
@@ -189,15 +207,13 @@ static partial class Usb
     /// <returns>Device instance ID</returns>
     static string GetInstanceIdByKeyName(string driverKeyName)
     {
-        var          ans      = "";
-        const string devEnum = REGSTR_KEY_USB;
+        var ans = "";
 
         // Use the "enumerator form" of the SetupDiGetClassDevs API
         // to generate a list of all USB devices
-        IntPtr h = SetupDiGetClassDevs(0, devEnum, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+        IntPtr h = SetupDiGetClassDevs(0, REGSTR_KEY_USB, IntPtr.Zero, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         IntPtr ptrBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
 
@@ -220,16 +236,20 @@ static partial class Usb
 
                 var keyName = "";
 
-                if(SetupDiGetDeviceRegistryProperty(h, ref da, SPDRP_DRIVER, ref regType, ptrBuf, BUFFER_SIZE,
+                if(SetupDiGetDeviceRegistryProperty(h,
+                                                    ref da,
+                                                    SPDRP_DRIVER,
+                                                    ref regType,
+                                                    ptrBuf,
+                                                    BUFFER_SIZE,
                                                     ref requiredSize))
                     keyName = Marshal.PtrToStringAuto(ptrBuf);
 
                 // is it a match?
                 if(keyName == driverKeyName)
                 {
-                    const int nBytes = BUFFER_SIZE;
-                    var       sb      = new StringBuilder(nBytes);
-                    SetupDiGetDeviceInstanceId(h, ref da, sb, nBytes, out requiredSize);
+                    var sb = new StringBuilder(BUFFER_SIZE);
+                    SetupDiGetDeviceInstanceId(h, ref da, sb, BUFFER_SIZE, out requiredSize);
                     ans = sb.ToString();
 
                     break;
@@ -245,72 +265,87 @@ static partial class Usb
         return ans;
     }
 
+#region Nested type: UsbController
+
     /// <summary>Represents a USB Host Controller</summary>
     sealed class UsbController
     {
-        internal string _controllerDriverKeyName, _controllerDevicePath, _controllerDeviceDesc;
-        internal int    _controllerIndex;
+        internal string ControllerDriverKeyName, ControllerDevicePath, ControllerDeviceDesc;
+        internal int    ControllerIndex;
 
         /// <summary>A simple default constructor</summary>
         internal UsbController()
         {
-            _controllerIndex         = 0;
-            _controllerDevicePath    = "";
-            _controllerDeviceDesc    = "";
-            _controllerDriverKeyName = "";
+            ControllerIndex         = 0;
+            ControllerDevicePath    = "";
+            ControllerDeviceDesc    = "";
+            ControllerDriverKeyName = "";
         }
 
         /// <summary>Return the index of the instance</summary>
-        internal int Index => _controllerIndex;
+        internal int Index => ControllerIndex;
 
         /// <summary>
         ///     Return the Device Path, such as "\\?\pci#ven_10de&amp;dev_005a&amp;subsys_815a1043&amp;rev_a2#3&267a616a&0&
         ///     58#{3abf6f2d-71c4-462a-8a92-1e6861e6af27}"
         /// </summary>
-        internal string DevicePath => _controllerDevicePath;
+        internal string DevicePath => ControllerDevicePath;
 
         /// <summary>The DriverKeyName may be useful as a search key</summary>
-        internal string DriverKeyName => _controllerDriverKeyName;
+        internal string DriverKeyName => ControllerDriverKeyName;
 
         /// <summary>Return the Friendly Name, such as "VIA USB Enhanced Host Controller"</summary>
-        internal string Name => _controllerDeviceDesc;
+        internal string Name => ControllerDeviceDesc;
 
         /// <summary>Return Root Hub for this Controller</summary>
         internal UsbHub GetRootHub()
         {
-            IntPtr h, h2;
-
             var root = new UsbHub
             {
-                _hubIsRootHub  = true,
-                _hubDeviceDesc = "Root Hub"
+                HubIsRootHub  = true,
+                HubDeviceDesc = "Root Hub"
             };
 
             // Open a handle to the Host Controller
-            h = CreateFile(_controllerDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                           IntPtr.Zero);
+            IntPtr h = CreateFile(ControllerDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
+                                  IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return root;
+            if(h == _invalidHandleValue) return root;
 
             var    hubName    = new UsbRootHubName();
             int    nBytes     = Marshal.SizeOf(hubName);
             IntPtr ptrHubName = Marshal.AllocHGlobal(nBytes);
 
             // get the Hub Name
-            if(DeviceIoControl(h, IOCTL_USB_GET_ROOT_HUB_NAME, ptrHubName, nBytes, ptrHubName, nBytes, out _,
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_ROOT_HUB_NAME,
+                               ptrHubName,
+                               nBytes,
+                               ptrHubName,
+                               nBytes,
+                               out _,
                                IntPtr.Zero))
             {
                 hubName = (UsbRootHubName)(Marshal.PtrToStructure(ptrHubName, typeof(UsbRootHubName)) ??
                                            default(UsbRootHubName));
-                root._hubDevicePath = @"\\.\" + hubName.RootHubName;
+
+                root.HubDevicePath = @"\\.\" + hubName.RootHubName;
             }
 
             // TODO: Get DriverKeyName for Root Hub
-
             // Now let's open the Hub (based upon the HubName we got above)
-            h2 = CreateFile(root._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                            IntPtr.Zero);
+            IntPtr h2 = CreateFile(root.HubDevicePath,
+                                   GENERIC_WRITE,
+                                   FILE_SHARE_WRITE,
+                                   IntPtr.Zero,
+                                   OPEN_EXISTING,
+                                   0,
+                                   IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
             {
@@ -324,14 +359,20 @@ static partial class Usb
                 Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                 // get the Hub Information
-                if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes, out _,
+                if(DeviceIoControl(h2,
+                                   IOCTL_USB_GET_NODE_INFORMATION,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   out _,
                                    IntPtr.Zero))
                 {
                     nodeInfo = (UsbNodeInformation)(Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation)) ??
                                                     default(UsbNodeInformation));
 
-                    root._hubIsBusPowered = Convert.ToBoolean(nodeInfo.HubInformation.HubIsBusPowered);
-                    root._hubPortCount    = nodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
+                    root.HubIsBusPowered = Convert.ToBoolean(nodeInfo.HubInformation.HubIsBusPowered);
+                    root.HubPortCount    = nodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
                 }
 
                 Marshal.FreeHGlobal(ptrNodeInfo);
@@ -345,58 +386,113 @@ static partial class Usb
         }
     }
 
+#endregion
+
+#region Nested type: UsbDevice
+
+    /// <summary>Represents an USB device</summary>
+    internal class UsbDevice
+    {
+        internal byte[]              BinaryDeviceDescriptors;
+        internal UsbDeviceDescriptor DeviceDescriptor;
+        internal string              DeviceDriverKey,    DeviceHubDevicePath, DeviceInstanceId, DeviceName;
+        internal string              DeviceManufacturer, DeviceProduct,       DeviceSerialNumber;
+        internal int                 DevicePortNumber;
+
+        /// <summary>a simple default constructor</summary>
+        internal UsbDevice()
+        {
+            DevicePortNumber        = 0;
+            DeviceHubDevicePath     = "";
+            DeviceDriverKey         = "";
+            DeviceManufacturer      = "";
+            DeviceProduct           = "Unknown USB Device";
+            DeviceSerialNumber      = "";
+            DeviceName              = "";
+            DeviceInstanceId        = "";
+            BinaryDeviceDescriptors = null;
+        }
+
+        /// <summary>return Port Index of the Hub</summary>
+        internal int PortNumber => DevicePortNumber;
+
+        /// <summary>return the Device Path of the Hub (the parent device)</summary>
+        internal string HubDevicePath => DeviceHubDevicePath;
+
+        /// <summary>useful as a search key</summary>
+        internal string DriverKey => DeviceDriverKey;
+
+        /// <summary>the device path of this device</summary>
+        internal string InstanceId => DeviceInstanceId;
+
+        /// <summary>the friendly name</summary>
+        internal string Name => DeviceName;
+
+        internal string Manufacturer => DeviceManufacturer;
+
+        internal string Product => DeviceProduct;
+
+        internal string SerialNumber => DeviceSerialNumber;
+
+        internal byte[] BinaryDescriptors => BinaryDeviceDescriptors;
+    }
+
+#endregion
+
+#region Nested type: UsbHub
+
     /// <summary>The Hub class</summary>
     internal class UsbHub
     {
-        internal string _hubDriverKey,    _hubDevicePath, _hubDeviceDesc;
-        internal bool   _hubIsBusPowered, _hubIsRootHub;
-        internal string _hubManufacturer, _hubProduct, _hubSerialNumber, _hubInstanceId;
-        internal int    _hubPortCount;
+        internal string HubDriverKey,    HubDevicePath, HubDeviceDesc;
+        internal bool   HubIsBusPowered, HubIsRootHub;
+        internal string HubManufacturer, HubProduct, HubSerialNumber, HubInstanceId;
+        internal int    HubPortCount;
 
         /// <summary>a simple default constructor</summary>
         internal UsbHub()
         {
-            _hubPortCount    = 0;
-            _hubDevicePath   = "";
-            _hubDeviceDesc   = "";
-            _hubDriverKey    = "";
-            _hubIsBusPowered = false;
-            _hubIsRootHub    = false;
-            _hubManufacturer = "";
-            _hubProduct      = "";
-            _hubSerialNumber = "";
-            _hubInstanceId   = "";
+            HubPortCount    = 0;
+            HubDevicePath   = "";
+            HubDeviceDesc   = "";
+            HubDriverKey    = "";
+            HubIsBusPowered = false;
+            HubIsRootHub    = false;
+            HubManufacturer = "";
+            HubProduct      = "";
+            HubSerialNumber = "";
+            HubInstanceId   = "";
         }
 
         /// <summary>return Port Count</summary>
-        internal int PortCount => _hubPortCount;
+        internal int PortCount => HubPortCount;
 
         /// <summary>
         ///     return the Device Path, such as "\\?\pci#ven_10de&amp;dev_005a&amp;subsys_815a1043&amp;rev_a2#3&267a616a&0&
         ///     58#{3abf6f2d-71c4-462a-8a92-1e6861e6af27}"
         /// </summary>
-        internal string DevicePath => _hubDevicePath;
+        internal string DevicePath => HubDevicePath;
 
         /// <summary>The DriverKey may be useful as a search key</summary>
-        internal string DriverKey => _hubDriverKey;
+        internal string DriverKey => HubDriverKey;
 
         /// <summary>return the Friendly Name, such as "VIA USB Enhanced Host Controller"</summary>
-        internal string Name => _hubDeviceDesc;
+        internal string Name => HubDeviceDesc;
 
         /// <summary>the device path of this device</summary>
-        internal string InstanceId => _hubInstanceId;
+        internal string InstanceId => HubInstanceId;
 
         /// <summary>is is this a self-powered hub?</summary>
-        internal bool IsBusPowered => _hubIsBusPowered;
+        internal bool IsBusPowered => HubIsBusPowered;
 
         /// <summary>is this a root hub?</summary>
-        internal bool IsRootHub => _hubIsRootHub;
+        internal bool IsRootHub => HubIsRootHub;
 
-        internal string Manufacturer => _hubManufacturer;
+        internal string Manufacturer => HubManufacturer;
 
-        internal string Product => _hubProduct;
+        internal string Product => HubProduct;
 
-        internal string SerialNumber => _hubSerialNumber;
+        internal string SerialNumber => HubSerialNumber;
 
         /// <summary>return a list of the down stream ports</summary>
         /// <returns>List of downstream ports</returns>
@@ -405,18 +501,22 @@ static partial class Usb
             var portList = new List<UsbPort>();
 
             // Open a handle to the Hub device
-            IntPtr h = CreateFile(_hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(HubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return new ReadOnlyCollection<UsbPort>(portList);
+            if(h == _invalidHandleValue) return new ReadOnlyCollection<UsbPort>(portList);
 
             int    nBytes            = Marshal.SizeOf(typeof(UsbNodeConnectionInformationEx));
             IntPtr ptrNodeConnection = Marshal.AllocHGlobal(nBytes);
 
             // loop thru all of the ports on the hub
             // BTW: Ports are numbered starting at 1
-            for(var i = 1; i <= _hubPortCount; i++)
+            for(var i = 1; i <= HubPortCount; i++)
             {
                 var nodeConnection = new UsbNodeConnectionInformationEx
                 {
@@ -425,8 +525,14 @@ static partial class Usb
 
                 Marshal.StructureToPtr(nodeConnection, ptrNodeConnection, true);
 
-                if(!DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX, ptrNodeConnection, nBytes,
-                                    ptrNodeConnection, nBytes, out _, IntPtr.Zero))
+                if(!DeviceIoControl(h,
+                                    IOCTL_USB_GET_NODE_CONNECTION_INFORMATION_EX,
+                                    ptrNodeConnection,
+                                    nBytes,
+                                    ptrNodeConnection,
+                                    nBytes,
+                                    out _,
+                                    IntPtr.Zero))
                     continue;
 
                 nodeConnection =
@@ -437,13 +543,13 @@ static partial class Usb
                 // load up the USBPort class
                 var port = new UsbPort
                 {
-                    _portPortNumber        = i,
-                    _portHubDevicePath     = _hubDevicePath,
-                    _portStatus            = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
-                    _portSpeed             = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
-                    _portIsDeviceConnected = nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
-                    _portIsHub             = Convert.ToBoolean(nodeConnection.DeviceIsHub),
-                    _portDeviceDescriptor  = nodeConnection.DeviceDescriptor
+                    PortPortNumber        = i,
+                    PortHubDevicePath     = HubDevicePath,
+                    PortStatus            = ((UsbConnectionStatus)nodeConnection.ConnectionStatus).ToString(),
+                    PortSpeed             = ((UsbDeviceSpeed)nodeConnection.Speed).ToString(),
+                    PortIsDeviceConnected = nodeConnection.ConnectionStatus == (int)UsbConnectionStatus.DeviceConnected,
+                    PortIsHub             = Convert.ToBoolean(nodeConnection.DeviceIsHub),
+                    PortDeviceDescriptor  = nodeConnection.DeviceDescriptor
                 };
 
                 // add it to the list
@@ -458,65 +564,72 @@ static partial class Usb
         }
     }
 
+#endregion
+
+#region Nested type: UsbPort
+
     /// <summary>Represents an USB port</summary>
     internal class UsbPort
     {
-        internal UsbDeviceDescriptor _portDeviceDescriptor;
-        internal bool                _portIsHub, _portIsDeviceConnected;
-        internal int                 _portPortNumber;
-        internal string              _portStatus, _portHubDevicePath, _portSpeed;
+        internal UsbDeviceDescriptor PortDeviceDescriptor;
+        internal bool                PortIsHub, PortIsDeviceConnected;
+        internal int                 PortPortNumber;
+        internal string              PortStatus, PortHubDevicePath, PortSpeed;
 
         /// <summary>a simple default constructor</summary>
         internal UsbPort()
         {
-            _portPortNumber        = 0;
-            _portStatus            = "";
-            _portHubDevicePath     = "";
-            _portSpeed             = "";
-            _portIsHub             = false;
-            _portIsDeviceConnected = false;
+            PortPortNumber        = 0;
+            PortStatus            = "";
+            PortHubDevicePath     = "";
+            PortSpeed             = "";
+            PortIsHub             = false;
+            PortIsDeviceConnected = false;
         }
 
         /// <summary>return Port Index of the Hub</summary>
-        internal int PortNumber => _portPortNumber;
+        internal int PortNumber => PortPortNumber;
 
         /// <summary>return the Device Path of the Hub</summary>
-        internal string HubDevicePath => _portHubDevicePath;
+        internal string HubDevicePath => PortHubDevicePath;
 
         /// <summary>the status (see USB_CONNECTION_STATUS above)</summary>
-        internal string Status => _portStatus;
+        internal string Status => PortStatus;
 
         /// <summary>the speed of the connection (see USB_DEVICE_SPEED above)</summary>
-        internal string Speed => _portSpeed;
+        internal string Speed => PortSpeed;
 
         /// <summary>is this a downstream external hub?</summary>
-        internal bool IsHub => _portIsHub;
+        internal bool IsHub => PortIsHub;
 
         /// <summary>is anybody home?</summary>
-        internal bool IsDeviceConnected => _portIsDeviceConnected;
+        internal bool IsDeviceConnected => PortIsDeviceConnected;
 
         /// <summary>return a down stream external hub</summary>
         /// <returns>Downstream external hub</returns>
         internal UsbDevice GetDevice()
         {
-            if(!_portIsDeviceConnected)
-                return null;
+            if(!PortIsDeviceConnected) return null;
 
             // Copy over some values from the Port class
             // Ya know, I've given some thought about making Device a derived class...
             var device = new UsbDevice
             {
-                _devicePortNumber    = _portPortNumber,
-                _deviceHubDevicePath = _portHubDevicePath,
-                _deviceDescriptor    = _portDeviceDescriptor
+                DevicePortNumber    = PortPortNumber,
+                DeviceHubDevicePath = PortHubDevicePath,
+                DeviceDescriptor    = PortDeviceDescriptor
             };
 
             // Open a handle to the Hub device
-            IntPtr h = CreateFile(_portHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
+            IntPtr h = CreateFile(PortHubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
                                   IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return device;
+            if(h == _invalidHandleValue) return device;
 
             int nBytesReturned;
             int nBytes = BUFFER_SIZE;
@@ -528,17 +641,17 @@ static partial class Usb
             // Device Descriptor are really just indexes.  So, we have to
             // request a String Descriptor to get the values for those strings.
 
-            if(_portDeviceDescriptor.iManufacturer > 0)
+            if(PortDeviceDescriptor.iManufacturer > 0)
             {
                 // build a request for string descriptor
                 var request = new UsbDescriptorRequest
                 {
-                    ConnectionIndex = _portPortNumber,
+                    ConnectionIndex = PortPortNumber,
                     SetupPacket =
                     {
                         // Language Code
                         wIndex = 0x409,
-                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + _portDeviceDescriptor.iManufacturer)
+                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iManufacturer)
                     }
                 };
 
@@ -549,8 +662,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // The location of the string descriptor is immediately after
                     // the Request structure.  Because this location is not "covered"
@@ -562,23 +681,23 @@ static partial class Usb
                         (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
                                               default(UsbStringDescriptor));
 
-                    device._deviceManufacturer = stringDesc.bString;
+                    device.DeviceManufacturer = stringDesc.bString;
                 }
 
                 Marshal.FreeHGlobal(ptrRequest);
             }
 
-            if(_portDeviceDescriptor.iProduct > 0)
+            if(PortDeviceDescriptor.iProduct > 0)
             {
                 // build a request for string descriptor
                 var request = new UsbDescriptorRequest
                 {
-                    ConnectionIndex = _portPortNumber,
+                    ConnectionIndex = PortPortNumber,
                     SetupPacket =
                     {
                         // Language Code
                         wIndex = 0x409,
-                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + _portDeviceDescriptor.iProduct)
+                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iProduct)
                     }
                 };
 
@@ -589,8 +708,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // the location of the string descriptor is immediately after the Request structure
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
@@ -599,23 +724,23 @@ static partial class Usb
                         (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
                                               default(UsbStringDescriptor));
 
-                    device._deviceProduct = stringDesc.bString;
+                    device.DeviceProduct = stringDesc.bString;
                 }
 
                 Marshal.FreeHGlobal(ptrRequest);
             }
 
-            if(_portDeviceDescriptor.iSerialNumber > 0)
+            if(PortDeviceDescriptor.iSerialNumber > 0)
             {
                 // build a request for string descriptor
                 var request = new UsbDescriptorRequest
                 {
-                    ConnectionIndex = _portPortNumber,
+                    ConnectionIndex = PortPortNumber,
                     SetupPacket =
                     {
                         // Language Code
                         wIndex = 0x409,
-                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + _portDeviceDescriptor.iSerialNumber)
+                        wValue = (short)((USB_STRING_DESCRIPTOR_TYPE << 8) + PortDeviceDescriptor.iSerialNumber)
                     }
                 };
 
@@ -626,8 +751,14 @@ static partial class Usb
                 Marshal.StructureToPtr(request, ptrRequest, true);
 
                 // Use an IOCTL call to request the String Descriptor
-                if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, ptrRequest, nBytes, ptrRequest,
-                                   nBytes, out nBytesReturned, IntPtr.Zero))
+                if(DeviceIoControl(h,
+                                   IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                                   ptrRequest,
+                                   nBytes,
+                                   ptrRequest,
+                                   nBytes,
+                                   out nBytesReturned,
+                                   IntPtr.Zero))
                 {
                     // the location of the string descriptor is immediately after the Request structure
                     var ptrStringDesc = IntPtr.Add(ptrRequest, Marshal.SizeOf(request));
@@ -636,7 +767,7 @@ static partial class Usb
                         (UsbStringDescriptor)(Marshal.PtrToStructure(ptrStringDesc, typeof(UsbStringDescriptor)) ??
                                               default(UsbStringDescriptor));
 
-                    device._deviceSerialNumber = stringDesc.bString;
+                    device.DeviceSerialNumber = stringDesc.bString;
                 }
 
                 Marshal.FreeHGlobal(ptrRequest);
@@ -645,7 +776,7 @@ static partial class Usb
             // build a request for configuration descriptor
             var dcrRequest = new UsbDescriptorRequest
             {
-                ConnectionIndex = _portPortNumber,
+                ConnectionIndex = PortPortNumber,
                 SetupPacket =
                 {
                     wIndex = 0,
@@ -660,12 +791,18 @@ static partial class Usb
             Marshal.StructureToPtr(dcrRequest, dcrPtrRequest, true);
 
             // Use an IOCTL call to request the String Descriptor
-            if(DeviceIoControl(h, IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION, dcrPtrRequest, nBytes, dcrPtrRequest,
-                               nBytes, out nBytesReturned, IntPtr.Zero))
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_DESCRIPTOR_FROM_NODE_CONNECTION,
+                               dcrPtrRequest,
+                               nBytes,
+                               dcrPtrRequest,
+                               nBytes,
+                               out nBytesReturned,
+                               IntPtr.Zero))
             {
                 var ptrStringDesc = IntPtr.Add(dcrPtrRequest, Marshal.SizeOf(dcrRequest));
-                device._binaryDeviceDescriptors = new byte[nBytesReturned];
-                Marshal.Copy(ptrStringDesc, device._binaryDeviceDescriptors, 0, nBytesReturned);
+                device.BinaryDeviceDescriptors = new byte[nBytesReturned];
+                Marshal.Copy(ptrStringDesc, device.BinaryDeviceDescriptors, 0, nBytesReturned);
             }
 
             Marshal.FreeHGlobal(dcrPtrRequest);
@@ -673,7 +810,7 @@ static partial class Usb
             // Get the Driver Key Name (usefull in locating a device)
             var driverKey = new UsbNodeConnectionDriverkeyName
             {
-                ConnectionIndex = _portPortNumber
+                ConnectionIndex = PortPortNumber
             };
 
             nBytes = Marshal.SizeOf(driverKey);
@@ -681,18 +818,24 @@ static partial class Usb
             Marshal.StructureToPtr(driverKey, ptrDriverKey, true);
 
             // Use an IOCTL call to request the Driver Key Name
-            if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME, ptrDriverKey, nBytes, ptrDriverKey,
-                               nBytes, out nBytesReturned, IntPtr.Zero))
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_NODE_CONNECTION_DRIVERKEY_NAME,
+                               ptrDriverKey,
+                               nBytes,
+                               ptrDriverKey,
+                               nBytes,
+                               out nBytesReturned,
+                               IntPtr.Zero))
             {
                 driverKey = (UsbNodeConnectionDriverkeyName)(Marshal.PtrToStructure(ptrDriverKey,
                                                                  typeof(UsbNodeConnectionDriverkeyName)) ??
                                                              default(UsbNodeConnectionDriverkeyName));
 
-                device._deviceDriverKey = driverKey.DriverKeyName;
+                device.DeviceDriverKey = driverKey.DriverKeyName;
 
                 // use the DriverKeyName to get the Device Description and Instance ID
-                device._deviceName       = GetDescriptionByKeyName(device._deviceDriverKey);
-                device._deviceInstanceId = GetInstanceIdByKeyName(device._deviceDriverKey);
+                device.DeviceName       = GetDescriptionByKeyName(device.DeviceDriverKey);
+                device.DeviceInstanceId = GetInstanceIdByKeyName(device.DeviceDriverKey);
             }
 
             Marshal.FreeHGlobal(ptrDriverKey);
@@ -705,25 +848,29 @@ static partial class Usb
         /// <returns>Downstream external hub</returns>
         internal UsbHub GetHub()
         {
-            if(!_portIsHub)
-                return null;
+            if(!PortIsHub) return null;
 
-            var    hub = new UsbHub();
-            IntPtr h, h2;
-            hub._hubIsRootHub  = false;
-            hub._hubDeviceDesc = "External Hub";
+            var hub = new UsbHub
+            {
+                HubIsRootHub  = false,
+                HubDeviceDesc = "External Hub"
+            };
 
             // Open a handle to the Host Controller
-            h = CreateFile(_portHubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                           IntPtr.Zero);
+            IntPtr h = CreateFile(PortHubDevicePath,
+                                  GENERIC_WRITE,
+                                  FILE_SHARE_WRITE,
+                                  IntPtr.Zero,
+                                  OPEN_EXISTING,
+                                  0,
+                                  IntPtr.Zero);
 
-            if(h == _invalidHandleValue)
-                return hub;
+            if(h == _invalidHandleValue) return hub;
 
             // Get the DevicePath for downstream hub
             var nodeName = new UsbNodeConnectionName
             {
-                ConnectionIndex = _portPortNumber
+                ConnectionIndex = PortPortNumber
             };
 
             int    nBytes      = Marshal.SizeOf(nodeName);
@@ -731,18 +878,29 @@ static partial class Usb
             Marshal.StructureToPtr(nodeName, ptrNodeName, true);
 
             // Use an IOCTL call to request the Node Name
-            if(DeviceIoControl(h, IOCTL_USB_GET_NODE_CONNECTION_NAME, ptrNodeName, nBytes, ptrNodeName, nBytes, out _,
+            if(DeviceIoControl(h,
+                               IOCTL_USB_GET_NODE_CONNECTION_NAME,
+                               ptrNodeName,
+                               nBytes,
+                               ptrNodeName,
+                               nBytes,
+                               out _,
                                IntPtr.Zero))
             {
                 nodeName = (UsbNodeConnectionName)(Marshal.PtrToStructure(ptrNodeName, typeof(UsbNodeConnectionName)) ??
                                                    default(UsbNodeConnectionName));
 
-                hub._hubDevicePath = @"\\.\" + nodeName.NodeName;
+                hub.HubDevicePath = @"\\.\" + nodeName.NodeName;
             }
 
             // Now let's open the Hub (based upon the HubName we got above)
-            h2 = CreateFile(hub._hubDevicePath, GENERIC_WRITE, FILE_SHARE_WRITE, IntPtr.Zero, OPEN_EXISTING, 0,
-                            IntPtr.Zero);
+            IntPtr h2 = CreateFile(hub.HubDevicePath,
+                                   GENERIC_WRITE,
+                                   FILE_SHARE_WRITE,
+                                   IntPtr.Zero,
+                                   OPEN_EXISTING,
+                                   0,
+                                   IntPtr.Zero);
 
             if(h2 != _invalidHandleValue)
             {
@@ -756,14 +914,20 @@ static partial class Usb
                 Marshal.StructureToPtr(nodeInfo, ptrNodeInfo, true);
 
                 // get the Hub Information
-                if(DeviceIoControl(h2, IOCTL_USB_GET_NODE_INFORMATION, ptrNodeInfo, nBytes, ptrNodeInfo, nBytes, out _,
+                if(DeviceIoControl(h2,
+                                   IOCTL_USB_GET_NODE_INFORMATION,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   ptrNodeInfo,
+                                   nBytes,
+                                   out _,
                                    IntPtr.Zero))
                 {
                     nodeInfo = (UsbNodeInformation)(Marshal.PtrToStructure(ptrNodeInfo, typeof(UsbNodeInformation)) ??
                                                     default(UsbNodeInformation));
 
-                    hub._hubIsBusPowered = Convert.ToBoolean(nodeInfo.HubInformation.HubIsBusPowered);
-                    hub._hubPortCount    = nodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
+                    hub.HubIsBusPowered = Convert.ToBoolean(nodeInfo.HubInformation.HubIsBusPowered);
+                    hub.HubPortCount    = nodeInfo.HubInformation.HubDescriptor.bNumberOfPorts;
                 }
 
                 Marshal.FreeHGlobal(ptrNodeInfo);
@@ -773,11 +937,11 @@ static partial class Usb
             // Fill in the missing Manufacture, Product, and SerialNumber values
             // values by just creating a Device instance and copying the values
             UsbDevice device = GetDevice();
-            hub._hubInstanceId   = device._deviceInstanceId;
-            hub._hubManufacturer = device.Manufacturer;
-            hub._hubProduct      = device.Product;
-            hub._hubSerialNumber = device.SerialNumber;
-            hub._hubDriverKey    = device.DriverKey;
+            hub.HubInstanceId   = device.DeviceInstanceId;
+            hub.HubManufacturer = device.Manufacturer;
+            hub.HubProduct      = device.Product;
+            hub.HubSerialNumber = device.SerialNumber;
+            hub.HubDriverKey    = device.DriverKey;
 
             Marshal.FreeHGlobal(ptrNodeName);
             CloseHandle(h);
@@ -786,60 +950,16 @@ static partial class Usb
         }
     }
 
-    /// <summary>Represents an USB device</summary>
-    internal class UsbDevice
-    {
-        internal byte[]              _binaryDeviceDescriptors;
-        internal UsbDeviceDescriptor _deviceDescriptor;
-        internal string              _deviceDriverKey,    _deviceHubDevicePath, _deviceInstanceId, _deviceName;
-        internal string              _deviceManufacturer, _deviceProduct,       _deviceSerialNumber;
-        internal int                 _devicePortNumber;
+#endregion
 
-        /// <summary>a simple default constructor</summary>
-        internal UsbDevice()
-        {
-            _devicePortNumber        = 0;
-            _deviceHubDevicePath     = "";
-            _deviceDriverKey         = "";
-            _deviceManufacturer      = "";
-            _deviceProduct           = "Unknown USB Device";
-            _deviceSerialNumber      = "";
-            _deviceName              = "";
-            _deviceInstanceId        = "";
-            _binaryDeviceDescriptors = null;
-        }
+#region "API Region"
 
-        /// <summary>return Port Index of the Hub</summary>
-        internal int PortNumber => _devicePortNumber;
-
-        /// <summary>return the Device Path of the Hub (the parent device)</summary>
-        internal string HubDevicePath => _deviceHubDevicePath;
-
-        /// <summary>useful as a search key</summary>
-        internal string DriverKey => _deviceDriverKey;
-
-        /// <summary>the device path of this device</summary>
-        internal string InstanceId => _deviceInstanceId;
-
-        /// <summary>the friendly name</summary>
-        internal string Name => _deviceName;
-
-        internal string Manufacturer => _deviceManufacturer;
-
-        internal string Product => _deviceProduct;
-
-        internal string SerialNumber => _deviceSerialNumber;
-
-        internal byte[] BinaryDescriptors => _binaryDeviceDescriptors;
-    }
-
-    #region "API Region"
     // ********************** Constants ************************
 
-    const           int    GENERIC_WRITE        = 0x40000000;
-    const           int    FILE_SHARE_READ      = 0x1;
-    const           int    FILE_SHARE_WRITE     = 0x2;
-    const           int    OPEN_EXISTING        = 0x3;
+    const           int    GENERIC_WRITE       = 0x40000000;
+    const           int    FILE_SHARE_READ     = 0x1;
+    const           int    FILE_SHARE_WRITE    = 0x2;
+    const           int    OPEN_EXISTING       = 0x3;
     static readonly IntPtr _invalidHandleValue = new(-1);
 
     const int IOCTL_GET_HCD_DRIVERKEY_NAME                  = 0x220424;
@@ -901,7 +1021,7 @@ static partial class Usb
     {
         internal          int    cbSize;
         internal readonly Guid   ClassGuid;
-        internal readonly IntPtr DevInst;
+        internal readonly uint   DevInst;
         internal readonly IntPtr Reserved;
     }
 
@@ -981,7 +1101,8 @@ static partial class Usb
         //internal IntPtr PipeList;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     internal struct UsbDeviceDescriptor
     {
         internal byte  bLength;
@@ -1049,53 +1170,73 @@ static partial class Usb
 
     // ********************** API Definitions ************************
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    static extern IntPtr SetupDiGetClassDevs( // 1st form using a ClassGUID
+    [LibraryImport("setupapi.dll", EntryPoint = "SetupDiGetClassDevsW")]
+    private static partial IntPtr SetupDiGetClassDevs( // 1st form using a ClassGUID
         ref Guid classGuid, int enumerator, IntPtr hwndParent, int flags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)] // 2nd form uses an Enumerator
-    static extern IntPtr SetupDiGetClassDevs(int classGuid, string enumerator, IntPtr hwndParent, int flags);
+    [LibraryImport("setupapi.dll",
+                   EntryPoint = "SetupDiGetClassDevsW",
+                   StringMarshalling = StringMarshalling.Utf16)] // 2nd form uses an Enumerator
+    private static partial IntPtr SetupDiGetClassDevs(int    classGuid,  string enumerator,
+                                                      IntPtr hwndParent, int    flags);
+
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiEnumDeviceInterfaces(IntPtr   deviceInfoSet,      IntPtr deviceInfoData,
+                                                            ref Guid interfaceClassGuid, int    memberIndex,
+                                                            ref SpDeviceInterfaceData
+                                                                deviceInterfaceData);
 
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiEnumDeviceInterfaces(IntPtr deviceInfoSet, IntPtr deviceInfoData,
-                                                   ref Guid interfaceClassGuid, int memberIndex,
-                                                   ref SpDeviceInterfaceData deviceInterfaceData);
-
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr deviceInfoSet,
+    static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr                    deviceInfoSet,
                                                        ref SpDeviceInterfaceData deviceInterfaceData,
-                                                       ref SpDeviceInterfaceDetailData deviceInterfaceDetailData,
-                                                       int deviceInterfaceDetailDataSize, ref int requiredSize,
+                                                       ref SpDeviceInterfaceDetailData
+                                                           deviceInterfaceDetailData,
+                                                       int               deviceInterfaceDetailDataSize,
+                                                       ref int           requiredSize,
                                                        ref SpDevinfoData deviceInfoData);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceRegistryProperty(IntPtr deviceInfoSet, ref SpDevinfoData deviceInfoData,
-                                                        int iProperty, ref int propertyRegDataType,
-                                                        IntPtr propertyBuffer, int propertyBufferSize,
-                                                        ref int requiredSize);
+    [LibraryImport("setupapi.dll",
+                   EntryPoint = "SetupDiGetDeviceRegistryPropertyW",
+                   SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiGetDeviceRegistryProperty(
+        IntPtr  deviceInfoSet,       ref SpDevinfoData deviceInfoData, int iProperty,
+        ref int propertyRegDataType, IntPtr            propertyBuffer, int propertyBufferSize,
+        ref int requiredSize);
+
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiEnumDeviceInfo(IntPtr            deviceInfoSet, int memberIndex,
+                                                      ref SpDevinfoData deviceInfoData);
+
+    [LibraryImport("setupapi.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);
 
     [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiEnumDeviceInfo(IntPtr deviceInfoSet, int memberIndex, ref SpDevinfoData deviceInfoData);
+    static extern bool SetupDiGetDeviceInstanceId(IntPtr        deviceInfoSet, ref SpDevinfoData deviceInfoData,
+                                                  StringBuilder deviceInstanceId,
+                                                  int           deviceInstanceIdSize, out int requiredSize);
 
-    [DllImport("setupapi.dll", SetLastError = true)]
-    static extern bool SetupDiDestroyDeviceInfoList(IntPtr deviceInfoSet);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool DeviceIoControl(IntPtr hDevice,        int     dwIoControlCode, IntPtr lpInBuffer,
+                                                int    nInBufferSize,  IntPtr  lpOutBuffer,
+                                                int    nOutBufferSize, out int lpBytesReturned,
+                                                IntPtr lpOverlapped);
 
-    [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool SetupDiGetDeviceInstanceId(IntPtr deviceInfoSet, ref SpDevinfoData deviceInfoData,
-                                                  StringBuilder deviceInstanceId, int deviceInstanceIdSize,
-                                                  out int requiredSize);
+    [LibraryImport("kernel32.dll",
+                   EntryPoint = "CreateFileW",
+                   SetLastError = true,
+                   StringMarshalling = StringMarshalling.Utf16)]
+    private static partial IntPtr CreateFile(string lpFileName,           int    dwDesiredAccess, int dwShareMode,
+                                             IntPtr lpSecurityAttributes, int    dwCreationDisposition,
+                                             int    dwFlagsAndAttributes, IntPtr hTemplateFile);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool DeviceIoControl(IntPtr hDevice, int dwIoControlCode, IntPtr lpInBuffer, int nInBufferSize,
-                                       IntPtr lpOutBuffer, int nOutBufferSize, out int lpBytesReturned,
-                                       IntPtr lpOverlapped);
+    [LibraryImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool CloseHandle(IntPtr hObject);
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern IntPtr CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode,
-                                    IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes,
-                                    IntPtr hTemplateFile);
-
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern bool CloseHandle(IntPtr hObject);
-    #endregion
+#endregion
 }

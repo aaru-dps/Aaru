@@ -27,39 +27,41 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class PartClone
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var pHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(pHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(pHdrB, 0, Marshal.SizeOf<Header>());
         _pHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(pHdrB);
 
-        if(stream.Position + (long)_pHdr.totalBlocks > stream.Length)
-            return false;
+        if(stream.Position + (long)_pHdr.totalBlocks > stream.Length) return false;
 
         stream.Seek((long)_pHdr.totalBlocks, SeekOrigin.Current);
 
         var bitmagic = new byte[8];
-        stream.Read(bitmagic, 0, 8);
+        stream.EnsureRead(bitmagic, 0, 8);
 
         return _partCloneMagic.SequenceEqual(_pHdr.magic) && _biTmAgIc.SequenceEqual(bitmagic);
     }
+
+#endregion
 }

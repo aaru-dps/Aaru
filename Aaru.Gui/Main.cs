@@ -23,15 +23,15 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui;
 
 using System.Text;
 using Avalonia;
 using Avalonia.Dialogs;
 using Avalonia.ReactiveUI;
+
+namespace Aaru.Gui;
 
 public static class Main
 {
@@ -43,6 +43,6 @@ public static class Main
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToDebug().
-                                                              UseReactiveUI().UseManagedSystemDialogs();
+    public static AppBuilder BuildAvaloniaApp() =>
+        AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI().UseManagedSystemDialogs();
 }

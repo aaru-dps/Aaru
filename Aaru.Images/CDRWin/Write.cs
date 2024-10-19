@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -38,15 +36,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Aaru.Console;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Images;
 
 public sealed partial class CdrWin
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(options != null)
         {
@@ -54,14 +58,14 @@ public sealed partial class CdrWin
             {
                 if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                 {
-                    ErrorMessage = "Invalid value for split option";
+                    ErrorMessage = Localization.Invalid_value_for_split_option;
 
                     return false;
                 }
 
                 if(_separateTracksWriting)
                 {
-                    ErrorMessage = "Separate tracks not yet implemented";
+                    ErrorMessage = Localization.Separate_tracks_not_yet_implemented;
 
                     return false;
                 }
@@ -72,7 +76,7 @@ public sealed partial class CdrWin
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -91,9 +95,10 @@ public sealed partial class CdrWin
 
             _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -101,15 +106,20 @@ public sealed partial class CdrWin
         _discImage = new CdrWinDisc
         {
             MediaType = mediaType,
-            Sessions  = new List<Session>(),
-            Tracks    = new List<CdrWinTrack>()
+            Sessions  = [],
+            Tracks    = []
         };
 
         var mediaTypeAsInt = (int)_discImage.MediaType;
 
-        _isCd = mediaTypeAsInt >= 10  && mediaTypeAsInt <= 39  || mediaTypeAsInt is 112 or 113 ||
-                mediaTypeAsInt >= 150 && mediaTypeAsInt <= 152 || mediaTypeAsInt is 154 or 155 ||
-                mediaTypeAsInt >= 171 && mediaTypeAsInt <= 179 || mediaTypeAsInt >= 740 && mediaTypeAsInt <= 749;
+        _isCd = mediaTypeAsInt is >= 10 and <= 39
+                               or 112
+                               or 113
+                               or >= 150 and <= 152
+                               or 154
+                               or 155
+                               or >= 171 and <= 179
+                               or >= 740 and <= 749;
 
         if(_isCd)
         {
@@ -128,7 +138,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -140,8 +150,10 @@ public sealed partial class CdrWin
 
                 return true;
             case MediaTagType.CD_TEXT when _isCd:
-                var cdTextStream = new FileStream(_writingBaseName + "_cdtext.bin", FileMode.Create,
-                                                  FileAccess.ReadWrite, FileShare.None);
+                var cdTextStream = new FileStream(_writingBaseName + "_cdtext.bin",
+                                                  FileMode.Create,
+                                                  FileAccess.ReadWrite,
+                                                  FileShare.None);
 
                 cdTextStream.Write(data, 0, data.Length);
                 _discImage.CdTextFile = Path.GetFileName(cdTextStream.Name);
@@ -149,7 +161,7 @@ public sealed partial class CdrWin
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -160,7 +172,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -170,7 +182,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -179,28 +191,28 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -212,7 +224,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -222,7 +234,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -231,35 +243,35 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -271,7 +283,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -281,7 +293,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -290,21 +302,21 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -316,7 +328,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -326,7 +338,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -335,28 +347,28 @@ public sealed partial class CdrWin
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -368,51 +380,55 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
-        if(tracks       == null ||
-           tracks.Count == 0)
+        if(tracks == null || tracks.Count == 0)
         {
-            ErrorMessage = "Invalid tracks sent";
+            ErrorMessage = Localization.Invalid_tracks_sent;
 
             return false;
         }
 
-        if(_writingTracks  != null &&
-           _writingStreams != null)
+        if(_writingTracks != null && _writingStreams != null)
             foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
                 oldTrack.Close();
 
-        _writingTracks = new List<Track>();
+        _writingTracks = [];
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {
-            Track newTrack = track;
+            track.File = _separateTracksWriting
+                             ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                             : _writingBaseName + ".bin";
 
-            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                : _writingBaseName                    + ".bin";
-
-            newTrack.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
-            _writingTracks.Add(newTrack);
+            track.FileOffset = _separateTracksWriting ? 0 : track.StartSector * 2352;
+            _writingTracks.Add(track);
         }
 
         _writingStreams = new Dictionary<uint, FileStream>();
 
         if(_separateTracksWriting)
+        {
             foreach(Track track in _writingTracks)
+            {
                 _writingStreams.Add(track.Sequence,
-                                    new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                    new FileStream(track.File,
+                                                   FileMode.OpenOrCreate,
+                                                   FileAccess.ReadWrite,
                                                    FileShare.None));
+            }
+        }
         else
         {
-            var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+            var jointStream = new FileStream(_writingBaseName + ".bin",
+                                             FileMode.OpenOrCreate,
+                                             FileAccess.ReadWrite,
                                              FileShare.None);
 
-            foreach(Track track in _writingTracks)
-                _writingStreams.Add(track.Sequence, jointStream);
+            foreach(Track track in _writingTracks) _writingStreams.Add(track.Sequence, jointStream);
         }
 
         return true;
@@ -423,17 +439,19 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
         if(_separateTracksWriting)
+        {
             foreach(FileStream writingStream in _writingStreams.Values)
             {
                 writingStream.Flush();
                 writingStream.Close();
             }
+        }
         else
         {
             _writingStreams.First().Value.Flush();
@@ -445,12 +463,12 @@ public sealed partial class CdrWin
         if(!string.IsNullOrWhiteSpace(_discImage.Comment))
         {
             string[] commentLines = _discImage.Comment.Split(new[]
-            {
-                '\n'
-            }, StringSplitOptions.RemoveEmptyEntries);
+                                                             {
+                                                                 '\n'
+                                                             },
+                                                             StringSplitOptions.RemoveEmptyEntries);
 
-            foreach(string line in commentLines)
-                _descriptorStream.WriteLine("REM {0}", line);
+            foreach(string line in commentLines) _descriptorStream.WriteLine("REM {0}", line);
         }
 
         _descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE: {0}", MediaTypeToCdrwinType(_imageInfo.MediaType));
@@ -466,7 +484,9 @@ public sealed partial class CdrWin
         }
 
         if(DumpHardware != null)
-            foreach(var dumpData in from dump in DumpHardware from extent in dump.Extents.OrderBy(e => e.Start)
+        {
+            foreach(var dumpData in from dump in DumpHardware
+                                    from extent in dump.Extents.OrderBy(e => e.Start)
                                     select new
                                     {
                                         dump.Manufacturer,
@@ -479,20 +499,21 @@ public sealed partial class CdrWin
                                         extent.Start,
                                         extent.End
                                     })
-                _descriptorStream.
-                    WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
+            {
+                _descriptorStream.WriteLine($"REM METADATA DUMP EXTENT: {dumpData.Application} | {
+                    dumpData.ApplicationVersion} | {dumpData.OperatingSystem} | {dumpData.Manufacturer} | {
+                        dumpData.Model} | {dumpData.Firmware} | {dumpData.Serial} | {dumpData.Start}:{dumpData.End}");
+            }
+        }
 
         if(!string.IsNullOrEmpty(_discImage.CdTextFile))
             _descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(_discImage.CdTextFile));
 
-        if(!string.IsNullOrEmpty(_discImage.Title))
-            _descriptorStream.WriteLine("TITLE {0}", _discImage.Title);
+        if(!string.IsNullOrEmpty(_discImage.Title)) _descriptorStream.WriteLine("TITLE {0}", _discImage.Title);
 
-        if(!string.IsNullOrEmpty(_discImage.Mcn))
-            _descriptorStream.WriteLine("CATALOG {0}", _discImage.Mcn);
+        if(!string.IsNullOrEmpty(_discImage.Mcn)) _descriptorStream.WriteLine("CATALOG {0}", _discImage.Mcn);
 
-        if(!string.IsNullOrEmpty(_discImage.Barcode))
-            _descriptorStream.WriteLine("UPC_EAN {0}", _discImage.Barcode);
+        if(!string.IsNullOrEmpty(_discImage.Barcode)) _descriptorStream.WriteLine("UPC_EAN {0}", _discImage.Barcode);
 
         if(!_separateTracksWriting)
             _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(_writingStreams.First().Value.Name));
@@ -515,11 +536,9 @@ public sealed partial class CdrWin
                     break;
             }
 
-            if(track.Session > currentSession)
-                _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
+            if(track.Session > currentSession) _descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
-            if(_separateTracksWriting)
-                _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
+            if(_separateTracksWriting) _descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.File));
 
             (byte minute, byte second, byte frame) msf = LbaToMsf(track.StartSector);
             _descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.Sequence, GetTrackMode(track));
@@ -527,8 +546,8 @@ public sealed partial class CdrWin
             if(_isCd)
             {
                 if(_trackFlags.TryGetValue((byte)track.Sequence, out byte flagsByte))
-                    if(flagsByte != 0 &&
-                       flagsByte != (byte)CdFlags.DataTrack)
+                {
+                    if(flagsByte != 0 && flagsByte != (byte)CdFlags.DataTrack)
                     {
                         var flags = (CdFlags)flagsByte;
 
@@ -537,47 +556,61 @@ public sealed partial class CdrWin
                                                     flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
                                                     flags.HasFlag(CdFlags.PreEmphasis) ? " PRE" : "");
                     }
+                }
 
-                if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
-                   !string.IsNullOrWhiteSpace(isrc))
+                if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) && !string.IsNullOrWhiteSpace(isrc))
                     _descriptorStream.WriteLine("    ISRC {0}", isrc);
             }
 
             if(track.Pregap > 0 && _isCd)
             {
                 if(track.Sequence > _writingTracks.Where(t => t.Session == track.Session).Min(t => t.Sequence))
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
+                {
+                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}",
+                                                0,
+                                                msf.minute,
+                                                msf.second,
                                                 msf.frame);
+                }
 
-                if(track.Sequence > 1)
-                    msf = LbaToMsf(track.StartSector + track.Pregap);
+                if(track.Sequence > 1) msf = LbaToMsf(track.StartSector + track.Pregap);
 
-                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}",
+                                            1,
+                                            msf.minute,
+                                            msf.second,
                                             msf.frame);
             }
             else
-                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+            {
+                _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}",
+                                            1,
+                                            msf.minute,
+                                            msf.second,
                                             msf.frame);
+            }
 
             if(_isCd)
+            {
                 foreach(KeyValuePair<ushort, int> index in track.Indexes.Where(i => i.Key > 1))
                 {
                     msf = LbaToMsf((ulong)index.Value);
 
-                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", index.Key, msf.minute,
-                                                msf.second, msf.frame);
+                    _descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}",
+                                                index.Key,
+                                                msf.minute,
+                                                msf.second,
+                                                msf.frame);
                 }
+            }
 
             ushort lastSession = _writingTracks.Max(t => t.Session);
 
-            if(currentSession >= lastSession)
-                continue;
+            if(currentSession >= lastSession) continue;
 
-            Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).OrderBy(t => t.Sequence).
-                                                      LastOrDefault();
+            Track lastTrackInSession = _writingTracks.Where(t => t.Session == currentSession).MaxBy(t => t.Sequence);
 
-            if(track.Sequence != lastTrackInSession.Sequence)
-                continue;
+            if(track.Sequence != lastTrackInSession.Sequence) continue;
 
             msf = LbaToMsf(track.EndSector + 1);
             _descriptorStream.WriteLine("REM LEAD-OUT {0:D2}:{1:D2}:{2:D2}", msf.minute, msf.second, msf.frame);
@@ -595,7 +628,7 @@ public sealed partial class CdrWin
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -605,7 +638,7 @@ public sealed partial class CdrWin
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -615,7 +648,7 @@ public sealed partial class CdrWin
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -626,7 +659,7 @@ public sealed partial class CdrWin
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -637,13 +670,12 @@ public sealed partial class CdrWin
             }
             case SectorTagType.CdTrackIsrc when _isCd:
             {
-                if(data != null)
-                    _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+                if(data != null) _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
 
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
@@ -654,7 +686,7 @@ public sealed partial class CdrWin
         WriteSectorTag(data, sectorAddress, tag);
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware)
     {
         DumpHardware = dumpHardware;
 
@@ -662,17 +694,19 @@ public sealed partial class CdrWin
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _discImage.Barcode            = metadata.MediaBarcode;
-        _discImage.Comment            = metadata.Comments;
-        _discImage.Title              = metadata.MediaTitle;
-        _imageInfo.Application        = metadata.Application;
-        _imageInfo.ApplicationVersion = metadata.ApplicationVersion;
+        _discImage.Barcode            = imageInfo.MediaBarcode;
+        _discImage.Comment            = imageInfo.Comments;
+        _discImage.Title              = imageInfo.MediaTitle;
+        _imageInfo.Application        = imageInfo.Application;
+        _imageInfo.ApplicationVersion = imageInfo.ApplicationVersion;
 
         return true;
     }
+
+#endregion
 }

@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle the Apple Macintosh File System directory.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,34 +23,35 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        contents = null;
+        node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        contents = _idToFilename.Select(kvp => kvp.Value).ToList();
+        var contents = _idToFilename.Select(kvp => kvp.Value).ToList();
 
         if(_debug)
         {
@@ -62,14 +59,51 @@ public sealed partial class AppleMFS
             contents.Add("$Bitmap");
             contents.Add("$MDB");
 
-            if(_bootBlocks != null)
-                contents.Add("$Boot");
+            if(_bootBlocks != null) contents.Add("$Boot");
         }
 
         contents.Sort();
 
+        node = new AppleMfsDirNode
+        {
+            Path      = path,
+            _position = 0,
+            _contents = contents.ToArray()
+        };
+
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not AppleMfsDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        if(mynode._position < 0) return ErrorNumber.InvalidArgument;
+
+        if(mynode._position >= mynode._contents.Length) return ErrorNumber.NoError;
+
+        filename = mynode._contents[mynode._position++];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not AppleMfsDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode._position = -1;
+        mynode._contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+#endregion
 
     bool FillDirectory()
     {
@@ -86,8 +120,7 @@ public sealed partial class AppleMFS
                 flFlags = (FileFlags)_directoryBlocks[offset + 0]
             };
 
-            if(!entry.flFlags.HasFlag(FileFlags.Used))
-                break;
+            if(!entry.flFlags.HasFlag(FileFlags.Used)) break;
 
             entry.flTyp = _directoryBlocks[offset + 1];
 
@@ -105,8 +138,9 @@ public sealed partial class AppleMFS
             entry.flNam    = new byte[_directoryBlocks[offset + 50] + 1];
             Array.Copy(_directoryBlocks, offset + 50, entry.flNam, 0, entry.flNam.Length);
 
-            string lowerFilename = StringHandlers.PascalToString(entry.flNam, Encoding).ToLowerInvariant().
-                                                  Replace('/', ':');
+            string lowerFilename = StringHandlers.PascalToString(entry.flNam, _encoding)
+                                                 .ToLowerInvariant()
+                                                 .Replace('/', ':');
 
             if(entry.flFlags.HasFlag(FileFlags.Used)     &&
                !_idToFilename.ContainsKey(entry.flFlNum) &&
@@ -117,35 +151,37 @@ public sealed partial class AppleMFS
                 _idToEntry.Add(entry.flFlNum, entry);
 
                 _idToFilename.Add(entry.flFlNum,
-                                  StringHandlers.PascalToString(entry.flNam, Encoding).Replace('/', ':'));
+                                  StringHandlers.PascalToString(entry.flNam, _encoding).Replace('/', ':'));
 
                 _filenameToId.Add(lowerFilename, entry.flFlNum);
 
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flTyp = {0}", entry.flTyp);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlNum = {0}", entry.flFlNum);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flStBlk = {0}", entry.flStBlk);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flLgLen = {0}", entry.flLgLen);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flPyLen = {0}", entry.flPyLen);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRStBlk = {0}", entry.flRStBlk);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRLgLen = {0}", entry.flRLgLen);
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlags = {0}",  entry.flFlags);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flTyp = {0}",    entry.flTyp);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flFlNum = {0}",  entry.flFlNum);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flStBlk = {0}",  entry.flStBlk);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flLgLen = {0}",  entry.flLgLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flPyLen = {0}",  entry.flPyLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRStBlk = {0}", entry.flRStBlk);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRLgLen = {0}", entry.flRLgLen);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "entry.flRPyLen = {0}", entry.flRPyLen);
 
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flCrDat = {0}",
                                            DateHandlers.MacToDateTime(entry.flCrDat));
 
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flMdDat = {0}",
                                            DateHandlers.MacToDateTime(entry.flMdDat));
 
-                AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
-                                           StringHandlers.PascalToString(entry.flNam, Encoding));
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           "entry.flNam0 = {0}",
+                                           StringHandlers.PascalToString(entry.flNam, _encoding));
             }
 
             offset += 50 + entry.flNam.Length;
 
             // "Entries are always an integral number of words"
-            if(offset % 2 != 0)
-                offset++;
+            if(offset % 2 != 0) offset++;
 
             // TODO: "Entries don't cross logical block boundaries"
         }

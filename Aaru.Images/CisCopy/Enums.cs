@@ -27,15 +27,28 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 
+namespace Aaru.Images;
+
 public sealed partial class CisCopy
 {
+#region Nested type: Compression
+
+    enum Compression : byte
+    {
+        None   = 0,
+        Normal = 1,
+        High   = 2
+    }
+
+#endregion
+
+#region Nested type: DiskType
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum DiskType : byte
     {
@@ -48,12 +61,9 @@ public sealed partial class CisCopy
         MF2HD  = 7
     }
 
-    enum Compression : byte
-    {
-        None   = 0,
-        Normal = 1,
-        High   = 2
-    }
+#endregion
+
+#region Nested type: TrackType
 
     enum TrackType : byte
     {
@@ -61,4 +71,6 @@ public sealed partial class CisCopy
         Omitted          = 0xFA,
         OmittedAlternate = 0xFE
     }
+
+#endregion
 }

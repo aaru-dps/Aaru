@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Dialogs;
 
 using System;
 using System.Collections.Generic;
@@ -41,21 +39,23 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Aaru.CommonTypes.Interop;
 using Aaru.Console;
-using Avalonia.Controls;
+using Aaru.Localization;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
-using Console = Aaru.Gui.Views.Dialogs.Console;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = Aaru.CommonTypes.Interop.Version;
 
+namespace Aaru.Gui.ViewModels.Dialogs;
+
 public sealed class ConsoleViewModel : ViewModelBase
 {
-    readonly Console _view;
-    bool             _debugChecked;
+    readonly Views.Dialogs.Console _view;
+    bool                           _debugChecked;
 
-    public ConsoleViewModel(Console view)
+    public ConsoleViewModel(Views.Dialogs.Console view)
     {
         _view        = view;
         SaveCommand  = ReactiveCommand.Create(ExecuteSaveCommand);
@@ -63,16 +63,25 @@ public sealed class ConsoleViewModel : ViewModelBase
     }
 
     [NotNull]
-    public string Title => "Console";
+    public string Title => UI.Title_Console;
+
     public ReactiveCommand<Unit, Unit>    ClearCommand { get; }
     public ReactiveCommand<Unit, Task>    SaveCommand  { get; }
     public ObservableCollection<LogEntry> Entries      => ConsoleHandler.Entries;
+
     [NotNull]
-    public string DebugText => "Enable debug console";
+    public string DebugText => UI.Enable_debug_console;
+
     [NotNull]
-    public string SaveLabel => "Save";
+    public string SaveLabel => UI.ButtonLabel_Save;
+
     [NotNull]
-    public string ClearLabel => "Clear";
+    public string ClearLabel => UI.ButtonLabel_Clear;
+
+    public string TimeLabel    => UI.Title_Time;
+    public string TypeLabel    => UI.Title_Type;
+    public string ModuleLabel  => UI.Title_Module;
+    public string MessageLabel => UI.Title_Message;
 
     public bool DebugChecked
     {
@@ -86,28 +95,22 @@ public sealed class ConsoleViewModel : ViewModelBase
 
     async Task ExecuteSaveCommand()
     {
-        var dlgSave = new SaveFileDialog();
-
-        dlgSave.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "log"
-            }),
-            Name = "Log files"
+                FilePickerFileTypes.Log
+            }
         });
 
-        string result = await dlgSave.ShowAsync(_view);
-
-        if(result is null)
-            return;
+        if(result is null) return;
 
         try
         {
-            var logFs = new FileStream(result, FileMode.Create, FileAccess.ReadWrite);
+            var logFs = new FileStream(result.Path.AbsolutePath, FileMode.Create, FileAccess.ReadWrite);
             var logSw = new StreamWriter(logFs);
 
-            logSw.WriteLine("Log saved at {0}", DateTime.Now);
+            logSw.WriteLine(UI.Log_saved_at_0, DateTime.Now);
 
             PlatformID platId  = DetectOS.GetRealPlatformID();
             string     platVer = DetectOS.GetVersion();
@@ -117,46 +120,53 @@ public sealed class ConsoleViewModel : ViewModelBase
                                              typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
 
-            logSw.WriteLine("################# System information #################");
+            logSw.WriteLine(Localization.Core.System_information);
 
-            logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
+            logSw.WriteLine("{0} {1} ({2}-bit)",
+                            DetectOS.GetPlatformName(platId, platVer),
+                            platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
 
             logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
 
             logSw.WriteLine();
 
-            logSw.WriteLine("################# Program information ################");
-            logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
-            logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
-        #if DEBUG
-            logSw.WriteLine("DEBUG version");
-        #endif
-            logSw.WriteLine("Command line: {0}", Environment.CommandLine);
+            logSw.WriteLine(Localization.Core.Program_information);
+            logSw.WriteLine("Aaru {0}",                         assemblyVersion?.InformationalVersion);
+            logSw.WriteLine(Localization.Core.Running_in_0_bit, Environment.Is64BitProcess ? 64 : 32);
+#if DEBUG
+            logSw.WriteLine(Localization.Core.DEBUG_version);
+#endif
+            logSw.WriteLine(Localization.Core.Command_line_0, Environment.CommandLine);
             logSw.WriteLine();
 
-            logSw.WriteLine("################# Console ################");
+            logSw.WriteLine(UI.Console_with_ornament);
 
             foreach(LogEntry entry in ConsoleHandler.Entries)
-                if(entry.Type != "Info")
+            {
+                if(entry.Type != UI.LogEntry_Type_Info)
                     logSw.WriteLine("{0}: ({1}) {2}", entry.Timestamp, entry.Type.ToLower(), entry.Message);
                 else
                     logSw.WriteLine("{0}: {1}", entry.Timestamp, entry.Message);
+            }
 
             logSw.Close();
             logFs.Close();
         }
         catch(Exception exception)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error",
-                                              $"Exception {exception.Message} trying to save logfile, details has been sent to console.",
-                                              ButtonEnum.Ok, Icon.Error).ShowDialog(_view);
+            await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                          string
+                                                             .Format(UI
+                                                                        .Exception_0_trying_to_save_logfile_details_has_been_sent_to_console,
+                                                                     exception.Message),
+                                                          ButtonEnum.Ok,
+                                                          Icon.Error)
+                                   .ShowWindowDialogAsync(_view);
 
-            AaruConsole.ErrorWriteLine("Console", exception.Message);
-            AaruConsole.ErrorWriteLine("Console", exception.StackTrace);
+            AaruConsole.WriteException(exception);
         }
     }
 
-    void ExecuteClearCommand() => ConsoleHandler.Entries.Clear();
+    static void ExecuteClearCommand() => ConsoleHandler.Entries.Clear();
 }

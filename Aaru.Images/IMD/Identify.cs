@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using System.Text;
@@ -38,19 +36,22 @@ using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Imd
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 4)
-            return false;
+        if(stream.Length < 4) return false;
 
         var hdr = new byte[stream.Length < 256 ? stream.Length : 256];
-        stream.Read(hdr, 0, hdr.Length);
+        stream.EnsureRead(hdr, 0, hdr.Length);
 
         string hdrStr = StringHandlers.CToString(hdr, Encoding.ASCII);
 
@@ -65,4 +66,6 @@ public sealed partial class Imd
 
         return imd.Success || sam.Success || z88dk.Success;
     }
+
+#endregion
 }

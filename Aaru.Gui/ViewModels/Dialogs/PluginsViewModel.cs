@@ -27,20 +27,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Dialogs;
 
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reflection;
+using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Core;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class PluginsViewModel : ViewModelBase
 {
@@ -49,18 +50,21 @@ public sealed class PluginsViewModel : ViewModelBase
     public PluginsViewModel(PluginsDialog view)
     {
         _view                = view;
-        Filters              = new ObservableCollection<PluginModel>();
-        PartitionSchemes     = new ObservableCollection<PluginModel>();
-        Filesystems          = new ObservableCollection<PluginModel>();
-        ReadOnlyFilesystems  = new ObservableCollection<PluginModel>();
-        Images               = new ObservableCollection<PluginModel>();
-        WritableImages       = new ObservableCollection<PluginModel>();
-        FloppyImages         = new ObservableCollection<PluginModel>();
-        WritableFloppyImages = new ObservableCollection<PluginModel>();
+        Filters              = [];
+        PartitionSchemes     = [];
+        Filesystems          = [];
+        ReadOnlyFilesystems  = [];
+        Images               = [];
+        WritableImages       = [];
+        FloppyImages         = [];
+        WritableFloppyImages = [];
         CloseCommand         = ReactiveCommand.Create(ExecuteCloseCommand);
 
         // TODO: Takes too much time
-        foreach(IFilter filter in GetPluginBase.Instance.Filters.Values)
+        foreach(IFilter filter in PluginRegister.Singleton.Filters.Values)
+        {
+            if(filter is null) continue;
+
             Filters.Add(new PluginModel
             {
                 Name    = filter.Name,
@@ -68,8 +72,12 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(filter.GetType())?.GetName().Version?.ToString(),
                 Author  = filter.Author
             });
+        }
 
-        foreach(IFloppyImage floppyImage in GetPluginBase.Instance.FloppyImages.Values)
+        foreach(IFloppyImage floppyImage in PluginRegister.Singleton.FloppyImages.Values)
+        {
+            if(floppyImage is null) continue;
+
             FloppyImages.Add(new PluginModel
             {
                 Name    = floppyImage.Name,
@@ -77,8 +85,12 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(floppyImage.GetType())?.GetName().Version?.ToString(),
                 Author  = floppyImage.Author
             });
+        }
 
-        foreach(IMediaImage mediaImage in GetPluginBase.Instance.ImagePluginsList.Values)
+        foreach(IMediaImage mediaImage in PluginRegister.Singleton.MediaImages.Values)
+        {
+            if(mediaImage is null) continue;
+
             Images.Add(new PluginModel
             {
                 Name    = mediaImage.Name,
@@ -86,8 +98,12 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(mediaImage.GetType())?.GetName().Version?.ToString(),
                 Author  = mediaImage.Author
             });
+        }
 
-        foreach(IPartition partition in GetPluginBase.Instance.PartPluginsList.Values)
+        foreach(IPartition partition in PluginRegister.Singleton.Partitions.Values)
+        {
+            if(partition is null) continue;
+
             PartitionSchemes.Add(new PluginModel
             {
                 Name    = partition.Name,
@@ -95,8 +111,12 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(partition.GetType())?.GetName().Version?.ToString(),
                 Author  = partition.Author
             });
+        }
 
-        foreach(IFilesystem filesystem in GetPluginBase.Instance.PluginsList.Values)
+        foreach(IFilesystem filesystem in PluginRegister.Singleton.Filesystems.Values)
+        {
+            if(filesystem is null) continue;
+
             Filesystems.Add(new PluginModel
             {
                 Name    = filesystem.Name,
@@ -104,17 +124,25 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(filesystem.GetType())?.GetName().Version?.ToString(),
                 Author  = filesystem.Author
             });
+        }
 
-        foreach(IReadOnlyFilesystem readOnlyFilesystem in GetPluginBase.Instance.ReadOnlyFilesystems.Values)
+        foreach(IReadOnlyFilesystem fs in PluginRegister.Singleton.ReadOnlyFilesystems.Values)
+        {
+            if(fs is null) continue;
+
             ReadOnlyFilesystems.Add(new PluginModel
             {
-                Name    = readOnlyFilesystem.Name,
-                Uuid    = readOnlyFilesystem.Id,
-                Version = Assembly.GetAssembly(readOnlyFilesystem.GetType())?.GetName().Version?.ToString(),
-                Author  = readOnlyFilesystem.Author
+                Name    = fs.Name,
+                Uuid    = fs.Id,
+                Version = Assembly.GetAssembly(fs.GetType())?.GetName().Version?.ToString(),
+                Author  = fs.Author
             });
+        }
 
-        foreach(IWritableFloppyImage writableFloppyImage in GetPluginBase.Instance.WritableFloppyImages.Values)
+        foreach(IWritableFloppyImage writableFloppyImage in PluginRegister.Singleton.WritableFloppyImages.Values)
+        {
+            if(writableFloppyImage is null) continue;
+
             WritableFloppyImages.Add(new PluginModel
             {
                 Name    = writableFloppyImage.Name,
@@ -122,8 +150,12 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(writableFloppyImage.GetType())?.GetName().Version?.ToString(),
                 Author  = writableFloppyImage.Author
             });
+        }
 
-        foreach(IWritableImage writableImage in GetPluginBase.Instance.WritableImages.Values)
+        foreach(IBaseWritableImage writableImage in PluginRegister.Singleton.WritableImages.Values)
+        {
+            if(writableImage is null) continue;
+
             WritableImages.Add(new PluginModel
             {
                 Name    = writableImage.Name,
@@ -131,28 +163,44 @@ public sealed class PluginsViewModel : ViewModelBase
                 Version = Assembly.GetAssembly(writableImage.GetType())?.GetName().Version?.ToString(),
                 Author  = writableImage.Author
             });
+        }
     }
 
     [NotNull]
-    public string Title => "Plugins";
+    public string Title => UI.Title_Plugins;
+
     [NotNull]
-    public string FiltersLabel => "Filters";
+    public string FiltersLabel => UI.Title_Filters;
+
     [NotNull]
-    public string PartitionsLabel => "Partitions";
+    public string PartitionsLabel => UI.Title_Partitions;
+
     [NotNull]
-    public string FilesystemsLabel => "Filesystems";
+    public string FilesystemsLabel => UI.Title_Filesystems;
+
     [NotNull]
-    public string IdentifyLabel => "Identify only:";
+    public string IdentifyLabel => UI.Title_Identify_only;
+
     [NotNull]
-    public string ImagesLabel => "Media images";
+    public string ImagesLabel => UI.Title_Media_images;
+
     [NotNull]
-    public string FloppyImagesLabel => "Floppy images";
+    public string FloppyImagesLabel => UI.Title_Floppy_images;
+
     [NotNull]
-    public string ReadableLabel => "Readable:";
+    public string ReadableLabel => UI.Title_Readable;
+
     [NotNull]
-    public string WritableLabel => "Writable:";
+    public string WritableLabel => UI.Title_Writable;
+
     [NotNull]
-    public string CloseLabel => "Close";
+    public string CloseLabel => UI.ButtonLabel_Close;
+
+    public string NameLabel    => UI.Title_Name;
+    public string UuidLabel    => UI.Title_UUID;
+    public string VersionLabel => UI.Title_Version;
+    public string AuthorLabel  => UI.Title_Author;
+
     public ReactiveCommand<Unit, Unit>       CloseCommand         { get; }
     public ObservableCollection<PluginModel> Filters              { get; }
     public ObservableCollection<PluginModel> PartitionSchemes     { get; }

@@ -7,10 +7,6 @@
 //
 // Component      : Common Apple file systems.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Macintosh Boot Block information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,13 +23,13 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System.Text;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
@@ -41,62 +37,75 @@ static partial class AppleCommon
 {
     internal static string GetBootBlockInformation(byte[] bbSector, Encoding encoding)
     {
-        if(bbSector is null ||
-           bbSector.Length < 0x100)
-            return null;
+        if(bbSector is null || bbSector.Length < 0x100) return null;
 
         BootBlock bb = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bbSector);
 
-        if(bb.bbID != BB_MAGIC)
-            return null;
+        if(bb.bbID != BB_MAGIC) return null;
 
         var sb = new StringBuilder();
-        sb.AppendLine("Boot Block:");
+        sb.AppendLine(Localization.Boot_Block);
 
         if((bb.bbVersion & 0x8000) > 0)
         {
-            sb.AppendLine("Boot block is in new format.");
+            sb.AppendLine(Localization.Boot_block_is_in_new_format);
 
             if((bb.bbVersion & 0x4000) > 0)
             {
-                sb.AppendLine("Boot block should be executed.");
+                sb.AppendLine(Localization.Boot_block_should_be_executed);
 
                 if((bb.bbVersion & 0x2000) > 0)
-                    sb.AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
-                                    bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                {
+                    sb.AppendFormat(Localization
+                                       .System_heap_will_be_extended_by_0_bytes_and_a_1_fraction_of_the_available_RAM,
+                                    bb.bbSysHeapExtra,
+                                    bb.bbSysHeapFract)
+                      .AppendLine();
+                }
             }
         }
-        else if((bb.bbVersion & 0xFF) == 0x0D)
-            sb.AppendLine("Boot block should be executed.");
+        else if((bb.bbVersion & 0xFF) == 0x0D) sb.AppendLine(Localization.Boot_block_should_be_executed);
 
-        if(bb.bbPageFlags > 0)
-            sb.AppendLine("Allocate secondary sound buffer at boot.");
-        else if(bb.bbPageFlags < 0)
-            sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+        switch(bb.bbPageFlags)
+        {
+            case > 0:
+                sb.AppendLine(Localization.Allocate_secondary_sound_buffer_at_boot);
 
-        sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, encoding)).AppendLine();
+                break;
+            case < 0:
+                sb.AppendLine(Localization.Allocate_secondary_sound_and_video_buffers_at_boot);
 
-        sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, encoding)).AppendLine();
+                break;
+        }
 
-        sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, encoding)).AppendLine();
+        sb.AppendFormat(Localization.System_filename_0, StringHandlers.PascalToString(bb.bbSysName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Finder_filename_0, StringHandlers.PascalToString(bb.bbShellName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Debugger_filename_0, StringHandlers.PascalToString(bb.bbDbg1Name, encoding))
+          .AppendLine();
 
-        sb.AppendFormat("First program to execute at boot: {0}",
-                        StringHandlers.PascalToString(bb.bbHelloName, encoding)).AppendLine();
+        sb.AppendFormat(Localization.Disassembler_filename_0, StringHandlers.PascalToString(bb.bbDbg2Name, encoding))
+          .AppendLine();
 
-        sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, encoding)).
-           AppendLine();
+        sb.AppendFormat(Localization.Startup_screen_filename_0,
+                        StringHandlers.PascalToString(bb.bbScreenName, encoding))
+          .AppendLine();
 
-        sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
-        sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
-        sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
-        sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
-        sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
+        sb.AppendFormat(Localization.First_program_to_execute_at_boot_0,
+                        StringHandlers.PascalToString(bb.bbHelloName, encoding))
+          .AppendLine();
+
+        sb.AppendFormat(Localization.Clipboard_filename_0, StringHandlers.PascalToString(bb.bbScrapName, encoding))
+          .AppendLine();
+
+        sb.AppendFormat(Localization.Maximum_opened_files_0,                       bb.bbCntFCBs * 4).AppendLine();
+        sb.AppendFormat(Localization.Event_queue_size_0,                           bb.bbCntEvts).AppendLine();
+        sb.AppendFormat(Localization.Heap_size_with_128KiB_of_RAM_0_bytes,         bb.bb128KSHeap).AppendLine();
+        sb.AppendFormat(Localization.Heap_size_with_256KiB_of_RAM_0_bytes,         bb.bb256KSHeap).AppendLine();
+        sb.AppendFormat(Localization.Heap_size_with_512KiB_of_RAM_or_more_0_bytes, bb.bbSysHeapSize).AppendLine();
 
         return sb.ToString();
     }

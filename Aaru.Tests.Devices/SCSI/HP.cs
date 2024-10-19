@@ -23,16 +23,15 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices.SCSI;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 using Aaru.Devices;
 using Aaru.Helpers;
+
+namespace Aaru.Tests.Devices.SCSI;
 
 static class Hp
 {
@@ -40,19 +39,19 @@ static class Hp
     {
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send a Hewlett-Packard vendor command to the device:");
-            AaruConsole.WriteLine("1.- Send READ LONG command.");
-            AaruConsole.WriteLine("0.- Return to SCSI commands menu.");
-            AaruConsole.Write("Choose: ");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_a_Hewlett_Packard_vendor_command_to_the_device);
+            AaruConsole.WriteLine(Localization._1_Send_READ_LONG_command);
+            AaruConsole.WriteLine(Localization.Return_to_SCSI_commands_menu);
+            AaruConsole.Write(Localization.Choose);
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -60,7 +59,7 @@ static class Hp
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to SCSI commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_SCSI_commands_menu);
 
                     return;
                 case 1:
@@ -68,8 +67,8 @@ static class Hp
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                    System.Console.ReadKey();
 
                     continue;
             }
@@ -91,28 +90,36 @@ static class Hp
 
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Parameters for READ LONG command:");
-            AaruConsole.WriteLine("{0} Block Address: {1}", physical ? "Physical" : "Logical", address);
-            AaruConsole.WriteLine("Relative?: {0}", relative);
-            AaruConsole.WriteLine("Will transfer {0} {1}", length, sectorCount ? "sectors" : "bytes");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Parameters_for_READ_LONG_command);
 
-            if(sectorCount)
-                AaruConsole.WriteLine("Expected sector size: {0} bytes", bps);
+            AaruConsole.WriteLine(physical
+                                      ? Localization.Physical_Block_Address_0
+                                      : Localization.Logical_Block_Address_0,
+                                  address);
+
+            AaruConsole.WriteLine(Localization.Relative_0, relative);
+
+            AaruConsole.WriteLine(sectorCount
+                                      ? Localization.Will_transfer_0_sectors
+                                      : Localization.Will_transfer_0_bytes,
+                                  length);
+
+            if(sectorCount) AaruConsole.WriteLine(Localization.Expected_sector_size_0_bytes, bps);
 
             AaruConsole.WriteLine();
-            AaruConsole.WriteLine("Choose what to do:");
-            AaruConsole.WriteLine("1.- Change parameters.");
-            AaruConsole.WriteLine("2.- Send command with these parameters.");
-            AaruConsole.WriteLine("0.- Return to Hewlett-Packard vendor commands menu.");
+            AaruConsole.WriteLine(Localization.Choose_what_to_do);
+            AaruConsole.WriteLine(Localization._1_Change_parameters);
+            AaruConsole.WriteLine(Localization._2_Send_command_with_these_parameters);
+            AaruConsole.WriteLine(Localization.Return_to_Hewlett_Packard_vendor_commands_menu);
 
-            strDev = Console.ReadLine();
+            strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -120,120 +127,140 @@ static class Hp
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to Hewlett-Packard vendor commands menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_Hewlett_Packard_vendor_commands_menu);
 
                     return;
                 case 1:
-                    AaruConsole.Write("Physical address?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Physical_address_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out physical))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         physical = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Relative address?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Relative_address_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out relative))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         relative = false;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("{0} Block Address?: ", physical ? "Physical" : "Logical");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(physical
+                                          ? Localization.Physical_Block_Address_Q
+                                          : Localization.Logical_Block_Address_Q);
+
+                    strDev = System.Console.ReadLine();
 
                     if(!uint.TryParse(strDev, out address))
                     {
-                        AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         address = 0;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("Transfer sectors?: ");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(Localization.Transfer_sectors_Q);
+                    strDev = System.Console.ReadLine();
 
                     if(!bool.TryParse(strDev, out sectorCount))
                     {
-                        AaruConsole.WriteLine("Not a boolean. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_boolean_Press_any_key_to_continue);
                         sectorCount = true;
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
-                    AaruConsole.Write("How many {0} to transfer?: ", sectorCount ? "sectors" : "bytes");
-                    strDev = Console.ReadLine();
+                    AaruConsole.Write(sectorCount
+                                          ? Localization.How_many_sectors_to_transfer_Q
+                                          : Localization.How_many_bytes_to_transfer_Q);
+
+                    strDev = System.Console.ReadLine();
 
                     if(!ushort.TryParse(strDev, out length))
                     {
-                        AaruConsole.WriteLine("Not a number. Press any key to continue...");
+                        AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                         length = (ushort)(sectorCount ? 1 : 512);
-                        Console.ReadKey();
+                        System.Console.ReadKey();
 
                         continue;
                     }
 
                     if(sectorCount)
                     {
-                        AaruConsole.Write("How many bytes to expect per sector?");
-                        strDev = Console.ReadLine();
+                        AaruConsole.Write(Localization.How_many_bytes_to_expect_per_sector_Q);
+                        strDev = System.Console.ReadLine();
 
                         if(!ushort.TryParse(strDev, out bps))
                         {
-                            AaruConsole.WriteLine("Not a numbr. Press any key to continue...");
+                            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
                             bps = 512;
-                            Console.ReadKey();
+                            System.Console.ReadKey();
                         }
                     }
 
                     break;
-                case 2: goto start;
+                case 2:
+                    goto start;
             }
         }
 
     start:
-        Console.Clear();
+        System.Console.Clear();
 
-        bool sense = dev.HpReadLong(out byte[] buffer, out byte[] senseBuffer, relative, address, length, bps, physical,
-                                    sectorCount, dev.Timeout, out double duration);
+        bool sense = dev.HpReadLong(out byte[] buffer,
+                                    out byte[] senseBuffer,
+                                    relative,
+                                    address,
+                                    length,
+                                    bps,
+                                    physical,
+                                    sectorCount,
+                                    dev.Timeout,
+                                    out double duration);
 
     menu:
-        AaruConsole.WriteLine("Device: {0}", devPath);
-        AaruConsole.WriteLine("Sending READ LONG to the device:");
-        AaruConsole.WriteLine("Command took {0} ms.", duration);
-        AaruConsole.WriteLine("Sense is {0}.", sense);
-        AaruConsole.WriteLine("Buffer is {0} bytes.", buffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(buffer));
-        AaruConsole.WriteLine("Sense buffer is {0} bytes.", senseBuffer?.Length.ToString() ?? "null");
-        AaruConsole.WriteLine("Sense buffer is null or empty? {0}", ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
-        AaruConsole.WriteLine();
-        AaruConsole.WriteLine("Choose what to do:");
-        AaruConsole.WriteLine("1.- Print buffer.");
-        AaruConsole.WriteLine("2.- Print sense buffer.");
-        AaruConsole.WriteLine("3.- Decode sense buffer.");
-        AaruConsole.WriteLine("4.- Send command again.");
-        AaruConsole.WriteLine("5.- Change parameters.");
-        AaruConsole.WriteLine("0.- Return to Hewlett-Packard vendor commands menu.");
-        AaruConsole.Write("Choose: ");
+        AaruConsole.WriteLine(Localization.Device_0, devPath);
+        AaruConsole.WriteLine(Localization.Sending_READ_LONG_to_the_device);
+        AaruConsole.WriteLine(Localization.Command_took_0_ms, duration);
+        AaruConsole.WriteLine(Localization.Sense_is_0, sense);
+        AaruConsole.WriteLine(Localization.Buffer_is_0_bytes, buffer?.Length.ToString() ?? Localization._null);
+        AaruConsole.WriteLine(Localization.Buffer_is_null_or_empty_0_Q, ArrayHelpers.ArrayIsNullOrEmpty(buffer));
 
-        strDev = Console.ReadLine();
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_0_bytes,
+                              senseBuffer?.Length.ToString() ?? Localization._null);
+
+        AaruConsole.WriteLine(Localization.Sense_buffer_is_null_or_empty_0,
+                              ArrayHelpers.ArrayIsNullOrEmpty(senseBuffer));
+
+        AaruConsole.WriteLine();
+        AaruConsole.WriteLine(Localization.Choose_what_to_do);
+        AaruConsole.WriteLine(Localization.Print_buffer);
+        AaruConsole.WriteLine(Localization._2_Print_sense_buffer);
+        AaruConsole.WriteLine(Localization._3_Decode_sense_buffer);
+        AaruConsole.WriteLine(Localization._4_Send_command_again);
+        AaruConsole.WriteLine(Localization._5_Change_parameters);
+        AaruConsole.WriteLine(Localization.Return_to_Hewlett_Packard_vendor_commands_menu);
+        AaruConsole.Write(Localization.Choose);
+
+        strDev = System.Console.ReadLine();
 
         if(!int.TryParse(strDev, out item))
         {
-            AaruConsole.WriteLine("Not a number. Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+            System.Console.ReadKey();
+            System.Console.Clear();
 
             goto menu;
         }
@@ -241,54 +268,54 @@ static class Hp
         switch(item)
         {
             case 0:
-                AaruConsole.WriteLine("Returning to Hewlett-Packard vendor commands menu...");
+                AaruConsole.WriteLine(Localization.Returning_to_Hewlett_Packard_vendor_commands_menu);
 
                 return;
             case 1:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ LONG response:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_LONG_response);
 
-                if(buffer != null)
-                    PrintHex.PrintHexArray(buffer, 64);
+                if(buffer != null) PrintHex.PrintHexArray(buffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 2:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ LONG sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_LONG_sense);
 
-                if(senseBuffer != null)
-                    PrintHex.PrintHexArray(senseBuffer, 64);
+                if(senseBuffer != null) PrintHex.PrintHexArray(senseBuffer, 64);
 
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
             case 3:
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
-                AaruConsole.WriteLine("READ LONG decoded sense:");
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
+                AaruConsole.WriteLine(Localization.READ_LONG_decoded_sense);
                 AaruConsole.Write("{0}", Sense.PrettifySense(senseBuffer));
-                AaruConsole.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                AaruConsole.WriteLine("Device: {0}", devPath);
+                AaruConsole.WriteLine(Localization.Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
+                AaruConsole.WriteLine(Localization.Device_0, devPath);
 
                 goto menu;
-            case 4: goto start;
-            case 5: goto parameters;
+            case 4:
+                goto start;
+            case 5:
+                goto parameters;
             default:
-                AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                System.Console.ReadKey();
+                System.Console.Clear();
 
                 goto menu;
         }

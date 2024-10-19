@@ -27,28 +27,32 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Aaru.Console;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Images;
 
 public sealed partial class ZZZRawImage
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize == 0)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
@@ -69,14 +73,15 @@ public sealed partial class ZZZRawImage
             case ".128" when sectorSize  != 128:
             case ".256" when sectorSize  != 256:
             case ".iso" when sectorSize  != 2048:
-                ErrorMessage = "The specified sector size does not correspond with the requested image extension.";
+                ErrorMessage = Localization
+                   .The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
 
                 return false;
         }
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -92,9 +97,10 @@ public sealed partial class ZZZRawImage
         {
             _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -114,7 +120,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -122,16 +128,16 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
@@ -143,8 +149,7 @@ public sealed partial class ZZZRawImage
             return false;
         }
 
-        if(_mediaTags.ContainsKey(tag))
-            _mediaTags.Remove(tag);
+        if(_mediaTags.ContainsKey(tag)) _mediaTags.Remove(tag);
 
         _mediaTags.Add(tag, data);
 
@@ -156,21 +161,21 @@ public sealed partial class ZZZRawImage
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length != _imageInfo.SectorSize)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress >= _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -188,21 +193,21 @@ public sealed partial class ZZZRawImage
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % _imageInfo.SectorSize != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -218,7 +223,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -226,7 +231,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -234,8 +239,7 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool SetTracks(List<Track> tracks)
     {
-        if(tracks.Count <= 1)
-            return true;
+        if(tracks.Count <= 1) return true;
 
         ErrorMessage = "This format supports only 1 track";
 
@@ -247,7 +251,7 @@ public sealed partial class ZZZRawImage
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -258,11 +262,12 @@ public sealed partial class ZZZRawImage
 
         foreach(KeyValuePair<MediaTagType, byte[]> tag in _mediaTags)
         {
-            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars).Where(t => t.tag == tag.Key).
-                                               Select(t => t.name).FirstOrDefault();
+            string suffix = _readWriteSidecars.Concat(_writeOnlySidecars)
+                                              .Where(t => t.tag == tag.Key)
+                                              .Select(t => t.name)
+                                              .FirstOrDefault();
 
-            if(suffix == null)
-                continue;
+            if(suffix == null) continue;
 
             var tagStream = new FileStream(_basePath + suffix, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
@@ -274,5 +279,7 @@ public sealed partial class ZZZRawImage
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
+
+#endregion
 }

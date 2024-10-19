@@ -27,20 +27,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices;
 
 using System;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
 using Aaru.Decoders.SCSI;
 
+namespace Aaru.Core.Devices;
+
 sealed partial class Reader
 {
-    // TODO: Raw reading
-    bool _hldtstReadRaw;
     bool _plextorReadRaw;
     bool _read10;
     bool _read12;
@@ -54,15 +52,16 @@ sealed partial class Reader
     bool _syqReadLong10;
     bool _syqReadLong6;
 
+    // TODO: Raw reading
+    public bool HldtstReadRaw;
+
     ulong ScsiGetBlocks() => ScsiGetBlockSize() ? 0 : Blocks;
 
     bool ScsiFindReadCommand()
     {
-        if(Blocks == 0)
-            GetDeviceBlocks();
+        if(Blocks == 0) GetDeviceBlocks();
 
-        if(Blocks == 0)
-            return true;
+        if(Blocks == 0) return true;
 
         byte[] senseBuf;
         var    tries      = 0;
@@ -71,11 +70,21 @@ sealed partial class Reader
 
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
         {
-            mediumScan = !_dev.MediumScan(out _, true, false, false, false, false, lba, 1, (uint)Blocks,
-                                          out uint foundLba, out _, _timeout, out _);
+            mediumScan = !_dev.MediumScan(out _,
+                                          true,
+                                          false,
+                                          false,
+                                          false,
+                                          false,
+                                          lba,
+                                          1,
+                                          (uint)Blocks,
+                                          out uint foundLba,
+                                          out _,
+                                          _timeout,
+                                          out _);
 
-            if(mediumScan)
-                lba = foundLba;
+            if(mediumScan) lba = foundLba;
         }
 
         var rnd = new Random();
@@ -84,74 +93,112 @@ sealed partial class Reader
         {
             _read6 = !_dev.Read6(out _, out senseBuf, lba, LogicalBlockSize, _timeout, out _);
 
-            _read10 = !_dev.Read10(out _, out senseBuf, 0, false, false, false, false, lba, LogicalBlockSize, 0, 1,
-                                   _timeout, out _);
+            _read10 = !_dev.Read10(out _,
+                                   out senseBuf,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   false,
+                                   lba,
+                                   LogicalBlockSize,
+                                   0,
+                                   1,
+                                   _timeout,
+                                   out _);
 
-            _read12 = !_dev.Read12(out _, out senseBuf, 0, false, false, false, false, lba, LogicalBlockSize, 0, 1,
-                                   false, _timeout, out _);
+            _read12 = !_dev.Read12(out _,
+                                   out senseBuf,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   false,
+                                   lba,
+                                   LogicalBlockSize,
+                                   0,
+                                   1,
+                                   false,
+                                   _timeout,
+                                   out _);
 
-            _read16 = !_dev.Read16(out _, out senseBuf, 0, false, false, false, lba, LogicalBlockSize, 0, 1, false,
-                                   _timeout, out _);
+            _read16 = !_dev.Read16(out _,
+                                   out senseBuf,
+                                   0,
+                                   false,
+                                   false,
+                                   false,
+                                   lba,
+                                   LogicalBlockSize,
+                                   0,
+                                   1,
+                                   false,
+                                   _timeout,
+                                   out _);
 
-            if(_read6  ||
-               _read10 ||
-               _read12 ||
-               _read16)
-                break;
+            if(_read6 || _read10 || _read12 || _read16) break;
 
             lba = (uint)rnd.Next(1, (int)Blocks);
 
             if(mediumScan)
             {
-                mediumScan = !_dev.MediumScan(out _, true, false, false, false, false, lba, 1, (uint)Blocks,
-                                              out uint foundLba, out _, _timeout, out _);
+                mediumScan = !_dev.MediumScan(out _,
+                                              true,
+                                              false,
+                                              false,
+                                              false,
+                                              false,
+                                              lba,
+                                              1,
+                                              (uint)Blocks,
+                                              out uint foundLba,
+                                              out _,
+                                              _timeout,
+                                              out _);
 
-                if(mediumScan)
-                    lba = foundLba;
+                if(mediumScan) lba = foundLba;
             }
 
             tries++;
         }
 
-        if(!_read6  &&
-           !_read10 &&
-           !_read12 &&
-           !_read16)
+        switch(_read6)
         {
-            // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
-            if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+            case false when !_read10 && !_read12 && !_read16:
             {
-                ErrorMessage = "Cannot read medium, aborting scan...";
+                // Magneto-opticals may have empty LBA 0 but we know they work with READ(12)
+                if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
+                {
+                    ErrorMessage = Localization.Core.Cannot_read_medium_aborting_scan;
+
+                    return true;
+                }
+
+                _read12 = true;
+
+                break;
+            }
+            case true when !_read10 && !_read12 && !_read16 && Blocks > 0x001FFFFF + 1:
+                ErrorMessage =
+                    string.Format(Localization.Core
+                                              .Device_only_supports_SCSI_READ_6_but_has_more_than_0_blocks_1_blocks_total,
+                                  0x001FFFFF + 1,
+                                  Blocks);
 
                 return true;
-            }
-
-            _read12 = true;
         }
 
-        if(_read6   &&
-           !_read10 &&
-           !_read12 &&
-           !_read16 &&
-           Blocks > 0x001FFFFF + 1)
+        if(Blocks > 0x001FFFFF + 1) _read6 = false;
+
+        if(_read10) _read12 = false;
+
+        if(!_read16 && Blocks > 0xFFFFFFFF + (long)1)
         {
             ErrorMessage =
-                $"Device only supports SCSI READ (6) but has more than {0x001FFFFF + 1} blocks ({Blocks} blocks total)";
-
-            return true;
-        }
-
-        if(Blocks > 0x001FFFFF + 1)
-            _read6 = false;
-
-        if(_read10)
-            _read12 = false;
-
-        if(!_read16 &&
-           Blocks > 0xFFFFFFFF + (long)1)
-        {
-            ErrorMessage =
-                $"Device only supports SCSI READ (10) but has more than {0xFFFFFFFF + (long)1} blocks ({Blocks} blocks total)";
+                string.Format(Localization.Core
+                                          .Device_only_supports_SCSI_READ_10_but_has_more_than_0_blocks_1_blocks_total,
+                              0xFFFFFFFF + (long)1,
+                              Blocks);
 
             return true;
         }
@@ -199,9 +246,7 @@ sealed partial class Reader
                 {
                     decSense = Sense.Decode(senseBuf);
 
-                    if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-                       decSense.Value.ASC  == 0x24                     &&
-                       decSense.Value.ASCQ == 0x00)
+                    if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
                     {
                         CanReadRaw = true;
 
@@ -224,13 +269,20 @@ sealed partial class Reader
                         {
                             LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
-                            _readLong10 = !_dev.ReadLong10(out _, out senseBuf, false, false, 0, (ushort)LongBlockSize,
-                                                           _timeout, out _);
+                            _readLong10 = !_dev.ReadLong10(out _,
+                                                           out senseBuf,
+                                                           false,
+                                                           false,
+                                                           0,
+                                                           (ushort)LongBlockSize,
+                                                           _timeout,
+                                                           out _);
                         }
                     }
                 }
 
                 if(CanReadRaw && LongBlockSize == LogicalBlockSize)
+                {
                     switch(LogicalBlockSize)
                     {
                         case 512:
@@ -249,8 +301,7 @@ sealed partial class Reader
                             {
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong16   = true;
                                     LongBlockSize = testSize;
@@ -259,11 +310,16 @@ sealed partial class Reader
                                     break;
                                 }
 
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                testSense = _dev.ReadLong10(out _,
+                                                            out senseBuf,
+                                                            false,
+                                                            false,
+                                                            0,
+                                                            testSize,
+                                                            _timeout,
                                                             out _);
 
-                                if(testSense || _dev.Error)
-                                    continue;
+                                if(testSense || _dev.Error) continue;
 
                                 _readLong10   = true;
                                 LongBlockSize = testSize;
@@ -287,8 +343,7 @@ sealed partial class Reader
                             {
                                 testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, testSize, _timeout, out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong16   = true;
                                     LongBlockSize = testSize;
@@ -297,11 +352,16 @@ sealed partial class Reader
                                     break;
                                 }
 
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, testSize, _timeout,
+                                testSense = _dev.ReadLong10(out _,
+                                                            out senseBuf,
+                                                            false,
+                                                            false,
+                                                            0,
+                                                            testSize,
+                                                            _timeout,
                                                             out _);
 
-                                if(testSense || _dev.Error)
-                                    continue;
+                                if(testSense || _dev.Error) continue;
 
                                 _readLong10   = true;
                                 LongBlockSize = testSize;
@@ -316,8 +376,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 2380, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 2380;
@@ -325,11 +384,16 @@ sealed partial class Reader
                             }
                             else
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 2380, _timeout,
+                                testSense = _dev.ReadLong10(out _,
+                                                            out senseBuf,
+                                                            false,
+                                                            false,
+                                                            0,
+                                                            2380,
+                                                            _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 2380;
@@ -343,8 +407,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 4760, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 4760;
@@ -352,11 +415,16 @@ sealed partial class Reader
                             }
                             else
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 4760, _timeout,
+                                testSense = _dev.ReadLong10(out _,
+                                                            out senseBuf,
+                                                            false,
+                                                            false,
+                                                            0,
+                                                            4760,
+                                                            _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 4760;
@@ -370,8 +438,7 @@ sealed partial class Reader
                         {
                             testSense = _dev.ReadLong16(out _, out senseBuf, false, 0, 9424, _timeout, out _);
 
-                            if(!testSense &&
-                               !_dev.Error)
+                            if(!testSense && !_dev.Error)
                             {
                                 _readLong16   = true;
                                 LongBlockSize = 9424;
@@ -379,11 +446,16 @@ sealed partial class Reader
                             }
                             else
                             {
-                                testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 9424, _timeout,
+                                testSense = _dev.ReadLong10(out _,
+                                                            out senseBuf,
+                                                            false,
+                                                            false,
+                                                            0,
+                                                            9424,
+                                                            _timeout,
                                                             out _);
 
-                                if(!testSense &&
-                                   !_dev.Error)
+                                if(!testSense && !_dev.Error)
                                 {
                                     _readLong10   = true;
                                     LongBlockSize = 9424;
@@ -394,9 +466,9 @@ sealed partial class Reader
                             break;
                         }
                     }
+                }
 
-                if(!CanReadRaw &&
-                   _dev.Manufacturer == "SYQUEST")
+                if(!CanReadRaw && _dev.Manufacturer == "SYQUEST")
                 {
                     testSense = _dev.SyQuestReadLong10(out _, out senseBuf, 0, 0xFFFF, _timeout, out _);
 
@@ -405,9 +477,8 @@ sealed partial class Reader
                         decSense = Sense.Decode(senseBuf);
 
                         if(decSense.HasValue)
-                            if(decSense.Value.SenseKey == SenseKeys.IllegalRequest &&
-                               decSense.Value.ASC      == 0x24                     &&
-                               decSense.Value.ASCQ     == 0x00)
+                        {
+                            if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
                             {
                                 CanReadRaw = true;
 
@@ -442,9 +513,7 @@ sealed partial class Reader
                                 {
                                     decSense = Sense.Decode(senseBuf);
 
-                                    if(decSense?.SenseKey  == SenseKeys.IllegalRequest &&
-                                       decSense.Value.ASC  == 0x24                     &&
-                                       decSense.Value.ASCQ == 0x00)
+                                    if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
                                     {
                                         CanReadRaw = true;
 
@@ -453,15 +522,15 @@ sealed partial class Reader
                                         uint information = decSense?.Fixed?.Information ?? 0;
 
                                         if(decSense.Value.Descriptor.HasValue &&
-                                           decSense.Value.Descriptor.Value.Descriptors.
-                                                    TryGetValue(0, out byte[] desc00))
+                                           decSense.Value.Descriptor.Value.Descriptors
+                                                   .TryGetValue(0, out byte[] desc00))
                                         {
                                             valid       = true;
                                             ili         = true;
                                             information = (uint)Sense.DecodeDescriptor00(desc00);
 
-                                            if(decSense.Value.Descriptor.Value.Descriptors.
-                                                        TryGetValue(4, out byte[] desc04))
+                                            if(decSense.Value.Descriptor.Value.Descriptors.TryGetValue(4,
+                                                   out byte[] desc04))
                                                 Sense.DecodeDescriptor04(desc04, out _, out _, out ili);
                                         }
 
@@ -470,21 +539,24 @@ sealed partial class Reader
                                             LongBlockSize = 0xFFFF - (information & 0xFFFF);
 
                                             _syqReadLong6 =
-                                                !_dev.SyQuestReadLong6(out _, out senseBuf, 0, LongBlockSize, _timeout,
+                                                !_dev.SyQuestReadLong6(out _,
+                                                                       out senseBuf,
+                                                                       0,
+                                                                       LongBlockSize,
+                                                                       _timeout,
                                                                        out _);
                                         }
                                     }
                                 }
                             }
+                        }
                     }
 
-                    if(!CanReadRaw &&
-                       LogicalBlockSize == 256)
+                    if(!CanReadRaw && LogicalBlockSize == 256)
                     {
                         testSense = _dev.SyQuestReadLong6(out _, out senseBuf, 0, 262, _timeout, out _);
 
-                        if(!testSense &&
-                           !_dev.Error)
+                        if(!testSense && !_dev.Error)
                         {
                             _syqReadLong6 = true;
                             LongBlockSize = 262;
@@ -498,7 +570,7 @@ sealed partial class Reader
                 switch(_dev.Manufacturer)
                 {
                     case "HL-DT-ST":
-                        _hldtstReadRaw = !_dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
+                        HldtstReadRaw = !_dev.HlDtStReadRawDvd(out _, out senseBuf, 0, 1, _timeout, out _);
 
                         break;
                     case "PLEXTOR":
@@ -507,20 +579,18 @@ sealed partial class Reader
                         break;
                 }
 
-                if(_hldtstReadRaw || _plextorReadRaw)
+                if(HldtstReadRaw || _plextorReadRaw)
                 {
                     CanReadRaw    = true;
                     LongBlockSize = 2064;
                 }
 
                 // READ LONG (10) for some DVD drives
-                if(!CanReadRaw &&
-                   _dev.Manufacturer == "MATSHITA")
+                if(!CanReadRaw && _dev.Manufacturer == "MATSHITA")
                 {
                     testSense = _dev.ReadLong10(out _, out senseBuf, false, false, 0, 37856, _timeout, out _);
 
-                    if(!testSense &&
-                       !_dev.Error)
+                    if(!testSense && !_dev.Error)
                     {
                         _readLongDvd  = true;
                         LongBlockSize = 37856;
@@ -533,26 +603,24 @@ sealed partial class Reader
         if(CanReadRaw)
         {
             if(_readLong16)
-                AaruConsole.WriteLine("Using SCSI READ LONG (16) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_LONG_16_command);
             else if(_readLong10 || _readLongDvd)
-                AaruConsole.WriteLine("Using SCSI READ LONG (10) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_LONG_10_command);
             else if(_syqReadLong10)
-                AaruConsole.WriteLine("Using SyQuest READ LONG (10) command.");
+                AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_10_command);
             else if(_syqReadLong6)
-                AaruConsole.WriteLine("Using SyQuest READ LONG (6) command.");
-            else if(_hldtstReadRaw)
-                AaruConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
-            else if(_plextorReadRaw)
-                AaruConsole.WriteLine("Using Plextor raw DVD reading.");
+                AaruConsole.WriteLine(Localization.Core.Using_SyQuest_READ_LONG_6_command);
+            else if(HldtstReadRaw)
+                AaruConsole.WriteLine(Localization.Core.Using_HL_DT_ST_raw_DVD_reading);
+            else if(_plextorReadRaw) AaruConsole.WriteLine(Localization.Core.Using_Plextor_raw_DVD_reading);
         }
         else if(_read6)
-            AaruConsole.WriteLine("Using SCSI READ (6) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_6_command);
         else if(_read10)
-            AaruConsole.WriteLine("Using SCSI READ (10) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_10_command);
         else if(_read12)
-            AaruConsole.WriteLine("Using SCSI READ (12) command.");
-        else if(_read16)
-            AaruConsole.WriteLine("Using SCSI READ (16) command.");
+            AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_12_command);
+        else if(_read16) AaruConsole.WriteLine(Localization.Core.Using_SCSI_READ_16_command);
 
         return false;
     }
@@ -573,22 +641,24 @@ sealed partial class Reader
         {
             sense = _dev.ReadCapacity16(out cmdBuf, out senseBuf, _timeout, out _);
 
-            if(sense && Blocks == 0)
-                if(_dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
-                {
-                    ErrorMessage = "Unable to get media capacity\n" + $"{Sense.PrettifySense(senseBuf)}";
+            switch(sense)
+            {
+                case true when Blocks == 0 && _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice:
+                    ErrorMessage = string.Format(Localization.Core.Unable_to_get_media_capacity,
+                                                 Sense.PrettifySense(senseBuf));
 
                     return true;
+                case false:
+                {
+                    var temp = new byte[8];
+
+                    Array.Copy(cmdBuf, 0, temp, 0, 8);
+                    Array.Reverse(temp);
+                    Blocks           = BitConverter.ToUInt64(temp, 0);
+                    LogicalBlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
+
+                    break;
                 }
-
-            if(!sense)
-            {
-                var temp = new byte[8];
-
-                Array.Copy(cmdBuf, 0, temp, 0, 8);
-                Array.Reverse(temp);
-                Blocks           = BitConverter.ToUInt64(temp, 0);
-                LogicalBlockSize = (uint)((cmdBuf[8] << 24) + (cmdBuf[9] << 16) + (cmdBuf[10] << 8) + cmdBuf[11]);
             }
         }
 
@@ -604,45 +674,74 @@ sealed partial class Reader
 
         while(true)
         {
-            if(_read6)
+            if(HldtstReadRaw)
+                BlocksToRead = 1;
+            else if(_read6)
             {
                 _dev.Read6(out _, out _, 0, LogicalBlockSize, (byte)BlocksToRead, _timeout, out _);
 
-                if(_dev.Error)
-                    BlocksToRead /= 2;
+                if(_dev.Error) BlocksToRead /= 2;
             }
             else if(_read10)
             {
-                _dev.Read10(out _, out _, 0, false, true, false, false, 0, LogicalBlockSize, 0, (ushort)BlocksToRead,
-                            _timeout, out _);
+                _dev.Read10(out _,
+                            out _,
+                            0,
+                            false,
+                            true,
+                            false,
+                            false,
+                            0,
+                            LogicalBlockSize,
+                            0,
+                            (ushort)BlocksToRead,
+                            _timeout,
+                            out _);
 
-                if(_dev.Error)
-                    BlocksToRead /= 2;
+                if(_dev.Error) BlocksToRead /= 2;
             }
             else if(_read12)
             {
-                _dev.Read12(out _, out _, 0, false, false, false, false, 0, LogicalBlockSize, 0, BlocksToRead, false,
-                            _timeout, out _);
+                _dev.Read12(out _,
+                            out _,
+                            0,
+                            false,
+                            false,
+                            false,
+                            false,
+                            0,
+                            LogicalBlockSize,
+                            0,
+                            BlocksToRead,
+                            false,
+                            _timeout,
+                            out _);
 
-                if(_dev.Error)
-                    BlocksToRead /= 2;
+                if(_dev.Error) BlocksToRead /= 2;
             }
             else if(_read16)
             {
-                _dev.Read16(out _, out _, 0, false, true, false, 0, LogicalBlockSize, 0, BlocksToRead, false, _timeout,
+                _dev.Read16(out _,
+                            out _,
+                            0,
+                            false,
+                            true,
+                            false,
+                            0,
+                            LogicalBlockSize,
+                            0,
+                            BlocksToRead,
+                            false,
+                            _timeout,
                             out _);
 
-                if(_dev.Error)
-                    BlocksToRead /= 2;
+                if(_dev.Error) BlocksToRead /= 2;
             }
 
-            if(!_dev.Error ||
-               BlocksToRead == 1)
-                break;
+            if(!_dev.Error || BlocksToRead == 1) break;
         }
 
-        if(!_dev.Error)
-            return false;
+        if(!_dev.Error) return false;
 
         // Magneto-opticals may have LBA 0 empty, we can hard code the value to a safe one
         if(_dev.ScsiType == PeripheralDeviceTypes.OpticalDevice)
@@ -653,13 +752,15 @@ sealed partial class Reader
         }
 
         BlocksToRead = 1;
-        ErrorMessage = $"Device error {_dev.LastError} trying to guess ideal transfer length.";
+
+        ErrorMessage = string.Format(Localization.Core.Device_error_0_trying_to_guess_ideal_transfer_length,
+                                     _dev.LastError);
 
         return true;
     }
 
     bool ScsiReadBlocks(out byte[] buffer, ulong block, uint count, out double duration, out bool recoveredError,
-                        out bool blankCheck)
+                        out bool   blankCheck)
     {
         bool   sense;
         byte[] senseBuf;
@@ -669,55 +770,145 @@ sealed partial class Reader
         blankCheck     = false;
 
         if(CanReadRaw)
+        {
             if(_readLong16)
                 sense = _dev.ReadLong16(out buffer, out senseBuf, false, block, LongBlockSize, _timeout, out duration);
             else if(_readLong10)
-                sense = _dev.ReadLong10(out buffer, out senseBuf, false, false, (uint)block, (ushort)LongBlockSize,
-                                        _timeout, out duration);
+            {
+                sense = _dev.ReadLong10(out buffer,
+                                        out senseBuf,
+                                        false,
+                                        false,
+                                        (uint)block,
+                                        (ushort)LongBlockSize,
+                                        _timeout,
+                                        out duration);
+            }
             else if(_syqReadLong10)
-                sense = _dev.SyQuestReadLong10(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
+            {
+                sense = _dev.SyQuestReadLong10(out buffer,
+                                               out senseBuf,
+                                               (uint)block,
+                                               LongBlockSize,
+                                               _timeout,
                                                out duration);
+            }
             else if(_syqReadLong6)
-                sense = _dev.SyQuestReadLong6(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
+            {
+                sense = _dev.SyQuestReadLong6(out buffer,
+                                              out senseBuf,
+                                              (uint)block,
+                                              LongBlockSize,
+                                              _timeout,
                                               out duration);
-            else if(_hldtstReadRaw)
-                sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
-                                              out duration);
+            }
+            else if(HldtstReadRaw)
+            {
+                // We need to fill the buffer before reading it with the HL-DT-ST command. We don't care about sense,
+                // because the data can be wrong anyway, so we need to check the buffer data instead.
+                _dev.Read12(out buffer,
+                            out senseBuf,
+                            0,
+                            false,
+                            false,
+                            false,
+                            false,
+                            (uint)block,
+                            LogicalBlockSize,
+                            0,
+                            16,
+                            false,
+                            _timeout,
+                            out duration);
+
+                sense = _dev.HlDtStReadRawDvd(out buffer, out senseBuf, (uint)block, count, _timeout, out duration);
+            }
             else if(_plextorReadRaw)
-                sense = _dev.PlextorReadRawDvd(out buffer, out senseBuf, (uint)block, LongBlockSize, _timeout,
+            {
+                sense = _dev.PlextorReadRawDvd(out buffer,
+                                               out senseBuf,
+                                               (uint)block,
+                                               LongBlockSize,
+                                               _timeout,
                                                out duration);
+            }
             else
                 return true;
+        }
         else
         {
             if(_read6)
-                sense = _dev.Read6(out buffer, out senseBuf, (uint)block, LogicalBlockSize, (byte)count, _timeout,
+            {
+                sense = _dev.Read6(out buffer,
+                                   out senseBuf,
+                                   (uint)block,
+                                   LogicalBlockSize,
+                                   (byte)count,
+                                   _timeout,
                                    out duration);
+            }
             else if(_read10)
-                sense = _dev.Read10(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
-                                    LogicalBlockSize, 0, (ushort)count, _timeout, out duration);
+            {
+                sense = _dev.Read10(out buffer,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    (uint)block,
+                                    LogicalBlockSize,
+                                    0,
+                                    (ushort)count,
+                                    _timeout,
+                                    out duration);
+            }
             else if(_read12)
-                sense = _dev.Read12(out buffer, out senseBuf, 0, false, false, false, false, (uint)block,
-                                    LogicalBlockSize, 0, count, false, _timeout, out duration);
+            {
+                sense = _dev.Read12(out buffer,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    (uint)block,
+                                    LogicalBlockSize,
+                                    0,
+                                    count,
+                                    false,
+                                    _timeout,
+                                    out duration);
+            }
             else if(_read16)
-                sense = _dev.Read16(out buffer, out senseBuf, 0, false, false, false, block, LogicalBlockSize, 0, count,
-                                    false, _timeout, out duration);
+            {
+                sense = _dev.Read16(out buffer,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    false,
+                                    false,
+                                    block,
+                                    LogicalBlockSize,
+                                    0,
+                                    count,
+                                    false,
+                                    _timeout,
+                                    out duration);
+            }
             else
                 return true;
         }
 
-        if(sense || _dev.Error)
-            _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, senseBuf);
+        if(sense || _dev.Error) _errorLog?.WriteLine(block, _dev.Error, _dev.LastError, senseBuf);
 
-        if(!sense &&
-           !_dev.Error)
-            return false;
+        if(!sense && !_dev.Error) return false;
 
         recoveredError = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.RecoveredError;
 
         blankCheck = Sense.Decode(senseBuf)?.SenseKey == SenseKeys.BlankCheck;
 
-        AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
 
         return sense;
     }
@@ -728,9 +919,8 @@ sealed partial class Reader
         duration = 0;
 
         if(_seek6)
-            sense = _dev.Seek6(out _, (uint)block, _timeout, out duration);
-        else if(_seek10)
-            sense = _dev.Seek10(out _, (uint)block, _timeout, out duration);
+            sense              = _dev.Seek6(out _, (uint)block, _timeout, out duration);
+        else if(_seek10) sense = _dev.Seek10(out _, (uint)block, _timeout, out duration);
 
         return sense;
     }

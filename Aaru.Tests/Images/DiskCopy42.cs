@@ -23,23 +23,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class DiskCopy42 : BlockMediaImageTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskCopy 4.2");
-    public override IMediaImage Plugin => new DiscImages.DiskCopy42();
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskCopy 4.2");
+    public override IMediaImage Plugin     => new Aaru.Images.DiskCopy42();
+
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "hfs.dsk.lz",
@@ -112,5 +113,5 @@ public class DiskCopy42 : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "fcf747bd356b48d442ff74adb8f3516b"
         }
-    };
+    ];
 }

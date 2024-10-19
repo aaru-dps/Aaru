@@ -27,23 +27,23 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Views.Dialogs;
 
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui.Views.Dialogs;
 
 public sealed class LicenseDialog : Window
 {
     public LicenseDialog()
     {
         InitializeComponent();
-    #if DEBUG
+#if DEBUG
         this.AttachDevTools();
-    #endif
+#endif
     }
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);

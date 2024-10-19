@@ -7,10 +7,6 @@
 //
 // Component      : Apple Hierarchical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Hierarchical File System structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,24 +23,245 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable UnusedType.Local
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable MemberCanBePrivate.Local
 
-namespace Aaru.Filesystems;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh
 // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
 public sealed partial class AppleHFS
 {
+#region Nested type: BTHdrRed
+
+    /// <summary>B*-tree header</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct BTHdrRed
+    {
+        /// <summary>Current depth of tree.</summary>
+        public readonly ushort bthDepth;
+        /// <summary>Number of root node.</summary>
+        public readonly uint bthRoot;
+        /// <summary>Number of leaf records in tree.</summary>
+        public readonly uint bthNRecs;
+        /// <summary>Number of first leaf node.</summary>
+        public readonly uint bthFNode;
+        /// <summary>Number of last leaf node.</summary>
+        public readonly uint bthLNode;
+        /// <summary>Size of a node.</summary>
+        public readonly ushort bthNodeSize;
+        /// <summary>Maximum length of a key.</summary>
+        public readonly ushort bthKeyLen;
+        /// <summary>Total number of nodes in tree.</summary>
+        public readonly uint bthNNodes;
+        /// <summary>Number of free nodes.</summary>
+        public readonly uint bthFree;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)]
+        public readonly sbyte[] bthResv;
+    }
+
+#endregion
+
+#region Nested type: CatDataRec
+
+    /// <summary>Catalog data record header</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CatDataRec
+    {
+        public readonly CatDataType cdrType;
+        public readonly sbyte       cdrResvr2;
+    }
+
+#endregion
+
+#region Nested type: CatKeyRec
+
+    /// <summary>Catalog key record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CatKeyRec
+    {
+        /// <summary>Key length.</summary>
+        public readonly sbyte ckrKeyLen;
+        /// <summary>Reserved.</summary>
+        public readonly sbyte ckrResrv1;
+        /// <summary>Parent directory ID.</summary>
+        public readonly uint ckrParID;
+        /// <summary>Catalog node name. Full 32 bytes in index nodes but only the needed bytes, padded to word, in leaf nodes.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] ckrCName;
+    }
+
+#endregion
+
+#region Nested type: CdrDirRec
+
+    /// <summary>Directory record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdrDirRec
+    {
+        public readonly CatDataRec dirHdr;
+        /// <summary>Directory flags.</summary>
+        public readonly ushort dirFlags;
+        /// <summary>Directory valence.</summary>
+        public readonly ushort dirVal;
+        /// <summary>Directory ID.</summary>
+        public readonly uint dirDirID;
+        /// <summary>Date and time of creation.</summary>
+        public readonly uint dirCrDat;
+        /// <summary>Date and time of last modification.</summary>
+        public readonly uint dirMdDat;
+        /// <summary>Date and time of last backup.</summary>
+        public readonly uint dirBkDat;
+        /// <summary>Finder information.</summary>
+        public readonly AppleCommon.DInfo dirUsrInfo;
+        /// <summary>Additional Finder information.</summary>
+        public readonly AppleCommon.DXInfo dirFndrInfo;
+        /// <summary>Reserved</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly uint[] dirResrv;
+    }
+
+#endregion
+
+#region Nested type: CdrFilRec
+
+    /// <summary>File record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdrFilRec
+    {
+        public readonly CatDataRec filHdr;
+        /// <summary>File flags.</summary>
+        public readonly sbyte filFlags;
+        /// <summary>File type.</summary>
+        public readonly sbyte filType;
+        /// <summary>Finder information.</summary>
+        public readonly AppleCommon.FInfo filUsrWds;
+        /// <summary>File ID.</summary>
+        public readonly uint filFlNum;
+        /// <summary>First allocation block of data fork.</summary>
+        public readonly ushort filStBlk;
+        /// <summary>Logical EOF of data fork.</summary>
+        public readonly uint filLgLen;
+        /// <summary>Physical EOF of data fork.</summary>
+        public readonly uint filPyLen;
+        /// <summary>First allocation block of resource fork.</summary>
+        public readonly ushort filRStBlk;
+        /// <summary>Logical EOF of resource fork.</summary>
+        public readonly uint filRLgLen;
+        /// <summary>Physical EOF of resource fork.</summary>
+        public readonly uint filRPyLen;
+        /// <summary>Date and time of creation.</summary>
+        public readonly uint filCrDat;
+        /// <summary>Date and time of last modification.</summary>
+        public readonly uint filMdDat;
+        /// <summary>Date and time of last backup.</summary>
+        public readonly uint filBkDat;
+        /// <summary>Additional Finder information.</summary>
+        public readonly AppleCommon.FXInfo filFndrInfo;
+        /// <summary>File clump size.</summary>
+        public readonly ushort filClpSize;
+        /// <summary>First data fork extent record.</summary>
+        public readonly ExtDataRec filExtRec;
+        /// <summary>First resource fork extent record.</summary>
+        public readonly ExtDataRec filRExtRec;
+        /// <summary>Reserved</summary>
+        public readonly uint filResrv;
+    }
+
+#endregion
+
+#region Nested type: CdrFThdRec
+
+    /// <summary>File thread record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdrFThdRec
+    {
+        public readonly CatDataRec fthdHdr;
+        /// <summary>Reserved.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly uint[] fthdResrv;
+        /// <summary>Parent ID for this file.</summary>
+        public readonly uint fthdParID;
+        /// <summary>Name of this file.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] fthdCName;
+    }
+
+#endregion
+
+#region Nested type: CdrThdRec
+
+    /// <summary>Directory thread record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdrThdRec
+    {
+        public readonly CatDataRec thdHdr;
+        /// <summary>Reserved.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly uint[] thdResrv;
+        /// <summary>Parent ID for this directory.</summary>
+        public readonly uint thdParID;
+        /// <summary>Name of this directory.</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        public readonly byte[] thdCName;
+    }
+
+#endregion
+
+#region Nested type: ExtDataRec
+
+    /// <summary>Extent data record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ExtDataRec
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly ExtDescriptor[] xdr;
+    }
+
+#endregion
+
+#region Nested type: ExtDescriptor
+
+    /// <summary>Extent descriptor</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ExtDescriptor
+    {
+        /// <summary>First allocation block</summary>
+        public readonly ushort xdrStABN;
+        /// <summary>Number of allocation blocks</summary>
+        public readonly ushort xdrNumABlks;
+    }
+
+#endregion
+
+#region Nested type: ExtKeyRec
+
+    /// <summary>Extent key record</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct ExtKeyRec
+    {
+        /// <summary>Key length.</summary>
+        public readonly sbyte xkrKeyLen;
+        /// <summary>Fork type.</summary>
+        public readonly ForkType xkrFkType;
+        /// <summary>File number.</summary>
+        public readonly uint xkrFNum;
+        /// <summary>Starting file allocation block.</summary>
+        public readonly ushort xkrFABN;
+    }
+
+#endregion
+
+#region Nested type: MasterDirectoryBlock
+
     /// <summary>Master Directory Block, should be sector 2 in volume</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MasterDirectoryBlock // Should be sector 2 in volume
@@ -134,6 +351,10 @@ public sealed partial class AppleHFS
         public readonly uint drCTFlSize;
     }
 
+#endregion
+
+#region Nested type: NodeDescriptor
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct NodeDescriptor
     {
@@ -151,184 +372,5 @@ public sealed partial class AppleHFS
         public readonly ushort ndResv2;
     }
 
-    /// <summary>B*-tree header</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct BTHdrRed
-    {
-        /// <summary>Current depth of tree.</summary>
-        public readonly ushort bthDepth;
-        /// <summary>Number of root node.</summary>
-        public readonly uint bthRoot;
-        /// <summary>Number of leaf records in tree.</summary>
-        public readonly uint bthNRecs;
-        /// <summary>Number of first leaf node.</summary>
-        public readonly uint bthFNode;
-        /// <summary>Number of last leaf node.</summary>
-        public readonly uint bthLNode;
-        /// <summary>Size of a node.</summary>
-        public readonly ushort bthNodeSize;
-        /// <summary>Maximum length of a key.</summary>
-        public readonly ushort bthKeyLen;
-        /// <summary>Total number of nodes in tree.</summary>
-        public readonly uint bthNNodes;
-        /// <summary>Number of free nodes.</summary>
-        public readonly uint bthFree;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)]
-        public readonly sbyte[] bthResv;
-    }
-
-    /// <summary>Catalog key record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CatKeyRec
-    {
-        /// <summary>Key length.</summary>
-        public readonly sbyte ckrKeyLen;
-        /// <summary>Reserved.</summary>
-        public readonly sbyte ckrResrv1;
-        /// <summary>Parent directory ID.</summary>
-        public readonly uint ckrParID;
-        /// <summary>Catalog node name. Full 32 bytes in index nodes but only the needed bytes, padded to word, in leaf nodes.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] ckrCName;
-    }
-
-    /// <summary>Catalog data record header</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CatDataRec
-    {
-        public readonly CatDataType cdrType;
-        public readonly sbyte       cdrResvr2;
-    }
-
-    /// <summary>Directory record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdrDirRec
-    {
-        public readonly CatDataRec dirHdr;
-        /// <summary>Directory flags.</summary>
-        public readonly ushort dirFlags;
-        /// <summary>Directory valence.</summary>
-        public readonly ushort dirVal;
-        /// <summary>Directory ID.</summary>
-        public readonly uint dirDirID;
-        /// <summary>Date and time of creation.</summary>
-        public readonly uint dirCrDat;
-        /// <summary>Date and time of last modification.</summary>
-        public readonly uint dirMdDat;
-        /// <summary>Date and time of last backup.</summary>
-        public readonly uint dirBkDat;
-        /// <summary>Finder information.</summary>
-        public readonly AppleCommon.DInfo dirUsrInfo;
-        /// <summary>Additional Finder information.</summary>
-        public readonly AppleCommon.DXInfo dirFndrInfo;
-        /// <summary>Reserved</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly uint[] dirResrv;
-    }
-
-    /// <summary>File record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdrFilRec
-    {
-        public readonly CatDataRec filHdr;
-        /// <summary>File flags.</summary>
-        public readonly sbyte filFlags;
-        /// <summary>File type.</summary>
-        public readonly sbyte filType;
-        /// <summary>Finder information.</summary>
-        public readonly AppleCommon.FInfo filUsrWds;
-        /// <summary>File ID.</summary>
-        public readonly uint filFlNum;
-        /// <summary>First allocation block of data fork.</summary>
-        public readonly ushort filStBlk;
-        /// <summary>Logical EOF of data fork.</summary>
-        public readonly uint filLgLen;
-        /// <summary>Physical EOF of data fork.</summary>
-        public readonly uint filPyLen;
-        /// <summary>First allocation block of resource fork.</summary>
-        public readonly ushort filRStBlk;
-        /// <summary>Logical EOF of resource fork.</summary>
-        public readonly uint filRLgLen;
-        /// <summary>Physical EOF of resource fork.</summary>
-        public readonly uint filRPyLen;
-        /// <summary>Date and time of creation.</summary>
-        public readonly uint filCrDat;
-        /// <summary>Date and time of last modification.</summary>
-        public readonly uint filMdDat;
-        /// <summary>Date and time of last backup.</summary>
-        public readonly uint filBkDat;
-        /// <summary>Additional Finder information.</summary>
-        public readonly AppleCommon.FXInfo filFndrInfo;
-        /// <summary>File clump size.</summary>
-        public readonly ushort filClpSize;
-        /// <summary>First data fork extent record.</summary>
-        public readonly ExtDataRec filExtRec;
-        /// <summary>First resource fork extent record.</summary>
-        public readonly ExtDataRec filRExtRec;
-        /// <summary>Reserved</summary>
-        public readonly uint filResrv;
-    }
-
-    /// <summary>Directory thread record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdrThdRec
-    {
-        public readonly CatDataRec thdHdr;
-        /// <summary>Reserved.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly uint[] thdResrv;
-        /// <summary>Parent ID for this directory.</summary>
-        public readonly uint thdParID;
-        /// <summary>Name of this directory.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] thdCName;
-    }
-
-    /// <summary>File thread record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdrFThdRec
-    {
-        public readonly CatDataRec fthdHdr;
-        /// <summary>Reserved.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly uint[] fthdResrv;
-        /// <summary>Parent ID for this file.</summary>
-        public readonly uint fthdParID;
-        /// <summary>Name of this file.</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public readonly byte[] fthdCName;
-    }
-
-    /// <summary>Extent descriptor</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ExtDescriptor
-    {
-        /// <summary>First allocation block</summary>
-        public readonly ushort xdrStABN;
-        /// <summary>Number of allocation blocks</summary>
-        public readonly ushort xdrNumABlks;
-    }
-
-    /// <summary>Extent data record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ExtDataRec
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly ExtDescriptor[] xdr;
-    }
-
-    /// <summary>Extent key record</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct ExtKeyRec
-    {
-        /// <summary>Key length.</summary>
-        public readonly sbyte xkrKeyLen;
-        /// <summary>Fork type.</summary>
-        public readonly ForkType xkrFkType;
-        /// <summary>File number.</summary>
-        public readonly uint xkrFNum;
-        /// <summary>Starting file allocation block.</summary>
-        public readonly ushort xkrFABN;
-    }
+#endregion
 }

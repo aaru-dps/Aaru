@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.COHERENT;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Whole : FilesystemTest
-{
-    public Whole() : base("Coherent fs") {}
+namespace Aaru.Tests.Filesystems.COHERENT;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "COHERENT filesystem");
+[TestFixture]
+public class Whole() : FilesystemTest("coherent")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "coherentunix_4.2.10_dsdd.img.lz",
@@ -86,5 +84,5 @@ public class Whole : FilesystemTest
             ClusterSize = 512,
             VolumeName  = "noname"
         }
-    };
+    ];
 }

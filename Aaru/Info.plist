@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0">
-    <dict>
-        <key>LSMinimumSystemVersion</key>
-        <string>10.13</string>
-        <key>CFBundleDevelopmentRegion</key>
-        <string>en</string>
-        <key>NSHumanReadableCopyright</key>
-        <string>© Natalia Portillo</string>
-        <key>CFBundleIconFile</key>
-        <string>MacIcon.icns</string>
-        <key>CFBundleName</key>
-        <string>Aaru</string>
-        <key>CFBundleIdentifier</key>
-        <string>app.aaru</string>
-        <key>CFBundleShortVersionString</key>
-        <string>6.0.0-alpha8</string>
-        <key>CFBundleExecutable</key>
-        <string>aaru</string>
-        <key>LSExecutableArchitectures</key>
-        <array>
-            <string>x86_64</string>
-        </array>
-        <key>NSHighResolutionCapable</key>
-        <true/>
-    </dict>
+  <dict>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.13</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>© Natalia Portillo</string>
+    <key>CFBundleIconFile</key>
+    <string>MacIcon.icns</string>
+    <key>CFBundleName</key>
+    <string>Aaru</string>
+    <key>CFBundleIdentifier</key>
+    <string>app.aaru</string>
+    <key>CFBundleShortVersionString</key>
+    <string>6.0.0-alpha9</string>
+    <key>CFBundleExecutable</key>
+    <string>aaru</string>
+    <key>LSExecutableArchitectures</key>
+    <array>
+      <string>x86_64</string>
+    </array>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+  </dict>
 </plist>
 

@@ -28,21 +28,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.Partition">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.Partition">
     <Design.DataContext>
         <panels:PartitionViewModel />
     </Design.DataContext>
     <StackPanel>
         <TextBlock Text="{Binding NameText}" /> <TextBlock Text="{Binding TypeText}" />
         <TextBlock Text="{Binding StartText}" /> <TextBlock Text="{Binding LengthText}" />
-        <TextBlock Text="{Binding DescriptionLabelText}" IsVisible="{Binding !!DescriptionText}" />
-        <TextBox Text="{Binding DescriptionText}" IsVisible="{Binding !!DescriptionText}" IsReadOnly="True" />
+        <TextBlock Text="{Binding DescriptionLabelText}"
+                   IsVisible="{Binding !!DescriptionText}" />
+        <TextBox Text="{Binding DescriptionText}"
+                 IsVisible="{Binding !!DescriptionText}"
+                 IsReadOnly="True" />
     </StackPanel>
 </UserControl>

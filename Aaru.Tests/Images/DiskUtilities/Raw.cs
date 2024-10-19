@@ -23,26 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.DiskUtilities;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.DiskUtilities;
 
 [TestFixture]
 public class Raw : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "disk-analyse", "raw");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "disk-analyse", "raw");
+
     public override IMediaImage Plugin => new ZZZRawImage();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf2dd_acorn.img.lz",
@@ -101,5 +102,5 @@ public class Raw : BlockMediaImageTest
             MD5        = "UNKNOWN"
         }
         */
-    };
+    ];
 }

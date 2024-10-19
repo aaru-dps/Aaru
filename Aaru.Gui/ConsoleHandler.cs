@@ -28,15 +28,16 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui;
 
 using System;
 using System.Collections.ObjectModel;
 using Aaru.Console;
+using Aaru.Localization;
 using JetBrains.Annotations;
+
+namespace Aaru.Gui;
 
 static class ConsoleHandler
 {
@@ -45,39 +46,34 @@ static class ConsoleHandler
 
     public static bool Debug
     {
-        get => _debug;
         set
         {
-            if(_debug == value)
-                return;
+            if(_debug == value) return;
 
             _debug = value;
 
             if(_debug)
+            {
                 AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
+                AaruConsole.WriteExceptionEvent           += OnWriteExceptionEvent;
+            }
             else
+            {
                 AaruConsole.DebugWithModuleWriteLineEvent -= OnDebugWriteHandler;
+                AaruConsole.WriteExceptionEvent           -= OnWriteExceptionEvent;
+            }
         }
     }
 
-    public static bool Verbose
+    public static ObservableCollection<LogEntry> Entries { get; } = [];
+
+    static void OnWriteExceptionEvent([NotNull] Exception ex) => Entries.Add(new LogEntry
     {
-        get => _verbose;
-        set
-        {
-            if(_verbose == value)
-                return;
-
-            _verbose = value;
-
-            if(_verbose)
-                AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
-            else
-                AaruConsole.VerboseWriteLineEvent -= OnVerboseWriteHandler;
-        }
-    }
-
-    public static ObservableCollection<LogEntry> Entries { get; } = new();
+        Message   = ex.ToString(),
+        Module    = null,
+        Timestamp = DateTime.Now,
+        Type      = UI.LogEntry_Type_Exception
+    });
 
     internal static void Init()
     {
@@ -87,61 +83,40 @@ static class ConsoleHandler
 
     static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {
             Message   = string.Format(format, arg),
             Module    = null,
             Timestamp = DateTime.Now,
-            Type      = "Info"
+            Type      = UI.LogEntry_Type_Info
         });
     }
 
     static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {
             Message   = string.Format(format, arg),
             Module    = null,
             Timestamp = DateTime.Now,
-            Type      = "Error"
-        });
-    }
-
-    static void OnVerboseWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
-    {
-        if(format == null ||
-           arg    == null)
-            return;
-
-        Entries.Add(new LogEntry
-        {
-            Message   = string.Format(format, arg),
-            Module    = null,
-            Timestamp = DateTime.Now,
-            Type      = "Verbose"
+            Type      = UI.LogEntry_Type_Error
         });
     }
 
     static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
     {
-        if(format == null ||
-           arg    == null)
-            return;
+        if(format == null || arg == null) return;
 
         Entries.Add(new LogEntry
         {
             Message   = string.Format(format, arg),
             Module    = module,
             Timestamp = DateTime.Now,
-            Type      = "Debug"
+            Type      = UI.LogEntry_Type_Debug
         });
     }
 }

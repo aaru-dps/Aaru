@@ -27,27 +27,33 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
 using Aaru.CommonTypes;
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
     /// <summary>Initializes a progress indicator (e.g. makes a progress bar visible)</summary>
     public event InitProgressHandler InitProgressEvent;
+
     /// <summary>Updates a progress indicator with text</summary>
     public event UpdateProgressHandler UpdateProgressEvent;
+
     /// <summary>Uninitializes a progress indicator (e.g. adds a newline to the console)</summary>
     public event EndProgressHandler EndProgressEvent;
+
     /// <summary>Initializes a secondary progress indicator (e.g. makes a progress bar visible)</summary>
     public event InitProgressHandler2 InitProgressEvent2;
+
     /// <summary>Event raised to update the values of a determinate progress bar</summary>
     public event UpdateProgressHandler2 UpdateProgressEvent2;
+
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler2 EndProgressEvent2;
+
     /// <summary>Updates a status indicator</summary>
     public event UpdateStatusHandler UpdateStatusEvent;
 

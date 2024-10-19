@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.FATX;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Xbox360 : ReadOnlyFilesystemTest
-{
-    public Xbox360() : base("FATX filesystem") {}
+namespace Aaru.Tests.Filesystems.FATX;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Xbox FAT16", "be");
+[TestFixture]
+public class Xbox360() : ReadOnlyFilesystemTest("fatx")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xbox FAT16", "be");
 
     public override IFilesystem Plugin     => new XboxFatPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "microsoft256mb.img.lz",
@@ -57,5 +55,5 @@ public class Xbox360 : ReadOnlyFilesystemTest
             VolumeName   = "",
             VolumeSerial = "66C2E9D0"
         }
-    };
+    ];
 }

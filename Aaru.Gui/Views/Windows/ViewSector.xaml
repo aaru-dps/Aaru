@@ -28,26 +28,36 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="480" Height="320" x:Class="Aaru.Gui.Views.Windows.ViewSector"
-        Icon="/Assets/aaru-logo.png" CanResize="False" Title="{Binding Title}">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="480"
+        Height="320"
+        x:Class="Aaru.Gui.Views.Windows.ViewSector"
+        Icon="/Assets/aaru-logo.png"
+        CanResize="False"
+        Title="{Binding Title}">
     <Design.DataContext>
         <windows:ViewSectorViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Sector" /> <NumericUpDown Value="{Binding SectorNumber}" />
+            <TextBlock Text="{Binding SectorLabel}" /> <NumericUpDown Value="{Binding SectorNumber}" />
             <TextBlock Text="{Binding TotalSectorsText}" />
         </StackPanel>
-        <CheckBox IsChecked="{Binding LongSectorChecked}" IsVisible="{Binding LongSectorVisible}">
-            <TextBlock Text="Show long sector" />
+        <CheckBox IsChecked="{Binding LongSectorChecked}"
+                  IsVisible="{Binding LongSectorVisible}">
+            <TextBlock Text="{Binding LongSectorLabel}" />
         </CheckBox>
-        <TextBox IsReadOnly="True" Text="{Binding PrintHexText}" />
+        <TextBox IsReadOnly="True"
+                 Text="{Binding PrintHexText}" />
     </StackPanel>
 </Window>

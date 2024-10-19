@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using System.Text.RegularExpressions;
@@ -39,19 +37,22 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class RayDim
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < Marshal.SizeOf<Header>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<Header>()) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[Marshal.SizeOf<Header>()];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header header = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
@@ -60,8 +61,7 @@ public sealed partial class RayDim
         var   sx = new Regex(REGEX_SIGNATURE);
         Match sm = sx.Match(signature);
 
-        if(!sm.Success)
-            return ErrorNumber.InvalidArgument;
+        if(!sm.Success) return ErrorNumber.InvalidArgument;
 
         _imageInfo.ApplicationVersion = $"{sm.Groups["major"].Value}.{sm.Groups["minor"].Value}";
 
@@ -76,7 +76,7 @@ public sealed partial class RayDim
 
         for(var i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
         {
-            stream.Read(sectors, 0, sectors.Length);
+            stream.EnsureRead(sectors, 0, sectors.Length);
             stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);
             _disk.Write(sectors, 0, sectors.Length);
         }
@@ -101,7 +101,7 @@ public sealed partial class RayDim
                 break;
         }
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         return ErrorNumber.NoError;
     }
@@ -114,17 +114,17 @@ public sealed partial class RayDim
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
-        _disk.Seek((long)(sectorAddress    * _imageInfo.SectorSize), SeekOrigin.Begin);
-        _disk.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        _disk.Seek((long)(sectorAddress          * _imageInfo.SectorSize), SeekOrigin.Begin);
+        _disk.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

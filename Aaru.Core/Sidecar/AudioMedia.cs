@@ -27,18 +27,20 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+// ReSharper disable UnusedParameter.Local
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -52,39 +54,38 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginBase plugins,
-                           List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+    static void AudioMedia(IBaseImage image, Guid filterId, string imagePath, FileInfo fi, PluginRegister plugins,
+                           List<CommonTypes.AaruMetadata.Checksum> imgChecksums, ref Metadata sidecar,
+                           Encoding encoding)
     {
-        sidecar.AudioMedia = new[]
-        {
-            new AudioMediaType
+        sidecar.AudioMedias =
+        [
+            new AudioMedia
             {
-                Checksums = imgChecksums.ToArray(),
-                Image = new ImageType
+                Checksums = imgChecksums,
+                Image = new Image
                 {
-                    format          = image.Format,
-                    offset          = 0,
-                    offsetSpecified = true,
-                    Value           = Path.GetFileName(imagePath)
+                    Format = image.Format,
+                    Offset = 0,
+                    Value  = Path.GetFileName(imagePath)
                 },
                 Size = (ulong)fi.Length,
-                Sequence = new SequenceType
+                Sequence = new Sequence
                 {
-                    MediaTitle = image.Info.MediaTitle
+                    Title = image.Info.MediaTitle
                 }
             }
-        };
+        ];
 
-        if(image.Info.MediaSequence     != 0 &&
-           image.Info.LastMediaSequence != 0)
+        if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
         {
-            sidecar.AudioMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
-            sidecar.AudioMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
+            sidecar.AudioMedias[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+            sidecar.AudioMedias[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
         }
         else
         {
-            sidecar.AudioMedia[0].Sequence.MediaSequence = 1;
-            sidecar.AudioMedia[0].Sequence.TotalMedia    = 1;
+            sidecar.AudioMedias[0].Sequence.MediaSequence = 1;
+            sidecar.AudioMedias[0].Sequence.TotalMedia    = 1;
         }
     }
 }

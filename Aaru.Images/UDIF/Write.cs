@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -39,28 +37,33 @@ using System.Linq;
 using System.Text;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.PropertyList;
-using Schemas;
+
+namespace Aaru.Images;
 
 public sealed partial class Udif
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -76,9 +79,10 @@ public sealed partial class Udif
         {
             _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -98,7 +102,7 @@ public sealed partial class Udif
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Writing media tags is not supported.";
+        ErrorMessage = Localization.Writing_media_tags_is_not_supported;
 
         return false;
     }
@@ -108,28 +112,28 @@ public sealed partial class Udif
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length != _imageInfo.SectorSize)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress >= _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
 
         if(sectorAddress < _currentSector)
         {
-            ErrorMessage = "Tried to rewind, this format rewinded on writing";
+            ErrorMessage = Localization.Tried_to_rewind_this_format_not_supported;
 
             return false;
         }
@@ -179,21 +183,21 @@ public sealed partial class Udif
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % _imageInfo.SectorSize != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
@@ -226,8 +230,7 @@ public sealed partial class Udif
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -238,7 +241,7 @@ public sealed partial class Udif
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -246,7 +249,7 @@ public sealed partial class Udif
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -256,21 +259,21 @@ public sealed partial class Udif
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
-        if(_currentChunk.type != CHUNK_TYPE_NOCOPY)
-            _currentChunk.length = _currentChunk.sectors * 512;
+        if(_currentChunk.type != CHUNK_TYPE_NOCOPY) _currentChunk.length = _currentChunk.sectors * 512;
 
         _chunks.Add(_currentChunk.sector, _currentChunk);
 
-        _chunks.Add(_imageInfo.Sectors, new BlockChunk
-        {
-            type   = CHUNK_TYPE_END,
-            sector = _imageInfo.Sectors
-        });
+        _chunks.Add(_imageInfo.Sectors,
+                    new BlockChunk
+                    {
+                        type   = CHUNK_TYPE_END,
+                        sector = _imageInfo.Sectors
+                    });
 
         var bHdr = new BlockHeader
         {
@@ -284,33 +287,33 @@ public sealed partial class Udif
         };
 
         var chunkMs = new MemoryStream();
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.signature), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.version), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.sectorStart), 0, 8);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.sectorCount), 0, 8);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.dataOffset), 0, 8);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.buffers), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.descriptor), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved1), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved2), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved3), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved4), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved5), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved6), 0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.signature),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.version),      0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.sectorStart),  0, 8);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.sectorCount),  0, 8);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.dataOffset),   0, 8);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.buffers),      0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.descriptor),   0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved1),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved2),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved3),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved4),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved5),    0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.reserved6),    0, 4);
         chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.checksumType), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.checksumLen), 0, 4);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.checksum), 0, 4);
-        chunkMs.Write(new byte[124], 0, 124);
-        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.chunks), 0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.checksumLen),  0, 4);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.checksum),     0, 4);
+        chunkMs.Write(new byte[124],                                     0, 124);
+        chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.chunks),       0, 4);
 
         foreach(BlockChunk chunk in _chunks.Values)
         {
-            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.type), 0, 4);
+            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.type),    0, 4);
             chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.comment), 0, 4);
-            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.sector), 0, 8);
+            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.sector),  0, 8);
             chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.sectors), 0, 8);
-            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.offset), 0, 8);
-            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.length), 0, 8);
+            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.offset),  0, 8);
+            chunkMs.Write(BigEndianBitConverter.GetBytes(chunk.length),  0, 8);
         }
 
         byte[] plist = Encoding.UTF8.GetBytes(new NSDictionary
@@ -370,33 +373,33 @@ public sealed partial class Udif
         };
 
         _writingStream.Seek(0, SeekOrigin.End);
-        _writingStream.Write(plist, 0, plist.Length);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.signature), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.version), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.headerSize), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.flags), 0, 4);
+        _writingStream.Write(plist,                                                      0, plist.Length);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.signature),          0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.version),            0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.headerSize),         0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.flags),              0, 4);
         _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.runningDataForkOff), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkOff), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkLen), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkOff), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkLen), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentNumber), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentCount), 0, 4);
-        _writingStream.Write(_footer.segmentId.ToByteArray(), 0, 16);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkType), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkLen), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChk), 0, 4);
-        _writingStream.Write(new byte[124], 0, 124);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistOff), 0, 8);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistLen), 0, 8);
-        _writingStream.Write(new byte[120], 0, 120);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkType), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkLen), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChk), 0, 4);
-        _writingStream.Write(new byte[124], 0, 124);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.imageVariant), 0, 4);
-        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.sectorCount), 0, 8);
-        _writingStream.Write(new byte[12], 0, 12);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkOff),        0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkLen),        0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkOff),        0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.rsrcForkLen),        0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentNumber),      0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.segmentCount),       0, 4);
+        _writingStream.Write(_footer.segmentId.ToByteArray(),                            0, 16);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkType),    0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChkLen),     0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.dataForkChk),        0, 4);
+        _writingStream.Write(new byte[124],                                              0, 124);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistOff),           0, 8);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.plistLen),           0, 8);
+        _writingStream.Write(new byte[120],                                              0, 120);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkType),      0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChkLen),       0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.masterChk),          0, 4);
+        _writingStream.Write(new byte[124],                                              0, 124);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.imageVariant),       0, 4);
+        _writingStream.Write(BigEndianBitConverter.GetBytes(_footer.sectorCount),        0, 8);
+        _writingStream.Write(new byte[12],                                               0, 12);
 
         _writingStream.Flush();
         _writingStream.Close();
@@ -409,7 +412,7 @@ public sealed partial class Udif
 
     // TODO: Comments
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
@@ -417,7 +420,7 @@ public sealed partial class Udif
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -425,14 +428,16 @@ public sealed partial class Udif
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

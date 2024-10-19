@@ -27,15 +27,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 
+namespace Aaru.Images;
+
 public sealed partial class Alcohol120
 {
+#region Nested type: MediumType
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum MediumType : ushort
     {
@@ -45,6 +47,20 @@ public sealed partial class Alcohol120
         DVD  = 0x10,
         DVDR = 0x12
     }
+
+#endregion
+
+#region Nested type: SubchannelMode
+
+    enum SubchannelMode : byte
+    {
+        None        = 0x00,
+        Interleaved = 0x08
+    }
+
+#endregion
+
+#region Nested type: TrackMode
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     enum TrackMode : byte
@@ -62,9 +78,5 @@ public sealed partial class Alcohol120
         Mode2F2Alt = 0xAD
     }
 
-    enum SubchannelMode : byte
-    {
-        None        = 0x00,
-        Interleaved = 0x08
-    }
+#endregion
 }

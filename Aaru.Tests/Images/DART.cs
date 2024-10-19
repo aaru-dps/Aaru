@@ -23,21 +23,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class Dart : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DART");
-    public override IMediaImage Plugin    => new DiscImages.Dart();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "DART");
+    public override IMediaImage Plugin     => new Aaru.Images.Dart();
 
     public override BlockImageTestExpected[] Tests => new[]
     {
@@ -73,7 +73,9 @@ public class Dart : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "93e71b9ecdb39d3ec9245b4f451856d4"
         }
-        #region Unsupported LZH compression
+
+#region Unsupported LZH compression
+
         /*
         new BlockImageTestExpected
         {
@@ -108,6 +110,7 @@ public class Dart : BlockMediaImageTest
             MD5        = "93e71b9ecdb39d3ec9245b4f451856d4"
         },
         */
-        #endregion Unsupported LZH compression
+
+#endregion Unsupported LZH compression
     };
 }

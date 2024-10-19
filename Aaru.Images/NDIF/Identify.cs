@@ -27,43 +27,41 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Claunia.RsrcFork;
+
+namespace Aaru.Images;
 
 public sealed partial class Ndif
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(!imageFilter.HasResourceFork ||
-           imageFilter.ResourceForkLength == 0)
-            return false;
+        if(!imageFilter.HasResourceFork || imageFilter.ResourceForkLength == 0) return false;
 
         try
         {
             var rsrcFork = new ResourceFork(imageFilter.GetResourceForkStream());
 
-            if(!rsrcFork.ContainsKey(NDIF_RESOURCE))
-                return false;
+            if(!rsrcFork.ContainsKey(NDIF_RESOURCE)) return false;
 
             Resource rsrc = rsrcFork.GetResource(NDIF_RESOURCE);
 
             Stream dataFork  = imageFilter.GetDataForkStream();
             var    udifMagic = new byte[4];
-            dataFork.Read(udifMagic, 0, 4);
+            dataFork.EnsureRead(udifMagic, 0, 4);
 
-            if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B)
-                return false;
+            if(BitConverter.ToUInt32(udifMagic, 0) == 0x796C6F6B) return false;
 
-            if(rsrc.ContainsId(NDIF_RESOURCEID))
-                return true;
+            if(rsrc.ContainsId(NDIF_RESOURCEID)) return true;
         }
         catch(InvalidCastException)
         {
@@ -72,4 +70,6 @@ public sealed partial class Ndif
 
         return false;
     }
+
+#endregion
 }

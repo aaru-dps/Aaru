@@ -23,28 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Mbr : PartitionSchemeTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Master Boot Record");
+        Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Master Boot Record");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "concurrentdos_6.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 100800,
@@ -81,13 +81,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 352800,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "darwin_1.4.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 409248,
@@ -106,13 +106,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 818496,
                     Type     = "0xA8"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "darwin_6.0.2.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 204561,
@@ -149,13 +149,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 532224,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "darwin_8.0.1.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 150000,
@@ -192,13 +192,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 676063,
                     Type     = "0x0C"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_3.40.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 100800,
@@ -235,13 +235,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 656271,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_3.41.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 126945,
@@ -278,13 +278,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 353871,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_5.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 128016,
@@ -330,13 +330,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 767151,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_6.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 101745,
@@ -382,13 +382,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 454671,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_7.02.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 102753,
@@ -434,13 +434,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 812511,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_7.03.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 202545,
@@ -486,13 +486,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 869967,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "drdos_8.0.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -538,13 +538,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 906255,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "linux.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 20480,
@@ -590,13 +590,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 212992,
                     Type     = "0x83"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macosx_10.3.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 204800,
@@ -651,13 +651,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 819248,
                     Type     = "0xAF"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "macosx_10.4.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 102400,
@@ -712,13 +712,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 819378,
                     Type     = "0xAF"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_3.30a.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 65457,
@@ -863,13 +863,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 982863,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_5.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 102753,
@@ -987,13 +987,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1009071,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_6.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 51345,
@@ -1075,13 +1075,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 980847,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_6.20.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1136,13 +1136,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1006047,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_6.21.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1206,13 +1206,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1003023,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "msdos_6.22.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 245889,
@@ -1258,13 +1258,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 984879,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "multiuserdos_7.22r04.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 152145,
@@ -1310,13 +1310,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 456687,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "novelldos_7.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 252945,
@@ -1362,13 +1362,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 904239,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "opendos_7.01.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 307377,
@@ -1414,13 +1414,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 555471,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "parted.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 67584,
@@ -1448,13 +1448,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 133120,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_2000.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1500,13 +1500,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 964719,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_2.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 1022111,
@@ -1516,13 +1516,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_2.10.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 1022111,
@@ -1532,13 +1532,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_3.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 66465,
@@ -1548,13 +1548,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 63,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_3.10.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 66465,
@@ -1564,13 +1564,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 63,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_3.30.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 65457,
@@ -1715,13 +1715,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 982863,
                     Type     = "0x04"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_4.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1767,13 +1767,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 784287,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_5.00.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1819,13 +1819,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 764127,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "pcdos_6.10.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1871,13 +1871,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 702639,
                     Type     = "0x06"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "win95.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 205569,
@@ -1923,13 +1923,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1006047,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "win96osr25.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 307377,
@@ -1984,13 +1984,13 @@ public class Mbr : PartitionSchemeTest
                     Start    = 1006047,
                     Type     = "0x01"
                 }
-            }
+            ]
         },
         new PartitionTest
         {
             TestFile = "winnt_3.10.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
                     Length   = 204561,
@@ -2045,7 +2045,7 @@ public class Mbr : PartitionSchemeTest
                     Start    = 962640,
                     Type     = "0x07"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

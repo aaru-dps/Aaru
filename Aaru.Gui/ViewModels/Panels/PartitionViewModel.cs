@@ -27,29 +27,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 using Aaru.CommonTypes;
 
-public sealed class PartitionViewModel
-{
-    public PartitionViewModel(Partition partition)
-    {
-        NameText             = $"Partition name: {partition.Name}";
-        TypeText             = $"Partition type: {partition.Type}";
-        StartText            = $"Partition start: sector {partition.Start}, byte {partition.Offset}";
-        LengthText           = $"Partition length: {partition.Length} sectors, {partition.Size} bytes";
-        DescriptionLabelText = "Partition description:";
-        DescriptionText      = partition.Description;
-    }
+namespace Aaru.Gui.ViewModels.Panels;
 
-    public string NameText             { get; }
-    public string TypeText             { get; }
-    public string StartText            { get; }
-    public string LengthText           { get; }
-    public string DescriptionLabelText { get; }
-    public string DescriptionText      { get; }
+public sealed class PartitionViewModel(Partition partition)
+{
+    public string NameText { get; } = string.Format(Localization.Core.Partition_name_0, partition.Name);
+    public string TypeText { get; } = string.Format(Localization.Core.Partition_type_0, partition.Type);
+
+    public string StartText { get; } =
+        string.Format(Localization.Core.Partition_start_sector_0_byte_1, partition.Start, partition.Offset);
+
+    public string LengthText { get; } = string.Format(Localization.Core.Partition_length_0_sectors_1_bytes,
+                                                      partition.Length,
+                                                      partition.Size);
+
+    public string DescriptionLabelText { get; } = Localization.Core.Title_Partition_description;
+    public string DescriptionText      { get; } = partition.Description;
 }

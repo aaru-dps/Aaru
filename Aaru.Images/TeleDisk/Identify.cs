@@ -27,18 +27,21 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class TeleDisk
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -47,13 +50,11 @@ public sealed partial class TeleDisk
         Stream stream      = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        stream.Read(headerBytes, 0, 12);
+        stream.EnsureRead(headerBytes, 0, 12);
 
         _header.Signature = BitConverter.ToUInt16(headerBytes, 0);
 
-        if(_header.Signature != TD_MAGIC &&
-           _header.Signature != TD_ADV_COMP_MAGIC)
-            return false;
+        if(_header.Signature != TD_MAGIC && _header.Signature != TD_ADV_COMP_MAGIC) return false;
 
         _header.Sequence      = headerBytes[2];
         _header.DiskSet       = headerBytes[3];
@@ -69,34 +70,40 @@ public sealed partial class TeleDisk
         Array.Copy(headerBytes, headerBytesForCrc, 10);
         ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}", _header.Signature);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}", _header.Sequence);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}", _header.DiskSet);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}", _header.Version);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}", _header.DataRate);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}", _header.DriveType);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}", _header.Stepping);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}", _header.Sides);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}", _header.Crc);
-        AaruConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.signature = 0x{0:X4}",     _header.Signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sequence = 0x{0:X2}",      _header.Sequence);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.diskSet = 0x{0:X2}",       _header.DiskSet);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.version = 0x{0:X2}",       _header.Version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dataRate = 0x{0:X2}",      _header.DataRate);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.driveType = 0x{0:X2}",     _header.DriveType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.stepping = 0x{0:X2}",      _header.Stepping);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.dosAllocation = 0x{0:X2}", _header.DosAllocation);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.sides = 0x{0:X2}",         _header.Sides);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "header.crc = 0x{0:X4}",           _header.Crc);
+
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.calculated_header_crc_equals_0_X4, calculatedHeaderCrc);
 
         // We need more checks as the magic is too simply.
         // This may deny legal images
 
         // That would be much of a coincidence
-        if(_header.Crc == calculatedHeaderCrc)
-            return true;
+        if(_header.Crc == calculatedHeaderCrc) return true;
 
-        if(_header.Sequence != 0x00)
-            return false;
+        if(_header.Sequence != 0x00) return false;
 
         if(_header.DataRate != DATA_RATE_250_KBPS &&
            _header.DataRate != DATA_RATE_300_KBPS &&
            _header.DataRate != DATA_RATE_500_KBPS)
             return false;
 
-        return _header.DriveType is DRIVE_TYPE_35_DD or DRIVE_TYPE_35_ED or DRIVE_TYPE_35_HD or DRIVE_TYPE_525_DD
-                                 or DRIVE_TYPE_525_HD or DRIVE_TYPE_525_HD_DD_DISK or DRIVE_TYPE_8_INCH;
+        return _header.DriveType is DRIVE_TYPE_35_DD
+                                 or DRIVE_TYPE_35_ED
+                                 or DRIVE_TYPE_35_HD
+                                 or DRIVE_TYPE_525_DD
+                                 or DRIVE_TYPE_525_HD
+                                 or DRIVE_TYPE_525_HD_DD_DISK
+                                 or DRIVE_TYPE_8_INCH;
     }
+
+#endregion
 }

@@ -7,10 +7,6 @@
 //
 // Component      : Opera filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Opera filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,57 +23,54 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System.Collections.Generic;
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
     {
         // TODO: Find correct default encoding
-        Encoding = Encoding.ASCII;
+        _encoding = Encoding.ASCII;
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         ErrorNumber errno = imagePlugin.ReadSector(0 + partition.Start, out byte[] sbSector);
 
-        if(errno != ErrorNumber.NoError)
-            return errno;
+        if(errno != ErrorNumber.NoError) return errno;
 
         SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
 
-        if(sb.record_type    != 1 ||
-           sb.record_version != 1)
-            return ErrorNumber.InvalidArgument;
+        if(sb.record_type != 1 || sb.record_version != 1) return ErrorNumber.InvalidArgument;
 
-        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC)
-            return ErrorNumber.InvalidArgument;
+        if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC) return ErrorNumber.InvalidArgument;
 
         if(imagePlugin.Info.SectorSize is 2336 or 2352 or 2448)
             _volumeBlockSizeRatio = sb.block_size / 2048;
         else
             _volumeBlockSizeRatio = sb.block_size / imagePlugin.Info.SectorSize;
 
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Type         = "Opera",
-            VolumeName   = StringHandlers.CToString(sb.volume_label, Encoding),
+            Type         = FS_TYPE,
+            VolumeName   = StringHandlers.CToString(sb.volume_label, _encoding),
             ClusterSize  = sb.block_size,
             Clusters     = sb.block_count,
             Bootable     = true,
@@ -95,7 +88,7 @@ public sealed partial class OperaFS
                 Serial32 = sb.volume_id
             },
             PluginId = Id,
-            Type     = "Opera"
+            Type     = FS_TYPE
         };
 
         _image = imagePlugin;
@@ -110,8 +103,7 @@ public sealed partial class OperaFS
     /// <inheritdoc />
     public ErrorNumber Unmount()
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         _mounted = false;
 
@@ -123,11 +115,12 @@ public sealed partial class OperaFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = _statfs.ShallowCopy();
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

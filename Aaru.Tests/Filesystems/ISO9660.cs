@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Iso9660 : ReadOnlyFilesystemTest
-{
-    public Iso9660() : base("ISO9660") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "ISO9660");
+[TestFixture]
+public class Iso9660() : ReadOnlyFilesystemTest("iso9660")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ISO9660");
     public override IFilesystem Plugin     => new ISO9660();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile      = "toast_3.5.7_iso9660_apple.aif",
@@ -965,5 +963,5 @@ public class Iso9660 : ReadOnlyFilesystemTest
             SystemId      = "",
             VolumeName    = "test"
         }
-    };
+    ];
 }

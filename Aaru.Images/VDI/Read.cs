@@ -27,83 +27,88 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Images;
 
 public sealed partial class Vdi
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var vHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(vHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(vHdrB, 0, Marshal.SizeOf<Header>());
         _vHdr = Marshal.ByteArrayToStructureLittleEndian<Header>(vHdrB);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", _vHdr.creator);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}", _vHdr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.creator = {0}", _vHdr.creator);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.magic = {0}",   _vHdr.magic);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", _vHdr.majorVersion,
-                                   _vHdr.minorVersion);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.version = {0}.{1}", _vHdr.majorVersion, _vHdr.minorVersion);
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}", _vHdr.headerSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}", _vHdr.imageType);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}", _vHdr.imageFlags);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}", _vHdr.comments);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}", _vHdr.offsetBlocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}", _vHdr.offsetData);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}", _vHdr.cylinders);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}", _vHdr.heads);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}", _vHdr.spt);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}", _vHdr.sectorSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}", _vHdr.size);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}", _vHdr.blockSize);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}", _vHdr.blockExtraData);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}", _vHdr.blocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", _vHdr.allocatedBlocks);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}", _vHdr.uuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}", _vHdr.snapshotUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}", _vHdr.linkUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}", _vHdr.parentUuid);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalCylinders = {0}", _vHdr.logicalCylinders);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalHeads = {0}", _vHdr.logicalHeads);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSpt = {0}", _vHdr.logicalSpt);
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.headerSize = {0}",        _vHdr.headerSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageType = {0}",         _vHdr.imageType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.imageFlags = {0}",        _vHdr.imageFlags);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.description = {0}",       _vHdr.comments);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetBlocks = {0}",      _vHdr.offsetBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.offsetData = {0}",        _vHdr.offsetData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.cylinders = {0}",         _vHdr.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.heads = {0}",             _vHdr.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.spt = {0}",               _vHdr.spt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.sectorSize = {0}",        _vHdr.sectorSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.size = {0}",              _vHdr.size);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockSize = {0}",         _vHdr.blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blockExtraData = {0}",    _vHdr.blockExtraData);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.blocks = {0}",            _vHdr.blocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.allocatedBlocks = {0}",   _vHdr.allocatedBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.uuid = {0}",              _vHdr.uuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.snapshotUuid = {0}",      _vHdr.snapshotUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.linkUuid = {0}",          _vHdr.linkUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.parentUuid = {0}",        _vHdr.parentUuid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalCylinders = {0}",  _vHdr.logicalCylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalHeads = {0}",      _vHdr.logicalHeads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSpt = {0}",        _vHdr.logicalSpt);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "vHdr.logicalSectorSize = {0}", _vHdr.logicalSectorSize);
 
         if(_vHdr.imageType != VdiImageType.Normal)
         {
-            AaruConsole.ErrorWriteLine($"Support for image type {_vHdr.imageType} not yet implemented");
+            AaruConsole.ErrorWriteLine(string.Format(Localization.Support_for_image_type_0_not_yet_implemented,
+                                                     _vHdr.imageType));
 
             return ErrorNumber.InvalidArgument;
         }
 
-        DateTime start = DateTime.UtcNow;
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
+        var blockMapStopwatch = new Stopwatch();
+        blockMapStopwatch.Start();
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_Image_Block_Map);
         stream.Seek(_vHdr.offsetBlocks, SeekOrigin.Begin);
         var ibmB = new byte[_vHdr.blocks * 4];
-        stream.Read(ibmB, 0, ibmB.Length);
+        stream.EnsureRead(ibmB, 0, ibmB.Length);
         _ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
-        DateTime end = DateTime.UtcNow;
+        blockMapStopwatch.Stop();
 
-        AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
-                                   (end - start).TotalMilliseconds);
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Reading_Image_Block_Map_took_0_ms,
+                                   blockMapStopwatch.Elapsed.TotalMilliseconds);
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -113,43 +118,22 @@ public sealed partial class Vdi
         _imageInfo.Sectors              = _vHdr.size / _vHdr.sectorSize;
         _imageInfo.ImageSize            = _vHdr.size;
         _imageInfo.SectorSize           = _vHdr.sectorSize;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.MediaType            = MediaType.GENERIC_HDD;
         _imageInfo.Comments             = _vHdr.comments;
         _imageInfo.Version              = $"{_vHdr.majorVersion}.{_vHdr.minorVersion}";
 
-        switch(_vHdr.creator)
-        {
-            case SUN_VDI:
-                _imageInfo.Application = "Sun VirtualBox";
-
-                break;
-            case SUN_OLD_VDI:
-                _imageInfo.Application = "Sun xVM";
-
-                break;
-            case ORACLE_VDI:
-                _imageInfo.Application = "Oracle VirtualBox";
-
-                break;
-            case QEMUVDI:
-                _imageInfo.Application = "QEMU";
-
-                break;
-            case INNOTEK_VDI:
-            case INNOTEK_OLD_VDI:
-                _imageInfo.Application = "innotek VirtualBox";
-
-                break;
-            case DIC_VDI:
-                _imageInfo.Application = "DiscImageChef";
-
-                break;
-            case DIC_AARU:
-                _imageInfo.Application = "Aaru";
-
-                break;
-        }
+        _imageInfo.Application = _vHdr.creator switch
+                                 {
+                                     SUN_VDI                        => "Sun VirtualBox",
+                                     SUN_OLD_VDI                    => "Sun xVM",
+                                     ORACLE_VDI                     => "Oracle VirtualBox",
+                                     QEMUVDI                        => "QEMU",
+                                     INNOTEK_VDI or INNOTEK_OLD_VDI => "innotek VirtualBox",
+                                     DIC_VDI                        => "DiscImageChef",
+                                     DIC_AARU                       => "Aaru",
+                                     _                              => _imageInfo.Application
+                                 };
 
         _imageStream = stream;
 
@@ -166,8 +150,7 @@ public sealed partial class Vdi
             _imageInfo.SectorsPerTrack = _vHdr.spt;
         }
 
-        if(_imageInfo.Cylinders != 0)
-            return ErrorNumber.InvalidArgument;
+        if(_imageInfo.Cylinders != 0) return ErrorNumber.InvalidArgument;
 
         // Same calculation as done by VirtualBox
         _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
@@ -186,10 +169,7 @@ public sealed partial class Vdi
 
             _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
 
-            if(_imageInfo.Cylinders       == 0 &&
-               _imageInfo.Heads           == 0 &&
-               _imageInfo.SectorsPerTrack == 0)
-                break;
+            if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
         }
 
         return ErrorNumber.NoError;
@@ -200,11 +180,9 @@ public sealed partial class Vdi
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
-            return ErrorNumber.NoError;
+        if(_sectorCache.TryGetValue(sectorAddress, out buffer)) return ErrorNumber.NoError;
 
         ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
         ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
@@ -222,12 +200,11 @@ public sealed partial class Vdi
 
         var cluster = new byte[_vHdr.blockSize];
         _imageStream.Seek((long)imageOff, SeekOrigin.Begin);
-        _imageStream.Read(cluster, 0, (int)_vHdr.blockSize);
+        _imageStream.EnsureRead(cluster, 0, (int)_vHdr.blockSize);
         buffer = new byte[_vHdr.sectorSize];
         Array.Copy(cluster, (int)secOff, buffer, 0, _vHdr.sectorSize);
 
-        if(_sectorCache.Count > MAX_CACHED_SECTORS)
-            _sectorCache.Clear();
+        if(_sectorCache.Count > MAX_CACHED_SECTORS) _sectorCache.Clear();
 
         _sectorCache.Add(sectorAddress, buffer);
 
@@ -239,11 +216,9 @@ public sealed partial class Vdi
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -251,8 +226,7 @@ public sealed partial class Vdi
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -261,4 +235,6 @@ public sealed partial class Vdi
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

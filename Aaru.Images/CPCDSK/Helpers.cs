@@ -27,28 +27,25 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using Aaru.Decoders.Floppy;
 
+namespace Aaru.Images;
+
 public sealed partial class Cpcdsk
 {
-    static int SizeCodeToBytes(IBMSectorSizeCode code)
-    {
-        switch(code)
-        {
-            case IBMSectorSizeCode.EighthKilo:       return 128;
-            case IBMSectorSizeCode.QuarterKilo:      return 256;
-            case IBMSectorSizeCode.HalfKilo:         return 512;
-            case IBMSectorSizeCode.Kilo:             return 1024;
-            case IBMSectorSizeCode.TwiceKilo:        return 2048;
-            case IBMSectorSizeCode.FriceKilo:        return 4096;
-            case IBMSectorSizeCode.TwiceFriceKilo:   return 8192;
-            case IBMSectorSizeCode.FricelyFriceKilo: return 16384;
-            default:                                 return 0;
-        }
-    }
+    static int SizeCodeToBytes(IBMSectorSizeCode code) => code switch
+                                                          {
+                                                              IBMSectorSizeCode.EighthKilo       => 128,
+                                                              IBMSectorSizeCode.QuarterKilo      => 256,
+                                                              IBMSectorSizeCode.HalfKilo         => 512,
+                                                              IBMSectorSizeCode.Kilo             => 1024,
+                                                              IBMSectorSizeCode.TwiceKilo        => 2048,
+                                                              IBMSectorSizeCode.FriceKilo        => 4096,
+                                                              IBMSectorSizeCode.TwiceFriceKilo   => 8192,
+                                                              IBMSectorSizeCode.FricelyFriceKilo => 16384,
+                                                              _                                  => 0
+                                                          };
 }

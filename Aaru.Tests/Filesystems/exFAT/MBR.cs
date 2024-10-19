@@ -23,29 +23,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.exFAT;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.exFAT;
+
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR() : FilesystemTest("exfat")
 {
-    public MBR() : base("exFAT") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (MBR)");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (MBR)");
-
-    public override IFilesystem Plugin     => new exFAT();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -96,5 +93,5 @@ public class MBR : FilesystemTest
             ClusterSize  = 32768,
             VolumeSerial = "636E083B"
         }
-    };
+    ];
 }

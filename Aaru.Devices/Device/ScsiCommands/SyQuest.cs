@@ -27,13 +27,14 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
-using System;
 using Aaru.Console;
+
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -46,8 +47,15 @@ public partial class Device
     /// <param name="lba">Starting block.</param>
     /// <param name="blockSize">Block size in bytes.</param>
     public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                             out double duration) => SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false,
-                                                                  false, timeout, out duration);
+                             out double duration) => SyQuestRead6(out buffer,
+                                                                  out senseBuffer,
+                                                                  lba,
+                                                                  blockSize,
+                                                                  1,
+                                                                  false,
+                                                                  false,
+                                                                  timeout,
+                                                                  out duration);
 
     /// <summary>Sends the SyQuest READ LONG (6) command</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
@@ -73,7 +81,7 @@ public partial class Device
     /// <param name="blockSize">Block size in bytes.</param>
     /// <param name="transferLength">How many blocks to read.</param>
     public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, byte transferLength,
-                             bool inhibitDma, bool readLong, uint timeout, out double duration)
+                             bool       inhibitDma, bool readLong, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
         var  cdb = new byte[6];
@@ -85,14 +93,11 @@ public partial class Device
         cdb[3] = (byte)(lba & 0xFF);
         cdb[4] = transferLength;
 
-        if(inhibitDma)
-            cdb[5] += 0x80;
+        if(inhibitDma) cdb[5] += 0x80;
 
-        if(readLong)
-            cdb[5] += 0x40;
+        if(readLong) cdb[5] += 0x40;
 
-        if(!inhibitDma &&
-           !readLong)
+        if(!inhibitDma && !readLong)
             buffer = transferLength == 0 ? new byte[256 * blockSize] : new byte[transferLength * blockSize];
         else if(readLong)
         {
@@ -100,18 +105,32 @@ public partial class Device
             cdb[4] = 1;
         }
         else
-            buffer = Array.Empty<byte>();
+            buffer = [];
 
         if(!inhibitDma)
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        {
+            LastError = SendScsiCommand(cdb,
+                                        ref buffer,
+                                        out senseBuffer,
+                                        timeout,
+                                        ScsiDirection.In,
+                                        out duration,
                                         out sense);
+        }
         else
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        {
+            LastError = SendScsiCommand(cdb,
+                                        ref buffer,
+                                        out senseBuffer,
+                                        timeout,
+                                        ScsiDirection.None,
+                                        out duration,
                                         out sense);
+        }
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (6) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.SYQUEST_READ_6_took_0_ms, duration);
 
         return sense;
     }
@@ -162,14 +181,11 @@ public partial class Device
         cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
         cdb[8] = (byte)(transferLength & 0xFF);
 
-        if(inhibitDma)
-            cdb[9] += 0x80;
+        if(inhibitDma) cdb[9] += 0x80;
 
-        if(readLong)
-            cdb[9] += 0x40;
+        if(readLong) cdb[9] += 0x40;
 
-        if(!inhibitDma &&
-           !readLong)
+        if(!inhibitDma && !readLong)
             buffer = new byte[transferLength * blockSize];
         else if(readLong)
         {
@@ -177,18 +193,32 @@ public partial class Device
             cdb[4] = 1;
         }
         else
-            buffer = Array.Empty<byte>();
+            buffer = [];
 
         if(!inhibitDma)
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        {
+            LastError = SendScsiCommand(cdb,
+                                        ref buffer,
+                                        out senseBuffer,
+                                        timeout,
+                                        ScsiDirection.In,
+                                        out duration,
                                         out sense);
+        }
         else
-            LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        {
+            LastError = SendScsiCommand(cdb,
+                                        ref buffer,
+                                        out senseBuffer,
+                                        timeout,
+                                        ScsiDirection.None,
+                                        out duration,
                                         out sense);
+        }
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (10) took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.SYQUEST_READ_10_took_0_ms, duration);
 
         return sense;
     }

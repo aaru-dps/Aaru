@@ -23,28 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 // ReSharper disable CheckNamespace
-
-namespace Aaru.Tests.Filesystems.UDF._250;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Filesystems.UDF._250;
 
 [TestFixture]
 public class Whole : FilesystemTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Universal Disc Format", "2.50");
-    public override IFilesystem Plugin     => new UDF();
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format", "2.50");
+
+    public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -54,7 +54,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Linux UDFFS",
-            Type         = "UDF v2.50",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "595c5d0e4f338552LinuxUDF"
         },
@@ -67,7 +67,7 @@ public class Whole : FilesystemTest
             Clusters     = 1024000,
             ClusterSize  = 512,
             SystemId     = "*Apple Mac OS X UDF FS",
-            Type         = "UDF v2.50",
+            Type         = "udf",
             VolumeName   = "Volume label",
             VolumeSerial = "709E84A1 (Mac OS X newfs_udf) UDF Volume Set"
         },
@@ -80,7 +80,7 @@ public class Whole : FilesystemTest
             Clusters     = 262144,
             ClusterSize  = 512,
             SystemId     = "*NetBSD userland UDF",
-            Type         = "UDF v2.50",
+            Type         = "udf",
             VolumeName   = "anonymous",
             VolumeSerial = "672fe9a0114cdddb"
         },
@@ -93,9 +93,9 @@ public class Whole : FilesystemTest
             Clusters     = 262144,
             ClusterSize  = 512,
             SystemId     = "*NetBSD userland UDF",
-            Type         = "UDF v2.50",
+            Type         = "udf",
             VolumeName   = "anonymous",
             VolumeSerial = "723d15a55a5d8156"
         }
-    };
+    ];
 }

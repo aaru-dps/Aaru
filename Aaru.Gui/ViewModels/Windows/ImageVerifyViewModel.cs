@@ -27,14 +27,13 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Gui.ViewModels.Windows;
-
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 using System.Threading;
 using Aaru.CommonTypes.Interfaces;
@@ -42,9 +41,14 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Humanizer;
+using Humanizer.Localisation;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageVerifyViewModel : ViewModelBase
 {
@@ -96,14 +100,21 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         StopCommand          = ReactiveCommand.Create(ExecuteStopCommand);
         _inputFormat         = inputFormat;
         _cancel              = false;
-        ErrorList            = new ObservableCollection<LbaModel>();
-        UnknownList          = new ObservableCollection<LbaModel>();
+        ErrorList            = [];
+        UnknownList          = [];
         VerifyImageEnabled   = true;
         VerifySectorsEnabled = true;
         CloseVisible         = true;
         StartVisible         = true;
         OptionsVisible       = true;
     }
+
+    public string VerifyImageLabel   => UI.Verify_media_image_if_supported;
+    public string VerifySectorsLabel => UI.Verify_all_sectors_if_supported;
+    public string LBALabel           => UI.Title_LBA;
+    public string StartLabel         => UI.ButtonLabel_Start;
+    public string CloseLabel         => UI.ButtonLabel_Close;
+    public string StopLabel          => UI.ButtonLabel_Stop;
 
     public ObservableCollection<LbaModel> ErrorList    { get; }
     public ObservableCollection<LbaModel> UnknownList  { get; }
@@ -343,6 +354,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
         new Thread(DoWork).Start();
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         bool formatHasTracks;
@@ -364,8 +376,7 @@ public sealed class ImageVerifyViewModel : ViewModelBase
             ProgressVisible  = true;
             ProgressMaxValue = 0;
 
-            if(VerifyImageChecked || VerifySectorsChecked)
-                ProgressMaxValue = 1;
+            if(VerifyImageChecked || VerifySectorsChecked) ProgressMaxValue = 1;
 
             if(formatHasTracks && inputOptical != null)
                 ProgressMaxValue += inputOptical.Tracks.Count;
@@ -389,17 +400,19 @@ public sealed class ImageVerifyViewModel : ViewModelBase
 
         if(VerifyImageChecked)
         {
-            if(!(_inputFormat is IVerifiableImage verifiableImage))
+            if(_inputFormat is not IVerifiableImage verifiableImage)
+            {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     ImageResultVisible = true;
-                    ImageResultText    = "Disc image does not support verification.";
+                    ImageResultText    = UI.Disc_image_does_not_support_verification;
                 });
+            }
             else
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    ProgressText = "Checking media image...";
+                    ProgressText = UI.Checking_media_image;
 
                     if(VerifySectorsChecked)
                         ProgressValue = 1;
@@ -409,43 +422,33 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     Progress2Indeterminate = true;
                 });
 
-                DateTime startCheck      = DateTime.UtcNow;
-                bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
-                DateTime endCheck        = DateTime.UtcNow;
-
-                TimeSpan checkTime = endCheck - startCheck;
+                var chkStopwatch = new Stopwatch();
+                chkStopwatch.Start();
+                bool? discCheckStatus = verifiableImage.VerifyMediaImage();
+                chkStopwatch.Stop();
 
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     ImageResultVisible = true;
 
-                    switch(discCheckStatus)
-                    {
-                        case true:
-                            ImageResultText = "Disc image checksums are correct";
-
-                            break;
-                        case false:
-                            ImageResultText = "Disc image checksums are incorrect";
-
-                            break;
-                        case null:
-                            ImageResultText = "Disc image does not contain checksums";
-
-                            break;
-                    }
+                    ImageResultText = discCheckStatus switch
+                                      {
+                                          true  => UI.Disc_image_checksums_are_correct,
+                                          false => UI.Disc_image_checksums_are_incorrect,
+                                          null  => UI.Disc_image_does_not_contain_checksums
+                                      };
                 });
 
-                AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine(UI.Checking_disc_image_checksums_took_0,
+                                             chkStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
             }
         }
 
         if(VerifySectorsChecked)
         {
-            DateTime    startCheck  = DateTime.Now;
-            DateTime    endCheck    = startCheck;
-            List<ulong> failingLbas = new();
-            List<ulong> unknownLbas = new();
+            var         chkStopwatch = new Stopwatch();
+            List<ulong> failingLbas  = [];
+            List<ulong> unknownLbas  = [];
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -459,13 +462,15 @@ public sealed class ImageVerifyViewModel : ViewModelBase
             {
                 ulong currentSectorAll = 0;
 
-                startCheck = DateTime.UtcNow;
+                chkStopwatch.Restart();
 
                 foreach(Track currentTrack in inputOptical.Tracks)
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ProgressText = $"Verifying track {currentTrack.Sequence} of {inputOptical.Tracks.Count}";
+                        ProgressText = string.Format(UI.Verifying_track_0_of_1,
+                                                     currentTrack.Sequence,
+                                                     inputOptical.Tracks.Count);
 
                         ProgressValue++;
                     });
@@ -493,19 +498,31 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                         {
                             Progress2Value = all / 512d;
 
-                            Progress2Text =
-                                $"Checking sector {all} of {_inputFormat.Info.Sectors}, on track {currentTrack.Sequence}";
+                            Progress2Text = string.Format(UI.Checking_sector_0_of_1_on_track_2,
+                                                          all,
+                                                          _inputFormat.Info.Sectors,
+                                                          currentTrack.Sequence);
                         });
 
                         List<ulong> tempFailingLbas;
                         List<ulong> tempUnknownLbas;
 
                         if(remainingSectors < 512)
-                            inputOptical.VerifySectors(currentSector, (uint)remainingSectors, currentTrack.Sequence,
-                                                       out tempFailingLbas, out tempUnknownLbas);
-                        else
-                            inputOptical.VerifySectors(currentSector, 512, currentTrack.Sequence, out tempFailingLbas,
+                        {
+                            inputOptical.VerifySectors(currentSector,
+                                                       (uint)remainingSectors,
+                                                       currentTrack.Sequence,
+                                                       out tempFailingLbas,
                                                        out tempUnknownLbas);
+                        }
+                        else
+                        {
+                            inputOptical.VerifySectors(currentSector,
+                                                       512,
+                                                       currentTrack.Sequence,
+                                                       out tempFailingLbas,
+                                                       out tempUnknownLbas);
+                        }
 
                         failingLbas.AddRange(tempFailingLbas);
 
@@ -526,14 +543,14 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     }
                 }
 
-                endCheck = DateTime.UtcNow;
+                chkStopwatch.Stop();
             }
-            else if(!(verifiableSectorsImage is null))
+            else if(verifiableSectorsImage is not null)
             {
                 ulong remainingSectors = _inputFormat.Info.Sectors;
                 ulong currentSector    = 0;
 
-                startCheck = DateTime.UtcNow;
+                chkStopwatch.Restart();
 
                 while(remainingSectors > 0)
                 {
@@ -554,18 +571,26 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         Progress2Value = (int)(sector / 512);
-                        Progress2Text  = $"Checking sector {sector} of {_inputFormat.Info.Sectors}";
+                        Progress2Text  = string.Format(UI.Checking_sector_0_of_1, sector, _inputFormat.Info.Sectors);
                     });
 
                     List<ulong> tempFailingLbas;
                     List<ulong> tempUnknownLbas;
 
                     if(remainingSectors < 512)
-                        verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors, out tempFailingLbas,
+                    {
+                        verifiableSectorsImage.VerifySectors(currentSector,
+                                                             (uint)remainingSectors,
+                                                             out tempFailingLbas,
                                                              out tempUnknownLbas);
+                    }
                     else
-                        verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                    {
+                        verifiableSectorsImage.VerifySectors(currentSector,
+                                                             512,
+                                                             out tempFailingLbas,
                                                              out tempUnknownLbas);
+                    }
 
                     failingLbas.AddRange(tempFailingLbas);
 
@@ -583,11 +608,11 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     }
                 }
 
-                endCheck = DateTime.UtcNow;
+                chkStopwatch.Stop();
             }
 
-            TimeSpan checkTime = endCheck - startCheck;
-            AaruConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
+            AaruConsole.VerboseWriteLine(UI.Checking_sector_checksums_took_0,
+                                         chkStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second));
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -596,18 +621,20 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     if(failingLbas.Count == (int)_inputFormat.Info.Sectors)
                     {
                         SectorsErrorsAllVisible = true;
-                        SectorsErrorsAllText    = "All sectors contain errors";
+                        SectorsErrorsAllText    = UI.All_sectors_contain_errors;
                     }
                     else
                     {
-                        SectorErrorsText    = "LBAs with error:";
+                        SectorErrorsText    = UI.LBAs_with_error;
                         SectorErrorsVisible = true;
 
                         foreach(ulong t in failingLbas)
+                        {
                             ErrorList.Add(new LbaModel
                             {
                                 Lba = t.ToString()
                             });
+                        }
                     }
                 }
 
@@ -616,27 +643,30 @@ public sealed class ImageVerifyViewModel : ViewModelBase
                     if(unknownLbas.Count == (int)_inputFormat.Info.Sectors)
                     {
                         SectorsUnknownAllVisible = true;
-                        SectorsUnknownAllText    = "All sectors are unknown";
+                        SectorsUnknownAllText    = UI.All_sectors_are_unknown;
                     }
                     else
                     {
-                        SectorsUnknownsText    = "Unknown LBAs:";
+                        SectorsUnknownsText    = UI.Unknown_LBAs;
                         SectorsUnknownsVisible = true;
 
                         foreach(ulong t in unknownLbas)
+                        {
                             UnknownList.Add(new LbaModel
                             {
                                 Lba = t.ToString()
                             });
+                        }
                     }
                 }
 
                 SectorSummaryVisible    = true;
-                TotalSectorsText        = $"Total sectors........... {_inputFormat.Info.Sectors}";
-                TotalSectorErrorsText   = $"Total errors............ {failingLbas.Count}";
-                TotalSectorUnknownsText = $"Total unknowns.......... {unknownLbas.Count}";
+                TotalSectorsText        = string.Format(UI.Total_sectors,  _inputFormat.Info.Sectors);
+                TotalSectorErrorsText   = string.Format(UI.Total_errors,   failingLbas.Count);
+                TotalSectorUnknownsText = string.Format(UI.Total_unknowns, unknownLbas.Count);
 
-                TotalSectorErrorsUnknownsText = $"Total errors+unknowns... {failingLbas.Count + unknownLbas.Count}";
+                TotalSectorErrorsUnknownsText =
+                    string.Format(UI.Total_errors_plus_unknowns, failingLbas.Count + unknownLbas.Count);
             });
         }
 

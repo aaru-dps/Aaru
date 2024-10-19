@@ -27,18 +27,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Models;
 
 using System.Collections.ObjectModel;
 using Aaru.Gui.ViewModels.Panels;
 using Avalonia.Media.Imaging;
 
+namespace Aaru.Gui.Models;
+
 public sealed class DeviceModel
 {
-    public DeviceModel() => Media = new ObservableCollection<MediaModel>();
+    public DeviceModel() => Media = [];
 
     public Bitmap              Icon      { get; set; }
     public string              Name      { get; set; }

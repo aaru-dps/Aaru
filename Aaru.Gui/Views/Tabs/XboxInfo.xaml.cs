@@ -27,13 +27,13 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Views.Tabs;
 
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui.Views.Tabs;
 
 public sealed class XboxInfo : UserControl
 {

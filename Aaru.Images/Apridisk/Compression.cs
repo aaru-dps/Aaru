@@ -27,13 +27,13 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
+
+namespace Aaru.Images;
 
 public sealed partial class Apridisk
 {
@@ -50,8 +50,7 @@ public sealed partial class Apridisk
             var blklen = BitConverter.ToUInt16(compressed, readp);
             readp += 2;
 
-            for(var i = 0; i < blklen; i++)
-                buffer.WriteByte(compressed[readp]);
+            for(var i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
 
             uLen += blklen;
             readp++;

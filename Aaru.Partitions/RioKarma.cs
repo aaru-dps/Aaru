@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Partitions;
+
 /// <inheritdoc />
 /// <summary>Implements decoding of Rio Karma partitions</summary>
 public sealed class RioKarma : IPartition
@@ -48,12 +48,16 @@ public sealed class RioKarma : IPartition
     const ushort KARMA_MAGIC = 0xAB56;
     const byte   ENTRY_MAGIC = 0x4D;
 
+#region IPartition Members
+
     /// <inheritdoc />
-    public string Name => "Rio Karma partitioning";
+    public string Name => Localization.RioKarma_Name;
+
     /// <inheritdoc />
     public Guid Id => new("246A6D93-4F1A-1F8A-344D-50187A5513A9");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
@@ -61,30 +65,49 @@ public sealed class RioKarma : IPartition
         partitions = null;
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Table table = Marshal.ByteArrayToStructureLittleEndian<Table>(sector);
 
-        if(table.magic != KARMA_MAGIC)
-            return false;
+        if(table.magic != KARMA_MAGIC) return false;
 
         ulong counter = 0;
 
-        partitions = (from entry in table.entries let part = new Partition
-                         {
-                             Start    = entry.offset,
-                             Offset   = (ulong)(entry.offset * sector.Length),
-                             Size     = entry.size,
-                             Length   = (ulong)(entry.size * sector.Length),
-                             Type     = "Rio Karma",
-                             Sequence = counter++,
-                             Scheme   = Name
-                         } where entry.type == ENTRY_MAGIC select part).ToList();
+        partitions = (from entry in table.entries
+                      let part = new Partition
+                      {
+                          Start    = entry.offset,
+                          Offset   = (ulong)(entry.offset * sector.Length),
+                          Size     = entry.size,
+                          Length   = (ulong)(entry.size * sector.Length),
+                          Type     = Localization.Rio_Karma,
+                          Sequence = counter++,
+                          Scheme   = Name
+                      }
+                      where entry.type == ENTRY_MAGIC
+                      select part).ToList();
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Entry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Entry
+    {
+        public readonly uint reserved;
+        public readonly byte type;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] reserved2;
+        public readonly uint offset;
+        public readonly uint size;
+    }
+
+#endregion
+
+#region Nested type: Table
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Table
@@ -98,14 +121,5 @@ public sealed class RioKarma : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Entry
-    {
-        public readonly uint reserved;
-        public readonly byte type;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public readonly byte[] reserved2;
-        public readonly uint offset;
-        public readonly uint size;
-    }
+#endregion
 }

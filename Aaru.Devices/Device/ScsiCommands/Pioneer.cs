@@ -27,12 +27,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
 using Aaru.Console;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -64,12 +64,17 @@ public partial class Device
 
         buffer = new byte[blockSize * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PIONEER_READ_CD_DA_took_0_ms, duration);
 
         return sense;
     }
@@ -102,12 +107,17 @@ public partial class Device
         var transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
         buffer = new byte[blockSize * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PIONEER_READ_CD_DA_MSF_took_0_ms, duration);
 
         return sense;
     }
@@ -125,8 +135,8 @@ public partial class Device
     /// <param name="wholeSector">If set to <c>true</c>, returns all 2352 bytes of sector data.</param>
     /// <param name="lba">Start block address.</param>
     /// <param name="transferLength">How many blocks to read.</param>
-    public bool PioneerReadCdXa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
-                                bool errorFlags, bool wholeSector, uint timeout, out double duration)
+    public bool PioneerReadCdXa(out byte[] buffer,     out byte[] senseBuffer, uint lba,     uint       transferLength,
+                                bool       errorFlags, bool       wholeSector, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[12];
@@ -156,12 +166,17 @@ public partial class Device
             cdb[6] = 0x00;
         }
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.PIONEER_READ_CD_XA_took_0_ms, duration);
 
         return sense;
     }

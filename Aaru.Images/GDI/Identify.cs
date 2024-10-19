@@ -27,19 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.RegularExpressions;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
+using Aaru.Helpers;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Gdi
 {
+#region IOpticalMediaImage Members
+
     // Due to .gdi format, this method must parse whole file, ignoring errors (those will be returned by OpenImage()).
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
@@ -48,7 +53,7 @@ public sealed partial class Gdi
         {
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
             var testArray = new byte[512];
-            imageFilter.GetDataForkStream().Read(testArray, 0, 512);
+            imageFilter.GetDataForkStream().EnsureRead(testArray, 0, 512);
             imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
 
             // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
@@ -56,23 +61,18 @@ public sealed partial class Gdi
 
             for(var i = 0; i < 512; i++)
             {
-                if(i >= imageFilter.GetDataForkStream().Length)
-                    break;
+                if(i >= imageFilter.GetDataForkStream().Length) break;
 
                 if(testArray[i] == 0)
                 {
-                    if(twoConsecutiveNulls)
-                        return false;
+                    if(twoConsecutiveNulls) return false;
 
                     twoConsecutiveNulls = true;
                 }
                 else
                     twoConsecutiveNulls = false;
 
-                if(testArray[i] < 0x20  &&
-                   testArray[i] != 0x0A &&
-                   testArray[i] != 0x0D &&
-                   testArray[i] != 0x00)
+                if(testArray[i] < 0x20 && testArray[i] != 0x0A && testArray[i] != 0x0D && testArray[i] != 0x00)
                     return false;
             }
 
@@ -88,8 +88,7 @@ public sealed partial class Gdi
 
                 if(lineNumber == 1)
                 {
-                    if(!int.TryParse(line, out tracks))
-                        return false;
+                    if(!int.TryParse(line, out tracks)) return false;
                 }
                 else
                 {
@@ -97,25 +96,24 @@ public sealed partial class Gdi
 
                     Match trackMatch = regexTrack.Match(line ?? "");
 
-                    if(!trackMatch.Success)
-                        return false;
+                    if(!trackMatch.Success) return false;
 
                     tracksFound++;
                 }
             }
 
-            if(tracks == 0)
-                return false;
+            if(tracks == 0) return false;
 
             return tracks == tracksFound;
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.BasePath);
-            AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-            AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(Localization.Exception_trying_to_identify_image_file_0, imageFilter.BasePath);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
     }
+
+#endregion
 }

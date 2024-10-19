@@ -23,25 +23,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.pce;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images.pce;
+
 [TestFixture]
 public class DiskCopy42 : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "pce", "DiskCopy 4.2");
-    public override IMediaImage Plugin => new DiscImages.DiskCopy42();
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "pce", "DiskCopy 4.2");
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override IMediaImage Plugin => new Aaru.Images.DiskCopy42();
+
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "mf1dd_gcr.dc42.lz",
@@ -49,14 +50,14 @@ public class DiskCopy42 : BlockMediaImageTest
             Sectors    = 800,
             SectorSize = 512,
             Md5        = "c5d92544c3e78b7f0a9b4baaa9a64eec",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 800
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -65,14 +66,14 @@ public class DiskCopy42 : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "de3f85896f771b7e5bc4c9e3926d64e4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -81,14 +82,14 @@ public class DiskCopy42 : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "93e71b9ecdb39d3ec9245b4f451856d4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         }
-    };
+    ];
 }

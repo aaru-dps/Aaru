@@ -27,17 +27,39 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Images;
+
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class Chd
 {
+#region Nested type: CompressedMapHeaderV5
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CompressedMapHeaderV5
+    {
+        /// <summary>Length of compressed map</summary>
+        public readonly uint length;
+        /// <summary>Offset of first block (48 bits) and CRC16 of map (16 bits)</summary>
+        public readonly ulong startAndCrc;
+        /// <summary>Bits used to encode compressed length on map entry</summary>
+        public readonly byte bitsUsedToEncodeCompLength;
+        /// <summary>Bits used to encode self-refs</summary>
+        public readonly byte bitsUsedToEncodeSelfRefs;
+        /// <summary>Bits used to encode parent unit refs</summary>
+        public readonly byte bitsUsedToEncodeParentUnits;
+        public readonly byte reserved;
+    }
+
+#endregion
+
+#region Nested type: HeaderV1
+
     // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
     // Sectors are fixed at 512 bytes/sector
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -71,6 +93,10 @@ public sealed partial class Chd
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly byte[] parentmd5;
     }
+
+#endregion
+
+#region Nested type: HeaderV2
 
     // Hunks are represented in a 64 bit integer with 44 bit as offset, 20 bits as length
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -106,6 +132,10 @@ public sealed partial class Chd
         /// <summary>Bytes per sector</summary>
         public readonly uint seclen;
     }
+
+#endregion
+
+#region Nested type: HeaderV3
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HeaderV3
@@ -143,31 +173,9 @@ public sealed partial class Chd
         public readonly byte[] parentsha1;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct MapEntryV3
-    {
-        /// <summary>Offset to hunk from start of image</summary>
-        public readonly ulong offset;
-        /// <summary>CRC32 of uncompressed hunk</summary>
-        public readonly uint crc;
-        /// <summary>Lower 16 bits of length</summary>
-        public readonly ushort lengthLsb;
-        /// <summary>Upper 8 bits of length</summary>
-        public readonly byte length;
-        /// <summary>Hunk flags</summary>
-        public readonly byte flags;
-    }
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TrackOld
-    {
-        public uint type;
-        public uint subType;
-        public uint dataSize;
-        public uint subSize;
-        public uint frames;
-        public uint extraFrames;
-    }
+#region Nested type: HeaderV4
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HeaderV4
@@ -201,6 +209,10 @@ public sealed partial class Chd
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
         public readonly byte[] rawsha1;
     }
+
+#endregion
+
+#region Nested type: HeaderV5
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct HeaderV5
@@ -241,21 +253,50 @@ public sealed partial class Chd
         public readonly byte[] parentsha1;
     }
 
+#endregion
+
+#region Nested type: HunkSector
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CompressedMapHeaderV5
+    readonly struct HunkSector
     {
-        /// <summary>Length of compressed map</summary>
-        public readonly uint length;
-        /// <summary>Offset of first block (48 bits) and CRC16 of map (16 bits)</summary>
-        public readonly ulong startAndCrc;
-        /// <summary>Bits used to encode compressed length on map entry</summary>
-        public readonly byte bitsUsedToEncodeCompLength;
-        /// <summary>Bits used to encode self-refs</summary>
-        public readonly byte bitsUsedToEncodeSelfRefs;
-        /// <summary>Bits used to encode parent unit refs</summary>
-        public readonly byte bitsUsedToEncodeParentUnits;
-        public readonly byte reserved;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+        public readonly ulong[] hunkEntry;
     }
+
+#endregion
+
+#region Nested type: HunkSectorSmall
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct HunkSectorSmall
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        public readonly uint[] hunkEntry;
+    }
+
+#endregion
+
+#region Nested type: MapEntryV3
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct MapEntryV3
+    {
+        /// <summary>Offset to hunk from start of image</summary>
+        public readonly ulong offset;
+        /// <summary>CRC32 of uncompressed hunk</summary>
+        public readonly uint crc;
+        /// <summary>Lower 16 bits of length</summary>
+        public readonly ushort lengthLsb;
+        /// <summary>Upper 8 bits of length</summary>
+        public readonly byte length;
+        /// <summary>Hunk flags</summary>
+        public readonly byte flags;
+    }
+
+#endregion
+
+#region Nested type: MapEntryV5
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MapEntryV5
@@ -266,6 +307,10 @@ public sealed partial class Chd
         public readonly ulong offsetAndCrc;
     }
 
+#endregion
+
+#region Nested type: MetadataHeader
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MetadataHeader
     {
@@ -274,17 +319,20 @@ public sealed partial class Chd
         public readonly ulong next;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct HunkSector
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public readonly ulong[] hunkEntry;
-    }
+#endregion
+
+#region Nested type: TrackOld
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct HunkSectorSmall
+    struct TrackOld
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public readonly uint[] hunkEntry;
+        public uint type;
+        public uint subType;
+        public uint dataSize;
+        public uint subSize;
+        public uint frames;
+        public uint extraFrames;
     }
+
+#endregion
 }

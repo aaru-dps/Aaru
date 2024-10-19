@@ -27,16 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Logging;
-
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using Aaru.Devices;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Implements a log in the format used by IMGBurn</summary>
 sealed class IbgLog
@@ -45,8 +46,8 @@ sealed class IbgLog
     readonly double        _ibgDivider;
     readonly string        _ibgMediaType;
     readonly StringBuilder _ibgSb;
+    readonly Stopwatch     _ibgStopwatch;
     readonly string        _logFile;
-    DateTime               _ibgDatePoint;
     ulong                  _ibgIntSector;
     double                 _ibgIntSpeed;
     double                 _ibgMaxSpeed;
@@ -60,18 +61,19 @@ sealed class IbgLog
     /// <param name="currentProfile">Profile as defined by SCSI MultiMedia Commands specification</param>
     internal IbgLog(string outputFile, ushort currentProfile)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _logFile      = outputFile;
         _ibgSb        = new StringBuilder();
-        _ibgDatePoint = DateTime.Now;
+        _ibgStopwatch = new Stopwatch();
         _ibgCulture   = new CultureInfo("en-US");
         _ibgStartSet  = false;
         _ibgMaxSpeed  = 0;
         _ibgIntSpeed  = 0;
         _ibgSnaps     = 0;
         _ibgIntSector = 0;
+
+        _ibgStopwatch.Start();
 
         switch(currentProfile)
         {
@@ -236,30 +238,26 @@ sealed class IbgLog
     /// <param name="currentSpeed">Current speed at the snapshot</param>
     internal void Write(ulong sector, double currentSpeed)
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
 
         _ibgIntSpeed   += currentSpeed;
-        _ibgSampleRate += (int)Math.Floor((DateTime.Now - _ibgDatePoint).TotalMilliseconds);
+        _ibgSampleRate += (int)Math.Floor(_ibgStopwatch.Elapsed.TotalMilliseconds);
         _ibgSnaps++;
 
-        if(_ibgSampleRate < 100)
-            return;
+        if(_ibgSampleRate < 100) return;
 
-        if(_ibgIntSpeed > 0 &&
-           !_ibgStartSet)
+        if(_ibgIntSpeed > 0 && !_ibgStartSet)
         {
             _ibgStartSpeed = _ibgIntSpeed / _ibgSnaps / _ibgDivider;
             _ibgStartSet   = true;
         }
 
-        _ibgSb.AppendFormat("{0:0.00},{1},{2:0},0", _ibgIntSpeed / _ibgSnaps / _ibgDivider, _ibgIntSector,
-                            _ibgSampleRate).AppendLine();
+        _ibgSb.Append($"{_ibgIntSpeed / _ibgSnaps / _ibgDivider:0.00},{_ibgIntSector},{_ibgSampleRate:0},0")
+              .AppendLine();
 
-        if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed)
-            _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
+        if(_ibgIntSpeed / _ibgSnaps / _ibgDivider > _ibgMaxSpeed) _ibgMaxSpeed = _ibgIntSpeed / _ibgDivider;
 
-        _ibgDatePoint  = DateTime.Now;
+        _ibgStopwatch.Restart();
         _ibgIntSpeed   = 0;
         _ibgSampleRate = 0;
         _ibgSnaps      = 0;
@@ -274,11 +272,12 @@ sealed class IbgLog
     /// <param name="currentSpeed">Speed at the end</param>
     /// <param name="averageSpeed">Average speed</param>
     /// <param name="devicePath">Device path</param>
-    internal void Close(Device dev, ulong blocks, ulong blockSize, double totalSeconds, double currentSpeed,
+    internal void Close(Device dev,          ulong  blocks, ulong blockSize, double totalSeconds, double currentSpeed,
                         double averageSpeed, string devicePath)
     {
-        if(_logFile == null)
-            return;
+        if(_logFile == null) return;
+
+        _ibgStopwatch.Stop();
 
         var    ibgFs     = new FileStream(_logFile, FileMode.Create);
         var    ibgHeader = new StringBuilder();
@@ -296,42 +295,41 @@ sealed class IbgLog
         ibgHeader.AppendLine("[START_CONFIGURATION]");
         ibgHeader.AppendLine("IBGD_VERSION=2");
         ibgHeader.AppendLine();
-        ibgHeader.AppendFormat("DATE={0}", DateTime.Now).AppendLine();
+        ibgHeader.Append($"DATE={DateTime.Now}").AppendLine();
         ibgHeader.AppendLine();
-        ibgHeader.AppendFormat("SAMPLE_RATE={0}", 100).AppendLine();
+        ibgHeader.Append($"SAMPLE_RATE={100}").AppendLine();
 
         ibgHeader.AppendLine();
 
-        ibgHeader.AppendFormat("DEVICE=[0:0:0] {0} {1} ({2}) ({3})", dev.Manufacturer, dev.Model, devicePath,
-                               ibgBusType).AppendLine();
+        ibgHeader.Append($"DEVICE=[0:0:0] {dev.Manufacturer} {dev.Model} ({devicePath}) ({ibgBusType})").AppendLine();
 
         ibgHeader.AppendLine("DEVICE_ADDRESS=0:0:0");
-        ibgHeader.AppendFormat("DEVICE_MAKEMODEL={0} {1}", dev.Manufacturer, dev.Model).AppendLine();
-        ibgHeader.AppendFormat("DEVICE_FIRMWAREVERSION={0}", dev.FirmwareRevision).AppendLine();
-        ibgHeader.AppendFormat("DEVICE_DRIVELETTER={0}", devicePath).AppendLine();
-        ibgHeader.AppendFormat("DEVICE_BUSTYPE={0}", ibgBusType).AppendLine();
+        ibgHeader.Append($"DEVICE_MAKEMODEL={dev.Manufacturer} {dev.Model}").AppendLine();
+        ibgHeader.Append($"DEVICE_FIRMWAREVERSION={dev.FirmwareRevision}").AppendLine();
+        ibgHeader.Append($"DEVICE_DRIVELETTER={devicePath}").AppendLine();
+        ibgHeader.Append($"DEVICE_BUSTYPE={ibgBusType}").AppendLine();
         ibgHeader.AppendLine();
 
-        ibgHeader.AppendFormat("MEDIA_TYPE={0}", _ibgMediaType).AppendLine();
+        ibgHeader.Append($"MEDIA_TYPE={_ibgMediaType}").AppendLine();
         ibgHeader.AppendLine("MEDIA_BOOKTYPE=Unknown");
         ibgHeader.AppendLine("MEDIA_ID=N/A");
         ibgHeader.AppendLine("MEDIA_TRACKPATH=PTP");
         ibgHeader.AppendLine("MEDIA_SPEEDS=N/A");
-        ibgHeader.AppendFormat("MEDIA_CAPACITY={0}", blocks).AppendLine();
+        ibgHeader.Append($"MEDIA_CAPACITY={blocks}").AppendLine();
         ibgHeader.AppendLine("MEDIA_LAYER_BREAK=0");
         ibgHeader.AppendLine();
         ibgHeader.AppendLine("DATA_IMAGEFILE=/dev/null");
-        ibgHeader.AppendFormat("DATA_SECTORS={0}", blocks).AppendLine();
-        ibgHeader.AppendFormat("DATA_TYPE=MODE1/{0}", blockSize).AppendLine();
+        ibgHeader.Append($"DATA_SECTORS={blocks}").AppendLine();
+        ibgHeader.Append($"DATA_TYPE=MODE1/{blockSize}").AppendLine();
         ibgHeader.AppendLine("DATA_VOLUMEIDENTIFIER=");
         ibgHeader.AppendLine();
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_START={0:0.00}", _ibgStartSpeed).AppendLine();
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_END={0:0.00}", currentSpeed / _ibgDivider).AppendLine();
+        ibgHeader.Append(_ibgCulture, $"VERIFY_SPEED_START={_ibgStartSpeed:0.00}").AppendLine();
+        ibgHeader.Append(_ibgCulture, $"VERIFY_SPEED_END={currentSpeed / _ibgDivider:0.00}").AppendLine();
 
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_AVERAGE={0:0.00}", averageSpeed / _ibgDivider).AppendLine();
+        ibgHeader.Append(_ibgCulture, $"VERIFY_SPEED_AVERAGE={averageSpeed / _ibgDivider:0.00}").AppendLine();
 
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_SPEED_MAX={0:0.00}", _ibgMaxSpeed).AppendLine();
-        ibgHeader.AppendFormat(_ibgCulture, "VERIFY_TIME_TAKEN={0:0}", Math.Floor(totalSeconds)).AppendLine();
+        ibgHeader.Append(_ibgCulture, $"VERIFY_SPEED_MAX={_ibgMaxSpeed:0.00}").AppendLine();
+        ibgHeader.Append(_ibgCulture, $"VERIFY_TIME_TAKEN={Math.Floor(totalSeconds):0}").AppendLine();
         ibgHeader.AppendLine("[END_CONFIGURATION]");
         ibgHeader.AppendLine();
         ibgHeader.AppendLine("HRPC=True");

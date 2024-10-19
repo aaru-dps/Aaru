@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Microsoft FAT filesystem constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,16 +23,14 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable UnusedMember.Local
 
-namespace Aaru.Filesystems;
-
 using System;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class FAT
 {
@@ -83,8 +77,13 @@ public sealed partial class FAT
     const ushort EAT_ASN1        = 0xFFDD;
     const string FAT32_EA_TAIL   = " EA. SF";
 
+    const string FS_TYPE_FAT_PLUS = "fatplus";
+    const string FS_TYPE_FAT32    = "fat32";
+    const string FS_TYPE_FAT16    = "fat16";
+    const string FS_TYPE_FAT12    = "fat12";
+
     readonly (string hash, string name)[] _knownBootHashes =
-    {
+    [
         ("b639b4d5b25f63560e3b34a3a0feb732aa65486f", "Amstrad MS-DOS 3.20 (8-sector floppy)"),
         ("9311151f13f7611b1431593da05ddd3153370574", "Amstrad MS-DOS 3.20 (Spanish)"),
         ("55eda6a9b955f5199020e6b56a6954fa6fcb7dc6", "AT&T MS-DOS 2.11"),
@@ -174,21 +173,9 @@ public sealed partial class FAT
         ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
         ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00"),
         ("91e2b47c3cb46611249e4daa283a68ba21ba596a", "Human68k 2.00")
-    };
+    ];
 
-    [Flags]
-    enum FatAttributes : byte
-    {
-        ReadOnly     = 0x01,
-        Hidden       = 0x02,
-        System       = 0x04,
-        VolumeLabel  = 0x08,
-        Subdirectory = 0x10,
-        Archive      = 0x20,
-        Device       = 0x40,
-        Reserved     = 0x80,
-        LFN          = 0x0F
-    }
+#region Nested type: BpbKind
 
     enum BpbKind
     {
@@ -210,6 +197,61 @@ public sealed partial class FAT
         Human
     }
 
+#endregion
+
+#region Nested type: CaseInfo
+
+    [Flags]
+    enum CaseInfo : byte
+    {
+        /// <summary>FASTFAT.SYS indicator that basename is lowercase</summary>
+        LowerCaseBasename = 0x08,
+        /// <summary>FASTFAT.SYS indicator that extension is lowercase</summary>
+        LowerCaseExtension = 0x10,
+        AllLowerCase = 0x18,
+        /// <summary>FAT32.IFS &lt; 0.97 indicator for normal EAs present</summary>
+        NormalEaOld = 0xEA,
+        /// <summary>FAT32.IFS &lt; 0.97 indicator for critical EAs present</summary>
+        CriticalEaOld = 0xEC,
+        /// <summary>FAT32.IFS &gt;= 0.97 indicator for normal EAs present</summary>
+        NormalEa = 0x40,
+        /// <summary>FAT32.IFS &gt;= 0.97 indicator for critical EAs present</summary>
+        CriticalEa = 0x80
+    }
+
+#endregion
+
+#region Nested type: EaFlags
+
+    [Flags]
+    enum EaFlags : uint
+    {
+        Normal   = 0,
+        Critical = 1
+    }
+
+#endregion
+
+#region Nested type: FatAttributes
+
+    [Flags]
+    enum FatAttributes : byte
+    {
+        ReadOnly     = 0x01,
+        Hidden       = 0x02,
+        System       = 0x04,
+        VolumeLabel  = 0x08,
+        Subdirectory = 0x10,
+        Archive      = 0x20,
+        Device       = 0x40,
+        Reserved     = 0x80,
+        LFN          = 0x0F
+    }
+
+#endregion
+
+#region Nested type: Namespace
+
     enum Namespace
     {
         Dos,
@@ -220,27 +262,5 @@ public sealed partial class FAT
         Human
     }
 
-    [Flags]
-    enum EaFlags : uint
-    {
-        Normal   = 0,
-        Critical = 1
-    }
-
-    [Flags]
-    enum CaseInfo : byte
-    {
-        /// <summary>FASTFAT.SYS indicator that basename is lowercase</summary>
-        LowerCaseBasename = 0x08,
-        /// <summary>FASTFAT.SYS indicator that extension is lowercase</summary>
-        LowerCaseExtension = 0x10, AllLowerCase = 0x18,
-        /// <summary>FAT32.IFS &lt; 0.97 indicator for normal EAs present</summary>
-        NormalEaOld = 0xEA,
-        /// <summary>FAT32.IFS &lt; 0.97 indicator for critical EAs present</summary>
-        CriticalEaOld = 0xEC,
-        /// <summary>FAT32.IFS &gt;= 0.97 indicator for normal EAs present</summary>
-        NormalEa = 0x40,
-        /// <summary>FAT32.IFS &gt;= 0.97 indicator for critical EAs present</summary>
-        CriticalEa = 0x80
-    }
+#endregion
 }

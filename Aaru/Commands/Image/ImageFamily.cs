@@ -27,16 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Image;
 
-using System.CommandLine;
-
 sealed class ImageFamily : Command
 {
-    public ImageFamily() : base("image", "Commands to manage images")
+    public ImageFamily() : base("image", UI.Image_Command_Family_Description)
     {
         AddAlias("i");
 

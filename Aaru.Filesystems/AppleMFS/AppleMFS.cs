@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the Apple Macintosh File System plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,51 +23,56 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 /// <inheritdoc />
 /// <summary>Implements the Apple Macintosh File System</summary>
 public sealed partial class AppleMFS : IReadOnlyFilesystem
 {
-    bool                        _mounted;
+    const string                MODULE_NAME = "Apple MFS plugin";
+    byte[]                      _bitmapTags;
+    uint[]                      _blockMap;
+    byte[]                      _blockMapBytes;
+    byte[]                      _bootBlocks;
+    byte[]                      _bootTags;
     bool                        _debug;
     IMediaImage                 _device;
-    ulong                       _partitionStart;
-    Dictionary<uint, string>    _idToFilename;
-    Dictionary<uint, FileEntry> _idToEntry;
-    Dictionary<string, uint>    _filenameToId;
-    MasterDirectoryBlock        _volMdb;
-    byte[]                      _bootBlocks;
-    byte[]                      _mdbBlocks;
     byte[]                      _directoryBlocks;
-    byte[]                      _blockMapBytes;
-    uint[]                      _blockMap;
-    int                         _sectorsPerBlock;
-    byte[]                      _bootTags;
-    byte[]                      _mdbTags;
     byte[]                      _directoryTags;
-    byte[]                      _bitmapTags;
+    Encoding                    _encoding;
+    Dictionary<string, uint>    _filenameToId;
+    Dictionary<uint, FileEntry> _idToEntry;
+    Dictionary<uint, string>    _idToFilename;
+    byte[]                      _mdbBlocks;
+    byte[]                      _mdbTags;
+    bool                        _mounted;
+    ulong                       _partitionStart;
+    int                         _sectorsPerBlock;
+    MasterDirectoryBlock        _volMdb;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public string Name => Localization.AppleMFS_Name;
+
     /// <inheritdoc />
-    public string Name => "Apple Macintosh File System";
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("36405F8D-0D26-4066-6538-5DBF5D065C3A");
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     // TODO: Implement Finder namespace (requires decoding Desktop database)
     /// <inheritdoc />
@@ -80,6 +81,8 @@ public sealed partial class AppleMFS : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {

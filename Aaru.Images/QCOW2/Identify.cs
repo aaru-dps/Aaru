@@ -27,34 +27,37 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class Qcow2
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return false;
+        if(stream.Length < 512) return false;
 
         var qHdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(qHdrB, 0, Marshal.SizeOf<Header>());
+        stream.EnsureRead(qHdrB, 0, Marshal.SizeOf<Header>());
         _qHdr = Marshal.SpanToStructureBigEndian<Header>(qHdrB);
 
-        AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", _qHdr.magic);
-        AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}", _qHdr.version);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.magic = 0x{0:X8}", _qHdr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "qHdr.version = {0}",    _qHdr.version);
 
-        return _qHdr.magic == QCOW_MAGIC && _qHdr.version is QCOW_VERSION2 or QCOW_VERSION3;
+        return _qHdr is { magic: QCOW_MAGIC, version: QCOW_VERSION2 or QCOW_VERSION3 };
     }
+
+#endregion
 }

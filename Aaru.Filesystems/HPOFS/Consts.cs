@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     High Performance Optical File System constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,23 +23,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+// ReSharper disable UnusedMember.Local
 
 namespace Aaru.Filesystems;
 
 public sealed partial class HPOFS
 {
-    readonly byte[] _type =
-    {
-        0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00
-    };
-    readonly byte[] _medinfoSignature =
-    {
-        0x4D, 0x45, 0x44, 0x49, 0x4E, 0x46, 0x4F, 0x20
-    };
-    readonly byte[] _volinfoSignature =
-    {
-        0x56, 0x4F, 0x4C, 0x49, 0x4E, 0x46, 0x4F, 0x20
-    };
+    // Do not translate
+    const    string FS_TYPE           = "hpofs";
+    readonly byte[] _medinfoSignature = "MEDINFO "u8.ToArray();
+    readonly byte[] _type             = [0x48, 0x50, 0x4F, 0x46, 0x53, 0x00, 0x00, 0x00];
+    readonly byte[] _volinfoSignature = "VOLINFO "u8.ToArray();
 }

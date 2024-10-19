@@ -27,18 +27,20 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+// ReSharper disable UnusedParameter.Local
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
@@ -52,21 +54,20 @@ public sealed partial class Sidecar
     /// <param name="imgChecksums">List of image checksums</param>
     /// <param name="sidecar">Metadata sidecar</param>
     /// <param name="encoding">Encoding to be used for filesystem plugins</param>
-    static void LinearMedia(IByteAddressableImage image, Guid filterId, string imagePath, FileInfo fi,
-                            PluginBase plugins, List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar,
-                            Encoding encoding) => sidecar.LinearMedia = new[]
-    {
-        new LinearMediaType
-        {
-            Checksums = imgChecksums.ToArray(),
-            Image = new ImageType
-            {
-                format          = image.Format,
-                offset          = 0,
-                offsetSpecified = true,
-                Value           = Path.GetFileName(imagePath)
-            },
-            Size = image.Info.Sectors
-        }
-    };
+    static void LinearMedia(IByteAddressableImage image,   Guid filterId, string imagePath, FileInfo fi,
+                            PluginRegister        plugins, List<CommonTypes.AaruMetadata.Checksum> imgChecksums,
+                            ref Metadata          sidecar, Encoding encoding) => sidecar.LinearMedias =
+                                                                                 [
+                                                                                     new LinearMedia
+                                                                                     {
+                                                                                         Checksums = imgChecksums,
+                                                                                         Image = new Image
+                                                                                         {
+                                                                                             Format = image.Format,
+                                                                                             Offset = 0,
+                                                                                             Value  = Path.GetFileName(imagePath)
+                                                                                         },
+                                                                                         Size = image.Info.Sectors
+                                                                                     }
+                                                                                 ];
 }

@@ -27,26 +27,29 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reactive;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ReactiveUI;
-using Schemas;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageSidecarViewModel : ViewModelBase
 {
@@ -77,7 +80,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
     bool                 _stopVisible;
 
     public ImageSidecarViewModel(IMediaImage inputFormat, string imageSource, Guid filterId, Encoding encoding,
-                                 Window view)
+                                 Window      view)
     {
         _view        = view;
         _inputFormat = inputFormat;
@@ -86,7 +89,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _encoding    = encoding;
 
         DestinationText = Path.Combine(Path.GetDirectoryName(imageSource) ?? "",
-                                       Path.GetFileNameWithoutExtension(imageSource) + ".cicm.xml");
+                                       Path.GetFileNameWithoutExtension(imageSource) + ".metadata.json");
 
         DestinationEnabled = true;
         StartVisible       = true;
@@ -96,6 +99,12 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         CloseCommand       = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand        = ReactiveCommand.Create(ExecuteStopCommand);
     }
+
+    public string DestinationFileLabel => UI.Title_Destination_file;
+    public string ChooseLabel          => UI.ButtonLabel_Choose;
+    public string StartLabel           => UI.ButtonLabel_Start;
+    public string CloseLabel           => UI.ButtonLabel_Close;
+    public string StopLabel            => UI.ButtonLabel_Stop;
 
     public string                      Title              { get; }
     public ReactiveCommand<Unit, Task> DestinationCommand { get; }
@@ -219,6 +228,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
 
     void ExecuteStartCommand() => new Thread(DoWork).Start();
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         // Prepare UI
@@ -241,15 +251,21 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         _sidecarClass.InitProgressEvent2   += InitProgress2;
         _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
         _sidecarClass.EndProgressEvent2    += EndProgress2;
-        CICMMetadataType sidecar = _sidecarClass.Create();
+        Metadata sidecar = _sidecarClass.Create();
 
-        AaruConsole.WriteLine("Writing metadata sidecar");
+        AaruConsole.WriteLine(Localization.Core.Writing_metadata_sidecar);
 
-        var xmlFs = new FileStream(DestinationText, FileMode.Create);
+        var jsonFs = new FileStream(DestinationText, FileMode.Create);
 
-        var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-        xmlSer.Serialize(xmlFs, sidecar);
-        xmlFs.Close();
+        await JsonSerializer.SerializeAsync(jsonFs,
+                                            new MetadataJson
+                                            {
+                                                AaruMetadata = sidecar
+                                            },
+                                            typeof(MetadataJson),
+                                            MetadataJsonContext.Default);
+
+        jsonFs.Close();
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -262,11 +278,10 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Statistics.AddCommand("create-sidecar");
     }
 
-    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = false;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = false; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Text          = text;
@@ -276,16 +291,13 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         Progress2Value    = current;
     });
 
-    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = true;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = true; });
 
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
@@ -295,42 +307,31 @@ public sealed class ImageSidecarViewModel : ViewModelBase
         ProgressValue    = current;
     });
 
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
-    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        StatusText = text;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() => { StatusText = text; });
 
     void ExecuteCloseCommand() => _view.Close();
 
     void ExecuteStopCommand()
     {
-        ProgressText = "Aborting...";
+        ProgressText = Localization.Core.Aborting;
         StopEnabled  = false;
         _sidecarClass.Abort();
     }
 
     async Task ExecuteDestinationCommand()
     {
-        var dlgDestination = new SaveFileDialog
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Choose destination file"
-        };
-
-        dlgDestination.Filters.Add(new FileDialogFilter
-        {
-            Name = "CICM XML metadata",
-            Extensions = new List<string>(new[]
+            Title = UI.Dialog_Choose_destination_file,
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.xml"
-            })
+                FilePickerFileTypes.AaruMetadata
+            }
         });
-
-        string result = await dlgDestination.ShowAsync(_view);
 
         if(result is null)
         {
@@ -339,9 +340,7 @@ public sealed class ImageSidecarViewModel : ViewModelBase
             return;
         }
 
-        if(string.IsNullOrEmpty(Path.GetExtension(result)))
-            result += ".xml";
-
-        DestinationText = result;
+        DestinationText = result.Path.AbsolutePath;
+        if(string.IsNullOrEmpty(Path.GetExtension(DestinationText))) DestinationText += ".json";
     }
 }

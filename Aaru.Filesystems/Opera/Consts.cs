@@ -7,10 +7,6 @@
 //
 // Component      : Opera filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Opera filesystem constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,13 +23,13 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class OperaFS
@@ -48,7 +44,11 @@ public sealed partial class OperaFS
     const uint TYPE_LBL = 0x2A6C626C;
     /// <summary>Catapult</summary>
     const uint TYPE_ZAP = 0x2A7A6170;
-    static readonly int _directoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
+
+    const           string FS_TYPE             = "opera";
+    static readonly int    _directoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
+
+#region Nested type: FileFlags
 
     enum FileFlags : uint
     {
@@ -58,4 +58,6 @@ public sealed partial class OperaFS
         LastEntryInBlock = 0x40000000,
         LastEntry        = 0x80000000
     }
+
+#endregion
 }

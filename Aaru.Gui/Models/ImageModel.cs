@@ -27,19 +27,19 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Models;
 
 using System.Collections.ObjectModel;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Gui.ViewModels.Panels;
 using Avalonia.Media.Imaging;
 
+namespace Aaru.Gui.Models;
+
 public sealed class ImageModel
 {
-    public ImageModel() => PartitionSchemesOrFileSystems = new ObservableCollection<RootModel>();
+    public ImageModel() => PartitionSchemesOrFileSystems = [];
 
     public string                          Path                          { get; set; }
     public string                          FileName                      { get; set; }

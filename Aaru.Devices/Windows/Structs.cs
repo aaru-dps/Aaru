@@ -28,16 +28,17 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices.Windows;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+namespace Aaru.Devices.Windows;
+
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct ScsiPassThroughDirect
 {
     public ushort Length;
@@ -49,10 +50,10 @@ struct ScsiPassThroughDirect
     public byte   SenseInfoLength;
     [MarshalAs(UnmanagedType.U1)]
     public ScsiIoctlDirection DataIn;
-    public uint   DataTransferLength;
-    public uint   TimeOutValue;
-    public IntPtr DataBuffer;
-    public uint   SenseInfoOffset;
+    public uint DataTransferLength;
+    public uint TimeOutValue;
+    public nint DataBuffer;
+    public uint SenseInfoOffset;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
     public byte[] Cdb;
@@ -67,7 +68,8 @@ struct ScsiPassThroughDirectAndSenseBuffer
     public byte[] SenseBuf;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct AtaPassThroughDirect
 {
     /// <summary>Length in bytes of this structure</summary>
@@ -99,7 +101,7 @@ struct AtaPassThroughDirect
     public uint ReservedAsUlong;
 
     /// <summary>Pointer to data buffer</summary>
-    public IntPtr DataBuffer;
+    public nint DataBuffer;
 
     /// <summary>Previous ATA registers, for LBA48</summary>
     public AtaTaskFile PreviousTaskFile;
@@ -108,7 +110,8 @@ struct AtaPassThroughDirect
     public AtaTaskFile CurrentTaskFile;
 }
 
-[StructLayout(LayoutKind.Explicit), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Explicit)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct AtaTaskFile
 {
     // Fields for commands sent
@@ -150,7 +153,9 @@ struct StoragePropertyQuery
     public byte[] AdditionalParameters;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct StorageDescriptorHeader
 {
     public uint Version;
@@ -191,7 +196,8 @@ struct IdePassThroughDirect
     public byte[] DataBuffer;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct StorageDeviceNumber
 {
     public int deviceType;
@@ -199,25 +205,29 @@ struct StorageDeviceNumber
     public int partitionNumber;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct DeviceInfoData
 {
-    public int    cbSize;
-    public Guid   classGuid;
-    public uint   devInst;
-    public IntPtr reserved;
+    public int  cbSize;
+    public Guid classGuid;
+    public uint devInst;
+    public nint reserved;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct DeviceInterfaceData
 {
-    public   int    cbSize;
-    public   Guid   interfaceClassGuid;
-    public   uint   flags;
-    readonly IntPtr reserved;
+    public   int  cbSize;
+    public   Guid interfaceClassGuid;
+    public   uint flags;
+    readonly nint reserved;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct UsbSetupPacket
 {
     public byte  bmRequest;
@@ -227,7 +237,9 @@ struct UsbSetupPacket
     public short wLength;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 struct UsbDescriptorRequest
 {
     public int ConnectionIndex;
@@ -237,7 +249,8 @@ struct UsbDescriptorRequest
     //public byte[] Data;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SffdiskQueryDeviceProtocolData
 {
     public ushort size;
@@ -245,7 +258,8 @@ struct SffdiskQueryDeviceProtocolData
     public Guid   protocolGuid;
 }
 
-[StructLayout(LayoutKind.Sequential), SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[StructLayout(LayoutKind.Sequential)]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 struct SffdiskDeviceCommandData
 {
     public ushort      size;

@@ -27,17 +27,79 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems.UCSDPascal;
-
 using System.Diagnostics.CodeAnalysis;
+using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 [SuppressMessage("ReSharper", "NotAccessedField.Local")]
 public sealed partial class PascalPlugin
 {
+#region Nested type: PascalDirNode
+
+    sealed class PascalDirNode : IDirNode
+    {
+        internal string[] Contents;
+        internal int      Position;
+
+#region IDirNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: PascalFileEntry
+
+    struct PascalFileEntry
+    {
+        /// <summary>0x00, first block of file</summary>
+        public short FirstBlock;
+        /// <summary>0x02, last block of file</summary>
+        public short LastBlock;
+        /// <summary>0x04, entry type</summary>
+        public PascalFileKind EntryType;
+        /// <summary>0x06, file name</summary>
+        public byte[] Filename;
+        /// <summary>0x16, bytes used in last block</summary>
+        public short LastBytes;
+        /// <summary>0x18, modification time</summary>
+        public short ModificationTime;
+    }
+
+#endregion
+
+#region Nested type: PascalFileNode
+
+    sealed class PascalFileNode : IFileNode
+    {
+        internal byte[] Cache;
+
+#region IFileNode Members
+
+        /// <inheritdoc />
+        public string Path { get; init; }
+
+        /// <inheritdoc />
+        public long Length { get; init; }
+
+        /// <inheritdoc />
+        public long Offset { get; set; }
+
+#endregion
+    }
+
+#endregion
+
+#region Nested type: PascalVolumeEntry
+
     struct PascalVolumeEntry
     {
         /// <summary>0x00, first block of volume entry</summary>
@@ -60,19 +122,5 @@ public sealed partial class PascalPlugin
         public int Tail;
     }
 
-    struct PascalFileEntry
-    {
-        /// <summary>0x00, first block of file</summary>
-        public short FirstBlock;
-        /// <summary>0x02, last block of file</summary>
-        public short LastBlock;
-        /// <summary>0x04, entry type</summary>
-        public PascalFileKind EntryType;
-        /// <summary>0x06, file name</summary>
-        public byte[] Filename;
-        /// <summary>0x16, bytes used in last block</summary>
-        public short LastBytes;
-        /// <summary>0x18, modification time</summary>
-        public short ModificationTime;
-    }
+#endregion
 }

@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Filesystem;
 
 using System;
 using System.Collections.Generic;
@@ -44,46 +42,41 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using Spectre.Console;
 
+namespace Aaru.Commands.Filesystem;
+
 sealed class LsCommand : Command
 {
-    public LsCommand() : base("list", "Lists files in disc image.")
+    const string MODULE_NAME = "Ls command";
+
+    public LsCommand() : base("list", UI.Filesystem_List_Command_Description)
     {
         AddAlias("ls");
 
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, "Name of character encoding to use."));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-        {
-            "--long-format", "-l"
-        }, () => true, "Uses long format."));
+        Add(new Option<bool>(["--long-format", "-l"], () => true, UI.Use_long_format));
 
-        Add(new Option<string>(new[]
-        {
-            "--options", "-O"
-        }, () => null, "Comma separated name=value pairs of options to pass to filesystem plugin."));
+        Add(new Option<string>(["--options", "-O"],
+                               () => null,
+                               UI.Comma_separated_name_value_pairs_of_filesystem_options));
 
-        Add(new Option<string>(new[]
-        {
-            "--namespace", "-n"
-        }, () => null, "Namespace to use for filenames."));
+        Add(new Option<string>(["--namespace", "-n"], () => null, UI.Namespace_to_use_for_filenames));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
-    public static int Invoke(bool debug, bool verbose, string encoding, string imagePath, bool longFormat,
+    public static int Invoke(bool   debug,      bool   verbose, string encoding, string imagePath, bool longFormat,
                              string @namespace, string options)
     {
         MainClass.PrintCopyright();
@@ -92,19 +85,22 @@ sealed class LsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
             {
                 if(objects is null)
-                    stderrConsole.MarkupLine(format);
+                    stderrConsole.MarkupLine(Markup.Escape(format));
                 else
-                    stderrConsole.MarkupLine(format, objects);
+                    stderrConsole.MarkupLine(Markup.Escape(format), objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -112,34 +108,34 @@ sealed class LsCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
-        AaruConsole.DebugWriteLine("Ls command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Ls command", "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine("Ls command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Ls command", "--options={0}", options);
-        AaruConsole.DebugWriteLine("Ls command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",    debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}", Markup.Escape(encoding  ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",    Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--options={0}",  Markup.Escape(options   ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",  verbose);
         Statistics.AddCommand("ls");
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
-        AaruConsole.DebugWriteLine("Ls command", "Parsed options:");
+        AaruConsole.DebugWriteLine(MODULE_NAME, UI.Parsed_options);
 
         foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-            AaruConsole.DebugWriteLine("Ls command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
         parsedOptions.Add("debug", debug.ToString());
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
@@ -147,79 +143,82 @@ sealed class LsCommand : Command
         Encoding encodingClass = null;
 
         if(encoding != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
-                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginRegister plugins = PluginRegister.Singleton;
 
         try
         {
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
                 imageFormat = baseImage as IMediaImage;
             });
 
             if(baseImage == null)
             {
-                AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                AaruConsole.WriteLine(UI.Image_format_not_identified_not_proceeding_with_listing);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(imageFormat == null)
             {
-                AaruConsole.WriteLine("Command not supported for this image type.");
+                AaruConsole.WriteLine(UI.Command_not_supported_for_this_image_type);
 
                 return (int)ErrorNumber.InvalidArgument;
             }
 
             if(verbose)
-                AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+                AaruConsole.VerboseWriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
             else
-                AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                AaruConsole.WriteLine(UI.Image_format_identified_by_0, imageFormat.Name);
 
             try
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("Unable to open image format");
-                    AaruConsole.WriteLine("Error {0}", opened);
+                    AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
 
-                AaruConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
 
-                AaruConsole.DebugWriteLine("Ls command", "Image without headers is {0} bytes.",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_without_headers_is_0_bytes,
                                            imageFormat.Info.ImageSize);
 
-                AaruConsole.DebugWriteLine("Ls command", "Image has {0} sectors.", imageFormat.Info.Sectors);
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.Image_has_0_sectors, imageFormat.Info.Sectors);
 
-                AaruConsole.DebugWriteLine("Ls command", "Image identifies disk type as {0}.",
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Image_identifies_media_type_as_0,
                                            imageFormat.Info.MediaType);
 
                 Statistics.AddMediaFormat(imageFormat.Format);
@@ -228,29 +227,30 @@ sealed class LsCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
-                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
 
             List<Partition> partitions = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                partitions = Partitions.GetAll(imageFormat);
+                ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                partitions = Core.Partitions.GetAll(imageFormat);
             });
 
-            Partitions.AddSchemesToStats(partitions);
+            Core.Partitions.AddSchemesToStats(partitions);
 
             if(partitions.Count == 0)
             {
-                AaruConsole.DebugWriteLine("Ls command", "No partitions found");
+                AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                 partitions.Add(new Partition
                 {
-                    Description = "Whole device",
+                    Description = Localization.Core.Whole_device,
                     Length      = imageFormat.Info.Sectors,
                     Offset      = 0,
                     Size        = imageFormat.Info.SectorSize * imageFormat.Info.Sectors,
@@ -259,79 +259,69 @@ sealed class LsCommand : Command
                 });
             }
 
-            AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
+            AaruConsole.WriteLine(UI._0_partitions_found, partitions.Count);
 
             for(var i = 0; i < partitions.Count; i++)
             {
                 AaruConsole.WriteLine();
-                AaruConsole.WriteLine("[bold]Partition {0}:[/]", partitions[i].Sequence);
+                AaruConsole.WriteLine($"[bold]{string.Format(UI.Partition_0, partitions[i].Sequence)}[/]");
 
                 List<string> idPlugins = null;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                    Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                    ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
                 });
 
                 if(idPlugins.Count == 0)
-                    AaruConsole.WriteLine("Filesystem not identified");
+                    AaruConsole.WriteLine(UI.Filesystem_not_identified);
                 else
                 {
-                    IReadOnlyFilesystem plugin;
-                    ErrorNumber         error = ErrorNumber.InvalidArgument;
+                    ErrorNumber error = ErrorNumber.InvalidArgument;
 
                     if(idPlugins.Count > 1)
                     {
-                        AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+                        AaruConsole.WriteLine($"[italic]{string.Format(UI.Identified_by_0_plugins, idPlugins.Count)
+                        }[/]");
 
                         foreach(string pluginName in idPlugins)
-                            if(plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out plugin))
+                        {
+                            if(!plugins.ReadOnlyFilesystems.TryGetValue(pluginName, out IReadOnlyFilesystem fs))
+                                continue;
+
+                            if(fs is null) continue;
+
+                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
+
+                            Core.Spectre.ProgressSingleSpinner(ctx =>
                             {
-                                AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+                                ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
 
-                                var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                                     Invoke(Array.Empty<object>());
+                                error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
+                            });
 
-                                if(fs == null)
-                                    continue;
+                            if(error == ErrorNumber.NoError)
+                            {
+                                ListFilesInDir("/", fs, longFormat);
 
-                                Spectre.ProgressSingleSpinner(ctx =>
-                                {
-                                    ctx.AddTask("Mounting filesystem...").IsIndeterminate();
-
-                                    error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions,
-                                                     @namespace);
-                                });
-
-                                if(error == ErrorNumber.NoError)
-                                {
-                                    ListFilesInDir("/", fs, longFormat);
-
-                                    Statistics.AddFilesystem(fs.XmlFsType.Type);
-                                }
-                                else
-                                    AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                                Statistics.AddFilesystem(fs.Metadata.Type);
                             }
+                            else
+                                AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
+                        }
                     }
                     else
                     {
-                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out plugin);
+                        plugins.ReadOnlyFilesystems.TryGetValue(idPlugins[0], out IReadOnlyFilesystem fs);
 
-                        if(plugin == null)
-                            continue;
+                        if(fs is null) continue;
 
-                        AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
+                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
 
-                        var fs = (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.
-                                                             Invoke(Array.Empty<object>());
-
-                        if(fs == null)
-                            continue;
-
-                        Spectre.ProgressSingleSpinner(ctx =>
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
-                            ctx.AddTask("Mounting filesystem...").IsIndeterminate();
+                            ctx.AddTask(UI.Mounting_filesystem).IsIndeterminate();
                             error = fs.Mount(imageFormat, partitions[i], encodingClass, parsedOptions, @namespace);
                         });
 
@@ -339,18 +329,18 @@ sealed class LsCommand : Command
                         {
                             ListFilesInDir("/", fs, longFormat);
 
-                            Statistics.AddFilesystem(fs.XmlFsType.Type);
+                            Statistics.AddFilesystem(fs.Metadata.Type);
                         }
                         else
-                            AaruConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
+                            AaruConsole.ErrorWriteLine(UI.Unable_to_mount_volume_error_0, error.ToString());
                     }
                 }
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-            AaruConsole.DebugWriteLine("Ls command", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, Markup.Escape(ex.Message)));
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
         }
@@ -360,65 +350,74 @@ sealed class LsCommand : Command
 
     static void ListFilesInDir(string path, [NotNull] IReadOnlyFilesystem fs, bool longFormat)
     {
-        ErrorNumber  error     = ErrorNumber.InvalidArgument;
-        List<string> directory = new();
+        ErrorNumber error = ErrorNumber.InvalidArgument;
+        IDirNode    node  = null;
 
-        if(path.StartsWith('/'))
-            path = path.Substring(1);
+        if(path.StartsWith('/')) path = path[1..];
 
-        AaruConsole.WriteLine(string.IsNullOrEmpty(path) ? "Root directory" : $"Directory: {Markup.Escape(path)}");
+        AaruConsole.WriteLine(string.IsNullOrEmpty(path)
+                                  ? UI.Root_directory
+                                  : string.Format(UI.Directory_0, Markup.Escape(path)));
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Reading directory...").IsIndeterminate();
-            error = fs.ReadDir(path, out directory);
+            ctx.AddTask(UI.Reading_directory).IsIndeterminate();
+            error = fs.OpenDir(path, out node);
         });
 
         if(error != ErrorNumber.NoError)
         {
-            AaruConsole.ErrorWriteLine("Error {0} reading root directory {1}", error.ToString(), path);
+            AaruConsole.ErrorWriteLine(UI.Error_0_reading_directory_1, error.ToString(), path);
 
             return;
         }
 
         Dictionary<string, FileEntryInfo> stats = new();
 
-        AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                    Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).Start(ctx =>
-                    {
-                        ProgressTask task = ctx.AddTask("Retrieving file information...");
-                        task.MaxValue = directory.Count;
+        Core.Spectre.ProgressSingleSpinner(ctx =>
+        {
+            ctx.AddTask(UI.Retrieving_file_information).IsIndeterminate();
 
-                        foreach(string entry in directory)
-                        {
-                            task.Increment(1);
-                            fs.Stat(path + "/" + entry, out FileEntryInfo stat);
+            while(fs.ReadDir(node, out string entry) == ErrorNumber.NoError && entry is not null)
+            {
+                fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-                            stats.Add(entry, stat);
-                        }
-                    });
+                stats.Add(entry, stat);
+            }
+
+            fs.CloseDir(node);
+        });
 
         foreach(KeyValuePair<string, FileEntryInfo> entry in
                 stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
+        {
             if(longFormat)
             {
                 if(entry.Value != null)
                 {
                     if(entry.Value.Attributes.HasFlag(FileAttributes.Directory))
-                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}", entry.Value.CreationTimeUtc,
-                                              "<DIR>", Markup.Escape(entry.Key));
+                    {
+                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}",
+                                              entry.Value.CreationTimeUtc,
+                                              UI.Directory_abbreviation,
+                                              Markup.Escape(entry.Key));
+                    }
                     else
-                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:N0}  {3}", entry.Value.CreationTimeUtc,
-                                              entry.Value.Inode, entry.Value.Length, Markup.Escape(entry.Key));
+                    {
+                        AaruConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:N0}  {3}",
+                                              entry.Value.CreationTimeUtc,
+                                              entry.Value.Inode,
+                                              entry.Value.Length,
+                                              Markup.Escape(entry.Key));
+                    }
 
                     error = fs.ListXAttr(path + "/" + entry.Key, out List<string> xattrs);
 
-                    if(error != ErrorNumber.NoError)
-                        continue;
+                    if(error != ErrorNumber.NoError) continue;
 
                     foreach(string xattr in xattrs)
                     {
-                        byte[] xattrBuf = Array.Empty<byte>();
+                        byte[] xattrBuf = [];
                         error = fs.GetXattr(path + "/" + entry.Key, xattr, ref xattrBuf);
 
                         if(error == ErrorNumber.NoError)
@@ -429,9 +428,13 @@ sealed class LsCommand : Command
                     AaruConsole.WriteLine("{0, 47}{1}", string.Empty, Markup.Escape(entry.Key));
             }
             else
-                AaruConsole.
-                    WriteLine(entry.Value?.Attributes.HasFlag(FileAttributes.Directory) == true ? "{0}/" : "{0}",
-                              entry.Key);
+            {
+                AaruConsole.WriteLine(entry.Value?.Attributes.HasFlag(FileAttributes.Directory) == true
+                                          ? "{0}/"
+                                          : "{0}",
+                                      entry.Key);
+            }
+        }
 
         AaruConsole.WriteLine();
 

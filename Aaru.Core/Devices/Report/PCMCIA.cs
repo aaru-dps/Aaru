@@ -27,13 +27,13 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Report;
 
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.PCMCIA;
+
+namespace Aaru.Core.Devices.Report;
 
 /// <summary>Implements creating a report for a PCMCIA device</summary>
 public sealed partial class DeviceReport
@@ -48,10 +48,10 @@ public sealed partial class DeviceReport
 
         Tuple[] tuples = CIS.GetTuples(_dev.Cis);
 
-        if(tuples == null)
-            return pcmciaReport;
+        if(tuples == null) return pcmciaReport;
 
         foreach(Tuple tuple in tuples)
+        {
             switch(tuple.Code)
             {
                 case TupleCodes.CISTPL_MANFID:
@@ -77,6 +77,7 @@ public sealed partial class DeviceReport
 
                     break;
             }
+        }
 
         return pcmciaReport;
     }

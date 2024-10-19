@@ -27,24 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-#pragma warning disable 612
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
 using Aaru.Checksums;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+#pragma warning disable 612
+
+namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing Apple's Universal Disk Image Format disk images</summary>
 public sealed partial class Udif : IWritableImage
 {
+    const string                  MODULE_NAME = "UDIF plugin";
     uint                          _buffersize;
     Dictionary<ulong, byte[]>     _chunkCache;
     Dictionary<ulong, BlockChunk> _chunks;
@@ -61,8 +61,8 @@ public sealed partial class Udif : IWritableImage
 
     public Udif() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

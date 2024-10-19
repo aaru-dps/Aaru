@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle files.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,101 +23,49 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
+namespace Aaru.Filesystems;
+
 // Information from Inside Macintosh Volume II
 public sealed partial class AppleMFS
 {
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = new long();
-
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
-
-        string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
-
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
-
-        path = pathElements[0];
-
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
-
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
-
-        if(fileBlock > entry.flPyLen / _volMdb.drAlBlkSiz)
-            return ErrorNumber.InvalidArgument;
-
-        uint nextBlock = entry.flStBlk;
-        long relBlock  = 0;
-
-        while(true)
-        {
-            if(relBlock == fileBlock)
-            {
-                deviceBlock = (nextBlock - 2) * _sectorsPerBlock + _volMdb.drAlBlSt + (long)_partitionStart;
-
-                return ErrorNumber.NoError;
-            }
-
-            if(_blockMap[nextBlock] == BMAP_FREE ||
-               _blockMap[nextBlock] == BMAP_LAST)
-                break;
-
-            nextBlock = _blockMap[nextBlock];
-            relBlock++;
-        }
-
-        return ErrorNumber.InOutError;
-    }
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
-            attributes |= FileAttributes.Alias;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias)) attributes |= FileAttributes.Alias;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
-            attributes |= FileAttributes.Bundle;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle)) attributes |= FileAttributes.Bundle;
 
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
             attributes |= FileAttributes.HasBeenInited;
@@ -129,20 +73,15 @@ public sealed partial class AppleMFS
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
             attributes |= FileAttributes.HasCustomIcon;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
-            attributes |= FileAttributes.HasNoINITs;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs)) attributes |= FileAttributes.HasNoINITs;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
-            attributes |= FileAttributes.Hidden;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible)) attributes |= FileAttributes.Hidden;
 
-        if(entry.flFlags.HasFlag(FileFlags.Locked))
-            attributes |= FileAttributes.Immutable;
+        if(entry.flFlags.HasFlag(FileFlags.Locked)) attributes |= FileAttributes.Immutable;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
-            attributes |= FileAttributes.IsOnDesk;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk)) attributes |= FileAttributes.IsOnDesk;
 
-        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
-            attributes |= FileAttributes.Shared;
+        if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared)) attributes |= FileAttributes.Shared;
 
         if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
             attributes |= FileAttributes.Stationery;
@@ -158,46 +97,82 @@ public sealed partial class AppleMFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber OpenFile(string path, out IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        node = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         byte[]      file;
         ErrorNumber error = ErrorNumber.NoError;
 
-        if(_debug && string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-            file = _directoryBlocks;
-        else if(_debug                                                                &&
-                string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                _bootBlocks                                                      != null)
-            file = _bootBlocks;
-        else if(_debug && string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0)
-            file = _blockMapBytes;
-        else if(_debug && string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0)
-            file = _mdbBlocks;
-        else
-            error = ReadFile(path, out file, false, false);
-
-        if(error != ErrorNumber.NoError)
-            return error;
-
-        if(size == 0)
+        switch(_debug)
         {
-            buf = Array.Empty<byte>();
+            case true when string.Compare(path, "$", StringComparison.InvariantCulture) == 0:
+                file = _directoryBlocks;
 
-            return ErrorNumber.NoError;
+                break;
+            case true when string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null:
+                file = _bootBlocks;
+
+                break;
+            case true when string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0:
+                file = _blockMapBytes;
+
+                break;
+            case true when string.Compare(path, "$MDB", StringComparison.InvariantCulture) == 0:
+                file = _mdbBlocks;
+
+                break;
+            default:
+                error = ReadFile(path, out file, false, false);
+
+                break;
         }
 
-        if(offset >= file.Length)
-            return ErrorNumber.InvalidArgument;
+        if(error != ErrorNumber.NoError) return error;
 
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
+        node = new AppleMfsFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            _cache = file
+        };
 
-        buf = new byte[size];
+        return ErrorNumber.NoError;
+    }
 
-        Array.Copy(file, offset, buf, 0, size);
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not AppleMfsFileNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode._cache = null;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
+    {
+        read = 0;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
+
+        if(node is not AppleMfsFileNode mynode) return ErrorNumber.InvalidArgument;
+
+        read = length;
+
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
+
+        Array.Copy(mynode._cache, mynode.Offset, buffer, 0, read);
+
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }
@@ -207,24 +182,24 @@ public sealed partial class AppleMFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
-               string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
+        {
+            if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
+               string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-               string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
+               string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
             {
                 stat = new FileEntryInfo
                 {
@@ -246,8 +221,7 @@ public sealed partial class AppleMFS
 
                     stat.Length = _blockMapBytes.Length;
                 }
-                else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 &&
-                        _bootBlocks                                                      != null)
+                else if(string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 && _bootBlocks != null)
                 {
                     stat.Blocks = _bootBlocks.Length / stat.BlockSize + _bootBlocks.Length % stat.BlockSize;
                     stat.Length = _bootBlocks.Length;
@@ -262,27 +236,25 @@ public sealed partial class AppleMFS
 
                 return ErrorNumber.NoError;
             }
+        }
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         ErrorNumber error = GetAttributes(path, out FileAttributes attr);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         stat = new FileEntryInfo
         {
             Attributes    = attr,
-            Blocks        = entry.flLgLen / _volMdb.drAlBlkSiz,
+            Blocks        = entry.flPyLen / _volMdb.drAlBlkSiz,
             BlockSize     = _volMdb.drAlBlkSiz,
             CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
             Inode         = entry.flFlNum,
             LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
-            Length        = entry.flPyLen,
+            Length        = entry.flLgLen,
             Links         = 1
         };
 
@@ -297,28 +269,27 @@ public sealed partial class AppleMFS
         return ErrorNumber.NotImplemented;
     }
 
+#endregion
+
     ErrorNumber ReadFile(string path, out byte[] buf, bool resourceFork, bool tags)
     {
         buf = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         path = pathElements[0];
 
-        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
-            return ErrorNumber.NoSuchFile;
+        if(!_filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return ErrorNumber.NoSuchFile;
 
-        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry))
-            return ErrorNumber.NoSuchFile;
+        if(!_idToEntry.TryGetValue(fileId, out FileEntry entry)) return ErrorNumber.NoSuchFile;
 
         uint nextBlock;
 
@@ -326,7 +297,7 @@ public sealed partial class AppleMFS
         {
             if(entry.flRPyLen == 0)
             {
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
             }
@@ -337,7 +308,7 @@ public sealed partial class AppleMFS
         {
             if(entry.flPyLen == 0)
             {
-                buf = Array.Empty<byte>();
+                buf = [];
 
                 return ErrorNumber.NoError;
             }
@@ -349,26 +320,26 @@ public sealed partial class AppleMFS
 
         do
         {
-            byte[]      sectors;
-            ErrorNumber errno;
+            ErrorNumber errno = tags
+                                    ? _device.ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) +
+                                                             _volMdb.drAlBlSt                            +
+                                                             _partitionStart,
+                                                             (uint)_sectorsPerBlock,
+                                                             SectorTagType.AppleSectorTag,
+                                                             out byte[] sectors)
+                                    : _device.ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) +
+                                                          _volMdb.drAlBlSt                            +
+                                                          _partitionStart,
+                                                          (uint)_sectorsPerBlock,
+                                                          out sectors);
 
-            errno =
-                tags
-                    ? _device.
-                        ReadSectorsTag((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                       (uint)_sectorsPerBlock, SectorTagType.AppleSectorTag, out sectors)
-                    : _device.
-                        ReadSectors((ulong)((nextBlock - 2) * _sectorsPerBlock) + _volMdb.drAlBlSt + _partitionStart,
-                                    (uint)_sectorsPerBlock, out sectors);
-
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sectors, 0, sectors.Length);
 
             if(_blockMap[nextBlock] == BMAP_FREE)
             {
-                AaruConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
+                AaruConsole.ErrorWriteLine(Localization.File_truncated_at_block_0, nextBlock);
 
                 break;
             }
@@ -381,6 +352,7 @@ public sealed partial class AppleMFS
         else
         {
             if(resourceFork)
+            {
                 if(ms.Length < entry.flRLgLen)
                     buf = ms.ToArray();
                 else
@@ -388,6 +360,7 @@ public sealed partial class AppleMFS
                     buf = new byte[entry.flRLgLen];
                     Array.Copy(ms.ToArray(), 0, buf, 0, buf.Length);
                 }
+            }
             else
             {
                 if(ms.Length < entry.flLgLen)

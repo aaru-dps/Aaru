@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -44,12 +42,17 @@ using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Gui.Models;
 using Aaru.Helpers;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
+namespace Aaru.Gui.ViewModels.Tabs;
+
 public sealed class ScsiInfoViewModel : ViewModelBase
 {
+    const    string MODULE_NAME = "SCSI Information ViewModel";
     readonly byte[] _configuration;
     readonly byte[] _scsiModeSense10;
     readonly byte[] _scsiModeSense6;
@@ -70,9 +73,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         _scsiModeSense10         = scsiModeSense10;
         _configuration           = mmcConfiguration;
         _view                    = view;
-        ModeSensePages           = new ObservableCollection<ScsiPageModel>();
-        EvpdPages                = new ObservableCollection<ScsiPageModel>();
-        MmcFeatures              = new ObservableCollection<ScsiPageModel>();
+        ModeSensePages           = [];
+        EvpdPages                = [];
+        MmcFeatures              = [];
         SaveInquiryBinaryCommand = ReactiveCommand.Create(ExecuteSaveInquiryBinaryCommand);
         SaveInquiryTextCommand   = ReactiveCommand.Create(ExecuteSaveInquiryTextCommand);
         SaveModeSense6Command    = ReactiveCommand.Create(ExecuteSaveModeSense6Command);
@@ -80,9 +83,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         SaveEvpdPageCommand      = ReactiveCommand.Create(ExecuteSaveEvpdPageCommand);
         SaveMmcFeaturesCommand   = ReactiveCommand.Create(ExecuteSaveMmcFeaturesCommand);
 
-        if(InquiryData == null ||
-           !scsiInquiry.HasValue)
-            return;
+        if(InquiryData == null || !scsiInquiry.HasValue) return;
 
         ScsiInquiryText = Decoders.SCSI.Inquiry.Prettify(scsiInquiry);
 
@@ -90,15 +91,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         {
             ModeSensePages.Add(new ScsiPageModel
             {
-                Page        = "Header",
+                Page        = UI.Title_Header,
                 Description = Modes.PrettifyModeHeader(scsiMode.Value.Header, scsiType)
             });
 
             if(scsiMode.Value.Pages != null)
+            {
                 foreach(Modes.ModePage page in scsiMode.Value.Pages.OrderBy(t => t.Page).ThenBy(t => t.Subpage))
                 {
-                    string pageNumberText = page.Subpage == 0 ? $"MODE {page.Page:X2}h"
-                                                : $"MODE {page.Page:X2} Subpage {page.Subpage:X2}";
+                    string pageNumberText = page.Subpage == 0
+                                                ? string.Format(UI.MODE_0,           page.Page)
+                                                : string.Format(UI.MODE_0_Subpage_1, page.Page, page.Subpage);
 
                     string decodedText;
 
@@ -106,20 +109,21 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     {
                         case 0x00:
                         {
-                            if(scsiType     == PeripheralDeviceTypes.MultiMediaDevice &&
-                               page.Subpage == 0)
+                            if(scsiType == PeripheralDeviceTypes.MultiMediaDevice && page.Subpage == 0)
                                 decodedText = Modes.PrettifyModePage_00_SFF(page.PageResponse);
                             else
-                                decodedText = "Undecoded";
+                                decodedText = UI.Undecoded;
 
                             break;
                         }
                         case 0x01:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_01_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_01(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -173,9 +177,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x07:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_07_MMC(page.PageResponse)
                                                   : Modes.PrettifyModePage_07(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -240,9 +246,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x10:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.SequentialAccess
                                                   ? Modes.PrettifyModePage_10_SSC(page.PageResponse)
                                                   : Modes.PrettifyModePage_10(page.PageResponse);
+                            }
                             else
                                 goto default;
 
@@ -291,9 +299,11 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x1C:
                         {
                             if(page.Subpage == 0)
+                            {
                                 decodedText = scsiType == PeripheralDeviceTypes.MultiMediaDevice
                                                   ? Modes.PrettifyModePage_1C_SFF(page.PageResponse)
                                                   : Modes.PrettifyModePage_1C(page.PageResponse);
+                            }
                             else if(page.Subpage == 1)
                                 decodedText = Modes.PrettifyModePage_1C_S01(page.PageResponse);
                             else
@@ -358,7 +368,7 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         case 0x30:
                         {
                             if(Modes.IsAppleModePage_30(page.PageResponse))
-                                decodedText = "Drive identifies as Apple OEM drive";
+                                decodedText = Localization.Core.Drive_identifies_as_Apple_OEM_drive;
                             else
                                 goto default;
 
@@ -406,15 +416,14 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         }
                         default:
                         {
-                            decodedText = "Undecoded";
+                            decodedText = UI.Undecoded;
 
                             break;
                         }
                     }
 
                     // TODO: Automatic error reporting
-                    if(decodedText == null)
-                        decodedText = "Error decoding page, please open an issue.";
+                    decodedText ??= UI.Error_decoding_page_please_open_an_issue;
 
                     ModeSensePages.Add(new ScsiPageModel
                     {
@@ -422,201 +431,187 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                         Description = decodedText
                     });
                 }
+            }
         }
 
         if(scsiEvpdPages != null)
+        {
             foreach(KeyValuePair<byte, byte[]> page in scsiEvpdPages.OrderBy(t => t.Key))
             {
                 var    evpdPageTitle = "";
                 string evpdDecodedPage;
 
-                if(page.Key >= 0x01 &&
-                   page.Key <= 0x7F)
+                switch(page.Key)
                 {
-                    evpdPageTitle   = $"ASCII Page {page.Key:X2}h";
-                    evpdDecodedPage = EVPD.DecodeASCIIPage(page.Value);
-                }
-                else if(page.Key == 0x80)
-                {
-                    evpdPageTitle   = "Unit Serial Number";
-                    evpdDecodedPage = EVPD.DecodePage80(page.Value);
-                }
-                else if(page.Key == 0x81)
-                {
-                    evpdPageTitle   = "SCSI Implemented operating definitions";
-                    evpdDecodedPage = EVPD.PrettifyPage_81(page.Value);
-                }
-                else if(page.Key == 0x82)
-                {
-                    evpdPageTitle   = "ASCII implemented operating definitions";
-                    evpdDecodedPage = EVPD.DecodePage82(page.Value);
-                }
-                else if(page.Key == 0x83)
-                {
-                    evpdPageTitle   = "SCSI Device identification";
-                    evpdDecodedPage = EVPD.PrettifyPage_83(page.Value);
-                }
-                else if(page.Key == 0x84)
-                {
-                    evpdPageTitle   = "SCSI Software Interface Identifiers";
-                    evpdDecodedPage = EVPD.PrettifyPage_84(page.Value);
-                }
-                else if(page.Key == 0x85)
-                {
-                    evpdPageTitle   = "SCSI Management Network Addresses";
-                    evpdDecodedPage = EVPD.PrettifyPage_85(page.Value);
-                }
-                else if(page.Key == 0x86)
-                {
-                    evpdPageTitle   = "SCSI Extended INQUIRY Data";
-                    evpdDecodedPage = EVPD.PrettifyPage_86(page.Value);
-                }
-                else if(page.Key == 0x89)
-                {
-                    evpdPageTitle   = "SCSI to ATA Translation Layer Data";
-                    evpdDecodedPage = EVPD.PrettifyPage_89(page.Value);
-                }
-                else if(page.Key == 0xB0)
-                {
-                    evpdPageTitle   = "SCSI Sequential-access Device Capabilities";
-                    evpdDecodedPage = EVPD.PrettifyPage_B0(page.Value);
-                }
-                else if(page.Key == 0xB1)
-                {
-                    evpdPageTitle   = "Manufacturer-assigned Serial Number";
-                    evpdDecodedPage = EVPD.DecodePageB1(page.Value);
-                }
-                else if(page.Key == 0xB2)
-                {
-                    evpdPageTitle   = "TapeAlert Supported Flags Bitmap";
-                    evpdDecodedPage = $"0x{EVPD.DecodePageB2(page.Value):X16}";
-                }
-                else if(page.Key == 0xB3)
-                {
-                    evpdPageTitle   = "Automation Device Serial Number";
-                    evpdDecodedPage = EVPD.DecodePageB3(page.Value);
-                }
-                else if(page.Key == 0xB4)
-                {
-                    evpdPageTitle   = "Data Transfer Device Element Address";
-                    evpdDecodedPage = EVPD.DecodePageB4(page.Value);
-                }
-                else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "quantum")
-                {
-                    evpdPageTitle   = "Quantum Firmware Build Information page";
-                    evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
-                }
-                else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "seagate")
-                {
-                    evpdPageTitle   = "Seagate Firmware Numbers page";
-                    evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
-                }
-                else if(page.Key == 0xC0 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "ibm")
-                {
-                    evpdPageTitle   = "IBM Drive Component Revision Levels page";
-                    evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
-                }
-                else if(page.Key == 0xC1 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "ibm")
-                {
-                    evpdPageTitle   = "IBM Drive Serial Numbers page";
-                    evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
-                }
-                else if(page.Key is 0xC0 or 0xC1 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "certance")
-                {
-                    evpdPageTitle   = "Certance Drive Component Revision Levels page";
-                    evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
-                }
-                else if(page.Key is 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "certance")
-                {
-                    switch(page.Key)
+                    case >= 0x01 and <= 0x7F:
+                        evpdPageTitle   = string.Format(UI.ASCII_Page_0, page.Key);
+                        evpdDecodedPage = EVPD.DecodeASCIIPage(page.Value);
+
+                        break;
+                    case 0x80:
+                        evpdPageTitle   = UI.Unit_Serial_Number;
+                        evpdDecodedPage = EVPD.DecodePage80(page.Value);
+
+                        break;
+                    case 0x81:
+                        evpdPageTitle   = UI.SCSI_Implemented_operating_definitions;
+                        evpdDecodedPage = EVPD.PrettifyPage_81(page.Value);
+
+                        break;
+                    case 0x82:
+                        evpdPageTitle   = UI.ASCII_implemented_operating_definitions;
+                        evpdDecodedPage = EVPD.DecodePage82(page.Value);
+
+                        break;
+                    case 0x83:
+                        evpdPageTitle   = UI.SCSI_Device_identification;
+                        evpdDecodedPage = EVPD.PrettifyPage_83(page.Value);
+
+                        break;
+                    case 0x84:
+                        evpdPageTitle   = UI.SCSI_Software_Interface_Identifiers;
+                        evpdDecodedPage = EVPD.PrettifyPage_84(page.Value);
+
+                        break;
+                    case 0x85:
+                        evpdPageTitle   = UI.SCSI_Management_Network_Addresses;
+                        evpdDecodedPage = EVPD.PrettifyPage_85(page.Value);
+
+                        break;
+                    case 0x86:
+                        evpdPageTitle   = UI.SCSI_Extended_INQUIRY_Data;
+                        evpdDecodedPage = EVPD.PrettifyPage_86(page.Value);
+
+                        break;
+                    case 0x89:
+                        evpdPageTitle   = UI.SCSI_to_ATA_Translation_Layer_Data;
+                        evpdDecodedPage = EVPD.PrettifyPage_89(page.Value);
+
+                        break;
+                    case 0xB0:
+                        evpdPageTitle   = UI.SCSI_Sequential_access_Device_Capabilities;
+                        evpdDecodedPage = EVPD.PrettifyPage_B0(page.Value);
+
+                        break;
+                    case 0xB1:
+                        evpdPageTitle   = UI.Manufacturer_assigned_Serial_Number;
+                        evpdDecodedPage = EVPD.DecodePageB1(page.Value);
+
+                        break;
+                    case 0xB2:
+                        evpdPageTitle   = UI.TapeAlert_Supported_Flags_Bitmap;
+                        evpdDecodedPage = $"0x{EVPD.DecodePageB2(page.Value):X16}";
+
+                        break;
+                    case 0xB3:
+                        evpdPageTitle   = UI.Automation_Device_Serial_Number;
+                        evpdDecodedPage = EVPD.DecodePageB3(page.Value);
+
+                        break;
+                    case 0xB4:
+                        evpdPageTitle   = UI.Data_Transfer_Device_Element_Address;
+                        evpdDecodedPage = EVPD.DecodePageB4(page.Value);
+
+                        break;
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
+                                   "quantum":
+                        evpdPageTitle   = UI.Quantum_Firmware_Build_Information_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_C0_Quantum(page.Value);
+
+                        break;
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
+                                   "seagate":
+                        evpdPageTitle   = UI.Seagate_Firmware_Numbers_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_C0_Seagate(page.Value);
+
+                        break;
+                    case 0xC0 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
+                                   "ibm":
+                        evpdPageTitle   = UI.IBM_Drive_Component_Revision_Levels_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_C0_IBM(page.Value);
+
+                        break;
+                    case 0xC1 when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
+                                   "ibm":
+                        evpdPageTitle   = UI.IBM_Drive_Serial_Numbers_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_C1_IBM(page.Value);
+
+                        break;
+                    case 0xC0 or 0xC1
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
+                             "certance":
+                        evpdPageTitle   = UI.Certance_Drive_Component_Revision_Levels_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_C0_C1_Certance(page.Value);
+
+                        break;
+                    case 0xC2 or 0xC3 or 0xC4 or 0xC5 or 0xC6
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
+                             "certance":
+                        evpdPageTitle = page.Key switch
+                                        {
+                                            0xC2 => UI.Head_Assembly_Serial_Number,
+                                            0xC3 => UI.Reel_Motor_1_Serial_Number,
+                                            0xC4 => UI.Reel_Motor_2_Serial_Number,
+                                            0xC5 => UI.Board_Serial_Number,
+                                            0xC6 => UI.Base_Mechanical_Serial_Number,
+                                            _    => evpdPageTitle
+                                        };
+
+                        evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
+
+                        break;
+                    case 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5
+                        when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                           .ToLowerInvariant()
+                                           .Trim() ==
+                             "hp":
+                        evpdPageTitle = page.Key switch
+                                        {
+                                            0xC0 => UI.HP_Drive_Firmware_Revision_Levels_page,
+                                            0xC1 => UI.HP_Drive_Hardware_Revision_Levels_page,
+                                            0xC2 => UI.HP_Drive_PCA_Revision_Levels_page,
+                                            0xC3 => UI.HP_Drive_Mechanism_Revision_Levels_page,
+                                            0xC4 => UI.HP_Drive_Head_Assembly_Revision_Levels_page,
+                                            0xC5 => UI.HP_Drive_ACI_Revision_Levels_page,
+                                            _    => evpdPageTitle
+                                        };
+
+                        evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
+
+                        break;
+                    case 0xDF when StringHandlers.CToString(scsiInquiry.Value.VendorIdentification)
+                                                 .ToLowerInvariant()
+                                                 .Trim() ==
+                                   "certance":
+                        evpdPageTitle   = UI.Certance_drive_status_page;
+                        evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
+
+                        break;
+                    default:
                     {
-                        case 0xC2:
-                            evpdPageTitle = "Head Assembly Serial Number";
+                        if(page.Key == 0x00) continue;
 
-                            break;
-                        case 0xC3:
-                            evpdPageTitle = "Reel Motor 1 Serial Number";
+                        evpdPageTitle   = string.Format(UI.Page_0_h, page.Key);
+                        evpdDecodedPage = UI.Undecoded;
 
-                            break;
-                        case 0xC4:
-                            evpdPageTitle = "Reel Motor 2 Serial Number";
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Core.Found_undecoded_SCSI_VPD_page_0,
+                                                   page.Key);
 
-                            break;
-                        case 0xC5:
-                            evpdPageTitle = "Board Serial Number";
-
-                            break;
-                        case 0xC6:
-                            evpdPageTitle = "Base Mechanical Serial Number";
-
-                            break;
+                        break;
                     }
-
-                    evpdDecodedPage = EVPD.PrettifyPage_C2_C3_C4_C5_C6_Certance(page.Value);
-                }
-                else if(page.Key is 0xC0 or 0xC1 or 0xC2 or 0xC3 or 0xC4 or 0xC5 &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "hp")
-                {
-                    switch(page.Key)
-                    {
-                        case 0xC0:
-                            evpdPageTitle = "HP Drive Firmware Revision Levels page:";
-
-                            break;
-                        case 0xC1:
-                            evpdPageTitle = "HP Drive Hardware Revision Levels page:";
-
-                            break;
-                        case 0xC2:
-                            evpdPageTitle = "HP Drive PCA Revision Levels page:";
-
-                            break;
-                        case 0xC3:
-                            evpdPageTitle = "HP Drive Mechanism Revision Levels page:";
-
-                            break;
-                        case 0xC4:
-                            evpdPageTitle = "HP Drive Head Assembly Revision Levels page:";
-
-                            break;
-                        case 0xC5:
-                            evpdPageTitle = "HP Drive ACI Revision Levels page:";
-
-                            break;
-                    }
-
-                    evpdDecodedPage = EVPD.PrettifyPage_C0_to_C5_HP(page.Value);
-                }
-                else if(page.Key == 0xDF &&
-                        StringHandlers.CToString(scsiInquiry.Value.VendorIdentification).ToLowerInvariant().Trim() ==
-                        "certance")
-                {
-                    evpdPageTitle   = "Certance drive status page";
-                    evpdDecodedPage = EVPD.PrettifyPage_DF_Certance(page.Value);
-                }
-                else
-                {
-                    if(page.Key == 0x00)
-                        continue;
-
-                    evpdPageTitle   = $"Page {page.Key:X2}h";
-                    evpdDecodedPage = "Undecoded";
-
-                    AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
-                                               page.Key);
                 }
 
                 EvpdPages.Add(new ScsiPageModel
@@ -626,271 +621,99 @@ public sealed class ScsiInfoViewModel : ViewModelBase
                     Description = evpdDecodedPage
                 });
             }
+        }
 
-        if(_configuration != null)
+        if(_configuration == null) return;
+
+        Features.SeparatedFeatures ftr = Features.Separate(_configuration);
+
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.GET_CONFIGURATION_length_is_0, ftr.DataLength);
+
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Core.GET_CONFIGURATION_current_profile_is_0,
+                                   ftr.CurrentProfile);
+
+        if(ftr.Descriptors != null)
         {
-            Features.SeparatedFeatures ftr = Features.Separate(_configuration);
+            foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
+            {
+                var featureNumber = string.Format(Localization.Core.Feature_0, desc.Code);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Core.Feature_0, desc.Code);
 
-            AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes", ftr.DataLength);
+                string featureDescription = desc.Code switch
+                                            {
+                                                0x0000 => Features.Prettify_0000(desc.Data),
+                                                0x0001 => Features.Prettify_0001(desc.Data),
+                                                0x0002 => Features.Prettify_0002(desc.Data),
+                                                0x0003 => Features.Prettify_0003(desc.Data),
+                                                0x0004 => Features.Prettify_0004(desc.Data),
+                                                0x0010 => Features.Prettify_0010(desc.Data),
+                                                0x001D => Features.Prettify_001D(desc.Data),
+                                                0x001E => Features.Prettify_001E(desc.Data),
+                                                0x001F => Features.Prettify_001F(desc.Data),
+                                                0x0020 => Features.Prettify_0020(desc.Data),
+                                                0x0021 => Features.Prettify_0021(desc.Data),
+                                                0x0022 => Features.Prettify_0022(desc.Data),
+                                                0x0023 => Features.Prettify_0023(desc.Data),
+                                                0x0024 => Features.Prettify_0024(desc.Data),
+                                                0x0025 => Features.Prettify_0025(desc.Data),
+                                                0x0026 => Features.Prettify_0026(desc.Data),
+                                                0x0027 => Features.Prettify_0027(desc.Data),
+                                                0x0028 => Features.Prettify_0028(desc.Data),
+                                                0x0029 => Features.Prettify_0029(desc.Data),
+                                                0x002A => Features.Prettify_002A(desc.Data),
+                                                0x002B => Features.Prettify_002B(desc.Data),
+                                                0x002C => Features.Prettify_002C(desc.Data),
+                                                0x002D => Features.Prettify_002D(desc.Data),
+                                                0x002E => Features.Prettify_002E(desc.Data),
+                                                0x002F => Features.Prettify_002F(desc.Data),
+                                                0x0030 => Features.Prettify_0030(desc.Data),
+                                                0x0031 => Features.Prettify_0031(desc.Data),
+                                                0x0032 => Features.Prettify_0032(desc.Data),
+                                                0x0033 => Features.Prettify_0033(desc.Data),
+                                                0x0035 => Features.Prettify_0035(desc.Data),
+                                                0x0037 => Features.Prettify_0037(desc.Data),
+                                                0x0038 => Features.Prettify_0038(desc.Data),
+                                                0x003A => Features.Prettify_003A(desc.Data),
+                                                0x003B => Features.Prettify_003B(desc.Data),
+                                                0x0040 => Features.Prettify_0040(desc.Data),
+                                                0x0041 => Features.Prettify_0041(desc.Data),
+                                                0x0042 => Features.Prettify_0042(desc.Data),
+                                                0x0050 => Features.Prettify_0050(desc.Data),
+                                                0x0051 => Features.Prettify_0051(desc.Data),
+                                                0x0080 => Features.Prettify_0080(desc.Data),
+                                                0x0100 => Features.Prettify_0100(desc.Data),
+                                                0x0101 => Features.Prettify_0101(desc.Data),
+                                                0x0102 => Features.Prettify_0102(desc.Data),
+                                                0x0103 => Features.Prettify_0103(desc.Data),
+                                                0x0104 => Features.Prettify_0104(desc.Data),
+                                                0x0105 => Features.Prettify_0105(desc.Data),
+                                                0x0106 => Features.Prettify_0106(desc.Data),
+                                                0x0107 => Features.Prettify_0107(desc.Data),
+                                                0x0108 => Features.Prettify_0108(desc.Data),
+                                                0x0109 => Features.Prettify_0109(desc.Data),
+                                                0x010A => Features.Prettify_010A(desc.Data),
+                                                0x010B => Features.Prettify_010B(desc.Data),
+                                                0x010C => Features.Prettify_010C(desc.Data),
+                                                0x010D => Features.Prettify_010D(desc.Data),
+                                                0x010E => Features.Prettify_010E(desc.Data),
+                                                0x0110 => Features.Prettify_0110(desc.Data),
+                                                0x0113 => Features.Prettify_0113(desc.Data),
+                                                0x0142 => Features.Prettify_0142(desc.Data),
+                                                _      => UI.Unknown_feature
+                                            };
 
-            AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
-                                       ftr.CurrentProfile);
-
-            if(ftr.Descriptors != null)
-                foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
+                MmcFeatures.Add(new ScsiPageModel
                 {
-                    string featureNumber = $"Feature {desc.Code:X4}h";
-                    string featureDescription;
-                    AaruConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
-
-                    switch(desc.Code)
-                    {
-                        case 0x0000:
-                            featureDescription = Features.Prettify_0000(desc.Data);
-
-                            break;
-                        case 0x0001:
-                            featureDescription = Features.Prettify_0001(desc.Data);
-
-                            break;
-                        case 0x0002:
-                            featureDescription = Features.Prettify_0002(desc.Data);
-
-                            break;
-                        case 0x0003:
-                            featureDescription = Features.Prettify_0003(desc.Data);
-
-                            break;
-                        case 0x0004:
-                            featureDescription = Features.Prettify_0004(desc.Data);
-
-                            break;
-                        case 0x0010:
-                            featureDescription = Features.Prettify_0010(desc.Data);
-
-                            break;
-                        case 0x001D:
-                            featureDescription = Features.Prettify_001D(desc.Data);
-
-                            break;
-                        case 0x001E:
-                            featureDescription = Features.Prettify_001E(desc.Data);
-
-                            break;
-                        case 0x001F:
-                            featureDescription = Features.Prettify_001F(desc.Data);
-
-                            break;
-                        case 0x0020:
-                            featureDescription = Features.Prettify_0020(desc.Data);
-
-                            break;
-                        case 0x0021:
-                            featureDescription = Features.Prettify_0021(desc.Data);
-
-                            break;
-                        case 0x0022:
-                            featureDescription = Features.Prettify_0022(desc.Data);
-
-                            break;
-                        case 0x0023:
-                            featureDescription = Features.Prettify_0023(desc.Data);
-
-                            break;
-                        case 0x0024:
-                            featureDescription = Features.Prettify_0024(desc.Data);
-
-                            break;
-                        case 0x0025:
-                            featureDescription = Features.Prettify_0025(desc.Data);
-
-                            break;
-                        case 0x0026:
-                            featureDescription = Features.Prettify_0026(desc.Data);
-
-                            break;
-                        case 0x0027:
-                            featureDescription = Features.Prettify_0027(desc.Data);
-
-                            break;
-                        case 0x0028:
-                            featureDescription = Features.Prettify_0028(desc.Data);
-
-                            break;
-                        case 0x0029:
-                            featureDescription = Features.Prettify_0029(desc.Data);
-
-                            break;
-                        case 0x002A:
-                            featureDescription = Features.Prettify_002A(desc.Data);
-
-                            break;
-                        case 0x002B:
-                            featureDescription = Features.Prettify_002B(desc.Data);
-
-                            break;
-                        case 0x002C:
-                            featureDescription = Features.Prettify_002C(desc.Data);
-
-                            break;
-                        case 0x002D:
-                            featureDescription = Features.Prettify_002D(desc.Data);
-
-                            break;
-                        case 0x002E:
-                            featureDescription = Features.Prettify_002E(desc.Data);
-
-                            break;
-                        case 0x002F:
-                            featureDescription = Features.Prettify_002F(desc.Data);
-
-                            break;
-                        case 0x0030:
-                            featureDescription = Features.Prettify_0030(desc.Data);
-
-                            break;
-                        case 0x0031:
-                            featureDescription = Features.Prettify_0031(desc.Data);
-
-                            break;
-                        case 0x0032:
-                            featureDescription = Features.Prettify_0032(desc.Data);
-
-                            break;
-                        case 0x0033:
-                            featureDescription = Features.Prettify_0033(desc.Data);
-
-                            break;
-                        case 0x0035:
-                            featureDescription = Features.Prettify_0035(desc.Data);
-
-                            break;
-                        case 0x0037:
-                            featureDescription = Features.Prettify_0037(desc.Data);
-
-                            break;
-                        case 0x0038:
-                            featureDescription = Features.Prettify_0038(desc.Data);
-
-                            break;
-                        case 0x003A:
-                            featureDescription = Features.Prettify_003A(desc.Data);
-
-                            break;
-                        case 0x003B:
-                            featureDescription = Features.Prettify_003B(desc.Data);
-
-                            break;
-                        case 0x0040:
-                            featureDescription = Features.Prettify_0040(desc.Data);
-
-                            break;
-                        case 0x0041:
-                            featureDescription = Features.Prettify_0041(desc.Data);
-
-                            break;
-                        case 0x0042:
-                            featureDescription = Features.Prettify_0042(desc.Data);
-
-                            break;
-                        case 0x0050:
-                            featureDescription = Features.Prettify_0050(desc.Data);
-
-                            break;
-                        case 0x0051:
-                            featureDescription = Features.Prettify_0051(desc.Data);
-
-                            break;
-                        case 0x0080:
-                            featureDescription = Features.Prettify_0080(desc.Data);
-
-                            break;
-                        case 0x0100:
-                            featureDescription = Features.Prettify_0100(desc.Data);
-
-                            break;
-                        case 0x0101:
-                            featureDescription = Features.Prettify_0101(desc.Data);
-
-                            break;
-                        case 0x0102:
-                            featureDescription = Features.Prettify_0102(desc.Data);
-
-                            break;
-                        case 0x0103:
-                            featureDescription = Features.Prettify_0103(desc.Data);
-
-                            break;
-                        case 0x0104:
-                            featureDescription = Features.Prettify_0104(desc.Data);
-
-                            break;
-                        case 0x0105:
-                            featureDescription = Features.Prettify_0105(desc.Data);
-
-                            break;
-                        case 0x0106:
-                            featureDescription = Features.Prettify_0106(desc.Data);
-
-                            break;
-                        case 0x0107:
-                            featureDescription = Features.Prettify_0107(desc.Data);
-
-                            break;
-                        case 0x0108:
-                            featureDescription = Features.Prettify_0108(desc.Data);
-
-                            break;
-                        case 0x0109:
-                            featureDescription = Features.Prettify_0109(desc.Data);
-
-                            break;
-                        case 0x010A:
-                            featureDescription = Features.Prettify_010A(desc.Data);
-
-                            break;
-                        case 0x010B:
-                            featureDescription = Features.Prettify_010B(desc.Data);
-
-                            break;
-                        case 0x010C:
-                            featureDescription = Features.Prettify_010C(desc.Data);
-
-                            break;
-                        case 0x010D:
-                            featureDescription = Features.Prettify_010D(desc.Data);
-
-                            break;
-                        case 0x010E:
-                            featureDescription = Features.Prettify_010E(desc.Data);
-
-                            break;
-                        case 0x0110:
-                            featureDescription = Features.Prettify_0110(desc.Data);
-
-                            break;
-                        case 0x0113:
-                            featureDescription = Features.Prettify_0113(desc.Data);
-
-                            break;
-                        case 0x0142:
-                            featureDescription = Features.Prettify_0142(desc.Data);
-
-                            break;
-                        default:
-                            featureDescription = "Unknown feature";
-
-                            break;
-                    }
-
-                    MmcFeatures.Add(new ScsiPageModel
-                    {
-                        Page        = featureNumber,
-                        Description = featureDescription
-                    });
-                }
-            else
-                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION returned no feature descriptors");
+                    Page        = featureNumber,
+                    Description = featureDescription
+                });
+            }
+        }
+        else
+        {
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Core.GET_CONFIGURATION_returned_no_feature_descriptors);
         }
     }
 
@@ -911,11 +734,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedModeSensePage;
         set
         {
-            if(value == _selectedModeSensePage)
-                return;
+            if(value == _selectedModeSensePage) return;
 
-            if(value is ScsiPageModel pageModel)
-                ModeSensePageText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) ModeSensePageText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedModeSensePage, value);
         }
@@ -932,11 +753,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedEvpdPage;
         set
         {
-            if(value == _selectedEvpdPage)
-                return;
+            if(value == _selectedEvpdPage) return;
 
-            if(value is ScsiPageModel pageModel)
-                EvpdPageText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) EvpdPageText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedEvpdPage, value);
         }
@@ -953,11 +772,9 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         get => _selectedMmcFeature;
         set
         {
-            if(value == _selectedMmcFeature)
-                return;
+            if(value == _selectedMmcFeature) return;
 
-            if(value is ScsiPageModel pageModel)
-                MmcFeatureText = pageModel.Description;
+            if(value is ScsiPageModel pageModel) MmcFeatureText = pageModel.Description;
 
             this.RaiseAndSetIfChanged(ref _selectedMmcFeature, value);
         }
@@ -969,25 +786,33 @@ public sealed class ScsiInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _mmcFeatureText, value);
     }
 
+    public string InquiryLabel           => UI.Title_INQUIRY;
+    public string ScsiInquiryLabel       => UI.Title_SCSI_INQUIRY;
+    public string SaveInquiryBinaryLabel => UI.ButtonLabel_Save_binary_to_file;
+    public string SaveInquiryTextLabel   => UI.ButtonLabel_Save_text_to_file;
+    public string ModeSenseLabel         => UI.Title_MODE_SENSE;
+    public string PageLabel              => UI.Title_Page;
+    public string SaveModeSense6Label    => UI.ButtonLabel_Save_MODE_SENSE_6_response_to_file;
+    public string SaveModeSense10Label   => UI.ButtonLabel_Save_MODE_SENSE_10_response_to_file;
+    public string EvpdLabel              => UI.Title_EVPD;
+    public string SaveEvpdPageLabel      => UI.ButtonLabel_Save_EVPD_page_to_file;
+    public string MmcFeaturesLabel       => UI.Title_MMC_FEATURES;
+    public string FeatureLabel           => UI.Title_Feature;
+    public string SaveMmcFeaturesLabel   => UI.ButtonLabel_Save_MMC_GET_CONFIGURATION_response_to_file;
+
     async Task ExecuteSaveInquiryBinaryCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(InquiryData, 0, InquiryData.Length);
 
         saveFs.Close();
@@ -995,47 +820,35 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveInquiryTextCommand()
     {
-        var dlgSaveText = new SaveFileDialog();
-
-        dlgSaveText.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.txt"
-            }),
-            Name = "Text"
+                FilePickerFileTypes.PlainText
+            }
         });
 
-        string result = await dlgSaveText.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
-        saveSw.Write(ScsiInquiryText);
+        await saveSw.WriteAsync(ScsiInquiryText);
         saveFs.Close();
     }
 
     async Task ExecuteSaveModeSense6Command()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_scsiModeSense6, 0, _scsiModeSense6.Length);
 
         saveFs.Close();
@@ -1043,23 +856,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveModeSense10Command()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_scsiModeSense10, 0, _scsiModeSense10.Length);
 
         saveFs.Close();
@@ -1067,26 +874,19 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveEvpdPageCommand()
     {
-        if(!(SelectedEvpdPage is ScsiPageModel pageModel))
-            return;
+        if(SelectedEvpdPage is not ScsiPageModel pageModel) return;
 
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(pageModel.Data, 0, pageModel.Data.Length);
 
         saveFs.Close();
@@ -1094,23 +894,17 @@ public sealed class ScsiInfoViewModel : ViewModelBase
 
     async Task ExecuteSaveMmcFeaturesCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_configuration, 0, _configuration.Length);
 
         saveFs.Close();

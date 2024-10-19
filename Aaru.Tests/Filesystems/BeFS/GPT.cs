@@ -23,28 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.BeFS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.BeFS;
+
 [TestFixture]
-public class GPT : FilesystemTest
+public class GPT() : FilesystemTest("befs")
 {
-    public GPT() : base("BeFS") {}
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (GPT)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
+    public override bool        Partitions => true;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Be File System (GPT)");
-    public override IFilesystem Plugin => new BeFS();
-    public override bool Partitions => true;
-
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "haiku_hrev51259.aif",
@@ -55,5 +52,5 @@ public class GPT : FilesystemTest
             ClusterSize = 2048,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

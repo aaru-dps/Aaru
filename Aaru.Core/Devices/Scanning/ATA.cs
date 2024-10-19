@@ -27,15 +27,16 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
-using System.Collections.Generic;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Core.Logging;
+using Humanizer;
+using Humanizer.Bytes;
+
+namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning the media from an ATA device</summary>
 public sealed partial class MediaScan
@@ -54,8 +55,7 @@ public sealed partial class MediaScan
 
         bool sense = _dev.AtaIdentify(out byte[] cmdBuf, out _);
 
-        if(!sense &&
-           Identify.Decode(cmdBuf).HasValue)
+        if(!sense && Identify.Decode(cmdBuf).HasValue)
         {
             // Initialize reader
             var ataReader = new Reader(_dev, timeout, cmdBuf, null);
@@ -93,20 +93,18 @@ public sealed partial class MediaScan
             byte   heads        = ataReader.Heads;
             byte   sectors      = ataReader.Sectors;
 
-            results.A       = 0; // <3ms
-            results.B       = 0; // >=3ms, <10ms
-            results.C       = 0; // >=10ms, <50ms
-            results.D       = 0; // >=50ms, <150ms
-            results.E       = 0; // >=150ms, <500ms
-            results.F       = 0; // >=500ms
-            results.Errored = 0;
-            DateTime start;
-            DateTime end;
+            results.A              = 0; // <3ms
+            results.B              = 0; // >=3ms, <10ms
+            results.C              = 0; // >=10ms, <50ms
+            results.D              = 0; // >=50ms, <150ms
+            results.E              = 0; // >=150ms, <500ms
+            results.F              = 0; // >=500ms
+            results.Errored        = 0;
             results.ProcessingTime = 0;
             double currentSpeed = 0;
             results.MaxSpeed          = double.MinValue;
             results.MinSpeed          = double.MaxValue;
-            results.UnreadableSectors = new List<ulong>();
+            results.UnreadableSectors = [];
             results.SeekMax           = double.MinValue;
             results.SeekMin           = double.MaxValue;
             results.SeekTotal         = 0;
@@ -122,52 +120,67 @@ public sealed partial class MediaScan
 
             if(ataReader.IsLba)
             {
-                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
                 InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ataProfile);
                 mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
                 ibgLog  = new IbgLog(_ibgLogPath, ataProfile);
 
-                start = DateTime.UtcNow;
-                DateTime timeSpeedStart   = DateTime.UtcNow;
-                ulong    sectorSpeedStart = 0;
+                _scanStopwatch.Restart();
+                _speedStopwatch.Restart();
+                ulong sectorSpeedStart = 0;
                 InitProgress?.Invoke();
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
-                    if(_aborted)
-                        break;
+                    if(_aborted) break;
 
-                    if(results.Blocks - i < blocksToRead)
-                        blocksToRead = (byte)(results.Blocks - i);
+                    if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
 
-                    if(currentSpeed > results.MaxSpeed &&
-                       currentSpeed > 0)
-                        results.MaxSpeed = currentSpeed;
+                    if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                    if(currentSpeed < results.MinSpeed &&
-                       currentSpeed > 0)
-                        results.MinSpeed = currentSpeed;
+                    if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-                    UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
-                                           (long)i, (long)results.Blocks);
+                    UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                         i,
+                                                         results.Blocks,
+                                                         ByteSize.FromMegabytes(currentSpeed)
+                                                                 .Per(_oneSecond)
+                                                                 .Humanize()),
+                                           (long)i,
+                                           (long)results.Blocks);
 
                     bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration, out _, out _);
 
                     if(!error)
                     {
-                        if(duration >= 500)
-                            results.F += blocksToRead;
-                        else if(duration >= 150)
-                            results.E += blocksToRead;
-                        else if(duration >= 50)
-                            results.D += blocksToRead;
-                        else if(duration >= 10)
-                            results.C += blocksToRead;
-                        else if(duration >= 3)
-                            results.B += blocksToRead;
-                        else
-                            results.A += blocksToRead;
+                        switch(duration)
+                        {
+                            case >= 500:
+                                results.F += blocksToRead;
+
+                                break;
+                            case >= 150:
+                                results.E += blocksToRead;
+
+                                break;
+                            case >= 50:
+                                results.D += blocksToRead;
+
+                                break;
+                            case >= 10:
+                                results.C += blocksToRead;
+
+                                break;
+                            case >= 3:
+                                results.B += blocksToRead;
+
+                                break;
+                            default:
+                                results.A += blocksToRead;
+
+                                break;
+                        }
 
                         ScanTime?.Invoke(i, duration);
                         mhddLog.Write(i, duration);
@@ -178,8 +191,7 @@ public sealed partial class MediaScan
                         ScanUnreadable?.Invoke(i);
                         results.Errored += blocksToRead;
 
-                        for(ulong b = i; b < i + blocksToRead; b++)
-                            results.UnreadableSectors.Add(b);
+                        for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                         mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
@@ -188,50 +200,51 @@ public sealed partial class MediaScan
 
                     sectorSpeedStart += blocksToRead;
 
-                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                    if(elapsed <= 0)
-                        continue;
+                    if(elapsed <= 0) continue;
 
                     currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                     sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
+                    _speedStopwatch.Restart();
                 }
 
-                end = DateTime.UtcNow;
+                _speedStopwatch.Stop();
+                _scanStopwatch.Stop();
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev,
+                             results.Blocks,
+                             blockSize,
+                             _scanStopwatch.Elapsed.TotalSeconds,
+                             currentSpeed                             * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
 
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeekLba && _seekTest)
+                {
                     for(var i = 0; i < seekTimes; i++)
                     {
-                        if(_aborted)
-                            break;
+                        if(_aborted) break;
 
                         var seekPos = (uint)rnd.Next((int)results.Blocks);
 
-                        PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
+                        PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 
                         ataReader.Seek(seekPos, out seekCur);
 
-                        if(seekCur > results.SeekMax &&
-                           seekCur > 0)
-                            results.SeekMax = seekCur;
+                        if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin &&
-                           seekCur > 0)
-                            results.SeekMin = seekCur;
+                        if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;
                         GC.Collect();
                     }
+                }
 
                 EndProgress?.Invoke();
             }
@@ -243,9 +256,9 @@ public sealed partial class MediaScan
 
                 ulong currentBlock = 0;
                 results.Blocks = (ulong)(cylinders * heads * sectors);
-                start          = DateTime.UtcNow;
-                DateTime timeSpeedStart   = DateTime.UtcNow;
-                ulong    sectorSpeedStart = 0;
+                _scanStopwatch.Restart();
+                _speedStopwatch.Restart();
+                ulong sectorSpeedStart = 0;
                 InitProgress?.Invoke();
 
                 for(ushort cy = 0; cy < cylinders; cy++)
@@ -254,36 +267,51 @@ public sealed partial class MediaScan
                     {
                         for(byte sc = 1; sc < sectors; sc++)
                         {
-                            if(_aborted)
-                                break;
+                            if(_aborted) break;
 
-                            if(currentSpeed > results.MaxSpeed &&
-                               currentSpeed > 0)
-                                results.MaxSpeed = currentSpeed;
+                            if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                            if(currentSpeed < results.MinSpeed &&
-                               currentSpeed > 0)
-                                results.MinSpeed = currentSpeed;
+                            if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-                            PulseProgress?.
-                                Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
+                            PulseProgress?.Invoke(string.Format(Localization.Core.Reading_cylinder_0_head_1_sector_2_3,
+                                                                cy,
+                                                                hd,
+                                                                sc,
+                                                                ByteSize.FromMegabytes(currentSpeed)
+                                                                        .Per(_oneSecond)
+                                                                        .Humanize()));
 
                             bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration, out _);
 
                             if(!error)
                             {
-                                if(duration >= 500)
-                                    results.F += blocksToRead;
-                                else if(duration >= 150)
-                                    results.E += blocksToRead;
-                                else if(duration >= 50)
-                                    results.D += blocksToRead;
-                                else if(duration >= 10)
-                                    results.C += blocksToRead;
-                                else if(duration >= 3)
-                                    results.B += blocksToRead;
-                                else
-                                    results.A += blocksToRead;
+                                switch(duration)
+                                {
+                                    case >= 500:
+                                        results.F += blocksToRead;
+
+                                        break;
+                                    case >= 150:
+                                        results.E += blocksToRead;
+
+                                        break;
+                                    case >= 50:
+                                        results.D += blocksToRead;
+
+                                        break;
+                                    case >= 10:
+                                        results.C += blocksToRead;
+
+                                        break;
+                                    case >= 3:
+                                        results.B += blocksToRead;
+
+                                        break;
+                                    default:
+                                        results.A += blocksToRead;
+
+                                        break;
+                                }
 
                                 ScanTime?.Invoke(currentBlock, duration);
                                 mhddLog.Write(currentBlock, duration);
@@ -302,67 +330,71 @@ public sealed partial class MediaScan
                             sectorSpeedStart++;
                             currentBlock++;
 
-                            double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                            double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                            if(elapsed <= 0)
-                                continue;
+                            if(elapsed <= 0) continue;
 
                             currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                             ScanSpeed?.Invoke(currentBlock, currentSpeed           * 1024);
                             sectorSpeedStart = 0;
-                            timeSpeedStart   = DateTime.UtcNow;
+                            _speedStopwatch.Restart();
                         }
                     }
                 }
 
-                end = DateTime.UtcNow;
+                _speedStopwatch.Stop();
+                _scanStopwatch.Stop();
                 EndProgress?.Invoke();
                 mhddLog.Close();
 
-                ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                ibgLog.Close(_dev,
+                             results.Blocks,
+                             blockSize,
+                             _scanStopwatch.Elapsed.TotalSeconds,
+                             currentSpeed                             * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                              _devicePath);
 
                 InitProgress?.Invoke();
 
                 if(ataReader.CanSeek)
+                {
                     for(var i = 0; i < seekTimes; i++)
                     {
-                        if(_aborted)
-                            break;
+                        if(_aborted) break;
 
                         var seekCy = (ushort)rnd.Next(cylinders);
                         var seekHd = (byte)rnd.Next(heads);
                         var seekSc = (byte)rnd.Next(sectors);
 
-                        PulseProgress?.Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
+                        PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_cylinder_0_head_1_sector_2,
+                                                            seekCy,
+                                                            seekHd,
+                                                            seekSc));
 
                         ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
-                        if(seekCur > results.SeekMax &&
-                           seekCur > 0)
-                            results.SeekMax = seekCur;
+                        if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-                        if(seekCur < results.SeekMin &&
-                           seekCur > 0)
-                            results.SeekMin = seekCur;
+                        if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
                         results.SeekTotal += seekCur;
                         GC.Collect();
                     }
+                }
 
                 EndProgress?.Invoke();
             }
 
             results.ProcessingTime /= 1000;
-            results.TotalTime      =  (end - start).TotalSeconds;
+            results.TotalTime      =  _scanStopwatch.Elapsed.TotalSeconds;
             results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
             results.SeekTimes      =  seekTimes;
 
             return results;
         }
 
-        StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");
+        StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_communicate_with_ATA_device);
 
         return results;
     }

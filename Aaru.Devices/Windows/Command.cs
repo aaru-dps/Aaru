@@ -28,52 +28,40 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
 
+namespace Aaru.Devices.Windows;
+
 [SuppressMessage("ReSharper", "UnusedParameter.Global")]
 partial class Device
 {
     /// <inheritdoc />
-    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+    public override int SendScsiCommand(byte[]        cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         senseBuffer = null;
         duration    = 0;
         sense       = false;
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
-        ScsiIoctlDirection dir;
-
-        switch(direction)
-        {
-            case ScsiDirection.In:
-                dir = ScsiIoctlDirection.In;
-
-                break;
-            case ScsiDirection.Out:
-                dir = ScsiIoctlDirection.Out;
-
-                break;
-            default:
-                dir = ScsiIoctlDirection.Unspecified;
-
-                break;
-        }
+        ScsiIoctlDirection dir = direction switch
+                                 {
+                                     ScsiDirection.In  => ScsiIoctlDirection.In,
+                                     ScsiDirection.Out => ScsiIoctlDirection.Out,
+                                     _                 => ScsiIoctlDirection.Unspecified
+                                 };
 
         var sptdSb = new ScsiPassThroughDirectAndSenseBuffer
         {
@@ -99,16 +87,21 @@ partial class Device
 
         Marshal.Copy(buffer, 0, sptdSb.sptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
-        bool hasError = !Extern.DeviceIoControlScsi(_fileHandle, WindowsIoctl.IoctlScsiPassThroughDirect, ref sptdSb,
-                                                    (uint)Marshal.SizeOf(sptdSb), ref sptdSb,
-                                                    (uint)Marshal.SizeOf(sptdSb), ref k, IntPtr.Zero);
+        bool hasError = !Extern.DeviceIoControlScsi(_fileHandle,
+                                                    WindowsIoctl.IoctlScsiPassThroughDirect,
+                                                    ref sptdSb,
+                                                    (uint)Marshal.SizeOf(sptdSb),
+                                                    ref sptdSb,
+                                                    (uint)Marshal.SizeOf(sptdSb),
+                                                    ref k,
+                                                    IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
-        if(hasError)
-            error = Marshal.GetLastWin32Error();
+        if(hasError) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(sptdSb.sptd.DataBuffer, buffer, 0, buffer.Length);
 
@@ -117,7 +110,7 @@ partial class Device
         senseBuffer = new byte[64];
         Array.Copy(sptdSb.SenseBuf, senseBuffer, 32);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(sptdSb.sptd.DataBuffer);
 
@@ -130,15 +123,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersChs();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var aptd = new AtaPassThroughDirect
         {
@@ -159,20 +150,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {
@@ -194,20 +177,25 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
-        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
-                                           (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+        sense = !Extern.DeviceIoControlAta(_fileHandle,
+                                           WindowsIoctl.IoctlAtaPassThroughDirect,
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
-        if(sense)
-            error = Marshal.GetLastWin32Error();
+        if(sense) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.CylinderHigh = aptd.CurrentTaskFile.CylinderHigh;
         errorRegisters.CylinderLow  = aptd.CurrentTaskFile.CylinderLow;
@@ -230,15 +218,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba28();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var aptd = new AtaPassThroughDirect
         {
@@ -259,20 +245,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {
@@ -294,20 +272,25 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
-        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
-                                           (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+        sense = !Extern.DeviceIoControlAta(_fileHandle,
+                                           WindowsIoctl.IoctlAtaPassThroughDirect,
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
-        if(sense)
-            error = Marshal.GetLastWin32Error();
+        if(sense) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.LbaHigh     = aptd.CurrentTaskFile.CylinderHigh;
         errorRegisters.LbaMid      = aptd.CurrentTaskFile.CylinderLow;
@@ -330,15 +313,13 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba48();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var aptd = new AtaPassThroughDirect
         {
@@ -366,20 +347,12 @@ partial class Device
             }
         };
 
-        switch(protocol)
-        {
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn:
-            case AtaProtocol.Dma:
-                aptd.AtaFlags = AtaFlags.DataIn;
-
-                break;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut:
-                aptd.AtaFlags = AtaFlags.DataOut;
-
-                break;
-        }
+        aptd.AtaFlags = protocol switch
+                        {
+                            AtaProtocol.PioIn or AtaProtocol.UDmaIn or AtaProtocol.Dma => AtaFlags.DataIn,
+                            AtaProtocol.PioOut or AtaProtocol.UDmaOut                  => AtaFlags.DataOut,
+                            _                                                          => aptd.AtaFlags
+                        };
 
         switch(protocol)
         {
@@ -403,20 +376,25 @@ partial class Device
 
         Marshal.Copy(buffer, 0, aptd.DataBuffer, buffer.Length);
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
-        sense = !Extern.DeviceIoControlAta(_fileHandle, WindowsIoctl.IoctlAtaPassThroughDirect, ref aptd,
-                                           (uint)Marshal.SizeOf(aptd), ref aptd, (uint)Marshal.SizeOf(aptd), ref k,
+        sense = !Extern.DeviceIoControlAta(_fileHandle,
+                                           WindowsIoctl.IoctlAtaPassThroughDirect,
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref aptd,
+                                           (uint)Marshal.SizeOf(aptd),
+                                           ref k,
                                            IntPtr.Zero);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
-        if(sense)
-            error = Marshal.GetLastWin32Error();
+        if(sense) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(aptd.DataBuffer, buffer, 0, buffer.Length);
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         errorRegisters.SectorCount = (ushort)((aptd.PreviousTaskFile.SectorCount << 8) +
                                               aptd.CurrentTaskFile.SectorCount);
@@ -446,69 +424,74 @@ partial class Device
         var queryData1 = new SffdiskQueryDeviceProtocolData();
         queryData1.size = (ushort)Marshal.SizeOf(queryData1);
 
-        Extern.DeviceIoControl(fd, WindowsIoctl.IoctlSffdiskQueryDeviceProtocol, IntPtr.Zero, 0, ref queryData1,
-                               queryData1.size, out _, IntPtr.Zero);
+        Extern.DeviceIoControl(fd,
+                               WindowsIoctl.IoctlSffdiskQueryDeviceProtocol,
+                               IntPtr.Zero,
+                               0,
+                               ref queryData1,
+                               queryData1.size,
+                               out _,
+                               IntPtr.Zero);
 
         return queryData1.protocolGuid.Equals(Consts.GuidSffProtocolSd) ||
                queryData1.protocolGuid.Equals(Consts.GuidSffProtocolMmc);
     }
 
     /// <inheritdoc />
-    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                       uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
+    public override int SendMmcCommand(MmcCommands command,  bool       write,     bool isApplication, MmcFlags flags,
+                                       uint        argument, uint       blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
-        DateTime start;
-        DateTime end;
+        var cmdStopwatch = new Stopwatch();
 
         switch(command)
         {
-            case MmcCommands.SendCid when _cachedCid != null:
+            case MmcCommands.SendCid when CachedCid != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedCid.Length];
-                Array.Copy(_cachedCid, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedCid.Length];
+                Array.Copy(CachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case MmcCommands.SendCsd when _cachedCid != null:
+            case MmcCommands.SendCsd when CachedCid != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedCsd.Length];
-                Array.Copy(_cachedCsd, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedCsd.Length];
+                Array.Copy(CachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
+            case (MmcCommands)SecureDigitalCommands.SendScr when CachedScr != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedScr.Length];
-                Array.Copy(_cachedScr, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedScr.Length];
+                Array.Copy(CachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
-            case MmcCommands.SendOpCond when _cachedOcr                                    != null:
+            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when CachedOcr != null:
+            case MmcCommands.SendOpCond when CachedOcr                                    != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedOcr.Length];
-                Array.Copy(_cachedOcr, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedOcr.Length];
+                Array.Copy(CachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
@@ -524,39 +507,33 @@ partial class Device
         commandDescriptor.cmdClass          = isApplication ? SdCommandClass.AppCmd : SdCommandClass.Standard;
         commandDescriptor.transferDirection = write ? SdTransferDirection.Write : SdTransferDirection.Read;
 
-        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc) ? command == MmcCommands.ReadMultipleBlock
-                                                                                   ? SdTransferType.MultiBlock
-                                                                                   : SdTransferType.SingleBlock
+        commandDescriptor.transferType = flags.HasFlag(MmcFlags.CommandAdtc)
+                                             ? command == MmcCommands.ReadMultipleBlock
+                                                   ? SdTransferType.MultiBlock
+                                                   : SdTransferType.SingleBlock
                                              : SdTransferType.CmdOnly;
 
         commandDescriptor.responseType = 0;
 
-        if(flags.HasFlag(MmcFlags.ResponseR1) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR1))
+        if(flags.HasFlag(MmcFlags.ResponseR1) || flags.HasFlag(MmcFlags.ResponseSpiR1))
             commandDescriptor.responseType = SdResponseType.R1;
 
-        if(flags.HasFlag(MmcFlags.ResponseR1B) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR1B))
+        if(flags.HasFlag(MmcFlags.ResponseR1B) || flags.HasFlag(MmcFlags.ResponseSpiR1B))
             commandDescriptor.responseType = SdResponseType.R1b;
 
-        if(flags.HasFlag(MmcFlags.ResponseR2) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR2))
+        if(flags.HasFlag(MmcFlags.ResponseR2) || flags.HasFlag(MmcFlags.ResponseSpiR2))
             commandDescriptor.responseType = SdResponseType.R2;
 
-        if(flags.HasFlag(MmcFlags.ResponseR3) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR3))
+        if(flags.HasFlag(MmcFlags.ResponseR3) || flags.HasFlag(MmcFlags.ResponseSpiR3))
             commandDescriptor.responseType = SdResponseType.R3;
 
-        if(flags.HasFlag(MmcFlags.ResponseR4) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR4))
+        if(flags.HasFlag(MmcFlags.ResponseR4) || flags.HasFlag(MmcFlags.ResponseSpiR4))
             commandDescriptor.responseType = SdResponseType.R4;
 
-        if(flags.HasFlag(MmcFlags.ResponseR5) ||
-           flags.HasFlag(MmcFlags.ResponseSpiR5))
+        if(flags.HasFlag(MmcFlags.ResponseR5) || flags.HasFlag(MmcFlags.ResponseSpiR5))
             commandDescriptor.responseType = SdResponseType.R5;
 
-        if(flags.HasFlag(MmcFlags.ResponseR6))
-            commandDescriptor.responseType = SdResponseType.R6;
+        if(flags.HasFlag(MmcFlags.ResponseR6)) commandDescriptor.responseType = SdResponseType.R6;
 
         var commandB = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
@@ -569,32 +546,36 @@ partial class Device
         Marshal.FreeHGlobal(hBuf);
 
         var error = 0;
-        start = DateTime.Now;
+        cmdStopwatch.Restart();
 
-        sense = !Extern.DeviceIoControl(_fileHandle, WindowsIoctl.IoctlSffdiskDeviceCommand, commandB,
-                                        (uint)commandB.Length, commandB, (uint)commandB.Length, out _, IntPtr.Zero);
+        sense = !Extern.DeviceIoControl(_fileHandle,
+                                        WindowsIoctl.IoctlSffdiskDeviceCommand,
+                                        commandB,
+                                        (uint)commandB.Length,
+                                        commandB,
+                                        (uint)commandB.Length,
+                                        out _,
+                                        IntPtr.Zero);
 
-        end = DateTime.Now;
+        cmdStopwatch.Stop();
 
-        if(sense)
-            error = Marshal.GetLastWin32Error();
+        if(sense) error = Marshal.GetLastWin32Error();
 
         buffer = new byte[blockSize * blocks];
         Buffer.BlockCopy(commandB, commandB.Length - buffer.Length, buffer, 0, buffer.Length);
 
         response = new uint[4];
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         return error;
     }
 
     /// <inheritdoc />
     public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                                uint timeout = 15)
+                                                uint               timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         var error = 0;
         duration = 0;
@@ -604,24 +585,41 @@ partial class Device
            commands[0].command == MmcCommands.SetBlocklen       &&
            commands[1].command == MmcCommands.ReadMultipleBlock &&
            commands[2].command == MmcCommands.StopTransmission)
-            return SendMmcCommand(commands[1].command, commands[1].write, commands[1].isApplication, commands[1].flags,
-                                  commands[1].argument, commands[1].blockSize, commands[1].blocks,
-                                  ref commands[1].buffer, out commands[1].response, out duration, out sense, timeout);
+        {
+            return SendMmcCommand(commands[1].command,
+                                  commands[1].write,
+                                  commands[1].isApplication,
+                                  commands[1].flags,
+                                  commands[1].argument,
+                                  commands[1].blockSize,
+                                  commands[1].blocks,
+                                  ref commands[1].buffer,
+                                  out commands[1].response,
+                                  out duration,
+                                  out sense,
+                                  timeout);
+        }
 
         foreach(MmcSingleCommand command in commands)
         {
-            int singleError = SendMmcCommand(command.command, command.write, command.isApplication, command.flags,
-                                             command.argument, command.blockSize, command.blocks, ref command.buffer,
-                                             out command.response, out double cmdDuration, out bool cmdSense, timeout);
+            int singleError = SendMmcCommand(command.command,
+                                             command.write,
+                                             command.isApplication,
+                                             command.flags,
+                                             command.argument,
+                                             command.blockSize,
+                                             command.blocks,
+                                             ref command.buffer,
+                                             out command.response,
+                                             out double cmdDuration,
+                                             out bool cmdSense,
+                                             timeout);
 
-            if(error       == 0 &&
-               singleError != 0)
-                error = singleError;
+            if(error == 0 && singleError != 0) error = singleError;
 
             duration += cmdDuration;
 
-            if(cmdSense)
-                sense = true;
+            if(cmdSense) sense = true;
         }
 
         return error;
@@ -632,9 +630,13 @@ partial class Device
     {
         Extern.CloseHandle(_fileHandle);
 
-        SafeFileHandle newFd = Extern.CreateFile(_devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                                 FileShare.Read | FileShare.Write, IntPtr.Zero, FileMode.OpenExisting,
-                                                 FileAttributes.Normal, IntPtr.Zero);
+        SafeFileHandle newFd = Extern.CreateFile(DevicePath,
+                                                 FileAccess.GenericRead | FileAccess.GenericWrite,
+                                                 FileShare.Read         | FileShare.Write,
+                                                 IntPtr.Zero,
+                                                 FileMode.OpenExisting,
+                                                 FileAttributes.Normal,
+                                                 IntPtr.Zero);
 
         if(newFd.IsInvalid)
         {
@@ -654,15 +656,17 @@ partial class Device
     {
         buffer = new byte[length];
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         bool sense = !Extern.SetFilePointerEx(_fileHandle, offset, out _, MoveMethod.Begin);
 
-        DateTime end = DateTime.Now;
+        cmdStopwatch.Stop();
 
         if(sense)
         {
-            duration = (end - start).TotalMilliseconds;
+            cmdStopwatch.Stop();
+            duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
             LastError = Marshal.GetLastWin32Error();
             Error     = true;
@@ -672,8 +676,8 @@ partial class Device
 
         sense = !Extern.ReadFile(_fileHandle, buffer, length, out _, IntPtr.Zero);
 
-        end      = DateTime.Now;
-        duration = (end - start).TotalMilliseconds;
+        cmdStopwatch.Stop();
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         if(sense)
         {

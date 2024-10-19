@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices.Remote;
 
 using System;
 using System.Net.Sockets;
@@ -39,10 +37,15 @@ using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.SecureDigital;
 
+namespace Aaru.Devices.Remote;
+
 /// <inheritdoc />
 public sealed partial class Device : Devices.Device
 {
+    bool?  _isRemoteAdmin;
     Remote _remote;
+
+    Device() {}
 
     /// <summary>Returns if remote is running under administrative (aka root) privileges</summary>
     public bool IsAdmin
@@ -56,25 +59,31 @@ public sealed partial class Device : Devices.Device
     }
 
     /// <summary>Current device is remote</summary>
+
+    // ReSharper disable once UnusedMember.Global
     public bool IsRemote => _remote != null;
+
     /// <summary>Remote application</summary>
     public string RemoteApplication => _remote?.ServerApplication;
+
     /// <summary>Remote application server</summary>
     public string RemoteVersion => _remote?.ServerVersion;
+
     /// <summary>Remote operating system name</summary>
     public string RemoteOperatingSystem => _remote?.ServerOperatingSystem;
+
     /// <summary>Remote operating system version</summary>
     public string RemoteOperatingSystemVersion => _remote?.ServerOperatingSystemVersion;
+
     /// <summary>Remote architecture</summary>
     public string RemoteArchitecture => _remote?.ServerArchitecture;
+
     /// <summary>Remote protocol version</summary>
     public int RemoteProtocolVersion => _remote?.ServerProtocolVersion ?? 0;
-    bool? _isRemoteAdmin;
-
-    Device() {}
 
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="aaruUri">AaruRemote URI</param>
+    /// <param name="errno">Sets the error if a device cannot be opened</param>
     /// <returns>Device</returns>
     internal static Device Create(Uri aaruUri, out ErrorNumber errno)
     {
@@ -88,18 +97,15 @@ public sealed partial class Device : Devices.Device
             IsRemovable = false
         };
 
-        if(aaruUri.Scheme is not ("dic" or "aaru"))
-            return null;
+        if(aaruUri.Scheme is not ("dic" or "aaru")) return null;
 
         string devicePath = aaruUri.AbsolutePath;
 
-        if(devicePath.StartsWith('/'))
-            devicePath = devicePath[1..];
+        if(devicePath.StartsWith('/')) devicePath = devicePath[1..];
 
-        if(devicePath.StartsWith("dev", StringComparison.Ordinal))
-            devicePath = $"/{devicePath}";
+        if(devicePath.StartsWith("dev", StringComparison.Ordinal)) devicePath = $"/{devicePath}";
 
-        dev._devicePath = devicePath;
+        dev.DevicePath = devicePath;
 
         try
         {
@@ -126,19 +132,17 @@ public sealed partial class Device : Devices.Device
             return null;
         }
 
-        if(dev._remote.ServerOperatingSystem == "Linux")
-            _readMultipleBlockCannotSetBlockCount = true;
+        if(dev._remote.ServerOperatingSystem == "Linux") _readMultipleBlockCannotSetBlockCount = true;
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
 
         if(dev.Error)
-            if(dev.Error)
-            {
-                errno = (ErrorNumber)dev.LastError;
+        {
+            errno = (ErrorNumber)dev.LastError;
 
-                return null;
-            }
+            return null;
+        }
 
         dev.Type = dev._remote.GetDeviceType();
 
@@ -146,8 +150,10 @@ public sealed partial class Device : Devices.Device
         {
             case DeviceType.SecureDigital:
             case DeviceType.MMC:
-                if(!dev._remote.GetSdhciRegisters(out dev._cachedCsd, out dev._cachedCid, out dev._cachedOcr,
-                                                  out dev._cachedScr))
+                if(!dev._remote.GetSdhciRegisters(out dev.CachedCsd,
+                                                  out dev.CachedCid,
+                                                  out dev.CachedOcr,
+                                                  out dev.CachedScr))
                 {
                     dev.Type     = DeviceType.SCSI;
                     dev.ScsiType = PeripheralDeviceTypes.DirectAccess;
@@ -156,16 +162,17 @@ public sealed partial class Device : Devices.Device
                 break;
         }
 
-        #region SecureDigital / MultiMediaCard
-        if(dev._cachedCid != null)
+#region SecureDigital / MultiMediaCard
+
+        if(dev.CachedCid != null)
         {
             dev.ScsiType    = PeripheralDeviceTypes.DirectAccess;
             dev.IsRemovable = false;
 
-            if(dev._cachedScr != null)
+            if(dev.CachedScr != null)
             {
                 dev.Type = DeviceType.SecureDigital;
-                CID decoded = Decoders.DecodeCID(dev._cachedCid);
+                CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(dev.CachedCid);
                 dev.Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
@@ -177,8 +184,8 @@ public sealed partial class Device : Devices.Device
             else
             {
                 dev.Type = DeviceType.MMC;
-                Aaru.Decoders.MMC.CID decoded = Aaru.Decoders.MMC.Decoders.DecodeCID(dev._cachedCid);
-                dev.Manufacturer = Aaru.Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
+                Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(dev.CachedCid);
+                dev.Manufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
                 dev.Model        = decoded.ProductName;
 
                 dev.FirmwareRevision =
@@ -189,39 +196,52 @@ public sealed partial class Device : Devices.Device
 
             return dev;
         }
-        #endregion SecureDigital / MultiMediaCard
 
-        #region USB
-        if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors, out ushort remoteUsbVendor,
-                                  out ushort remoteUsbProduct, out string remoteUsbManufacturer,
-                                  out string remoteUsbProductString, out string remoteUsbSerial))
+#endregion SecureDigital / MultiMediaCard
+
+#region USB
+
+        if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors,
+                                  out ushort remoteUsbVendor,
+                                  out ushort remoteUsbProduct,
+                                  out string remoteUsbManufacturer,
+                                  out string remoteUsbProductString,
+                                  out string remoteUsbSerial))
         {
             dev.IsUsb                 = true;
             dev.UsbDescriptors        = remoteUsbDescriptors;
-            dev._usbVendor            = remoteUsbVendor;
-            dev._usbProduct           = remoteUsbProduct;
+            dev.UsbVendor             = remoteUsbVendor;
+            dev.UsbProduct            = remoteUsbProduct;
             dev.UsbManufacturerString = remoteUsbManufacturer;
             dev.UsbProductString      = remoteUsbProductString;
             dev.UsbSerialString       = remoteUsbSerial;
         }
-        #endregion USB
 
-        #region FireWire
-        if(dev._remote.GetFireWireData(out dev._firewireVendor, out dev._firewireModel, out dev._firewireGuid,
-                                       out string remoteFireWireVendorName, out string remoteFireWireModelName))
+#endregion USB
+
+#region FireWire
+
+        if(dev._remote.GetFireWireData(out dev.FirewireVendor,
+                                       out dev.FirewireModel,
+                                       out dev.FirewireGuid,
+                                       out string remoteFireWireVendorName,
+                                       out string remoteFireWireModelName))
         {
             dev.IsFireWire         = true;
             dev.FireWireVendorName = remoteFireWireVendorName;
             dev.FireWireModelName  = remoteFireWireModelName;
         }
-        #endregion FireWire
-        #region PCMCIA
-        if(dev._remote.GetPcmciaData(out byte[] cisBuf))
-        {
-            dev.IsPcmcia = true;
-            dev.Cis      = cisBuf;
-        }
-        #endregion PCMCIA
+
+#endregion FireWire
+
+#region PCMCIA
+
+        if(!dev._remote.GetPcmciaData(out byte[] cisBuf)) return dev;
+
+        dev.IsPcmcia = true;
+        dev.Cis      = cisBuf;
+
+#endregion PCMCIA
 
         return dev;
     }
@@ -229,8 +249,7 @@ public sealed partial class Device : Devices.Device
     /// <inheritdoc />
     public override void Close()
     {
-        if(_remote == null)
-            return;
+        if(_remote == null) return;
 
         _remote.Close();
         _remote.Disconnect();

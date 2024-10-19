@@ -27,28 +27,36 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Images;
 
 public sealed partial class BlindWrite5
 {
+#region IOpticalMediaImage Members
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
 
     /// <inheritdoc />
-    public string Name => "BlindWrite 5";
+    public string Name => Localization.BlindWrite5_Name;
+
     /// <inheritdoc />
     public Guid Id => new("9CB7A381-0509-4F9F-B801-3F65434BC3EE");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "BlindWrite 5 TOC file";
 
@@ -62,7 +70,10 @@ public sealed partial class BlindWrite5
     public List<Session> Sessions { get; private set; }
 
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
+#endregion
 }

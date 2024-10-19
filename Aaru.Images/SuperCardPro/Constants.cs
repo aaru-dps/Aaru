@@ -27,23 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class SuperCardPro
 {
     /// <summary>SuperCardPro footer signature: "FPCS"</summary>
     const uint FOOTER_SIGNATURE = 0x53435046;
+
+    /// <summary>SuperCardPro device default capture resolution: 25 nanoseconds.</summary>
+    const ushort DEFAULT_RESOLUTION = 25000;
+    /// <summary>SuperCardPro format full (with track offsets) header length.</summary>
+    const uint FULL_HEADER_OFFSET = 0x2b0;
+    /// <summary>SuperCardPro format header length (without track offsets).</summary>
+    const byte HEADER_OFFSET = 0x10;
     /// <summary>SuperCardPro header signature: "SCP"</summary>
-    readonly byte[] _scpSignature =
-    {
-        0x53, 0x43, 0x50
-    };
+    readonly byte[] _scpSignature = "SCP"u8.ToArray();
     /// <summary>SuperCardPro track header signature: "TRK"</summary>
-    readonly byte[] _trkSignature =
-    {
-        0x54, 0x52, 0x4B
-    };
+    readonly byte[] _trkSignature = "TRK"u8.ToArray();
 }

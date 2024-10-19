@@ -23,44 +23,32 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Devices;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
-using Aaru.DiscImages;
 using Aaru.Filters;
+using Aaru.Images;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Devices;
 
 [TestFixture]
 public class Ls120
 {
-    readonly string[] _testFiles =
-    {
-        "ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"
-    };
+    readonly string[] _testFiles = ["ls120.bin.lz", "mf2dd.bin.lz", "mf2hd.bin.lz"];
 
-    readonly MediaType[] _mediaTypes =
-    {
-        MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
-    };
+    readonly MediaType[] _mediaTypes = [MediaType.LS120, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD];
 
-    readonly ulong[] _sectors =
-    {
-        246528, 1440, 2880
-    };
+    readonly ulong[] _sectors = [246528, 1440, 2880];
 
-    readonly uint[] _sectorSize =
-    {
-        512, 512, 512
-    };
+    readonly uint[] _sectorSize = [512, 512, 512];
 
-    readonly string _dataFolder = Path.Combine(Consts.TEST_FILES_ROOT, "Device test dumps", "LS-120");
+    readonly string _dataFolder = Path.Combine(Consts.TestFilesRoot, "Device test dumps", "LS-120");
 
     [Test]
     public void Info()
@@ -77,18 +65,27 @@ public class Ls120
                 var         image  = new ZZZRawImage();
                 ErrorNumber opened = image.Open(filter);
 
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {_testFiles[i]}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, _testFiles[i]));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(_sectors[i], image.Info.Sectors, $"Sectors: {_testFiles[i]}");
-                        Assert.AreEqual(_sectorSize[i], image.Info.SectorSize, $"Sector size: {_testFiles[i]}");
-                        Assert.AreEqual(_mediaTypes[i], image.Info.MediaType, $"Media type: {_testFiles[i]}");
+                        Assert.That(image.Info.Sectors,
+                                    Is.EqualTo(_sectors[i]),
+                                    string.Format(Localization.Sectors_0, _testFiles[i]));
+
+                        Assert.That(image.Info.SectorSize,
+                                    Is.EqualTo(_sectorSize[i]),
+                                    string.Format(Localization.Sector_size_0, _testFiles[i]));
+
+                        Assert.That(image.Info.MediaType,
+                                    Is.EqualTo(_mediaTypes[i]),
+                                    string.Format(Localization.Media_type_0, _testFiles[i]));
                     });
+                }
             }
         });
     }

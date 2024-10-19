@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using System.Collections.ObjectModel;
 using System.Text;
@@ -47,6 +45,7 @@ using Aaru.Decoders.SCSI.MMC;
 using Aaru.Decoders.Xbox;
 using Aaru.Gui.Models;
 using Aaru.Helpers;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
 using BCA = Aaru.Decoders.Bluray.BCA;
@@ -55,6 +54,8 @@ using DDS = Aaru.Decoders.DVD.DDS;
 using DMI = Aaru.Decoders.Xbox.DMI;
 using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 using Spare = Aaru.Decoders.DVD.Spare;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class DecodeMediaTagsViewModel : ViewModelBase
 {
@@ -67,7 +68,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
 
     public DecodeMediaTagsViewModel([NotNull] IMediaImage inputFormat)
     {
-        TagsList = new ObservableCollection<MediaTagModel>();
+        TagsList = [];
 
         _mediaType = inputFormat.Info.MediaType;
 
@@ -76,11 +77,13 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
             ErrorNumber errno = inputFormat.ReadMediaTag(tag, out byte[] data);
 
             if(errno == ErrorNumber.NoError)
+            {
                 TagsList.Add(new MediaTagModel
                 {
                     Tag  = tag,
                     Data = data
                 });
+            }
         }
     }
 
@@ -94,8 +97,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _selectedTag, value);
 
-            if(value is null)
-                return;
+            if(value is null) return;
 
             // TODO: Decoders should be able to handle tags with/without length header
             HexViewText    = PrintHex.ByteArrayToHexArrayString(value.Data, HEX_COLUMNS);
@@ -216,7 +218,8 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
 
                     break;
                 case MediaTagType.Xbox_DMI:
-                    DecodedText = DMI.IsXbox360(value.Data) ? DMI.PrettifyXbox360(value.Data)
+                    DecodedText = DMI.IsXbox360(value.Data)
+                                      ? DMI.PrettifyXbox360(value.Data)
                                       : DMI.PrettifyXbox(value.Data);
 
                     break;
@@ -226,8 +229,7 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
                     break;
             }
 
-            if(DecodedText != null)
-                value.Decoded = DecodedText;
+            if(DecodedText != null) value.Decoded = DecodedText;
         }
     }
 
@@ -248,4 +250,8 @@ public sealed class DecodeMediaTagsViewModel : ViewModelBase
         get => _decodedText;
         set => this.RaiseAndSetIfChanged(ref _decodedText, value);
     }
+
+    public string TagLabel     => UI.Title_Tag;
+    public string HexViewLabel => UI.Title_HexView;
+    public string DecodedLabel => UI.Title_Decoded;
 }

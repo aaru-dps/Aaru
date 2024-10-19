@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Decodes path tables.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,24 +23,22 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Collections.Generic;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
     PathTableEntryInternal[] DecodePathTable(byte[] data)
     {
-        if(data is null ||
-           data.Length == 0)
-            return null;
+        if(data is null || data.Length == 0) return null;
 
-        var table = new List<PathTableEntryInternal>();
+        List<PathTableEntryInternal> table = [];
 
         var off = 0;
 
@@ -61,12 +55,11 @@ public sealed partial class ISO9660
         {
             entry = Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
-            if(entry.name_len == 0)
-                break;
+            if(entry.name_len == 0) break;
 
             off += Marshal.SizeOf<PathTableEntry>();
 
-            string name = Encoding.GetString(data, off, entry.name_len);
+            string name = _encoding.GetString(data, off, entry.name_len);
 
             table.Add(new PathTableEntryInternal
             {
@@ -78,8 +71,7 @@ public sealed partial class ISO9660
 
             off += entry.name_len;
 
-            if(entry.name_len % 2 != 0)
-                off++;
+            if(entry.name_len % 2 != 0) off++;
         }
 
         return table.ToArray();
@@ -87,27 +79,26 @@ public sealed partial class ISO9660
 
     PathTableEntryInternal[] DecodeHighSierraPathTable(byte[] data)
     {
-        if(data is null)
-            return null;
+        if(data is null) return null;
 
-        var table = new List<PathTableEntryInternal>();
+        List<PathTableEntryInternal> table = [];
 
         var off = 0;
 
         while(off < data.Length)
         {
             HighSierraPathTableEntry entry =
-                Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data, off,
-                                                                                    Marshal.
-                                                                                        SizeOf<
+                Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data,
+                                                                                    off,
+                                                                                    Marshal
+                                                                                       .SizeOf<
                                                                                             HighSierraPathTableEntry>());
 
-            if(entry.name_len == 0)
-                break;
+            if(entry.name_len == 0) break;
 
             off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
-            string name = Encoding.GetString(data, off, entry.name_len);
+            string name = _encoding.GetString(data, off, entry.name_len);
 
             table.Add(new PathTableEntryInternal
             {
@@ -119,8 +110,7 @@ public sealed partial class ISO9660
 
             off += entry.name_len;
 
-            if(entry.name_len % 2 != 0)
-                off++;
+            if(entry.name_len % 2 != 0) off++;
         }
 
         return table.ToArray();

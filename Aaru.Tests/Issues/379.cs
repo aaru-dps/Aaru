@@ -1,9 +1,10 @@
-namespace Aaru.Tests.Issues;
-
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
+
+namespace Aaru.Tests.Issues;
 
 /* https://github.com/aaru-dps/Aaru/issues/379
  *
@@ -15,10 +16,11 @@ using Aaru.DiscImages;
  */
 
 // 20201103 CLAUNIA: Fixed in 532b2adddc900d8e4c61a6399d4da20a566d4876
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class _379 : OpticalImageConvertIssueTest
 {
     public override Dictionary<string, string> ParsedOptions => new();
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue379");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue379");
     public override string InputPath => "Sony USB Driver.B6T";
     public override string SuggestedOutputFilename => "AaruIssue379Output.aif";
     public override IWritableImage OutputFormat => new AaruFormat();

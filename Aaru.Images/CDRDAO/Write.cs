@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -38,16 +36,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Aaru.Console;
+using Track = Aaru.CommonTypes.Structs.Track;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.Images;
 
 public sealed partial class Cdrdao
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(options != null)
         {
@@ -55,14 +59,14 @@ public sealed partial class Cdrdao
             {
                 if(!bool.TryParse(tmpValue, out _separateTracksWriting))
                 {
-                    ErrorMessage = "Invalid value for split option";
+                    ErrorMessage = Localization.Invalid_value_for_split_option;
 
                     return false;
                 }
 
                 if(_separateTracksWriting)
                 {
-                    ErrorMessage = "Separate tracks not yet implemented";
+                    ErrorMessage = Localization.Separate_tracks_not_yet_implemented;
 
                     return false;
                 }
@@ -73,7 +77,7 @@ public sealed partial class Cdrdao
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -92,9 +96,10 @@ public sealed partial class Cdrdao
 
             _descriptorStream = new StreamWriter(path, false, Encoding.ASCII);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -102,7 +107,7 @@ public sealed partial class Cdrdao
         _discimage = new CdrdaoDisc
         {
             Disktype = mediaType,
-            Tracks   = new List<CdrdaoTrack>()
+            Tracks   = []
         };
 
         _trackFlags = new Dictionary<byte, byte>();
@@ -119,7 +124,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -131,7 +136,7 @@ public sealed partial class Cdrdao
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -142,7 +147,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -152,7 +157,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -161,21 +166,21 @@ public sealed partial class Cdrdao
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -194,9 +199,9 @@ public sealed partial class Cdrdao
             data = swapped;
         }
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -208,7 +213,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -218,7 +223,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -227,28 +232,28 @@ public sealed partial class Cdrdao
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -270,9 +275,9 @@ public sealed partial class Cdrdao
         switch(track.SubchannelType)
         {
             case TrackSubchannelType.None:
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                                 SeekOrigin.Begin);
 
                 trackStream.Write(data, 0, data.Length);
 
@@ -281,9 +286,9 @@ public sealed partial class Cdrdao
                 return true;
             case TrackSubchannelType.Raw:
             case TrackSubchannelType.RawInterleaved:
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
+                                 SeekOrigin.Begin);
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -295,7 +300,7 @@ public sealed partial class Cdrdao
 
                 return true;
             default:
-                ErrorMessage = "Invalid subchannel mode for this sector";
+                ErrorMessage = Localization.Invalid_subchannel_mode_for_this_sector;
 
                 return false;
         }
@@ -306,7 +311,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -316,7 +321,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -325,14 +330,14 @@ public sealed partial class Cdrdao
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -353,9 +358,10 @@ public sealed partial class Cdrdao
 
         var subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
-        trackStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                 SeekOrigin.Begin);
+        trackStream.Seek((long)(track.FileOffset +
+                                (sectorAddress - track.StartSector) *
+                                (ulong)(track.RawBytesPerSector + subchannelSize)),
+                         SeekOrigin.Begin);
 
         trackStream.Write(data, 0, data.Length);
 
@@ -367,7 +373,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -377,7 +383,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -386,21 +392,21 @@ public sealed partial class Cdrdao
 
         if(trackStream == null)
         {
-            ErrorMessage = $"Can't found file containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -423,9 +429,10 @@ public sealed partial class Cdrdao
 
         for(uint i = 0; i < length; i++)
         {
-            trackStream.
-                Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                     SeekOrigin.Begin);
+            trackStream.Seek((long)(track.FileOffset +
+                                    (i                              + sectorAddress - track.StartSector) *
+                                    (ulong)(track.RawBytesPerSector + subchannelSize)),
+                             SeekOrigin.Begin);
 
             trackStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
         }
@@ -438,64 +445,70 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
-        if(tracks       == null ||
-           tracks.Count == 0)
+        if(tracks == null || tracks.Count == 0)
         {
-            ErrorMessage = "Invalid tracks sent";
+            ErrorMessage = Localization.Invalid_tracks_sent;
 
             return false;
         }
 
-        if(_writingTracks  != null &&
-           _writingStreams != null)
+        if(_writingTracks != null && _writingStreams != null)
             foreach(FileStream oldTrack in _writingStreams.Select(t => t.Value).Distinct())
                 oldTrack.Close();
 
         ulong currentOffset = 0;
-        _writingTracks = new List<Track>();
+        _writingTracks = [];
 
         foreach(Track track in tracks.OrderBy(t => t.Sequence))
         {
             if(track.SubchannelType is TrackSubchannelType.Q16 or TrackSubchannelType.Q16Interleaved)
             {
-                ErrorMessage = $"Unsupported subchannel type {track.SubchannelType} for track {track.Sequence}";
+                ErrorMessage = string.Format(Localization.Unsupported_subchannel_type_0_for_track_1,
+                                             track.SubchannelType,
+                                             track.Sequence);
 
                 return false;
             }
 
-            Track newTrack = track;
+            track.File = _separateTracksWriting
+                             ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
+                             : _writingBaseName + ".bin";
 
-            newTrack.File = _separateTracksWriting ? _writingBaseName + $"_track{track.Sequence:D2}.bin"
-                                : _writingBaseName                    + ".bin";
+            track.FileOffset = _separateTracksWriting ? 0 : currentOffset;
+            _writingTracks.Add(track);
 
-            newTrack.FileOffset = _separateTracksWriting ? 0 : currentOffset;
-            _writingTracks.Add(newTrack);
-
-            currentOffset += (ulong)newTrack.RawBytesPerSector * (newTrack.EndSector - newTrack.StartSector + 1);
+            currentOffset += (ulong)track.RawBytesPerSector * (track.EndSector - track.StartSector + 1);
 
             if(track.SubchannelType != TrackSubchannelType.None)
-                currentOffset += 96 * (newTrack.EndSector - newTrack.StartSector + 1);
+                currentOffset += 96 * (track.EndSector - track.StartSector + 1);
         }
 
         _writingStreams = new Dictionary<uint, FileStream>();
 
         if(_separateTracksWriting)
+        {
             foreach(Track track in _writingTracks)
+            {
                 _writingStreams.Add(track.Sequence,
-                                    new FileStream(track.File, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                    new FileStream(track.File,
+                                                   FileMode.OpenOrCreate,
+                                                   FileAccess.ReadWrite,
                                                    FileShare.None));
+            }
+        }
         else
         {
-            var jointStream = new FileStream(_writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+            var jointStream = new FileStream(_writingBaseName + ".bin",
+                                             FileMode.OpenOrCreate,
+                                             FileAccess.ReadWrite,
                                              FileShare.None);
 
-            foreach(Track track in _writingTracks)
-                _writingStreams.Add(track.Sequence, jointStream);
+            foreach(Track track in _writingTracks) _writingStreams.Add(track.Sequence, jointStream);
         }
 
         return true;
@@ -506,17 +519,19 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
         if(_separateTracksWriting)
+        {
             foreach(FileStream writingStream in _writingStreams.Values)
             {
                 writingStream.Flush();
                 writingStream.Close();
             }
+        }
         else
         {
             _writingStreams.First().Value.Flush();
@@ -526,8 +541,10 @@ public sealed partial class Cdrdao
         bool data = _writingTracks.Count(t => t.Type != TrackType.Audio) > 0;
 
         bool mode2 =
-            _writingTracks.Count(t => t.Type is TrackType.CdMode2Form1 or TrackType.CdMode2Form2
-                                                                       or TrackType.CdMode2Formless) > 0;
+            _writingTracks.Count(t => t.Type is TrackType.CdMode2Form1
+                                             or TrackType.CdMode2Form2
+                                             or TrackType.CdMode2Formless) >
+            0;
 
         if(mode2)
             _descriptorStream.WriteLine("CD_ROM_XA");
@@ -539,43 +556,29 @@ public sealed partial class Cdrdao
         if(!string.IsNullOrWhiteSpace(_discimage.Comment))
         {
             string[] commentLines = _discimage.Comment.Split(new[]
-            {
-                '\n'
-            }, StringSplitOptions.RemoveEmptyEntries);
+                                                             {
+                                                                 '\n'
+                                                             },
+                                                             StringSplitOptions.RemoveEmptyEntries);
 
-            foreach(string line in commentLines)
-                _descriptorStream.WriteLine("// {0}", line);
+            foreach(string line in commentLines) _descriptorStream.WriteLine("// {0}", line);
         }
 
         _descriptorStream.WriteLine();
 
-        if(!string.IsNullOrEmpty(_discimage.Mcn))
-            _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
+        if(!string.IsNullOrEmpty(_discimage.Mcn)) _descriptorStream.WriteLine("CATALOG {0}", _discimage.Mcn);
 
         foreach(Track track in _writingTracks)
         {
             _descriptorStream.WriteLine();
             _descriptorStream.WriteLine("// Track {0}", track.Sequence);
 
-            string subchannelType;
-
-            switch(track.SubchannelType)
-            {
-                case TrackSubchannelType.Packed:
-                case TrackSubchannelType.PackedInterleaved:
-                    subchannelType = " RW";
-
-                    break;
-                case TrackSubchannelType.Raw:
-                case TrackSubchannelType.RawInterleaved:
-                    subchannelType = " RW_RAW";
-
-                    break;
-                default:
-                    subchannelType = "";
-
-                    break;
-            }
+            string subchannelType = track.SubchannelType switch
+                                    {
+                                        TrackSubchannelType.Packed or TrackSubchannelType.PackedInterleaved => " RW",
+                                        TrackSubchannelType.Raw or TrackSubchannelType.RawInterleaved => " RW_RAW",
+                                        _ => ""
+                                    };
 
             _descriptorStream.WriteLine("TRACK {0}{1}", GetTrackMode(track), subchannelType);
 
@@ -592,14 +595,16 @@ public sealed partial class Cdrdao
                 _descriptorStream.WriteLine("{0}_CHANNEL_AUDIO", flags.HasFlag(CdFlags.FourChannel) ? "FOUR" : "TWO");
             }
 
-            if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) &&
-               !string.IsNullOrWhiteSpace(isrc))
+            if(_trackIsrcs.TryGetValue((byte)track.Sequence, out string isrc) && !string.IsNullOrWhiteSpace(isrc))
                 _descriptorStream.WriteLine("ISRC {0}", isrc);
 
             (byte minute, byte second, byte frame) msf = LbaToMsf(track.EndSector - track.StartSector + 1);
 
             _descriptorStream.WriteLine("DATAFILE \"{0}\" #{1} {2:D2}:{3:D2}:{4:D2} // length in bytes: {5}",
-                                        Path.GetFileName(track.File), track.FileOffset, msf.minute, msf.second,
+                                        Path.GetFileName(track.File),
+                                        track.FileOffset,
+                                        msf.minute,
+                                        msf.second,
                                         msf.frame,
                                         (track.EndSector - track.StartSector + 1) *
                                         (ulong)(track.RawBytesPerSector +
@@ -625,10 +630,10 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
-        _discimage.Barcode = metadata.MediaBarcode;
-        _discimage.Comment = metadata.Comments;
+        _discimage.Barcode = imageInfo.MediaBarcode;
+        _discimage.Comment = imageInfo.Comments;
 
         return true;
     }
@@ -636,7 +641,7 @@ public sealed partial class Cdrdao
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -646,7 +651,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -656,7 +661,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -667,7 +672,7 @@ public sealed partial class Cdrdao
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -678,8 +683,7 @@ public sealed partial class Cdrdao
             }
             case SectorTagType.CdTrackIsrc:
             {
-                if(data != null)
-                    _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
+                if(data != null) _trackIsrcs[(byte)sectorAddress] = Encoding.UTF8.GetString(data);
 
                 return true;
             }
@@ -688,14 +692,15 @@ public sealed partial class Cdrdao
                 if(track.SubchannelType == 0)
                 {
                     ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length != 96)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -704,21 +709,22 @@ public sealed partial class Cdrdao
 
                 if(trackStream == null)
                 {
-                    ErrorMessage = $"Can't found file containing {sectorAddress}";
+                    ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
                     return false;
                 }
 
-                trackStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                         SeekOrigin.Begin);
+                trackStream.Seek((long)(track.FileOffset +
+                                        (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) +
+                                 track.RawBytesPerSector,
+                                 SeekOrigin.Begin);
 
                 trackStream.Write(data, 0, data.Length);
 
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
@@ -729,7 +735,7 @@ public sealed partial class Cdrdao
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -739,7 +745,7 @@ public sealed partial class Cdrdao
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -747,20 +753,22 @@ public sealed partial class Cdrdao
         switch(tag)
         {
             case SectorTagType.CdTrackFlags:
-            case SectorTagType.CdTrackIsrc: return WriteSectorTag(data, sectorAddress, tag);
+            case SectorTagType.CdTrackIsrc:
+                return WriteSectorTag(data, sectorAddress, tag);
             case SectorTagType.CdSectorSubchannel:
             {
                 if(track.SubchannelType == 0)
                 {
                     ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length % 96 != 0)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
@@ -769,16 +777,18 @@ public sealed partial class Cdrdao
 
                 if(trackStream == null)
                 {
-                    ErrorMessage = $"Can't found file containing {sectorAddress}";
+                    ErrorMessage = string.Format(Localization.Cant_find_file_containing_0, sectorAddress);
 
                     return false;
                 }
 
                 for(uint i = 0; i < length; i++)
                 {
-                    trackStream.
-                        Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                             SeekOrigin.Begin);
+                    trackStream.Seek((long)(track.FileOffset +
+                                            (i                              + sectorAddress - track.StartSector) *
+                                            (ulong)(track.RawBytesPerSector + 96)) +
+                                     track.RawBytesPerSector,
+                                     SeekOrigin.Begin);
 
                     trackStream.Write(data, (int)(i * 96), 96);
                 }
@@ -786,15 +796,17 @@ public sealed partial class Cdrdao
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

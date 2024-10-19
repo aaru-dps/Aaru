@@ -28,77 +28,101 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.ImageVerify" Icon="/Assets/aaru-logo.png"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.ImageVerify"
+        Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
         <windows:ImageVerifyViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <StackPanel Orientation="Vertical" IsVisible="{Binding OptionsVisible}">
-            <CheckBox IsChecked="{Binding VerifyImageChecked}" IsEnabled="{Binding VerifyImageEnabled}">
-                <TextBlock Text="Verify disc image if supported." />
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding OptionsVisible}">
+            <CheckBox IsChecked="{Binding VerifyImageChecked}"
+                      IsEnabled="{Binding VerifyImageEnabled}">
+                <TextBlock Text="{Binding VerifyImageLabel}" />
             </CheckBox>
-            <CheckBox IsChecked="{Binding VerifySectorsChecked}" IsEnabled="{Binding VerifySectorsEnabled}"
+            <CheckBox IsChecked="{Binding VerifySectorsChecked}"
+                      IsEnabled="{Binding VerifySectorsEnabled}"
                       IsVisible="{Binding VerifySectorsVisible}">
-                <TextBlock Text="Verify all sectors if supported." />
+                <TextBlock Text="{Binding VerifySectorsLabel}" />
             </CheckBox>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ResultsVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ResultsVisible}">
             <StackPanel Orientation="Horizontal">
-                <StackPanel Orientation="Vertical" IsVisible="{Binding SectorErrorsVisible}">
+                <StackPanel Orientation="Vertical"
+                            IsVisible="{Binding SectorErrorsVisible}">
                     <TextBlock Text="{Binding SectorErrorsText}" />
-                    <DataGrid Items="{Binding ErrorList}">
+                    <DataGrid ItemsSource="{Binding ErrorList}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="LBA" Binding="{Binding Lba}" />
+                            <DataGridTextColumn Header="{Binding LBALabel}"
+                                                Binding="{Binding Lba}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" IsVisible="{Binding SectorsUnknownsVisible}">
+                <StackPanel Orientation="Vertical"
+                            IsVisible="{Binding SectorsUnknownsVisible}">
                     <TextBlock Text="{Binding SectorsUnknownsText}" />
-                    <DataGrid Items="{Binding UnknownList}">
+                    <DataGrid ItemsSource="{Binding UnknownList}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="LBA" Binding="{Binding Lba}" />
+                            <DataGridTextColumn Header="{Binding LBALabel}"
+                                                Binding="{Binding Lba}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>
             </StackPanel>
             <StackPanel IsVisible="{Binding SectorSummaryVisible}">
-                <TextBlock Text="{Binding ImageResultText}" IsVisible="{Binding ImageResultVisible}" />
-                <TextBlock Text="{Binding SectorsErrorsAllText}" IsVisible="{Binding SectorsErrorsAllVisible}" />
-                <TextBlock Text="{Binding SectorsUnknownAllText}" IsVisible="{Binding SectorsUnknownAllVisible}" />
+                <TextBlock Text="{Binding ImageResultText}"
+                           IsVisible="{Binding ImageResultVisible}" />
+                <TextBlock Text="{Binding SectorsErrorsAllText}"
+                           IsVisible="{Binding SectorsErrorsAllVisible}" />
+                <TextBlock Text="{Binding SectorsUnknownAllText}"
+                           IsVisible="{Binding SectorsUnknownAllVisible}" />
                 <TextBlock Text="{Binding TotalSectorsText}" /> <TextBlock Text="{Binding TotalSectorErrorsText}" />
                 <TextBlock Text="{Binding TotalSectorUnknownsText}" />
                 <TextBlock Text="{Binding TotalSectorErrorsUnknownsText}" />
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMaxValue}" IsIndeterminate="{Binding ProgressIndeterminate}"
+                <ProgressBar Maximum="{Binding ProgressMaxValue}"
+                             IsIndeterminate="{Binding ProgressIndeterminate}"
                              Value="{Binding ProgressValue}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBlock Text="{Binding Progress2Text}" />
-                <ProgressBar Maximum="{Binding Progress2MaxValue}" IsIndeterminate="{Binding Progress2Indeterminate}"
+                <ProgressBar Maximum="{Binding Progress2MaxValue}"
+                             IsIndeterminate="{Binding Progress2Indeterminate}"
                              Value="{Binding Progress2Value}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
-                <TextBlock Text="Stop" />
+            <Button Command="{Binding StopCommand}"
+                    IsVisible="{Binding StopVisible}"
+                    IsEnabled="{Binding StopEnabled}">
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

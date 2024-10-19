@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Filesystem;
 
 using System;
 using System.Collections.Generic;
@@ -38,43 +36,42 @@ using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Commands.Filesystem;
 
 sealed class FilesystemInfoCommand : Command
 {
-    public FilesystemInfoCommand() : base("info",
-                                          "Opens a disc image and prints info on the found partitions and/or filesystems.")
+    const string MODULE_NAME = "Fs-info command";
+
+    public FilesystemInfoCommand() : base("info", UI.Filesystem_Info_Command_Description)
     {
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, "Name of character encoding to use."));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-        {
-            "--filesystems", "-f"
-        }, () => true, "Searches and prints information about filesystems."));
+        Add(new Option<bool>(["--filesystems", "-f"],
+                             () => true,
+                             UI.Searches_and_prints_information_about_filesystems));
 
-        Add(new Option<bool>(new[]
-        {
-            "--partitions", "-p"
-        }, () => true, "Searches and interprets partitions."));
+        Add(new Option<bool>(["--partitions", "-p"], () => true, UI.Searches_and_interprets_partitions));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
         Handler = CommandHandler.Create(typeof(FilesystemInfoCommand).GetMethod(nameof(Invoke)));
     }
 
-    public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions,
+    public static int Invoke(bool   verbose, bool debug, string encoding, bool filesystems, bool partitions,
                              string imagePath)
     {
         MainClass.PrintCopyright();
@@ -83,7 +80,7 @@ sealed class FilesystemInfoCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -93,9 +90,12 @@ sealed class FilesystemInfoCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -103,28 +103,28 @@ sealed class FilesystemInfoCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("fs-info");
 
-        AaruConsole.DebugWriteLine("Fs-info command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Fs-info command", "--encoding={0}", encoding);
-        AaruConsole.DebugWriteLine("Fs-info command", "--filesystems={0}", filesystems);
-        AaruConsole.DebugWriteLine("Fs-info command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Fs-info command", "--partitions={0}", partitions);
-        AaruConsole.DebugWriteLine("Fs-info command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",       debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",    Markup.Escape(encoding ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--filesystems={0}", filesystems);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",       Markup.Escape(imagePath ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--partitions={0}",  partitions);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",     verbose);
 
-        var     filtersList = new FiltersList();
         IFilter inputFilter = null;
 
-        Spectre.ProgressSingleSpinner(ctx =>
+        Core.Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Identifying file filter...").IsIndeterminate();
-            inputFilter = filtersList.GetFilter(imagePath);
+            ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+            inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
         });
 
         if(inputFilter == null)
         {
-            AaruConsole.ErrorWriteLine("Cannot open specified file.");
+            AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
             return (int)ErrorNumber.CannotOpenFile;
         }
@@ -132,21 +132,22 @@ sealed class FilesystemInfoCommand : Command
         Encoding encodingClass = null;
 
         if(encoding != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
-                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginRegister plugins = PluginRegister.Singleton;
 
         var checkRaw = false;
 
@@ -155,31 +156,31 @@ sealed class FilesystemInfoCommand : Command
             IMediaImage imageFormat = null;
             IBaseImage  baseImage   = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying image format...").IsIndeterminate();
+                ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                 baseImage   = ImageFormat.Detect(inputFilter);
                 imageFormat = baseImage as IMediaImage;
             });
 
             if(baseImage == null)
             {
-                AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                AaruConsole.WriteLine(UI.Image_format_not_identified_not_proceeding_with_analysis);
 
                 return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(imageFormat == null)
             {
-                AaruConsole.WriteLine("Command not supported for this image type.");
+                AaruConsole.WriteLine(UI.Command_not_supported_for_this_image_type);
 
                 return (int)ErrorNumber.InvalidArgument;
             }
 
             if(verbose)
-                AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+                AaruConsole.VerboseWriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
             else
-                AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                AaruConsole.WriteLine(UI.Image_format_identified_by_0, imageFormat.Name);
 
             AaruConsole.WriteLine();
 
@@ -187,16 +188,16 @@ sealed class FilesystemInfoCommand : Command
             {
                 ErrorNumber opened = ErrorNumber.NoData;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Opening image file...").IsIndeterminate();
+                    ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                     opened = imageFormat.Open(inputFilter);
                 });
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    AaruConsole.WriteLine("Unable to open image format");
-                    AaruConsole.WriteLine("Error {0}", opened);
+                    AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                     return (int)opened;
                 }
@@ -213,36 +214,36 @@ sealed class FilesystemInfoCommand : Command
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine("Unable to open image format");
-                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                AaruConsole.DebugWriteLine("Fs-info command", "Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.CannotOpenFormat;
             }
 
             List<string> idPlugins = null;
-            IFilesystem  plugin;
+            IFilesystem  fs;
             string       information;
 
             if(partitions)
             {
                 List<Partition> partitionsList = null;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Enumerating partitions...").IsIndeterminate();
-                    partitionsList = Partitions.GetAll(imageFormat);
+                    ctx.AddTask(UI.Enumerating_partitions).IsIndeterminate();
+                    partitionsList = Core.Partitions.GetAll(imageFormat);
                 });
 
-                Partitions.AddSchemesToStats(partitionsList);
+                Core.Partitions.AddSchemesToStats(partitionsList);
 
                 if(partitionsList.Count == 0)
                 {
-                    AaruConsole.DebugWriteLine("Fs-info command", "No partitions found");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                     if(!filesystems)
                     {
-                        AaruConsole.WriteLine("No partitions founds, not searching for filesystems");
+                        AaruConsole.WriteLine(UI.No_partitions_found_not_searching_for_filesystems);
 
                         return (int)ErrorNumber.NothingFound;
                     }
@@ -251,65 +252,95 @@ sealed class FilesystemInfoCommand : Command
                 }
                 else
                 {
-                    AaruConsole.WriteLine("{0} partitions found.", partitionsList.Count);
+                    AaruConsole.WriteLine(UI._0_partitions_found, partitionsList.Count);
 
                     for(var i = 0; i < partitionsList.Count; i++)
                     {
-                        Table table = new();
-                        table.Title = new TableTitle($"Partition {partitionsList[i].Sequence}:");
+                        Table table = new()
+                        {
+                            Title = new TableTitle(string.Format(UI.Partition_0, partitionsList[i].Sequence))
+                        };
+
                         table.AddColumn("");
                         table.AddColumn("");
                         table.HideHeaders();
 
-                        table.AddRow("Name", Markup.Escape(partitionsList[i].Name ?? ""));
-                        table.AddRow("Type", Markup.Escape(partitionsList[i].Type ?? ""));
-                        table.AddRow("Start", $"sector {partitionsList[i].Start}, byte {partitionsList[i].Offset}");
+                        table.AddRow(UI.Title_Name, Markup.Escape(partitionsList[i].Name ?? ""));
+                        table.AddRow(UI.Title_Type, Markup.Escape(partitionsList[i].Type ?? ""));
 
-                        table.AddRow("Length", $"{partitionsList[i].Length} sectors, {partitionsList[i].Size} bytes");
+                        table.AddRow(Localization.Core.Title_Start,
+                                     string.Format(UI.sector_0_byte_1,
+                                                   partitionsList[i].Start,
+                                                   partitionsList[i].Offset));
 
-                        table.AddRow("Scheme", Markup.Escape(partitionsList[i].Scheme           ?? ""));
-                        table.AddRow("Description", Markup.Escape(partitionsList[i].Description ?? ""));
+                        table.AddRow(UI.Title_Length,
+                                     string.Format(UI._0_sectors_1_bytes,
+                                                   partitionsList[i].Length,
+                                                   partitionsList[i].Size));
+
+                        table.AddRow(UI.Title_Scheme,      Markup.Escape(partitionsList[i].Scheme      ?? ""));
+                        table.AddRow(UI.Title_Description, Markup.Escape(partitionsList[i].Description ?? ""));
 
                         AnsiConsole.Write(table);
 
-                        if(!filesystems)
-                            continue;
+                        if(!filesystems) continue;
 
-                        Spectre.ProgressSingleSpinner(ctx =>
+                        Core.Spectre.ProgressSingleSpinner(ctx =>
                         {
-                            ctx.AddTask("Identifying filesystems on partition...").IsIndeterminate();
-                            Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
+                            ctx.AddTask(UI.Identifying_filesystems_on_partition).IsIndeterminate();
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
                         });
 
-                        if(idPlugins.Count == 0)
-                            AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
-                        else if(idPlugins.Count > 1)
+                        switch(idPlugins.Count)
                         {
-                            AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+                            case 0:
+                                AaruConsole.WriteLine($"[bold]{UI.Filesystem_not_identified}[/]");
 
-                            foreach(string pluginName in idPlugins)
-                                if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                break;
+                            case > 1:
+                            {
+                                AaruConsole.WriteLine($"[italic]{string.Format(UI.Identified_by_0_plugins,
+                                                                               idPlugins.Count)}[/]");
+
+                                foreach(string pluginName in idPlugins)
                                 {
-                                    AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out fs)) continue;
+                                    if(fs is null) continue;
 
-                                    plugin.GetInformation(imageFormat, partitionsList[i], out information,
-                                                          encodingClass);
+                                    AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)
+                                    }[/]");
+
+                                    fs.GetInformation(imageFormat,
+                                                      partitionsList[i],
+                                                      encodingClass,
+                                                      out information,
+                                                      out FileSystem fsMetadata);
 
                                     AaruConsole.Write(information);
-                                    Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                    Statistics.AddFilesystem(fsMetadata.Type);
                                 }
-                        }
-                        else
-                        {
-                            plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
 
-                            if(plugin == null)
-                                continue;
+                                break;
+                            }
+                            default:
+                            {
+                                plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
 
-                            AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
-                            plugin.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
-                            AaruConsole.Write("{0}", information);
-                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                if(fs is null) continue;
+
+                                AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
+
+                                fs.GetInformation(imageFormat,
+                                                  partitionsList[i],
+                                                  encodingClass,
+                                                  out information,
+                                                  out FileSystem fsMetadata);
+
+                                AaruConsole.Write("{0}", information);
+                                Statistics.AddFilesystem(fsMetadata.Type);
+
+                                break;
+                            }
                         }
 
                         AaruConsole.WriteLine();
@@ -321,50 +352,73 @@ sealed class FilesystemInfoCommand : Command
             {
                 var wholePart = new Partition
                 {
-                    Name   = "Whole device",
+                    Name   = Localization.Core.Whole_device,
                     Length = imageFormat.Info.Sectors,
                     Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Identifying filesystems...").IsIndeterminate();
-                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    ctx.AddTask(UI.Identifying_filesystems).IsIndeterminate();
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
                 });
 
-                if(idPlugins.Count == 0)
-                    AaruConsole.WriteLine("[bold]Filesystem not identified[/]");
-                else if(idPlugins.Count > 1)
+                switch(idPlugins.Count)
                 {
-                    AaruConsole.WriteLine($"[italic]Identified by {idPlugins.Count} plugins[/]");
+                    case 0:
+                        AaruConsole.WriteLine($"[bold]{UI.Filesystem_not_identified}[/]");
 
-                    foreach(string pluginName in idPlugins)
-                        if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
-                        {
-                            AaruConsole.WriteLine($"[bold]As identified by {plugin.Name}.[/]");
-                            plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
-                            AaruConsole.Write(information);
-                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
-                        }
-                }
-                else
-                {
-                    plugins.PluginsList.TryGetValue(idPlugins[0], out plugin);
-
-                    if(plugin != null)
+                        break;
+                    case > 1:
                     {
-                        AaruConsole.WriteLine($"[bold]Identified by {plugin.Name}.[/]");
-                        plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
+                        AaruConsole.WriteLine($"[italic]{string.Format(UI.Identified_by_0_plugins, idPlugins.Count)
+                        }[/]");
+
+                        foreach(string pluginName in idPlugins)
+                        {
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out fs)) continue;
+                            if(fs is null) continue;
+
+                            AaruConsole.WriteLine($"[bold]{string.Format(UI.As_identified_by_0, fs.Name)}[/]");
+
+                            fs.GetInformation(imageFormat,
+                                              wholePart,
+                                              encodingClass,
+                                              out information,
+                                              out FileSystem fsMetadata);
+
+                            AaruConsole.Write(information);
+                            Statistics.AddFilesystem(fsMetadata.Type);
+                        }
+
+                        break;
+                    }
+                    default:
+                    {
+                        plugins.Filesystems.TryGetValue(idPlugins[0], out fs);
+
+                        if(fs is null) break;
+
+                        AaruConsole.WriteLine($"[bold]{string.Format(UI.Identified_by_0, fs.Name)}[/]");
+
+                        fs.GetInformation(imageFormat,
+                                          wholePart,
+                                          encodingClass,
+                                          out information,
+                                          out FileSystem fsMetadata);
+
                         AaruConsole.Write(information);
-                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                        Statistics.AddFilesystem(fsMetadata.Type);
+
+                        break;
                     }
                 }
             }
         }
         catch(Exception ex)
         {
-            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-            AaruConsole.DebugWriteLine("Fs-info command", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(Markup.Escape(string.Format(UI.Error_reading_file_0, ex.Message)));
+            AaruConsole.WriteException(ex);
 
             return (int)ErrorNumber.UnexpectedException;
         }

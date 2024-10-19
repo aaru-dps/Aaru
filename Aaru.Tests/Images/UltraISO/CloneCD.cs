@@ -23,28 +23,29 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.UltraISO;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.UltraISO;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CloneCD : OpticalMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "UltraISO", "CloneCD");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "UltraISO", "CloneCD");
+
     public override IMediaImage Plugin => new CloneCd();
 
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "cdiready_the_apprentice.ccd",
@@ -53,8 +54,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "e159c422cba79ce772437458c11c00d8",
             LongMd5       = "e159c422cba79ce772437458c11c00d8",
             SubchannelMd5 = "f43afdef9df3fc5b3d74494f0908223f",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -231,7 +232,7 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -241,8 +242,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "c09f408a4416634d8ac1c1ffd0ed75a5",
             LongMd5       = "c09f408a4416634d8ac1c1ffd0ed75a5",
             SubchannelMd5 = "e6b61ad780c72d162c3ceb784de1fbd2",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -355,7 +356,7 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -365,8 +366,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "bf4bbec517101d0d6f45d2e4d50cb875",
             LongMd5       = "3d3f9cf7d1ba2249b1e7960071e5af46",
             SubchannelMd5 = "292b671b4b296a20511516557dbbd2b1",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -375,25 +376,25 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 63562,
                             ClusterSize = 8192,
-                            Type        = "HFS",
+                            Type        = "hfs",
                             VolumeName  = "Winpower"
                         },
                         new FileSystemTest
                         {
                             Clusters    = 254265,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Winpower"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -403,8 +404,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "1e55aa420ca8f8ea77d5b597c9cfc19b",
             LongMd5       = "3af5f943ddb9427d9c63a4ce3b704db9",
             SubchannelMd5 = "4b054ac37c290a91a47997c84c9978d6",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -413,19 +414,19 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Bootable    = true,
                             Clusters    = 308224,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "ARCH_201901"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -435,8 +436,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "97e5bf1caf3998e818d40cd845c6ecc9",
             LongMd5       = "07b4d88c8f38cc0168a2f5725b31c52e",
             SubchannelMd5 = "74910fc131a456fa3d39a666dcee3dcc",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -549,18 +550,18 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 0,
                     Number  = 14,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 69136,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = "Melanie C"
                         }
-                    }
+                    ]
                 }
-            }
+            ]
         },
         new OpticalImageTestExpected
         {
@@ -570,8 +571,8 @@ public class CloneCD : OpticalMediaImageTest
             Md5           = "8d8493eb8eba6c67be7a8f47d4fde971",
             LongMd5       = "5a9eb4f35ecc39de5c011a2bac8549b5",
             SubchannelMd5 = "159b910e0ec1a88e004b9bcebdbde747",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -580,16 +581,16 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4,
                     Number  = 1,
-                    FileSystems = new[]
-                    {
+                    FileSystems =
+                    [
                         new FileSystemTest
                         {
                             Clusters    = 1587,
                             ClusterSize = 2048,
-                            Type        = "ISO9660",
+                            Type        = "iso9660",
                             VolumeName  = ""
                         }
-                    }
+                    ]
                 },
                 new TrackInfoTestExpected
                 {
@@ -711,7 +712,7 @@ public class CloneCD : OpticalMediaImageTest
                     Pregap  = 0,
                     Flags   = 0
                 }
-            }
+            ]
         }
-    };
+    ];
 }

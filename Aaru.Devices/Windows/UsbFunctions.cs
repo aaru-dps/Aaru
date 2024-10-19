@@ -27,15 +27,16 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+
+namespace Aaru.Devices.Windows;
 
 //
 // A place for "higher level" related functions
@@ -43,13 +44,14 @@ using System.Runtime.InteropServices;
 //
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 static partial class Usb
 {
     const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-    internal const string GUID_DEVINTERFACE_DISK            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_CDROM           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_FLOPPY          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
-    internal const string GUID_DEVINTERFACE_TAPE            = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_DISK          = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_CDROM         = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_FLOPPY        = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+    internal const string GUID_DEVINTERFACE_TAPE          = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
 
     /// <summary>Get a list of all connected devices</summary>
     /// <returns>List of usb devices</returns>
@@ -57,8 +59,7 @@ static partial class Usb
     {
         var devList = new List<UsbDevice>();
 
-        foreach(UsbController controller in GetHostControllers())
-            ListHub(controller.GetRootHub(), devList);
+        foreach(UsbController controller in GetHostControllers()) ListHub(controller.GetRootHub(), devList);
 
         return devList;
     }
@@ -69,13 +70,14 @@ static partial class Usb
     static void ListHub(UsbHub hub, ICollection<UsbDevice> devList)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 ListHub(port.GetHub(), devList);
             else
             {
-                if(port.IsDeviceConnected)
-                    devList.Add(port.GetDevice());
+                if(port.IsDeviceConnected) devList.Add(port.GetDevice());
             }
+        }
     }
 
     /// <summary>Find a device based upon it's DriverKeyName</summary>
@@ -89,8 +91,7 @@ static partial class Usb
         {
             SearchHubDriverKeyName(controller.GetRootHub(), ref foundDevice, driverKeyName);
 
-            if(foundDevice != null)
-                break;
+            if(foundDevice != null) break;
         }
 
         return foundDevice;
@@ -103,22 +104,22 @@ static partial class Usb
     static void SearchHubDriverKeyName(UsbHub hub, ref UsbDevice foundDevice, string driverKeyName)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 SearchHubDriverKeyName(port.GetHub(), ref foundDevice, driverKeyName);
             else
             {
-                if(!port.IsDeviceConnected)
-                    continue;
+                if(!port.IsDeviceConnected) continue;
 
                 UsbDevice device = port.GetDevice();
 
-                if(device._deviceDriverKey != driverKeyName)
-                    continue;
+                if(device.DeviceDriverKey != driverKeyName) continue;
 
                 foundDevice = device;
 
                 break;
             }
+        }
     }
 
     /// <summary>Find a device based upon it's Instance ID</summary>
@@ -132,8 +133,7 @@ static partial class Usb
         {
             SearchHubInstanceId(controller.GetRootHub(), ref foundDevice, instanceId);
 
-            if(foundDevice != null)
-                break;
+            if(foundDevice != null) break;
         }
 
         return foundDevice;
@@ -146,29 +146,29 @@ static partial class Usb
     static void SearchHubInstanceId(UsbHub hub, ref UsbDevice foundDevice, string instanceId)
     {
         foreach(UsbPort port in hub.GetPorts())
+        {
             if(port.IsHub)
                 SearchHubInstanceId(port.GetHub(), ref foundDevice, instanceId);
             else
             {
-                if(!port.IsDeviceConnected)
-                    continue;
+                if(!port.IsDeviceConnected) continue;
 
                 UsbDevice device = port.GetDevice();
 
-                if(device.InstanceId != instanceId)
-                    continue;
+                if(device.InstanceId != instanceId) continue;
 
                 foundDevice = device;
 
                 break;
             }
+        }
     }
 
-    [DllImport("setupapi.dll")]
-    static extern int CM_Get_Parent(out IntPtr pdnDevInst, IntPtr dnDevInst, int ulFlags);
+    [LibraryImport("setupapi.dll")]
+    private static partial int CM_Get_Parent(out uint pdnDevInst, uint dnDevInst, int ulFlags);
 
-    [DllImport("setupapi.dll", CharSet = CharSet.Auto)]
-    static extern int CM_Get_Device_ID(IntPtr dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
+    [LibraryImport("setupapi.dll", EntryPoint = "CM_Get_Device_IDW")]
+    private static partial int CM_Get_Device_ID(uint dnDevInst, IntPtr buffer, int bufferLen, int ulFlags);
 
     /// <summary>Find a device based upon a Drive Letter</summary>
     /// <param name="driveLetter">Drive letter</param>
@@ -236,23 +236,23 @@ static partial class Usb
                     // build a Device Interface Detail Data structure
                     var didd = new SpDeviceInterfaceDetailData
                     {
-                        cbSize = 4 + Marshal.SystemDefaultCharSize
-                    }; // trust me :)
+                        cbSize = IntPtr.Size == 8 ? 8 : 4 + Marshal.SystemDefaultCharSize
+                    };
 
                     // now we can get some more detailed information
-                    var       nRequiredSize = 0;
-                    const int nBytes       = BUFFER_SIZE;
+                    var nRequiredSize = 0;
 
-                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, nBytes, ref nRequiredSize, ref da))
+                    if(SetupDiGetDeviceInterfaceDetail(h, ref dia, ref didd, BUFFER_SIZE, ref nRequiredSize, ref da))
+                    {
                         if(GetDeviceNumber(didd.DevicePath) == devNum)
                         {
                             // current InstanceID is at the "USBSTOR" level, so we
                             // need up "move up" one level to get to the "USB" level
-                            CM_Get_Parent(out IntPtr ptrPrevious, da.DevInst, 0);
+                            CM_Get_Parent(out uint ptrPrevious, da.DevInst, 0);
 
                             // Now we get the InstanceID of the USB level device
-                            IntPtr ptrInstanceBuf = Marshal.AllocHGlobal(nBytes);
-                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, nBytes, 0);
+                            nint ptrInstanceBuf = Marshal.AllocHGlobal(BUFFER_SIZE);
+                            CM_Get_Device_ID(ptrPrevious, ptrInstanceBuf, BUFFER_SIZE, 0);
                             instanceId = Marshal.PtrToStringAuto(ptrInstanceBuf);
 
                             Marshal.FreeHGlobal(ptrInstanceBuf);
@@ -260,6 +260,7 @@ static partial class Usb
                             //System.Console.WriteLine("InstanceId: {0}", instanceId);
                             //break;
                         }
+                    }
                 }
 
                 i++;
@@ -284,8 +285,7 @@ static partial class Usb
 
         IntPtr h = CreateFile(devicePath.TrimEnd('\\'), 0, 0, IntPtr.Zero, OPEN_EXISTING, 0, IntPtr.Zero);
 
-        if(h == _invalidHandleValue)
-            return ans;
+        if(h == _invalidHandleValue) return ans;
 
         var    sdn    = new StorageDeviceNumber();
         int    nBytes = Marshal.SizeOf(sdn);
@@ -307,6 +307,8 @@ static partial class Usb
         return ans;
     }
 
+#region Nested type: StorageDeviceNumber
+
     [StructLayout(LayoutKind.Sequential)]
     readonly struct StorageDeviceNumber
     {
@@ -314,4 +316,6 @@ static partial class Usb
         internal readonly int DeviceNumber;
         internal readonly int PartitionNumber;
     }
+
+#endregion
 }

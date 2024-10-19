@@ -28,15 +28,22 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" Width="600" Height="450" x:Class="Aaru.Gui.Views.Dialogs.Console"
-        Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
+        xmlns:dialogs="clr-namespace:Aaru.Gui.ViewModels.Dialogs"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        Width="600"
+        Height="450"
+        x:Class="Aaru.Gui.Views.Dialogs.Console"
+        Icon="/Assets/aaru-logo.png"
+        Title="{Binding Title}">
     <Design.DataContext>
         <dialogs:ConsoleViewModel />
     </Design.DataContext>
@@ -45,18 +52,34 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <DataGrid Items="{Binding Entries}">
+            <DataGrid ItemsSource="{Binding Entries}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Module" Binding="{Binding Module}" Width="Auto" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding TimeLabel}"
+                                        Binding="{Binding Timestamp}"
+                                        Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding TypeLabel}"
+                                        Binding="{Binding Type}"
+                                        Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding ModuleLabel}"
+                                        Binding="{Binding Module}"
+                                        Width="Auto"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Header="{Binding MessageLabel}"
+                                        Binding="{Binding Message}"
+                                        Width="Auto"
+                                        IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
-            <CheckBox Grid.Row="1" IsChecked="{Binding DebugChecked}">
+            <CheckBox Grid.Row="1"
+                      IsChecked="{Binding DebugChecked}">
                 <TextBlock Text="{Binding DebugText}" />
             </CheckBox>
-            <StackPanel Grid.Row="2" Spacing="10" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.Row="2"
+                        Spacing="10"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
                 <Button Command="{Binding ClearCommand}">
                     <TextBlock Text="{Binding ClearLabel}" />
                 </Button>

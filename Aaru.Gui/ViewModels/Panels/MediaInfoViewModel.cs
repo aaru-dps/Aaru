@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 using System;
 using System.Collections.Generic;
@@ -42,14 +40,18 @@ using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
-using Avalonia;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using Avalonia.Platform.Storage;
+using Humanizer.Bytes;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using ScsiInfo = Aaru.Core.Media.Info.ScsiInfo;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class MediaInfoViewModel : ViewModelBase
 {
@@ -92,36 +94,21 @@ public sealed class MediaInfoViewModel : ViewModelBase
         SaveMediumSupportCommand          = ReactiveCommand.Create(ExecuteSaveMediumSupportCommand);
         DumpCommand                       = ReactiveCommand.Create(ExecuteDumpCommand);
         ScanCommand                       = ReactiveCommand.Create(ExecuteScanCommand);
-        IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-        _devicePath = devicePath;
-        _scsiInfo   = scsiInfo;
+        _devicePath                       = devicePath;
+        _scsiInfo                         = scsiInfo;
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{scsiInfo.MediaType}.png");
 
-        MediaLogo = assets?.Exists(mediaResource) == true ? new Bitmap(assets.Open(mediaResource)) : null;
+        MediaLogo = AssetLoader.Exists(mediaResource) ? new Bitmap(AssetLoader.Open(mediaResource)) : null;
 
         MediaType = scsiInfo.MediaType.ToString();
 
-        if(scsiInfo.Blocks    != 0 &&
-           scsiInfo.BlockSize != 0)
+        if(scsiInfo.Blocks != 0 && scsiInfo.BlockSize != 0)
         {
-            ulong totalSize = scsiInfo.Blocks * scsiInfo.BlockSize;
-
-            if(totalSize > 1099511627776)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)";
-            else if(totalSize > 1073741824)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)";
-            else if(totalSize > 1048576)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)";
-            else if(totalSize > 1024)
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)";
-            else
-                MediaSize =
-                    $"Media has {scsiInfo.Blocks} blocks of {scsiInfo.BlockSize} bytes/each. (for a total of {totalSize} bytes)";
+            MediaSize = string.Format(Localization.Core.Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                      scsiInfo.Blocks,
+                                      scsiInfo.BlockSize,
+                                      ByteSize.FromBytes(scsiInfo.Blocks * scsiInfo.BlockSize).ToString("0.000"));
         }
 
         if(scsiInfo.MediaSerialNumber != null)
@@ -129,7 +116,7 @@ public sealed class MediaInfoViewModel : ViewModelBase
             var sbSerial = new StringBuilder();
 
             for(var i = 4; i < scsiInfo.MediaSerialNumber.Length; i++)
-                sbSerial.AppendFormat("{0:X2}", scsiInfo.MediaSerialNumber[i]);
+                sbSerial.Append($"{scsiInfo.MediaSerialNumber[i]:X2}");
 
             MediaSerial = sbSerial.ToString();
         }
@@ -142,7 +129,8 @@ public sealed class MediaInfoViewModel : ViewModelBase
         SaveRecognizedFormatLayersVisible = scsiInfo.RecognizedFormatLayers != null;
         SaveWriteProtectionStatusVisible  = scsiInfo.WriteProtectionStatus  != null;
 
-        MmcVisible = SaveGetConfigurationVisible || SaveRecognizedFormatLayersVisible ||
+        MmcVisible = SaveGetConfigurationVisible       ||
+                     SaveRecognizedFormatLayersVisible ||
                      SaveWriteProtectionStatusVisible;
 
         if(scsiInfo.DensitySupportHeader.HasValue)
@@ -158,48 +146,78 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
         CompactDiscInfo = new CompactDiscInfo
         {
-            DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc, scsiInfo.Atip, scsiInfo.DiscInformation,
-                                                       scsiInfo.Session, scsiInfo.RawToc, scsiInfo.Pma,
-                                                       scsiInfo.CdTextLeadIn, scsiInfo.DecodedToc, scsiInfo.DecodedAtip,
-                                                       scsiInfo.DecodedSession, scsiInfo.FullToc,
-                                                       scsiInfo.DecodedCdTextLeadIn, scsiInfo.DecodedDiscInformation,
-                                                       scsiInfo.Mcn, scsiInfo.Isrcs, _view)
+            DataContext = new CompactDiscInfoViewModel(scsiInfo.Toc,
+                                                       scsiInfo.Atip,
+                                                       scsiInfo.DiscInformation,
+                                                       scsiInfo.Session,
+                                                       scsiInfo.RawToc,
+                                                       scsiInfo.Pma,
+                                                       scsiInfo.CdTextLeadIn,
+                                                       scsiInfo.DecodedToc,
+                                                       scsiInfo.DecodedAtip,
+                                                       scsiInfo.DecodedSession,
+                                                       scsiInfo.FullToc,
+                                                       scsiInfo.DecodedCdTextLeadIn,
+                                                       scsiInfo.DecodedDiscInformation,
+                                                       scsiInfo.Mcn,
+                                                       scsiInfo.Isrcs,
+                                                       _view)
         };
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdPfi, scsiInfo.DvdDmi, scsiInfo.DvdCmi,
-                                               scsiInfo.HddvdCopyrightInformation, scsiInfo.DvdBca, scsiInfo.DvdAacs,
-                                               scsiInfo.DecodedPfi, _view)
+            DataContext = new DvdInfoViewModel(scsiInfo.DvdPfi,
+                                               scsiInfo.DvdDmi,
+                                               scsiInfo.DvdCmi,
+                                               scsiInfo.HddvdCopyrightInformation,
+                                               scsiInfo.DvdBca,
+                                               scsiInfo.DvdAacs,
+                                               scsiInfo.DecodedPfi,
+                                               _view)
         };
 
         XboxInfo = new XboxInfo
         {
-            DataContext = new XboxInfoViewModel(scsiInfo.XgdInfo, scsiInfo.DvdDmi, scsiInfo.XboxSecuritySector,
-                                                scsiInfo.DecodedXboxSecuritySector, _view)
+            DataContext = new XboxInfoViewModel(scsiInfo.XgdInfo,
+                                                scsiInfo.DvdDmi,
+                                                scsiInfo.XboxSecuritySector,
+                                                scsiInfo.DecodedXboxSecuritySector,
+                                                _view)
         };
 
         DvdWritableInfo = new DvdWritableInfo
         {
-            DataContext = new DvdWritableInfoViewModel(scsiInfo.MediaType, scsiInfo.DvdRamDds,
-                                                       scsiInfo.DvdRamCartridgeStatus, scsiInfo.DvdRamSpareArea,
-                                                       scsiInfo.LastBorderOutRmd, scsiInfo.DvdPreRecordedInfo,
-                                                       scsiInfo.DvdrMediaIdentifier, scsiInfo.DvdrPhysicalInformation,
-                                                       scsiInfo.HddvdrMediumStatus, scsiInfo.HddvdrLastRmd,
-                                                       scsiInfo.DvdrLayerCapacity, scsiInfo.DvdrDlMiddleZoneStart,
+            DataContext = new DvdWritableInfoViewModel(scsiInfo.DvdRamDds,
+                                                       scsiInfo.DvdRamCartridgeStatus,
+                                                       scsiInfo.DvdRamSpareArea,
+                                                       scsiInfo.LastBorderOutRmd,
+                                                       scsiInfo.DvdPreRecordedInfo,
+                                                       scsiInfo.DvdrMediaIdentifier,
+                                                       scsiInfo.DvdrPhysicalInformation,
+                                                       scsiInfo.HddvdrMediumStatus,
+                                                       scsiInfo.HddvdrLastRmd,
+                                                       scsiInfo.DvdrLayerCapacity,
+                                                       scsiInfo.DvdrDlMiddleZoneStart,
                                                        scsiInfo.DvdrDlJumpIntervalSize,
                                                        scsiInfo.DvdrDlManualLayerJumpStartLba,
-                                                       scsiInfo.DvdrDlRemapAnchorPoint, scsiInfo.DvdPlusAdip,
-                                                       scsiInfo.DvdPlusDcb, _view)
+                                                       scsiInfo.DvdrDlRemapAnchorPoint,
+                                                       scsiInfo.DvdPlusAdip,
+                                                       scsiInfo.DvdPlusDcb,
+                                                       _view)
         };
 
         BlurayInfo = new BlurayInfo
         {
-            DataContext = new BlurayInfoViewModel(scsiInfo.BlurayDiscInformation, scsiInfo.BlurayBurstCuttingArea,
-                                                  scsiInfo.BlurayDds, scsiInfo.BlurayCartridgeStatus,
-                                                  scsiInfo.BluraySpareAreaInformation, scsiInfo.BlurayPowResources,
-                                                  scsiInfo.BlurayTrackResources, scsiInfo.BlurayRawDfl,
-                                                  scsiInfo.BlurayPac, _view)
+            DataContext = new BlurayInfoViewModel(scsiInfo.BlurayDiscInformation,
+                                                  scsiInfo.BlurayBurstCuttingArea,
+                                                  scsiInfo.BlurayDds,
+                                                  scsiInfo.BlurayCartridgeStatus,
+                                                  scsiInfo.BluraySpareAreaInformation,
+                                                  scsiInfo.BlurayPowResources,
+                                                  scsiInfo.BlurayTrackResources,
+                                                  scsiInfo.BlurayRawDfl,
+                                                  scsiInfo.BlurayPac,
+                                                  _view)
         };
     }
 
@@ -346,25 +364,43 @@ public sealed class MediaInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _blurayInfo, value);
     }
 
+    public string MediaInformationLabel           => UI.Title_Media_information;
+    public string GeneralLabel                    => UI.Title_General;
+    public string MediaTypeLabel                  => UI.Title_Media_type;
+    public string MediaSerialNumberLabel          => UI.Title_Media_serial_number;
+    public string SaveReadMediaSerialLabel        => UI.ButtonLabel_Save_READ_MEDIA_SERIAL_NUMBER_response;
+    public string SaveReadCapacityLabel           => UI.ButtonLabel_Save_READ_CAPACITY_response;
+    public string SaveReadCapacity16Label         => UI.ButtonLabel_Save_READ_CAPACITY_16_response;
+    public string MMCLabel                        => Localization.Core.Title_MMC;
+    public string SaveGetConfigurationLabel       => UI.ButtonLabel_Save_GET_CONFIGURATION_response;
+    public string SaveRecognizedFormatLayersLabel => UI.ButtonLabel_Save_RECOGNIZED_FORMAT_LAYERS_response;
+    public string SaveWriteProtectionStatusLabel  => UI.ButtonLabel_Save_WRITE_PROTECTION_STATUS_response;
+    public string SscLabel                        => Localization.Core.Title_SSC;
+    public string DensitySupportLabel             => UI.Densities_supported_by_currently_inserted_media;
+    public string MediumSupportLabel              => UI.Medium_types_currently_inserted_in_device;
+    public string SaveDensitySupportLabel         => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIA_response;
+    public string SaveMediumSupportLabel          => UI.ButtonLabel_Save_REPORT_DENSITY_SUPPORT_MEDIUM_MEDIA_response;
+    public string CompactDiscLabel                => Localization.Core.Title_CompactDisc;
+    public string DvdLabel                        => Localization.Core.Title_DVD;
+    public string Dvd_R_WLabel                    => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string XboxLabel                       => Localization.Core.Title_Xbox;
+    public string BluRayLabel                     => Localization.Core.Title_Blu_ray;
+    public string DumpLabel                       => UI.ButtonLabel_Dump_media_to_image;
+    public string ScanLabel                       => UI.ButtonLabel_Scan_media_surface;
+
     async Task SaveElement(byte[] data)
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(data, 0, data.Length);
 
         saveFs.Close();
@@ -388,24 +424,28 @@ public sealed class MediaInfoViewModel : ViewModelBase
 
     async Task ExecuteDumpCommand()
     {
-        if(_scsiInfo.MediaType is CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM)
+        switch(_scsiInfo.MediaType)
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "GD-ROM dump support is not yet implemented.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+            case CommonTypes.MediaType.GDR or CommonTypes.MediaType.GDROM:
+                await MessageBoxManager
+                     .GetMessageBoxStandard(UI.Title_Error,
+                                            Localization.Core.GD_ROM_dump_support_is_not_yet_implemented,
+                                            ButtonEnum.Ok,
+                                            Icon.Error)
+                     .ShowWindowDialogAsync(_view);
 
-            return;
-        }
+                return;
+            case CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2 or CommonTypes.MediaType.XGD3
+                when _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true:
+                await MessageBoxManager
+                     .GetMessageBoxStandard(UI.Title_Error,
+                                            Localization.Core
+                                                        .Dumping_Xbox_Game_Discs_requires_a_drive_with_Kreon_firmware,
+                                            ButtonEnum.Ok,
+                                            Icon.Error)
+                     .ShowWindowDialogAsync(_view);
 
-        if(_scsiInfo.MediaType is CommonTypes.MediaType.XGD or CommonTypes.MediaType.XGD2
-                                                            or CommonTypes.MediaType.XGD3 &&
-           _scsiInfo.DeviceInfo.ScsiInquiry?.KreonPresent != true)
-        {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "Dumping Xbox discs require a Kreon drive.", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
-
-            return;
+                return;
         }
 
         var mediaDumpWindow = new MediaDump();
@@ -423,9 +463,12 @@ public sealed class MediaInfoViewModel : ViewModelBase
             // TODO: GD-ROM
             case CommonTypes.MediaType.GDR:
             case CommonTypes.MediaType.GDROM:
-                await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "GD-ROM scan support is not yet implemented.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                await MessageBoxManager
+                     .GetMessageBoxStandard(UI.Title_Error,
+                                            Localization.Core.GD_ROM_scan_support_is_not_yet_implemented,
+                                            ButtonEnum.Ok,
+                                            Icon.Error)
+                     .ShowWindowDialogAsync(_view);
 
                 return;
 
@@ -433,9 +476,12 @@ public sealed class MediaInfoViewModel : ViewModelBase
             case CommonTypes.MediaType.XGD:
             case CommonTypes.MediaType.XGD2:
             case CommonTypes.MediaType.XGD3:
-                await MessageBoxManager.
-                      GetMessageBoxStandardWindow("Error", "Scanning Xbox discs is not yet supported.", ButtonEnum.Ok,
-                                                  Icon.Error).ShowDialog(_view);
+                await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                              Localization.Core
+                                                                          .Scanning_Xbox_discs_is_not_yet_supported,
+                                                              ButtonEnum.Ok,
+                                                              Icon.Error)
+                                       .ShowWindowDialogAsync(_view);
 
                 return;
         }

@@ -23,29 +23,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.SFS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.SFS;
+
 [TestFixture]
-public class APM : FilesystemTest
+public class APM() : FilesystemTest("sfs")
 {
-    public APM() : base("SmartFileSystem") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (APM)");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Smart File System (APM)");
-
-    public override IFilesystem Plugin     => new SFS();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.SFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "morphos_3.13.aif",
@@ -55,5 +52,5 @@ public class APM : FilesystemTest
             Clusters    = 262018,
             ClusterSize = 512
         }
-    };
+    ];
 }

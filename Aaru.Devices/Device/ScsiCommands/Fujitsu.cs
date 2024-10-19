@@ -27,15 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices;
 
 using System;
 using System.Text;
 using Aaru.Console;
 using Aaru.Helpers;
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -48,8 +48,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool FujitsuDisplay(out byte[] senseBuffer, bool flash, FujitsuDisplayModes mode, string firstHalf,
-                               string secondHalf, uint timeout, out double duration)
+    public bool FujitsuDisplay(out byte[] senseBuffer, bool flash,   FujitsuDisplayModes mode, string firstHalf,
+                               string     secondHalf,  uint timeout, out double          duration)
     {
         byte[] tmp;
         var    firstHalfBytes  = new byte[8];
@@ -72,38 +72,42 @@ public partial class Device
         }
 
         if(mode != FujitsuDisplayModes.Half)
+        {
             if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                !ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 displayLen = true;
             else if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(firstHalfBytes) &&
                     ArrayHelpers.ArrayIsNullOrWhiteSpace(secondHalfBytes))
                 halfMsg = true;
+        }
 
         buffer[0] = (byte)((byte)mode << 5);
 
-        if(displayLen)
-            buffer[0] += 0x10;
+        if(displayLen) buffer[0] += 0x10;
 
-        if(flash)
-            buffer[0] += 0x08;
+        if(flash) buffer[0] += 0x08;
 
-        if(halfMsg)
-            buffer[0] += 0x04;
+        if(halfMsg) buffer[0] += 0x04;
 
         buffer[0] += 0x01; // Always ASCII
 
-        Array.Copy(firstHalfBytes, 0, buffer, 1, 8);
+        Array.Copy(firstHalfBytes,  0, buffer, 1, 8);
         Array.Copy(secondHalfBytes, 0, buffer, 9, 8);
 
         cdb[0] = (byte)ScsiCommands.FujitsuDisplay;
         cdb[6] = (byte)buffer.Length;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.Out,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "FUJITSU DISPLAY took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.FUJITSU_DISPLAY_took_0_ms, duration);
 
         return sense;
     }

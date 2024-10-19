@@ -27,15 +27,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Devices.Report;
 
 using Aaru.Devices;
 
+namespace Aaru.Core.Devices.Report;
+
 public sealed partial class DeviceReport
 {
+    const    string GDROM_MODULE_NAME = "GD-ROM reporter";
+    const    string ATA_MODULE_NAME   = "ATA Report";
+    const    string SCSI_MODULE_NAME  = "SCSI Report";
     readonly Device _dev;
 
     /// <summary>Initializes a device report for the specified device (must be opened)</summary>

@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,49 +5,62 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class AtariLynx : IByteAddressableImage
 {
     byte[]    _data;
     Stream    _dataStream;
     ImageInfo _imageInfo;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => "Atari Lynx cartridge dump";
+
     /// <inheritdoc />
     public Guid Id => new("809A6835-0486-4FD3-BD8B-2EF40C3EF97B");
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "Atari Lynx";
+    public string Name => Localization.AtariLynx_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if((stream.Length - 64) % 65536 != 0)
-            return false;
+        if((stream.Length - 64) % 65536 != 0) return false;
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         // "LYNX"
@@ -59,29 +70,26 @@ public class AtariLynx : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if((stream.Length - 64) % 65536 != 0)
-            return ErrorNumber.InvalidArgument;
+        if((stream.Length - 64) % 65536 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x0;
         var magicBytes = new byte[4];
-        stream.Read(magicBytes, 0, 4);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
-        if(magic != 0x584E594C)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x584E594C) return ErrorNumber.InvalidArgument;
 
         var headerBytes = new byte[64];
         stream.Position = 0;
-        stream.Read(headerBytes, 0, 64);
+        stream.EnsureRead(headerBytes, 0, 64);
 
         _data = new byte[imageFilter.DataForkLength - 64];
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength - 64);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength - 64);
 
         _imageInfo = new ImageInfo
         {
@@ -91,29 +99,28 @@ public class AtariLynx : IByteAddressableImage
             MediaType            = MediaType.AtariLynxCard,
             LastModificationTime = imageFilter.LastWriteTime,
             Sectors              = (ulong)imageFilter.DataForkLength,
-            XmlMediaType         = XmlMediaType.LinearMedia
+            MetadataMediaType    = MetadataMediaType.LinearMedia
         };
 
         HandyHeader header = Marshal.ByteArrayToStructureBigEndian<HandyHeader>(headerBytes, 0, 64);
 
-        if(header.Version != 256)
-            return ErrorNumber.NotSupported;
+        if(header.Version != 256) return ErrorNumber.NotSupported;
 
         _imageInfo.MediaTitle        = StringHandlers.CToString(header.Name);
         _imageInfo.MediaManufacturer = StringHandlers.CToString(header.Manufacturer);
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
-        sb.AppendFormat("Manufacturer: {0}", _imageInfo.MediaManufacturer).AppendLine();
+        sb.AppendFormat(Localization.Name_0,         _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
 
-        sb.AppendFormat("Bank 0 size: {0} pages ({1} bytes)", header.Bank0Length, header.Bank0Length * 65536).
-           AppendLine();
+        sb.AppendFormat(Localization.Bank_zero_size_0_pages_1_bytes, header.Bank0Length, header.Bank0Length * 65536)
+          .AppendLine();
 
-        sb.AppendFormat("Bank 1 size: {0} pages ({1} bytes)", header.Bank1Length, header.Bank1Length * 65536).
-           AppendLine();
+        sb.AppendFormat(Localization.Bank_one_size_0_pages_1_bytes, header.Bank1Length, header.Bank1Length * 65536)
+          .AppendLine();
 
-        sb.AppendFormat("Rotation: {0}", header.Rotation).AppendLine();
+        sb.AppendFormat(Localization.Rotation_0, header.Rotation).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -123,43 +130,49 @@ public class AtariLynx : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
         ".lnx"
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         MediaType.AtariLynxCard
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -185,7 +198,7 @@ public class AtariLynx : IByteAddressableImage
         byte[] headerBytes = Marshal.StructureToByteArrayBigEndian(header);
 
         _dataStream.Write(headerBytes, 0, headerBytes.Length);
-        _dataStream.Write(_data, 0, _data.Length);
+        _dataStream.Write(_data,       0, _data.Length);
         _dataStream.Close();
 
         IsWriting = false;
@@ -195,33 +208,32 @@ public class AtariLynx : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata)
+    public bool SetImageInfo(ImageInfo imageInfo)
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
-        if(!string.IsNullOrWhiteSpace(metadata.MediaTitle))
-            _imageInfo.MediaTitle = metadata.MediaTitle[..32];
+        if(!string.IsNullOrWhiteSpace(imageInfo.MediaTitle)) _imageInfo.MediaTitle = imageInfo.MediaTitle[..32];
 
-        if(!string.IsNullOrWhiteSpace(metadata.MediaManufacturer))
-            _imageInfo.MediaManufacturer = metadata.MediaManufacturer[..16];
+        if(!string.IsNullOrWhiteSpace(imageInfo.MediaManufacturer))
+            _imageInfo.MediaManufacturer = imageInfo.MediaManufacturer[..16];
 
         return true;
     }
@@ -234,14 +246,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.AtariLynxCard)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -256,9 +268,10 @@ public class AtariLynx : IByteAddressableImage
         {
             _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.InOutError;
         }
@@ -278,15 +291,15 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         mappings = new LinearMemoryMap
         {
-            Devices = new[]
-            {
+            Devices =
+            [
                 new LinearMemoryDevice
                 {
                     Type = LinearMemoryType.ROM,
@@ -296,7 +309,7 @@ public class AtariLynx : IByteAddressableImage
                         Length = (ulong)_data.Length
                     }
                 }
-            }
+            ]
         };
 
         return ErrorNumber.NoError;
@@ -312,22 +325,21 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -344,35 +356,32 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -384,14 +393,14 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -400,14 +409,17 @@ public class AtariLynx : IByteAddressableImage
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
                     foundRom = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -421,36 +433,35 @@ public class AtariLynx : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -461,50 +472,52 @@ public class AtariLynx : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
         return ErrorNumber.NoError;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "MemberCanBePrivate.Local"),
-     SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+#endregion
+
+#region Nested type: HandyHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct HandyHeader
     {
         public uint  Magic;
@@ -519,4 +532,6 @@ public class AtariLynx : IByteAddressableImage
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
         public byte[] Spare;
     }
+
+#endregion
 }

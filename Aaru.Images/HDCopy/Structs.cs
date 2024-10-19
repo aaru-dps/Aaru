@@ -27,18 +27,35 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2017 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2017-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Images;
+
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class HdCopy
 {
+#region Nested type: BlockHeader
+
+    /// <summary>The header for a RLE-compressed block</summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct BlockHeader
+    {
+        /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
+        public readonly ushort length;
+
+        /// <summary>The byte value used as RLE escape sequence</summary>
+        public readonly byte escape;
+    }
+
+#endregion
+
+#region Nested type: FileHeader
+
     /// <summary>The global header of a HDCP image file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct FileHeader
@@ -57,14 +74,5 @@ public sealed partial class HdCopy
         public byte[] trackMap;
     }
 
-    /// <summary>The header for a RLE-compressed block</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct BlockHeader
-    {
-        /// <summary>The length of the compressed block, in bytes. Little-endian.</summary>
-        public readonly ushort length;
-
-        /// <summary>The byte value used as RLE escape sequence</summary>
-        public readonly byte escape;
-    }
+#endregion
 }

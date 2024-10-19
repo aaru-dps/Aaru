@@ -7,10 +7,6 @@
 //
 // Component      : U.C.S.D. Pascal filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle files.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,48 +23,41 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 using System;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 public sealed partial class PascalPlugin
 {
-    /// <inheritdoc />
-    public ErrorNumber MapBlock(string path, long fileBlock, out long deviceBlock)
-    {
-        deviceBlock = 0;
-
-        return !_mounted ? ErrorNumber.AccessDenied : ErrorNumber.NotImplemented;
-    }
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public ErrorNumber GetAttributes(string path, out FileAttributes attributes)
     {
         attributes = new FileAttributes();
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         ErrorNumber error = GetFileEntry(path, out _);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         attributes = FileAttributes.File;
 
@@ -76,36 +65,37 @@ public sealed partial class PascalPlugin
     }
 
     /// <inheritdoc />
-    public ErrorNumber Read(string path, long offset, long size, ref byte[] buf)
+    public ErrorNumber OpenFile(string path, out IFileNode node)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        node = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         byte[] file;
 
-        if(_debug && (string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
-                      string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
+        if(_debug &&
+           (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
+            string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0))
             file = string.Compare(path, "$", StringComparison.InvariantCulture) == 0 ? _catalogBlocks : _bootBlocks;
         else
         {
             ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             error = _device.ReadSectors((ulong)entry.FirstBlock                    * _multiplier,
-                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier, out byte[] tmp);
+                                        (uint)(entry.LastBlock - entry.FirstBlock) * _multiplier,
+                                        out byte[] tmp);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             file = new byte[(entry.LastBlock - entry.FirstBlock - 1) * _device.Info.SectorSize * _multiplier +
                             entry.LastBytes];
@@ -113,15 +103,46 @@ public sealed partial class PascalPlugin
             Array.Copy(tmp, 0, file, 0, file.Length);
         }
 
-        if(offset >= file.Length)
-            return ErrorNumber.EINVAL;
+        node = new PascalFileNode
+        {
+            Path   = path,
+            Length = file.Length,
+            Offset = 0,
+            Cache  = file
+        };
 
-        if(size + offset >= file.Length)
-            size = file.Length - offset;
+        return ErrorNumber.NoError;
+    }
 
-        buf = new byte[size];
+    /// <inheritdoc />
+    public ErrorNumber CloseFile(IFileNode node)
+    {
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        Array.Copy(file, offset, buf, 0, size);
+        if(node is not PascalFileNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode.Cache = null;
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadFile(IFileNode node, long length, byte[] buffer, out long read)
+    {
+        read = 0;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(buffer is null || buffer.Length < length) return ErrorNumber.InvalidArgument;
+
+        if(node is not PascalFileNode mynode) return ErrorNumber.InvalidArgument;
+
+        read = length;
+
+        if(length + mynode.Offset >= mynode.Length) read = mynode.Length - mynode.Offset;
+
+        Array.Copy(mynode.Cache, mynode.Offset, buffer, 0, read);
+        mynode.Offset += read;
 
         return ErrorNumber.NoError;
     }
@@ -132,15 +153,16 @@ public sealed partial class PascalPlugin
         stat = null;
 
         string[] pathElements = path.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                           {
+                                               '/'
+                                           },
+                                           StringSplitOptions.RemoveEmptyEntries);
 
-        if(pathElements.Length != 1)
-            return ErrorNumber.NotSupported;
+        if(pathElements.Length != 1) return ErrorNumber.NotSupported;
 
         if(_debug)
-            if(string.Compare(path, "$", StringComparison.InvariantCulture)     == 0 ||
+        {
+            if(string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0)
             {
                 stat = new FileEntryInfo
@@ -164,11 +186,11 @@ public sealed partial class PascalPlugin
 
                 return ErrorNumber.NoError;
             }
+        }
 
         ErrorNumber error = GetFileEntry(path, out PascalFileEntry entry);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         stat = new FileEntryInfo
         {
@@ -183,16 +205,19 @@ public sealed partial class PascalPlugin
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     ErrorNumber GetFileEntry(string path, out PascalFileEntry entry)
     {
         entry = new PascalFileEntry();
 
-        foreach(PascalFileEntry ent in _fileEntries.Where(ent =>
-                                                              string.Compare(path,
-                                                                             StringHandlers.PascalToString(ent.Filename,
-                                                                                 Encoding),
-                                                                             StringComparison.
-                                                                                 InvariantCultureIgnoreCase) == 0))
+        foreach(PascalFileEntry ent in _fileEntries.Where(ent => string.Compare(path,
+                                                                                    StringHandlers
+                                                                                       .PascalToString(ent.Filename,
+                                                                                            _encoding),
+                                                                                    StringComparison
+                                                                                       .InvariantCultureIgnoreCase) ==
+                                                                 0))
         {
             entry = ent;
 

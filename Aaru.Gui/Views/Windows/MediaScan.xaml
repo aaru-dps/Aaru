@@ -28,15 +28,20 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" xmlns:controls="clr-namespace:Aaru.Gui.Controls"
-        xmlns:avalonia="http://oxyplot.org/avalonia" mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Aaru.Gui.Views.Windows.MediaScan" Icon="/Assets/aaru-logo.png" Title="{Binding Title}">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.MediaScan"
+        Icon="/Assets/aaru-logo.png"
+        Title="{Binding Title}">
     <Design.DataContext>
         <windows:MediaScanViewModel />
     </Design.DataContext>
@@ -49,56 +54,70 @@
                 <StackPanel Orientation="Vertical">
                     <TextBlock Text="{Binding A}" /> <TextBlock Text="{Binding B}" /> <TextBlock Text="{Binding C}" />
                     <TextBlock Text="{Binding D}" /> <TextBlock Text="{Binding E}" /> <TextBlock Text="{Binding F}" />
-                    <TextBlock Text="{Binding UnreadableSectors}" IsVisible="{Binding !!UnreadableSectors}" />
-                    <TextBlock Text="{Binding TotalTime}" IsVisible="{Binding !!TotalTime}" />
-                    <TextBlock Text="{Binding AvgSpeed}" IsVisible="{Binding !!AvgSpeed}" />
-                    <TextBlock Text="{Binding MaxSpeed}" IsVisible="{Binding !!MaxSpeed}" />
-                    <TextBlock Text="{Binding MinSpeed}" IsVisible="{Binding !!MinSpeed}" />
+                    <TextBlock Text="{Binding UnreadableSectors}"
+                               IsVisible="{Binding !!UnreadableSectors}" />
+                    <TextBlock Text="{Binding TotalTime}"
+                               IsVisible="{Binding !!TotalTime}" />
+                    <TextBlock Text="{Binding AvgSpeed}"
+                               IsVisible="{Binding !!AvgSpeed}" />
+                    <TextBlock Text="{Binding MaxSpeed}"
+                               IsVisible="{Binding !!MaxSpeed}" />
+                    <TextBlock Text="{Binding MinSpeed}"
+                               IsVisible="{Binding !!MinSpeed}" />
                 </StackPanel>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
                     <TextBlock Text="Graph" />
                 </TabItem.Header>
-                <controls:BlockMap Width="750" Height="400" Blocks="{Binding Blocks}" Items="{Binding BlockMapList}" />
+                <!--                <controls:BlockMap Width="750" Height="400" Blocks="{Binding Blocks}" ItemsSource="{Binding BlockMapList}" /> -->
             </TabItem>
             <TabItem>
                 <TabItem.Header>
                     <TextBlock Text="Chart" />
                 </TabItem.Header>
+                <!-- TODO: Abandoned project need to find replacement
                 <avalonia:Plot Height="300" PlotMargins="50 0 0 0" PlotAreaBorderColor="#999999"
                                PlotAreaBackground="#2974c1">
                     <avalonia:Plot.Series>
-                        <avalonia:LineSeries DataFieldX="Index" DataFieldY="Value" Items="{Binding Path=ChartPoints}"
+                        <avalonia:LineSeries DataFieldX="Index" DataFieldY="Value" ItemsSource="{Binding Path=ChartPoints}"
                                              Color="{Binding LineColor}" />
                     </avalonia:Plot.Series>
                     <avalonia:Plot.Axes>
                         <avalonia:LinearAxis Position="Left" Maximum="{Binding MaxY}" Minimum="{Binding MinY}"
-                                             MajorStep="{Binding StepsY}" Title="Speed" Unit="Kb/s"
-                                             AxislineColor="{Binding AxesColor}" />
+                                             MajorStep="{Binding StepsY}" Title="{Binding SpeedLabel}"
+                                             Unit="{Binding KbsLabel}" AxislineColor="{Binding AxesColor}" />
                         <avalonia:LinearAxis Position="Bottom" Maximum="{Binding MaxX}" Minimum="{Binding MinX}"
-                                             MajorStep="{Binding StepsX}" Title="Block"
+                                             MajorStep="{Binding StepsX}" Title="{Binding BlockLabel}"
                                              AxislineColor="{Binding AxesColor}" />
                     </avalonia:Plot.Axes>
                 </avalonia:Plot>
+                -->
             </TabItem>
         </TabControl>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBlock Text="{Binding ProgressText}" />
-                <ProgressBar Maximum="{Binding ProgressMaxValue}" IsIndeterminate="{Binding ProgressIndeterminate}"
+                <ProgressBar Maximum="{Binding ProgressMaxValue}"
+                             IsIndeterminate="{Binding ProgressIndeterminate}"
                              Value="{Binding ProgressValue}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
-                <TextBlock Text="Stop" />
+            <Button Command="{Binding StopCommand}"
+                    IsVisible="{Binding StopVisible}"
+                    IsEnabled="{Binding StopEnabled}">
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

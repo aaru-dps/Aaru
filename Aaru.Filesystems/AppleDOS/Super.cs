@@ -7,10 +7,6 @@
 //
 // Component      : Apple DOS filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Handles mounting and umounting the Apple DOS filesystem.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,50 +23,51 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Collections.Generic;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
-using Schemas;
 using Encoding = System.Text.Encoding;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class AppleDOS
 {
-    /// <inheritdoc />
-    public ErrorNumber Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding,
-                             Dictionary<string, string> options, string @namespace)
-    {
-        _device  = imagePlugin;
-        _start   = partition.Start;
-        Encoding = encoding ?? new Apple2();
+#region IReadOnlyFilesystem Members
 
-        if(_device.Info.Sectors != 455 &&
-           _device.Info.Sectors != 560)
+    /// <inheritdoc />
+    public ErrorNumber Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
+                             Dictionary<string, string> options,     string    @namespace)
+    {
+        _device   = imagePlugin;
+        _start    = partition.Start;
+        _encoding = encoding ?? new Apple2();
+
+        if(_device.Info.Sectors != 455 && _device.Info.Sectors != 560)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Incorrect_device_size);
 
             return ErrorNumber.InOutError;
         }
 
         if(_start > 0)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Partitions_are_not_supported);
 
             return ErrorNumber.InOutError;
         }
 
         if(_device.Info.SectorSize != 256)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Incorrect_sector_size);
 
             return ErrorNumber.InOutError;
         }
@@ -80,8 +77,7 @@ public sealed partial class AppleDOS
         // Read the VTOC
         ErrorNumber error = _device.ReadSector((ulong)(17 * _sectorsPerTrack), out _vtocBlocks);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
         _vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(_vtocBlocks);
 
@@ -93,38 +89,37 @@ public sealed partial class AppleDOS
 
         if(error != ErrorNumber.NoError)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unable_to_read_catalog);
 
             return error;
         }
+
+        _fileSizeCache = new Dictionary<string, int>();
 
         error = CacheAllFiles();
 
         if(error != ErrorNumber.NoError)
         {
-            AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
+            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Unable_cache_all_files);
 
             return error;
         }
 
         // Create XML metadata for mounted filesystem
-        XmlFsType = new FileSystemType
+        Metadata = new FileSystem
         {
-            Bootable              = true,
-            Clusters              = _device.Info.Sectors,
-            ClusterSize           = _vtoc.bytesPerSector,
-            Files                 = (ulong)_catalogCache.Count,
-            FilesSpecified        = true,
-            FreeClustersSpecified = true,
-            Type                  = "Apple DOS"
+            Bootable    = true,
+            Clusters    = _device.Info.Sectors,
+            ClusterSize = _vtoc.bytesPerSector,
+            Files       = (ulong)_catalogCache.Count,
+            Type        = FS_TYPE
         };
 
-        XmlFsType.FreeClusters = XmlFsType.Clusters - _usedSectors;
+        Metadata.FreeClusters = Metadata.Clusters - _usedSectors;
 
         options ??= GetDefaultOptions();
 
-        if(options.TryGetValue("debug", out string debugString))
-            bool.TryParse(debugString, out _debug);
+        if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out _debug);
 
         _mounted = true;
 
@@ -152,7 +147,7 @@ public sealed partial class AppleDOS
             FilenameLength = 30,
             Files          = (ulong)_catalogCache.Count,
             PluginId       = Id,
-            Type           = "Apple DOS"
+            Type           = FS_TYPE
         };
 
         stat.FreeFiles  = _totalFileEntries - stat.Files;
@@ -160,4 +155,6 @@ public sealed partial class AppleDOS
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

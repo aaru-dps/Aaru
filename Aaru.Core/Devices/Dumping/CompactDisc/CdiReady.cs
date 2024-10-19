@@ -27,25 +27,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.Core.Logging;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
-using Schemas;
+using Humanizer;
+using Humanizer.Bytes;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -54,13 +56,9 @@ partial class Dump
     /// <returns><c>true</c> if it contains Yellow Book data, <c>false</c> otherwise</returns>
     static bool IsData(byte[] sector)
     {
-        if(sector?.Length != 2352)
-            return false;
+        if(sector?.Length != 2352) return false;
 
-        byte[] syncMark =
-        {
-            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-        };
+        byte[] syncMark = [0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00];
 
         var testMark = new byte[12];
         Array.Copy(sector, 0, testMark, 0, 12);
@@ -77,13 +75,9 @@ partial class Dump
     {
         offset = 0;
 
-        if(sector?.Length != 2352)
-            return false;
+        if(sector?.Length != 2352) return false;
 
-        byte[] syncMark =
-        {
-            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-        };
+        byte[] syncMark = [0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00];
 
         var testMark = new byte[12];
 
@@ -146,7 +140,7 @@ partial class Dump
     /// <param name="mcn">Disc media catalogue number</param>
     /// <param name="subchannelExtents">List of subchannels not yet dumped correctly</param>
     /// <param name="smallestPregapLbaPerTrack">List of smallest pregap relative address per track</param>
-    void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardwareType currentTry, ExtentsULong extents,
+    void ReadCdiReady(uint blockSize, ref double currentSpeed, DumpHardware currentTry, ExtentsULong extents,
                       IbgLog ibgLog, ref double imageWriteDuration, ExtentsULong leadOutExtents, ref double maxSpeed,
                       MhddLog mhddLog, ref double minSpeed, uint subSize, MmcSubchannel supportedSubchannel,
                       ref double totalDuration, Track[] tracks, SubchannelLog subLog, MmcSubchannel desiredSubchannel,
@@ -154,24 +148,22 @@ partial class Dump
                       bool cdiReadyReadAsAudio, int offsetBytes, int sectorsForOffset,
                       Dictionary<byte, int> smallestPregapLbaPerTrack)
     {
-        ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
-        DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
-        bool       sense;                              // Sense indicator
-        byte[]     cmdBuf;                             // Data buffer
-        byte[]     senseBuf;                           // Sense buffer
-        double     cmdDuration;                        // Command execution time
-        const uint sectorSize = 2352;                  // Full sector size
+        ulong      sectorSpeedStart = 0; // Used to calculate correct speed
+        bool       sense;                // Sense indicator
+        byte[]     cmdBuf;               // Data buffer
+        byte[]     senseBuf;             // Sense buffer
+        double     cmdDuration;          // Command execution time
+        const uint sectorSize = 2352;    // Full sector size
         Track      firstTrack = tracks.FirstOrDefault();
         uint       blocksToRead; // How many sectors to read at once
         var        outputOptical = _outputPlugin as IWritableOpticalImage;
 
-        if(firstTrack is null)
-            return;
+        if(firstTrack is null) return;
 
         if(cdiReadyReadAsAudio)
         {
-            _dumpLog.WriteLine("Setting speed to 8x for CD-i Ready reading as audio.");
-            UpdateStatus?.Invoke("Setting speed to 8x for CD-i Ready reading as audio.");
+            _dumpLog.WriteLine(Localization.Core.Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio);
+            UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio);
 
             _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
         }
@@ -183,8 +175,8 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
@@ -193,10 +185,10 @@ partial class Dump
 
             blocksToRead = _maximumReadable;
 
-            if(blocksToRead == 1 && cdiReadyReadAsAudio)
-                blocksToRead += (uint)sectorsForOffset;
+            if(blocksToRead == 1 && cdiReadyReadAsAudio) blocksToRead += (uint)sectorsForOffset;
 
             if(cdiReadyReadAsAudio)
+            {
                 if(offsetBytes < 0)
                 {
                     if(i == 0)
@@ -204,50 +196,97 @@ partial class Dump
                     else
                         firstSectorToRead -= (uint)sectorsForOffset;
                 }
+            }
 
-            if(currentSpeed > maxSpeed &&
-               currentSpeed > 0)
-                maxSpeed = currentSpeed;
+            if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-            if(currentSpeed < minSpeed &&
-               currentSpeed > 0)
-                minSpeed = currentSpeed;
+            if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+            UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                 i,
+                                                 blocks,
+                                                 ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                   (long)i,
                                    (long)blocks);
 
-            sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
-                                MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+            _speedStopwatch.Start();
+
+            sense = _dev.ReadCd(out cmdBuf,
+                                out senseBuf,
+                                firstSectorToRead,
+                                blockSize,
+                                blocksToRead,
+                                MmcSectorTypes.AllTypes,
+                                false,
+                                false,
+                                true,
+                                MmcHeaderCodes.AllHeaders,
+                                true,
+                                true,
+                                MmcErrorField.None,
+                                supportedSubchannel,
+                                _dev.Timeout,
+                                out cmdDuration);
 
             totalDuration += cmdDuration;
-
+            _speedStopwatch.Stop();
             double elapsed;
 
             // Overcome the track mode change drive error
             if(sense)
+            {
                 for(uint r = 0; r < _maximumReadable; r++)
                 {
-                    UpdateProgress?.Invoke($"Reading sector {i + r} of {blocks} ({currentSpeed:F3} MiB/sec.)",
-                                           (long)i + r, (long)blocks);
+                    UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                         i + r,
+                                                         blocks,
+                                                         ByteSize.FromMegabytes(currentSpeed)
+                                                                 .Per(_oneSecond)
+                                                                 .Humanize()),
+                                           (long)i + r,
+                                           (long)blocks);
 
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(i + r), blockSize, (uint)sectorsForOffset + 1,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
+                    _speedStopwatch.Start();
+
+                    sense = _dev.ReadCd(out cmdBuf,
+                                        out senseBuf,
+                                        (uint)(i + r),
+                                        blockSize,
+                                        (uint)sectorsForOffset + 1,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        supportedSubchannel,
+                                        _dev.Timeout,
+                                        out cmdDuration);
 
                     totalDuration += cmdDuration;
+                    _speedStopwatch.Stop();
 
-                    if(!sense &&
-                       !_dev.Error)
+                    if(!sense && !_dev.Error)
                     {
                         mhddLog.Write(i + r, cmdDuration);
                         ibgLog.Write(i  + r, currentSpeed * 1024);
                         extents.Add(i   + r, 1, true);
-                        DateTime writeStart = DateTime.Now;
+                        _writeStopwatch.Restart();
 
                         if(cdiReadyReadAsAudio)
-                            FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel,
-                                          ref blocksToRead, subSize, ref cmdBuf, blockSize, false);
+                        {
+                            FixOffsetData(offsetBytes,
+                                          sectorSize,
+                                          sectorsForOffset,
+                                          supportedSubchannel,
+                                          ref blocksToRead,
+                                          subSize,
+                                          ref cmdBuf,
+                                          blockSize,
+                                          false);
+                        }
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
@@ -258,16 +297,30 @@ partial class Dump
 
                             Array.Copy(cmdBuf, sectorSize, sub, 0, subSize);
 
-                            if(cdiReadyReadAsAudio)
-                                data = Sector.Scramble(data);
+                            if(cdiReadyReadAsAudio) data = Sector.Scramble(data);
 
                             outputOptical.WriteSectorsLong(data, i + r, 1);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                                desiredSubchannel, sub, i + r, 1, subLog, isrcs, 1, ref mcn, tracks,
-                                subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                                _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
-                                out List<ulong> newPregapSectors);
+                                desiredSubchannel,
+                                sub,
+                                i + r,
+                                1,
+                                subLog,
+                                isrcs,
+                                1,
+                                ref mcn,
+                                tracks,
+                                subchannelExtents,
+                                _fixSubchannelPosition,
+                                outputOptical,
+                                _fixSubchannel,
+                                _fixSubchannelCrc,
+                                _dumpLog,
+                                UpdateStatus,
+                                smallestPregapLbaPerTrack,
+                                true,
+                                out List<ulong> _);
 
                             // Set tracks and go back
                             if(indexesChanged)
@@ -281,7 +334,9 @@ partial class Dump
                         else
                             outputOptical.WriteSectorsLong(cmdBuf, i + r, 1);
 
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+
+                        _mediaGraph?.PaintSectorGood(i + r);
                     }
                     else
                     {
@@ -289,40 +344,52 @@ partial class Dump
 
                         leadOutExtents.Add(i + r, firstTrack.EndSector);
 
-                        UpdateStatus?.
-                            Invoke($"Adding CD-i Ready hole from LBA {i + r} to {firstTrack.EndSector} inclusive.");
+                        UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                                       .Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive,
+                                                           i + r,
+                                                           firstTrack.EndSector));
 
-                        _dumpLog.WriteLine("Adding CD-i Ready hole from LBA {0} to {1} inclusive.", i + r,
+                        _dumpLog.WriteLine(Localization.Core.Adding_CD_i_Ready_hole_from_LBA_0_to_1_inclusive,
+                                           i + r,
                                            firstTrack.EndSector);
 
                         break;
                     }
 
+                    _writeStopwatch.Stop();
                     sectorSpeedStart += r;
 
                     _resume.NextBlock = i + r;
 
-                    elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                    if(elapsed <= 0)
-                        continue;
+                    if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
                     currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                     sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
+                    _speedStopwatch.Reset();
                 }
+            }
 
-            if(!sense &&
-               !_dev.Error)
+            if(!sense && !_dev.Error)
             {
                 if(cdiReadyReadAsAudio)
-                    FixOffsetData(offsetBytes, sectorSize, sectorsForOffset, supportedSubchannel, ref blocksToRead,
-                                  subSize, ref cmdBuf, blockSize, false);
+                {
+                    FixOffsetData(offsetBytes,
+                                  sectorSize,
+                                  sectorsForOffset,
+                                  supportedSubchannel,
+                                  ref blocksToRead,
+                                  subSize,
+                                  ref cmdBuf,
+                                  blockSize,
+                                  false);
+                }
 
                 mhddLog.Write(i, cmdDuration);
                 ibgLog.Write(i, currentSpeed * 1024);
                 extents.Add(i, blocksToRead, true);
-                DateTime writeStart = DateTime.Now;
+                _writeStopwatch.Restart();
 
                 if(supportedSubchannel != MmcSubchannel.None)
                 {
@@ -347,9 +414,24 @@ partial class Dump
                     outputOptical.WriteSectorsLong(data, i, blocksToRead);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
-                        desiredSubchannel, sub, i, blocksToRead, subLog, isrcs, 1, ref mcn, tracks,
-                        subchannelExtents, _fixSubchannelPosition, outputOptical, _fixSubchannel,
-                        _fixSubchannelCrc, _dumpLog, UpdateStatus, smallestPregapLbaPerTrack, true,
+                        desiredSubchannel,
+                        sub,
+                        i,
+                        blocksToRead,
+                        subLog,
+                        isrcs,
+                        1,
+                        ref mcn,
+                        tracks,
+                        subchannelExtents,
+                        _fixSubchannelPosition,
+                        outputOptical,
+                        _fixSubchannel,
+                        _fixSubchannelCrc,
+                        _dumpLog,
+                        UpdateStatus,
+                        smallestPregapLbaPerTrack,
+                        true,
                         out List<ulong> newPregapSectors);
 
                     // Set tracks and go back
@@ -357,16 +439,14 @@ partial class Dump
                     {
                         outputOptical.SetTracks(tracks.ToList());
 
-                        foreach(ulong newPregapSector in newPregapSectors)
-                            _resume.BadBlocks.Add(newPregapSector);
+                        foreach(ulong newPregapSector in newPregapSectors) _resume.BadBlocks.Add(newPregapSector);
 
                         if(i >= blocksToRead)
                             i -= blocksToRead;
                         else
                             i = 0;
 
-                        if(i > 0)
-                            i--;
+                        if(i > 0) i--;
 
                         continue;
                     }
@@ -391,7 +471,9 @@ partial class Dump
                         outputOptical.WriteSectorsLong(cmdBuf, i, blocksToRead);
                 }
 
-                imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+
+                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
             }
             else
             {
@@ -402,20 +484,21 @@ partial class Dump
                 break;
             }
 
+            _writeStopwatch.Stop();
             sectorSpeedStart += blocksToRead;
 
             _resume.NextBlock = i + blocksToRead;
 
-            elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+            elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-            if(elapsed <= 0)
-                continue;
+            if(elapsed <= 0 || sectorSpeedStart * blockSize < 524288) continue;
 
             currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
             sectorSpeedStart = 0;
-            timeSpeedStart   = DateTime.UtcNow;
+            _speedStopwatch.Reset();
         }
 
+        _speedStopwatch.Stop();
         EndProgress?.Invoke();
     }
 }

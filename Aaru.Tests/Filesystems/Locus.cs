@@ -23,27 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-[TestFixture]
-public class Locus : FilesystemTest
-{
-    public Locus() : base("Locus filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Locus filesystem");
+[TestFixture]
+public class Locus() : FilesystemTest("locus")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Locus filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Locus();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "mf2dd.img.lz",
@@ -64,5 +62,5 @@ public class Locus : FilesystemTest
             ClusterSize = 4096,
             VolumeName  = "Label"
         }
-    };
+    ];
 }

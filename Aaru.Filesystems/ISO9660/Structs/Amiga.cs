@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Amiga extensions structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,16 +23,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Runtime.InteropServices;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
+#region Nested type: AmigaEntry
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AmigaEntry
     {
@@ -49,6 +47,10 @@ public sealed partial class ISO9660
         // Followed by length-prefixed string for comment if present
     }
 
+#endregion
+
+#region Nested type: AmigaProtection
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AmigaProtection
     {
@@ -57,4 +59,6 @@ public sealed partial class ISO9660
         public readonly AmigaMultiuser  Multiuser;
         public readonly AmigaAttributes Protection;
     }
+
+#endregion
 }

@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
@@ -40,24 +38,28 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Decoders.Floppy;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class AppleNib
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < 512)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 512) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[stream.Length];
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Decoding_whole_image);
         List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_tracks, tracks.Count);
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
@@ -67,40 +69,54 @@ public sealed partial class AppleNib
         for(var i = 1; i < tracks.Count; i++)
             allTracksEqual &= tracks[i - 1].sectors.Length == tracks[i].sectors.Length;
 
-        if(allTracksEqual)
-            spt = tracks[0].sectors.Length;
+        if(allTracksEqual) spt = tracks[0].sectors.Length;
 
         bool    skewed  = spt == 16;
         ulong[] skewing = _proDosSkewing;
 
         // Detect ProDOS skewed disks
         if(skewed)
+        {
             foreach(bool isDos in from sector in tracks[17].sectors
                                   where sector.addressField.sector.SequenceEqual(new byte[]
                                   {
                                       170, 170
-                                  }) select Apple2.DecodeSector(sector) into sector0 where sector0 != null
-                                  select sector0[0x01] == 17 && sector0[0x02] < 16  && sector0[0x27] <= 122 &&
-                                         sector0[0x34] == 35 && sector0[0x35] == 16 && sector0[0x36] == 0   &&
+                                  })
+                                  select Apple2.DecodeSector(sector)
+                                  into sector0
+                                  where sector0 != null
+                                  select sector0[0x01] == 17  &&
+                                         sector0[0x02] < 16   &&
+                                         sector0[0x27] <= 122 &&
+                                         sector0[0x34] == 35  &&
+                                         sector0[0x35] == 16  &&
+                                         sector0[0x36] == 0   &&
                                          sector0[0x37] == 1)
             {
-                if(isDos)
-                    skewing = _dosSkewing;
+                if(isDos) skewing = _dosSkewing;
 
-                AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
-                                           skewing.SequenceEqual(_dosSkewing) ? "" : "Pro");
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           skewing.SequenceEqual(_dosSkewing)
+                                               ? Localization.Using_DOS_skewing
+                                               : Localization.Using_ProDOS_skewing);
             }
+        }
 
         for(var i = 0; i < tracks.Count; i++)
+        {
             foreach(Apple2.RawSector sector in tracks[i].sectors)
+            {
                 if(skewed && spt != 0)
                 {
-                    var sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
-                                            (sector.addressField.sector[1] & 0x55)) & 0xFF);
+                    var sectorNo = (ulong)(((sector.addressField.sector[0] & 0x55) << 1 |
+                                            sector.addressField.sector[1] & 0x55) &
+                                           0xFF);
 
-                    AaruConsole.DebugWriteLine("Apple NIB Plugin",
-                                               "Hardware sector {0} of track {1} goes to logical sector {2}", sectorNo,
-                                               i, skewing[sectorNo] + (ulong)(i * spt));
+                    AaruConsole.DebugWriteLine(MODULE_NAME,
+                                               Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,
+                                               sectorNo,
+                                               i,
+                                               skewing[sectorNo] + (ulong)(i * spt));
 
                     rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
                     _imageInfo.Sectors++;
@@ -110,10 +126,12 @@ public sealed partial class AppleNib
                     rawSectors.Add(_imageInfo.Sectors, sector);
                     _imageInfo.Sectors++;
                 }
+            }
+        }
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", _imageInfo.Sectors);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Got_0_sectors, _imageInfo.Sectors);
 
-        AaruConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Cooking_sectors);
 
         _longSectors   = new Dictionary<ulong, byte[]>();
         _cookedSectors = new Dictionary<ulong, byte[]>();
@@ -134,15 +152,15 @@ public sealed partial class AppleNib
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
 
-        if(_imageInfo.Sectors == 455)
-            _imageInfo.MediaType = MediaType.Apple32SS;
-        else if(_imageInfo.Sectors == 560)
-            _imageInfo.MediaType = MediaType.Apple33SS;
-        else
-            _imageInfo.MediaType = MediaType.Unknown;
+        _imageInfo.MediaType = _imageInfo.Sectors switch
+                               {
+                                   455 => MediaType.Apple32SS,
+                                   560 => MediaType.Apple33SS,
+                                   _   => MediaType.Unknown
+                               };
 
-        _imageInfo.SectorSize   = 256;
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.SectorSize        = 256;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
         _imageInfo.ReadableSectorTags.Add(SectorTagType.FloppyAddressMark);
 
         switch(_imageInfo.MediaType)
@@ -169,8 +187,7 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         return _cookedSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
@@ -180,11 +197,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -192,8 +207,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -208,11 +222,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
         return _addressFields.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.NoData;
     }
@@ -222,14 +234,11 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        if(tag != SectorTagType.FloppyAddressMark)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.FloppyAddressMark) return ErrorNumber.NotSupported;
 
         var ms = new MemoryStream();
 
@@ -237,8 +246,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSectorTag(sectorAddress + i, tag, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -253,8 +261,7 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         return _longSectors.TryGetValue(sectorAddress, out buffer) ? ErrorNumber.NoError : ErrorNumber.SectorNotFound;
     }
@@ -264,11 +271,9 @@ public sealed partial class AppleNib
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         var ms = new MemoryStream();
 
@@ -276,8 +281,7 @@ public sealed partial class AppleNib
         {
             ErrorNumber errno = ReadSectorLong(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -286,4 +290,6 @@ public sealed partial class AppleNib
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

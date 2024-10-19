@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -41,8 +39,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs.Devices.ATA;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class RsIde
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -50,12 +52,11 @@ public sealed partial class RsIde
         stream.Seek(0, SeekOrigin.Begin);
 
         var hdrB = new byte[Marshal.SizeOf<Header>()];
-        stream.Read(hdrB, 0, hdrB.Length);
+        stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         Header hdr = Marshal.ByteArrayToStructureLittleEndian<Header>(hdrB);
 
-        if(!hdr.magic.SequenceEqual(_signature))
-            return ErrorNumber.InvalidArgument;
+        if(!hdr.magic.SequenceEqual(_signature)) return ErrorNumber.InvalidArgument;
 
         _dataOff = hdr.dataOff;
 
@@ -66,7 +67,7 @@ public sealed partial class RsIde
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         _imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(hdr.identify))
@@ -89,9 +90,7 @@ public sealed partial class RsIde
             }
         }
 
-        if(_imageInfo.Cylinders       == 0 ||
-           _imageInfo.Heads           == 0 ||
-           _imageInfo.SectorsPerTrack == 0)
+        if(_imageInfo.Cylinders == 0 || _imageInfo.Heads == 0 || _imageInfo.SectorsPerTrack == 0)
         {
             _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
             _imageInfo.Heads           = 16;
@@ -111,11 +110,9 @@ public sealed partial class RsIde
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
@@ -123,7 +120,7 @@ public sealed partial class RsIde
 
         stream.Seek((long)(_dataOff + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
 
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
@@ -133,12 +130,13 @@ public sealed partial class RsIde
     {
         buffer = null;
 
-        if(!_imageInfo.ReadableMediaTags.Contains(tag) ||
-           tag != MediaTagType.ATA_IDENTIFY)
+        if(!_imageInfo.ReadableMediaTags.Contains(tag) || tag != MediaTagType.ATA_IDENTIFY)
             return ErrorNumber.NotSupported;
 
         buffer = _identify?.Clone() as byte[];
 
         return buffer is null ? ErrorNumber.NoData : ErrorNumber.NoError;
     }
+
+#endregion
 }

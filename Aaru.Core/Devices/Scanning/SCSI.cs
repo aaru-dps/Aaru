@@ -27,13 +27,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Scanning;
-
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Console;
@@ -42,6 +39,10 @@ using Aaru.Decoders.CD;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.MMC;
 using Aaru.Devices;
+using Humanizer;
+using Humanizer.Bytes;
+
+namespace Aaru.Core.Devices.Scanning;
 
 /// <summary>Implements scanning the media from an SCSI device</summary>
 public sealed partial class MediaScan
@@ -70,6 +71,7 @@ public sealed partial class MediaScan
                 DecodedSense? decSense = Sense.Decode(senseBuf);
 
                 if(decSense.HasValue)
+                {
                     switch(decSense.Value.ASC)
                     {
                         case 0x3A:
@@ -78,19 +80,18 @@ public sealed partial class MediaScan
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.Invoke("Please insert media in drive");
+                                StoppingErrorMessage?.Invoke(Localization.Core.Please_insert_media_in_drive);
 
                                 return results;
                             }
@@ -103,20 +104,20 @@ public sealed partial class MediaScan
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                              .Error_testing_unit_was_ready_0,
+                                                                           Sense.PrettifySense(senseBuf)));
 
                                 return results;
                             }
@@ -131,20 +132,20 @@ public sealed partial class MediaScan
 
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("Waiting for drive to become ready");
+                                PulseProgress?.Invoke(Localization.Core.Waiting_for_drive_to_become_ready);
                                 Thread.Sleep(2000);
                                 sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
 
-                                if(!sense)
-                                    break;
+                                if(!sense) break;
 
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                StoppingErrorMessage?.
-                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                              .Error_testing_unit_was_ready_0,
+                                                                           Sense.PrettifySense(senseBuf)));
 
                                 return results;
                             }
@@ -152,14 +153,15 @@ public sealed partial class MediaScan
                             break;
                         }
                         default:
-                            StoppingErrorMessage?.
-                                Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                            StoppingErrorMessage?.Invoke(string.Format(Localization.Core.Error_testing_unit_was_ready_0,
+                                                                       Sense.PrettifySense(senseBuf)));
 
                             return results;
                     }
+                }
                 else
                 {
-                    StoppingErrorMessage?.Invoke("Unknown testing unit was ready.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.Unknown_sense_testing_unit_was_ready);
 
                     return results;
                 }
@@ -182,52 +184,37 @@ public sealed partial class MediaScan
                 results.Blocks   = scsiReader.GetDeviceBlocks();
                 foundReadCommand = !scsiReader.FindReadCommand();
 
-                if(!foundReadCommand &&
-                   _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
+                if(!foundReadCommand && _dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
                 {
-                    StoppingErrorMessage?.Invoke("Unable to read medium.");
+                    StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_read_medium);
 
                     return results;
                 }
 
                 blockSize = scsiReader.LogicalBlockSize;
 
-                if(results.Blocks != 0 &&
-                   blockSize      != 0)
+                if(results.Blocks != 0 && blockSize != 0)
                 {
                     results.Blocks++;
 
-                    ulong totalSize = results.Blocks * blockSize;
-
-                    if(totalSize > 1099511627776)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1099511627776d:F3} TiB)");
-                    else if(totalSize > 1073741824)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1073741824d:F3} GiB)");
-                    else if(totalSize > 1048576)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1048576d:F3} MiB)");
-                    else if(totalSize > 1024)
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize / 1024d:F3} KiB)");
-                    else
-                        UpdateStatus?.
-                            Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {totalSize} bytes)");
+                    UpdateStatus?.Invoke(string.Format(Localization.Core
+                                                                   .Media_has_0_blocks_of_1_bytes_each_for_a_total_of_2,
+                                                       results.Blocks,
+                                                       blockSize,
+                                                       ByteSize.FromBytes(results.Blocks * blockSize)
+                                                               .ToString("0.000")));
                 }
 
                 break;
             case PeripheralDeviceTypes.SequentialAccess:
-                StoppingErrorMessage?.Invoke("Scanning will never be supported on SCSI Streaming Devices." +
-                                             Environment.NewLine                                           +
-                                             "It has no sense to do it, and it will put too much strain on the tape.");
+                StoppingErrorMessage?.Invoke(Localization.Core.Scanning_never_supported_in_SSC);
 
                 return results;
         }
 
         if(results.Blocks == 0)
         {
-            StoppingErrorMessage?.Invoke("Unable to read medium or empty medium present...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_read_medium_or_empty_medium_present);
 
             return results;
         }
@@ -237,8 +224,12 @@ public sealed partial class MediaScan
 
         if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
         {
-            sense = _dev.GetConfiguration(out byte[] cmdBuf, out senseBuf, 0, MmcGetConfigurationRt.Current,
-                                          _dev.Timeout, out _);
+            sense = _dev.GetConfiguration(out byte[] cmdBuf,
+                                          out senseBuf,
+                                          0,
+                                          MmcGetConfigurationRt.Current,
+                                          _dev.Timeout,
+                                          out _);
 
             if(!sense)
             {
@@ -254,7 +245,8 @@ public sealed partial class MediaScan
                     case 0x000A:
                     case 0x0020:
                     case 0x0021:
-                    case 0x0022: break;
+                    case 0x0022:
+                        break;
                     default:
                         compactDisc = false;
 
@@ -270,8 +262,7 @@ public sealed partial class MediaScan
                 // No TOC, no CD (or an empty one)
                 bool tocSense = _dev.ReadRawToc(out cmdBuf, out senseBuf, 1, _dev.Timeout, out _);
 
-                if(!tocSense)
-                    toc = FullTOC.Decode(cmdBuf);
+                if(!tocSense) toc = FullTOC.Decode(cmdBuf);
             }
         }
         else
@@ -280,21 +271,19 @@ public sealed partial class MediaScan
         scsiReader.GetBlocksToRead();
 
         uint blocksToRead;
-        results.A       = 0; // <3ms
-        results.B       = 0; // >=3ms, <10ms
-        results.C       = 0; // >=10ms, <50ms
-        results.D       = 0; // >=50ms, <150ms
-        results.E       = 0; // >=150ms, <500ms
-        results.F       = 0; // >=500ms
-        results.Errored = 0;
-        DateTime start;
-        DateTime end;
+        results.A              = 0; // <3ms
+        results.B              = 0; // >=3ms, <10ms
+        results.C              = 0; // >=10ms, <50ms
+        results.D              = 0; // >=50ms, <150ms
+        results.E              = 0; // >=150ms, <500ms
+        results.F              = 0; // >=500ms
+        results.Errored        = 0;
         results.ProcessingTime = 0;
         results.TotalTime      = 0;
         double currentSpeed = 0;
         results.MaxSpeed          = double.MinValue;
         results.MinSpeed          = double.MaxValue;
-        results.UnreadableSectors = new List<ulong>();
+        results.UnreadableSectors = [];
 
         if(compactDisc)
         {
@@ -302,83 +291,123 @@ public sealed partial class MediaScan
 
             if(toc == null)
             {
-                StoppingErrorMessage?.Invoke("Error trying to decode TOC...");
+                StoppingErrorMessage?.Invoke(Localization.Core.Error_trying_to_decode_TOC);
 
                 return results;
             }
 
-            readcd = !_dev.ReadCd(out _, out senseBuf, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                  MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                  _dev.Timeout, out _);
+            readcd = !_dev.ReadCd(out _,
+                                  out senseBuf,
+                                  0,
+                                  2352,
+                                  1,
+                                  MmcSectorTypes.AllTypes,
+                                  false,
+                                  false,
+                                  true,
+                                  MmcHeaderCodes.AllHeaders,
+                                  true,
+                                  true,
+                                  MmcErrorField.None,
+                                  MmcSubchannel.None,
+                                  _dev.Timeout,
+                                  out _);
 
             if(readcd)
-                UpdateStatus?.Invoke("Using MMC READ CD command.");
+                UpdateStatus?.Invoke(Localization.Core.Using_MMC_READ_CD_command);
             else if(!foundReadCommand)
             {
-                StoppingErrorMessage?.Invoke("Unable to read medium.");
+                StoppingErrorMessage?.Invoke(Localization.Core.Unable_to_read_medium);
 
                 return results;
             }
 
-            start = DateTime.UtcNow;
+            _scanStopwatch.Restart();
 
             if(readcd)
+            {
                 while(true)
                 {
-                    sense = _dev.ReadCd(out _, out senseBuf, 0, 2352, blocksToRead, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        MmcSubchannel.None, _dev.Timeout, out _);
+                    sense = _dev.ReadCd(out _,
+                                        out senseBuf,
+                                        0,
+                                        2352,
+                                        blocksToRead,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        MmcSubchannel.None,
+                                        _dev.Timeout,
+                                        out _);
 
-                    if(_dev.Error || sense)
-                        blocksToRead /= 2;
+                    if(_dev.Error || sense) blocksToRead /= 2;
 
-                    if(!_dev.Error ||
-                       blocksToRead == 1)
-                        break;
+                    if(!_dev.Error || blocksToRead == 1) break;
                 }
+            }
 
             if(_dev.Error)
             {
-                StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
+                StoppingErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                       .Device_error_0_trying_to_guess_ideal_transfer_length,
+                                                           _dev.LastError));
 
                 return results;
             }
 
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, currentProfile);
             mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, blocksToRead, false);
             ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    sectorSpeedStart = 0;
+            _speedStopwatch.Restart();
+            ulong sectorSpeedStart = 0;
 
             InitProgress?.Invoke();
 
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
             {
-                if(_aborted)
-                    break;
+                if(_aborted) break;
 
                 double cmdDuration;
 
-                if(results.Blocks - i < blocksToRead)
-                    blocksToRead = (uint)(results.Blocks - i);
+                if(results.Blocks - i < blocksToRead) blocksToRead = (uint)(results.Blocks - i);
 
-                if(currentSpeed > results.MaxSpeed &&
-                   currentSpeed > 0)
-                    results.MaxSpeed = currentSpeed;
+                if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                if(currentSpeed < results.MinSpeed &&
-                   currentSpeed > 0)
-                    results.MinSpeed = currentSpeed;
+                if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-                UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                     i,
+                                                     results.Blocks,
+                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                       (long)i,
                                        (long)results.Blocks);
 
                 if(readcd)
-                    sense = _dev.ReadCd(out _, out senseBuf, (uint)i, 2352, blocksToRead, MmcSectorTypes.AllTypes,
-                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        MmcSubchannel.None, _dev.Timeout, out cmdDuration);
+                {
+                    sense = _dev.ReadCd(out _,
+                                        out senseBuf,
+                                        (uint)i,
+                                        2352,
+                                        blocksToRead,
+                                        MmcSectorTypes.AllTypes,
+                                        false,
+                                        false,
+                                        true,
+                                        MmcHeaderCodes.AllHeaders,
+                                        true,
+                                        true,
+                                        MmcErrorField.None,
+                                        MmcSubchannel.None,
+                                        _dev.Timeout,
+                                        out cmdDuration);
+                }
                 else
                     sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out cmdDuration, out _, out _);
 
@@ -386,18 +415,33 @@ public sealed partial class MediaScan
 
                 if(!sense)
                 {
-                    if(cmdDuration >= 500)
-                        results.F += blocksToRead;
-                    else if(cmdDuration >= 150)
-                        results.E += blocksToRead;
-                    else if(cmdDuration >= 50)
-                        results.D += blocksToRead;
-                    else if(cmdDuration >= 10)
-                        results.C += blocksToRead;
-                    else if(cmdDuration >= 3)
-                        results.B += blocksToRead;
-                    else
-                        results.A += blocksToRead;
+                    switch(cmdDuration)
+                    {
+                        case >= 500:
+                            results.F += blocksToRead;
+
+                            break;
+                        case >= 150:
+                            results.E += blocksToRead;
+
+                            break;
+                        case >= 50:
+                            results.D += blocksToRead;
+
+                            break;
+                        case >= 10:
+                            results.C += blocksToRead;
+
+                            break;
+                        case >= 3:
+                            results.B += blocksToRead;
+
+                            break;
+                        default:
+                            results.A += blocksToRead;
+
+                            break;
+                    }
 
                     ScanTime?.Invoke(i, cmdDuration);
                     mhddLog.Write(i, cmdDuration);
@@ -409,7 +453,9 @@ public sealed partial class MediaScan
 
                     if(readcd)
                     {
-                        AaruConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Core.READ_CD_error_0,
+                                                   Sense.PrettifySense(senseBuf));
 
                         senseDecoded = Sense.Decode(senseBuf);
 
@@ -417,6 +463,7 @@ public sealed partial class MediaScan
 
                             // TODO: This error happens when changing from track type afaik. Need to solve that more cleanly
                             // LOGICAL BLOCK ADDRESS OUT OF RANGE
+                        {
                             if((senseDecoded.Value.ASC != 0x21 || senseDecoded.Value.ASCQ != 0x00) &&
 
                                // ILLEGAL MODE FOR THIS TRACK (requesting sectors as-is, this is a firmware misconception when audio sectors
@@ -425,14 +472,14 @@ public sealed partial class MediaScan
                             {
                                 results.Errored += blocksToRead;
 
-                                for(ulong b = i; b < i + blocksToRead; b++)
-                                    results.UnreadableSectors.Add(b);
+                                for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                                 ScanUnreadable?.Invoke(i);
                                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                                 ibgLog.Write(i, 0);
                             }
+                        }
                     }
 
                     if(!senseDecoded.HasValue)
@@ -440,8 +487,7 @@ public sealed partial class MediaScan
                         ScanUnreadable?.Invoke(i);
                         results.Errored += blocksToRead;
 
-                        for(ulong b = i; b < i + blocksToRead; b++)
-                            results.UnreadableSectors.Add(b);
+                        for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                         mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
@@ -451,88 +497,102 @@ public sealed partial class MediaScan
 
                 sectorSpeedStart += blocksToRead;
 
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                if(elapsed <= 0)
-                    continue;
+                if(elapsed <= 0) continue;
 
                 currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                 sectorSpeedStart = 0;
-                timeSpeedStart   = DateTime.UtcNow;
+                _speedStopwatch.Restart();
             }
 
-            end = DateTime.UtcNow;
+            _speedStopwatch.Stop();
+            _scanStopwatch.Stop();
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            currentSpeed = sectorSpeedStart * blockSize / (1048576 * (end - timeSpeedStart).TotalSeconds);
+            currentSpeed = sectorSpeedStart * blockSize / (1048576 * _speedStopwatch.Elapsed.TotalSeconds);
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if(results.MaxSpeed == double.MinValue)
-                results.MaxSpeed = currentSpeed;
+            if(results.MaxSpeed == double.MinValue) results.MaxSpeed = currentSpeed;
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if(results.MinSpeed == double.MaxValue)
-                results.MinSpeed = currentSpeed;
+            if(results.MinSpeed == double.MaxValue) results.MinSpeed = currentSpeed;
 
-            ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+            ibgLog.Close(_dev,
+                         results.Blocks,
+                         blockSize,
+                         _scanStopwatch.Elapsed.TotalSeconds,
+                         currentSpeed                             * 1024,
                          blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                          _devicePath);
         }
         else
         {
-            start = DateTime.UtcNow;
+            _scanStopwatch.Restart();
 
-            UpdateStatus?.Invoke($"Reading {scsiReader.BlocksToRead} sectors at a time.");
+            UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, scsiReader.BlocksToRead));
 
             InitBlockMap?.Invoke(results.Blocks, blockSize, scsiReader.BlocksToRead, currentProfile);
             mhddLog = new MhddLog(_mhddLogPath, _dev, results.Blocks, blockSize, scsiReader.BlocksToRead, false);
             ibgLog  = new IbgLog(_ibgLogPath, currentProfile);
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    sectorSpeedStart = 0;
+            _speedStopwatch.Restart();
+            ulong sectorSpeedStart = 0;
 
             InitProgress?.Invoke();
 
             for(ulong i = 0; i < results.Blocks; i += scsiReader.BlocksToRead)
             {
-                if(_aborted)
-                    break;
+                if(_aborted) break;
 
                 blocksToRead = scsiReader.BlocksToRead;
 
-                if(results.Blocks - i < blocksToRead)
-                    blocksToRead = (uint)(results.Blocks - i);
+                if(results.Blocks - i < blocksToRead) blocksToRead = (uint)(results.Blocks - i);
 
-                if(currentSpeed > results.MaxSpeed &&
-                   currentSpeed > 0)
-                    results.MaxSpeed = currentSpeed;
+                if(currentSpeed > results.MaxSpeed && currentSpeed > 0) results.MaxSpeed = currentSpeed;
 
-                if(currentSpeed < results.MinSpeed &&
-                   currentSpeed > 0)
-                    results.MinSpeed = currentSpeed;
+                if(currentSpeed < results.MinSpeed && currentSpeed > 0) results.MinSpeed = currentSpeed;
 
-                UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                     i,
+                                                     results.Blocks,
+                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                       (long)i,
                                        (long)results.Blocks);
 
                 sense = scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration, out _, out _);
                 results.ProcessingTime += cmdDuration;
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
-                    if(cmdDuration >= 500)
-                        results.F += blocksToRead;
-                    else if(cmdDuration >= 150)
-                        results.E += blocksToRead;
-                    else if(cmdDuration >= 50)
-                        results.D += blocksToRead;
-                    else if(cmdDuration >= 10)
-                        results.C += blocksToRead;
-                    else if(cmdDuration >= 3)
-                        results.B += blocksToRead;
-                    else
-                        results.A += blocksToRead;
+                    switch(cmdDuration)
+                    {
+                        case >= 500:
+                            results.F += blocksToRead;
+
+                            break;
+                        case >= 150:
+                            results.E += blocksToRead;
+
+                            break;
+                        case >= 50:
+                            results.D += blocksToRead;
+
+                            break;
+                        case >= 10:
+                            results.C += blocksToRead;
+
+                            break;
+                        case >= 3:
+                            results.B += blocksToRead;
+
+                            break;
+                        default:
+                            results.A += blocksToRead;
+
+                            break;
+                    }
 
                     ScanTime?.Invoke(i, cmdDuration);
                     mhddLog.Write(i, cmdDuration);
@@ -545,8 +605,7 @@ public sealed partial class MediaScan
                     ScanUnreadable?.Invoke(i);
                     results.Errored += blocksToRead;
 
-                    for(ulong b = i; b < i + blocksToRead; b++)
-                        results.UnreadableSectors.Add(b);
+                    for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
                     ibgLog.Write(i, 0);
@@ -554,22 +613,26 @@ public sealed partial class MediaScan
 
                 sectorSpeedStart += blocksToRead;
 
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                if(elapsed <= 0)
-                    continue;
+                if(elapsed <= 0) continue;
 
                 currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                 sectorSpeedStart = 0;
-                timeSpeedStart   = DateTime.UtcNow;
+                _speedStopwatch.Restart();
             }
 
-            end = DateTime.UtcNow;
+            _speedStopwatch.Stop();
+            _scanStopwatch.Stop();
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            ibgLog.Close(_dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+            ibgLog.Close(_dev,
+                         results.Blocks,
+                         blockSize,
+                         _scanStopwatch.Elapsed.TotalSeconds,
+                         currentSpeed                             * 1024,
                          blockSize * (double)(results.Blocks + 1) / 1024 / (results.ProcessingTime / 1000),
                          _devicePath);
         }
@@ -585,31 +648,41 @@ public sealed partial class MediaScan
 
         for(var i = 0; i < seekTimes; i++)
         {
-            if(_aborted || !_seekTest)
-                break;
+            if(_aborted || !_seekTest) break;
 
             var seekPos = (uint)rnd.Next((int)results.Blocks);
 
-            PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Seeking_to_sector_0, seekPos));
 
             double seekCur;
 
             if(scsiReader.CanSeek)
                 scsiReader.Seek(seekPos, out seekCur);
             else if(readcd)
-                _dev.ReadCd(out _, out _, seekPos, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                            MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+            {
+                _dev.ReadCd(out _,
+                            out _,
+                            seekPos,
+                            2352,
+                            1,
+                            MmcSectorTypes.AllTypes,
+                            false,
+                            false,
+                            true,
+                            MmcHeaderCodes.AllHeaders,
+                            true,
+                            true,
+                            MmcErrorField.None,
+                            MmcSubchannel.None,
+                            _dev.Timeout,
                             out seekCur);
+            }
             else
                 scsiReader.ReadBlock(out _, seekPos, out seekCur, out _, out _);
 
-            if(seekCur > results.SeekMax &&
-               seekCur > 0)
-                results.SeekMax = seekCur;
+            if(seekCur > results.SeekMax && seekCur > 0) results.SeekMax = seekCur;
 
-            if(seekCur < results.SeekMin &&
-               seekCur > 0)
-                results.SeekMin = seekCur;
+            if(seekCur < results.SeekMin && seekCur > 0) results.SeekMin = seekCur;
 
             results.SeekTotal += seekCur;
             GC.Collect();
@@ -618,7 +691,7 @@ public sealed partial class MediaScan
         EndProgress?.Invoke();
 
         results.ProcessingTime /= 1000;
-        results.TotalTime      =  (end - start).TotalSeconds;
+        results.TotalTime      =  _scanStopwatch.Elapsed.TotalSeconds;
         results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
         results.SeekTimes      =  seekTimes;
 

@@ -27,30 +27,42 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Images;
 
 public sealed partial class Ndif
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "Apple New Disk Image Format";
+    public string Name => Localization.Ndif_Name;
+
     /// <inheritdoc />
     public Guid Id => new("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+
     /// <inheritdoc />
     public string Format => "Apple New Disk Image Format";
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
+#endregion
 }

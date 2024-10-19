@@ -7,10 +7,6 @@
 //
 // Component      : Apple Macintosh File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Apple Macintosh File System constants.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,12 +23,12 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems;
 
 // Information from Inside Macintosh Volume II
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -48,4 +44,7 @@ public sealed partial class AppleMFS
     const int BMAP_FREE = 0;
     const int BMAP_LAST = 1;
     const int BMAP_DIR  = 0xFFF;
+
+    // Do not translate
+    const string FS_TYPE = "mfs";
 }

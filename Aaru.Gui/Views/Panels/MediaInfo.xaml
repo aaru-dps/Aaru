@@ -28,121 +28,140 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.MediaInfo">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.MediaInfo">
     <Design.DataContext>
         <panels:MediaInfoViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock HorizontalAlignment="Center" Text="Media information" />
-        <Image Width="128" Height="128" HorizontalAlignment="Center" Source="{Binding MediaLogo}" />
+        <TextBlock HorizontalAlignment="Center"
+                   Text="{Binding MediaInformationLabel}" />
+        <Image Width="128"
+               Height="128"
+               HorizontalAlignment="Center"
+               Source="{Binding MediaLogo}" />
         <TabControl>
             <TabItem IsVisible="{Binding GeneralVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="General" />
+                    <TextBlock Text="{Binding GeneralLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Media type" /> <TextBox Text="{Binding MediaType}" IsReadOnly="True" />
+                        <TextBlock Text="{Binding MediaTypeLabel}" />
+                        <TextBox Text="{Binding MediaType}"
+                                 IsReadOnly="True" />
                     </StackPanel>
-                    <TextBlock IsVisible="{Binding !!MediaSize}" Text="{Binding MediaSize}" />
-                    <StackPanel Orientation="Horizontal" IsVisible="{Binding !!MediaSerial}">
-                        <TextBlock Text="Media serial number" />
-                        <TextBox Text="{Binding MediaSerial}" IsReadOnly="True" />
+                    <TextBlock IsVisible="{Binding !!MediaSize}"
+                               Text="{Binding MediaSize}" />
+                    <StackPanel Orientation="Horizontal"
+                                IsVisible="{Binding !!MediaSerial}">
+                        <TextBlock Text="{Binding MediaSerialNumberLabel}" />
+                        <TextBox Text="{Binding MediaSerial}"
+                                 IsReadOnly="True" />
                     </StackPanel>
                     <Button IsVisible="{Binding SaveReadMediaSerialVisible}"
                             Command="{Binding SaveReadMediaSerialCommand}">
-                        <TextBlock Text="Save READ MEDIA SERIAL NUMBER response" />
+                        <TextBlock Text="{Binding SaveReadMediaSerialLabel}" />
                     </Button>
-                    <Button IsVisible="{Binding SaveReadCapacityVisible}" Command="{Binding SaveReadCapacityCommand}">
-                        <TextBlock Text="Save READ CAPACITY response" />
+                    <Button IsVisible="{Binding SaveReadCapacityVisible}"
+                            Command="{Binding SaveReadCapacityCommand}">
+                        <TextBlock Text="{Binding SaveReadCapacityLabel}" />
                     </Button>
                     <Button IsVisible="{Binding SaveReadCapacity16Visible}"
                             Command="{Binding SaveReadCapacity16Command}">
-                        <TextBlock Text="Save READ CAPACITY (16) response" />
+                        <TextBlock Text="{Binding SaveReadCapacity16Label}" />
                     </Button>
                 </StackPanel>
             </TabItem>
             <TabItem IsVisible="{Binding MmcVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="MMC" />
+                    <TextBlock Text="{Binding MMCLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <Button IsVisible="{Binding SaveGetConfigurationVisible}"
                             Command="{Binding SaveGetConfigurationCommand}">
-                        <TextBlock Text="Save GET CONFIGURATION response" />
+                        <TextBlock Text="{Binding SaveGetConfigurationLabel}" />
                     </Button>
                     <Button IsVisible="{Binding SaveRecognizedFormatLayersVisible}"
                             Command="{Binding SaveRecognizedFormatLayersCommand}">
-                        <TextBlock Text="Save RECOGNIZED FORMAT LAYERS response" />
+                        <TextBlock Text="{Binding SaveRecognizedFormatLayersLabel}" />
                     </Button>
                     <Button IsVisible="{Binding SaveWriteProtectionStatusVisible}"
                             Command="{Binding SaveWriteProtectionStatusCommand}">
-                        <TextBlock Text="Save WRITE PROTECTION STATUS response" />
+                        <TextBlock Text="{Binding SaveWriteProtectionStatusLabel}" />
                     </Button>
                 </StackPanel>
             </TabItem>
             <TabItem IsVisible="{Binding SscVisible}">
                 <TabItem.Header>
-                    <TextBlock Text="SSC" />
+                    <TextBlock Text="{Binding SscLabel}" />
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <TextBlock IsVisible="{Binding !!DensitySupport}"
-                               Text="Densities supported by currently inserted media" />
-                    <TextBox IsVisible="{Binding !!DensitySupport}" Text="{Binding DensitySupport}" IsReadOnly="True" />
-                    <TextBlock IsVisible="{Binding !!MediumSupport}" Text="Medium types currently inserted in device" />
-                    <TextBox Text="{Binding MediumSupport}" IsReadOnly="True" />
+                               Text="{Binding DensitySupportLabel}" />
+                    <TextBox IsVisible="{Binding !!DensitySupport}"
+                             Text="{Binding DensitySupport}"
+                             IsReadOnly="True" />
+                    <TextBlock IsVisible="{Binding !!MediumSupport}"
+                               Text="{Binding MediumSupportLabel}" />
+                    <TextBox Text="{Binding MediumSupport}"
+                             IsReadOnly="True" />
                     <Button IsVisible="{Binding SaveDensitySupportVisible}"
                             Command="{Binding SaveDensitySupportCommand}">
-                        <TextBlock Text="Save REPORT DENSITY SUPPORT (MEDIA) response" />
+                        <TextBlock Text="{Binding SaveDensitySupportLabel}" />
                     </Button>
-                    <Button IsVisible="{Binding SaveMediumSupportVisible}" Command="{Binding SaveMediumSupportCommand}">
-                        <TextBlock Text="Save REPORT DENSITY SUPPORT (MEDIUM &amp; MEDIA) response" />
+                    <Button IsVisible="{Binding SaveMediumSupportVisible}"
+                            Command="{Binding SaveMediumSupportCommand}">
+                        <TextBlock Text="{Binding SaveMediumSupportLabel}" />
                     </Button>
                 </StackPanel>
             </TabItem>
             <TabItem IsVisible="{Binding !!CompactDiscInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="CompactDisc" />
+                    <TextBlock Text="{Binding CompactDiscLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding CompactDiscInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="DVD" />
+                    <TextBlock Text="{Binding DvdLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!DvdWritableInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="DVD±R(W)" />
+                    <TextBlock Text="{Binding Dvd_R_WLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding DvdWritableInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!XboxInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="Xbox" />
+                    <TextBlock Text="{Binding XboxLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding XboxInfo}" />
             </TabItem>
             <TabItem IsVisible="{Binding !!BlurayInfo}">
                 <TabItem.Header>
-                    <TextBlock Text="Blu-ray" />
+                    <TextBlock Text="{Binding BluRayLabel}" />
                 </TabItem.Header>
                 <ContentControl Content="{Binding BlurayInfo}" />
             </TabItem>
         </TabControl>
         <Button Command="{Binding DumpCommand}">
-            <TextBlock Text="Dump media to image" />
+            <TextBlock Text="{Binding DumpLabel}" />
         </Button>
         <Button Command="{Binding ScanCommand}">
-            <TextBlock Text="Scan media surface" />
+            <TextBlock Text="{Binding ScanLabel}" />
         </Button>
     </StackPanel>
 </UserControl>

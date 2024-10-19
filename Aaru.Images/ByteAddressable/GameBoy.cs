@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,49 +5,62 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class GameBoy : IByteAddressableImage
 {
     byte[]    _data;
     Stream    _dataStream;
     ImageInfo _imageInfo;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
     public string Format => "Nintendo Game Boy cartridge dump";
+
     /// <inheritdoc />
     public Guid Id => new("04AFDB93-587E-413B-9B52-10D4A92966CF");
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "Nintendo Game Boy";
+    public string Name => Localization.GameBoy_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return false;
+        if(stream.Length % 32768 != 0) return false;
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
         return magic == 0x0B000DCC6666EDCE;
@@ -58,26 +69,23 @@ public class GameBoy : IByteAddressableImage
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this, maybe more
-        if(stream.Length % 512 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 512 != 0) return ErrorNumber.InvalidArgument;
 
         stream.Position = 0x104;
         var magicBytes = new byte[8];
-        stream.Read(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
-        if(magic != 0x0B000DCC6666EDCE)
-            return ErrorNumber.InvalidArgument;
+        if(magic != 0x0B000DCC6666EDCE) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         _imageInfo = new ImageInfo
         {
@@ -87,7 +95,7 @@ public class GameBoy : IByteAddressableImage
             MediaType            = MediaType.GameBoyGamePak,
             LastModificationTime = imageFilter.LastWriteTime,
             Sectors              = (ulong)imageFilter.DataForkLength,
-            XmlMediaType         = XmlMediaType.LinearMedia
+            MetadataMediaType    = MetadataMediaType.LinearMedia
         };
 
         Header header = Marshal.ByteArrayToStructureBigEndian<Header>(_data, 0x100, Marshal.SizeOf<Header>());
@@ -99,30 +107,30 @@ public class GameBoy : IByteAddressableImage
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Name_0, _imageInfo.MediaTitle).AppendLine();
 
         if((header.Name[^1] & 0xC0) == 0xC0)
-            sb.AppendLine("Requires Game Boy Color");
+            sb.AppendLine(Localization.Requires_Game_Boy_Color);
         else
         {
-            if((header.Name[^1] & 0xC0) == 0xC0)
-                sb.AppendLine("Contains features for Game Boy Color");
+            if((header.Name[^1] & 0xC0) == 0xC0) sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
 
-            if(header.Sgb == 0x03)
-                sb.AppendLine("Contains features for Super Game Boy");
+            if(header.Sgb == 0x03) sb.AppendLine(Localization.Contains_features_for_Super_Game_Boy);
         }
 
-        sb.AppendFormat("Region: {0}", header.Country == 0 ? "Japan" : "World").AppendLine();
-        sb.AppendFormat("Cartridge type: {0}", DecodeCartridgeType(header.RomType)).AppendLine();
-        sb.AppendFormat("ROM size: {0} bytes", DecodeRomSize(header.RomSize)).AppendLine();
+        sb.AppendFormat(Localization.Region_0, header.Country == 0 ? Localization.Japan : Localization.World)
+          .AppendLine();
+
+        sb.AppendFormat(Localization.Cartridge_type_0, DecodeCartridgeType(header.RomType)).AppendLine();
+        sb.AppendFormat(Localization.ROM_size_0_bytes, DecodeRomSize(header.RomSize)).AppendLine();
 
         if(header.SramSize > 0)
-            sb.AppendFormat("Save RAM size: {0} bytes", DecodeSaveRamSize(header.SramSize)).AppendLine();
+            sb.AppendFormat(Localization.Save_RAM_size_0_bytes, DecodeSaveRamSize(header.SramSize)).AppendLine();
 
-        sb.AppendFormat("Licensee: {0}", DecodeLicensee(header.Licensee, header.LicenseeNew)).AppendLine();
-        sb.AppendFormat("Revision: {0}", header.Revision).AppendLine();
-        sb.AppendFormat("Header checksum: 0x{0:X2}", header.HeaderChecksum).AppendLine();
-        sb.AppendFormat("Checksum: 0x{0:X4}", header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Licensee_0, DecodeLicensee(header.Licensee, header.LicenseeNew)).AppendLine();
+        sb.AppendFormat(Localization.Revision_0, header.Revision).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_0, header.HeaderChecksum).AppendLine();
+        sb.AppendFormat(Localization.Checksum_0_X4, header.Checksum).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -132,43 +140,49 @@ public class GameBoy : IByteAddressableImage
 
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
         ".gb", ".gbc", ".sgb"
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         MediaType.GameBoyGamePak
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -184,13 +198,13 @@ public class GameBoy : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public long Position { get; set; }
@@ -200,14 +214,14 @@ public class GameBoy : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
         if(mediaType != MediaType.GameBoyGamePak)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -222,9 +236,10 @@ public class GameBoy : IByteAddressableImage
         {
             _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.InOutError;
         }
@@ -244,7 +259,7 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -407,8 +422,8 @@ public class GameBoy : IByteAddressableImage
             case 0xFC: // Pocket Camera
                 mappings = new LinearMemoryMap
                 {
-                    Devices = new[]
-                    {
+                    Devices =
+                    [
                         new LinearMemoryDevice
                         {
                             Location     = "U1",
@@ -443,7 +458,7 @@ public class GameBoy : IByteAddressableImage
                                 Length = DecodeSaveRamSize(header.SramSize)
                             }
                         }
-                    }
+                    ]
                 };
 
                 return ErrorNumber.NoError;
@@ -469,16 +484,13 @@ public class GameBoy : IByteAddressableImage
 
         mappings = new LinearMemoryMap();
 
-        if(header.SramSize > 0)
-            hasSaveRam = true;
+        if(header.SramSize > 0) hasSaveRam = true;
 
         var devices = 1;
 
-        if(hasSaveRam)
-            devices++;
+        if(hasSaveRam) devices++;
 
-        if(hasMapper)
-            devices++;
+        if(hasMapper) devices++;
 
         mappings.Devices = new LinearMemoryDevice[devices];
 
@@ -491,6 +503,7 @@ public class GameBoy : IByteAddressableImage
         };
 
         if(hasSaveRam)
+        {
             mappings.Devices[1] = new LinearMemoryDevice
             {
                 Type = LinearMemoryType.SaveRAM,
@@ -500,14 +513,17 @@ public class GameBoy : IByteAddressableImage
                     Length = DecodeSaveRamSize(header.SramSize)
                 }
             };
+        }
 
         if(hasMapper)
+        {
             mappings.Devices[^1] = new LinearMemoryDevice
             {
                 Type         = LinearMemoryType.Mapper,
                 Manufacturer = mapperManufacturer,
                 Model        = mapperName
             };
+        }
 
         return ErrorNumber.NoError;
     }
@@ -522,22 +538,21 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -554,35 +569,32 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -594,14 +606,14 @@ public class GameBoy : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -612,6 +624,7 @@ public class GameBoy : IByteAddressableImage
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -626,8 +639,10 @@ public class GameBoy : IByteAddressableImage
                     foundMapper = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -641,36 +656,35 @@ public class GameBoy : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -681,274 +695,273 @@ public class GameBoy : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    string DecodeLicensee(byte headerLicensee, byte[] headerLicenseeNew)
+    static string DecodeLicensee(byte headerLicensee, byte[] headerLicenseeNew)
     {
-        if(headerLicensee == 0x33)
+        if(headerLicensee != 0x33)
         {
-            string licenseeNew = StringHandlers.CToString(headerLicenseeNew);
-
-            switch(licenseeNew)
-            {
-                case "00": return "none";
-                case "01": return "Nintendo R&D1";
-                case "08": return "Capcom";
-                case "13": return "Electronic Arts";
-                case "18": return "Hudson Soft";
-                case "19": return "b-ai";
-                case "20": return "kss";
-                case "22": return "pow";
-                case "24": return "PCM Complete";
-                case "25": return "san-x";
-                case "28": return "Kemco Japan";
-                case "29": return "seta";
-                case "30": return "Viacom";
-                case "31": return "Nintendo";
-                case "32": return "Bandai";
-                case "33": return "Ocean / Acclaim";
-                case "34": return "Konami";
-                case "35": return "Hector";
-                case "37": return "Taito";
-                case "38": return "Hudson";
-                case "39": return "Banpresto";
-                case "41": return "Ubi Soft";
-                case "42": return "Atlus";
-                case "44": return "Malibu";
-                case "46": return "angel";
-                case "47": return "Bullet -Proof";
-                case "49": return "irem";
-                case "50": return "Absolute";
-                case "51": return "Acclaim";
-                case "52": return "Activision";
-                case "53": return "American sammy";
-                case "54": return "Konami";
-                case "55": return "Hi tech entertainment";
-                case "56": return "LJN";
-                case "57": return "Matchbox";
-                case "58": return "Mattel";
-                case "59": return "Milton Bradley";
-                case "60": return "Titus";
-                case "61": return "Virgin";
-                case "64": return "LucasArts";
-                case "67": return "Ocean";
-                case "69": return "Electronic Arts";
-                case "70": return "Infogrames";
-                case "71": return "Interplay";
-                case "72": return "Brøderbund";
-                case "73": return "sculptured";
-                case "75": return "sci";
-                case "78": return "THQ";
-                case "79": return "Accolade";
-                case "80": return "misawa";
-                case "83": return "lozc";
-                case "86": return "tokuma shoten i";
-                case "87": return "tsukuda ori";
-                case "91": return "Chunsoft";
-                case "92": return "Video  system";
-                case "93": return "Ocean / Acclaim";
-                case "95": return "Varie";
-                case "96": return "Yonezawa / s'pal";
-                case "97": return "Kaneko";
-                case "99": return "Pack in soft";
-                case "A4": return "Konami";
-                default:   return "Unknown";
-            }
+            return headerLicensee switch
+                   {
+                       0x00 => Localization.none_licensee,
+                       0x01 => "nintendo",
+                       0x08 => "capcom",
+                       0x09 => "hot-b",
+                       0x0A => "jaleco",
+                       0x0B => "coconuts",
+                       0x0C => "elite systems",
+                       0x13 => "electronic arts",
+                       0x18 => "hudsonsoft",
+                       0x19 => "itc entertainment",
+                       0x1A => "yanoman",
+                       0x1D => "clary",
+                       0x1F => "virgin",
+                       0x20 => "KSS",
+                       0x24 => "pcm complete",
+                       0x25 => "san-x",
+                       0x28 => "kotobuki systems",
+                       0x29 => "seta",
+                       0x30 => "infogrames",
+                       0x31 => "nintendo",
+                       0x32 => "bandai",
+                       0x33 => Localization.GBC_see_above,
+                       0x34 => "konami",
+                       0x35 => "hector",
+                       0x38 => "Capcom",
+                       0x39 => "Banpresto",
+                       0x3C => "*entertainment i",
+                       0x3E => "gremlin",
+                       0x41 => "Ubisoft",
+                       0x42 => "Atlus",
+                       0x44 => "Malibu",
+                       0x46 => "angel",
+                       0x47 => "spectrum holoby",
+                       0x49 => "irem",
+                       0x4A => "virgin",
+                       0x4D => "malibu",
+                       0x4F => "u.s. gold",
+                       0x50 => "absolute",
+                       0x51 => "acclaim",
+                       0x52 => "activision",
+                       0x53 => "american sammy",
+                       0x54 => "gametek",
+                       0x55 => "park place",
+                       0x56 => "ljn",
+                       0x57 => "matchbox",
+                       0x59 => "milton bradley",
+                       0x5A => "mindscape",
+                       0x5B => "romstar",
+                       0x5C => "naxat soft",
+                       0x5D => "tradewest",
+                       0x60 => "titus",
+                       0x61 => "virgin",
+                       0x67 => "ocean",
+                       0x69 => "electronic arts",
+                       0x6E => "elite systems",
+                       0x6F => "electro brain",
+                       0x70 => "Infogrammes",
+                       0x71 => "Interplay",
+                       0x72 => "broderbund",
+                       0x73 => "sculptered soft",
+                       0x75 => "the sales curve",
+                       0x78 => "t*hq",
+                       0x79 => "accolade",
+                       0x7A => "triffix entertainment",
+                       0x7C => "microprose",
+                       0x7F => "kemco",
+                       0x80 => "misawa entertainment",
+                       0x83 => "lozc",
+                       0x86 => "tokuma shoten intermedia",
+                       0x8B => "bullet-proof software",
+                       0x8C => "vic tokai",
+                       0x8E => "ape",
+                       0x8F => "i'max",
+                       0x91 => "chun soft",
+                       0x92 => "video system",
+                       0x93 => "tsuburava",
+                       0x95 => "varie",
+                       0x96 => "yonezawa/s'pal",
+                       0x97 => "kaneko",
+                       0x99 => "arc",
+                       0x9A => "nihon bussan",
+                       0x9B => "Tecmo",
+                       0x9C => "imagineer",
+                       0x9D => "Banpresto",
+                       0x9F => "nova",
+                       0xA1 => "Hori electric",
+                       0xA2 => "Bandai",
+                       0xA4 => "Konami",
+                       0xA6 => "kawada",
+                       0xA7 => "takara",
+                       0xA9 => "technos japan",
+                       0xAA => "broderbund",
+                       0xAC => "Toei animation",
+                       0xAD => "toho",
+                       0xAF => "Namco",
+                       0xB0 => "Acclaim",
+                       0xB1 => "ascii or nexoft",
+                       0xB2 => "Bandai",
+                       0xB4 => "Enix",
+                       0xB6 => "HAL",
+                       0xB7 => "SNK",
+                       0xB9 => "pony canyon",
+                       0xBA => "*culture brain o",
+                       0xBB => "Sunsoft",
+                       0xBD => "Sony imagesoft",
+                       0xBF => "sammy",
+                       0xC0 => "Taito",
+                       0xC2 => "Kemco",
+                       0xC3 => "Squaresoft",
+                       0xC4 => "tokuma shoten intermedia",
+                       0xC5 => "data east",
+                       0xC6 => "tonkin house",
+                       0xC8 => "koei",
+                       0xC9 => "ufl",
+                       0xCA => "ultra",
+                       0xCB => "vap",
+                       0xCC => "use",
+                       0xCD => "meldac",
+                       0xCE => "*pony canyon or",
+                       0xCF => "angel",
+                       0xD0 => "Taito",
+                       0xD1 => "sofel",
+                       0xD2 => "quest",
+                       0xD3 => "sigma enterprises",
+                       0xD4 => "ask kodansha",
+                       0xD6 => "naxat soft",
+                       0xD7 => "copya systems",
+                       0xD9 => "Banpresto",
+                       0xDA => "tomy",
+                       0xDB => "ljn",
+                       0xDD => "ncs",
+                       0xDE => "human",
+                       0xDF => "altron",
+                       0xE0 => "jaleco",
+                       0xE1 => "towachiki",
+                       0xE2 => "uutaka",
+                       0xE3 => "varie",
+                       0xE5 => "epoch",
+                       0xE7 => "athena",
+                       0xE8 => "asmik",
+                       0xE9 => "natsume",
+                       0xEA => "king records",
+                       0xEB => "atlus",
+                       0xEC => "Epic/Sony records",
+                       0xEE => "igs",
+                       0xF0 => "a wave",
+                       0xF3 => "extreme entertainment",
+                       0xFF => "ljn",
+                       _    => Localization.Unknown_licensee
+                   };
         }
 
-        switch(headerLicensee)
-        {
-            case 0x00: return "none";
-            case 0x01: return "nintendo";
-            case 0x08: return "capcom";
-            case 0x09: return "hot-b";
-            case 0x0A: return "jaleco";
-            case 0x0B: return "coconuts";
-            case 0x0C: return "elite systems";
-            case 0x13: return "electronic arts";
-            case 0x18: return "hudsonsoft";
-            case 0x19: return "itc entertainment";
-            case 0x1A: return "yanoman";
-            case 0x1D: return "clary";
-            case 0x1F: return "virgin";
-            case 0x20: return "KSS";
-            case 0x24: return "pcm complete";
-            case 0x25: return "san-x";
-            case 0x28: return "kotobuki systems";
-            case 0x29: return "seta";
-            case 0x30: return "infogrames";
-            case 0x31: return "nintendo";
-            case 0x32: return "bandai";
-            case 0x33: return "'''GBC - see above'''";
-            case 0x34: return "konami";
-            case 0x35: return "hector";
-            case 0x38: return "Capcom";
-            case 0x39: return "Banpresto";
-            case 0x3C: return "*entertainment i";
-            case 0x3E: return "gremlin";
-            case 0x41: return "Ubisoft";
-            case 0x42: return "Atlus";
-            case 0x44: return "Malibu";
-            case 0x46: return "angel";
-            case 0x47: return "spectrum holoby";
-            case 0x49: return "irem";
-            case 0x4A: return "virgin";
-            case 0x4D: return "malibu";
-            case 0x4F: return "u.s. gold";
-            case 0x50: return "absolute";
-            case 0x51: return "acclaim";
-            case 0x52: return "activision";
-            case 0x53: return "american sammy";
-            case 0x54: return "gametek";
-            case 0x55: return "park place";
-            case 0x56: return "ljn";
-            case 0x57: return "matchbox";
-            case 0x59: return "milton bradley";
-            case 0x5A: return "mindscape";
-            case 0x5B: return "romstar";
-            case 0x5C: return "naxat soft";
-            case 0x5D: return "tradewest";
-            case 0x60: return "titus";
-            case 0x61: return "virgin";
-            case 0x67: return "ocean";
-            case 0x69: return "electronic arts";
-            case 0x6E: return "elite systems";
-            case 0x6F: return "electro brain";
-            case 0x70: return "Infogrammes";
-            case 0x71: return "Interplay";
-            case 0x72: return "broderbund";
-            case 0x73: return "sculptered soft";
-            case 0x75: return "the sales curve";
-            case 0x78: return "t*hq";
-            case 0x79: return "accolade";
-            case 0x7A: return "triffix entertainment";
-            case 0x7C: return "microprose";
-            case 0x7F: return "kemco";
-            case 0x80: return "misawa entertainment";
-            case 0x83: return "lozc";
-            case 0x86: return "tokuma shoten intermedia";
-            case 0x8B: return "bullet-proof software";
-            case 0x8C: return "vic tokai";
-            case 0x8E: return "ape";
-            case 0x8F: return "i'max";
-            case 0x91: return "chun soft";
-            case 0x92: return "video system";
-            case 0x93: return "tsuburava";
-            case 0x95: return "varie";
-            case 0x96: return "yonezawa/s'pal";
-            case 0x97: return "kaneko";
-            case 0x99: return "arc";
-            case 0x9A: return "nihon bussan";
-            case 0x9B: return "Tecmo";
-            case 0x9C: return "imagineer";
-            case 0x9D: return "Banpresto";
-            case 0x9F: return "nova";
-            case 0xA1: return "Hori electric";
-            case 0xA2: return "Bandai";
-            case 0xA4: return "Konami";
-            case 0xA6: return "kawada";
-            case 0xA7: return "takara";
-            case 0xA9: return "technos japan";
-            case 0xAA: return "broderbund";
-            case 0xAC: return "Toei animation";
-            case 0xAD: return "toho";
-            case 0xAF: return "Namco";
-            case 0xB0: return "Acclaim";
-            case 0xB1: return "ascii or nexoft";
-            case 0xB2: return "Bandai";
-            case 0xB4: return "Enix";
-            case 0xB6: return "HAL";
-            case 0xB7: return "SNK";
-            case 0xB9: return "pony canyon";
-            case 0xBA: return "*culture brain o";
-            case 0xBB: return "Sunsoft";
-            case 0xBD: return "Sony imagesoft";
-            case 0xBF: return "sammy";
-            case 0xC0: return "Taito";
-            case 0xC2: return "Kemco";
-            case 0xC3: return "Squaresoft";
-            case 0xC4: return "tokuma shoten intermedia";
-            case 0xC5: return "data east";
-            case 0xC6: return "tonkin house";
-            case 0xC8: return "koei";
-            case 0xC9: return "ufl";
-            case 0xCA: return "ultra";
-            case 0xCB: return "vap";
-            case 0xCC: return "use";
-            case 0xCD: return "meldac";
-            case 0xCE: return "*pony canyon or";
-            case 0xCF: return "angel";
-            case 0xD0: return "Taito";
-            case 0xD1: return "sofel";
-            case 0xD2: return "quest";
-            case 0xD3: return "sigma enterprises";
-            case 0xD4: return "ask kodansha";
-            case 0xD6: return "naxat soft";
-            case 0xD7: return "copya systems";
-            case 0xD9: return "Banpresto";
-            case 0xDA: return "tomy";
-            case 0xDB: return "ljn";
-            case 0xDD: return "ncs";
-            case 0xDE: return "human";
-            case 0xDF: return "altron";
-            case 0xE0: return "jaleco";
-            case 0xE1: return "towachiki";
-            case 0xE2: return "uutaka";
-            case 0xE3: return "varie";
-            case 0xE5: return "epoch";
-            case 0xE7: return "athena";
-            case 0xE8: return "asmik";
-            case 0xE9: return "natsume";
-            case 0xEA: return "king records";
-            case 0xEB: return "atlus";
-            case 0xEC: return "Epic/Sony records";
-            case 0xEE: return "igs";
-            case 0xF0: return "a wave";
-            case 0xF3: return "extreme entertainment";
-            case 0xFF: return "ljn";
-            default:   return "Unknown";
-        }
+        string licenseeNew = StringHandlers.CToString(headerLicenseeNew);
+
+        return licenseeNew switch
+               {
+                   "00" => Localization.none_licensee,
+                   "01" => "Nintendo R&D1",
+                   "08" => "Capcom",
+                   "13" => "Electronic Arts",
+                   "18" => "Hudson Soft",
+                   "19" => "b-ai",
+                   "20" => "kss",
+                   "22" => "pow",
+                   "24" => "PCM Complete",
+                   "25" => "san-x",
+                   "28" => "Kemco Japan",
+                   "29" => "seta",
+                   "30" => "Viacom",
+                   "31" => "Nintendo",
+                   "32" => "Bandai",
+                   "33" => "Ocean / Acclaim",
+                   "34" => "Konami",
+                   "35" => "Hector",
+                   "37" => "Taito",
+                   "38" => "Hudson",
+                   "39" => "Banpresto",
+                   "41" => "Ubi Soft",
+                   "42" => "Atlus",
+                   "44" => "Malibu",
+                   "46" => "angel",
+                   "47" => "Bullet -Proof",
+                   "49" => "irem",
+                   "50" => "Absolute",
+                   "51" => "Acclaim",
+                   "52" => "Activision",
+                   "53" => "American sammy",
+                   "54" => "Konami",
+                   "55" => "Hi tech entertainment",
+                   "56" => "LJN",
+                   "57" => "Matchbox",
+                   "58" => "Mattel",
+                   "59" => "Milton Bradley",
+                   "60" => "Titus",
+                   "61" => "Virgin",
+                   "64" => "LucasArts",
+                   "67" => "Ocean",
+                   "69" => "Electronic Arts",
+                   "70" => "Infogrames",
+                   "71" => "Interplay",
+                   "72" => "Brøderbund",
+                   "73" => "sculptured",
+                   "75" => "sci",
+                   "78" => "THQ",
+                   "79" => "Accolade",
+                   "80" => "misawa",
+                   "83" => "lozc",
+                   "86" => "tokuma shoten i",
+                   "87" => "tsukuda ori",
+                   "91" => "Chunsoft",
+                   "92" => "Video  system",
+                   "93" => "Ocean / Acclaim",
+                   "95" => "Varie",
+                   "96" => "Yonezawa / s'pal",
+                   "97" => "Kaneko",
+                   "99" => "Pack in soft",
+                   "A4" => "Konami",
+                   _    => Localization.Unknown_licensee
+               };
     }
 
     static uint DecodeRomSize(byte headerRomType) => headerRomType switch
@@ -981,39 +994,43 @@ public class GameBoy : IByteAddressableImage
 
     static string DecodeCartridgeType(byte headerRomType) => headerRomType switch
                                                              {
-                                                                 0x00 => "ROM only",
-                                                                 0x01 => "ROM and MBC1",
-                                                                 0x02 => "ROM, MBC1 and RAM",
-                                                                 0x03 => "ROM, MBC1, RAM and battery",
-                                                                 0x05 => "ROM and MBC2",
-                                                                 0x06 => "ROM, MBC2 and battery",
-                                                                 0x08 => "ROM and RAM",
-                                                                 0x09 => "ROM, RAM and battery",
-                                                                 0x0B => "ROM and MMM01",
-                                                                 0x0C => "ROM, MMM01 and RAM",
-                                                                 0x0D => "ROM, MMM01, RAM and battery",
-                                                                 0x0F => "ROM, MBC3, timer and battery",
-                                                                 0x10 => "ROM, MBC3, RAM, timer and battery",
-                                                                 0x11 => "ROM and MBC3",
-                                                                 0x12 => "ROM, MBC3 and RAM",
-                                                                 0x13 => "ROM, MBC3, RAM and battery",
-                                                                 0x19 => "ROM and MBC5",
-                                                                 0x1A => "ROM, MBC5 and RAM",
-                                                                 0x1B => "ROM, MBC5, RAM and battery",
-                                                                 0x1C => "ROM, MBC5 and vibration motor",
-                                                                 0x1D => "ROM, MBC5, RAM and vibration motor",
-                                                                 0x1E => "ROM, MBC5, RAM, battery and vibration motor",
-                                                                 0x20 => "ROM and MBC6",
-                                                                 0x22 =>
-                                                                     "ROM, MBC7, RAM, battery, light sensor and vibration motor",
-                                                                 0xFC => "Pocket Camera",
-                                                                 0xFD => "ROM and TAMA5",
-                                                                 0xFE => "ROM and HuC-3",
-                                                                 0xFF => "ROM and HuC-1",
-                                                                 _    => "Unknown"
+                                                                 0x00 => Localization.ROM_only,
+                                                                 0x01 => Localization.ROM_and_MBC1,
+                                                                 0x02 => Localization.ROM_MBC1_and_RAM,
+                                                                 0x03 => Localization.ROM_MBC1_RAM_and_battery,
+                                                                 0x05 => Localization.ROM_and_MBC2,
+                                                                 0x06 => Localization.ROM_MBC2_and_battery,
+                                                                 0x08 => Localization.ROM_and_RAM,
+                                                                 0x09 => Localization.ROM_RAM_and_battery,
+                                                                 0x0B => Localization.ROM_and_MMM01,
+                                                                 0x0C => Localization.ROM_MMM01_and_RAM,
+                                                                 0x0D => Localization.ROM_MMM01_RAM_and_battery,
+                                                                 0x0F => Localization.ROM_MBC3_timer_and_battery,
+                                                                 0x10 => Localization.ROM_MBC3_RAM_timer_and_battery,
+                                                                 0x11 => Localization.ROM_and_MBC3,
+                                                                 0x12 => Localization.ROM_MBC3_and_RAM,
+                                                                 0x13 => Localization.ROM_MBC3_RAM_and_battery,
+                                                                 0x19 => Localization.ROM_and_MBC5,
+                                                                 0x1A => Localization.ROM_MBC5_and_RAM,
+                                                                 0x1B => Localization.ROM_MBC5_RAM_and_battery,
+                                                                 0x1C => Localization.ROM_MBC5_and_vibration_motor,
+                                                                 0x1D => Localization.ROM_MBC5_RAM_and_vibration_motor,
+                                                                 0x1E => Localization
+                                                                    .ROM_MBC5_RAM_battery_and_vibration_motor,
+                                                                 0x20 => Localization.ROM_and_MBC6,
+                                                                 0x22 => Localization
+                                                                    .ROM_MBC7_RAM_battery_light_sensor_and_vibration_motor,
+                                                                 0xFC => Localization.Pocket_Camera,
+                                                                 0xFD => Localization.ROM_and_TAMA5,
+                                                                 0xFE => Localization.ROM_and_HuC_3,
+                                                                 0xFF => Localization.ROM_and_HuC_1,
+                                                                 _    => Localization.Unknown_cartridge_type
                                                              };
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
     struct Header
     {
         /// <summary>Usually 0x00 (NOP)</summary>
@@ -1050,4 +1067,6 @@ public class GameBoy : IByteAddressableImage
         /// <summary>Cartridge checksum</summary>
         public ushort Checksum;
     }
+
+#endregion
 }

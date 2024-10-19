@@ -27,42 +27,43 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class MaxiDisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 8)
-            return false;
+        if(stream.Length < 8) return false;
 
         var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown = {0}", tmpHeader.unknown);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.diskType = {0}", tmpHeader.diskType);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.heads = {0}", tmpHeader.heads);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.cylinders = {0}", tmpHeader.cylinders);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown = {0}",        tmpHeader.unknown);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskType = {0}",       tmpHeader.diskType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.heads = {0}",          tmpHeader.heads);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.cylinders = {0}",      tmpHeader.cylinders);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.bytesPerSector = {0}", tmpHeader.bytesPerSector);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.sectorsPerTrack = {0}", tmpHeader.sectorsPerTrack);
 
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
-        AaruConsole.DebugWriteLine("MAXI Disk plugin", "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown2 = {0}", tmpHeader.unknown2);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.unknown3 = {0}", tmpHeader.unknown3);
 
         // This is hardcoded
         // But its possible values are unknown...
@@ -70,20 +71,22 @@ public sealed partial class MaxiDisk
         //    return false;
 
         // Only floppies supported
-        if(tmpHeader.heads is 0 or > 2)
-            return false;
+        if(tmpHeader.heads is 0 or > 2) return false;
 
         // No floppies with more than this?
-        if(tmpHeader.cylinders > 90)
-            return false;
+        if(tmpHeader.cylinders > 90) return false;
 
         // Maximum supported bps is 16384
-        if(tmpHeader.bytesPerSector > 7)
-            return false;
+        if(tmpHeader.bytesPerSector > 7) return false;
 
-        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                               (128 << tmpHeader.bytesPerSector) + 8;
+        int expectedFileSize = tmpHeader.heads           *
+                               tmpHeader.cylinders       *
+                               tmpHeader.sectorsPerTrack *
+                               (128 << tmpHeader.bytesPerSector) +
+                               8;
 
         return expectedFileSize == stream.Length;
     }
+
+#endregion
 }

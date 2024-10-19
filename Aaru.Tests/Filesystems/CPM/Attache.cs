@@ -22,29 +22,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.CPM;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.CPM;
+
 [TestFixture]
-public class Attache : FilesystemTest
+public class Attache() : FilesystemTest("cpmfs")
 {
-    public Attache() : base("CP/M") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "Otrona Attaché");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "Otrona Attaché");
-
-    public override IFilesystem Plugin     => new CPM();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "filename.imd",
@@ -63,5 +60,5 @@ public class Attache : FilesystemTest
             Clusters    = 395,
             ClusterSize = 1024
         }
-    };
+    ];
 }

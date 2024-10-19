@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands;
 
 using System;
 using System.Collections.Generic;
@@ -42,13 +40,17 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
+
+namespace Aaru.Commands;
 
 sealed class ListNamespacesCommand : Command
 {
-    public ListNamespacesCommand() :
-        base("list-namespaces", "Lists all namespaces supported by read-only filesystems.") =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    const string MODULE_NAME = "List-Namespaces command";
+
+    public ListNamespacesCommand() : base("list-namespaces", UI.List_Namespaces_Command_Description) =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool debug, bool verbose)
     {
@@ -58,7 +60,7 @@ sealed class ListNamespacesCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -68,9 +70,12 @@ sealed class ListNamespacesCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -78,25 +83,27 @@ sealed class ListNamespacesCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
-        AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
         Statistics.AddCommand("list-namespaces");
 
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginRegister plugins = PluginRegister.Singleton;
 
-        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in
-                plugins.ReadOnlyFilesystems.Where(kvp => !(kvp.Value.Namespaces is null)))
+        foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
         {
+            if(fs?.Namespaces is null) continue;
+
             Table table = new()
             {
-                Title = new TableTitle($"Namespaces for {kvp.Value.Name}:")
+                Title = new TableTitle(string.Format(UI.Namespaces_for_0, fs.Name))
             };
 
-            table.AddColumn("Namespace");
-            table.AddColumn("Description");
+            table.AddColumn(UI.Title_Namespace);
+            table.AddColumn(UI.Title_Description);
 
-            foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
+            foreach(KeyValuePair<string, string> @namespace in fs.Namespaces.OrderBy(t => t.Key))
                 table.AddRow(@namespace.Key, @namespace.Value);
 
             AnsiConsole.Write(table);

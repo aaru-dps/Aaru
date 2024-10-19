@@ -27,35 +27,71 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System;
+using System.Text;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
 namespace Aaru.Filesystems;
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Aaru.CommonTypes.Enums;
-using Aaru.Helpers;
-
 public sealed partial class CPM
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        contents = null;
+        node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(!string.IsNullOrEmpty(path) &&
-           string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
+        if(!string.IsNullOrEmpty(path) && string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) != 0)
             return ErrorNumber.NotSupported;
 
-        contents = new List<string>(_dirList);
+        node = new CpmDirNode
+        {
+            Path     = path,
+            Position = 0,
+            Contents = _dirList.ToArray()
+        };
 
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not CpmDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
+
+        filename = mynode.Contents[mynode.Position++];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not CpmDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode.Position = -1;
+        mynode.Contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+#endregion
 
     /// <summary>
     ///     Checks that the given directory blocks follow the CP/M filesystem directory specification Corrupted
@@ -68,8 +104,7 @@ public sealed partial class CPM
     {
         try
         {
-            if(directory == null)
-                return false;
+            if(directory == null) return false;
 
             var fileCount = 0;
 
@@ -80,41 +115,47 @@ public sealed partial class CPM
                 if((entry.statusUser & 0x7F) < 0x20)
                 {
                     for(var f = 0; f < 8; f++)
-                        if(entry.filename[f] < 0x20 &&
-                           entry.filename[f] != 0x00)
+                        if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
                             return false;
 
                     for(var e = 0; e < 3; e++)
-                        if(entry.extension[e] < 0x20 &&
-                           entry.extension[e] != 0x00)
+                        if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
                             return false;
 
-                    if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename))
-                        fileCount++;
+                    if(!ArrayHelpers.ArrayIsNullOrWhiteSpace(entry.filename)) fileCount++;
                 }
-                else if(entry.statusUser == 0x20)
+                else
                 {
-                    for(var f = 0; f < 8; f++)
-                        if(entry.filename[f] < 0x20 &&
-                           entry.filename[f] != 0x00)
-                            return false;
+                    switch(entry.statusUser)
+                    {
+                        case 0x20:
+                        {
+                            for(var f = 0; f < 8; f++)
+                                if(entry.filename[f] < 0x20 && entry.filename[f] != 0x00)
+                                    return false;
 
-                    for(var e = 0; e < 3; e++)
-                        if(entry.extension[e] < 0x20 &&
-                           entry.extension[e] != 0x00)
-                            return false;
+                            for(var e = 0; e < 3; e++)
+                                if(entry.extension[e] < 0x20 && entry.extension[e] != 0x00)
+                                    return false;
 
-                    _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
-                    _labelCreationDate = new byte[4];
-                    _labelUpdateDate   = new byte[4];
-                    Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
-                    Array.Copy(directory, off + 28, _labelUpdateDate, 0, 4);
+                            _label             = Encoding.ASCII.GetString(directory, off + 1, 11).Trim();
+                            _labelCreationDate = new byte[4];
+                            _labelUpdateDate   = new byte[4];
+                            Array.Copy(directory, off + 24, _labelCreationDate, 0, 4);
+                            Array.Copy(directory, off + 28, _labelUpdateDate,   0, 4);
+
+                            break;
+                        }
+                        case 0x21 when directory[off + 1] == 0x00:
+                            _thirdPartyTimestamps = true;
+
+                            break;
+                        case 0x21:
+                            _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
+
+                            break;
+                    }
                 }
-                else if(entry.statusUser == 0x21)
-                    if(directory[off + 1] == 0x00)
-                        _thirdPartyTimestamps = true;
-                    else
-                        _standardTimestamps |= directory[off + 21] == 0x00 && directory[off + 31] == 0x00;
             }
 
             return fileCount > 0;

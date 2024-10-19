@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,20 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Nilfs2 : FilesystemTest
-{
-    public Nilfs2() : base("NILFS2 filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
+[TestFixture]
+public class Nilfs2() : FilesystemTest("nilfs2")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot,
+                                                      "Filesystems",
                                                       "New Implementation of a Log-structured File System 2");
+
     public override IFilesystem Plugin     => new NILFS2();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -57,5 +57,5 @@ public class Nilfs2 : FilesystemTest
             VolumeName   = "Volume label",
             VolumeSerial = "6b1ca79e-7048-a748-93a0-89c74b02cb5a"
         }
-    };
+    ];
 }

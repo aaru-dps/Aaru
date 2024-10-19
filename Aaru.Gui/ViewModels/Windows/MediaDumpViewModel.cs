@@ -27,22 +27,23 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Metadata;
@@ -52,16 +53,21 @@ using Aaru.Core.Logging;
 using Aaru.Core.Media.Info;
 using Aaru.Devices;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using DynamicData;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
-using Schemas;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using Dump = Aaru.Core.Devices.Dumping.Dump;
+using File = System.IO.File;
 using MediaType = Aaru.CommonTypes.MediaType;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class MediaDumpViewModel : ViewModelBase
 {
@@ -96,7 +102,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     double           _retries;
     EncodingModel    _selectedEncoding;
     ImagePluginModel _selectedPlugin;
-    CICMMetadataType _sidecar;
+    Metadata         _sidecar;
     double           _skipped;
     bool             _startVisible;
     bool             _stopEnabled;
@@ -108,7 +114,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
     bool             _useResume;
     bool             _useSidecar;
 
-    public MediaDumpViewModel(string devicePath, DeviceInfo deviceInfo, Window view,
+    public MediaDumpViewModel(string               devicePath, DeviceInfo deviceInfo, Window view,
                               [CanBeNull] ScsiInfo scsiInfo = null)
     {
         _view              = view;
@@ -120,8 +126,8 @@ public sealed class MediaDumpViewModel : ViewModelBase
         CloseCommand       = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand        = ReactiveCommand.Create(ExecuteStopCommand);
         DestinationCommand = ReactiveCommand.Create(ExecuteDestinationCommand);
-        PluginsList        = new ObservableCollection<ImagePluginModel>();
-        Encodings          = new ObservableCollection<EncodingModel>();
+        PluginsList        = [];
+        Encodings          = [];
 
         // Defaults
         StopOnError      = false;
@@ -140,6 +146,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
         if(scsiInfo != null)
             mediaType = scsiInfo.MediaType;
         else
+        {
             switch(deviceInfo.Type)
             {
                 case DeviceType.SecureDigital:
@@ -160,84 +167,106 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
                     break;
             }
-
-        PluginBase plugins = GetPluginBase.Instance;
-
-        foreach(IWritableImage plugin in
-                plugins.WritableImages.Values.Where(p => p.SupportedMediaTypes.Contains(mediaType)))
-            PluginsList.Add(new ImagePluginModel
-            {
-                Plugin = plugin
-            });
-
-        Encodings.AddRange(Encoding.GetEncodings().Select(info => new EncodingModel
-        {
-            Name        = info.Name,
-            DisplayName = info.GetEncoding().EncodingName
-        }));
-
-        Encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new EncodingModel
-        {
-            Name        = info.Name,
-            DisplayName = info.DisplayName
-        }));
-
-        switch(mediaType)
-        {
-            case MediaType.CD:
-            case MediaType.CDDA:
-            case MediaType.CDG:
-            case MediaType.CDEG:
-            case MediaType.CDI:
-            case MediaType.CDROM:
-            case MediaType.CDROMXA:
-            case MediaType.CDPLUS:
-            case MediaType.CDMO:
-            case MediaType.CDR:
-            case MediaType.CDRW:
-            case MediaType.CDMRW:
-            case MediaType.VCD:
-            case MediaType.SVCD:
-            case MediaType.PCD:
-            case MediaType.DDCD:
-            case MediaType.DDCDR:
-            case MediaType.DDCDRW:
-            case MediaType.DTSCD:
-            case MediaType.CDMIDI:
-            case MediaType.CDV:
-            case MediaType.CDIREADY:
-            case MediaType.FMTOWNS:
-            case MediaType.PS1CD:
-            case MediaType.PS2CD:
-            case MediaType.MEGACD:
-            case MediaType.SATURNCD:
-            case MediaType.GDROM:
-            case MediaType.GDR:
-            case MediaType.MilCD:
-            case MediaType.SuperCDROM2:
-            case MediaType.JaguarCD:
-            case MediaType.ThreeDO:
-            case MediaType.PCFX:
-            case MediaType.NeoGeoCD:
-            case MediaType.CDTV:
-            case MediaType.CD32:
-            case MediaType.Playdia:
-            case MediaType.Pippin:
-            case MediaType.VideoNow:
-            case MediaType.VideoNowColor:
-            case MediaType.VideoNowXp:
-            case MediaType.CVD:
-                Track1PregapVisible = true;
-
-                break;
-            default:
-                Track1PregapVisible = false;
-
-                break;
         }
+
+        PluginRegister plugins = PluginRegister.Singleton;
+
+        foreach(IWritableImage plugin in plugins.WritableImages.Values)
+        {
+            if(plugin is null) continue;
+
+            if(plugin.SupportedMediaTypes.Contains(mediaType))
+            {
+                PluginsList.Add(new ImagePluginModel
+                {
+                    Plugin = plugin
+                });
+            }
+        }
+
+        Encodings.AddRange(Encoding.GetEncodings()
+                                   .Select(info => new EncodingModel
+                                    {
+                                        Name        = info.Name,
+                                        DisplayName = info.GetEncoding().EncodingName
+                                    }));
+
+        Encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
+                                  .Select(info => new EncodingModel
+                                   {
+                                       Name        = info.Name,
+                                       DisplayName = info.DisplayName
+                                   }));
+
+        Track1PregapVisible = mediaType switch
+                              {
+                                  MediaType.CD
+                                   or MediaType.CDDA
+                                   or MediaType.CDG
+                                   or MediaType.CDEG
+                                   or MediaType.CDI
+                                   or MediaType.CDROM
+                                   or MediaType.CDROMXA
+                                   or MediaType.CDPLUS
+                                   or MediaType.CDMO
+                                   or MediaType.CDR
+                                   or MediaType.CDRW
+                                   or MediaType.CDMRW
+                                   or MediaType.VCD
+                                   or MediaType.SVCD
+                                   or MediaType.PCD
+                                   or MediaType.DDCD
+                                   or MediaType.DDCDR
+                                   or MediaType.DDCDRW
+                                   or MediaType.DTSCD
+                                   or MediaType.CDMIDI
+                                   or MediaType.CDV
+                                   or MediaType.CDIREADY
+                                   or MediaType.FMTOWNS
+                                   or MediaType.PS1CD
+                                   or MediaType.PS2CD
+                                   or MediaType.MEGACD
+                                   or MediaType.SATURNCD
+                                   or MediaType.GDROM
+                                   or MediaType.GDR
+                                   or MediaType.MilCD
+                                   or MediaType.SuperCDROM2
+                                   or MediaType.JaguarCD
+                                   or MediaType.ThreeDO
+                                   or MediaType.PCFX
+                                   or MediaType.NeoGeoCD
+                                   or MediaType.CDTV
+                                   or MediaType.CD32
+                                   or MediaType.Playdia
+                                   or MediaType.Pippin
+                                   or MediaType.VideoNow
+                                   or MediaType.VideoNowColor
+                                   or MediaType.VideoNowXp
+                                   or MediaType.CVD => true,
+                                  _ => false
+                              };
 
         _devicePath = devicePath;
     }
+
+    public string OutputFormatLabel     => UI.Output_format;
+    public string ChooseLabel           => UI.ButtonLabel_Choose;
+    public string StopOnErrorLabel      => UI.Stop_media_dump_on_first_error;
+    public string ForceLabel            => UI.Continue_dumping_whatever_happens;
+    public string RetriesLabel          => UI.Retry_passes;
+    public string PersistentLabel       => UI.Try_to_recover_partial_or_incorrect_data;
+    public string ResumeLabel           => UI.Create_or_use_resume_mapfile;
+    public string Track1PregapLabel     => UI.Try_to_read_track_1_pregap;
+    public string SkippedLabel          => UI.Skipped_sectors_on_error;
+    public string SidecarLabel          => UI.Create_Aaru_Metadata_sidecar;
+    public string TrimLabel             => UI.Trim_errors_from_skipped_sectors;
+    public string ExistingMetadataLabel => UI.Take_metadata_from_existing_CICM_XML_sidecar;
+    public string EncodingLabel         => UI.Encoding_to_use_on_metadata_sidecar_creation;
+    public string DestinationLabel      => UI.Writing_image_to;
+    public string LogLabel              => UI.Title_Log;
+    public string StartLabel            => UI.ButtonLabel_Start;
+    public string CloseLabel            => UI.ButtonLabel_Close;
+    public string StopLabel             => UI.ButtonLabel_Stop;
 
     public ReactiveCommand<Unit, Unit> StartCommand       { get; }
     public ReactiveCommand<Unit, Unit> CloseCommand       { get; }
@@ -417,11 +446,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _useResume, value);
 
-            if(value == false)
-                return;
+            if(!value) return;
 
-            if(_outputPrefix != null)
-                CheckResumeFile();
+            if(_outputPrefix != null) CheckResumeFile().GetAwaiter().GetResult();
         }
     }
 
@@ -479,36 +506,33 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 return;
             }
 
-            var dlgMetadata = new OpenFileDialog
-            {
-                Title = "Choose existing metadata sidecar"
-            };
+            IReadOnlyList<IStorageFile> result = _view.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                                                       {
+                                                           Title         = UI.Dialog_Choose_existing_metadata_sidecar,
+                                                           AllowMultiple = false,
+                                                           FileTypeFilter = new List<FilePickerFileType>
+                                                           {
+                                                               FilePickerFileTypes.AaruMetadata
+                                                           }
+                                                       })
+                                                      .Result;
 
-            dlgMetadata.Filters.Add(new FileDialogFilter
-            {
-                Name = "CICM XML metadata",
-                Extensions = new List<string>(new[]
-                {
-                    ".xml"
-                })
-            });
-
-            string[] result = dlgMetadata.ShowAsync(_view).Result;
-
-            if(result?.Length != 1)
+            if(result.Count != 1)
             {
                 ExistingMetadata = false;
 
                 return;
             }
 
-            var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
-
             try
             {
-                var sr = new StreamReader(result[0]);
-                _sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
-                sr.Close();
+                var fs = new FileStream(result[0].Path.AbsolutePath, FileMode.Open);
+
+                _sidecar =
+                    (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)
+                  ?.AaruMetadata;
+
+                fs.Close();
             }
             catch
             {
@@ -516,8 +540,9 @@ public sealed class MediaDumpViewModel : ViewModelBase
                 _ = MessageBoxManager.
 
                     // ReSharper restore AssignmentIsFullyDiscarded
-                    GetMessageBoxStandardWindow("Error", "Incorrect metadata sidecar file...", ButtonEnum.Ok,
-                                                Icon.Error).ShowDialog(_view).Result;
+                    GetMessageBoxStandard(UI.Title_Error, UI.Incorrect_metadata_sidecar_file, ButtonEnum.Ok, Icon.Error)
+                   .ShowWindowDialogAsync(_view)
+                   .Result;
 
                 ExistingMetadata = false;
             }
@@ -634,21 +659,19 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
     async Task ExecuteDestinationCommand()
     {
-        if(SelectedPlugin is null)
-            return;
+        if(SelectedPlugin is null) return;
 
-        var dlgDestination = new SaveFileDialog
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = "Choose destination file"
-        };
-
-        dlgDestination.Filters.Add(new FileDialogFilter
-        {
-            Name       = SelectedPlugin.Plugin.Name,
-            Extensions = SelectedPlugin.Plugin.KnownExtensions.ToList()
+            Title = UI.Dialog_Choose_destination_file,
+            FileTypeChoices = new List<FilePickerFileType>
+            {
+                new(SelectedPlugin.Plugin.Name)
+                {
+                    Patterns = SelectedPlugin.Plugin.KnownExtensions.ToList()
+                }
+            }
         });
-
-        string result = await dlgDestination.ShowAsync(_view);
 
         if(result is null)
         {
@@ -658,12 +681,13 @@ public sealed class MediaDumpViewModel : ViewModelBase
             return;
         }
 
-        if(string.IsNullOrEmpty(Path.GetExtension(result)))
-            result += SelectedPlugin.Plugin.KnownExtensions.First();
+        Destination = result.Path.AbsolutePath;
 
-        Destination = result;
+        _outputPrefix = Path.Combine(Path.GetDirectoryName(Destination) ?? "",
+                                     Path.GetFileNameWithoutExtension(Destination));
 
-        _outputPrefix = Path.Combine(Path.GetDirectoryName(result) ?? "", Path.GetFileNameWithoutExtension(result));
+        if(string.IsNullOrEmpty(Path.GetExtension(Destination)))
+            Destination += SelectedPlugin.Plugin.KnownExtensions.First();
 
         Resume = true;
     }
@@ -671,34 +695,61 @@ public sealed class MediaDumpViewModel : ViewModelBase
     async Task CheckResumeFile()
     {
         _resume = null;
-        var xs = new XmlSerializer(typeof(Resume));
 
         try
         {
-            var sr = new StreamReader(_outputPrefix + ".resume.xml");
-            _resume = (Resume)xs.Deserialize(sr);
-            sr.Close();
+            if(File.Exists(_outputPrefix + ".resume.json"))
+            {
+                var fs = new FileStream(_outputPrefix + ".resume.json", FileMode.Open);
+
+                _resume =
+                    (await JsonSerializer.DeserializeAsync(fs, typeof(ResumeJson), ResumeJsonContext.Default) as
+                         ResumeJson)?.Resume;
+
+                fs.Close();
+            }
+
+            // DEPRECATED: To be removed in Aaru 7
+            else if(File.Exists(_outputPrefix + ".resume.xml"))
+            {
+                // Should be covered by virtue of being the same exact class as the JSON above
+#pragma warning disable IL2026
+                var xs = new XmlSerializer(typeof(Resume));
+#pragma warning restore IL2026
+
+                var sr = new StreamReader(_outputPrefix + ".resume.xml");
+
+                // Should be covered by virtue of being the same exact class as the JSON above
+#pragma warning disable IL2026
+                _resume = (Resume)xs.Deserialize(sr);
+#pragma warning restore IL2026
+
+                sr.Close();
+            }
         }
         catch
         {
-            await MessageBoxManager.
-                  GetMessageBoxStandardWindow("Error", "Incorrect resume file, cannot use it...", ButtonEnum.Ok,
-                                              Icon.Error).ShowDialog(_view);
+            await MessageBoxManager
+                 .GetMessageBoxStandard(UI.Title_Error,
+                                        UI.Incorrect_resume_file_cannot_use_it,
+                                        ButtonEnum.Ok,
+                                        Icon.Error)
+                 .ShowWindowDialogAsync(_view);
 
             Resume = false;
 
             return;
         }
 
-        if(_resume           == null              ||
-           _resume.NextBlock <= _resume.LastBlock ||
-           _resume.BadBlocks.Count != 0 && !_resume.Tape)
+        if(_resume == null || _resume.NextBlock <= _resume.LastBlock || _resume.BadBlocks.Count != 0 && !_resume.Tape)
             return;
 
-        await MessageBoxManager.
-              GetMessageBoxStandardWindow("Warning",
-                                          "Media already dumped correctly, please choose another destination...",
-                                          ButtonEnum.Ok, Icon.Warning).ShowDialog(_view);
+        await MessageBoxManager
+             .GetMessageBoxStandard(UI.Title_Warning,
+                                    UI.Media_already_dumped_correctly_please_choose_another_destination,
+                                    ButtonEnum.Ok,
+                                    Icon.Warning)
+             .ShowWindowDialogAsync(_view);
 
         Resume = false;
     }
@@ -722,19 +773,21 @@ public sealed class MediaDumpViewModel : ViewModelBase
         DestinationEnabled = false;
         OptionsVisible     = false;
 
-        UpdateStatus("Opening device...");
+        UpdateStatus(UI.Opening_device);
 
         _dev = Device.Create(_devicePath, out ErrorNumber devErrno);
 
         switch(_dev)
         {
             case null:
-                StoppingErrorMessage($"Error {devErrno} opening device.");
+                StoppingErrorMessage(string.Format(UI.Error_0_opening_device, devErrno));
 
                 return;
             case Devices.Remote.Device remoteDev:
-                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                     remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
+                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                     remoteDev.RemoteVersion,
+                                     remoteDev.RemoteOperatingSystem,
+                                     remoteDev.RemoteOperatingSystemVersion,
                                      remoteDev.RemoteArchitecture);
 
                 break;
@@ -742,7 +795,7 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(_dev.Error)
         {
-            StoppingErrorMessage($"Error {_dev.LastError} opening device.");
+            StoppingErrorMessage(string.Format(UI.Error_0_opening_device, _dev.LastError));
 
             return;
         }
@@ -752,26 +805,28 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         if(SelectedPlugin is null)
         {
-            StoppingErrorMessage("Cannot open output plugin.");
+            StoppingErrorMessage(UI.Cannot_open_output_plugin);
 
             return;
         }
 
         Encoding encoding = null;
 
-        if(!(SelectedEncoding is null))
+        if(SelectedEncoding is not null)
+        {
             try
             {
                 encoding = Claunia.Encoding.Encoding.GetEncoding(SelectedEncoding.Name);
             }
             catch(ArgumentException)
             {
-                StoppingErrorMessage("Specified encoding is not supported.");
+                StoppingErrorMessage(UI.Specified_encoding_is_not_supported);
 
                 return;
             }
+        }
 
-        var parsedOptions = new Dictionary<string, string>();
+        Dictionary<string, string> parsedOptions = new();
 
         /* TODO: Options
         if(grpOptions.Content is StackLayout stkFormatOptions)
@@ -804,19 +859,54 @@ public sealed class MediaDumpViewModel : ViewModelBase
 
         var dumpLog = new DumpLog(_outputPrefix + ".log", _dev, false);
 
-        dumpLog.WriteLine("Output image format: {0}.", SelectedPlugin.Name);
+        dumpLog.WriteLine(UI.Output_image_format_0, SelectedPlugin.Name);
 
         var errorLog = new ErrorLog(_outputPrefix + ".error.log");
 
-        _dumper = new Dump(Resume, _dev, _devicePath, SelectedPlugin.Plugin, (ushort)Retries, Force, false, Persistent,
-                           StopOnError, _resume, dumpLog, encoding, _outputPrefix, Destination, parsedOptions, _sidecar,
-                           (uint)Skipped, ExistingMetadata == false, Trim == false, Track1Pregap, true, false,
-                           DumpSubchannel.Any, 0, false, false, false, false, false, true, errorLog, false, 64, true,
-                           true, false, 10);
+        _dumper = new Dump(Resume,
+                           _dev,
+                           _devicePath,
+                           SelectedPlugin.Plugin,
+                           (ushort)Retries,
+                           Force,
+                           false,
+                           Persistent,
+                           StopOnError,
+                           _resume,
+                           dumpLog,
+                           encoding,
+                           _outputPrefix,
+                           Destination,
+                           parsedOptions,
+                           _sidecar,
+                           (uint)Skipped,
+                           ExistingMetadata == false,
+                           Trim             == false,
+                           Track1Pregap,
+                           true,
+                           false,
+                           DumpSubchannel.Any,
+                           0,
+                           false,
+                           false,
+                           false,
+                           false,
+                           false,
+                           true,
+                           errorLog,
+                           false,
+                           64,
+                           true,
+                           true,
+                           false,
+                           10,
+                           true,
+                           1080);
 
         new Thread(DoWork).Start();
     }
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void DoWork()
     {
         _dumper.UpdateStatus         += UpdateStatus;
@@ -845,11 +935,10 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Progress2Visible = false;
     });
 
-    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = false;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void EndProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = false; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Text          = text;
@@ -859,16 +948,13 @@ public sealed class MediaDumpViewModel : ViewModelBase
         Progress2Value    = current;
     });
 
-    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress2Visible = true;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void InitProgress2() => await Dispatcher.UIThread.InvokeAsync(() => { Progress2Visible = true; });
 
-    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = false;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void EndProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = false; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
@@ -878,32 +964,34 @@ public sealed class MediaDumpViewModel : ViewModelBase
         ProgressValue    = current;
     });
 
-    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() =>
-    {
-        Progress1Visible = true;
-    });
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+    async void InitProgress() => await Dispatcher.UIThread.InvokeAsync(() => { Progress1Visible = true; });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void PulseProgress(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText          = text;
         ProgressIndeterminate = true;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void StoppingErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(async () =>
     {
         ErrorMessage(text);
 
-        await MessageBoxManager.GetMessageBoxStandardWindow("Error", $"{text}", ButtonEnum.Ok, Icon.Error).
-                                ShowDialog(_view);
+        await MessageBoxManager.GetMessageBoxStandard(UI.Title_Error, $"{text}", ButtonEnum.Ok, Icon.Error)
+                               .ShowWindowDialogAsync(_view);
 
         await WorkFinished();
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void ErrorMessage(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Log += text + Environment.NewLine;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateStatus(string text) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Log += text + Environment.NewLine;

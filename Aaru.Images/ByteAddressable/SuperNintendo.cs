@@ -1,5 +1,3 @@
-namespace Aaru.DiscImages.ByteAddressable;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -7,13 +5,17 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class SuperNintendo : IByteAddressableImage
 {
     byte[]    _data;
@@ -21,123 +23,138 @@ public class SuperNintendo : IByteAddressableImage
     Header    _header;
     ImageInfo _imageInfo;
     bool      _opened;
+
+#region IByteAddressableImage Members
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "Super Nintendo";
+    public string Name => Localization.SuperNintendo_Name;
 
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return false;
+        if(imageFilter == null) return false;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return false;
+        if(stream.Length % 32768 != 0) return false;
 
         // Too many false positives at bigger sizes
-        if(stream.Length > 16 * 1048576)
+        if(stream.Length > 16 * 1048576) return false;
+
+        // Check exact sizes, too many positives otherwise
+        if(stream.Length != 262144  &&
+           stream.Length != 524288  &&
+           stream.Length != 1048576 &&
+           stream.Length != 1572864 &&
+           stream.Length != 2097152 &&
+           stream.Length != 2621440 &&
+           stream.Length != 3145728 &&
+           stream.Length != 4194304 &&
+           stream.Length != 6291456 &&
+           stream.Length != 8388608)
             return false;
 
         Header header;
         var    headerBytes = new byte[48];
 
-        if(stream.Length > 0x40FFFF)
+        switch(stream.Length)
         {
-            stream.Position = 0x40FFB0;
+            case > 0x40FFFF:
+            {
+                stream.Position = 0x40FFB0;
 
-            stream.Read(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.EnsureRead(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((header.Mode & 0xF) == 0x5 ||
-               (header.Mode & 0xF) == 0xA)
-                return true;
+                if((header.Mode & 0xF) == 0x5 || (header.Mode & 0xF) == 0xA) return true;
+
+                break;
+            }
+            case > 0xFFFF:
+            {
+                stream.Position = 0xFFB0;
+
+                stream.EnsureRead(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                if((header.Mode & 0xF) == 0x1 || (header.Mode & 0xF) == 0xA) return true;
+
+                break;
+            }
+            case > 0x7FFF:
+                stream.Position = 0x7FB0;
+
+                stream.EnsureRead(headerBytes, 0, 48);
+                header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
         }
 
-        if(stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
-
-            stream.Read(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((header.Mode & 0xF) == 0x1 ||
-               (header.Mode & 0xF) == 0xA)
-                return true;
-        }
-
-        if(stream.Length <= 0x7FFF)
-            return false;
-
-        stream.Position = 0x7FB0;
-
-        stream.Read(headerBytes, 0, 48);
-        header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-        return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
+        return false;
     }
 
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        if(imageFilter == null)
-            return ErrorNumber.NoSuchFile;
+        if(imageFilter == null) return ErrorNumber.NoSuchFile;
 
         Stream stream = imageFilter.GetDataForkStream();
 
         // Not sure but seems to be a multiple of at least this
-        if(stream.Length % 32768 != 0)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length % 32768 != 0) return ErrorNumber.InvalidArgument;
 
         var found       = false;
         var headerBytes = new byte[48];
 
-        if(stream.Length > 0x40FFFF)
+        switch(stream.Length)
         {
-            stream.Position = 0x40FFB0;
+            case > 0x40FFFF:
+            {
+                stream.Position = 0x40FFB0;
 
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+                stream.EnsureRead(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
 
-            if((_header.Mode & 0xF) == 0x5 ||
-               (_header.Mode & 0xF) == 0xA)
-                found = true;
+                if((_header.Mode & 0xF) == 0x5 || (_header.Mode & 0xF) == 0xA) found = true;
+
+                break;
+            }
+            case > 0xFFFF:
+            {
+                stream.Position = 0xFFB0;
+
+                stream.EnsureRead(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                if((_header.Mode & 0xF) == 0x1 || (_header.Mode & 0xF) == 0xA) found = true;
+
+                break;
+            }
+            case > 0x7FFF:
+            {
+                stream.Position = 0x7FB0;
+
+                stream.EnsureRead(headerBytes, 0, 48);
+                _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+                if((_header.Mode & 0xF) == 0x0 || (_header.Mode & 0xF) == 0x2 || (_header.Mode & 0xF) == 0x3)
+                    found = true;
+
+                break;
+            }
         }
 
-        if(stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
-
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((_header.Mode & 0xF) == 0x1 ||
-               (_header.Mode & 0xF) == 0xA)
-                found = true;
-        }
-
-        if(stream.Length > 0x7FFF)
-        {
-            stream.Position = 0x7FB0;
-
-            stream.Read(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((_header.Mode & 0xF) == 0x0 ||
-               (_header.Mode & 0xF) == 0x2 ||
-               (_header.Mode & 0xF) == 0x3)
-                found = true;
-        }
-
-        if(!found)
-            return ErrorNumber.InvalidArgument;
+        if(!found) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
-        stream.Read(_data, 0, (int)imageFilter.DataForkLength);
+        stream.EnsureRead(_data, 0, (int)imageFilter.DataForkLength);
 
         Encoding encoding;
 
@@ -158,47 +175,49 @@ public class SuperNintendo : IByteAddressableImage
             MediaType            = _header.Region == 1 ? MediaType.SNESGamePakUS : MediaType.SNESGamePak,
             LastModificationTime = imageFilter.LastWriteTime,
             Sectors              = (ulong)imageFilter.DataForkLength,
-            XmlMediaType         = XmlMediaType.LinearMedia,
+            MetadataMediaType    = MetadataMediaType.LinearMedia,
             MediaTitle           = StringHandlers.SpacePaddedToString(_header.Title, encoding),
             MediaManufacturer    = DecodeManufacturer(_header.OldMakerCode, _header.MakerCode)
         };
 
         var sb = new StringBuilder();
 
-        sb.AppendFormat("Name: {0}", _imageInfo.MediaTitle).AppendLine();
-        sb.AppendFormat("Manufacturer: {0}", _imageInfo.MediaManufacturer).AppendLine();
-        sb.AppendFormat("Region: {0}", DecodeRegion(_header.Region)).AppendLine();
+        sb.AppendFormat(Localization.Name_0,         _imageInfo.MediaTitle).AppendLine();
+        sb.AppendFormat(Localization.Manufacturer_0, _imageInfo.MediaManufacturer).AppendLine();
+        sb.AppendFormat(Localization.Region_0,       DecodeRegion(_header.Region)).AppendLine();
+
+        if(_header.OldMakerCode == 0x33) sb.AppendFormat(Localization.Game_code_0, _header.GameCode).AppendLine();
+
+        sb.AppendFormat(Localization.Revision_0, _header.Revision).AppendLine();
 
         if(_header.OldMakerCode == 0x33)
-            sb.AppendFormat("Game code: {0}", _header.GameCode).AppendLine();
+            sb.AppendFormat(Localization.Special_revision_0, _header.SpecialVersion).AppendLine();
 
-        sb.AppendFormat("Revision: {0}", _header.Revision).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_0_X4,         _header.Checksum).AppendLine();
+        sb.AppendFormat(Localization.Header_checksum_complement_0, _header.ChecksumComplement).AppendLine();
 
-        if(_header.OldMakerCode == 0x33)
-            sb.AppendFormat("Special revision: {0}", _header.SpecialVersion).AppendLine();
-
-        sb.AppendFormat("Header checksum: 0x{0:X4}", _header.Checksum).AppendLine();
-        sb.AppendFormat("Header checksum complement: 0x{0:X4}", _header.ChecksumComplement).AppendLine();
-
-        sb.AppendFormat("ROM size: {0} bytes", (1 << _header.RomSize) * 1024).AppendLine();
+        sb.AppendFormat(Localization.ROM_size_0_bytes, (1 << _header.RomSize) * 1024).AppendLine();
 
         if(_header.RamSize > 0)
-            sb.AppendFormat("RAM size: {0} bytes", (1 << _header.RamSize) * 1024).AppendLine();
+            sb.AppendFormat(Localization.RAM_size_0_bytes, (1 << _header.RamSize) * 1024).AppendLine();
 
         if(_header.OldMakerCode == 0x33)
         {
             if(_header.ExpansionFlashSize > 0)
-                sb.AppendFormat("Flash size: {0} bytes", (1 << _header.ExpansionFlashSize) * 1024).AppendLine();
+                sb.AppendFormat(Localization.Flash_size_0_bytes, (1 << _header.ExpansionFlashSize) * 1024).AppendLine();
 
             if(_header.ExpansionRamSize > 0)
-                sb.AppendFormat("Expansion RAM size: {0} bytes", (1 << _header.ExpansionRamSize) * 1024).AppendLine();
+            {
+                sb.AppendFormat(Localization.Expansion_RAM_size_0_bytes, (1 << _header.ExpansionRamSize) * 1024)
+                  .AppendLine();
+            }
         }
 
-        sb.AppendFormat("Cartridge type: {0}", DecodeCartType(_header.Mode)).AppendLine();
-        sb.AppendFormat("ROM speed: {0}", DecodeRomSpeed(_header.Mode)).AppendLine();
-        sb.AppendFormat("Bank size: {0} bytes", DecodeBankSize(_header.Mode)).AppendLine();
-        sb.AppendFormat("Cartridge chip set: {0}", DecodeChipset(_header.Chipset)).AppendLine();
-        sb.AppendFormat("Coprocessor: {0}", DecodeCoprocessor(_header.Chipset, _header.Subtype)).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_type_0, DecodeCartType(_header.Mode)).AppendLine();
+        sb.AppendFormat(Localization.ROM_speed_0, DecodeRomSpeed(_header.Mode)).AppendLine();
+        sb.AppendFormat(Localization.Bank_size_0_bytes, DecodeBankSize(_header.Mode)).AppendLine();
+        sb.AppendFormat(Localization.Cartridge_chip_set_0, DecodeChipset(_header.Chipset)).AppendLine();
+        sb.AppendFormat(Localization.Coprocessor_0, DecodeCoprocessor(_header.Chipset, _header.Subtype)).AppendLine();
 
         _imageInfo.Comments = sb.ToString();
         _opened             = true;
@@ -208,53 +227,64 @@ public class SuperNintendo : IByteAddressableImage
 
     /// <inheritdoc />
     public Guid Id => new("DF861EB0-8B9B-4E3F-BF39-9F2E75668F80");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
     public string Format => "Super Nintendo Cartridge Dump";
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
         ".sfc"
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => Array.Empty<MediaTagType>();
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
         MediaType.SNESGamePak, MediaType.SNESGamePakUS
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => Array.Empty<SectorTagType>();
 
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
+                       uint   sectorSize) => Create(path, mediaType, options, (long)sectors) == ErrorNumber.NoError;
 
     /// <inheritdoc />
     public bool Close()
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return false;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -270,13 +300,13 @@ public class SuperNintendo : IByteAddressableImage
     }
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public long Position { get; set; }
@@ -286,15 +316,14 @@ public class SuperNintendo : IByteAddressableImage
     {
         if(_opened)
         {
-            ErrorMessage = "Cannot create an opened image";
+            ErrorMessage = Localization.Cannot_create_an_opened_image;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(mediaType != MediaType.SNESGamePak &&
-           mediaType != MediaType.SNESGamePakUS)
+        if(mediaType != MediaType.SNESGamePak && mediaType != MediaType.SNESGamePakUS)
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return ErrorNumber.NotSupported;
         }
@@ -309,9 +338,10 @@ public class SuperNintendo : IByteAddressableImage
         {
             _dataStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return ErrorNumber.InOutError;
         }
@@ -331,7 +361,7 @@ public class SuperNintendo : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
@@ -339,23 +369,22 @@ public class SuperNintendo : IByteAddressableImage
         int chipset = _header.Chipset & 0xF;
 
         bool hasRam      = _header.RamSize > 0;
-        bool hasExtraRam = _header.OldMakerCode == 0x33 && _header.ExpansionRamSize   > 0;
-        bool hasFlash    = _header.OldMakerCode == 0x33 && _header.ExpansionFlashSize > 0;
+        bool hasExtraRam = _header is { OldMakerCode: 0x33, ExpansionRamSize  : > 0 };
+        bool hasFlash    = _header is { OldMakerCode: 0x33, ExpansionFlashSize: > 0 };
         bool hasBattery  = chipset is 2 or 5 or 6 or 9 or 0xA;
 
         var devices = 1;
 
-        if(hasRam)
-            devices++;
+        if(hasRam) devices++;
 
-        if(hasExtraRam)
-            devices++;
+        if(hasExtraRam) devices++;
 
-        if(hasFlash)
-            devices++;
+        if(hasFlash) devices++;
 
-        mappings         = new LinearMemoryMap();
-        mappings.Devices = new LinearMemoryDevice[devices];
+        mappings = new LinearMemoryMap
+        {
+            Devices = new LinearMemoryDevice[devices]
+        };
 
         mappings.Devices[0] = new LinearMemoryDevice
         {
@@ -403,6 +432,7 @@ public class SuperNintendo : IByteAddressableImage
         }
 
         if(hasFlash)
+        {
             mappings.Devices[pos] = new LinearMemoryDevice
             {
                 Type = LinearMemoryType.NOR,
@@ -412,6 +442,7 @@ public class SuperNintendo : IByteAddressableImage
                     Length = (ulong)(1 << _header.ExpansionRamSize) * 1024
                 }
             };
+        }
 
         return ErrorNumber.NoError;
     }
@@ -426,22 +457,21 @@ public class SuperNintendo : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         b = _data[position];
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
@@ -458,35 +488,32 @@ public class SuperNintendo : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToRead > buffer.Length)
-            bytesRead = buffer.Length - offset;
+        if(offset + bytesToRead > buffer.Length) bytesRead = buffer.Length - offset;
 
-        if(position + bytesToRead > _data.Length)
-            bytesToRead = (int)(_data.Length - position);
+        if(position + bytesToRead > _data.Length) bytesToRead = (int)(_data.Length - position);
 
         Array.Copy(_data, position, buffer, offset, bytesToRead);
 
-        if(advance)
-            Position = position + bytesToRead;
+        if(advance) Position = position + bytesToRead;
 
         bytesRead = bytesToRead;
 
@@ -498,14 +525,14 @@ public class SuperNintendo : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
@@ -517,6 +544,7 @@ public class SuperNintendo : IByteAddressableImage
 
         // Sanitize
         foreach(LinearMemoryDevice map in mappings.Devices)
+        {
             switch(map.Type)
             {
                 case LinearMemoryType.ROM when !foundRom:
@@ -544,8 +572,10 @@ public class SuperNintendo : IByteAddressableImage
                     foundFlash = true;
 
                     break;
-                default: return ErrorNumber.InvalidArgument;
+                default:
+                    return ErrorNumber.InvalidArgument;
             }
+        }
 
         // Cannot save in this image format anyway
         return foundRom ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
@@ -559,36 +589,35 @@ public class SuperNintendo : IByteAddressableImage
     {
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         _data[position] = b;
 
-        if(advance)
-            Position = position + 1;
+        if(advance) Position = position + 1;
 
         return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
     public ErrorNumber WriteBytes(byte[] buffer, int offset, int bytesToWrite, out int bytesWritten,
-                                  bool advance = true) =>
+                                  bool   advance = true) =>
         WriteBytesAt(Position, buffer, offset, bytesToWrite, out bytesWritten, advance);
 
     /// <inheritdoc />
@@ -599,52 +628,50 @@ public class SuperNintendo : IByteAddressableImage
 
         if(!_opened)
         {
-            ErrorMessage = "Not image has been opened.";
+            ErrorMessage = Localization.No_image_has_been_opened;
 
             return ErrorNumber.NotOpened;
         }
 
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing.";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return ErrorNumber.ReadOnly;
         }
 
         if(position >= _data.Length)
         {
-            ErrorMessage = "The requested position is out of range.";
+            ErrorMessage = Localization.The_requested_position_is_out_of_range;
 
             return ErrorNumber.OutOfRange;
         }
 
         if(buffer is null)
         {
-            ErrorMessage = "Buffer must not be null.";
+            ErrorMessage = Localization.Buffer_must_not_be_null;
 
             return ErrorNumber.InvalidArgument;
         }
 
-        if(offset + bytesToWrite > buffer.Length)
-            bytesToWrite = buffer.Length - offset;
+        if(offset + bytesToWrite > buffer.Length) bytesToWrite = buffer.Length - offset;
 
-        if(position + bytesToWrite > _data.Length)
-            bytesToWrite = (int)(_data.Length - position);
+        if(position + bytesToWrite > _data.Length) bytesToWrite = (int)(_data.Length - position);
 
         Array.Copy(buffer, offset, _data, position, bytesToWrite);
 
-        if(advance)
-            Position = position + bytesToWrite;
+        if(advance) Position = position + bytesToWrite;
 
         bytesWritten = bytesToWrite;
 
         return ErrorNumber.NoError;
     }
 
+#endregion
+
     static string DecodeCoprocessor(byte chipset, byte subtype)
     {
-        if((chipset & 0xF) < 3)
-            return "None";
+        if((chipset & 0xF) < 3) return Localization.None_coprocessor;
 
         return ((chipset & 0xF0) >> 4) switch
                {
@@ -654,104 +681,98 @@ public class SuperNintendo : IByteAddressableImage
                    3   => "SA-1",
                    4   => "S-DD1",
                    5   => "S-RTC",
-                   0xE => "Other",
+                   0xE => Localization.Other_coprocessor,
                    0xF => subtype switch
                           {
                               0    => "SPC7110",
                               1    => "ST010/ST011",
                               2    => "ST018",
                               0x10 => "CX4",
-                              _    => "Unknown"
+                              _    => Localization.Unknown_coprocessor
                           },
-                   _ => "Unknown"
+                   _ => Localization.Unknown_coprocessor
                };
     }
 
     static string DecodeChipset(byte chipset)
     {
-        switch(chipset & 0xF)
-        {
-            case 0:                            return "ROM";
-            case 1:                            return "ROM and RAM";
-            case 2 when (chipset & 0xF0) == 0: return "ROM, RAM and battery";
-            case 3:                            return "ROM and coprocessor";
-            case 4:                            return "ROM, RAM and coprocessor";
-            case 2:
-            case 5: return "ROM, RAM, battery and coprocessor";
-            case 6:   return "ROM, battery and coprocessor";
-            case 9:   return "ROM, RAM, battery, coprocessor and RTC";
-            case 0xA: return "ROM, RAM, battery and coprocessor";
-            default:  return "Unknown";
-        }
+        return (chipset & 0xF) switch
+               {
+                   0                            => Localization.ROM,
+                   1                            => Localization.ROM_and_RAM,
+                   2 when (chipset & 0xF0) == 0 => Localization.ROM_RAM_and_battery,
+                   3                            => Localization.ROM_and_coprocessor,
+                   4                            => Localization.ROM_RAM_and_coprocessor,
+                   2 or 5                       => Localization.ROM_RAM_battery_and_coprocessor,
+                   6                            => Localization.ROM_battery_and_coprocessor,
+                   9                            => Localization.ROM_RAM_battery_coprocessor_and_RTC,
+                   0xA                          => Localization.ROM_RAM_battery_and_coprocessor,
+                   _                            => Localization.Unknown_chipset
+               };
     }
 
     static int DecodeBankSize(byte mode)
     {
-        switch(mode & 0xF)
-        {
-            case 0:
-            case 2:
-            case 3: return 32768;
-            case 1:
-            case 5:
-            case 0xA: return 65536;
-            default: return 0;
-        }
+        return (mode & 0xF) switch
+               {
+                   0 or 2 or 3   => 32768,
+                   1 or 5 or 0xA => 65536,
+                   _             => 0
+               };
     }
 
     static string DecodeRomSpeed(byte mode) => (mode & 0x10) == 0x10 ? "Fast (120ns)" : "Slow (200ns)";
 
     static string DecodeCartType(byte mode)
     {
-        switch(mode & 0xF)
-        {
-            case 0:
-            case 2:
-            case 3: return "LoROM";
-            case 1:
-            case 0xA: return "HiROM";
-            case 5:  return "ExHiROM";
-            default: return "Unknown";
-        }
+        return (mode & 0xF) switch
+               {
+                   0 or 2 or 3 => "LoROM",
+                   1 or 0xA    => "HiROM",
+                   5           => "ExHiROM",
+                   _           => Localization.Unknown_licensee
+               };
     }
 
     static string DecodeRegion(byte headerRegion) => headerRegion switch
                                                      {
-                                                         0  => "Japan",
-                                                         1  => "USA and Canada",
-                                                         2  => "Europe, Oceania, Asia",
-                                                         3  => "Sweden/Scandinavia",
-                                                         4  => "Finland",
-                                                         5  => "Denmark",
-                                                         6  => "France",
-                                                         7  => "Netherlands",
-                                                         8  => "Spain",
-                                                         9  => "Germany, Austria, Switzerland",
-                                                         10 => "Italy",
-                                                         11 => "China, Hong Kong",
-                                                         12 => "Indonesia",
-                                                         13 => "South Korea",
-                                                         15 => "Canada",
-                                                         16 => "Brazil",
-                                                         17 => "Australia",
-                                                         _  => "Unknown"
+                                                         0  => Localization.Japan,
+                                                         1  => Localization.USA_and_Canada,
+                                                         2  => Localization.Europe_Oceania_Asia,
+                                                         3  => Localization.Sweden_Scandinavia,
+                                                         4  => Localization.Finland,
+                                                         5  => Localization.Denmark,
+                                                         6  => Localization.France,
+                                                         7  => Localization.Netherlands,
+                                                         8  => Localization.Spain,
+                                                         9  => Localization.Germany_Austria_Switzerland,
+                                                         10 => Localization.Italy,
+                                                         11 => Localization.China_Hong_Kong,
+                                                         12 => Localization.Indonesia,
+                                                         13 => Localization.South_Korea,
+                                                         15 => Localization.Canada,
+                                                         16 => Localization.Brazil,
+                                                         17 => Localization.Australia,
+                                                         _  => Localization.Unknown_licensee
                                                      };
 
     static string DecodeManufacturer(byte oldMakerCode, string makerCode)
     {
         // TODO: Add full table
-        if(oldMakerCode != 0x33)
-            makerCode = $"{(oldMakerCode >> 4) * 36 + (oldMakerCode & 0x0f)}";
+        if(oldMakerCode != 0x33) makerCode = $"{(oldMakerCode >> 4) * 36 + (oldMakerCode & 0x0f)}";
 
         return makerCode switch
                {
                    "01" => "Nintendo",
-                   _    => "Unknown"
+                   _    => Localization.Unknown_manufacturer
                };
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1), SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local"),
-     SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+#region Nested type: Header
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
     struct Header
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 2)]
@@ -776,4 +797,6 @@ public class SuperNintendo : IByteAddressableImage
         public ushort ChecksumComplement;
         public ushort Checksum;
     }
+
+#endregion
 }

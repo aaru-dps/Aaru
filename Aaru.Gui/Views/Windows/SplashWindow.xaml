@@ -28,15 +28,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.SplashWindow" Icon="/Assets/aaru-logo.png" Title="Aaru"
-        HasSystemDecorations="False">
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.SplashWindow"
+        Icon="/Assets/aaru-logo.png"
+        Title="Aaru"
+        SystemDecorations="BorderOnly">
     <Design.DataContext>
         <windows:SplashWindowViewModel />
     </Design.DataContext>
@@ -44,9 +50,19 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" /> <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Image Source="/Assets/aaru-logo.png" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="0" />
-        <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
-        <ProgressBar Maximum="{Binding MaxProgress}" Minimum="0" Value="{Binding CurrentProgress}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2" />
+        <Image Source="/Assets/aaru-logo.png"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               Grid.Row="0" />
+        <TextBlock Text="{Binding Message}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Grid.Row="1" />
+        <ProgressBar Maximum="{Binding MaxProgress}"
+                     Minimum="0"
+                     Value="{Binding CurrentProgress}"
+                     HorizontalAlignment="Stretch"
+                     VerticalAlignment="Bottom"
+                     Grid.Row="2" />
     </Grid>
 </Window>

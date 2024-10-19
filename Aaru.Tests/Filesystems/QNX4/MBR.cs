@@ -23,28 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.QNX4;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class MBR : FilesystemTest
-{
-    public MBR() : base("QNX4 filesystem") {}
+namespace Aaru.Tests.Filesystems.QNX4;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem (MBR)");
-    public override IFilesystem Plugin => new QNX4();
+[TestFixture]
+public class MBR() : FilesystemTest("qnx4")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem (MBR)");
+    public override IFilesystem Plugin => new Aaru.Filesystems.QNX4();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "qnx_4.24.aif",
@@ -54,5 +51,5 @@ public class MBR : FilesystemTest
             Clusters    = 1023104,
             ClusterSize = 512
         }
-    };
+    ];
 }

@@ -27,14 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices;
-
-using System;
 using Aaru.Console;
 using Aaru.Decoders.ATA;
+
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -54,12 +55,19 @@ public partial class Device
             Command = (byte)AtaCommands.ReadBuffer
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ BUFFER took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_BUFFER_took_0_ms, duration);
 
         return sense;
     }
@@ -80,12 +88,19 @@ public partial class Device
             Command = (byte)AtaCommands.ReadBufferDma
         };
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.Dma,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ BUFFER DMA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_BUFFER_DMA_took_0_ms, duration);
 
         return sense;
     }
@@ -98,8 +113,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
-                        uint timeout, out double duration) =>
+    public bool ReadDma(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
+                        uint       timeout, out double                 duration) =>
         ReadDma(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
 
     /// <summary>Reads sectors using 48-bit addressing and DMA transfer</summary>
@@ -112,7 +127,7 @@ public partial class Device
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool retry, uint lba, byte count,
-                        uint timeout, out double duration)
+                        uint       timeout, out double duration)
     {
         buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
 
@@ -128,12 +143,19 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.Dma, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.Dma,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ DMA took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_DMA_took_0_ms, duration);
 
         return sense;
     }
@@ -149,8 +171,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadMultiple(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
-                             uint timeout, out double duration)
+    public bool ReadMultiple(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
+                             uint       timeout, out double                 duration)
     {
         buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
 
@@ -166,12 +188,19 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_MULTIPLE_took_0_ms, duration);
 
         return sense;
     }
@@ -182,11 +211,11 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadNativeMaxAddress(out uint lba, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
+    public bool ReadNativeMaxAddress(out uint   lba, out AtaErrorRegistersLba28 statusRegisters, uint timeout,
                                      out double duration)
     {
         lba = 0;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersLba28
         {
@@ -195,8 +224,15 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
@@ -209,7 +245,7 @@ public partial class Device
             lba += statusRegisters.LbaLow;
         }
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ NATIVE MAX ADDRESS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_NATIVE_MAX_ADDRESS_took_0_ms, duration);
 
         return sense;
     }
@@ -235,8 +271,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool Read(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool retry, uint lba, byte count,
-                     uint timeout, out double duration)
+    public bool Read(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, bool retry, uint lba, byte count,
+                     uint       timeout, out double                 duration)
     {
         buffer = count == 0 ? new byte[512 * 256] : new byte[512 * count];
 
@@ -252,12 +288,19 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_SECTORS_took_0_ms, duration);
 
         return sense;
     }
@@ -270,8 +313,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, uint lba, uint blockSize,
-                         uint timeout, out double duration) =>
+    public bool ReadLong(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, uint blockSize,
+                         uint       timeout, out double                 duration) =>
         ReadLong(out buffer, out statusRegisters, true, lba, blockSize, timeout, out duration);
 
     /// <summary>Reads a long sector using 28-bit addressing and PIO transfer, retrying on error</summary>
@@ -283,8 +326,8 @@ public partial class Device
     /// <param name="timeout">Timeout to wait for command execution</param>
     /// <param name="duration">Time the device took to execute the command in milliseconds</param>
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
-    public bool ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool retry, uint lba,
-                         uint blockSize, uint timeout, out double duration)
+    public bool ReadLong(out byte[] buffer,    out AtaErrorRegistersLba28 statusRegisters, bool       retry, uint lba,
+                         uint       blockSize, uint                       timeout,         out double duration)
     {
         buffer = new byte[blockSize];
 
@@ -300,12 +343,19 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.PioIn, AtaTransferRegister.SectorCount,
-                                   ref buffer, timeout, true, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.PioIn,
+                                   AtaTransferRegister.SectorCount,
+                                   ref buffer,
+                                   timeout,
+                                   true,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.READ_LONG_took_0_ms, duration);
 
         return sense;
     }
@@ -318,7 +368,7 @@ public partial class Device
     /// <returns><c>true</c> if the device set an error condition, <c>false</c> otherwise</returns>
     public bool Seek(out AtaErrorRegistersLba28 statusRegisters, uint lba, uint timeout, out double duration)
     {
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         var registers = new AtaRegistersLba28
         {
@@ -331,12 +381,19 @@ public partial class Device
 
         registers.DeviceHead += 0x40;
 
-        LastError = SendAtaCommand(registers, out statusRegisters, AtaProtocol.NonData, AtaTransferRegister.NoTransfer,
-                                   ref buffer, timeout, false, out duration, out bool sense);
+        LastError = SendAtaCommand(registers,
+                                   out statusRegisters,
+                                   AtaProtocol.NonData,
+                                   AtaTransferRegister.NoTransfer,
+                                   ref buffer,
+                                   timeout,
+                                   false,
+                                   out duration,
+                                   out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(ATA_MODULE_NAME, Localization.SEEK_took_0_ms, duration);
 
         return sense;
     }

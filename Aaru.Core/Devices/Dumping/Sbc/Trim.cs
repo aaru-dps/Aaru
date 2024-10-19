@@ -21,20 +21,18 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -43,18 +41,18 @@ partial class Dump
     /// <param name="extents">Correctly dump extents</param>
     /// <param name="currentTry">Resume information</param>
     /// <param name="blankExtents">Blank extents</param>
-    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardwareType currentTry, ExtentsULong blankExtents)
+    void TrimSbcData(Reader scsiReader, ExtentsULong extents, DumpHardware currentTry, ExtentsULong blankExtents)
     {
         ulong[] tmpArray = _resume.BadBlocks.ToArray();
         bool    sense;
         bool    recoveredError;
         bool    blankCheck;
         byte[]  buffer;
-        var     newBlank     = false;
+        var     newBlank = false;
 
         if(_outputPlugin is not IWritableImage outputFormat)
         {
-            StoppingErrorMessage?.Invoke("Image is not writable, aborting...");
+            StoppingErrorMessage?.Invoke(Localization.Core.Image_is_not_writable_aborting);
 
             return;
         }
@@ -64,13 +62,13 @@ partial class Dump
             if(_aborted)
             {
                 currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                UpdateStatus?.Invoke("Aborted!");
-                _dumpLog.WriteLine("Aborted!");
+                UpdateStatus?.Invoke(Localization.Core.Aborted);
+                _dumpLog.WriteLine(Localization.Core.Aborted);
 
                 break;
             }
 
-            PulseProgress?.Invoke($"Trimming sector {badSector}");
+            PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
             sense = scsiReader.ReadBlock(out buffer, badSector, out double _, out recoveredError, out blankCheck);
 
@@ -80,22 +78,20 @@ partial class Dump
                 newBlank = true;
                 _resume.BadBlocks.Remove(badSector);
 
-                UpdateStatus?.Invoke($"Found blank block {badSector}.");
-                _dumpLog.WriteLine("Found blank block {0}.", badSector);
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Found_blank_block_0, badSector));
+                _dumpLog.WriteLine(Localization.Core.Found_blank_block_0, badSector);
 
                 continue;
             }
 
-            if((sense || _dev.Error) &&
-               !recoveredError)
-                continue;
+            if((sense || _dev.Error) && !recoveredError) continue;
 
             _resume.BadBlocks.Remove(badSector);
             extents.Add(badSector);
             outputFormat.WriteSector(buffer, badSector);
+            _mediaGraph?.PaintSectorGood(badSector);
         }
 
-        if(newBlank)
-            _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+        if(newBlank) _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
     }
 }

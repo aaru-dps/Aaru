@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Aaru.Console</RootNamespace>
+    <AssemblyName>Aaru.Console</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2024 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru.Console</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Description>Contains console implementation used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru.Console</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageReference Include="Text.Analyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+</Project>

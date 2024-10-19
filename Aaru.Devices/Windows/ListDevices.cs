@@ -27,22 +27,23 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices.Windows;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management;
+using System.Runtime.Versioning;
 using System.Text;
 using Aaru.Helpers;
 using Microsoft.Win32.SafeHandles;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
-[System.Runtime.Versioning.SupportedOSPlatform("windows")]
+namespace Aaru.Devices.Windows;
+
+[SupportedOSPlatform("windows")]
 static class ListDevices
 {
     /// <summary>Converts a hex dump string to the ASCII string it represents</summary>
@@ -86,32 +87,33 @@ static class ListDevices
         }
         catch(Exception)
         {
-        #if DEBUG
+#if DEBUG
             throw;
-        #else
+#else
                 return null;
-        #endif
+#endif
         }
 
         var devList = new List<DeviceInfo>();
 
         foreach(string devId in deviceIDs)
         {
-            if(devId is null)
-                continue;
+            if(devId is null) continue;
 
             string physId = devId;
 
             // TODO: This can be done better
-            if(devId.Length == 2 &&
-               devId[1]     == ':')
-                physId = "\\\\?\\" + devId;
+            if(devId.Length == 2 && devId[1] == ':') physId = "\\\\?\\" + devId;
 
-            SafeFileHandle fd = Extern.CreateFile(physId, 0, FileShare.Read | FileShare.Write, IntPtr.Zero,
-                                                  FileMode.OpenExisting, 0, IntPtr.Zero);
+            SafeFileHandle fd = Extern.CreateFile(physId,
+                                                  0,
+                                                  FileShare.Read | FileShare.Write,
+                                                  IntPtr.Zero,
+                                                  FileMode.OpenExisting,
+                                                  0,
+                                                  IntPtr.Zero);
 
-            if(fd.IsInvalid)
-                continue;
+            if(fd.IsInvalid) continue;
 
             var query = new StoragePropertyQuery
             {
@@ -129,17 +131,20 @@ static class ListDevices
             uint returned = 0;
             var  error    = 0;
 
-            bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty, ref query,
-                                                                (uint)Marshal.SizeOf(query), descriptorPtr, 1000,
-                                                                ref returned, IntPtr.Zero);
+            bool hasError = !Extern.DeviceIoControlStorageQuery(fd,
+                                                                WindowsIoctl.IoctlStorageQueryProperty,
+                                                                ref query,
+                                                                (uint)Marshal.SizeOf(query),
+                                                                descriptorPtr,
+                                                                1000,
+                                                                ref returned,
+                                                                IntPtr.Zero);
 
-            if(hasError)
-                error = Marshal.GetLastWin32Error();
+            if(hasError) error = Marshal.GetLastWin32Error();
 
             Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
-            if(hasError && error != 0)
-                continue;
+            if(hasError && error != 0) continue;
 
             var descriptor = new StorageDeviceDescriptor
             {
@@ -181,36 +186,33 @@ static class ListDevices
                     info.Serial = HexStringToString(info.Serial).Trim();
             }
 
-            if(string.IsNullOrEmpty(info.Vendor) ||
-               info.Vendor == "ATA")
+            if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
             {
                 string[] pieces = info.Model?.Split(' ');
 
                 if(pieces?.Length > 1)
                 {
                     info.Vendor = pieces[0];
-                    info.Model  = info.Model.Substring(pieces[0].Length + 1);
+                    info.Model  = info.Model[(pieces[0].Length + 1)..];
                 }
             }
 
-            switch(descriptor.BusType)
-            {
-                case StorageBusType.SCSI:
-                case StorageBusType.ATAPI:
-                case StorageBusType.ATA:
-                case StorageBusType.FireWire:
-                case StorageBusType.SSA:
-                case StorageBusType.Fibre:
-                case StorageBusType.USB:
-                case StorageBusType.iSCSI:
-                case StorageBusType.SAS:
-                case StorageBusType.SATA:
-                case StorageBusType.SecureDigital:
-                case StorageBusType.MultiMediaCard:
-                    info.Supported = true;
-
-                    break;
-            }
+            info.Supported = descriptor.BusType switch
+                             {
+                                 StorageBusType.SCSI
+                                  or StorageBusType.ATAPI
+                                  or StorageBusType.ATA
+                                  or StorageBusType.FireWire
+                                  or StorageBusType.SSA
+                                  or StorageBusType.Fibre
+                                  or StorageBusType.USB
+                                  or StorageBusType.iSCSI
+                                  or StorageBusType.SAS
+                                  or StorageBusType.SATA
+                                  or StorageBusType.SecureDigital
+                                  or StorageBusType.MultiMediaCard => true,
+                                 _ => info.Supported
+                             };
 
             Marshal.FreeHGlobal(descriptorPtr);
             devList.Add(info);

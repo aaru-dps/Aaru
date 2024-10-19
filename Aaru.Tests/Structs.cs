@@ -1,9 +1,9 @@
-namespace Aaru.Tests;
-
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Tests;
 
 /// <summary>Class to define expected data when testing media info</summary>
 public class MediaInfoTest
@@ -72,8 +72,8 @@ public class OpticalImageTestExpected : BlockImageTestExpected
 
 public class TapeImageTestExpected : BlockImageTestExpected
 {
-    public TapeFile[]      Files;
-    public TapePartition[] Partitions;
+    public     TapeFile[]      Files;
+    public new TapePartition[] Partitions;
 }
 
 public class PartitionTest
@@ -111,7 +111,6 @@ public class VolumeData
 
 public class BlockPartitionVolumes
 {
-    public ulong        Length;
-    public ulong        Start;
-    public VolumeData[] Volumes;
+    public ulong Length;
+    public ulong Start;
 }

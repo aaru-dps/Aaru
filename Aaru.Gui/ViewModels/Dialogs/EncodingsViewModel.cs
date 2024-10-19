@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Dialogs;
 
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -39,8 +37,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Aaru.Gui.Models;
 using Aaru.Gui.Views.Dialogs;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Dialogs;
 
 public sealed class EncodingsViewModel : ViewModelBase
 {
@@ -49,32 +50,39 @@ public sealed class EncodingsViewModel : ViewModelBase
     public EncodingsViewModel(Encodings view)
     {
         _view        = view;
-        Encodings    = new ObservableCollection<EncodingModel>();
+        Encodings    = [];
         CloseCommand = ReactiveCommand.Create(ExecuteCloseCommand);
 
         Task.Run(() =>
         {
-            var encodings = Encoding.GetEncodings().Select(info => new EncodingModel
-            {
-                Name        = info.Name,
-                DisplayName = info.GetEncoding().EncodingName
-            }).ToList();
+            var encodings = Encoding.GetEncodings()
+                                    .Select(info => new EncodingModel
+                                     {
+                                         Name        = info.Name,
+                                         DisplayName = info.GetEncoding().EncodingName
+                                     })
+                                    .ToList();
 
-            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new EncodingModel
-            {
-                Name        = info.Name,
-                DisplayName = info.DisplayName
-            }));
+            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
+                                      .Select(info => new EncodingModel
+                                       {
+                                           Name        = info.Name,
+                                           DisplayName = info.DisplayName
+                                       }));
 
-            foreach(EncodingModel encoding in encodings.OrderBy(t => t.DisplayName))
-                Encodings.Add(encoding);
+            foreach(EncodingModel encoding in encodings.OrderBy(t => t.DisplayName)) Encodings.Add(encoding);
         });
     }
 
     [NotNull]
-    public string Title => "Encodings";
+    public string Title => UI.Encodings;
+
     [NotNull]
-    public string CloseLabel => "Close";
+    public string CloseLabel => UI.ButtonLabel_Close;
+
+    public string CodeLabel => UI.Title_Code_for_encoding;
+    public string NameLabel => UI.Title_Name;
+
     public ReactiveCommand<Unit, Unit>         CloseCommand { get; }
     public ObservableCollection<EncodingModel> Encodings    { get; }
 

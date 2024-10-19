@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -39,6 +37,8 @@ using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.Partitions;
 
 // This is the most stupid or the most intelligent partition scheme ever done, pick or take
 // At sector 1 from offset, text resides (yes, TEXT) in following format:
@@ -49,35 +49,36 @@ using Aaru.Helpers;
 /// <summary>Implements decoding of Plan-9 partitions</summary>
 public sealed class Plan9 : IPartition
 {
+#region IPartition Members
+
     /// <inheritdoc />
-    public string Name => "Plan9 partition table";
+    public string Name => Localization.Plan9_Name;
+
     /// <inheritdoc />
     public Guid Id => new("F0BF4FFC-056E-4E7C-8B65-4EAEE250ADD9");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
-        if(sectorOffset + 2 >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + 2 >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset + 1, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         // While all of Plan9 is supposedly UTF-8, it uses ASCII strcmp for reading its partition table
         string[] really = StringHandlers.CToString(sector).Split('\n');
 
-        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part.Substring(0, 5) == "part ").
-                                          Select(part => part.Split(' ')).TakeWhile(tokens => tokens.Length == 4))
+        foreach(string[] tokens in really.TakeWhile(part => part.Length >= 5 && part[..5] == "part ")
+                                         .Select(part => part.Split(' '))
+                                         .TakeWhile(tokens => tokens.Length == 4))
         {
-            if(!ulong.TryParse(tokens[2], out ulong start) ||
-               !ulong.TryParse(tokens[3], out ulong end))
-                break;
+            if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
 
             var part = new Partition
             {
@@ -95,4 +96,6 @@ public sealed class Plan9 : IPartition
 
         return partitions.Count > 0;
     }
+
+#endregion
 }

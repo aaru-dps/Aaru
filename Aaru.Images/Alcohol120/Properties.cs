@@ -27,21 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public OpticalImageCapabilities OpticalCapabilities => OpticalImageCapabilities.CanStoreAudioTracks  |
                                                            OpticalImageCapabilities.CanStoreDataTracks   |
@@ -55,14 +58,20 @@ public sealed partial class Alcohol120
                                                            OpticalImageCapabilities.CanStoreRawData    |
                                                            OpticalImageCapabilities.CanStoreCookedData |
                                                            OpticalImageCapabilities.CanStoreMultipleTracks;
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
-    public string Name => "Alcohol 120% Media Descriptor Structure";
+    public string Name => Localization.Alcohol120_Name;
+
     /// <inheritdoc />
     public Guid Id => new("A78FBEBA-0307-4915-BDE3-B8A3B57F843F");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public string Format => "Alcohol 120% Media Descriptor Structure";
@@ -75,11 +84,9 @@ public sealed partial class Alcohol120
     {
         get
         {
-            if(_writingTracks != null &&
-               _alcTracks     == null)
-                return _writingTracks;
+            if(_writingTracks != null && _alcTracks == null) return _writingTracks;
 
-            List<CommonTypes.Structs.Track> tracks = new();
+            List<CommonTypes.Structs.Track> tracks = [];
             _alcTracks ??= new Dictionary<int, Track>();
 
             foreach(Track alcTrack in _alcTracks.Values)
@@ -89,8 +96,7 @@ public sealed partial class Alcohol120
                      where alcTrack.point >= session.StartTrack && alcTrack.point <= session.EndTrack
                      select session.Sequence).FirstOrDefault();
 
-                if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra))
-                    continue;
+                if(!_alcTrackExtras.TryGetValue(alcTrack.point, out TrackExtra alcExtra)) continue;
 
                 var aaruTrack = new CommonTypes.Structs.Track
                 {
@@ -108,13 +114,11 @@ public sealed partial class Alcohol120
                     BytesPerSector    = TrackModeToCookedBytesPerSector(alcTrack.mode)
                 };
 
-                if(alcExtra.pregap > 0)
-                    aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
+                if(alcExtra.pregap > 0) aaruTrack.Indexes.Add(0, (int)(alcTrack.startLba - alcExtra.pregap));
 
                 aaruTrack.Indexes.Add(1, (int)alcTrack.startLba);
 
-                if(aaruTrack.Indexes.ContainsKey(0) &&
-                   aaruTrack.Indexes[0] >= 0)
+                if(aaruTrack.Indexes.ContainsKey(0) && aaruTrack.Indexes[0] >= 0)
                     aaruTrack.StartSector = (ulong)aaruTrack.Indexes[0];
 
                 switch(alcTrack.subMode)
@@ -132,9 +136,7 @@ public sealed partial class Alcohol120
                         break;
                 }
 
-                if(_header.type != MediumType.CD  &&
-                   _header.type != MediumType.CDR &&
-                   _header.type != MediumType.CDRW)
+                if(_header.type != MediumType.CD && _header.type != MediumType.CDR && _header.type != MediumType.CDRW)
                 {
                     aaruTrack.Pregap = 0;
                     aaruTrack.Indexes?.Clear();
@@ -151,15 +153,17 @@ public sealed partial class Alcohol120
     public List<CommonTypes.Structs.Session> Sessions { get; private set; }
 
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
 
     /// <inheritdoc />
     public IEnumerable<MediaTagType> SupportedMediaTags => new[]
     {
         MediaTagType.CD_FullTOC, MediaTagType.DVD_BCA, MediaTagType.DVD_DMI, MediaTagType.DVD_PFI
     };
+
     /// <inheritdoc />
     public IEnumerable<SectorTagType> SupportedSectorTags => new[]
     {
@@ -167,6 +171,7 @@ public sealed partial class Alcohol120
         SectorTagType.CdSectorHeader, SectorTagType.CdSectorSubHeader, SectorTagType.CdSectorSync,
         SectorTagType.CdTrackFlags, SectorTagType.CdSectorSubchannel
     };
+
     /// <inheritdoc />
     public IEnumerable<MediaType> SupportedMediaTypes => new[]
     {
@@ -184,16 +189,22 @@ public sealed partial class Alcohol120
         MediaType.Nuon, MediaType.Playdia, MediaType.Pippin, MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow,
         MediaType.VideoNowColor, MediaType.VideoNowXp, MediaType.CVD, MediaType.PCD
     };
+
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
         Array.Empty<(string name, Type type, string description, object @default)>();
+
     /// <inheritdoc />
     public IEnumerable<string> KnownExtensions => new[]
     {
         ".mds"
     };
+
     /// <inheritdoc />
     public bool IsWriting { get; private set; }
+
     /// <inheritdoc />
     public string ErrorMessage { get; private set; }
+
+#endregion
 }

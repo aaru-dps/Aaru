@@ -28,39 +28,84 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.Subdirectory">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.Subdirectory">
     <Design.DataContext>
         <panels:SubdirectoryViewModel />
     </Design.DataContext>
-    <DataGrid Items="{Binding Entries}" IsReadOnly="True" SelectionMode="Extended"> <!-- TODO: SelectedItems="{Binding SelectedEntries}" -->
+    <DataGrid ItemsSource="{Binding Entries}"
+              IsReadOnly="True"
+              SelectionMode="Extended"> <!-- TODO: SelectedItemsSource="{Binding SelectedEntries}" -->
         <DataGrid.ContextMenu>
             <ContextMenu>
                 <Button Command="{Binding ExtractFilesCommand}">
-                    <TextBlock Text="Extract to..." />
+                    <TextBlock Text="{Binding ExtractFilesLabel}" />
                 </Button>
             </ContextMenu>
         </DataGrid.ContextMenu>
         <DataGrid.Columns>
-            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Length" Binding="{Binding Size}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Name" Binding="{Binding CreationTime}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Last access" Binding="{Binding LastAccessTime}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Changed" Binding="{Binding ChangedTime}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Last backup" Binding="{Binding LastBackupTime}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Last write" Binding="{Binding LastWriteTime}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="GID" Binding="{Binding Gid}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="UID" Binding="{Binding Uid}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Inode" Binding="{Binding Inode}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Links" Binding="{Binding Links}" Width="Auto" IsReadOnly="True" />
-            <DataGridTextColumn Header="Model" Binding="{Binding Mode}" Width="Auto" IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding NameLabel}"
+                                Binding="{Binding Name}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LengthLabel}"
+                                Binding="{Binding Size}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding CreationLabel}"
+                                Binding="{Binding CreationTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LastAccessLabel}"
+                                Binding="{Binding LastAccessTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding ChangedLabel}"
+                                Binding="{Binding ChangedTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LastBackupLabel}"
+                                Binding="{Binding LastBackupTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LastWriteLabel}"
+                                Binding="{Binding LastWriteTime}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding AttributesLabel}"
+                                Binding="{Binding Attributes}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding GIDLabel}"
+                                Binding="{Binding Gid}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding UIDLabel}"
+                                Binding="{Binding Uid}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding InodeLabel}"
+                                Binding="{Binding Inode}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding LinksLabel}"
+                                Binding="{Binding Links}"
+                                Width="Auto"
+                                IsReadOnly="True" />
+            <DataGridTextColumn Header="{Binding ModeLabel}"
+                                Binding="{Binding Mode}"
+                                Width="Auto"
+                                IsReadOnly="True" />
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

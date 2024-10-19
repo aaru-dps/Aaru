@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Issues;
-
 using System;
 using System.IO;
 using Aaru.Checksums;
@@ -9,6 +7,8 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Core;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Issues;
+
 /// <summary>This class will test an issue that happens when reading an image completely, from start to end, crashes.</summary>
 public abstract class ImageReadIssueTest
 {
@@ -16,32 +16,37 @@ public abstract class ImageReadIssueTest
     public abstract string DataFolder { get; }
     public abstract string TestFile   { get; }
 
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
     [Test]
     public void Test()
     {
         Environment.CurrentDirectory = DataFolder;
 
         bool exists = File.Exists(TestFile);
-        Assert.True(exists, "Test file not found");
+        Assert.That(exists, Localization.Test_file_not_found);
 
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(TestFile);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(TestFile);
 
-        Assert.IsNotNull(inputFilter, "Filter for test file is not detected");
+        Assert.That(inputFilter, Is.Not.Null, Localization.Filter_for_test_file_is_not_detected);
 
         var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-        Assert.IsNotNull(image, "Image format for test file is not detected");
+        Assert.That(image, Is.Not.Null, Localization.Image_format_for_test_file_is_not_detected);
 
-        Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), "Cannot open image for test file");
+        Assert.That(image.Open(inputFilter),
+                    Is.EqualTo(ErrorNumber.NoError),
+                    Localization.Cannot_open_image_for_test_file);
 
-        ulong       doneSectors = 0;
-        var         ctx         = new Crc32Context();
-        ErrorNumber errno;
+        ulong doneSectors = 0;
+        var   ctx         = new Crc32Context();
 
         while(doneSectors < image.Info.Sectors)
         {
             byte[] sector;
+
+            ErrorNumber errno;
 
             if(image.Info.Sectors - doneSectors >= SECTORS_TO_READ)
             {
@@ -54,7 +59,7 @@ public abstract class ImageReadIssueTest
                 doneSectors += image.Info.Sectors - doneSectors;
             }
 
-            Assert.AreEqual(ErrorNumber.NoError, errno);
+            Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
 
             ctx.Update(sector);
         }

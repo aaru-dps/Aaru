@@ -27,18 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core.Devices.Report;
-
-using System;
 using System.Linq;
 using Aaru.CommonTypes.Metadata;
 using Aaru.Decoders.SCSI;
 using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
-using global::Spectre.Console;
+using Spectre.Console;
+
+namespace Aaru.Core.Devices.Report;
 
 public sealed partial class DeviceReport
 {
@@ -48,11 +47,11 @@ public sealed partial class DeviceReport
     {
         var    report = new Ssc();
         var    sense  = true;
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI READ BLOCK LIMITS...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_READ_BLOCK_LIMITS).IsIndeterminate();
             sense = _dev.ReadBlockLimits(out buffer, out _, _dev.Timeout, out _);
         });
 
@@ -60,19 +59,16 @@ public sealed partial class DeviceReport
         {
             BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
 
-            if(decBl?.granularity > 0)
-                report.BlockSizeGranularity = decBl.Value.granularity;
+            if(decBl?.granularity > 0) report.BlockSizeGranularity = decBl.Value.granularity;
 
-            if(decBl?.maxBlockLen > 0)
-                report.MaxBlockLength = decBl.Value.maxBlockLen;
+            if(decBl?.maxBlockLen > 0) report.MaxBlockLength = decBl.Value.maxBlockLen;
 
-            if(decBl?.minBlockLen > 0)
-                report.MinBlockLength = decBl.Value.minBlockLen;
+            if(decBl?.minBlockLen > 0) report.MinBlockLength = decBl.Value.minBlockLen;
         }
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, false, false, _dev.Timeout, out _);
         });
 
@@ -85,6 +81,7 @@ public sealed partial class DeviceReport
                 var array = new SupportedDensity[dsh.Value.descriptors.Length];
 
                 for(var i = 0; i < dsh.Value.descriptors.Length; i++)
+                {
                     array[i] = new SupportedDensity
                     {
                         BitsPerMm      = dsh.Value.descriptors[i].bpmm,
@@ -100,6 +97,7 @@ public sealed partial class DeviceReport
                         Width          = dsh.Value.descriptors[i].width,
                         Writable       = dsh.Value.descriptors[i].writable
                     };
+                }
 
                 report.SupportedDensities = array.ToList();
             }
@@ -107,17 +105,15 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, true, false, _dev.Timeout, out _);
         });
 
-        if(sense)
-            return report;
+        if(sense) return report;
 
         DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
 
-        if(!mtsh.HasValue)
-            return report;
+        if(!mtsh.HasValue) return report;
 
         var array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
 
@@ -133,16 +129,17 @@ public sealed partial class DeviceReport
                 Width        = mtsh.Value.descriptors[i].width
             };
 
-            if(mtsh.Value.descriptors[i].densityCodes == null)
-                continue;
+            if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
             var array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
 
             for(var j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+            {
                 array3[j] = new DensityCode
                 {
                     Code = mtsh.Value.descriptors[i].densityCodes[j]
                 };
+            }
 
             array2[i].DensityCodes = array3.Distinct().ToList();
         }
@@ -158,20 +155,26 @@ public sealed partial class DeviceReport
     {
         var    seqTest = new TestedSequentialMedia();
         var    sense   = true;
-        byte[] buffer  = Array.Empty<byte>();
+        byte[] buffer  = [];
 
         Modes.DecodedMode? decMode = null;
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE (10)...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE_10).IsIndeterminate();
 
-            sense = _dev.ModeSense10(out buffer, out _, false, true, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                     _dev.Timeout, out _);
+            sense = _dev.ModeSense10(out buffer,
+                                     out _,
+                                     false,
+                                     true,
+                                     ScsiModeSensePageControl.Current,
+                                     0x3F,
+                                     0x00,
+                                     _dev.Timeout,
+                                     out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode                 = Modes.DecodeMode10(buffer, _dev.ScsiType);
             seqTest.ModeSense10Data = buffer;
@@ -179,12 +182,11 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI MODE SENSE...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_MODE_SENSE).IsIndeterminate();
             sense = _dev.ModeSense(out buffer, out _, _dev.Timeout, out _);
         });
 
-        if(!sense &&
-           !_dev.Error)
+        if(!sense && !_dev.Error)
         {
             decMode ??= Modes.DecodeMode6(buffer, _dev.ScsiType);
 
@@ -196,12 +198,12 @@ public sealed partial class DeviceReport
             seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
 
             if(decMode.Value.Header.BlockDescriptors?.Length > 0)
-                seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors?[0].Density;
+                seqTest.Density = (byte)(decMode.Value.Header.BlockDescriptors?[0].Density ?? default(DensityType));
         }
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for current media...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_current_media).IsIndeterminate();
             sense = _dev.ReportDensitySupport(out buffer, out _, false, true, _dev.Timeout, out _);
         });
 
@@ -214,6 +216,7 @@ public sealed partial class DeviceReport
                 var array = new SupportedDensity[dsh.Value.descriptors.Length];
 
                 for(var i = 0; i < dsh.Value.descriptors.Length; i++)
+                {
                     array[i] = new SupportedDensity
                     {
                         BitsPerMm      = dsh.Value.descriptors[i].bpmm,
@@ -229,6 +232,7 @@ public sealed partial class DeviceReport
                         Width          = dsh.Value.descriptors[i].width,
                         Writable       = dsh.Value.descriptors[i].writable
                     };
+                }
 
                 seqTest.SupportedDensities = array.ToList();
             }
@@ -236,7 +240,8 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Querying_SCSI_REPORT_DENSITY_SUPPORT_for_medium_types_for_current_media)
+               .IsIndeterminate();
 
             sense = _dev.ReportDensitySupport(out buffer, out _, true, true, _dev.Timeout, out _);
         });
@@ -261,16 +266,17 @@ public sealed partial class DeviceReport
                         Width        = mtsh.Value.descriptors[i].width
                     };
 
-                    if(mtsh.Value.descriptors[i].densityCodes == null)
-                        continue;
+                    if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                     var array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
 
                     for(var j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
+                    {
                         array2[j] = new DensityCode
                         {
                             Code = mtsh.Value.descriptors[i].densityCodes[j]
                         };
+                    }
 
                     array[i].DensityCodes = array2.Distinct().ToList();
                 }
@@ -281,7 +287,7 @@ public sealed partial class DeviceReport
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
-            ctx.AddTask("Trying SCSI READ MEDIA SERIAL NUMBER...").IsIndeterminate();
+            ctx.AddTask(Localization.Core.Trying_SCSI_READ_MEDIA_SERIAL_NUMBER).IsIndeterminate();
             seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out _, _dev.Timeout, out _);
         });
 

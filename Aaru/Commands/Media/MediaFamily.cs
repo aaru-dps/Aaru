@@ -27,16 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Media;
 
-using System.CommandLine;
-
 sealed class MediaFamily : Command
 {
-    public MediaFamily() : base("media", "Commands to manage media inserted in devices")
+    public MediaFamily() : base("media", UI.Media_Command_Family_Description)
     {
         AddAlias("m");
 

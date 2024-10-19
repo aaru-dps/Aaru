@@ -27,22 +27,26 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
 
+namespace Aaru.Images;
+
 public sealed partial class DiscFerret
 {
-    /// <inheritdoc />
-    public bool? VerifySector(ulong sectorAddress) =>
-        throw new NotImplementedException("Flux decoding is not yet implemented.");
+#region IVerifiableSectorsImage Members
 
     /// <inheritdoc />
-    public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
+    public bool? VerifySector(ulong sectorAddress) =>
+        throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
+
+    /// <inheritdoc />
+    public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                out List<ulong> unknownLbas) =>
-        throw new NotImplementedException("Flux decoding is not yet implemented.");
+        throw new NotImplementedException(Localization.Flux_decoding_is_not_yet_implemented);
+
+#endregion
 }

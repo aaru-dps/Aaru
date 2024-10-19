@@ -28,59 +28,41 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Devices.Linux;
-
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interop;
 using Aaru.Decoders.ATA;
 
+namespace Aaru.Devices.Linux;
+
 partial class Device
 {
     /// <inheritdoc />
-    public override int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+    public override int SendScsiCommand(byte[]        cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                         ScsiDirection direction, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         senseBuffer = null;
         duration    = 0;
         sense       = false;
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
-        ScsiIoctlDirection dir;
-
-        switch(direction)
-        {
-            case ScsiDirection.In:
-                dir = ScsiIoctlDirection.In;
-
-                break;
-            case ScsiDirection.Out:
-                dir = ScsiIoctlDirection.Out;
-
-                break;
-            case ScsiDirection.Bidirectional:
-                dir = ScsiIoctlDirection.Unspecified;
-
-                break;
-            case ScsiDirection.None:
-                dir = ScsiIoctlDirection.None;
-
-                break;
-            default:
-                dir = ScsiIoctlDirection.Unknown;
-
-                break;
-        }
+        ScsiIoctlDirection dir = direction switch
+                                 {
+                                     ScsiDirection.In            => ScsiIoctlDirection.In,
+                                     ScsiDirection.Out           => ScsiIoctlDirection.Out,
+                                     ScsiDirection.Bidirectional => ScsiIoctlDirection.Unspecified,
+                                     ScsiDirection.None          => ScsiIoctlDirection.None,
+                                     _                           => ScsiIoctlDirection.Unknown
+                                 };
 
         var ioHdr = new SgIoHdrT();
 
@@ -97,24 +79,24 @@ partial class Device
         ioHdr.timeout         = timeout * 1000;
         ioHdr.flags           = (uint)SgFlags.DirectIo;
 
-        Marshal.Copy(buffer, 0, ioHdr.dxferp, buffer.Length);
-        Marshal.Copy(cdb, 0, ioHdr.cmdp, cdb.Length);
-        Marshal.Copy(senseBuffer, 0, ioHdr.sbp, senseBuffer.Length);
+        Marshal.Copy(buffer,      0, ioHdr.dxferp, buffer.Length);
+        Marshal.Copy(cdb,         0, ioHdr.cmdp,   cdb.Length);
+        Marshal.Copy(senseBuffer, 0, ioHdr.sbp,    senseBuffer.Length);
 
-        DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
-        DateTime end   = DateTime.UtcNow;
+        var cmdStopWatch = new Stopwatch();
+        cmdStopWatch.Start();
+        int error = Extern.ioctlSg(_fileDescriptor, LinuxIoctl.SgIo, ref ioHdr);
+        cmdStopWatch.Stop();
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
-        Marshal.Copy(ioHdr.dxferp, buffer, 0, buffer.Length);
-        Marshal.Copy(ioHdr.cmdp, cdb, 0, cdb.Length);
-        Marshal.Copy(ioHdr.sbp, senseBuffer, 0, senseBuffer.Length);
+        Marshal.Copy(ioHdr.dxferp, buffer,      0, buffer.Length);
+        Marshal.Copy(ioHdr.cmdp,   cdb,         0, cdb.Length);
+        Marshal.Copy(ioHdr.sbp,    senseBuffer, 0, senseBuffer.Length);
 
         sense |= (ioHdr.info & SgInfo.OkMask) != SgInfo.Ok;
 
-        duration = ioHdr.duration > 0 ? ioHdr.duration : (end - start).TotalMilliseconds;
+        duration = ioHdr.duration > 0 ? ioHdr.duration : cmdStopWatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(ioHdr.dxferp);
         Marshal.FreeHGlobal(ioHdr.cmdp);
@@ -128,20 +110,18 @@ partial class Device
     /// <returns>SG_IO direction</returns>
     static ScsiDirection AtaProtocolToScsiDirection(AtaProtocol protocol)
     {
-        switch(protocol)
-        {
-            case AtaProtocol.DeviceDiagnostic:
-            case AtaProtocol.DeviceReset:
-            case AtaProtocol.HardReset:
-            case AtaProtocol.NonData:
-            case AtaProtocol.SoftReset:
-            case AtaProtocol.ReturnResponse: return ScsiDirection.None;
-            case AtaProtocol.PioIn:
-            case AtaProtocol.UDmaIn: return ScsiDirection.In;
-            case AtaProtocol.PioOut:
-            case AtaProtocol.UDmaOut: return ScsiDirection.Out;
-            default: return ScsiDirection.Unspecified;
-        }
+        return protocol switch
+               {
+                   AtaProtocol.DeviceDiagnostic
+                    or AtaProtocol.DeviceReset
+                    or AtaProtocol.HardReset
+                    or AtaProtocol.NonData
+                    or AtaProtocol.SoftReset
+                    or AtaProtocol.ReturnResponse => ScsiDirection.None,
+                   AtaProtocol.PioIn or AtaProtocol.UDmaIn   => ScsiDirection.In,
+                   AtaProtocol.PioOut or AtaProtocol.UDmaOut => ScsiDirection.Out,
+                   _                                         => ScsiDirection.Unspecified
+               };
     }
 
     /// <inheritdoc />
@@ -150,38 +130,27 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersChs();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
-        cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+        cdb[1] = (byte)((byte)protocol << 1 & 0x1E);
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
-
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -196,12 +165,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -223,38 +195,27 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba28();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] = (byte)ScsiCommands.AtaPassThrough16;
-        cdb[1] = (byte)(((byte)protocol << 1) & 0x1E);
+        cdb[1] = (byte)((byte)protocol << 1 & 0x1E);
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
-
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -269,12 +230,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -296,39 +260,28 @@ partial class Device
                                        uint timeout, bool transferBlocks, out double duration, out bool sense)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration       = 0;
         sense          = false;
         errorRegisters = new AtaErrorRegistersLba48();
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var cdb = new byte[16];
         cdb[0] =  (byte)ScsiCommands.AtaPassThrough16;
-        cdb[1] =  (byte)(((byte)protocol << 1) & 0x1E);
+        cdb[1] =  (byte)((byte)protocol << 1 & 0x1E);
         cdb[1] |= 0x01;
 
-        if(transferRegister != AtaTransferRegister.NoTransfer &&
-           protocol         != AtaProtocol.NonData)
+        if(transferRegister != AtaTransferRegister.NoTransfer && protocol != AtaProtocol.NonData)
         {
-            switch(protocol)
-            {
-                case AtaProtocol.PioIn:
-                case AtaProtocol.UDmaIn:
-                    cdb[2] = 0x08;
+            cdb[2] = protocol switch
+                     {
+                         AtaProtocol.PioIn or AtaProtocol.UDmaIn => 0x08,
+                         _                                       => 0x00
+                     };
 
-                    break;
-                default:
-                    cdb[2] = 0x00;
-
-                    break;
-            }
-
-            if(transferBlocks)
-                cdb[2] |= 0x04;
+            if(transferBlocks) cdb[2] |= 0x04;
 
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
@@ -348,12 +301,15 @@ partial class Device
         cdb[13] = registers.DeviceHead;
         cdb[14] = registers.Command;
 
-        int error = SendScsiCommand(cdb, ref buffer, out byte[] senseBuffer, timeout,
-                                    AtaProtocolToScsiDirection(protocol), out duration, out sense);
+        int error = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out byte[] senseBuffer,
+                                    timeout,
+                                    AtaProtocolToScsiDirection(protocol),
+                                    out duration,
+                                    out sense);
 
-        if(senseBuffer.Length < 22 ||
-           senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C)
-            return error;
+        if(senseBuffer.Length < 22 || senseBuffer[8] != 0x09 && senseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = senseBuffer[11];
 
@@ -375,65 +331,63 @@ partial class Device
     }
 
     /// <inheritdoc />
-    public override int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                       uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                       out uint[] response, out double duration, out bool sense, uint timeout = 15)
+    public override int SendMmcCommand(MmcCommands command,  bool       write,     bool isApplication, MmcFlags flags,
+                                       uint        argument, uint       blockSize, uint blocks, ref byte[] buffer,
+                                       out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
-        DateTime start;
-        DateTime end;
+        var cmdStopwatch = new Stopwatch();
 
         switch(command)
         {
-            case MmcCommands.SendCid when _cachedCid != null:
+            case MmcCommands.SendCid when CachedCid != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedCid.Length];
-                Array.Copy(_cachedCid, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedCid.Length];
+                Array.Copy(CachedCid, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case MmcCommands.SendCsd when _cachedCid != null:
+            case MmcCommands.SendCsd when CachedCid != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedCsd.Length];
-                Array.Copy(_cachedCsd, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedCsd.Length];
+                Array.Copy(CachedCsd, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendScr when _cachedScr != null:
+            case (MmcCommands)SecureDigitalCommands.SendScr when CachedScr != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedScr.Length];
-                Array.Copy(_cachedScr, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedScr.Length];
+                Array.Copy(CachedScr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
-            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when _cachedOcr != null:
-            case MmcCommands.SendOpCond when _cachedOcr                                    != null:
+            case (MmcCommands)SecureDigitalCommands.SendOperatingCondition when CachedOcr != null:
+            case MmcCommands.SendOpCond when CachedOcr                                    != null:
             {
-                start  = DateTime.Now;
-                buffer = new byte[_cachedOcr.Length];
-                Array.Copy(_cachedOcr, buffer, buffer.Length);
+                cmdStopwatch.Restart();
+                buffer = new byte[CachedOcr.Length];
+                Array.Copy(CachedOcr, buffer, buffer.Length);
                 response = new uint[4];
                 sense    = false;
-                end      = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
+                cmdStopwatch.Stop();
+                duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
                 return 0;
             }
@@ -443,12 +397,11 @@ partial class Device
         duration = 0;
         sense    = false;
 
-        if(buffer == null)
-            return -1;
+        if(buffer == null) return -1;
 
         var ioCmd = new MmcIocCmd();
 
-        IntPtr bufPtr = Marshal.AllocHGlobal(buffer.Length);
+        nint bufPtr = Marshal.AllocHGlobal(buffer.Length);
 
         ioCmd.write_flag = write;
         ioCmd.is_ascmd   = isApplication;
@@ -468,19 +421,19 @@ partial class Device
 
         Marshal.Copy(buffer, 0, bufPtr, buffer.Length);
 
-        start = DateTime.UtcNow;
+        var stopWatch = new Stopwatch();
+        stopWatch.Restart();
         int error = Extern.ioctlMmc(_fileDescriptor, LinuxIoctl.MmcIocCmd, ref ioCmd);
-        end = DateTime.UtcNow;
+        stopWatch.Stop();
 
         sense |= error < 0;
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
         Marshal.Copy(bufPtr, buffer, 0, buffer.Length);
 
         response = ioCmd.response;
-        duration = (end - start).TotalMilliseconds;
+        duration = stopWatch.Elapsed.TotalMilliseconds;
 
         Marshal.FreeHGlobal(bufPtr);
 
@@ -489,18 +442,16 @@ partial class Device
 
     /// <inheritdoc />
     public override int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                                uint timeout = 15)
+                                                uint               timeout = 15)
     {
         // We need a timeout
-        if(timeout == 0)
-            timeout = Timeout > 0 ? Timeout : 15;
+        if(timeout == 0) timeout = Timeout > 0 ? Timeout : 15;
 
         duration = 0;
         sense    = false;
-        int off;
 
         // Create array for buffers
-        var bufferPointers = new IntPtr[commands.Length];
+        var bufferPointers = new nint[commands.Length];
 
         // Allocate memory for the array for commands
         var ioMultiCmd = new byte[sizeof(ulong) + Marshal.SizeOf<MmcIocCmd>() * commands.Length];
@@ -508,7 +459,7 @@ partial class Device
         // First value of array is uint64 with count of commands
         Array.Copy(BitConverter.GetBytes((ulong)commands.Length), 0, ioMultiCmd, 0, sizeof(ulong));
 
-        off = sizeof(ulong);
+        int off = sizeof(ulong);
 
         for(var i = 0; i < commands.Length; i++)
         {
@@ -547,22 +498,22 @@ partial class Device
         }
 
         // Allocate unmanaged memory for array of commands
-        IntPtr ioMultiCmdPtr = Marshal.AllocHGlobal(ioMultiCmd.Length);
+        nint ioMultiCmdPtr = Marshal.AllocHGlobal(ioMultiCmd.Length);
 
         // Copy array of commands to unmanaged memory
         Marshal.Copy(ioMultiCmd, 0, ioMultiCmdPtr, ioMultiCmd.Length);
 
         // Send command
-        DateTime start = DateTime.UtcNow;
-        int      error = Extern.ioctlMmcMulti(_fileDescriptor, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
-        DateTime end   = DateTime.UtcNow;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
+        int error = Extern.ioctlMmcMulti(_fileDescriptor, LinuxIoctl.MmcIocMultiCmd, ioMultiCmdPtr);
+        cmdStopwatch.Stop();
 
         sense |= error < 0;
 
-        if(error < 0)
-            error = Marshal.GetLastWin32Error();
+        if(error < 0) error = Marshal.GetLastWin32Error();
 
-        duration = (end - start).TotalMilliseconds;
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         off = sizeof(ulong);
 
@@ -611,7 +562,7 @@ partial class Device
             return true;
         }
 
-        int newFd = Extern.open(_devicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+        int newFd = Extern.open(DevicePath, FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
 
         if(newFd >= 0)
         {
@@ -623,8 +574,7 @@ partial class Device
 
         int error = Marshal.GetLastWin32Error();
 
-        if(error != 13 &&
-           error != 30)
+        if(error != 13 && error != 30)
         {
             LastError = Marshal.GetLastWin32Error();
             Error     = true;
@@ -632,7 +582,7 @@ partial class Device
             return true;
         }
 
-        newFd = Extern.open(_devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+        newFd = Extern.open(DevicePath, FileFlags.Readonly | FileFlags.NonBlocking);
 
         if(newFd < 0)
         {
@@ -653,15 +603,14 @@ partial class Device
     /// <returns>Contents of the symbolic link</returns>
     static string ReadLink(string path)
     {
-        IntPtr buf = Marshal.AllocHGlobal(4096);
-        int    resultSize;
+        nint buf = Marshal.AllocHGlobal(4096);
+        int  resultSize;
 
         if(DetectOS.Is64Bit)
         {
             long result64 = Extern.readlink64(path, buf, 4096);
 
-            if(result64 <= 0)
-                return null;
+            if(result64 <= 0) return null;
 
             resultSize = (int)result64;
         }
@@ -669,8 +618,7 @@ partial class Device
         {
             int result = Extern.readlink(path, buf, 4096);
 
-            if(result <= 0)
-                return null;
+            if(result <= 0) return null;
 
             resultSize = result;
         }
@@ -688,15 +636,15 @@ partial class Device
     {
         buffer = new byte[length];
 
-        DateTime start = DateTime.Now;
+        var cmdStopwatch = new Stopwatch();
+        cmdStopwatch.Start();
 
         long sense = Extern.lseek(_fileDescriptor, offset, SeekWhence.Begin);
 
-        DateTime end = DateTime.Now;
-
         if(sense < 0)
         {
-            duration = (end - start).TotalMilliseconds;
+            cmdStopwatch.Stop();
+            duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
             Error     = true;
             LastError = Marshal.GetLastWin32Error();
@@ -704,18 +652,18 @@ partial class Device
             return true;
         }
 
-        sense = DetectOS.Is64Bit ? Extern.read64(_fileDescriptor, buffer, length)
+        sense = DetectOS.Is64Bit
+                    ? Extern.read64(_fileDescriptor, buffer, length)
                     : Extern.read(_fileDescriptor, buffer, (int)length);
 
-        end      = DateTime.Now;
-        duration = (end - start).TotalMilliseconds;
+        cmdStopwatch.Stop();
+        duration = cmdStopwatch.Elapsed.TotalMilliseconds;
 
         int errno = Marshal.GetLastWin32Error();
 
         if(sense == length)
-            errno = 0;
-        else if(errno == 0)
-            errno = -22;
+            errno                 = 0;
+        else if(errno == 0) errno = -22;
 
         LastError = errno;
         Error     = errno == 0;

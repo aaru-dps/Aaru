@@ -27,20 +27,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Tabs;
 
 using System.Collections.Generic;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
-using Aaru.CommonTypes;
 using Aaru.Decoders.DVD;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Tabs;
 
 public sealed class DvdInfoViewModel
 {
@@ -52,7 +53,7 @@ public sealed class DvdInfoViewModel
     readonly byte[] _hddvdCopyrightInformation;
     readonly Window _view;
 
-    public DvdInfoViewModel(MediaType mediaType, [CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi, [CanBeNull] byte[] cmi,
+    public DvdInfoViewModel([CanBeNull] byte[] pfi, [CanBeNull] byte[] dmi, [CanBeNull] byte[] cmi,
                             [CanBeNull] byte[] hdCopyrightInformation, [CanBeNull] byte[] bca, [CanBeNull] byte[] aacs,
                             PFI.PhysicalFormatInformation? decodedPfi, Window view)
     {
@@ -89,11 +90,9 @@ public sealed class DvdInfoViewModel
         }
         */
 
-        if(decodedPfi.HasValue)
-            DvdPfiText = PFI.Prettify(decodedPfi);
+        if(decodedPfi.HasValue) DvdPfiText = PFI.Prettify(decodedPfi);
 
-        if(cmi != null)
-            DvdCmiText = CSS_CPRM.PrettifyLeadInCopyright(cmi);
+        if(cmi != null) DvdCmiText = CSS_CPRM.PrettifyLeadInCopyright(cmi);
 
         SaveDvdPfiVisible   = pfi                    != null;
         SaveDvdDmiVisible   = dmi                    != null;
@@ -118,25 +117,26 @@ public sealed class DvdInfoViewModel
     public bool                        SaveDvdBcaVisible   { get; }
     public bool                        SaveDvdAacsVisible  { get; }
 
+    public string SaveDvdPfiLabel   => UI.ButtonLabel_Save_Physical_Format_Information;
+    public string SaveDvdDmiLabel   => UI.ButtonLabel_Save_Disc_Manufacturer_Information;
+    public string SaveDvdCmiLabel   => UI.ButtonLabel_Save_Copyright_Management_Information;
+    public string SaveHdDvdCmiLabel => UI.ButtonLabel_Save_Copyright_Management_Information;
+    public string SaveDvdBcaLabel   => UI.ButtonLabel_Save_Burst_Cutting_Area;
+    public string SaveDvdAacsLabel  => UI.ButtonLabel_Save_AACS_Information;
+
     async Task SaveElement(byte[] data)
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(data, 0, data.Length);
 
         saveFs.Close();

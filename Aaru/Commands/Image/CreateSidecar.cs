@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Commands.Image;
 
 using System;
 using System.CommandLine;
@@ -38,51 +36,46 @@ using System.CommandLine.NamingConventionBinder;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
+using System.Text.Json;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using JetBrains.Annotations;
-using Schemas;
 using Spectre.Console;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
+
+namespace Aaru.Commands.Image;
 
 sealed class CreateSidecarCommand : Command
 {
+    const  string       MODULE_NAME = "Create sidecar command";
     static ProgressTask _progressTask1;
     static ProgressTask _progressTask2;
 
-    public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
+    public CreateSidecarCommand() : base("create-sidecar", UI.Image_Create_Sidecar_Command_Description)
     {
-        Add(new Option<int>(new[]
-                            {
-                                "--block-size", "-b"
-                            }, () => 512,
-                            "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored."));
+        Add(new Option<int>(["--block-size", "-b"], () => 512, UI.Tape_block_size_argument_help));
 
-        Add(new Option<string>(new[]
-        {
-            "--encoding", "-e"
-        }, () => null, "Name of character encoding to use."));
+        Add(new Option<string>(["--encoding", "-e"], () => null, UI.Name_of_character_encoding_to_use));
 
-        Add(new Option<bool>(new[]
-                             {
-                                 "--tape", "-t"
-                             }, () => false,
-                             "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device)."));
+        Add(new Option<bool>(["--tape", "-t"], () => false, UI.Tape_argument_input_help));
 
         AddArgument(new Argument<string>
         {
             Arity       = ArgumentArity.ExactlyOne,
-            Description = "Media image path",
+            Description = UI.Media_image_path,
             Name        = "image-path"
         });
 
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
     }
 
-    public static int Invoke(bool debug, bool verbose, uint blockSize, [CanBeNull] string encodingName,
+    public static int Invoke(bool   debug,     bool verbose, uint blockSize, [CanBeNull] string encodingName,
                              string imagePath, bool tape)
     {
         MainClass.PrintCopyright();
@@ -91,7 +84,7 @@ sealed class CreateSidecarCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -101,9 +94,12 @@ sealed class CreateSidecarCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -111,54 +107,55 @@ sealed class CreateSidecarCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("create-sidecar");
 
-        AaruConsole.DebugWriteLine("Create sidecar command", "--block-size={0}", blockSize);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--encoding={0}", encodingName);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--input={0}", imagePath);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--tape={0}", tape);
-        AaruConsole.DebugWriteLine("Create sidecar command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--block-size={0}", blockSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",      debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--encoding={0}",   Markup.Escape(encodingName ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--input={0}",      Markup.Escape(imagePath    ?? ""));
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--tape={0}",       tape);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}",    verbose);
 
         Encoding encodingClass = null;
 
         if(encodingName != null)
+        {
             try
             {
                 encodingClass = Claunia.Encoding.Encoding.GetEncoding(encodingName);
 
-                if(verbose)
-                    AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                if(verbose) AaruConsole.VerboseWriteLine(UI.encoding_for_0, encodingClass.EncodingName);
             }
             catch(ArgumentException)
             {
-                AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
+                AaruConsole.ErrorWriteLine(UI.Specified_encoding_is_not_supported);
 
                 return (int)ErrorNumber.EncodingUnknown;
             }
+        }
 
         if(File.Exists(imagePath))
         {
             if(tape)
             {
-                AaruConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
+                AaruConsole.ErrorWriteLine(UI.You_cannot_use_tape_option_when_input_is_a_file);
 
                 return (int)ErrorNumber.NotDirectory;
             }
 
-            var     filtersList = new FiltersList();
             IFilter inputFilter = null;
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Identifying file filter...").IsIndeterminate();
-                inputFilter = filtersList.GetFilter(imagePath);
+                ctx.AddTask(UI.Identifying_file_filter).IsIndeterminate();
+                inputFilter = PluginRegister.Singleton.GetFilter(imagePath);
             });
 
             if(inputFilter == null)
             {
-                AaruConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine(UI.Cannot_open_specified_file);
 
                 return (int)ErrorNumber.CannotOpenFile;
             }
@@ -167,48 +164,49 @@ sealed class CreateSidecarCommand : Command
             {
                 IBaseImage imageFormat = null;
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Identifying image format...").IsIndeterminate();
+                    ctx.AddTask(UI.Identifying_image_format).IsIndeterminate();
                     imageFormat = ImageFormat.Detect(inputFilter);
                 });
 
                 if(imageFormat == null)
                 {
-                    AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                    AaruConsole.WriteLine(UI.Image_format_not_identified_not_proceeding_with_sidecar_creation);
 
                     return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
-                    AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
-                                                 imageFormat.Id);
+                    AaruConsole.VerboseWriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
                 else
-                    AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                    AaruConsole.WriteLine(UI.Image_format_identified_by_0, imageFormat.Name);
 
                 try
                 {
                     ErrorNumber opened = ErrorNumber.NoData;
 
-                    Spectre.ProgressSingleSpinner(ctx =>
+                    Core.Spectre.ProgressSingleSpinner(ctx =>
                     {
-                        ctx.AddTask("Opening image file...").IsIndeterminate();
+                        ctx.AddTask(UI.Invoke_Opening_image_file).IsIndeterminate();
                         opened = imageFormat.Open(inputFilter);
                     });
 
                     if(opened != ErrorNumber.NoError)
                     {
-                        AaruConsole.WriteLine("Error {opened} opening image format");
+                        AaruConsole.WriteLine(UI.Unable_to_open_image_format);
+                        AaruConsole.WriteLine(Localization.Core.Error_0, opened);
 
                         return (int)opened;
                     }
 
-                    AaruConsole.DebugWriteLine("Create sidecar command", "Correctly opened image file.");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.Correctly_opened_image_file);
                 }
                 catch(Exception ex)
                 {
-                    AaruConsole.ErrorWriteLine("Unable to open image format");
-                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                    AaruConsole.WriteException(ex);
 
                     return (int)ErrorNumber.CannotOpenFormat;
                 }
@@ -216,22 +214,18 @@ sealed class CreateSidecarCommand : Command
                 Statistics.AddMediaFormat(imageFormat.Format);
                 Statistics.AddFilter(inputFilter.Name);
 
-                var              sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
-                CICMMetadataType sidecar      = new();
+                var      sidecarClass = new Sidecar(imageFormat, imagePath, inputFilter.Id, encodingClass);
+                Metadata sidecar      = new();
 
-                AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                            Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                            Start(ctx =>
+                AnsiConsole.Progress()
+                           .AutoClear(true)
+                           .HideCompleted(true)
+                           .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                           .Start(ctx =>
                             {
-                                sidecarClass.InitProgressEvent += () =>
-                                {
-                                    _progressTask1 = ctx.AddTask("Progress");
-                                };
+                                sidecarClass.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                                sidecarClass.InitProgressEvent2 += () =>
-                                {
-                                    _progressTask2 = ctx.AddTask("Progress");
-                                };
+                                sidecarClass.InitProgressEvent2 += () => { _progressTask2 = ctx.AddTask("Progress"); };
 
                                 sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
                                 {
@@ -262,11 +256,11 @@ sealed class CreateSidecarCommand : Command
                                 };
 
                                 sidecarClass.UpdateStatusEvent += text =>
-                                {
-                                    AaruConsole.WriteLine(Markup.Escape(text));
-                                };
+                                    {
+                                        AaruConsole.WriteLine(Markup.Escape(text));
+                                    };
 
-                                Console.CancelKeyPress += (_, e) =>
+                                System.Console.CancelKeyPress += (_, e) =>
                                 {
                                     e.Cancel = true;
                                     sidecarClass.Abort();
@@ -275,24 +269,31 @@ sealed class CreateSidecarCommand : Command
                                 sidecar = sidecarClass.Create();
                             });
 
-                Spectre.ProgressSingleSpinner(ctx =>
+                Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
-                    ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
+                    ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
-                    var xmlFs =
-                        new
-                            FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                       FileMode.CreateNew);
+                    var jsonFs =
+                        new FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ??
+                                                    throw new InvalidOperationException(),
+                                                    Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                       FileMode.Create);
 
-                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                    xmlSer.Serialize(xmlFs, sidecar);
-                    xmlFs.Close();
+                    JsonSerializer.Serialize(jsonFs,
+                                             new MetadataJson
+                                             {
+                                                 AaruMetadata = sidecar
+                                             },
+                                             typeof(MetadataJson),
+                                             MetadataJsonContext.Default);
+
+                    jsonFs.Close();
                 });
             }
             catch(Exception ex)
             {
-                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                AaruConsole.DebugWriteLine("Create sidecar command", ex.StackTrace);
+                AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, Markup.Escape(ex.Message)));
+                AaruConsole.WriteException(ex);
 
                 return (int)ErrorNumber.UnexpectedException;
             }
@@ -301,7 +302,7 @@ sealed class CreateSidecarCommand : Command
         {
             if(!tape)
             {
-                AaruConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
+                AaruConsole.ErrorWriteLine(Localization.Core.Cannot_create_a_sidecar_from_a_directory);
 
                 return (int)ErrorNumber.IsDirectory;
             }
@@ -311,22 +312,18 @@ sealed class CreateSidecarCommand : Command
 
             files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-            var              sidecarClass = new Sidecar();
-            CICMMetadataType sidecar      = new();
+            var      sidecarClass = new Sidecar();
+            Metadata sidecar      = new();
 
-            AnsiConsole.Progress().AutoClear(true).HideCompleted(true).
-                        Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn()).
-                        Start(ctx =>
+            AnsiConsole.Progress()
+                       .AutoClear(true)
+                       .HideCompleted(true)
+                       .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
+                       .Start(ctx =>
                         {
-                            sidecarClass.InitProgressEvent += () =>
-                            {
-                                _progressTask1 = ctx.AddTask("Progress");
-                            };
+                            sidecarClass.InitProgressEvent += () => { _progressTask1 = ctx.AddTask("Progress"); };
 
-                            sidecarClass.InitProgressEvent2 += () =>
-                            {
-                                _progressTask2 = ctx.AddTask("Progress");
-                            };
+                            sidecarClass.InitProgressEvent2 += () => { _progressTask2 = ctx.AddTask("Progress"); };
 
                             sidecarClass.UpdateProgressEvent += (text, current, maximum) =>
                             {
@@ -356,12 +353,9 @@ sealed class CreateSidecarCommand : Command
                                 _progressTask2 = null;
                             };
 
-                            sidecarClass.UpdateStatusEvent += text =>
-                            {
-                                AaruConsole.WriteLine(Markup.Escape(text));
-                            };
+                            sidecarClass.UpdateStatusEvent += text => { AaruConsole.WriteLine(Markup.Escape(text)); };
 
-                            Console.CancelKeyPress += (_, e) =>
+                            System.Console.CancelKeyPress += (_, e) =>
                             {
                                 e.Cancel = true;
                                 sidecarClass.Abort();
@@ -370,22 +364,29 @@ sealed class CreateSidecarCommand : Command
                             sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
                         });
 
-            Spectre.ProgressSingleSpinner(ctx =>
+            Core.Spectre.ProgressSingleSpinner(ctx =>
             {
-                ctx.AddTask("Writing metadata sidecar").IsIndeterminate();
+                ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
 
-                var xmlFs =
-                    new
-                        FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(imagePath) + ".cicm.xml"),
-                                   FileMode.CreateNew);
+                var jsonFs =
+                    new FileStream(Path.Combine(Path.GetDirectoryName(imagePath) ??
+                                                throw new InvalidOperationException(),
+                                                Path.GetFileNameWithoutExtension(imagePath) + ".metadata.json"),
+                                   FileMode.Create);
 
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
+                JsonSerializer.Serialize(jsonFs,
+                                         new MetadataJson
+                                         {
+                                             AaruMetadata = sidecar
+                                         },
+                                         typeof(MetadataJson),
+                                         MetadataJsonContext.Default);
+
+                jsonFs.Close();
             });
         }
         else
-            AaruConsole.ErrorWriteLine("The specified input file cannot be found.");
+            AaruConsole.ErrorWriteLine(UI.The_specified_input_file_cannot_be_found);
 
         return (int)ErrorNumber.NoError;
     }

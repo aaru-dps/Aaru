@@ -28,22 +28,30 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows" mc:Ignorable="d" d:DesignWidth="800"
-        d:DesignHeight="450" x:Class="Aaru.Gui.Views.Windows.ImageConvert" Icon="/Assets/aaru-logo.png"
+        xmlns:windows="clr-namespace:Aaru.Gui.ViewModels.Windows"
+        mc:Ignorable="d"
+        d:DesignWidth="800"
+        d:DesignHeight="450"
+        x:Class="Aaru.Gui.Views.Windows.ImageConvert"
+        Icon="/Assets/aaru-logo.png"
         Title="{Binding Title}">
     <Design.DataContext>
         <windows:ImageConvertViewModel />
     </Design.DataContext>
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="Source image" /> <TextBox Text="{Binding SourceText}" IsReadOnly="True" />
-        <TextBlock Text="Output format" />
-        <ComboBox Items="{Binding PluginsList}" SelectedItem="{Binding SelectedPlugin}"
+        <TextBlock Text="{Binding SourceImageLabel}" />
+        <TextBox Text="{Binding SourceText}"
+                 IsReadOnly="True" />
+        <TextBlock Text="{Binding OutputFormatLabel}" />
+        <ComboBox ItemsSource="{Binding PluginsList}"
+                  SelectedItem="{Binding SelectedPlugin}"
                   IsEnabled="{Binding FormatReadOnly}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
@@ -52,183 +60,216 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
         <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DestinationText}" IsReadOnly="True" />
-            <Button Command="{Binding DestinationCommand}" IsEnabled="{Binding DestinationEnabled}"
+            <TextBox Text="{Binding DestinationText}"
+                     IsReadOnly="True" />
+            <Button Command="{Binding DestinationCommand}"
+                    IsEnabled="{Binding DestinationEnabled}"
                     IsVisible="{Binding DestinationVisible}">
-                <TextBlock Text="Choose..." />
+                <TextBlock Text="{Binding ChooseLabel}" />
             </Button>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding OptionsVisible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding OptionsVisible}">
             <StackPanel Orientation="Horizontal">
-                <NumericUpDown Increment="1" Minimum="1" Maximum="16384" Value="{Binding SectorsValue}" />
-                <TextBlock Text="How many sectors to convert at once." />
+                <NumericUpDown Increment="1"
+                               Minimum="1"
+                               Maximum="16384"
+                               Value="{Binding SectorsValue}" />
+                <TextBlock Text="{Binding SectorsLabel}" />
             </StackPanel>
             <CheckBox IsChecked="{Binding ForceChecked}">
-                <TextBlock Text="Continue conversion even if sector or media tags will be lost in the process." />
+                <TextBlock Text="{Binding ForceLabel}" />
             </CheckBox>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Who (person) created the image?" /> <TextBox Text="{Binding CreatorText}" />
-                <Button Command="{Binding CreatorCommand}" IsVisible="{Binding CreatorVisible}">
-                    <TextBlock Text="Get from source image" />
+                <TextBlock Text="{Binding CreatorLabel}" /> <TextBox Text="{Binding CreatorText}" />
+                <Button Command="{Binding CreatorCommand}"
+                        IsVisible="{Binding CreatorVisible}">
+                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                 </Button>
             </StackPanel>
             <StackPanel>
-                <TextBlock Text="Metadata" />
+                <TextBlock Text="{Binding MetadataLabel}" />
                 <TabControl>
                     <TabItem>
                         <TabItem.Header>
-                            <TextBlock Text="Media" />
+                            <TextBlock Text="{Binding MediaLabel}" />
                         </TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Title" /> <TextBox Text="{Binding MediaTitleText}" />
-                                <Button Command="{Binding MediaTitleCommand}" IsVisible="{Binding MediaTitleVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                <TextBlock Text="{Binding TitleLabel}" /> <TextBox Text="{Binding MediaTitleText}" />
+                                <Button Command="{Binding MediaTitleCommand}"
+                                        IsVisible="{Binding MediaTitleVisible}">
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Manufacturer" /> <TextBox Text="{Binding MediaManufacturerText}" />
+                                <TextBlock Text="{Binding ManufacturerLabel}" />
+                                <TextBox Text="{Binding MediaManufacturerText}" />
                                 <Button Command="{Binding MediaManufacturerCommand}"
                                         IsVisible="{Binding MediaManufacturerVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Model" /> <TextBox Text="{Binding MediaModelText}" />
-                                <Button Command="{Binding MediaModelCommand}" IsVisible="{Binding MediaModelVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                <TextBlock Text="{Binding ModelLabel}" /> <TextBox Text="{Binding MediaModelText}" />
+                                <Button Command="{Binding MediaModelCommand}"
+                                        IsVisible="{Binding MediaModelVisible}">
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Serial number" /> <TextBox Text="{Binding MediaSerialNumberText}" />
+                                <TextBlock Text="{Binding SerialNumberLabel}" />
+                                <TextBox Text="{Binding MediaSerialNumberText}" />
                                 <Button Command="{Binding MediaSerialNumberCommand}"
                                         IsVisible="{Binding MediaSerialNumberVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Barcode" /> <TextBox Text="{Binding MediaBarcodeText}" />
+                                <TextBlock Text="{Binding BarcodeLabel}" />
+                                <TextBox Text="{Binding MediaBarcodeText}" />
                                 <Button Command="{Binding MediaBarcodeCommand}"
                                         IsVisible="{Binding MediaBarcodeVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Part number" /> <TextBox Text="{Binding MediaPartNumberText}" />
+                                <TextBlock Text="{Binding PartNumberLabel}" />
+                                <TextBox Text="{Binding MediaPartNumberText}" />
                                 <Button Command="{Binding MediaPartNumberCommand}"
                                         IsVisible="{Binding MediaPartNumberVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Number in sequence" />
-                                <NumericUpDown Increment="1" Value="{Binding MediaSequenceValue}" Minimum="0" />
+                                <TextBlock Text="{Binding NumberInSequenceLabel}" />
+                                <NumericUpDown Increment="1"
+                                               Value="{Binding MediaSequenceValue}"
+                                               Minimum="0" />
                                 <Button Command="{Binding MediaSequenceCommand}"
                                         IsVisible="{Binding MediaSequenceVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Last media of the sequence" />
-                                <NumericUpDown Increment="1" Value="{Binding LastMediaSequenceValue}" Minimum="0" />
+                                <TextBlock Text="{Binding LastMediaOfTheSequenceLabel}" />
+                                <NumericUpDown Increment="1"
+                                               Value="{Binding LastMediaSequenceValue}"
+                                               Minimum="0" />
                                 <Button Command="{Binding LastMediaSequenceCommand}"
                                         IsVisible="{Binding LastMediaSequenceVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                         </StackPanel>
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>
-                            <TextBlock Text="Drive" />
+                            <TextBlock Text="{Binding DriveLabel}" />
                         </TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Manufacturer" /> <TextBox Text="{Binding DriveManufacturerText}" />
+                                <TextBlock Text="{Binding ManufacturerLabel}" />
+                                <TextBox Text="{Binding DriveManufacturerText}" />
                                 <Button Command="{Binding DriveManufacturerCommand}"
                                         IsVisible="{Binding DriveManufacturerVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Model" /> <TextBox Text="{Binding DriveModelText}" />
-                                <Button Command="{Binding DriveModelCommand}" IsVisible="{Binding DriveModelVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                <TextBlock Text="{Binding ModelLabel}" /> <TextBox Text="{Binding DriveModelText}" />
+                                <Button Command="{Binding DriveModelCommand}"
+                                        IsVisible="{Binding DriveModelVisible}">
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Serial number" /> <TextBox Text="{Binding DriveSerialNumberText}" />
+                                <TextBlock Text="{Binding SerialNumberLabel}" />
+                                <TextBox Text="{Binding DriveSerialNumberText}" />
                                 <Button Command="{Binding DriveSerialNumberCommand}"
                                         IsVisible="{Binding DriveSerialNumberVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Firmware revision" />
+                                <TextBlock Text="{Binding FirmwareRevisionLabel}" />
                                 <TextBox Text="{Binding DriveFirmwareRevisionText}" />
                                 <Button Command="{Binding DriveFirmwareRevisionCommand}"
                                         IsVisible="{Binding DriveFirmwareRevisionVisible}">
-                                    <TextBlock Text="Get from source image" />
+                                    <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                                 </Button>
                             </StackPanel>
                         </StackPanel>
                     </TabItem>
                     <TabItem>
                         <TabItem.Header>
-                            <TextBlock Text="Comments" />
+                            <TextBlock Text="{Binding CommentsLabel}" />
                         </TabItem.Header>
                         <StackPanel Orientation="Vertical">
                             <TextBox Text="{Binding CommentsText}" />
-                            <Button Command="{Binding CommentsCommand}" IsVisible="{Binding CommentsVisible}">
-                                <TextBlock Text="Get from source image" />
+                            <Button Command="{Binding CommentsCommand}"
+                                    IsVisible="{Binding CommentsVisible}">
+                                <TextBlock Text="{Binding GetFromSourceImageLabel}" />
                             </Button>
                         </StackPanel>
                     </TabItem>
                 </TabControl>
-                <TextBlock Text="Existing CICM XML sidecar" />
+                <TextBlock Text="{Binding AaruMetadataLabel}" />
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding CicmXmlText}" IsReadOnly="True" />
-                    <Button Command="{Binding CicmXmlFromImageCommand}" IsVisible="{Binding CicmXmlFromImageVisible}">
-                        <TextBlock Text="From image..." />
+                    <TextBox Text="{Binding MetadataJsonText}"
+                             IsReadOnly="True" />
+                    <Button Command="{Binding AaruMetadataFromImageCommand}"
+                            IsVisible="{Binding AaruMetadataFromImageVisible}">
+                        <TextBlock Text="{Binding FromImageLabel}" />
                     </Button>
-                    <Button Command="{Binding CicmXmlCommand}">
-                        <TextBlock Text="Choose..." />
+                    <Button Command="{Binding AaruMetadataCommand}">
+                        <TextBlock Text="{Binding ChooseLabel}" />
                     </Button>
                 </StackPanel>
-                <TextBlock Text="Existing resume file" />
+                <TextBlock Text="{Binding ResumeFileLabel}" />
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding ResumeFileText}" IsReadOnly="True" />
+                    <TextBox Text="{Binding ResumeFileText}"
+                             IsReadOnly="True" />
                     <Button Command="{Binding ResumeFileFromImageCommand}"
                             IsVisible="{Binding ResumeFileFromImageVisible}">
-                        <TextBlock Text="From image..." />
+                        <TextBlock Text="{Binding FromImageLabel}" />
                     </Button>
                     <Button Command="{Binding ResumeFileCommand}">
-                        <TextBlock Text="Choose..." />
+                        <TextBlock Text="{Binding ChooseLabel}" />
                     </Button>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" IsVisible="{Binding ProgressVisible}">
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress1Visible}">
+        <StackPanel Orientation="Vertical"
+                    IsVisible="{Binding ProgressVisible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress1Visible}">
                 <TextBox Text="{Binding ProgressText}" />
-                <ProgressBar Value="{Binding ProgressValue}" Maximum="{Binding ProgressMaxValue}"
+                <ProgressBar Value="{Binding ProgressValue}"
+                             Maximum="{Binding ProgressMaxValue}"
                              IsIndeterminate="{Binding ProgressIndeterminate}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" IsVisible="{Binding Progress2Visible}">
+            <StackPanel Orientation="Vertical"
+                        IsVisible="{Binding Progress2Visible}">
                 <TextBox Text="{Binding Progress2Text}" />
-                <ProgressBar Value="{Binding Progress2Value}" Maximum="{Binding Progress2MaxValue}"
+                <ProgressBar Value="{Binding Progress2Value}"
+                             Maximum="{Binding Progress2MaxValue}"
                              IsIndeterminate="{Binding Progress2Indeterminate}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding StartCommand}" IsVisible="{Binding StartVisible}">
-                <TextBlock Text="Start" />
+            <Button Command="{Binding StartCommand}"
+                    IsVisible="{Binding StartVisible}">
+                <TextBlock Text="{Binding StartLabel}" />
             </Button>
-            <Button Command="{Binding CloseCommand}" IsVisible="{Binding CloseVisible}">
-                <TextBlock Text="Close" />
+            <Button Command="{Binding CloseCommand}"
+                    IsVisible="{Binding CloseVisible}">
+                <TextBlock Text="{Binding CloseLabel}" />
             </Button>
-            <Button Command="{Binding StopCommand}" IsVisible="{Binding StopVisible}" IsEnabled="{Binding StopEnabled}">
-                <TextBlock Text="Stop" />
+            <Button Command="{Binding StopCommand}"
+                    IsVisible="{Binding StopVisible}"
+                    IsEnabled="{Binding StopEnabled}">
+                <TextBlock Text="{Binding StopLabel}" />
             </Button>
         </StackPanel>
     </StackPanel>

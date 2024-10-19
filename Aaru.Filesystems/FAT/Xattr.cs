@@ -7,10 +7,6 @@
 //
 // Component      : Microsoft FAT filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Microsoft FAT extended attributes.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,10 +23,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
@@ -40,25 +34,25 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
+namespace Aaru.Filesystems;
+
 public sealed partial class FAT
 {
     Dictionary<string, Dictionary<string, byte[]>> _eaCache;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
     {
         xattrs = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         // No other xattr recognized yet
-        if(_cachedEaData is null &&
-           !_fat32)
-            return ErrorNumber.NotSupported;
+        if(_cachedEaData is null && !_fat32) return ErrorNumber.NotSupported;
 
-        if(path[0] == '/')
-            path = path.Substring(1);
+        if(path[0] == '/') path = path[1..];
 
         if(_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
         {
@@ -69,29 +63,24 @@ public sealed partial class FAT
 
         ErrorNumber err = GetFileEntry(path, out CompleteDirectoryEntry entry);
 
-        if(err != ErrorNumber.NoError ||
-           entry is null)
-            return err;
+        if(err != ErrorNumber.NoError || entry is null) return err;
 
-        xattrs = new List<string>();
+        xattrs = [];
 
         if(!_fat32)
         {
-            if(entry.Dirent.ea_handle == 0)
-                return ErrorNumber.NoError;
+            if(entry.Dirent.ea_handle == 0) return ErrorNumber.NoError;
 
             eas = GetEas(entry.Dirent.ea_handle);
         }
         else
         {
-            if(entry.Fat32Ea.start_cluster == 0)
-                return ErrorNumber.NoError;
+            if(entry.Fat32Ea.start_cluster == 0) return ErrorNumber.NoError;
 
             eas = GetEas(entry.Fat32Ea);
         }
 
-        if(eas is null)
-            return ErrorNumber.NoError;
+        if(eas is null) return ErrorNumber.NoError;
 
         _eaCache.Add(path.ToLower(_cultureInfo), eas);
         xattrs = eas.Keys.ToList();
@@ -102,31 +91,28 @@ public sealed partial class FAT
     /// <inheritdoc />
     public ErrorNumber GetXattr(string path, string xattr, ref byte[] buf)
     {
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         ErrorNumber err = ListXAttr(path, out List<string> xattrs);
 
-        if(err != ErrorNumber.NoError)
-            return err;
+        if(err != ErrorNumber.NoError) return err;
 
-        if(path[0] == '/')
-            path = path.Substring(1);
+        if(path[0] == '/') path = path[1..];
 
-        if(!xattrs.Contains(xattr.ToLower(_cultureInfo)))
-            return ErrorNumber.NoSuchExtendedAttribute;
+        if(!xattrs.Contains(xattr.ToLower(_cultureInfo))) return ErrorNumber.NoSuchExtendedAttribute;
 
         if(!_eaCache.TryGetValue(path.ToLower(_cultureInfo), out Dictionary<string, byte[]> eas))
             return ErrorNumber.InvalidArgument;
 
-        if(!eas.TryGetValue(xattr.ToLower(_cultureInfo), out byte[] data))
-            return ErrorNumber.InvalidArgument;
+        if(!eas.TryGetValue(xattr.ToLower(_cultureInfo), out byte[] data)) return ErrorNumber.InvalidArgument;
 
         buf = new byte[data.Length];
         data.CopyTo(buf, 0);
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 
     Dictionary<string, byte[]> GetEas(DirectoryEntry entryFat32Ea)
     {
@@ -136,10 +122,10 @@ public sealed partial class FAT
         foreach(uint cluster in rootDirectoryClusters)
         {
             ErrorNumber errno = _image.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster,
-                                                   _sectorsPerCluster, out byte[] buffer);
+                                                   _sectorsPerCluster,
+                                                   out byte[] buffer);
 
-            if(errno != ErrorNumber.NoError)
-                return null;
+            if(errno != ErrorNumber.NoError) return null;
 
             eaMs.Write(buffer, 0, buffer.Length);
         }
@@ -165,15 +151,14 @@ public sealed partial class FAT
 
         var eaCluster = (uint)(a + b);
 
-        if(b == EA_UNUSED)
-            return null;
+        if(b == EA_UNUSED) return null;
 
         EaHeader header =
-            Marshal.ByteArrayToStructureLittleEndian<EaHeader>(_cachedEaData, (int)(eaCluster * _bytesPerCluster),
+            Marshal.ByteArrayToStructureLittleEndian<EaHeader>(_cachedEaData,
+                                                               (int)(eaCluster * _bytesPerCluster),
                                                                Marshal.SizeOf<EaHeader>());
 
-        if(header.magic != 0x4145)
-            return null;
+        if(header.magic != 0x4145) return null;
 
         var eaLen = BitConverter.ToUInt32(_cachedEaData,
                                           (int)(eaCluster * _bytesPerCluster) + Marshal.SizeOf<EaHeader>());
@@ -187,14 +172,11 @@ public sealed partial class FAT
 
     Dictionary<string, byte[]> GetEas(byte[] eaData)
     {
-        if(eaData is null ||
-           eaData.Length < 4)
-            return null;
+        if(eaData is null || eaData.Length < 4) return null;
 
         Dictionary<string, byte[]> eas = new();
 
-        if(_debug)
-            eas.Add("com.microsoft.os2.fea", eaData);
+        if(_debug) eas.Add("com.microsoft.os2.fea", eaData);
 
         var pos = 4;
 
@@ -231,18 +213,17 @@ public sealed partial class FAT
 
     void CacheEaData()
     {
-        if(_eaDirEntry.start_cluster == 0)
-            return;
+        if(_eaDirEntry.start_cluster == 0) return;
 
         var eaDataMs = new MemoryStream();
 
         foreach(uint cluster in GetClusters(_eaDirEntry.start_cluster))
         {
             ErrorNumber errno = _image.ReadSectors(_firstClusterSector + cluster * _sectorsPerCluster,
-                                                   _sectorsPerCluster, out byte[] buffer);
+                                                   _sectorsPerCluster,
+                                                   out byte[] buffer);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             eaDataMs.Write(buffer, 0, buffer.Length);
         }

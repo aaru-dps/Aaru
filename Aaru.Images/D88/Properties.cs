@@ -27,30 +27,42 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Images;
 
 public sealed partial class D88
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
-    public string Name => "D88 Disk Image";
+    public string Name => Localization.D88_Name;
+
     /// <inheritdoc />
     public Guid Id => new("669EDC77-EC41-4720-A88C-49C38CFFBAA0");
+
     /// <inheritdoc />
+
+    // ReSharper disable once ConvertToAutoProperty
     public ImageInfo Info => _imageInfo;
+
     /// <inheritdoc />
     public string Format => "D88 disk image";
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
+
     /// <inheritdoc />
-    public List<DumpHardwareType> DumpHardware => null;
+    public List<DumpHardware> DumpHardware => null;
+
     /// <inheritdoc />
-    public CICMMetadataType CicmMetadata => null;
+    public Metadata AaruMetadata => null;
+
+#endregion
 }

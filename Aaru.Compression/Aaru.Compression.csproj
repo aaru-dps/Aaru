@@ -1,128 +1,125 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{858398D1-7321-4763-8BAB-56BBFEC74E29}</ProjectGuid>
-        <OutputType>Library</OutputType>
-        <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>Aaru.Compression</RootNamespace>
-        <AssemblyName>Aaru.Compression</AssemblyName>
-        <FileAlignment>512</FileAlignment>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru Data Preservation Suite</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFramework>net6.0</TargetFramework>
-        <LangVersion>10</LangVersion>
-        <Description>Compression algorithms used by the Aaru Data Preservation Suite.</Description>
-        <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
-        <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <NeutralLanguage>en-US</NeutralLanguage>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-    </PropertyGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>true</NrtShowRevision>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>false</Optimize>
-        <OutputPath>bin\Debug</OutputPath>
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    </PropertyGroup>
-    <PropertyGroup>
-        <DefaultItemExcludes>
-            $(DefaultItemExcludes);cuetools.net/**/*
-        </DefaultItemExcludes>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="ADC.cs" />
-        <Compile Include="AppleRle.cs" />
-        <Compile Include="BZip2.cs" />
-        <Compile Include="FLAC.cs" />
-        <Compile Include="LZFSE.cs" />
-        <Compile Include="LZIP.cs" />
-        <Compile Include="LZMA.cs" />
-        <Compile Include="Native.cs" />
-        <Compile Include="NonClosableStream.cs" />
-        <Compile Include="TeleDiskLzh.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/CRC/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/NULL/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/ViewModel/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs/WAV/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs.Flake/*.cs" />
-        <Compile Include="cuetools.net/CUETools.Codecs.Flake/Properties/*.cs" />
-        <Compile Include="ZSTD.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha8" />
-        <PackageReference Include="DotNetZip" Version="1.16.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="SharpCompress" Version="0.30.1" />
-        <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2" PrivateAssets="all" />
-    </ItemGroup>
-    <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-           Other similar extension points exist, see Microsoft.Common.targets.
-      <Target Name="BeforeBuild">
-      </Target>
-      <Target Name="AfterBuild">
-      </Target>
-      -->
-    <PropertyGroup Condition="$(TargetFramework.StartsWith('net4')) and '$(OS)' == 'Unix'">
-        <!-- When compiling .NET SDK 2.0 projects targeting .NET 4.x on Mono using 'dotnet build' you -->
-        <!-- have to teach MSBuild where the Mono copy of the reference asssemblies is -->
-        <!-- Look in the standard install locations -->
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/lib/mono')">/usr/lib/mono</BaseFrameworkPathOverrideForMono>
-        <BaseFrameworkPathOverrideForMono Condition="'$(BaseFrameworkPathOverrideForMono)' == '' AND EXISTS('/usr/local/lib/mono')">/usr/local/lib/mono</BaseFrameworkPathOverrideForMono>
-        <!-- If we found Mono reference assemblies, then use them -->
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net40'">$(BaseFrameworkPathOverrideForMono)/4.0-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net45'">$(BaseFrameworkPathOverrideForMono)/4.5-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net451'">$(BaseFrameworkPathOverrideForMono)/4.5.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net452'">$(BaseFrameworkPathOverrideForMono)/4.5.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net46'">$(BaseFrameworkPathOverrideForMono)/4.6-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net461'">$(BaseFrameworkPathOverrideForMono)/4.6.1-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net462'">$(BaseFrameworkPathOverrideForMono)/4.6.2-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net47'">$(BaseFrameworkPathOverrideForMono)/4.7-api</FrameworkPathOverride>
-        <FrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != '' AND '$(TargetFramework)' == 'net471'">$(BaseFrameworkPathOverrideForMono)/4.7.1-api</FrameworkPathOverride>
-        <EnableFrameworkPathOverride Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">true</EnableFrameworkPathOverride>
-        <!-- Add the Facades directory.  Not sure how else to do this. Necessary at least for .NET 4.5 -->
-        <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ProjectGuid>{858398D1-7321-4763-8BAB-56BBFEC74E29}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Aaru.Compression</RootNamespace>
+    <AssemblyName>Aaru.Compression</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0-alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2024 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru Data Preservation Suite</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Description>Compression algorithms used by the Aaru Data Preservation Suite.</Description>
+    <PackageProjectUrl>https://github.com/aaru-dps/</PackageProjectUrl>
+    <PackageLicenseExpression>LGPL-2.1-only</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/aaru-dps/Aaru</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>true</NrtShowRevision>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefaultItemExcludes>
+      $(DefaultItemExcludes);cuetools.net/**/*
+    </DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ADC.cs"/>
+    <Compile Include="AppleRle.cs"/>
+    <Compile Include="BZip2.cs"/>
+    <Compile Include="FLAC.cs"/>
+    <Compile Include="LZFSE.cs"/>
+    <Compile Include="LZIP.cs"/>
+    <Compile Include="LZMA.cs"/>
+    <Compile Include="Native.cs"/>
+    <Compile Include="TeleDiskLzh.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/CommandLine/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/CRC/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/NULL/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/ViewModel/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs/WAV/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs.Flake/*.cs"/>
+    <Compile Include="cuetools.net/CUETools.Codecs.Flake/Properties/*.cs"/>
+    <Compile Include="ZSTD.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aaru.Compression.Native" Version="6.0.0-alpha.10"/>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="DotNetZip" Version="1.16.0"/>
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+    <PackageReference Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
+    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0"/>
+    <PackageReference Include="Text.Analyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3" PrivateAssets="all"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+  </ItemGroup>
 </Project>

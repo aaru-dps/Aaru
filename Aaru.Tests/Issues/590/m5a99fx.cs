@@ -1,12 +1,10 @@
-
-
 // ReSharper disable StringLiteralTypo
-
-namespace Aaru.Tests.Issues._590;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+
+namespace Aaru.Tests.Issues._590;
 
 /* https://github.com/aaru-dps/Aaru/issues/590
  *
@@ -16,10 +14,12 @@ using System.IO;
  */
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class m5a99fx : FsExtractHashIssueTest
 {
     protected override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Issues", "Fixed", "issue590", "m5a99fx");
+        Path.Combine(Consts.TestFilesRoot, "Issues", "Fixed", "issue590", "m5a99fx");
+
     protected override string                     TestFile         => "MB Support CD.aaruf";
     protected override Dictionary<string, string> ParsedOptions    => new();
     protected override bool                       Debug            => false;

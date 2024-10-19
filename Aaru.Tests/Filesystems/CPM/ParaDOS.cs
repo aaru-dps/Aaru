@@ -22,29 +22,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.CPM;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.CPM;
+
 [TestFixture]
-public class ParaDOS : FilesystemTest
+public class ParaDOS() : FilesystemTest("cpmfs")
 {
-    public ParaDOS() : base("CP/M") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "CPM", "ParaDOS");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "CPM", "ParaDOS");
-
-    public override IFilesystem Plugin     => new CPM();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.CPM();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "40d_filename.dsk.lz",
@@ -103,5 +100,5 @@ public class ParaDOS : FilesystemTest
             Clusters    = 170,
             ClusterSize = 1024
         }
-    };
+    ];
 }

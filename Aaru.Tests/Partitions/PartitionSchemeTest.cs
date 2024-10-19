@@ -1,5 +1,3 @@
-namespace Aaru.Tests.Partitions;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,10 +8,15 @@ using Aaru.Core;
 using FluentAssertions;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 public abstract class PartitionSchemeTest
 {
     public abstract string          DataFolder { get; }
     public abstract PartitionTest[] Tests      { get; }
+
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
 
     [Test]
     public void Test()
@@ -24,27 +27,30 @@ public abstract class PartitionSchemeTest
             Environment.CurrentDirectory = DataFolder;
 
             bool exists = File.Exists(testFile);
-            Assert.True(exists, $"{testFile} not found");
+            Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             // It arrives here...
             if(!exists)
+
+                // ReSharper disable once HeuristicUnreachableCode
                 continue;
 
-            var     filtersList = new FiltersList();
-            IFilter inputFilter = filtersList.GetFilter(testFile);
+            IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
 
-            Assert.IsNotNull(inputFilter, $"Filter: {testFile}");
+            Assert.That(inputFilter, Is.Not.Null, string.Format(Localization.Filter_0, testFile));
 
             var image = ImageFormat.Detect(inputFilter) as IMediaImage;
 
-            Assert.IsNotNull(image, $"Image format: {testFile}");
+            Assert.That(image, Is.Not.Null, string.Format(Localization.Image_format_0, testFile));
 
-            Assert.AreEqual(ErrorNumber.NoError, image.Open(inputFilter), $"Cannot open image for {testFile}");
+            Assert.That(image.Open(inputFilter),
+                        Is.EqualTo(ErrorNumber.NoError),
+                        string.Format(Localization.Cannot_open_image_for_0, testFile));
 
-            List<Partition> partitions = Partitions.GetAll(image);
+            List<Partition> partitions = Core.Partitions.GetAll(image);
 
-            partitions.Should().BeEquivalentTo(test.Partitions, $"Partitions: {testFile}");
+            partitions.Should().BeEquivalentTo(test.Partitions, string.Format(Localization.Partitions_0, testFile));
         }
     }
 }

@@ -27,15 +27,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class UkvFdi
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -48,4 +52,6 @@ public sealed partial class UkvFdi
         public readonly ushort    dataOff;
         public readonly ushort    addInfoLen;
     }
+
+#endregion
 }

@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.SysV;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Whole : FilesystemTest
-{
-    public Whole() : base("SVR4 fs") {}
+namespace Aaru.Tests.Filesystems.SysV;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "System V filesystem");
+[TestFixture]
+public class Whole() : FilesystemTest("sysv_r4")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem");
 
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix.adf.lz",
@@ -136,5 +134,5 @@ public class Whole : FilesystemTest
             ClusterSize = 1024,
             VolumeName  = ""
         }
-    };
+    ];
 }

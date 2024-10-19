@@ -27,20 +27,26 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Aaru.Database;
 
-using Microsoft.EntityFrameworkCore.Design;
-
 /// <inheritdoc />
 /// <summary>Database context factory, for design time</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
 {
+#region IDesignTimeDbContextFactory<AaruContext> Members
+
     /// <inheritdoc />
     /// <summary>Creates a database context</summary>
     /// <param name="args">Ignored parameters</param>
     /// <returns>A database context</returns>
     public AaruContext CreateDbContext(string[] args) => AaruContext.Create("aaru.db");
+
+#endregion
 }

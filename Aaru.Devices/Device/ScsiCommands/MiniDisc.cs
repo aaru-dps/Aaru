@@ -27,17 +27,16 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable InconsistentNaming
 
-namespace Aaru.Devices;
-
-using System;
 using Aaru.Console;
+
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
 
 public partial class Device
 {
@@ -49,23 +48,28 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscReadDataTOC(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 2336;
+        const ushort transferLength = 2336;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadDTOC;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC READ DTOC took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_DTOC_took_0_ms, duration);
 
         return sense;
     }
@@ -80,7 +84,7 @@ public partial class Device
     public bool MiniDiscReadUserTOC(out byte[] buffer, out byte[] senseBuffer, uint sector, uint timeout,
                                     out double duration)
     {
-        ushort transferLength = 2336;
+        const ushort transferLength = 2336;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
@@ -89,18 +93,23 @@ public partial class Device
         cdb[2] = (byte)((sector & 0xFF000000) >> 24);
         cdb[3] = (byte)((sector & 0xFF0000)   >> 16);
         cdb[4] = (byte)((sector & 0xFF00)     >> 8);
-        cdb[5] = (byte)(sector & 0xFF);
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[5] = (byte)(sector   & 0xFF);
+        cdb[7] = (transferLength & 0xFF00) >> 8;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC READ UTOC took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_UTOC_took_0_ms, duration);
 
         return sense;
     }
@@ -113,23 +122,28 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscD5(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 4;
+        const ushort transferLength = 4;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscD5;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = 0;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC command D5h took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_command_D5h_took_0_ms, duration);
 
         return sense;
     }
@@ -147,14 +161,19 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.MiniDiscStopPlay;
 
-        buffer = Array.Empty<byte>();
+        buffer = [];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC STOP PLAY took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_STOP_PLAY_took_0_ms, duration);
 
         return sense;
     }
@@ -167,23 +186,28 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 4;
+        const ushort transferLength = 4;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscReadPosition;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = 0;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC READ POSITION took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_READ_POSITION_took_0_ms, duration);
 
         return sense;
     }
@@ -196,23 +220,28 @@ public partial class Device
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     public bool MiniDiscGetType(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
-        ushort transferLength = 8;
+        const ushort transferLength = 8;
         senseBuffer = new byte[64];
         var cdb = new byte[10];
 
         cdb[0] = (byte)ScsiCommands.MiniDiscGetType;
 
-        cdb[7] = (byte)((transferLength & 0xFF00) >> 8);
-        cdb[8] = (byte)(transferLength & 0xFF);
+        cdb[7] = 0;
+        cdb[8] = transferLength & 0xFF;
 
         buffer = new byte[transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "MINIDISC GET TYPE took {0} ms.", duration);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME, Localization.MINIDISC_GET_TYPE_took_0_ms, duration);
 
         return sense;
     }

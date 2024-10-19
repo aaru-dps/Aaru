@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Runtime.InteropServices;
 using Aaru.Decoders.Floppy;
 
+namespace Aaru.Images;
+
 public sealed partial class D88
 {
+#region Nested type: Header
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Header
     {
@@ -56,6 +58,10 @@ public sealed partial class D88
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 164)]
         public readonly int[] track_table;
     }
+
+#endregion
+
+#region Nested type: SectorHeader
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct SectorHeader
@@ -82,4 +88,6 @@ public sealed partial class D88
         /// <summary>Size of data following this field このセクタ部のデータサイズ</summary>
         public readonly short size_of_data;
     }
+
+#endregion
 }

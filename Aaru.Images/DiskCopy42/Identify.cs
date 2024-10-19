@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.IO;
@@ -39,8 +37,12 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Claunia.Encoding;
 
+namespace Aaru.Images;
+
 public sealed partial class DiskCopy42
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Identify(IFilter imageFilter)
     {
@@ -48,11 +50,10 @@ public sealed partial class DiskCopy42
         stream.Seek(0, SeekOrigin.Begin);
         var buffer  = new byte[0x58];
         var pString = new byte[64];
-        stream.Read(buffer, 0, 0x58);
+        stream.EnsureRead(buffer, 0, 0x58);
 
         // Incorrect pascal string length, not DC42
-        if(buffer[0] > 63)
-            return false;
+        if(buffer[0] > 63) return false;
 
         var tmpHeader = new Header();
 
@@ -68,19 +69,17 @@ public sealed partial class DiskCopy42
         tmpHeader.Valid        = buffer[0x52];
         tmpHeader.Reserved     = buffer[0x53];
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.diskName = \"{0}\"", tmpHeader.DiskName);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataSize = {0} bytes", tmpHeader.DataSize);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagSize = {0} bytes", tmpHeader.TagSize);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataChecksum = 0x{0:X8}", tmpHeader.DataChecksum);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagChecksum = 0x{0:X8}", tmpHeader.TagChecksum);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.format = 0x{0:X2}", tmpHeader.Format);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.fmtByte = 0x{0:X2}", tmpHeader.FmtByte);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.valid = {0}", tmpHeader.Valid);
-        AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.reserved = {0}", tmpHeader.Reserved);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.diskName = \"{0}\"",      tmpHeader.DiskName);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.dataSize = {0} bytes",    tmpHeader.DataSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagSize = {0} bytes",     tmpHeader.TagSize);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.dataChecksum = 0x{0:X8}", tmpHeader.DataChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.tagChecksum = 0x{0:X8}",  tmpHeader.TagChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.format = 0x{0:X2}",       tmpHeader.Format);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.fmtByte = 0x{0:X2}",      tmpHeader.FmtByte);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.valid = {0}",             tmpHeader.Valid);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "tmp_header.reserved = {0}",          tmpHeader.Reserved);
 
-        if(tmpHeader.Valid    != 1 ||
-           tmpHeader.Reserved != 0)
-            return false;
+        if(tmpHeader.Valid != 1 || tmpHeader.Reserved != 0) return false;
 
         // Some versions seem to incorrectly create little endian fields
         if(tmpHeader.DataSize + tmpHeader.TagSize + 0x54 != imageFilter.DataForkLength &&
@@ -104,7 +103,9 @@ public sealed partial class DiskCopy42
            tmpHeader.Format != kSigmaFormatTwiggy &&
            tmpHeader.Format != kNotStandardFormat)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value", tmpHeader.Format);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Unknown_tmp_header_format_equals_0_value,
+                                       tmpHeader.Format);
 
             return false;
         }
@@ -118,16 +119,19 @@ public sealed partial class DiskCopy42
            tmpHeader.FmtByte != kFmtNotStandard           &&
            tmpHeader.FmtByte != kMacOSXFmtByte)
         {
-            AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", tmpHeader.FmtByte);
+            AaruConsole.DebugWriteLine(MODULE_NAME,
+                                       Localization.Unknown_tmp_header_fmtByte_equals_0_value,
+                                       tmpHeader.FmtByte);
 
             return false;
         }
 
-        if(tmpHeader.FmtByte != kInvalidFmtByte)
-            return true;
+        if(tmpHeader.FmtByte != kInvalidFmtByte) return true;
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Image_says_its_unformatted);
 
         return false;
     }
+
+#endregion
 }

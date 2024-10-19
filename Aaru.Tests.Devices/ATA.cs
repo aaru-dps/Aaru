@@ -23,15 +23,14 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
-using System;
 using Aaru.Console;
 using Aaru.Devices;
 using Aaru.Tests.Devices.ATA;
+
+namespace Aaru.Tests.Devices;
 
 static partial class MainClass
 {
@@ -39,25 +38,25 @@ static partial class MainClass
     {
         while(true)
         {
-            Console.Clear();
-            AaruConsole.WriteLine("Device: {0}", devPath);
-            AaruConsole.WriteLine("Send an ATA command to the device:");
-            AaruConsole.WriteLine("1.- Send a CHS ATA command to the device.");
-            AaruConsole.WriteLine("2.- Send a 28-bit ATA command to the device.");
-            AaruConsole.WriteLine("3.- Send a 48-bit ATA command to the device.");
-            AaruConsole.WriteLine("4.- Send an ATAPI command to the device.");
-            AaruConsole.WriteLine("5.- Send a CompactFlash command to the device.");
-            AaruConsole.WriteLine("6.- Send a Media Card Pass Through command to the device.");
-            AaruConsole.WriteLine("7.- Send a S.M.A.R.T. command to the device.");
-            AaruConsole.WriteLine("0.- Return to command class menu.");
-            AaruConsole.Write("Choose: ");
+            System.Console.Clear();
+            AaruConsole.WriteLine(Localization.Device_0, devPath);
+            AaruConsole.WriteLine(Localization.Send_an_ATA_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_CHS_ATA_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_28_bit_ATA_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_48_bit_ATA_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_an_ATAPI_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_CompactFlash_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_Media_Card_Pass_Through_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Send_a_SMART_command_to_the_device);
+            AaruConsole.WriteLine(Localization.Return_to_command_class_menu);
+            AaruConsole.Write(Localization.Choose);
 
-            string strDev = Console.ReadLine();
+            string strDev = System.Console.ReadLine();
 
             if(!int.TryParse(strDev, out int item))
             {
-                AaruConsole.WriteLine("Not a number. Press any key to continue...");
-                Console.ReadKey();
+                AaruConsole.WriteLine(Localization.Not_a_number_Press_any_key_to_continue);
+                System.Console.ReadKey();
 
                 continue;
             }
@@ -65,7 +64,7 @@ static partial class MainClass
             switch(item)
             {
                 case 0:
-                    AaruConsole.WriteLine("Returning to command class menu...");
+                    AaruConsole.WriteLine(Localization.Returning_to_command_class_menu);
 
                     return;
                 case 1:
@@ -97,8 +96,8 @@ static partial class MainClass
 
                     continue;
                 default:
-                    AaruConsole.WriteLine("Incorrect option. Press any key to continue...");
-                    Console.ReadKey();
+                    AaruConsole.WriteLine(Localization.Incorrect_option_Press_any_key_to_continue);
+                    System.Console.ReadKey();
 
                     continue;
             }

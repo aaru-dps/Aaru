@@ -23,20 +23,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Tests.Devices;
-
-using System;
+using System.Diagnostics.CodeAnalysis;
 using Aaru.Console;
 using Aaru.Devices;
 
+namespace Aaru.Tests.Devices;
+
+[SuppressMessage("ReSharper", "UnusedParameter.Global")]
 static partial class MainClass
 {
     public static void NVMe(string devPath, Device dev)
     {
-        AaruConsole.WriteLine("NVMe commands not yet implemented. Press any key to continue...");
-        Console.ReadKey();
+        AaruConsole.WriteLine(Localization.NVMe_commands_not_yet_implemented_Press_any_key_to_continue);
+        System.Console.ReadKey();
     }
 }

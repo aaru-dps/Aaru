@@ -27,30 +27,32 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2018-2019 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2018-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+namespace Aaru.Images;
+
 /// <inheritdoc />
 /// <summary>Manages floppy disk images created with d2f by DataPackRat</summary>
-[SuppressMessage("ReSharper", "NotAccessedField.Local"), SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "NotAccessedField.Local")]
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class WCDiskImage : IMediaImage
 {
+    const    string                                                 MODULE_NAME = "d2f plugin";
     readonly Dictionary<(int cylinder, int head, int sector), bool> _badSectors = new();
-    /// <summary>The file header after the image has been opened</summary>
-    FileHeader _fileHeader;
-    ImageInfo _imageInfo;
 
     /* the sectors are cached here */
     readonly Dictionary<(int cylinder, int head, int sector), byte[]> _sectorCache = new();
+    /// <summary>The file header after the image has been opened</summary>
+    FileHeader _fileHeader;
+    ImageInfo _imageInfo;
 
     /// <summary>The ImageFilter we're reading from, after the file has been opened</summary>
     IFilter _wcImageFilter;
@@ -58,8 +60,8 @@ public sealed partial class WCDiskImage : IMediaImage
     /// <summary>Manages floppy disk images created with d2f by DataPackRat</summary>
     public WCDiskImage() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

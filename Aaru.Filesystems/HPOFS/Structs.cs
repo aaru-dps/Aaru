@@ -7,10 +7,6 @@
 //
 // Component      : High Performance Optical File System plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     High Performance Optical File System structures.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,17 +23,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Filesystems;
+
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class HPOFS
 {
+#region Nested type: BiosParameterBlock
+
     /// <summary>BIOS Parameter Block, at sector 0, little-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct BiosParameterBlock
@@ -97,6 +95,180 @@ public sealed partial class HPOFS
         public readonly ushort signature2;
     }
 
+#endregion
+
+#region Nested type: Dci
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Dci
+    {
+        /// <summary>"DATA"</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly byte[] blockId;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown2;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown3;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown4;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown5;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown6;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown7;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown8;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown9;
+        /// <summary>Entries, size unknown</summary>
+        public readonly DciEntry[] entries;
+    }
+
+#endregion
+
+#region Nested type: DciEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DciEntry
+    {
+        /// <summary>Key length</summary>
+        public readonly ushort key_len;
+        /// <summary>Record length</summary>
+        public readonly ushort record_len;
+        /// <summary>dci key</summary>
+        public readonly DciKey key;
+        /// <summary>Padding? Size is key_len - size of DciKey</summary>
+        public readonly byte[] padding;
+        /// <summary>Direct</summary>
+        public readonly Direct dir;
+        /// <summary>Padding? Size is record_len - size of Direct</summary>
+        public readonly byte[] unknown;
+    }
+
+#endregion
+
+#region Nested type: DciKey
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct DciKey
+    {
+        /// <summary>Unknown</summary>
+        public readonly byte unknown;
+        /// <summary>Name size + 2</summary>
+        public readonly byte size;
+        /// <summary>Unknown</summary>
+        public readonly byte unknown2;
+        /// <summary>Unknown</summary>
+        public readonly byte unknown3;
+        /// <summary>Unknown</summary>
+        public readonly byte unknown4;
+        /// <summary>Unknown</summary>
+        public readonly byte unknown5;
+        /// <summary>Name, length = size - 2</summary>
+        public readonly byte[] name;
+    }
+
+#endregion
+
+#region Nested type: Direct
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Direct
+    {
+        /// <summary>Unknown</summary>
+        public readonly uint unknown;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown2;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown3;
+        /// <summary>Mask 0x6000</summary>
+        public readonly ushort subfiles_no;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown4;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown5;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown6;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown7;
+        /// <summary>Some date</summary>
+        public readonly ushort date1;
+        /// <summary>Some time</summary>
+        public readonly ushort time1;
+        /// <summary>Some date</summary>
+        public readonly ushort date2;
+        /// <summary>Some time</summary>
+        public readonly ushort time2;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown8;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown9;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown10;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown11;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown12;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown13;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown14;
+        /// <summary>Subfiles, length unknown</summary>
+        public readonly SubFile[] subfiles;
+    }
+
+#endregion
+
+#region Nested type: Extent
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct Extent
+    {
+        /// <summary>Extent length in sectors</summary>
+        public readonly ushort length;
+        /// <summary>Unknown</summary>
+        public readonly short unknown;
+        /// <summary>Extent starting sector</summary>
+        public readonly int start;
+    }
+
+#endregion
+
+#region Nested type: MasterRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct MasterRecord
+    {
+        /// <summary>"MAST"</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly byte[] blockId;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown2;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown3;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown4;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown5;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown6;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown7;
+        /// <summary>Unknown</summary>
+        public readonly ushort unknown8;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown9;
+    }
+
+#endregion
+
+#region Nested type: MediaInformationBlock
+
     /// <summary>Media Information Block, at sector 13, big-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct MediaInformationBlock
@@ -147,6 +319,39 @@ public sealed partial class HPOFS
         public readonly byte[] filler;
     }
 
+#endregion
+
+#region Nested type: SubFile
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SubFile
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public readonly Extent[] extents;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown2;
+        /// <summary>Logical size in bytes</summary>
+        public readonly uint logical_size;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown3;
+        /// <summary>Physical size in bytes</summary>
+        public readonly uint physical_size;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown4;
+        /// <summary>Physical size in bytes</summary>
+        public readonly uint physical_size2;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown5;
+        /// <summary>Unknown</summary>
+        public readonly uint unknown6;
+    }
+
+#endregion
+
+#region Nested type: VolumeInformationBlock
+
     /// <summary>Volume Information Block, at sector 14, big-endian</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct VolumeInformationBlock
@@ -185,174 +390,5 @@ public sealed partial class HPOFS
         public readonly byte[] filler;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Extent
-    {
-        /// <summary>Extent length in sectors</summary>
-        public readonly ushort length;
-        /// <summary>Unknown</summary>
-        public readonly short unknown;
-        /// <summary>Extent starting sector</summary>
-        public readonly int start;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SubFile
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public readonly Extent[] extents;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown2;
-        /// <summary>Logical size in bytes</summary>
-        public readonly uint logical_size;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown3;
-        /// <summary>Physical size in bytes</summary>
-        public readonly uint physical_size;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown4;
-        /// <summary>Physical size in bytes</summary>
-        public readonly uint physical_size2;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown5;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown6;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Direct
-    {
-        /// <summary>Unknown</summary>
-        public readonly uint unknown;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown2;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown3;
-        /// <summary>Mask 0x6000</summary>
-        public readonly ushort subfiles_no;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown4;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown5;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown6;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown7;
-        /// <summary>Some date</summary>
-        public readonly ushort date1;
-        /// <summary>Some time</summary>
-        public readonly ushort time1;
-        /// <summary>Some date</summary>
-        public readonly ushort date2;
-        /// <summary>Some time</summary>
-        public readonly ushort time2;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown8;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown9;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown10;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown11;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown12;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown13;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown14;
-        /// <summary>Subfiles, length unknown</summary>
-        public readonly SubFile[] subfiles;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct MasterRecord
-    {
-        /// <summary>"MAST"</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly byte[] blockId;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown2;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown3;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown4;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown5;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown6;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown7;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown8;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown9;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DciKey
-    {
-        /// <summary>Unknown</summary>
-        public readonly byte unknown;
-        /// <summary>Name size + 2</summary>
-        public readonly byte size;
-        /// <summary>Unknown</summary>
-        public readonly byte unknown2;
-        /// <summary>Unknown</summary>
-        public readonly byte unknown3;
-        /// <summary>Unknown</summary>
-        public readonly byte unknown4;
-        /// <summary>Unknown</summary>
-        public readonly byte unknown5;
-        /// <summary>Name, length = size - 2</summary>
-        public readonly byte[] name;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DciEntry
-    {
-        /// <summary>Key length</summary>
-        public readonly ushort key_len;
-        /// <summary>Record length</summary>
-        public readonly ushort record_len;
-        /// <summary>dci key</summary>
-        public readonly DciKey key;
-        /// <summary>Padding? Size is key_len - size of DciKey</summary>
-        public readonly byte[] padding;
-        /// <summary>Direct</summary>
-        public readonly Direct dir;
-        /// <summary>Padding? Size is record_len - size of Direct</summary>
-        public readonly byte[] unknown;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct Dci
-    {
-        /// <summary>"DATA"</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly byte[] blockId;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown2;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown3;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown4;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown5;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown6;
-        /// <summary>Unknown</summary>
-        public readonly ushort unknown7;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown8;
-        /// <summary>Unknown</summary>
-        public readonly uint unknown9;
-        /// <summary>Entries, size unknown</summary>
-        public readonly DciEntry[] entries;
-    }
+#endregion
 }

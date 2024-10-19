@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Collections.Generic;
 using System.IO;
@@ -41,20 +39,24 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Console;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class CopyTape
 {
+#region IWritableTapeImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
-        List<long> blockPositions = new();
+        List<long> blockPositions = [];
         var        partialBlockRx = new Regex(PARTIAL_BLOCK_REGEX);
         var        blockRx        = new Regex(BLOCK_REGEX);
         var        filemarkRx     = new Regex(FILEMARK_REGEX);
         var        eotRx          = new Regex(END_OF_TAPE_REGEX);
 
-        if(imageFilter.DataForkLength <= 16)
-            return ErrorNumber.InvalidArgument;
+        if(imageFilter.DataForkLength <= 16) return ErrorNumber.InvalidArgument;
 
         _imageStream          = imageFilter.GetDataForkStream();
         _imageStream.Position = 0;
@@ -66,19 +68,18 @@ public sealed partial class CopyTape
         ulong currentFileStart = 0;
         var   inFile           = false;
 
-        Files = new List<TapeFile>();
+        Files = [];
 
         while(_imageStream.Position + 9 < _imageStream.Length)
         {
-            _imageStream.Read(header, 0, 9);
+            _imageStream.EnsureRead(header, 0, 9);
             string mark = Encoding.ASCII.GetString(header);
 
             Match partialBlockMt = partialBlockRx.Match(mark);
             Match filemarkMt     = filemarkRx.Match(mark);
             Match eotMt          = eotRx.Match(mark);
 
-            if(eotMt.Success)
-                break;
+            if(eotMt.Success) break;
 
             if(filemarkMt.Success)
             {
@@ -98,7 +99,7 @@ public sealed partial class CopyTape
 
             if(!partialBlockMt.Success)
             {
-                AaruConsole.ErrorWriteLine("Found unhandled header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Found_unhandled_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -111,13 +112,13 @@ public sealed partial class CopyTape
                 inFile           = true;
             }
 
-            _imageStream.Read(blockHeader, 0, 16);
+            _imageStream.EnsureRead(blockHeader, 0, 16);
             mark = Encoding.ASCII.GetString(blockHeader);
             Match blockMt = blockRx.Match(mark);
 
             if(!blockMt.Success)
             {
-                AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -126,22 +127,21 @@ public sealed partial class CopyTape
 
             if(string.IsNullOrWhiteSpace(blkSize))
             {
-                AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
 
             if(!uint.TryParse(blkSize, out uint blockSize))
             {
-                AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
 
-            if(blockSize      == 0 ||
-               blockSize + 17 > imageFilter.DataForkLength)
+            if(blockSize == 0 || blockSize + 17 > imageFilter.DataForkLength)
             {
-                AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -152,7 +152,7 @@ public sealed partial class CopyTape
 
             if(newLine != 0x0A)
             {
-                AaruConsole.ErrorWriteLine("Cannot decode block header, cannot open.");
+                AaruConsole.ErrorWriteLine(Localization.Cannot_decode_block_header_cannot_open);
 
                 return ErrorNumber.InvalidArgument;
             }
@@ -161,28 +161,27 @@ public sealed partial class CopyTape
             currentBlock++;
             _imageInfo.ImageSize += blockSize;
 
-            if(_imageInfo.SectorSize < blockSize)
-                _imageInfo.SectorSize = blockSize;
+            if(_imageInfo.SectorSize < blockSize) _imageInfo.SectorSize = blockSize;
         }
 
         _blockPositionCache = blockPositions.ToArray();
 
-        TapePartitions = new List<TapePartition>
-        {
-            new()
+        TapePartitions =
+        [
+            new TapePartition
             {
                 FirstBlock = 0,
                 LastBlock  = currentBlock - 1,
                 Number     = 0
             }
-        };
+        ];
 
         _imageInfo.Sectors              = (ulong)_blockPositionCache.LongLength;
         _imageInfo.MediaType            = MediaType.UnknownTape;
         _imageInfo.Application          = "CopyTape";
         _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-        _imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
         IsTape                          = true;
 
         return ErrorNumber.NoError;
@@ -193,36 +192,30 @@ public sealed partial class CopyTape
     {
         buffer = null;
 
-        if(sectorAddress >= (ulong)_blockPositionCache.LongLength)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress >= (ulong)_blockPositionCache.LongLength) return ErrorNumber.OutOfRange;
 
         _imageStream.Position = _blockPositionCache[sectorAddress];
 
         var blockHeader = new byte[16];
         var blockRx     = new Regex(BLOCK_REGEX);
 
-        _imageStream.Read(blockHeader, 0, 16);
+        _imageStream.EnsureRead(blockHeader, 0, 16);
         string mark    = Encoding.ASCII.GetString(blockHeader);
         Match  blockMt = blockRx.Match(mark);
 
-        if(!blockMt.Success)
-            return ErrorNumber.InvalidArgument;
+        if(!blockMt.Success) return ErrorNumber.InvalidArgument;
 
         string blkSize = blockMt.Groups["blockSize"].Value;
 
-        if(string.IsNullOrWhiteSpace(blkSize))
-            return ErrorNumber.InvalidArgument;
+        if(string.IsNullOrWhiteSpace(blkSize)) return ErrorNumber.InvalidArgument;
 
-        if(!uint.TryParse(blkSize, out uint blockSize))
-            return ErrorNumber.InvalidArgument;
+        if(!uint.TryParse(blkSize, out uint blockSize)) return ErrorNumber.InvalidArgument;
 
-        if(blockSize      == 0 ||
-           blockSize + 17 > _imageStream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(blockSize == 0 || blockSize + 17 > _imageStream.Length) return ErrorNumber.InvalidArgument;
 
         buffer = new byte[blockSize];
 
-        _imageStream.Read(buffer, 0, (int)blockSize);
+        _imageStream.EnsureRead(buffer, 0, (int)blockSize);
 
         return _imageStream.ReadByte() != 0x0A ? ErrorNumber.InvalidArgument : ErrorNumber.NoError;
     }
@@ -238,8 +231,7 @@ public sealed partial class CopyTape
         {
             ErrorNumber errno = ReadSector(sectorAddress + i, out byte[] sector);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             ms.Write(sector, 0, sector.Length);
         }
@@ -248,4 +240,6 @@ public sealed partial class CopyTape
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

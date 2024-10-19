@@ -23,27 +23,28 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.DiskImagesFramework.UDIF;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class ULMO : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "DiskImagesFramework", "UDIF", "ULMO");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "DiskImagesFramework", "UDIF", "ULMO");
+
     public override IMediaImage Plugin => new Udif();
 
-    public override BlockImageTestExpected[] Tests => new BlockImageTestExpected[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         /* TODO: Chunks compressed with lzma are not yet supported.
         new BlockImageTestExpected
         {
@@ -214,5 +215,5 @@ public class ULMO : BlockMediaImageTest
             MD5        = "b7d4ad55c7702658081b6578b588a57f"
         }
         */
-    };
+    ];
 }

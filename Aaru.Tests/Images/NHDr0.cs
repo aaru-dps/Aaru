@@ -23,27 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class NHDr0 : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "T-98 Next");
-    public override IMediaImage Plugin    => new Nhdr0();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "T-98 Next");
+    public override IMediaImage Plugin     => new Nhdr0();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "t98n_128.nhd.lz",
@@ -100,5 +100,5 @@ public class NHDr0 : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "fe9ecc6f0b5beb9635a1595155941925"
         }
-    };
+    ];
 }

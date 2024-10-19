@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the FATX filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,28 +23,30 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements the Xbox File Allocation Table (FATX or XTAF) filesystem.</summary>
 public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 {
+    const string                                           MODULE_NAME = "Xbox FAT plugin";
     uint                                                   _bytesPerCluster;
     CultureInfo                                            _cultureInfo;
     bool                                                   _debug;
     Dictionary<string, Dictionary<string, DirectoryEntry>> _directoryCache;
+    Encoding                                               _encoding;
     ushort[]                                               _fat16;
     uint[]                                                 _fat32;
     ulong                                                  _fatStartSector;
@@ -61,16 +59,19 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
     FileSystemInfo                                         _statfs;
     Superblock                                             _superblock;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Name => "FATX Filesystem Plugin";
+    public string Name => Localization.XboxFatPlugin_Name;
+
     /// <inheritdoc />
     public Guid Id => new("ED27A721-4A17-4649-89FD-33633B46E228");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
@@ -97,6 +98,8 @@ public sealed partial class XboxFatPlugin : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {

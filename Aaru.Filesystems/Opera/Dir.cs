@@ -7,10 +7,6 @@
 //
 // Component      : Opera filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Methods to handle Opera filesystem directories.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,60 +23,70 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class OperaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        contents = null;
+        node = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        if(string.IsNullOrWhiteSpace(path) ||
-           path == "/")
+        if(string.IsNullOrWhiteSpace(path) || path == "/")
         {
-            contents = _rootDirectoryCache.Keys.ToList();
+            node = new OperaDirNode
+            {
+                Path     = path,
+                Contents = _rootDirectoryCache.Keys.ToArray(),
+                Position = 0
+            };
 
             return ErrorNumber.NoError;
         }
 
         string cutPath = path.StartsWith("/", StringComparison.Ordinal)
-                             ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                             ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                              : path.ToLower(CultureInfo.CurrentUICulture);
 
         if(_directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntryWithPointers> currentDirectory))
         {
-            contents = currentDirectory.Keys.ToList();
+            node = new OperaDirNode
+            {
+                Path     = path,
+                Contents = currentDirectory.Keys.ToArray(),
+                Position = 0
+            };
 
             return ErrorNumber.NoError;
         }
 
         string[] pieces = cutPath.Split(new[]
-        {
-            '/'
-        }, StringSplitOptions.RemoveEmptyEntries);
+                                        {
+                                            '/'
+                                        },
+                                        StringSplitOptions.RemoveEmptyEntries);
 
         KeyValuePair<string, DirectoryEntryWithPointers> entry =
-            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
+            _rootDirectoryCache.FirstOrDefault(t => t.Key.Equals(pieces[0], StringComparison.CurrentCultureIgnoreCase));
 
-        if(string.IsNullOrEmpty(entry.Key))
-            return ErrorNumber.NoSuchFile;
+        if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-        if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-            return ErrorNumber.NotDirectory;
+        if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return ErrorNumber.NotDirectory;
 
         string currentPath = pieces[0];
 
@@ -88,31 +94,66 @@ public sealed partial class OperaFS
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
+            entry = currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
+                                                                      StringComparison.CurrentCultureIgnoreCase));
 
-            if(string.IsNullOrEmpty(entry.Key))
-                return ErrorNumber.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
-            if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory)
-                return ErrorNumber.NotDirectory;
+            if((entry.Value.Entry.flags & FLAGS_MASK) != (int)FileFlags.Directory) return ErrorNumber.NotDirectory;
 
             currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-            if(_directoryCache.TryGetValue(currentPath, out currentDirectory))
-                continue;
+            if(_directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
-            if(entry.Value.Pointers.Length < 1)
-                return ErrorNumber.InvalidArgument;
+            if(entry.Value.Pointers.Length < 1) return ErrorNumber.InvalidArgument;
 
             currentDirectory = DecodeDirectory((int)entry.Value.Pointers[0]);
 
             _directoryCache.Add(currentPath, currentDirectory);
         }
 
-        contents = currentDirectory?.Keys.ToList();
+        if(currentDirectory is null) return ErrorNumber.NoSuchFile;
+
+        node = new OperaDirNode
+        {
+            Path     = path,
+            Contents = currentDirectory.Keys.ToArray(),
+            Position = 0
+        };
 
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not OperaDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
+
+        filename = mynode.Contents[mynode.Position++];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not OperaDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode.Position = -1;
+        mynode.Contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+#endregion
 
     Dictionary<string, DirectoryEntryWithPointers> DecodeDirectory(int firstBlock)
     {
@@ -124,11 +165,11 @@ public sealed partial class OperaFS
 
         do
         {
-            ErrorNumber errno = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio), _volumeBlockSizeRatio,
+            ErrorNumber errno = _image.ReadSectors((ulong)(nextBlock * _volumeBlockSizeRatio),
+                                                   _volumeBlockSizeRatio,
                                                    out byte[] data);
 
-            if(errno != ErrorNumber.NoError)
-                break;
+            if(errno != ErrorNumber.NoError) break;
 
             header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
             nextBlock = header.next_block + firstBlock;
@@ -140,7 +181,7 @@ public sealed partial class OperaFS
             while(off + _directoryEntrySize < data.Length)
             {
                 entry = Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(data, off, _directoryEntrySize);
-                string name = StringHandlers.CToString(entry.name, Encoding);
+                string name = StringHandlers.CToString(entry.name, _encoding);
 
                 var entryWithPointers = new DirectoryEntryWithPointers
                 {
@@ -149,8 +190,10 @@ public sealed partial class OperaFS
                 };
 
                 for(var i = 0; i <= entry.last_copy; i++)
+                {
                     entryWithPointers.Pointers[i] =
                         BigEndianBitConverter.ToUInt32(data, off + _directoryEntrySize + i * 4);
+                }
 
                 entries.Add(name, entryWithPointers);
 
@@ -161,8 +204,7 @@ public sealed partial class OperaFS
                 off += (int)(_directoryEntrySize + (entry.last_copy + 1) * 4);
             }
 
-            if((entry.flags & (uint)FileFlags.LastEntry) != 0)
-                break;
+            if((entry.flags & (uint)FileFlags.LastEntry) != 0) break;
         } while(header.next_block != -1);
 
         return entries;

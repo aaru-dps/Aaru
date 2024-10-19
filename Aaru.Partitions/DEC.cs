@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -40,6 +38,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Partitions;
+
 /// <inheritdoc />
 /// <summary>Implements decoding of DEC disklabels</summary>
 public sealed class DEC : IPartition
@@ -47,44 +47,44 @@ public sealed class DEC : IPartition
     const int PT_MAGIC = 0x032957;
     const int PT_VALID = 1;
 
+#region IPartition Members
+
     /// <inheritdoc />
-    public string Name => "DEC disklabel";
+    public string Name => Localization.DEC_Name;
+
     /// <inheritdoc />
     public Guid Id => new("58CEC3B7-3B93-4D47-86EE-D6DADE9D444F");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<CommonTypes.Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<CommonTypes.Partition>();
+        partitions = [];
 
-        if(31 + sectorOffset >= imagePlugin.Info.Sectors)
-            return false;
+        if(31 + sectorOffset >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(31 + sectorOffset, out byte[] sector);
 
-        if(errno         != ErrorNumber.NoError ||
-           sector.Length < 512)
-            return false;
+        if(errno != ErrorNumber.NoError || sector.Length < 512) return false;
 
         Label table = Marshal.ByteArrayToStructureLittleEndian<Label>(sector);
 
-        if(table.pt_magic != PT_MAGIC ||
-           table.pt_valid != PT_VALID)
-            return false;
+        if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;
 
         ulong counter = 0;
 
         foreach(CommonTypes.Partition part in table.pt_part.Select(entry => new CommonTypes.Partition
-                {
-                    Start    = entry.pi_blkoff,
-                    Offset   = (ulong)(entry.pi_blkoff * sector.Length),
-                    Size     = (ulong)entry.pi_nblocks,
-                    Length   = (ulong)(entry.pi_nblocks * sector.Length),
-                    Sequence = counter,
-                    Scheme   = Name
-                }).Where(part => part.Size > 0))
+                                                    {
+                                                        Start    = entry.pi_blkoff,
+                                                        Offset   = (ulong)(entry.pi_blkoff * sector.Length),
+                                                        Size     = (ulong)entry.pi_nblocks,
+                                                        Length   = (ulong)(entry.pi_nblocks * sector.Length),
+                                                        Sequence = counter,
+                                                        Scheme   = Name
+                                                    })
+                                                   .Where(part => part.Size > 0))
         {
             partitions.Add(part);
             counter++;
@@ -92,6 +92,10 @@ public sealed class DEC : IPartition
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Label
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Label
@@ -104,10 +108,16 @@ public sealed class DEC : IPartition
         public readonly Partition[] pt_part;
     }
 
+#endregion
+
+#region Nested type: Partition
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition
     {
         public readonly int  pi_nblocks;
         public readonly uint pi_blkoff;
     }
+
+#endregion
 }

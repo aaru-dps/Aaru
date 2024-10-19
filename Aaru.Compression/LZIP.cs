@@ -23,28 +23,26 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Compression;
 
 using System.Runtime.InteropServices;
 
+namespace Aaru.Compression;
+
 // ReSharper disable once InconsistentNaming
-/// <summary>
-/// Implements the LZIP compression algorithm
-/// </summary>
-public class LZIP
+/// <summary>Implements the LZIP compression algorithm</summary>
+public partial class LZIP
 {
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => Native.IsSupported;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzip_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
-                                              int dictionarySize, int matchLenLimit);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_lzip_encode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize,
+                                                       int    dictionarySize, int matchLenLimit);
 
     /// <summary>Decodes a buffer compressed with LZIP</summary>
     /// <param name="source">Encoded buffer</param>
@@ -60,6 +58,12 @@ public class LZIP
     /// <param name="matchLengthLimit">Match length limit</param>
     /// <returns>The size of the compressed data</returns>
     public static int EncodeBuffer(byte[] source, byte[] destination, int dictionarySize, int matchLengthLimit) =>
-        Native.IsSupported ? AARU_lzip_encode_buffer(destination, destination.Length, source, source.Length,
-                                                     dictionarySize, matchLengthLimit) : 0;
+        Native.IsSupported
+            ? AARU_lzip_encode_buffer(destination,
+                                      destination.Length,
+                                      source,
+                                      source.Length,
+                                      dictionarySize,
+                                      matchLengthLimit)
+            : 0;
 }

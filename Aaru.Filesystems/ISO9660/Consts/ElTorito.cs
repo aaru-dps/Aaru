@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     El Torito extensions constants and enumerations.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,41 +23,23 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-
-
 // ReSharper disable UnusedMember.Local
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
     const ushort EL_TORITO_MAGIC      = 0xAA55;
     const int    EL_TORITO_ENTRY_SIZE = 32;
 
-    enum ElToritoIndicator : byte
-    {
-        Header      = 1,
-        Extension   = 0x44,
-        Bootable    = 0x88,
-        MoreHeaders = 0x90,
-        LastHeader  = 0x91
-    }
-
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    enum ElToritoPlatform : byte
-    {
-        x86       = 0,
-        PowerPC   = 1,
-        Macintosh = 2,
-        EFI       = 0xef
-    }
+#region Nested type: ElToritoEmulation
 
     enum ElToritoEmulation : byte
     {
@@ -72,6 +50,10 @@ public sealed partial class ISO9660
         Hdd   = 4
     }
 
+#endregion
+
+#region Nested type: ElToritoFlags
+
     [Flags]
     enum ElToritoFlags : byte
     {
@@ -80,4 +62,32 @@ public sealed partial class ISO9660
         ATAPI     = 0x40,
         SCSI      = 0x08
     }
+
+#endregion
+
+#region Nested type: ElToritoIndicator
+
+    enum ElToritoIndicator : byte
+    {
+        Header      = 1,
+        Extension   = 0x44,
+        Bootable    = 0x88,
+        MoreHeaders = 0x90,
+        LastHeader  = 0x91
+    }
+
+#endregion
+
+#region Nested type: ElToritoPlatform
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    enum ElToritoPlatform : byte
+    {
+        x86       = 0,
+        PowerPC   = 1,
+        Macintosh = 2,
+        EFI       = 0xef
+    }
+
+#endregion
 }

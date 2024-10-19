@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -38,28 +36,33 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Helpers;
-using Schemas;
 using Marshal = Aaru.Helpers.Marshal;
+
+namespace Aaru.Images;
 
 public sealed partial class Qed
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(sectorSize != 512)
         {
-            ErrorMessage = "Unsupported sector size";
+            ErrorMessage = Localization.Unsupported_sector_size;
 
             return false;
         }
 
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -67,7 +70,7 @@ public sealed partial class Qed
         // TODO: Correct this calculation
         if(sectors * sectorSize / DEFAULT_CLUSTER_SIZE > uint.MaxValue)
         {
-            ErrorMessage = "Too many sectors for selected cluster size";
+            ErrorMessage = Localization.Too_many_sectors_for_selected_cluster_size;
 
             return false;
         }
@@ -83,9 +86,10 @@ public sealed partial class Qed
         {
             _writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
@@ -107,15 +111,14 @@ public sealed partial class Qed
         _l1Mask  = 0;
         var c = 0;
         _clusterBits = Ctz32(_qHdr.cluster_size);
-        _l2Mask      = (_tableSize - 1) << _clusterBits;
+        _l2Mask      = _tableSize - 1 << _clusterBits;
         _l1Shift     = _clusterBits + Ctz32(_tableSize);
 
         for(var i = 0; i < 64; i++)
         {
             _l1Mask <<= 1;
 
-            if(c >= 64 - _l1Shift)
-                continue;
+            if(c >= 64 - _l1Shift) continue;
 
             _l1Mask += 1;
             c++;
@@ -123,8 +126,7 @@ public sealed partial class Qed
 
         _sectorMask = 0;
 
-        for(var i = 0; i < _clusterBits; i++)
-            _sectorMask = (_sectorMask << 1) + 1;
+        for(var i = 0; i < _clusterBits; i++) _sectorMask = (_sectorMask << 1) + 1;
 
         var empty = new byte[_qHdr.l1_table_offset + _tableSize * 8];
         _writingStream.Write(empty, 0, empty.Length);
@@ -138,7 +140,7 @@ public sealed partial class Qed
     /// <inheritdoc />
     public bool WriteMediaTag(byte[] data, MediaTagType tag)
     {
-        ErrorMessage = "Writing media tags is not supported.";
+        ErrorMessage = Localization.Writing_media_tags_is_not_supported;
 
         return false;
     }
@@ -148,28 +150,27 @@ public sealed partial class Qed
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length != _imageInfo.SectorSize)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress >= _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         ulong byteAddress = sectorAddress * 512;
 
@@ -177,7 +178,9 @@ public sealed partial class Qed
 
         if((long)l1Off >= _l1Table.LongLength)
         {
-            ErrorMessage = $"Trying to write past L1 table, position {l1Off} of a max {_l1Table.LongLength}";
+            ErrorMessage = string.Format(Localization.Trying_to_write_past_L1_table_position_0_of_a_max_1,
+                                         l1Off,
+                                         _l1Table.LongLength);
 
             return false;
         }
@@ -198,7 +201,7 @@ public sealed partial class Qed
         _writingStream.Seek((long)(_l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
 
         var entry = new byte[8];
-        _writingStream.Read(entry, 0, 8);
+        _writingStream.EnsureRead(entry, 0, 8);
         var offset = BitConverter.ToUInt64(entry, 0);
 
         if(offset == 0)
@@ -226,36 +229,34 @@ public sealed partial class Qed
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(data.Length % _imageInfo.SectorSize != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         if(sectorAddress + length > _imageInfo.Sectors)
         {
-            ErrorMessage = "Tried to write past image size";
+            ErrorMessage = Localization.Tried_to_write_past_image_size;
 
             return false;
         }
 
         // Ignore empty sectors
-        if(ArrayHelpers.ArrayIsNullOrEmpty(data))
-            return true;
+        if(ArrayHelpers.ArrayIsNullOrEmpty(data)) return true;
 
         for(uint i = 0; i < length; i++)
         {
             var tmp = new byte[_imageInfo.SectorSize];
             Array.Copy(data, i * _imageInfo.SectorSize, tmp, 0, _imageInfo.SectorSize);
 
-            if(!WriteSector(tmp, sectorAddress + i))
-                return false;
+            if(!WriteSector(tmp, sectorAddress + i)) return false;
         }
 
         ErrorMessage = "";
@@ -266,7 +267,7 @@ public sealed partial class Qed
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -274,7 +275,7 @@ public sealed partial class Qed
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -284,13 +285,13 @@ public sealed partial class Qed
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
 
         var hdr = new byte[Marshal.SizeOf<QedHeader>()];
-        MemoryMarshal.Write(hdr, ref _qHdr);
+        MemoryMarshal.Write(hdr, in _qHdr);
 
         _writingStream.Seek(0, SeekOrigin.Begin);
         _writingStream.Write(hdr, 0, hdr.Length);
@@ -309,7 +310,7 @@ public sealed partial class Qed
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
@@ -317,7 +318,7 @@ public sealed partial class Qed
     /// <inheritdoc />
     public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
@@ -325,14 +326,16 @@ public sealed partial class Qed
     /// <inheritdoc />
     public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
     {
-        ErrorMessage = "Writing sectors with tags is not supported.";
+        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
         return false;
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

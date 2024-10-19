@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.FAT12;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,17 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class GPT : ReadOnlyFilesystemTest
-{
-    public GPT() : base("FAT12") {}
+namespace Aaru.Tests.Filesystems.FAT12;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "FAT12 (GPT)");
+[TestFixture]
+public class GPT() : ReadOnlyFilesystemTest("fat12")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "FAT12 (GPT)");
     public override IFilesystem Plugin     => new FAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -58,5 +56,5 @@ public class GPT : ReadOnlyFilesystemTest
             VolumeName   = "VOLUMELABEL",
             VolumeSerial = "66901F1B"
         }
-    };
+    ];
 }

@@ -27,16 +27,31 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Images;
 
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class Vdi
 {
+#region Nested type: VdiImageFlags
+
+    enum VdiImageFlags : uint
+    {
+        /// <summary>
+        ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set for
+        ///     opened existing images.
+        /// </summary>
+        ZeroExpand = 0x100
+    }
+
+#endregion
+
+#region Nested type: VdiImageType
+
     enum VdiImageType : uint
     {
         /// <summary> Normal dynamically growing base image file.</summary>
@@ -54,12 +69,5 @@ public sealed partial class Vdi
         Last = Differential
     }
 
-    enum VdiImageFlags : uint
-    {
-        /// <summary>
-        ///     Fill new blocks with zeroes while expanding image file. Only valid for newly created images, never set for
-        ///     opened existing images.
-        /// </summary>
-        ZeroExpand = 0x100
-    }
+#endregion
 }

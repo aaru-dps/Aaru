@@ -27,15 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Runtime.InteropServices;
 using Aaru.Helpers;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class ISO9660
 {
@@ -51,14 +51,12 @@ public sealed partial class ISO9660
             ApplicationIdentifier  = StringHandlers.CToString(pvd.application_data).TrimEnd()
         };
 
-        if(pvd.creation_date[0] == '0' ||
-           pvd.creation_date[0] == 0x00)
+        if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)
             decodedVd.CreationTime = DateTime.MinValue;
         else
             decodedVd.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
-        if(pvd.modification_date[0] == '0' ||
-           pvd.modification_date[0] == 0x00)
+        if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
             decodedVd.HasModificationTime = false;
         else
         {
@@ -66,8 +64,7 @@ public sealed partial class ISO9660
             decodedVd.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
         }
 
-        if(pvd.expiration_date[0] == '0' ||
-           pvd.expiration_date[0] == 0x00)
+        if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00)
             decodedVd.HasExpirationTime = false;
         else
         {
@@ -75,8 +72,7 @@ public sealed partial class ISO9660
             decodedVd.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
         }
 
-        if(pvd.effective_date[0] == '0' ||
-           pvd.effective_date[0] == 0x00)
+        if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00)
             decodedVd.HasEffectiveTime = false;
         else
         {
@@ -89,6 +85,48 @@ public sealed partial class ISO9660
 
         return decodedVd;
     }
+
+#region Nested type: CdiDirectoryRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdiDirectoryRecord
+    {
+        public readonly byte                length;
+        public readonly byte                xattr_len;
+        public readonly uint                reserved1;
+        public readonly uint                start_lbn;
+        public readonly uint                reserved2;
+        public readonly uint                size;
+        public readonly HighSierraTimestamp date;
+        public readonly byte                reserved3;
+        public readonly CdiFileFlags        flags;
+        public readonly ushort              file_unit_size;
+        public readonly ushort              reserved4;
+        public readonly ushort              volume_sequence_number;
+        public readonly byte                name_len;
+
+        // Followed by name[name_len] and then CdiSystemArea until length arrives
+    }
+
+#endregion
+
+#region Nested type: CdiSystemArea
+
+    // Follows filename on directory record
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct CdiSystemArea
+    {
+        public readonly ushort        group;
+        public readonly ushort        owner;
+        public readonly CdiAttributes attributes;
+        public readonly ushort        reserved1;
+        public readonly byte          file_no;
+        public readonly byte          reserved2;
+    }
+
+#endregion
+
+#region Nested type: FileStructureVolumeDescriptor
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct FileStructureVolumeDescriptor
@@ -161,35 +199,5 @@ public sealed partial class ISO9660
         public readonly byte[] reserved16;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdiDirectoryRecord
-    {
-        public readonly byte                length;
-        public readonly byte                xattr_len;
-        public readonly uint                reserved1;
-        public readonly uint                start_lbn;
-        public readonly uint                reserved2;
-        public readonly uint                size;
-        public readonly HighSierraTimestamp date;
-        public readonly byte                reserved3;
-        public readonly CdiFileFlags        flags;
-        public readonly ushort              file_unit_size;
-        public readonly ushort              reserved4;
-        public readonly ushort              volume_sequence_number;
-        public readonly byte                name_len;
-
-        // Followed by name[name_len] and then CdiSystemArea until length arrives
-    }
-
-    // Follows filename on directory record
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct CdiSystemArea
-    {
-        public readonly ushort        group;
-        public readonly ushort        owner;
-        public readonly CdiAttributes attributes;
-        public readonly ushort        reserved1;
-        public readonly byte          file_no;
-        public readonly byte          reserved2;
-    }
+#endregion
 }

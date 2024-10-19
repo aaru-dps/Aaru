@@ -23,24 +23,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class MaxiDisk : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "MaxiDisk");
-    public override IMediaImage Plugin    => new DiscImages.MaxiDisk();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "MaxiDisk");
+    public override IMediaImage Plugin     => new Aaru.Images.MaxiDisk();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "3DF800.HDK.lz",
@@ -48,14 +48,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "26532a62985b51a2c3b877a57f6d257b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -64,14 +64,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "9827ba1b3e9cac41263caabd862e78f9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -80,14 +80,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 5760,
             SectorSize = 512,
             Md5        = "4aeafaf2a088d6a7406856dce8118567",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 5760
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -96,14 +96,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "2bfd2e0a81bad704f8fc7758358cfcca",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -112,14 +112,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "7e3bf04f3660dd1052a335dc99441e44",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -128,14 +128,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "8eb8cb310feaf03c69fffd4f6e729847",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -144,14 +144,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "a58fd062f024b95714f1223a8bc2232f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -160,14 +160,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "00e61c06bf29f0c04a7eabe2dbd7efb6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -176,14 +176,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 320,
             SectorSize = 512,
             Md5        = "d81f5cb64fd0b99f138eab34110bbc3c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -192,14 +192,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 360,
             SectorSize = 512,
             Md5        = "a89006a75d13bee9202d1d6e52721ccb",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -208,14 +208,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "beef1cdb004dc69391d6b3d508988b95",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -232,14 +232,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "073a172879a71339ef4b00ebb47b67fc",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -248,14 +248,14 @@ public class MaxiDisk : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "02259cd5fbcc20f8484aa6bece7a37c6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         }
-    };
+    ];
 }

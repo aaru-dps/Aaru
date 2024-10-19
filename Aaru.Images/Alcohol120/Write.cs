@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -38,22 +36,27 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Aaru.Decoders.CD;
 using Aaru.Helpers;
-using Schemas;
 using TrackType = Aaru.CommonTypes.Enums.TrackType;
+
+namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {
+#region IWritableOpticalImage Members
+
     /// <inheritdoc />
     public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                       uint sectorSize)
+                       uint   sectorSize)
     {
         if(!SupportedMediaTypes.Contains(mediaType))
         {
-            ErrorMessage = $"Unsupported media format {mediaType}";
+            ErrorMessage = string.Format(Localization.Unsupported_media_format_0, mediaType);
 
             return false;
         }
@@ -70,66 +73,63 @@ public sealed partial class Alcohol120
             _descriptorStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
             _imageStream =
-                new
-                    FileStream(Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path)) + ".mdf",
-                               FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                new FileStream(Path.Combine(Path.GetDirectoryName(path) ?? "", Path.GetFileNameWithoutExtension(path)) +
+                               ".mdf",
+                               FileMode.OpenOrCreate,
+                               FileAccess.ReadWrite,
+                               FileShare.None);
         }
-        catch(IOException e)
+        catch(IOException ex)
         {
-            ErrorMessage = $"Could not create new image file, exception {e.Message}";
+            ErrorMessage = string.Format(Localization.Could_not_create_new_image_file_exception_0, ex.Message);
+            AaruConsole.WriteException(ex);
 
             return false;
         }
 
         _imageInfo.MediaType = mediaType;
 
-        switch(mediaType)
-        {
-            case MediaType.CD:
-            case MediaType.CDDA:
-            case MediaType.CDEG:
-            case MediaType.CDG:
-            case MediaType.CDI:
-            case MediaType.CDMIDI:
-            case MediaType.CDMRW:
-            case MediaType.CDPLUS:
-            case MediaType.CDR:
-            case MediaType.CDROM:
-            case MediaType.CDROMXA:
-            case MediaType.CDRW:
-            case MediaType.CDV:
-            case MediaType.DTSCD:
-            case MediaType.JaguarCD:
-            case MediaType.MEGACD:
-            case MediaType.PS1CD:
-            case MediaType.PS2CD:
-            case MediaType.SuperCDROM2:
-            case MediaType.SVCD:
-            case MediaType.SATURNCD:
-            case MediaType.ThreeDO:
-            case MediaType.VCD:
-            case MediaType.VCDHD:
-            case MediaType.NeoGeoCD:
-            case MediaType.PCFX:
-            case MediaType.CDTV:
-            case MediaType.CD32:
-            case MediaType.Nuon:
-            case MediaType.Playdia:
-            case MediaType.Pippin:
-            case MediaType.FMTOWNS:
-            case MediaType.MilCD:
-            case MediaType.VideoNow:
-            case MediaType.VideoNowColor:
-            case MediaType.VideoNowXp:
-            case MediaType.CVD:
-                _isDvd = false;
-
-                break;
-            default:
-                _isDvd = true;
-
-                break;
-        }
+        _isDvd = mediaType switch
+                 {
+                     MediaType.CD
+                      or MediaType.CDDA
+                      or MediaType.CDEG
+                      or MediaType.CDG
+                      or MediaType.CDI
+                      or MediaType.CDMIDI
+                      or MediaType.CDMRW
+                      or MediaType.CDPLUS
+                      or MediaType.CDR
+                      or MediaType.CDROM
+                      or MediaType.CDROMXA
+                      or MediaType.CDRW
+                      or MediaType.CDV
+                      or MediaType.DTSCD
+                      or MediaType.JaguarCD
+                      or MediaType.MEGACD
+                      or MediaType.PS1CD
+                      or MediaType.PS2CD
+                      or MediaType.SuperCDROM2
+                      or MediaType.SVCD
+                      or MediaType.SATURNCD
+                      or MediaType.ThreeDO
+                      or MediaType.VCD
+                      or MediaType.VCDHD
+                      or MediaType.NeoGeoCD
+                      or MediaType.PCFX
+                      or MediaType.CDTV
+                      or MediaType.CD32
+                      or MediaType.Nuon
+                      or MediaType.Playdia
+                      or MediaType.Pippin
+                      or MediaType.FMTOWNS
+                      or MediaType.MilCD
+                      or MediaType.VideoNow
+                      or MediaType.VideoNowColor
+                      or MediaType.VideoNowXp
+                      or MediaType.CVD => false,
+                     _ => true
+                 };
 
         _trackFlags = new Dictionary<byte, byte>();
 
@@ -144,7 +144,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -154,7 +154,9 @@ public sealed partial class Alcohol120
             case MediaTagType.CD_FullTOC:
                 if(_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1,
+                                                 tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -165,7 +167,9 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_PFI:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1,
+                                                 tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -176,7 +180,9 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_DMI:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1,
+                                                 tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -187,7 +193,9 @@ public sealed partial class Alcohol120
             case MediaTagType.DVD_BCA:
                 if(!_isDvd)
                 {
-                    ErrorMessage = $"Unsupported media tag {tag} for medium type {_imageInfo.MediaType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_media_tag_0_for_medium_type_1,
+                                                 tag,
+                                                 _imageInfo.MediaType);
 
                     return false;
                 }
@@ -196,7 +204,7 @@ public sealed partial class Alcohol120
 
                 return true;
             default:
-                ErrorMessage = $"Unsupported media tag {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_media_tag_0, tag);
 
                 return false;
         }
@@ -207,7 +215,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -217,35 +225,35 @@ public sealed partial class Alcohol120
 
         if(!_isDvd)
         {
-            ErrorMessage = "Cannot write non-long sectors to CD images.";
+            ErrorMessage = Localization.Cannot_write_non_long_sectors_to_CD_images;
 
             return false;
         }
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
-        _imageStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                 SeekOrigin.Begin);
+        _imageStream.Seek((long)(track.FileOffset +
+                                 (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                          SeekOrigin.Begin);
 
         _imageStream.Write(data, 0, data.Length);
 
@@ -257,14 +265,14 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
 
         if(!_isDvd)
         {
-            ErrorMessage = "Cannot write non-long sectors to CD images.";
+            ErrorMessage = Localization.Cannot_write_non_long_sectors_to_CD_images;
 
             return false;
         }
@@ -274,28 +282,28 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(track.BytesPerSector != track.RawBytesPerSector)
         {
-            ErrorMessage = "Invalid write mode for this sector";
+            ErrorMessage = Localization.Invalid_write_mode_for_this_sector;
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -303,9 +311,9 @@ public sealed partial class Alcohol120
         switch(track.SubchannelType)
         {
             case TrackSubchannelType.None:
-                _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
-                         SeekOrigin.Begin);
+                _imageStream.Seek((long)(track.FileOffset +
+                                         (sectorAddress - track.StartSector) * (ulong)track.RawBytesPerSector),
+                                  SeekOrigin.Begin);
 
                 _imageStream.Write(data, 0, data.Length);
 
@@ -314,9 +322,9 @@ public sealed partial class Alcohol120
                 return true;
             case TrackSubchannelType.Raw:
             case TrackSubchannelType.RawInterleaved:
-                _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
-                         SeekOrigin.Begin);
+                _imageStream.Seek((long)(track.FileOffset +
+                                         (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)),
+                                  SeekOrigin.Begin);
 
                 for(uint i = 0; i < length; i++)
                 {
@@ -328,7 +336,7 @@ public sealed partial class Alcohol120
 
                 return true;
             default:
-                ErrorMessage = "Invalid subchannel mode for this sector";
+                ErrorMessage = Localization.Invalid_subchannel_mode_for_this_sector;
 
                 return false;
         }
@@ -339,7 +347,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -349,23 +357,24 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(data.Length != track.RawBytesPerSector)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
 
         var subchannelSize = (uint)(track.SubchannelType != TrackSubchannelType.None ? 96 : 0);
 
-        _imageStream.
-            Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                 SeekOrigin.Begin);
+        _imageStream.Seek((long)(track.FileOffset +
+                                 (sectorAddress - track.StartSector) *
+                                 (ulong)(track.RawBytesPerSector + subchannelSize)),
+                          SeekOrigin.Begin);
 
         _imageStream.Write(data, 0, data.Length);
 
@@ -377,7 +386,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -387,21 +396,21 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         if(sectorAddress + length > track.EndSector + 1)
         {
-            ErrorMessage = "Can't cross tracks";
+            ErrorMessage = Localization.Cant_cross_tracks;
 
             return false;
         }
 
         if(data.Length % track.RawBytesPerSector != 0)
         {
-            ErrorMessage = "Incorrect data size";
+            ErrorMessage = Localization.Incorrect_data_size;
 
             return false;
         }
@@ -410,9 +419,10 @@ public sealed partial class Alcohol120
 
         for(uint i = 0; i < length; i++)
         {
-            _imageStream.
-                Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + subchannelSize)),
-                     SeekOrigin.Begin);
+            _imageStream.Seek((long)(track.FileOffset +
+                                     (i                              + sectorAddress - track.StartSector) *
+                                     (ulong)(track.RawBytesPerSector + subchannelSize)),
+                              SeekOrigin.Begin);
 
             _imageStream.Write(data, (int)(i * track.RawBytesPerSector), track.RawBytesPerSector);
         }
@@ -425,7 +435,7 @@ public sealed partial class Alcohol120
     {
         ulong currentDataOffset = 0;
 
-        _writingTracks = new List<CommonTypes.Structs.Track>();
+        _writingTracks = [];
 
         if(!_isDvd)
         {
@@ -436,13 +446,11 @@ public sealed partial class Alcohol120
                 CommonTypes.Structs.Track firstTrackInSession =
                     tracks.FirstOrDefault(t => t.Session == tmpTracks[i].Session);
 
-                if(firstTrackInSession is null)
-                    continue;
+                if(firstTrackInSession is null) continue;
 
                 if(tmpTracks[i].Sequence == firstTrackInSession.Sequence)
                 {
-                    if(tmpTracks[i].Sequence > 1)
-                        tmpTracks[i].StartSector += 150;
+                    if(tmpTracks[i].Sequence > 1) tmpTracks[i].StartSector += 150;
 
                     continue;
                 }
@@ -457,8 +465,7 @@ public sealed partial class Alcohol120
 
         foreach(CommonTypes.Structs.Track track in tracks.OrderBy(t => t.Sequence))
         {
-            CommonTypes.Structs.Track newTrack = track;
-            uint                      subchannelSize;
+            uint subchannelSize;
 
             switch(track.SubchannelType)
             {
@@ -472,17 +479,17 @@ public sealed partial class Alcohol120
 
                     break;
                 default:
-                    ErrorMessage = $"Unsupported subchannel type {track.SubchannelType}";
+                    ErrorMessage = string.Format(Localization.Unsupported_subchannel_type_0, track.SubchannelType);
 
                     return false;
             }
 
-            newTrack.FileOffset = currentDataOffset;
+            track.FileOffset = currentDataOffset;
 
-            currentDataOffset += (ulong)(newTrack.RawBytesPerSector + subchannelSize) *
-                                 (newTrack.EndSector                - newTrack.StartSector + 1);
+            currentDataOffset += (ulong)(track.RawBytesPerSector + subchannelSize) *
+                                 (track.EndSector                - track.StartSector + 1);
 
-            _writingTracks.Add(newTrack);
+            _writingTracks.Add(track);
         }
 
         return true;
@@ -493,7 +500,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Image is not opened for writing";
+            ErrorMessage = Localization.Image_is_not_opened_for_writing;
 
             return false;
         }
@@ -505,11 +512,8 @@ public sealed partial class Alcohol120
 
         var header = new Header
         {
-            signature = _alcoholSignature,
-            version = new byte[]
-            {
-                1, 5
-            },
+            signature        = _alcoholSignature,
+            version          = [1, 5],
             type             = MediaTypeToMediumType(_imageInfo.MediaType),
             sessions         = sessions,
             structuresOffset = (uint)(_pfi == null ? 0 : 96),
@@ -547,6 +551,7 @@ public sealed partial class Alcohol120
         var  extraCount         = 0;
 
         for(var i = 1; i <= sessions; i++)
+        {
             if(decodedToc.HasValue)
             {
                 extraCount += decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
@@ -563,12 +568,12 @@ public sealed partial class Alcohol120
 
                 extraCount += _writingTracks.Count(t => t.Session == i);
 
-                if(i < sessions)
-                {
-                    currentExtraOffset += Marshal.SizeOf<Track>() * 2;
-                    extraCount         += 2;
-                }
+                if(i >= sessions) continue;
+
+                currentExtraOffset += Marshal.SizeOf<Track>() * 2;
+                extraCount         += 2;
             }
+        }
 
         long footerOffset = currentExtraOffset + Marshal.SizeOf<TrackExtra>() * extraCount;
 
@@ -580,150 +585,160 @@ public sealed partial class Alcohol120
 
         if(_isDvd)
         {
-            _alcSessions.Add(1, new Session
-            {
-                sessionEnd      = (int)(_writingTracks[0].EndSector - _writingTracks[0].StartSector + 1),
-                sessionSequence = 1,
-                allBlocks       = 1,
-                nonTrackBlocks  = 3,
-                firstTrack      = 1,
-                lastTrack       = 1,
-                trackOffset     = 4220
-            });
+            _alcSessions.Add(1,
+                             new Session
+                             {
+                                 sessionEnd = (int)(_writingTracks[0].EndSector - _writingTracks[0].StartSector + 1),
+                                 sessionSequence = 1,
+                                 allBlocks = 1,
+                                 nonTrackBlocks = 3,
+                                 firstTrack = 1,
+                                 lastTrack = 1,
+                                 trackOffset = 4220
+                             });
 
             footerOffset = 4300;
 
-            if(_bca != null)
-                footerOffset += _bca.Length;
+            if(_bca != null) footerOffset += _bca.Length;
 
-            _alcTracks.Add(1, new Track
-            {
-                mode         = TrackMode.DVD,
-                adrCtl       = 20,
-                point        = 1,
-                extraOffset  = (uint)(_writingTracks[0].EndSector - _writingTracks[0].StartSector + 1),
-                sectorSize   = 2048,
-                files        = 1,
-                footerOffset = (uint)footerOffset,
-                unknown      = new byte[18],
-                unknown2     = new byte[24]
-            });
+            _alcTracks.Add(1,
+                           new Track
+                           {
+                               mode         = TrackMode.DVD,
+                               adrCtl       = 20,
+                               point        = 1,
+                               extraOffset  = (uint)(_writingTracks[0].EndSector - _writingTracks[0].StartSector + 1),
+                               sectorSize   = 2048,
+                               files        = 1,
+                               footerOffset = (uint)footerOffset,
+                               unknown      = new byte[18],
+                               unknown2     = new byte[24]
+                           });
 
             _alcToc.Add(1, _alcTracks);
         }
         else
+        {
             for(var i = 1; i <= sessions; i++)
             {
                 CommonTypes.Structs.Track firstTrack = _writingTracks.First(t => t.Session == i);
                 CommonTypes.Structs.Track lastTrack  = _writingTracks.Last(t => t.Session  == i);
 
-                _alcSessions.Add(i, new Session
-                {
-                    sessionStart    = (int)firstTrack.StartSector - 150,
-                    sessionEnd      = (int)lastTrack.EndSector    + 1,
-                    sessionSequence = (ushort)i,
-                    allBlocks = (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
-                                       _writingTracks.Count(t => t.Session == i) + 3),
-                    nonTrackBlocks =
-                        (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
-                                                                       t.POINT         <= 0xAF) ?? 3),
-                    firstTrack  = (ushort)firstTrack.Sequence,
-                    lastTrack   = (ushort)lastTrack.Sequence,
-                    trackOffset = (uint)currentTrackOffset
-                });
+                _alcSessions.Add(i,
+                                 new Session
+                                 {
+                                     sessionStart    = (int)firstTrack.StartSector - 150,
+                                     sessionEnd      = (int)lastTrack.EndSector    + 1,
+                                     sessionSequence = (ushort)i,
+                                     allBlocks =
+                                         (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i) ??
+                                                _writingTracks.Count(t => t.Session == i) + 3),
+                                     nonTrackBlocks =
+                                         (byte)(decodedToc?.TrackDescriptors.Count(t => t.SessionNumber == i &&
+                                                    t.POINT is >= 0xA0 and <= 0xAF) ??
+                                                3),
+                                     firstTrack  = (ushort)firstTrack.Sequence,
+                                     lastTrack   = (ushort)lastTrack.Sequence,
+                                     trackOffset = (uint)currentTrackOffset
+                                 });
 
                 Dictionary<int, Track> thisSessionTracks = new();
                 _trackFlags.TryGetValue((byte)firstTrack.Sequence, out byte firstTrackControl);
-                _trackFlags.TryGetValue((byte)lastTrack.Sequence, out byte lastTrackControl);
+                _trackFlags.TryGetValue((byte)lastTrack.Sequence,  out byte lastTrackControl);
 
-                if(firstTrackControl == 0 &&
-                   firstTrack.Type   != TrackType.Audio)
+                if(firstTrackControl == 0 && firstTrack.Type != TrackType.Audio)
                     firstTrackControl = (byte)CdFlags.DataTrack;
 
-                if(lastTrackControl == 0 &&
-                   lastTrack.Type   != TrackType.Audio)
+                if(lastTrackControl == 0 && lastTrack.Type != TrackType.Audio)
                     lastTrackControl = (byte)CdFlags.DataTrack;
 
                 (byte minute, byte second, byte frame) leadinPmsf = LbaToMsf(lastTrack.EndSector + 1);
 
-                if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xA0 && t.POINT <= 0xAF) ==
+                if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT is >= 0xA0 and <= 0xAF) ==
                    true)
+                {
                     foreach(FullTOC.TrackDataDescriptor tocTrk in
-                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xA0 &&
-                                                                         t.POINT         <= 0xAF))
+                            decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i &&
+                                                                         t.POINT is >= 0xA0 and <= 0xAF))
                     {
-                        thisSessionTracks.Add(tocTrk.POINT, new Track
-                        {
-                            adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
-                            tno         = tocTrk.TNO,
-                            point       = tocTrk.POINT,
-                            min         = tocTrk.Min,
-                            sec         = tocTrk.Sec,
-                            frame       = tocTrk.Frame,
-                            zero        = tocTrk.Zero,
-                            pmin        = tocTrk.PMIN,
-                            psec        = tocTrk.PSEC,
-                            pframe      = tocTrk.PFRAME,
-                            mode        = TrackMode.NoData,
-                            unknown     = new byte[18],
-                            unknown2    = new byte[24],
-                            extraOffset = (uint)currentExtraOffset
-                        });
+                        thisSessionTracks.Add(tocTrk.POINT,
+                                              new Track
+                                              {
+                                                  adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                                  tno         = tocTrk.TNO,
+                                                  point       = tocTrk.POINT,
+                                                  min         = tocTrk.Min,
+                                                  sec         = tocTrk.Sec,
+                                                  frame       = tocTrk.Frame,
+                                                  zero        = tocTrk.Zero,
+                                                  pmin        = tocTrk.PMIN,
+                                                  psec        = tocTrk.PSEC,
+                                                  pframe      = tocTrk.PFRAME,
+                                                  mode        = TrackMode.NoData,
+                                                  unknown     = new byte[18],
+                                                  unknown2    = new byte[24],
+                                                  extraOffset = (uint)currentExtraOffset
+                                              });
 
                         currentTrackOffset += Marshal.SizeOf<Track>();
                         currentExtraOffset += Marshal.SizeOf<TrackExtra>();
                     }
+                }
                 else
                 {
-                    thisSessionTracks.Add(0xA0, new Track
-                    {
-                        adrCtl   = (byte)((1 << 4) + firstTrackControl),
-                        pmin     = (byte)firstTrack.Sequence,
-                        mode     = TrackMode.NoData,
-                        point    = 0xA0,
-                        unknown  = new byte[18],
-                        unknown2 = new byte[24],
-                        psec = (byte)(_imageInfo.MediaType == MediaType.CDI
-                                          ? 0x10
-                                          : _writingTracks.Any(t => t.Type is TrackType.CdMode2Form1
-                                                                           or TrackType.CdMode2Form2
-                                                                           or TrackType.CdMode2Formless)
-                                              ? 0x20
-                                              : 0),
-                        extraOffset = (uint)currentExtraOffset
-                    });
+                    thisSessionTracks.Add(0xA0,
+                                          new Track
+                                          {
+                                              adrCtl   = (byte)((1 << 4) + firstTrackControl),
+                                              pmin     = (byte)firstTrack.Sequence,
+                                              mode     = TrackMode.NoData,
+                                              point    = 0xA0,
+                                              unknown  = new byte[18],
+                                              unknown2 = new byte[24],
+                                              psec = (byte)(_imageInfo.MediaType == MediaType.CDI
+                                                                ? 0x10
+                                                                : _writingTracks.Any(t => t.Type is TrackType
+                                                                       .CdMode2Form1
+                                                                 or TrackType.CdMode2Form2
+                                                                 or TrackType.CdMode2Formless)
+                                                                    ? 0x20
+                                                                    : 0),
+                                              extraOffset = (uint)currentExtraOffset
+                                          });
 
-                    thisSessionTracks.Add(0xA1, new Track
-                    {
-                        adrCtl      = (byte)((1 << 4) + lastTrackControl),
-                        pmin        = (byte)lastTrack.Sequence,
-                        mode        = TrackMode.NoData,
-                        point       = 0xA1,
-                        unknown     = new byte[18],
-                        unknown2    = new byte[24],
-                        extraOffset = (uint)currentExtraOffset
-                    });
+                    thisSessionTracks.Add(0xA1,
+                                          new Track
+                                          {
+                                              adrCtl      = (byte)((1 << 4) + lastTrackControl),
+                                              pmin        = (byte)lastTrack.Sequence,
+                                              mode        = TrackMode.NoData,
+                                              point       = 0xA1,
+                                              unknown     = new byte[18],
+                                              unknown2    = new byte[24],
+                                              extraOffset = (uint)currentExtraOffset
+                                          });
 
-                    thisSessionTracks.Add(0xA2, new Track
-                    {
-                        adrCtl      = (byte)((1 << 4) + firstTrackControl),
-                        zero        = 0,
-                        pmin        = leadinPmsf.minute,
-                        psec        = leadinPmsf.second,
-                        pframe      = leadinPmsf.frame,
-                        mode        = TrackMode.NoData,
-                        point       = 0xA2,
-                        unknown     = new byte[18],
-                        unknown2    = new byte[24],
-                        extraOffset = (uint)currentExtraOffset
-                    });
+                    thisSessionTracks.Add(0xA2,
+                                          new Track
+                                          {
+                                              adrCtl      = (byte)((1 << 4) + firstTrackControl),
+                                              zero        = 0,
+                                              pmin        = leadinPmsf.minute,
+                                              psec        = leadinPmsf.second,
+                                              pframe      = leadinPmsf.frame,
+                                              mode        = TrackMode.NoData,
+                                              point       = 0xA2,
+                                              unknown     = new byte[18],
+                                              unknown2    = new byte[24],
+                                              extraOffset = (uint)currentExtraOffset
+                                          });
 
                     currentExtraOffset += Marshal.SizeOf<TrackExtra>() * 3;
                     currentTrackOffset += Marshal.SizeOf<Track>()      * 3;
                 }
 
-                foreach(CommonTypes.Structs.Track track in _writingTracks.Where(t => t.Session == i).
-                                                                          OrderBy(t => t.Sequence))
+                foreach(CommonTypes.Structs.Track track in _writingTracks.Where(t => t.Session == i)
+                                                                         .OrderBy(t => t.Sequence))
                 {
                     var alcTrk = new Track();
 
@@ -749,9 +764,7 @@ public sealed partial class Alcohol120
                         (byte minute, byte second, byte frame) msf = LbaToMsf((ulong)track.Indexes[1]);
                         _trackFlags.TryGetValue((byte)track.Sequence, out byte trackControl);
 
-                        if(trackControl == 0 &&
-                           track.Type   != TrackType.Audio)
-                            trackControl = (byte)CdFlags.DataTrack;
+                        if(trackControl == 0 && track.Type != TrackType.Audio) trackControl = (byte)CdFlags.DataTrack;
 
                         alcTrk.adrCtl = (byte)((1 << 4) + trackControl);
                         alcTrk.point  = (byte)track.Sequence;
@@ -763,7 +776,8 @@ public sealed partial class Alcohol120
 
                     alcTrk.mode = TrackTypeToTrackMode(track.Type);
 
-                    alcTrk.subMode = track.SubchannelType != TrackSubchannelType.None ? SubchannelMode.Interleaved
+                    alcTrk.subMode = track.SubchannelType != TrackSubchannelType.None
+                                         ? SubchannelMode.Interleaved
                                          : SubchannelMode.None;
 
                     alcTrk.sectorSize = (ushort)(track.RawBytesPerSector +
@@ -783,11 +797,11 @@ public sealed partial class Alcohol120
 
                     // Alcohol seems to set that for all CD tracks
                     // Daemon Tools expect it to be like this
-                    alcTrk.unknown = new byte[]
-                    {
-                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x00, 0x00
-                    };
+                    alcTrk.unknown =
+                    [
+                        0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                        0x00, 0x00, 0x00
+                    ];
 
                     alcTrk.unknown2 = new byte[24];
 
@@ -821,30 +835,33 @@ public sealed partial class Alcohol120
                 }
 
                 if(decodedToc?.TrackDescriptors.Any(t => t.SessionNumber == i && t.POINT >= 0xB0) == true)
+                {
                     foreach(FullTOC.TrackDataDescriptor tocTrk in
                             decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == i && t.POINT >= 0xB0))
                     {
-                        thisSessionTracks.Add(tocTrk.POINT, new Track
-                        {
-                            adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
-                            tno         = tocTrk.TNO,
-                            point       = tocTrk.POINT,
-                            min         = tocTrk.Min,
-                            sec         = tocTrk.Sec,
-                            frame       = tocTrk.Frame,
-                            zero        = tocTrk.Zero,
-                            pmin        = tocTrk.PMIN,
-                            psec        = tocTrk.PSEC,
-                            pframe      = tocTrk.PFRAME,
-                            mode        = TrackMode.NoData,
-                            unknown     = new byte[18],
-                            unknown2    = new byte[24],
-                            extraOffset = (uint)currentExtraOffset
-                        });
+                        thisSessionTracks.Add(tocTrk.POINT,
+                                              new Track
+                                              {
+                                                  adrCtl      = (byte)((tocTrk.ADR << 4) + tocTrk.CONTROL),
+                                                  tno         = tocTrk.TNO,
+                                                  point       = tocTrk.POINT,
+                                                  min         = tocTrk.Min,
+                                                  sec         = tocTrk.Sec,
+                                                  frame       = tocTrk.Frame,
+                                                  zero        = tocTrk.Zero,
+                                                  pmin        = tocTrk.PMIN,
+                                                  psec        = tocTrk.PSEC,
+                                                  pframe      = tocTrk.PFRAME,
+                                                  mode        = TrackMode.NoData,
+                                                  unknown     = new byte[18],
+                                                  unknown2    = new byte[24],
+                                                  extraOffset = (uint)currentExtraOffset
+                                              });
 
                         currentExtraOffset += Marshal.SizeOf<TrackExtra>();
                         currentTrackOffset += Marshal.SizeOf<Track>();
                     }
+                }
                 else if(i < sessions)
                 {
                     (byte minute, byte second, byte frame) leadoutAmsf =
@@ -853,37 +870,40 @@ public sealed partial class Alcohol120
                     (byte minute, byte second, byte frame) leadoutPmsf =
                         LbaToMsf(_writingTracks.OrderBy(t => t.Session).ThenBy(t => t.Sequence).Last().StartSector);
 
-                    thisSessionTracks.Add(0xB0, new Track
-                    {
-                        point    = 0xB0,
-                        adrCtl   = 0x50,
-                        zero     = 0,
-                        min      = leadoutAmsf.minute,
-                        sec      = leadoutAmsf.second,
-                        frame    = leadoutAmsf.frame,
-                        pmin     = leadoutPmsf.minute,
-                        psec     = leadoutPmsf.second,
-                        pframe   = leadoutPmsf.frame,
-                        unknown  = new byte[18],
-                        unknown2 = new byte[24]
-                    });
+                    thisSessionTracks.Add(0xB0,
+                                          new Track
+                                          {
+                                              point    = 0xB0,
+                                              adrCtl   = 0x50,
+                                              zero     = 0,
+                                              min      = leadoutAmsf.minute,
+                                              sec      = leadoutAmsf.second,
+                                              frame    = leadoutAmsf.frame,
+                                              pmin     = leadoutPmsf.minute,
+                                              psec     = leadoutPmsf.second,
+                                              pframe   = leadoutPmsf.frame,
+                                              unknown  = new byte[18],
+                                              unknown2 = new byte[24]
+                                          });
 
-                    thisSessionTracks.Add(0xC0, new Track
-                    {
-                        point    = 0xC0,
-                        adrCtl   = 0x50,
-                        min      = 128,
-                        pmin     = 97,
-                        psec     = 25,
-                        unknown  = new byte[18],
-                        unknown2 = new byte[24]
-                    });
+                    thisSessionTracks.Add(0xC0,
+                                          new Track
+                                          {
+                                              point    = 0xC0,
+                                              adrCtl   = 0x50,
+                                              min      = 128,
+                                              pmin     = 97,
+                                              psec     = 25,
+                                              unknown  = new byte[18],
+                                              unknown2 = new byte[24]
+                                          });
 
                     currentTrackOffset += Marshal.SizeOf<Track>() * 2;
                 }
 
                 _alcToc.Add(i, thisSessionTracks);
             }
+        }
 
         _alcFooter = new Footer
         {
@@ -895,8 +915,8 @@ public sealed partial class Alcohol120
 
         // Write header
         _descriptorStream.Seek(0, SeekOrigin.Begin);
-        var    block    = new byte[Marshal.SizeOf<Header>()];
-        IntPtr blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
+        var  block    = new byte[Marshal.SizeOf<Header>()];
+        nint blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Header>());
         System.Runtime.InteropServices.Marshal.StructureToPtr(header, blockPtr, true);
         System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
         System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
@@ -916,10 +936,7 @@ public sealed partial class Alcohol120
 
                         break;
                     case 2048:
-                        _descriptorStream.Write(new byte[]
-                        {
-                            0x08, 0x02, 0x00, 0x00
-                        }, 0, 4);
+                        _descriptorStream.Write([0x08, 0x02, 0x00, 0x00], 0, 4);
 
                         _descriptorStream.Write(_dmi, 0, 2048);
 
@@ -1010,10 +1027,7 @@ public sealed partial class Alcohol120
         _descriptorStream.Write(filename, 0, filename.Length);
 
         // Write filename null termination
-        _descriptorStream.Write(new byte[]
-        {
-            0, 0
-        }, 0, 2);
+        _descriptorStream.Write([0, 0], 0, 2);
 
         _descriptorStream.Flush();
         _descriptorStream.Close();
@@ -1027,12 +1041,12 @@ public sealed partial class Alcohol120
     }
 
     /// <inheritdoc />
-    public bool SetMetadata(ImageInfo metadata) => true;
+    public bool SetImageInfo(ImageInfo imageInfo) => true;
 
     /// <inheritdoc />
     public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
     {
-        ErrorMessage = "Unsupported feature";
+        ErrorMessage = Localization.Unsupported_feature;
 
         return false;
     }
@@ -1042,7 +1056,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -1052,7 +1066,7 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
@@ -1063,7 +1077,7 @@ public sealed partial class Alcohol120
             {
                 if(data.Length != 1)
                 {
-                    ErrorMessage = "Incorrect data size for track flags";
+                    ErrorMessage = Localization.Incorrect_data_size_for_track_flags;
 
                     return false;
                 }
@@ -1077,28 +1091,30 @@ public sealed partial class Alcohol120
                 if(track.SubchannelType == 0)
                 {
                     ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length != 96)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
 
-                _imageStream.
-                    Seek((long)(track.FileOffset + (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                         SeekOrigin.Begin);
+                _imageStream.Seek((long)(track.FileOffset +
+                                         (sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) +
+                                  track.RawBytesPerSector,
+                                  SeekOrigin.Begin);
 
                 _imageStream.Write(data, 0, data.Length);
 
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
@@ -1109,7 +1125,7 @@ public sealed partial class Alcohol120
     {
         if(!IsWriting)
         {
-            ErrorMessage = "Tried to write on a non-writable image";
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
 
             return false;
         }
@@ -1119,36 +1135,40 @@ public sealed partial class Alcohol120
 
         if(track is null)
         {
-            ErrorMessage = $"Can't found track containing {sectorAddress}";
+            ErrorMessage = string.Format(Localization.Cant_find_track_containing_0, sectorAddress);
 
             return false;
         }
 
         switch(tag)
         {
-            case SectorTagType.CdTrackFlags: return WriteSectorTag(data, sectorAddress, tag);
+            case SectorTagType.CdTrackFlags:
+                return WriteSectorTag(data, sectorAddress, tag);
             case SectorTagType.CdSectorSubchannel:
             {
                 if(track.SubchannelType == 0)
                 {
                     ErrorMessage =
-                        $"Trying to write subchannel to track {track.Sequence}, that does not have subchannel";
+                        string.Format(Localization.Trying_to_write_subchannel_to_track_0_that_does_not_have_subchannel,
+                                      track.Sequence);
 
                     return false;
                 }
 
                 if(data.Length % 96 != 0)
                 {
-                    ErrorMessage = "Incorrect data size for subchannel";
+                    ErrorMessage = Localization.Incorrect_data_size_for_subchannel;
 
                     return false;
                 }
 
                 for(uint i = 0; i < length; i++)
                 {
-                    _imageStream.
-                        Seek((long)(track.FileOffset + (i + sectorAddress - track.StartSector) * (ulong)(track.RawBytesPerSector + 96)) + track.RawBytesPerSector,
-                             SeekOrigin.Begin);
+                    _imageStream.Seek((long)(track.FileOffset +
+                                             (i                              + sectorAddress - track.StartSector) *
+                                             (ulong)(track.RawBytesPerSector + 96)) +
+                                      track.RawBytesPerSector,
+                                      SeekOrigin.Begin);
 
                     _imageStream.Write(data, (int)(i * 96), 96);
                 }
@@ -1156,15 +1176,17 @@ public sealed partial class Alcohol120
                 return true;
             }
             default:
-                ErrorMessage = $"Unsupported tag type {tag}";
+                ErrorMessage = string.Format(Localization.Unsupported_tag_type_0, tag);
 
                 return false;
         }
     }
 
     /// <inheritdoc />
-    public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
+    public bool SetDumpHardware(List<DumpHardware> dumpHardware) => false;
 
     /// <inheritdoc />
-    public bool SetCicmMetadata(CICMMetadataType metadata) => false;
+    public bool SetMetadata(Metadata metadata) => false;
+
+#endregion
 }

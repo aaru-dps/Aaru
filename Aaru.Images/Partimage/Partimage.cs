@@ -27,24 +27,26 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-#pragma warning disable 649
-
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 
+#pragma warning disable 649
+
+namespace Aaru.Images;
+
 /// <inheritdoc cref="Aaru.CommonTypes.Interfaces.IMediaImage" />
 /// <summary>Implements reading partimage disk images</summary>
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Partimage : IMediaImage, IVerifiableImage
 {
+    const string              MODULE_NAME = "Partimage plugin";
     byte[]                    _bitmap;
     MainHeader                _cMainHeader;
     Header                    _cVolumeHeader;
@@ -57,8 +59,8 @@ public sealed partial class Partimage : IMediaImage, IVerifiableImage
 
     public Partimage() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Application           = "Partimage",

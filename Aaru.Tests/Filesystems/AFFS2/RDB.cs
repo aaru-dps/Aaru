@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.AFFS2;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,19 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class RDB : FilesystemTest
-{
-    public RDB() : base("Amiga FFS2") {}
+namespace Aaru.Tests.Filesystems.AFFS2;
 
+[TestFixture]
+public class RDB() : FilesystemTest("affs2")
+{
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Amiga Fast File System 2 (RDB)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Fast File System 2 (RDB)");
 
     public override IFilesystem Plugin     => new AmigaDOSPlugin();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "amigaos_4.0.aif",
@@ -69,5 +67,5 @@ public class RDB : FilesystemTest
             VolumeName   = "VolumeLabel",
             VolumeSerial = "D943AA14"
         }
-    };
+    ];
 }

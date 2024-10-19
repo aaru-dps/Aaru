@@ -27,17 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
+
+using System.CommandLine;
+using Aaru.Localization;
 
 namespace Aaru.Commands.Database;
 
-using System.CommandLine;
-
 sealed class DatabaseFamily : Command
 {
-    internal DatabaseFamily(bool mainDbUpdate) : base("database",
-                                                      "Commands to manage the device and statistics database")
+    internal DatabaseFamily(bool mainDbUpdate) : base("database", UI.Database_Command_Family_Description)
     {
         AddAlias("db");
 

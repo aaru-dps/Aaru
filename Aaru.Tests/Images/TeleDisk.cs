@@ -23,24 +23,24 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Images;
+
 [TestFixture]
 public class TeleDisk : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "TeleDisk");
-    public override IMediaImage Plugin    => new DiscImages.TeleDisk();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "TeleDisk");
+    public override IMediaImage Plugin     => new Aaru.Images.TeleDisk();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "md2dd8.td0.lz",
@@ -48,14 +48,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 640,
             SectorSize = 512,
             Md5        = "beef1cdb004dc69391d6b3d508988b95",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -72,14 +72,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 820,
             SectorSize = 512,
             Md5        = "348d12add1ed226cd712a4a6a10d1a34",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 820
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -88,14 +88,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "1c36b819cfe355c11360bc120c9216fe",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -104,14 +104,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "25114403c11e337480e2afc4e6e32108",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -120,14 +120,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "3d7760ddaa55cd258057773d15106b78",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -144,14 +144,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "c91e852828c2aeee2fc94a6adbeed0ae",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -160,14 +160,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 840,
             SectorSize = 512,
             Md5        = "efb6cfe53a6770f0ae388cb2c7f46264",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 840
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -176,14 +176,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1476,
             SectorSize = 512,
             Md5        = "6116f7c1397cadd55ba8d79c2aadc9dd",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1476
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -192,14 +192,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "93100f8d86e5d0d0e6340f59c52a5e0d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -208,14 +208,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "cf7b7d43aa70863bedcc4a8432a5af67",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -232,14 +232,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "073a172879a71339ef4b00ebb47b67fc",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -248,14 +248,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "d9890897130d0fc1eee3dbf4d9b0440f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -264,14 +264,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2788,
             SectorSize = 512,
             Md5        = "09ca721aa883d5bbaa422c7943b0782c",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2788
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -280,14 +280,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2400,
             SectorSize = 512,
             Md5        = "02259cd5fbcc20f8484aa6bece7a37c6",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2400
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -295,7 +295,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 640,
             SectorSize = 128,
-            Md5        = "b903ea7e0c9d7e4c6251df4825212db4"
+            Md5        = "c14ca79c13d605e44374bd6072f33ed7"
         },
         new BlockImageTestExpected
         {
@@ -304,14 +304,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "c533488a21098a62c85f1649abda2803",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -320,14 +320,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "db9cfb6eea18820b7a7e0b5b45594471",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -336,14 +336,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "26532a62985b51a2c3b877a57f6d257b",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -352,14 +352,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "a7771acff766557cc23b8c6943b588f9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -368,14 +368,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "d07f7ffaee89742c6477aaaf94eb5715",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -384,14 +384,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1640,
             SectorSize = 512,
             Md5        = "456390a9c6ab05cb458a03c47296de08",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1640
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -400,14 +400,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "56af87802a9852e6e01e08d544740816",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -416,14 +416,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1494,
             SectorSize = 512,
             Md5        = "fd7fb1ba11cdfe11db54af0322abf59d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1494
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -432,14 +432,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1600,
             SectorSize = 512,
             Md5        = "d9db52d992a76bf3bbc626ff844215a5",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1600
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -448,14 +448,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1660,
             SectorSize = 512,
             Md5        = "5949d0be57ce8bffcda7c4be4d1348ee",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1660
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -464,14 +464,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 1440,
             SectorSize = 512,
             Md5        = "de3f85896f771b7e5bc4c9e3926d64e4",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 1440
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -535,7 +535,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.Unknown,
             Sectors    = 332,
             SectorSize = 512,
-            Md5        = "62b900808c3e9f91f8361fd1716155a1"
+            Md5        = "323ea79c83432663669b9bc29f13785c"
         },
         new BlockImageTestExpected
         {
@@ -552,14 +552,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "7e3bf04f3660dd1052a335dc99441e44",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -568,14 +568,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "8eb8cb310feaf03c69fffd4f6e729847",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -584,14 +584,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3444,
             SectorSize = 512,
             Md5        = "a58fd062f024b95714f1223a8bc2232f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3444
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -600,14 +600,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "2bfd2e0a81bad704f8fc7758358cfcca",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -616,14 +616,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3486,
             SectorSize = 512,
             Md5        = "a79ec33c623697b4562dacaed31523b8",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3486
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -632,14 +632,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3486,
             SectorSize = 512,
             Md5        = "dbd52e9e684f97d9e2292811242bb24e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3486
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -648,14 +648,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "3c4becd695ed25866d39966a9a93c2d9",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -664,14 +664,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2460,
             SectorSize = 512,
             Md5        = "72282e11f7d91bf9c090b550fabfe80d",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2460
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -680,14 +680,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2720,
             SectorSize = 512,
             Md5        = "457c1126dc7f36bbbabe9e17e90372e3",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2720
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -696,14 +696,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2788,
             SectorSize = 512,
             Md5        = "852181d5913c6f290872c66bbe992314",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2788
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -712,14 +712,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "2980cc32504c945598dc50f1db576994",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -728,14 +728,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2952,
             SectorSize = 512,
             Md5        = "c1c58d74fffb3656dd7f60f74ae8a629",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2952
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -744,14 +744,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3200,
             SectorSize = 512,
             Md5        = "e45d41a61fbe48f328c995fcc10a5548",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3200
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -760,14 +760,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3320,
             SectorSize = 512,
             Md5        = "c25f2a57c71db1cd4fea2263598f544a",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3320
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -776,14 +776,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3360,
             SectorSize = 512,
             Md5        = "15f71b92bd72aba5d80bf70eca4d5b1e",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3360
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -792,14 +792,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 3486,
             SectorSize = 512,
             Md5        = "d88c8d818e238c9e52b8588b5fd52efe",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 3486
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -808,14 +808,14 @@ public class TeleDisk : BlockMediaImageTest
             Sectors    = 2880,
             SectorSize = 512,
             Md5        = "b4a602f67903c46eef62addb0780aa56",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 2880
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -823,7 +823,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "728f9361203dc39961b1413aa050f70d"
+            Md5        = "a8142f403d972f96787eb76655f5d42c"
         },
         new BlockImageTestExpected
         {
@@ -831,7 +831,7 @@ public class TeleDisk : BlockMediaImageTest
             MediaType  = MediaType.XDF_35,
             Sectors    = 640,
             SectorSize = 512,
-            Md5        = "728f9361203dc39961b1413aa050f70d"
+            Md5        = "a8142f403d972f96787eb76655f5d42c"
         }
-    };
+    ];
 }

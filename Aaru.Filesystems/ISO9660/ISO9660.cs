@@ -7,10 +7,6 @@
 //
 // Component      : ISO9660 filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the ISO9660 filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,19 +23,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 // This is coded following ECMA-119.
 /// <inheritdoc />
@@ -47,8 +43,11 @@ using Schemas;
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class ISO9660 : IReadOnlyFilesystem
 {
+    const string                              MODULE_NAME = "ISO9660 plugin";
+    ushort                                    _blockSize;
     bool                                      _cdi;
     bool                                      _debug;
+    Encoding                                  _encoding;
     bool                                      _highSierra;
     IMediaImage                               _image;
     bool                                      _joliet;
@@ -60,18 +59,20 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     bool                                      _useEvd;
     bool                                      _usePathTable;
     bool                                      _useTransTbl;
-    ushort                                    _blockSize;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
-    /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public string Name => "ISO9660 Filesystem";
+
     /// <inheritdoc />
     public Guid Id => new("d812f4d3-c357-400d-90fd-3b22ef786aa8");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -102,6 +103,8 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
             "romeo", "Primary Volume Descriptor using the specified encoding codepage"
         }
     };
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {

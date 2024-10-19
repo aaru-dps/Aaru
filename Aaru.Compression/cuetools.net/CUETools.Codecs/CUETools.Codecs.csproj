@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>2.1.9.0</Version>
+    <AssemblyName>CUETools.Codecs</AssemblyName>
+    <RootNamespace>CUETools.Codecs</RootNamespace>
+    <Product>CUETools</Product>
+    <Description>A library for encoding and decoding audio.</Description>
+    <Copyright>Copyright (c) 2008-2021 Grigory Chudov</Copyright>
+    <Authors>Grigory Chudov</Authors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputPath>..\bin\$(Configuration)\</OutputPath>
+    <RepositoryUrl>https://github.com/gchudov/cuetools.net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Company />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
+</Project>

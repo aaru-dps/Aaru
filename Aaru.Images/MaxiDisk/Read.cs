@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -38,19 +36,22 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class MaxiDisk
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
 
-        if(stream.Length < 8)
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < 8) return ErrorNumber.InvalidArgument;
 
         var buffer = new byte[8];
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         Header tmpHeader = Marshal.ByteArrayToStructureLittleEndian<Header>(buffer);
 
@@ -60,22 +61,21 @@ public sealed partial class MaxiDisk
         //    return false;
 
         // Only floppies supported
-        if(tmpHeader.heads is 0 or > 2)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.heads is 0 or > 2) return ErrorNumber.InvalidArgument;
 
         // No floppies with more than this?
-        if(tmpHeader.cylinders > 90)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.cylinders > 90) return ErrorNumber.InvalidArgument;
 
         // Maximum supported bps is 16384
-        if(tmpHeader.bytesPerSector > 7)
-            return ErrorNumber.InvalidArgument;
+        if(tmpHeader.bytesPerSector > 7) return ErrorNumber.InvalidArgument;
 
-        int expectedFileSize = tmpHeader.heads * tmpHeader.cylinders * tmpHeader.sectorsPerTrack *
-                               (128 << tmpHeader.bytesPerSector) + 8;
+        int expectedFileSize = tmpHeader.heads           *
+                               tmpHeader.cylinders       *
+                               tmpHeader.sectorsPerTrack *
+                               (128 << tmpHeader.bytesPerSector) +
+                               8;
 
-        if(expectedFileSize != stream.Length)
-            return ErrorNumber.InvalidArgument;
+        if(expectedFileSize != stream.Length) return ErrorNumber.InvalidArgument;
 
         _imageInfo.Cylinders       = tmpHeader.cylinders;
         _imageInfo.Heads           = tmpHeader.heads;
@@ -93,7 +93,7 @@ public sealed partial class MaxiDisk
                                                       (ushort)_imageInfo.SectorsPerTrack, _imageInfo.SectorSize,
                                                       MediaEncoding.MFM, false));
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
         return ErrorNumber.NoError;
     }
@@ -106,18 +106,18 @@ public sealed partial class MaxiDisk
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageInfo.SectorSize];
 
         Stream stream = _hdkImageFilter.GetDataForkStream();
         stream.Seek((long)(8 + sectorAddress * _imageInfo.SectorSize), SeekOrigin.Begin);
-        stream.Read(buffer, 0, (int)(length * _imageInfo.SectorSize));
+        stream.EnsureRead(buffer, 0, (int)(length * _imageInfo.SectorSize));
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

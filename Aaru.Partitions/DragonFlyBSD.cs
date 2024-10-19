@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -41,6 +39,8 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Partitions;
+
 /// <inheritdoc />
 /// <summary>Implements decoding of DragonFly BSD disklabels</summary>
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
@@ -48,35 +48,34 @@ public sealed class DragonFlyBSD : IPartition
 {
     const uint DISK_MAGIC64 = 0xC4464C59;
 
+#region IPartition Members
+
     /// <inheritdoc />
-    public string Name => "DragonFly BSD 64-bit disklabel";
+    public string Name => Localization.DragonFlyBSD_Name;
+
     /// <inheritdoc />
     public Guid Id => new("D49E41A6-D952-4760-9D94-03DAE2450C5F");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
-        partitions = new List<Partition>();
+        partitions = [];
         uint nSectors = 2048 / imagePlugin.Info.SectorSize;
 
-        if(2048 % imagePlugin.Info.SectorSize > 0)
-            nSectors++;
+        if(2048 % imagePlugin.Info.SectorSize > 0) nSectors++;
 
-        if(sectorOffset + nSectors >= imagePlugin.Info.Sectors)
-            return false;
+        if(sectorOffset + nSectors >= imagePlugin.Info.Sectors) return false;
 
         ErrorNumber errno = imagePlugin.ReadSectors(sectorOffset, nSectors, out byte[] sectors);
 
-        if(errno          != ErrorNumber.NoError ||
-           sectors.Length < 2048)
-            return false;
+        if(errno != ErrorNumber.NoError || sectors.Length < 2048) return false;
 
         Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);
 
-        if(disklabel.d_magic != 0xC4464C59)
-            return false;
+        if(disklabel.d_magic != 0xC4464C59) return false;
 
         ulong counter = 0;
 
@@ -91,16 +90,14 @@ public sealed class DragonFlyBSD : IPartition
                 Name     = entry.p_stor_uuid.ToString(),
                 Sequence = counter,
                 Scheme   = Name,
-                Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other ? entry.p_type_uuid.ToString()
+                Type = (BSD.fsType)entry.p_fstype == BSD.fsType.Other
+                           ? entry.p_type_uuid.ToString()
                            : BSD.FSTypeToString((BSD.fsType)entry.p_fstype)
             };
 
-            if(entry.p_bsize % imagePlugin.Info.SectorSize > 0)
-                part.Length++;
+            if(entry.p_bsize % imagePlugin.Info.SectorSize > 0) part.Length++;
 
-            if(entry.p_bsize   <= 0 ||
-               entry.p_boffset <= 0)
-                continue;
+            if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
 
             partitions.Add(part);
             counter++;
@@ -108,6 +105,10 @@ public sealed class DragonFlyBSD : IPartition
 
         return true;
     }
+
+#endregion
+
+#region Nested type: Disklabel64
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Disklabel64
@@ -132,6 +133,10 @@ public sealed class DragonFlyBSD : IPartition
         public readonly Partition64[] d_partitions;
     }
 
+#endregion
+
+#region Nested type: Partition64
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Partition64
     {
@@ -147,4 +152,6 @@ public sealed class DragonFlyBSD : IPartition
         public readonly Guid  p_type_uuid;
         public readonly Guid  p_stor_uuid;
     }
+
+#endregion
 }

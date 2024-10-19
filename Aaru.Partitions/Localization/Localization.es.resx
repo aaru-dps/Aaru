@@ -1,0 +1,1411 @@
+<root>
+    <!-- ReSharper disable MarkupTextTypo -->
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Acorn_Name" xml:space="preserve">
+    <value>Particiones de Acorn FileCore</value>
+  </data>
+    <data name="Acronis_Secure_Zone" xml:space="preserve">
+    <value>Zona Segura de Acronis</value>
+  </data>
+    <data name="AIX_boot_OS2_Commodore_DOS" xml:space="preserve">
+    <value>Arranque de AIX, OS/2 o Commodore DOS</value>
+  </data>
+    <data name="AIX_data_Coherent_QNX" xml:space="preserve">
+    <value>Datos de AIX, Coherent o QNX</value>
+  </data>
+    <data name="ALFS_THIN_lightweight_filesystem_for_DOS" xml:space="preserve">
+    <value>Sistema de ficheros ligero ALFS/THIN para DOS</value>
+  </data>
+    <data name="alternate_sector_mapping" xml:space="preserve">
+    <value> (mapeo alternativo de sectores)</value>
+  </data>
+    <data name="Alternate_sector_space" xml:space="preserve">
+    <value>Espacio alternativo de sectores</value>
+  </data>
+    <data name="Alternate_sector_track" xml:space="preserve">
+    <value>Sector alternativo de pista</value>
+  </data>
+    <data name="Alternate_track_space" xml:space="preserve">
+    <value>Espacio alternativo de pista</value>
+  </data>
+    <data name="AmigaRigidDiskBlock_Name" xml:space="preserve">
+    <value>Bloque de Disco Rígido (RDB) de Amiga</value>
+  </data>
+    <data name="Amiga_Fast_File_System" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_directory_cache" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con caché de directorio</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_directory_cache_and_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con caché de directorio y parches multi-usuario</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_international_characters" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con caracteres internacionales</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_international_characters_and_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con caracteres internacionales y parches multi-usuario</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_long_filenames" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con nombres de fichero largos</value>
+  </data>
+    <data name="Amiga_Fast_File_System_with_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Rápido de Amiga con parches multi-usuario</value>
+  </data>
+    <data name="Amiga_FFS" xml:space="preserve">
+    <value>Amiga FFS</value>
+  </data>
+    <data name="Amiga_Original_File_System" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_directory_cache" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con caché de directorio</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_directory_cache_and_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con caché de directorio y parches multi-usuario</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_international_characters" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con caracteres internacionales</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_international_characters_and_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con caracteres internacionales y parches multi-usuario</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_multi_user_patches" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con parches multi-usuario</value>
+  </data>
+    <data name="Amiga_Original_File_System_with_long_filenames" xml:space="preserve">
+    <value>Sistema de Ficheros Original de Amiga con nombres de fichero largos</value>
+  </data>
+    <data name="Amiga_UNIX_boot_filesystem" xml:space="preserve">
+    <value>Sistema de ficheros de arranque de Amiga UNIX</value>
+  </data>
+    <data name="Amiga_UNIX_BSD_filesystem" xml:space="preserve">
+    <value>Sistema de ficheros BSD de Amiga UNIX</value>
+  </data>
+    <data name="Amiga_UNIX_Reserved_partition__swap_" xml:space="preserve">
+    <value>Partición reservada (intercambio) de Amiga UNIX</value>
+  </data>
+    <data name="Amiga_UNIX_System_V_filesystem" xml:space="preserve">
+    <value>Sistema de ficheros System V de Amiga UNIX</value>
+  </data>
+    <data name="Amoeba_bad_blocks" xml:space="preserve">
+    <value>Bloques dañados de Amoeba</value>
+  </data>
+    <data name="Amoeba_Hidden_Linux" xml:space="preserve">
+    <value>Amoeba u oculta de Linux</value>
+  </data>
+    <data name="AppleMap_Name" xml:space="preserve">
+    <value>Mapa de Particiones de Apple (APM)</value>
+  </data>
+    <data name="Apple_Boot" xml:space="preserve">
+    <value>Arranque de Apple</value>
+  </data>
+    <data name="Apple_Core_Storage" xml:space="preserve">
+    <value>Apple Core Storage</value>
+  </data>
+    <data name="Apple_File_System" xml:space="preserve">
+    <value>Sistema de ficheros Apple (APFS)</value>
+  </data>
+    <data name="Apple_HFS" xml:space="preserve">
+    <value>Apple HFS</value>
+  </data>
+    <data name="Apple_Label" xml:space="preserve">
+    <value>Etiqueta Apple</value>
+  </data>
+    <data name="Apple_RAID" xml:space="preserve">
+    <value>RAID de Apple</value>
+  </data>
+    <data name="Apple_RAID_offline" xml:space="preserve">
+    <value>RAID de Apple, fuera de línea</value>
+  </data>
+    <data name="Apple_TV_Recovery" xml:space="preserve">
+    <value>Recuperación de Apple TV</value>
+  </data>
+    <data name="Apple_UFS" xml:space="preserve">
+    <value>Apple UFS</value>
+  </data>
+    <data name="Apricot_F1_ROM_BIOS" xml:space="preserve">
+    <value>Apricto F1 ROM BIOS</value>
+  </data>
+    <data name="Apricot_Name" xml:space="preserve">
+    <value>Particiones de ACT Apricot</value>
+  </data>
+    <data name="Apricot_Portable_ROM_BIOS" xml:space="preserve">
+    <value>Apricot Portable ROM BIOS</value>
+  </data>
+    <data name="Apricot_XI_RAM_BIOS" xml:space="preserve">
+    <value>Apricot &amp; XI RAM BIOS</value>
+  </data>
+    <data name="Apricot_XI_ROM_BIOS" xml:space="preserve">
+    <value>Apricot &amp; XI ROM BIOS</value>
+  </data>
+    <data name="AST_Windows_swap" xml:space="preserve">
+    <value>Intercambio de AST-Windows</value>
+  </data>
+    <data name="AtariPartitions_Name" xml:space="preserve">
+    <value>Particiones de Atari</value>
+  </data>
+    <data name="Atari_GEMDOS_partition" xml:space="preserve">
+    <value>Partición de Atari GEMDOS</value>
+  </data>
+    <data name="Atari_GEMDOS_partition_bigger_than_32_MiB" xml:space="preserve">
+    <value>Partición de Atari GEMDOS de más de 32 MiB</value>
+  </data>
+    <data name="Atari_UNIX_partition" xml:space="preserve">
+    <value>Partición de Atari UNIX</value>
+  </data>
+    <data name="bad" xml:space="preserve">
+    <value>dañado</value>
+  </data>
+    <data name="Bad_block_at_0_replaced_with_good_block_at_1" xml:space="preserve">
+    <value>Bloque dañado en {0} reemplazado por bloque correcto en {1}</value>
+  </data>
+    <data name="bad_sector_file" xml:space="preserve">
+    <value>fichero de sectores dañados</value>
+  </data>
+    <data name="BeOS" xml:space="preserve">
+    <value>BeOS</value>
+  </data>
+    <data name="BIOS_Boot" xml:space="preserve">
+    <value>Arranque de BIOS</value>
+  </data>
+    <data name="Boot" xml:space="preserve">
+    <value>Arranque</value>
+  </data>
+    <data name="BootIt_EMBRM" xml:space="preserve">
+    <value>EMBRM de BootIt</value>
+  </data>
+    <data name="BootStar" xml:space="preserve">
+    <value>BootStar</value>
+  </data>
+    <data name="Boot_code_checksum_0_X8" xml:space="preserve">
+    <value>Checksum del código de arranque: 0x{0:X8}</value>
+  </data>
+    <data name="Boot_code_SHA1_0" xml:space="preserve">
+    <value>SHA1 del código de arranque: {0}</value>
+  </data>
+    <data name="Boot_entry_point_0_X8" xml:space="preserve">
+    <value>Punto de entrada del arranque: 0x{0:X8}</value>
+  </data>
+    <data name="Boot_is_0_bytes" xml:space="preserve">
+    <value>El arranque ocupa {0} bytes.</value>
+  </data>
+    <data name="Boot_load_address_0_X8" xml:space="preserve">
+    <value>Dirección de carga del arranque: 0x{0:X8}</value>
+  </data>
+    <data name="BSDi" xml:space="preserve">
+    <value>BSDi</value>
+  </data>
+    <data name="BSD_4_2_FFS" xml:space="preserve">
+    <value>BSD 4.2 FFS</value>
+  </data>
+    <data name="BSD_4_4_LFS" xml:space="preserve">
+    <value>BSD 4.4 LFS</value>
+  </data>
+    <data name="BSD_GetInformation_Adding_it" xml:space="preserve">
+    <value>Añadiéndola...</value>
+  </data>
+    <data name="BSD_GetInformation_dl_magic_on_sector_0_at_offset_1_equals_2_X8_expected_3_X8" xml:space="preserve">
+    <value>dl.magic en el sector {0} posición {1} = 0x{2:X8} (se esperaba 0x{3:X8})</value>
+  </data>
+    <data name="BSD_Name" xml:space="preserve">
+    <value>Etiqueta de disco de BSD</value>
+  </data>
+    <data name="BSD_OS" xml:space="preserve">
+    <value>BSD/OS</value>
+  </data>
+    <data name="BSD_swap" xml:space="preserve">
+    <value>Intercambio de BSD</value>
+  </data>
+    <data name="BSD_unused" xml:space="preserve">
+    <value>Sin usar de BSD</value>
+  </data>
+    <data name="Cache" xml:space="preserve">
+    <value>Caché</value>
+  </data>
+    <data name="Cannot_find_VTOC" xml:space="preserve">
+    <value>No se pudo encontrar la VTOC.</value>
+  </data>
+    <data name="Ceph_disk_in_creation" xml:space="preserve">
+    <value>Disco Ceph en creación</value>
+  </data>
+    <data name="Ceph_dm_crypt_disk_in_creation" xml:space="preserve">
+    <value>Disco dm-crypt de Ceph en creación</value>
+  </data>
+    <data name="Ceph_dm_crypt_Encrypted_Journal" xml:space="preserve">
+    <value>Registro Encriptado dm-crypt de Ceph</value>
+  </data>
+    <data name="Ceph_dm_crypt_OSD" xml:space="preserve">
+    <value>OSD dm-crypt de Ceph</value>
+  </data>
+    <data name="Ceph_Journal" xml:space="preserve">
+    <value>Registro de Ceph</value>
+  </data>
+    <data name="Ceph_OSD" xml:space="preserve">
+    <value>OSD de Ceph</value>
+  </data>
+    <data name="ChromeOS_future_use" xml:space="preserve">
+    <value>Para uso futuro de ChromeOS</value>
+  </data>
+    <data name="ChromeOS_kernel" xml:space="preserve">
+    <value>Núclero de ChromeOS</value>
+  </data>
+    <data name="ChromeOS_rootfs" xml:space="preserve">
+    <value>Raíz de ChromeOS</value>
+  </data>
+    <data name="Coherent_swap_OPUS_OS_2_Boot_Manager" xml:space="preserve">
+    <value>Intercambio de Coheren, OPUS o Gestor de Arranque de OS/2</value>
+  </data>
+    <data name="Compaq_diagnostics_recovery_partition" xml:space="preserve">
+    <value>Diagnósticos de Compaq, partición de recuperación</value>
+  </data>
+    <data name="Concatenated_disk" xml:space="preserve">
+    <value>Disco concatenado</value>
+  </data>
+    <data name="Content_volume" xml:space="preserve">
+    <value>Volumen de contenido</value>
+  </data>
+    <data name="CPM" xml:space="preserve">
+    <value>CP/M</value>
+  </data>
+    <data name="CPM_CCPM_CTOS" xml:space="preserve">
+    <value>CP/M, CCP/M o CTOS</value>
+  </data>
+    <data name="CPM_Microport_UNIX" xml:space="preserve">
+    <value>CP/M o Microport UNIX</value>
+  </data>
+    <data name="created_on_0" xml:space="preserve">
+    <value> creado el {0}</value>
+  </data>
+    <data name="Cutting_last_partition_end_0_to_media_size_1" xml:space="preserve">
+    <value>Recordando el final de la última partición ({0}) al tamaño del medio ({1})</value>
+  </data>
+    <data name="Dashboard_volume" xml:space="preserve">
+    <value>Volumen de panel</value>
+  </data>
+    <data name="data" xml:space="preserve">
+    <value>datos</value>
+  </data>
+    <data name="Data_volume" xml:space="preserve">
+    <value>Volumen de datos</value>
+  </data>
+    <data name="DEC_Name" xml:space="preserve">
+    <value>Etiqueta de disco de DEC</value>
+  </data>
+    <data name="Dell_partition" xml:space="preserve">
+    <value>Partición de Dell</value>
+  </data>
+    <data name="Digital_Advanced_File_System" xml:space="preserve">
+    <value>Sistema de ficheros avanzado (AFS) de Digital</value>
+  </data>
+    <data name="Digital_LSM_Private_Region" xml:space="preserve">
+    <value>Región privada de LSM de Digital</value>
+  </data>
+    <data name="Digital_LSM_Public_Region" xml:space="preserve">
+    <value>Región pública de LSM de Digital</value>
+  </data>
+    <data name="Digital_LSM_Simple_Disk" xml:space="preserve">
+    <value>Disco simple de LSM de Digital</value>
+  </data>
+    <data name="DiskSecure_Multi_Boot" xml:space="preserve">
+    <value>Multi-arranque de DiskSecure</value>
+  </data>
+    <data name="DOS_3_3_secondary_Unisys_DOS" xml:space="preserve">
+    <value>Secundaria de DOS 3.3 o Unisys DOS</value>
+  </data>
+    <data name="DOS_read_only" xml:space="preserve">
+    <value>Sólo lectura de DOS</value>
+  </data>
+    <data name="DragonflyBSD_CCD" xml:space="preserve">
+    <value>DragonFly BSD CCD</value>
+  </data>
+    <data name="DragonflyBSD_Hammer" xml:space="preserve">
+    <value>DragonFly BSD Hammer</value>
+  </data>
+    <data name="DragonflyBSD_Hammer2" xml:space="preserve">
+    <value>DragonFly BSD Hammer2</value>
+  </data>
+    <data name="DragonflyBSD_Label" xml:space="preserve">
+    <value>Etiqueta de DragonFly BSD</value>
+  </data>
+    <data name="DragonflyBSD_Legacy" xml:space="preserve">
+    <value>Antigua de DragonFly BSD</value>
+  </data>
+    <data name="DragonFlyBSD_Name" xml:space="preserve">
+    <value>Etiqueta de 64-bits de DragonFly BSD</value>
+  </data>
+    <data name="DragonflyBSD_Swap" xml:space="preserve">
+    <value>Intercambio de DragonFly BSD</value>
+  </data>
+    <data name="DragonflyBSD_UFS" xml:space="preserve">
+    <value>DragonFly BSD UFS</value>
+  </data>
+    <data name="DragonflyBSD_Vinum" xml:space="preserve">
+    <value>DragonFly BSD Vinum</value>
+  </data>
+    <data name="DR_DOS_reserved" xml:space="preserve">
+    <value>Reservada de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_extended_LBA" xml:space="preserve">
+    <value>Extendida segura (LBA) de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT12" xml:space="preserve">
+    <value>FAT12 segura de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT16" xml:space="preserve">
+    <value>FAT16 segura de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT16_32_MiB" xml:space="preserve">
+    <value>FAT16 menor de 32 MiB segura de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT16_LBA" xml:space="preserve">
+    <value>FAT16 (LBA) segura de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT32" xml:space="preserve">
+    <value>FAT32 segura de DR-DOS</value>
+  </data>
+    <data name="DR_DOS_secured_FAT32_LBA" xml:space="preserve">
+    <value>FAT32 (LBA) segura de DR-DOS</value>
+  </data>
+    <data name="dump" xml:space="preserve">
+    <value>volcado</value>
+  </data>
+    <data name="dvh_magic_equals_0_X8_should_be_1_X8" xml:space="preserve">
+    <value>dvh.magic = 0x{0:X8} (debería ser 0x{1:X8})</value>
+  </data>
+    <data name="EFI_System" xml:space="preserve">
+    <value>Sistema EFI</value>
+  </data>
+    <data name="EFI_system_partition" xml:space="preserve">
+    <value>Partición de sistema EFI</value>
+  </data>
+    <data name="EFS" xml:space="preserve">
+    <value>EFS</value>
+  </data>
+    <data name="Empty" xml:space="preserve">
+    <value>Vacía</value>
+  </data>
+    <data name="errorlog" xml:space="preserve">
+    <value>registro de errores</value>
+  </data>
+    <data name="error_log" xml:space="preserve">
+    <value>registro de errores</value>
+  </data>
+    <data name="EUMEL_Elan" xml:space="preserve">
+    <value>EUMEL/Elan</value>
+  </data>
+    <data name="Even_parity" xml:space="preserve">
+    <value>Par</value>
+  </data>
+    <data name="Extended" xml:space="preserve">
+    <value>Extendida</value>
+  </data>
+    <data name="Extended_LBA" xml:space="preserve">
+    <value>Extendida (LBA)</value>
+  </data>
+    <data name="EZ_Drive" xml:space="preserve">
+    <value>EZ-Drive</value>
+  </data>
+    <data name="FAT" xml:space="preserve">
+    <value>FAT</value>
+  </data>
+    <data name="FAT12" xml:space="preserve">
+    <value>FAT12</value>
+  </data>
+    <data name="FAT16" xml:space="preserve">
+    <value>FAT16</value>
+  </data>
+    <data name="FAT16_32_MiB" xml:space="preserve">
+    <value>FAT16 menor de 32 MiB</value>
+  </data>
+    <data name="FAT16_LBA" xml:space="preserve">
+    <value>FAT16 (LBA)</value>
+  </data>
+    <data name="FAT32" xml:space="preserve">
+    <value>FAT32</value>
+  </data>
+    <data name="FAT32_LBA" xml:space="preserve">
+    <value>FAT32 (LBA)</value>
+  </data>
+    <data name="FAT_as_set_by_CrossDOS" xml:space="preserve">
+    <value>FAT, establecida por CrossDOS</value>
+  </data>
+    <data name="Filecore" xml:space="preserve">
+    <value>FileCore</value>
+  </data>
+    <data name="Filesystem_less_data" xml:space="preserve">
+    <value>Datos sin sistema de ficheros</value>
+  </data>
+    <data name="Filesystem_should_be_automatically_mounted" xml:space="preserve">
+    <value>El sistema de ficheros debería montarse automáticamente</value>
+  </data>
+    <data name="Filesystem_should_be_formatted_at_start" xml:space="preserve">
+    <value>El sistema de ficheros debería formatearse al inicio</value>
+  </data>
+    <data name="First_boot_sector_0" xml:space="preserve">
+    <value>Primer sector de arranque: {0}</value>
+  </data>
+    <data name="Found_aligned_entry" xml:space="preserve">
+    <value>Se encontró entrada alineada.</value>
+  </data>
+    <data name="Found_BadBlock_block" xml:space="preserve">
+    <value>Encontrado bloque BadBlock</value>
+  </data>
+    <data name="Found_FileSystemHeader_block" xml:space="preserve">
+    <value>Encontrado bloque FileSystemHeader</value>
+  </data>
+    <data name="Found_LoadSegment_block" xml:space="preserve">
+    <value>Encontrado bloque LoadSegment</value>
+  </data>
+    <data name="Found_misaligned_entry" xml:space="preserve">
+    <value>Se encontró entrada no alineada.</value>
+  </data>
+    <data name="Found_PartitionEntry_block" xml:space="preserve">
+    <value>Encontrado bloque PartitionEntry</value>
+  </data>
+    <data name="Found_RDB_magic_at_block_0" xml:space="preserve">
+    <value>Encontrado mágica de RDB en el bloque {0}</value>
+  </data>
+    <data name="Found_unaligned_signature" xml:space="preserve">
+    <value>Encontrada firma no alineada</value>
+  </data>
+    <data name="FreeBSD" xml:space="preserve">
+    <value>FreeBSD</value>
+  </data>
+    <data name="FreeBSD_Boot" xml:space="preserve">
+    <value>Arranque de FreeBSD</value>
+  </data>
+    <data name="FreeBSD_Data" xml:space="preserve">
+    <value>Datos de FreeBSD</value>
+  </data>
+    <data name="FreeBSD_nandfs" xml:space="preserve">
+    <value>FreeBSD nandfs</value>
+  </data>
+    <data name="FreeBSD_swap" xml:space="preserve">
+    <value>Intercambio de FreeBSD</value>
+  </data>
+    <data name="FreeBSD_UFS" xml:space="preserve">
+    <value>FreeBSD UFS</value>
+  </data>
+    <data name="FreeBSD_UFS2" xml:space="preserve">
+    <value>FreeBSD UFS2</value>
+  </data>
+    <data name="FreeBSD_Vinum" xml:space="preserve">
+    <value>FreeBSD Vinum</value>
+  </data>
+    <data name="FreeBSD_ZFS" xml:space="preserve">
+    <value>FreeBSD ZFS</value>
+  </data>
+    <data name="Game_cache" xml:space="preserve">
+    <value>Caché de juegos</value>
+  </data>
+    <data name="Generic_ROM_BIOS" xml:space="preserve">
+    <value>ROM BIOS genérica</value>
+  </data>
+    <data name="GNU_Hurd_System_V_386ix" xml:space="preserve">
+    <value>GNU Hurd, System V o 386/ix</value>
+  </data>
+    <data name="Going_to_block_0_in_search_of_a_BadBlock_block" xml:space="preserve">
+    <value>Yendo al bloque {0} en búsqueda del bloque BadBlock</value>
+  </data>
+    <data name="Going_to_block_0_in_search_of_a_FileSystemHeader_block" xml:space="preserve">
+    <value>Yendo al bloque {0} en búsqueda del bloque FileSystemHeader</value>
+  </data>
+    <data name="Going_to_block_0_in_search_of_a_LoadSegment_block" xml:space="preserve">
+    <value>Yendo al bloque {0} en búsqueda del bloque LoadSegment</value>
+  </data>
+    <data name="Going_to_block_0_in_search_of_a_PartitionEntry_block" xml:space="preserve">
+    <value>Yendo al bloque {0} en búsqueda del bloque PartitionEntry</value>
+  </data>
+    <data name="Going_to_read_0_sectors_from_sector_1_getting_VTOC_from_byte_2" xml:space="preserve">
+    <value>Yendo a leer {0} sectores desde el {1}, obteniendo VTOC del byte {2}</value>
+  </data>
+    <data name="Going_to_read_past_device_size_aborting" xml:space="preserve">
+    <value>Yendo a leer más allá del tamaño del dispositivo, abortando...</value>
+  </data>
+    <data name="Golden_Bow_VFeature" xml:space="preserve">
+    <value>Golden Bow VFeature</value>
+  </data>
+    <data name="GuidPartitionTable_Name" xml:space="preserve">
+    <value>Tabla de particiones GUID (GPT)</value>
+  </data>
+    <data name="Guid_Partition_Table" xml:space="preserve">
+    <value>Tabla de particiones GUID (GPT)</value>
+  </data>
+    <data name="Haiku_BFS" xml:space="preserve">
+    <value>BFS de Haiku</value>
+  </data>
+    <data name="Hammer" xml:space="preserve">
+    <value>Hammer</value>
+  </data>
+    <data name="Hammer2" xml:space="preserve">
+    <value>Hammer2</value>
+  </data>
+    <data name="HFS_as_set_by_CrossMac" xml:space="preserve">
+    <value>HFS, establecida por CrossMac</value>
+  </data>
+    <data name="Hibernation" xml:space="preserve">
+    <value>Hibernación</value>
+  </data>
+    <data name="Hidden_by_OS2_APM_hibernation" xml:space="preserve">
+    <value>Oculta de OS/2 o hibernación de APM</value>
+  </data>
+    <data name="Hidden_FAT12" xml:space="preserve">
+    <value>FAT12 oculta</value>
+  </data>
+    <data name="Hidden_FAT16" xml:space="preserve">
+    <value>FAT16 oculta</value>
+  </data>
+    <data name="Hidden_FAT16_32_MiB_AST_DOS" xml:space="preserve">
+    <value>FAT16 menor de 32 MiB oculta o AST-DOS</value>
+  </data>
+    <data name="Hidden_FAT16_LBA" xml:space="preserve">
+    <value>FAT16 (LBA) oculta</value>
+  </data>
+    <data name="Hidden_FAT32" xml:space="preserve">
+    <value>FAT32 oculta</value>
+  </data>
+    <data name="Hidden_FAT32_LBA" xml:space="preserve">
+    <value>FAT32 (LBA) oculta</value>
+  </data>
+    <data name="Hidden_IFS_HPFS_NTFS" xml:space="preserve">
+    <value>IFS (HPFS/NTFS) oculto</value>
+  </data>
+    <data name="Hidden_NetWare" xml:space="preserve">
+    <value>Oculta de NetWare</value>
+  </data>
+    <data name="Hidden_NTFS" xml:space="preserve">
+    <value>NTFS oculta</value>
+  </data>
+    <data name="HPFS" xml:space="preserve">
+    <value>HPFS</value>
+  </data>
+    <data name="HP_UX_Data" xml:space="preserve">
+    <value>Datos de HP-UX</value>
+  </data>
+    <data name="HP_UX_Service" xml:space="preserve">
+    <value>Servicio de HP-US</value>
+  </data>
+    <data name="HP_Volume_Expansion" xml:space="preserve">
+    <value>Expansión de volumen HP</value>
+  </data>
+    <data name="Human68K_Name" xml:space="preserve">
+    <value>Particiones de Human 68k</value>
+  </data>
+    <data name="IBM_General_Parallel_File_System_GPFS" xml:space="preserve">
+    <value>Sistema de ficheros general paralelo (GPFS) de IBM</value>
+  </data>
+    <data name="IBM_JFS2" xml:space="preserve">
+    <value>IBM JFS2</value>
+  </data>
+    <data name="IBM_PC_IX" xml:space="preserve">
+    <value>IBM PC/IX</value>
+  </data>
+    <data name="IFS_HPFS_NTFS" xml:space="preserve">
+    <value>IFS (HPFS/NFS)</value>
+  </data>
+    <data name="Intel_Fast_Flash_iFFS" xml:space="preserve">
+    <value>Intel Fast Flash (iFFS)</value>
+  </data>
+    <data name="Invalid_operating_system" xml:space="preserve">
+    <value>Inválido</value>
+  </data>
+    <data name="ISO9660" xml:space="preserve">
+    <value>ISO9660</value>
+  </data>
+    <data name="JXFS" xml:space="preserve">
+    <value>JXFS</value>
+  </data>
+    <data name="Lenovo_boot" xml:space="preserve">
+    <value>Arranque de Lenovo</value>
+  </data>
+    <data name="Linux" xml:space="preserve">
+    <value>Linux</value>
+  </data>
+    <data name="Linux_boot" xml:space="preserve">
+    <value>Arranque de Linux</value>
+  </data>
+    <data name="Linux_extended" xml:space="preserve">
+    <value>Extendida de Linux</value>
+  </data>
+    <data name="Linux_filesystem" xml:space="preserve">
+    <value>Sistema de ficheros de Linux</value>
+  </data>
+    <data name="Linux_filesystem_partition" xml:space="preserve">
+    <value>Partición de sistema de ficheros de Linux</value>
+  </data>
+    <data name="Linux_home" xml:space="preserve">
+    <value>/home de Linux</value>
+  </data>
+    <data name="Linux_LVM" xml:space="preserve">
+    <value>LVM de Linux</value>
+  </data>
+    <data name="Linux_partition" xml:space="preserve">
+    <value>Partición de Linux</value>
+  </data>
+    <data name="Linux_Plaintext" xml:space="preserve">
+    <value>Texto de Linux</value>
+  </data>
+    <data name="Linux_RAID" xml:space="preserve">
+    <value>RAID de Linux</value>
+  </data>
+    <data name="Linux_RAID_FreeDOS" xml:space="preserve">
+    <value>RAID de Linux o FreeBSD</value>
+  </data>
+    <data name="Linux_Reserved" xml:space="preserve">
+    <value>Reservada de Linux</value>
+  </data>
+    <data name="Linux_Root_32_bit_ARM" xml:space="preserve">
+    <value>Raíz de Linux para ARM de 32-bits</value>
+  </data>
+    <data name="Linux_Root_AArch64" xml:space="preserve">
+    <value>Raíz de Linux para ARM de 64-bits (AArch64)</value>
+  </data>
+    <data name="Linux_Root_x86" xml:space="preserve">
+    <value>Raíz de Linux para x86</value>
+  </data>
+    <data name="Linux_Root_x86_64" xml:space="preserve">
+    <value>Raíz de Linux para x86-64</value>
+  </data>
+    <data name="Linux_srv" xml:space="preserve">
+    <value>/srv de Linux</value>
+  </data>
+    <data name="Linux_swap" xml:space="preserve">
+    <value>Intercambio de Linux</value>
+  </data>
+    <data name="Linux_swap_partition" xml:space="preserve">
+    <value>Partición de intercambio de Linux</value>
+  </data>
+    <data name="Linux_swap_Solaris" xml:space="preserve">
+    <value>Intercambio de Linux o Solaris</value>
+  </data>
+    <data name="LoadSegment_data_SHA1_0" xml:space="preserve">
+    <value>SHA1 de los datos de LoadSegment: {0}</value>
+  </data>
+    <data name="Logical_Disk_Manager_data" xml:space="preserve">
+    <value>Datos del Gestor de Discos Lógicos (LDM)</value>
+  </data>
+    <data name="Logical_Disk_Manager_LDM_metadata" xml:space="preserve">
+    <value>Metadatos del Gestor de Discos Lógicos (LDM)</value>
+  </data>
+    <data name="Logical_volume" xml:space="preserve">
+    <value>Volumen lógico</value>
+  </data>
+    <data name="Logical_Volume_Manager_LVM" xml:space="preserve">
+    <value>Gestor de Volúmenes Lógicos (LVM)</value>
+  </data>
+    <data name="LUKS" xml:space="preserve">
+    <value>LUKS</value>
+  </data>
+    <data name="LVM" xml:space="preserve">
+    <value>LVM</value>
+  </data>
+    <data name="Macintosh_partition" xml:space="preserve">
+    <value>Partición de Macintosh</value>
+  </data>
+    <data name="maintenance" xml:space="preserve">
+    <value>mantenimiento</value>
+  </data>
+    <data name="maintenance_area" xml:space="preserve">
+    <value>area de mantenimiento</value>
+  </data>
+    <data name="Mark_parity" xml:space="preserve">
+    <value>Marca</value>
+  </data>
+    <data name="MBR_Name" xml:space="preserve">
+    <value>Registro Maestro de Arranque (MBR)</value>
+  </data>
+    <data name="MBR_scheme" xml:space="preserve">
+    <value>Esquema MBR</value>
+  </data>
+    <data name="MF1DD_70_track" xml:space="preserve">
+    <value>MF1DD de 70 pistas</value>
+  </data>
+    <data name="Microsoft_Basic_data" xml:space="preserve">
+    <value>Datos básicos de Microsoft</value>
+  </data>
+    <data name="Microsoft_Reserved_MSR" xml:space="preserve">
+    <value>Reservada de Microsoft</value>
+  </data>
+    <data name="MidnightBSD_Boot" xml:space="preserve">
+    <value>Arranque de MidnightBSD</value>
+  </data>
+    <data name="MidnightBSD_Data" xml:space="preserve">
+    <value>Datos de MidnightBSD</value>
+  </data>
+    <data name="MidnightBSD_Swap" xml:space="preserve">
+    <value>Intercambio de MidnightBSD</value>
+  </data>
+    <data name="MidnightBSD_UFS" xml:space="preserve">
+    <value>MidnightBSD UFS</value>
+  </data>
+    <data name="MidnightBSD_Vinum" xml:space="preserve">
+    <value>MidnightBSD Vinum</value>
+  </data>
+    <data name="MidnightBSD_ZFS" xml:space="preserve">
+    <value>MidnightBSD ZFS</value>
+  </data>
+    <data name="MINIX" xml:space="preserve">
+    <value>MINIX</value>
+  </data>
+    <data name="MINIX_Old_Linux" xml:space="preserve">
+    <value>MINIX, antigua de Linux</value>
+  </data>
+    <data name="MINIX_partition" xml:space="preserve">
+    <value>Partición de MINUX</value>
+  </data>
+    <data name="Multiuser_DOS_secured_extended" xml:space="preserve">
+    <value>Extendida segura de Multiuser DOS</value>
+  </data>
+    <data name="Multiuser_DOS_secured_FAT12" xml:space="preserve">
+    <value>FAT12 segura de Multiuser DOS</value>
+  </data>
+    <data name="Multiuser_DOS_secured_FAT16" xml:space="preserve">
+    <value>FAT16 segura de Multiuser DOS</value>
+  </data>
+    <data name="Multiuser_DOS_secured_FAT16_32_MiB" xml:space="preserve">
+    <value>FAT16 menor de 32 MiB segura de Multiuser DOS</value>
+  </data>
+    <data name="Mylex_EISA_SCSI" xml:space="preserve">
+    <value>Mylex EISA SCSI</value>
+  </data>
+    <data name="N88_BASIC_86" xml:space="preserve">
+    <value>N88-BASIC(86)</value>
+  </data>
+    <data name="NEC_DOS" xml:space="preserve">
+    <value>NEC-DOS</value>
+  </data>
+    <data name="NetBSD" xml:space="preserve">
+    <value>NetBSD</value>
+  </data>
+    <data name="NetBSD_4_2_FFS_root_partition" xml:space="preserve">
+    <value>Partición raíz 4.2 FFS de NetBSD</value>
+  </data>
+    <data name="NetBSD_4_2_FFS_user_partition" xml:space="preserve">
+    <value>Partición de usuario 4.2 FFS de NetBSD</value>
+  </data>
+    <data name="NetBSD_4_4_LFS_root_partition" xml:space="preserve">
+    <value>Partición raíz 4.4 LFS de NetBSD</value>
+  </data>
+    <data name="NetBSD_4_4_LFS_user_partition" xml:space="preserve">
+    <value>Partición de usuario 4.4 LFS de NetBSD</value>
+  </data>
+    <data name="NetBSD_Concatenated" xml:space="preserve">
+    <value>Concatenada de NetBSD</value>
+  </data>
+    <data name="NetBSD_Encrypted" xml:space="preserve">
+    <value>Encriptada de NetBSD</value>
+  </data>
+    <data name="NetBSD_FFS" xml:space="preserve">
+    <value>NetBSD FFS</value>
+  </data>
+    <data name="NetBSD_LFS" xml:space="preserve">
+    <value>NetBSD LFS</value>
+  </data>
+    <data name="NetBSD_partition" xml:space="preserve">
+    <value>Partición de NetBSD</value>
+  </data>
+    <data name="NetBSD_RAID" xml:space="preserve">
+    <value>RAID de NetBSD</value>
+  </data>
+    <data name="NetBSD_Swap" xml:space="preserve">
+    <value>Intercambio de NetBSD</value>
+  </data>
+    <data name="NetBSD_swap_partition" xml:space="preserve">
+    <value>Partición de intercambio de NetBSD</value>
+  </data>
+    <data name="NetBSD_unused_root_partition" xml:space="preserve">
+    <value>Partición raíz sin usar de NetBSD</value>
+  </data>
+    <data name="NetBSD_unused_user_partition" xml:space="preserve">
+    <value>Partición de usuario sin usar de NetBSD</value>
+  </data>
+    <data name="NetWare" xml:space="preserve">
+    <value>NetWare</value>
+  </data>
+    <data name="NetWare_286" xml:space="preserve">
+    <value>NetWare 286</value>
+  </data>
+    <data name="NetWare_386" xml:space="preserve">
+    <value>NetWare 386</value>
+  </data>
+    <data name="NetWare_NSS" xml:space="preserve">
+    <value>NetWare NSS</value>
+  </data>
+    <data name="New_VTOC_found" xml:space="preserve">
+    <value>VTOC nueva encontrada.</value>
+  </data>
+    <data name="New_VTOC_found_at_0" xml:space="preserve">
+    <value>VTOC nueva encontrada en {0}</value>
+  </data>
+    <data name="NeXTDisklabel_Name" xml:space="preserve">
+    <value>Etiqueta de disco de NeXT</value>
+  </data>
+    <data name="NeXTStep" xml:space="preserve">
+    <value>NeXTStep</value>
+  </data>
+    <data name="None_parity" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+    <data name="Non_bootable" xml:space="preserve">
+    <value>No arrancable</value>
+  </data>
+    <data name="non_UNIX" xml:space="preserve">
+    <value>no es UNIX</value>
+  </data>
+    <data name="Not_adding_partition_because_start_0_is_outside_media_size_1" xml:space="preserve">
+    <value>No se añadirá la partición porque comienza ({0}) más allá del tamaño del medio ({1})</value>
+  </data>
+    <data name="Novell_DOS_DR_DOS_secured" xml:space="preserve">
+    <value>Novell DOS o segura de DR-DOS</value>
+  </data>
+    <data name="NT_Stripe_Set" xml:space="preserve">
+    <value>NT Stripe Set</value>
+  </data>
+    <data name="Odd_parity" xml:space="preserve">
+    <value>Impar</value>
+  </data>
+    <data name="Old_MINIX" xml:space="preserve">
+    <value>Antigua de MINIX</value>
+  </data>
+    <data name="Old_VTOC_found_at_0" xml:space="preserve">
+    <value>VTOC antigua encontrada en {0}</value>
+  </data>
+    <data name="Olivetti_DOS_FAT12" xml:space="preserve">
+    <value>FAT12 de Olivetti DOS</value>
+  </data>
+    <data name="ONIE_boot" xml:space="preserve">
+    <value>Arranque de ONIE</value>
+  </data>
+    <data name="ONIE_config" xml:space="preserve">
+    <value>Configuración de ONIE</value>
+  </data>
+    <data name="Ontrack_DM_6" xml:space="preserve">
+    <value>Ontrack DM 6</value>
+  </data>
+    <data name="Ontrack_DM_RO_FAT" xml:space="preserve">
+    <value>Ontrack DM, R/O, FAT</value>
+  </data>
+    <data name="Ontrack_DM_RW_FAT" xml:space="preserve">
+    <value>Ontrack DM, R/W, FAT</value>
+  </data>
+    <data name="open" xml:space="preserve">
+    <value> (abierta)</value>
+  </data>
+    <data name="OpenBSD" xml:space="preserve">
+    <value>OpenBSD</value>
+  </data>
+    <data name="OpenBSD_Data" xml:space="preserve">
+    <value>Datos de OpenBSD</value>
+  </data>
+    <data name="OPUS" xml:space="preserve">
+    <value>OPUS</value>
+  </data>
+    <data name="Other_or_unknown" xml:space="preserve">
+    <value>Otra o desconocida</value>
+  </data>
+    <data name="Oxygen_Extended" xml:space="preserve">
+    <value>Extendida de Oxygen</value>
+  </data>
+    <data name="Oxygen_FSo2" xml:space="preserve">
+    <value>Oxygen FSo2</value>
+  </data>
+    <data name="Parallel_print_device" xml:space="preserve">
+    <value>Paralelo</value>
+  </data>
+    <data name="Partition_bigger_than_device_reducing" xml:space="preserve">
+    <value>La partición es más grande que el dispositivo, reduciendo...</value>
+  </data>
+    <data name="Partition_boot_code_is_position_independent" xml:space="preserve">
+    <value>El código de arranque de la partición es independiente de su posición.</value>
+  </data>
+    <data name="Partition_entry_is_allocated" xml:space="preserve">
+    <value>La entrada de partición está asignada.</value>
+  </data>
+    <data name="Partition_flags" xml:space="preserve">
+    <value>Banderas de la partición:</value>
+  </data>
+    <data name="Partition_is_bootable" xml:space="preserve">
+    <value>La partición es arrancable.</value>
+  </data>
+    <data name="Partition_is_in_use" xml:space="preserve">
+    <value>La partición está en uso.</value>
+  </data>
+    <data name="Partition_is_readable" xml:space="preserve">
+    <value>La partición es legible.</value>
+  </data>
+    <data name="Partition_is_valid" xml:space="preserve">
+    <value>La partición es válida.</value>
+  </data>
+    <data name="Partition_is_writable" xml:space="preserve">
+    <value>La partición es escribile</value>
+  </data>
+    <data name="Partition_Magic" xml:space="preserve">
+    <value>Partition Magic</value>
+  </data>
+    <data name="Partition_timestamped_on_0" xml:space="preserve">
+    <value>Partición fechada el {0}</value>
+  </data>
+    <data name="PC98_Name" xml:space="preserve">
+    <value>Tabla de particiones de NEC PC-9800</value>
+  </data>
+    <data name="PC_UX" xml:space="preserve">
+    <value>PC-UX</value>
+  </data>
+    <data name="Plain_dm_crypt" xml:space="preserve">
+    <value>dm-crypt plano</value>
+  </data>
+    <data name="Plan9_Name" xml:space="preserve">
+    <value>Tabla de particiones de Plan9</value>
+  </data>
+    <data name="Plan_9" xml:space="preserve">
+    <value>Plan 9</value>
+  </data>
+    <data name="Possible_magic_at_block_0_is_1_X8" xml:space="preserve">
+    <value>Posible mágica 0x{1:X8} en el bloque {0}</value>
+  </data>
+    <data name="PowerPC_PReP_boot" xml:space="preserve">
+    <value>Arranque PReP de PowerPC</value>
+  </data>
+    <data name="PReP_Boot" xml:space="preserve">
+    <value>Arranque PReP</value>
+  </data>
+    <data name="Priam_EDISK" xml:space="preserve">
+    <value>Priam EDISK</value>
+  </data>
+    <data name="Priam_EUMEL_Elan" xml:space="preserve">
+    <value>Priam o EUMEL/Elan</value>
+  </data>
+    <data name="Processor_0" xml:space="preserve">
+    <value>Procesador: {0}</value>
+  </data>
+    <data name="ProfessionalFileSystem" xml:space="preserve">
+    <value>Sistema de ficheros profesional (PFS)</value>
+  </data>
+    <data name="Prologue" xml:space="preserve">
+    <value>Prólogo</value>
+  </data>
+    <data name="PTS_BootWizard" xml:space="preserve">
+    <value>PTS BootWizard</value>
+  </data>
+    <data name="PTS_DOS" xml:space="preserve">
+    <value>PTS-DOS</value>
+  </data>
+    <data name="QNX_4" xml:space="preserve">
+    <value>QNX 4</value>
+  </data>
+    <data name="QNX_4_Oberon" xml:space="preserve">
+    <value>QNX 4 u Oberon</value>
+  </data>
+    <data name="QNX_Power_safe_QNX6" xml:space="preserve">
+    <value>QNX Power-safe (QNX6)</value>
+  </data>
+    <data name="RaidFrame_partition" xml:space="preserve">
+    <value>Partición RaidFrame</value>
+  </data>
+    <data name="Raw_data_swap" xml:space="preserve">
+    <value>Datos crudos (intercambio)</value>
+  </data>
+    <data name="Raw_logical_volume" xml:space="preserve">
+    <value>Volumen lógico sin procesar</value>
+  </data>
+    <data name="RAW_partition" xml:space="preserve">
+    <value>Partición RAW</value>
+  </data>
+    <data name="Read_only" xml:space="preserve">
+    <value>Sólo lectura</value>
+  </data>
+    <data name="Replacement_sectors" xml:space="preserve">
+    <value>Sectores de reemplazo</value>
+  </data>
+    <data name="Reserved" xml:space="preserve">
+    <value>Reservada</value>
+  </data>
+    <data name="Reserved_for_SMI" xml:space="preserve">
+    <value>Reservada para SMI</value>
+  </data>
+    <data name="RioKarma_Name" xml:space="preserve">
+    <value>Sistema de particiones de Rio Karma</value>
+  </data>
+    <data name="Rio_Karma" xml:space="preserve">
+    <value>Rio Karma</value>
+  </data>
+    <data name="sanity_at_0_is_1_X8_should_be_2_X8_or_3_X8" xml:space="preserve">
+    <value>la sanidad en {0} es 0x{1:X8} (debería ser 0x{2:X8} ó 0x{3:X8})</value>
+  </data>
+    <data name="Searching_for_VTOC_on_relative_byte_0" xml:space="preserve">
+    <value>Buscando VTOC en el byte relativo {0}</value>
+  </data>
+    <data name="Sector_replacements" xml:space="preserve">
+    <value>Reemplazos de sector</value>
+  </data>
+    <data name="Secure_File_System" xml:space="preserve">
+    <value>Sistema de Ficheros Seguro</value>
+  </data>
+    <data name="Security_sectors" xml:space="preserve">
+    <value>Sectores de seguridad</value>
+  </data>
+    <data name="Serial_print_device" xml:space="preserve">
+    <value>Número de serie</value>
+  </data>
+    <data name="SGI_Name" xml:space="preserve">
+    <value>Cabecera de Volumen del Disco (DVH) de SGI</value>
+  </data>
+    <data name="SGI_XVM" xml:space="preserve">
+    <value>SGI XMV</value>
+  </data>
+    <data name="SmartFileSystem_v1" xml:space="preserve">
+    <value>Sistema de Ficheros Inteligente (SFS) v1</value>
+  </data>
+    <data name="SmartFileSystem_v2" xml:space="preserve">
+    <value>Sistema de Ficheros Inteligente (SFS) v2</value>
+  </data>
+    <data name="Solaris" xml:space="preserve">
+    <value>Solaris</value>
+  </data>
+    <data name="Solaris_Alternate_sector" xml:space="preserve">
+    <value>Sector alternative de Solaris</value>
+  </data>
+    <data name="Solaris_Backup" xml:space="preserve">
+    <value>Respaldo de Solaris</value>
+  </data>
+    <data name="Solaris_boot" xml:space="preserve">
+    <value>Arranque de Solaris</value>
+  </data>
+    <data name="Solaris_home" xml:space="preserve">
+    <value>/home de Solaris</value>
+  </data>
+    <data name="Solaris_Reserved" xml:space="preserve">
+    <value>Reservada de Solaris</value>
+  </data>
+    <data name="Solaris_Root" xml:space="preserve">
+    <value>Raíz de Solaris</value>
+  </data>
+    <data name="Solaris_Swap" xml:space="preserve">
+    <value>Intercambio de Solaris</value>
+  </data>
+    <data name="Solaris_usr_or_Apple_ZFS" xml:space="preserve">
+    <value>/usr de Solaris o Apple ZFS</value>
+  </data>
+    <data name="Solaris_var" xml:space="preserve">
+    <value>/var de Solaris</value>
+  </data>
+    <data name="Sony_boot" xml:space="preserve">
+    <value>Arranque de Sony</value>
+  </data>
+    <data name="Space_optimized" xml:space="preserve">
+    <value>Optimizada para espacio</value>
+  </data>
+    <data name="Space_parity" xml:space="preserve">
+    <value>Espacio</value>
+  </data>
+    <data name="SpeedStor" xml:space="preserve">
+    <value>SpeedStor</value>
+  </data>
+    <data name="SpeedStor_LANStep_PS2_IML" xml:space="preserve">
+    <value>SpeedStor, LANStep o PS/2 IML</value>
+  </data>
+    <data name="SpeedStor_reserved" xml:space="preserve">
+    <value>Reservada de SpeedStor</value>
+  </data>
+    <data name="Sprytx" xml:space="preserve">
+    <value>Spryt*x</value>
+  </data>
+    <data name="SunDisklabel_Name" xml:space="preserve">
+    <value>Etiqueta de disco de Sun</value>
+  </data>
+    <data name="SunOS_partition" xml:space="preserve">
+    <value>Partición de SunOS</value>
+  </data>
+    <data name="Sun_boot" xml:space="preserve">
+    <value>Arranque de Sun</value>
+  </data>
+    <data name="Sun_cachefs" xml:space="preserve">
+    <value>cachefs de Sun</value>
+  </data>
+    <data name="Sun_home" xml:space="preserve">
+    <value>/home de Sun</value>
+  </data>
+    <data name="Sun_root" xml:space="preserve">
+    <value>Raíz de Sun</value>
+  </data>
+    <data name="Sun_stand" xml:space="preserve">
+    <value>/stand de Sun</value>
+  </data>
+    <data name="Sun_swap" xml:space="preserve">
+    <value>Intercambio de Sun</value>
+  </data>
+    <data name="Sun_usr" xml:space="preserve">
+    <value>/usr de Sun</value>
+  </data>
+    <data name="Sun_var" xml:space="preserve">
+    <value>/var de Sun</value>
+  </data>
+    <data name="swap" xml:space="preserve">
+    <value>intercambio</value>
+  </data>
+    <data name="Swapping_dk_label" xml:space="preserve">
+    <value>Girando dk_label</value>
+  </data>
+    <data name="Swapping_dk_label16" xml:space="preserve">
+    <value>Girando dk_label16</value>
+  </data>
+    <data name="Swapping_dk_label8" xml:space="preserve">
+    <value>Girando dk_label8</value>
+  </data>
+    <data name="Swap_partition" xml:space="preserve">
+    <value>Partición de intercambio</value>
+  </data>
+    <data name="Syrinx" xml:space="preserve">
+    <value>Syrinx</value>
+  </data>
+    <data name="System_cache" xml:space="preserve">
+    <value>Caché del sistema</value>
+  </data>
+    <data name="System_volume" xml:space="preserve">
+    <value>Volumen del sistema</value>
+  </data>
+    <data name="System_volume_2" xml:space="preserve">
+    <value>Volumen 2 del sistem</value>
+  </data>
+    <data name="Tandy_DOS" xml:space="preserve">
+    <value>Tandy DOS</value>
+  </data>
+    <data name="Theos" xml:space="preserve">
+    <value>Theos</value>
+  </data>
+    <data name="Time_optimized" xml:space="preserve">
+    <value>Optimizada al tiempo</value>
+  </data>
+    <data name="Track_replacements" xml:space="preserve">
+    <value>Reemplazos de pista</value>
+  </data>
+    <data name="UDF" xml:space="preserve">
+    <value>UDF</value>
+  </data>
+    <data name="UNIX_6th_Edition" xml:space="preserve">
+    <value>UNIX 6ª Edición</value>
+  </data>
+    <data name="UNIX_7th_Edition" xml:space="preserve">
+    <value>UNIX 7ª Edición</value>
+  </data>
+    <data name="UNIX_7th_Edition_with_1K_blocks" xml:space="preserve">
+    <value>UNIX 7ª Edición con bloques de 1K</value>
+  </data>
+    <data name="UNIX_8th_Edition_with_4K_blocks" xml:space="preserve">
+    <value>UNIX 7ª Edición con bloques de 4K</value>
+  </data>
+    <data name="UNIX_Name" xml:space="preserve">
+    <value>UNIX (forzada)</value>
+  </data>
+    <data name="UNIX_System_V" xml:space="preserve">
+    <value>UNIX System V</value>
+  </data>
+    <data name="Unknown_Amiga_DOS_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de Amiga DOS desconocido</value>
+  </data>
+    <data name="Unknown_Amiga_DOS_multi_user_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} multi-usuario de Amiga DOS desconocido</value>
+  </data>
+    <data name="Unknown_Amiga_UNIX_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de Amiga UNIX desconocido</value>
+  </data>
+    <data name="Unknown_boot_type" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+    <data name="Unknown_BSD_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de BSD desconocido</value>
+  </data>
+    <data name="Unknown_Linux_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de Linux desconocido</value>
+  </data>
+    <data name="Unknown_NetBSD_root_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} raíz de NetBSD desconocido</value>
+  </data>
+    <data name="Unknown_NetBSD_swap_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de intercambio de NetBSD desconocido</value>
+  </data>
+    <data name="Unknown_NetBSD_user_filesystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros {0} de usuario de NetBSD desconocido</value>
+  </data>
+    <data name="Unknown_ProfessionalFileSystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros profesional {0} desconocido</value>
+  </data>
+    <data name="Unknown_SmartFileSystem_type_0" xml:space="preserve">
+    <value>Tipo de sistema de ficheros inteligente {0} desconocido</value>
+  </data>
+    <data name="Unknown_disk_type" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+    <data name="Unknown_operating_system" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+    <data name="Unknown_optimization_0_X2" xml:space="preserve">
+    <value>Optimización {0:X2} desconocida</value>
+  </data>
+    <data name="Unknown_parity_type" xml:space="preserve">
+    <value>Desconocida</value>
+  </data>
+    <data name="Unknown_partition_type" xml:space="preserve">
+    <value>Tipo de partición desconocido</value>
+  </data>
+    <data name="Unknown_partition_type_0" xml:space="preserve">
+    <value>Tipo de partición {0} desconocido</value>
+  </data>
+    <data name="Unknown_print_device" xml:space="preserve">
+    <value>Desconocido</value>
+  </data>
+    <data name="Unknown_TAG_0" xml:space="preserve">
+    <value>Etiqueta desconocida: 0x{0:X4}</value>
+  </data>
+    <data name="Unmountable" xml:space="preserve">
+    <value>No montable</value>
+  </data>
+    <data name="Unused" xml:space="preserve">
+    <value>Sin usar</value>
+  </data>
+    <data name="Unused_entry" xml:space="preserve">
+    <value>Entrada sin usar</value>
+  </data>
+    <data name="user" xml:space="preserve">
+    <value>usuario</value>
+  </data>
+    <data name="valid" xml:space="preserve">
+    <value> (válida)</value>
+  </data>
+    <data name="VENIX_80286" xml:space="preserve">
+    <value>VENIX 80286</value>
+  </data>
+    <data name="Veritas_private" xml:space="preserve">
+    <value>Privada de Veritas</value>
+  </data>
+    <data name="Veritas_public" xml:space="preserve">
+    <value>Pública de Veritas</value>
+  </data>
+    <data name="Vinum" xml:space="preserve">
+    <value>Vinum</value>
+  </data>
+    <data name="VMware_Reserved" xml:space="preserve">
+    <value>Reservada de VMware</value>
+  </data>
+    <data name="VMware_VMFS" xml:space="preserve">
+    <value>VMFS de VMware</value>
+  </data>
+    <data name="VMWare_VMKCORE" xml:space="preserve">
+    <value>VMKCORE de VMware</value>
+  </data>
+    <data name="VMware_vmkcore_coredump" xml:space="preserve">
+    <value>VMKCORE de VMware</value>
+  </data>
+    <data name="Volume_header" xml:space="preserve">
+    <value>Cabecera de volumen</value>
+  </data>
+    <data name="volume_mgt_private_partition" xml:space="preserve">
+    <value>partición privada de gestión de volumen</value>
+  </data>
+    <data name="volume_mgt_public_partition" xml:space="preserve">
+    <value>partición pública de gestión de volumen</value>
+  </data>
+    <data name="VTOC_Name" xml:space="preserve">
+    <value>UNIX VTOC</value>
+  </data>
+    <data name="WARNING_End_of_partition_goes_beyond_device_size" xml:space="preserve">
+    <value>ATENCIÓN: El final de la partición está más allá del tamaño del dispositivo</value>
+  </data>
+    <data name="Whole_device" xml:space="preserve">
+    <value>Dispositivo completo</value>
+  </data>
+    <data name="Whole_disk" xml:space="preserve">
+    <value>DIsco completo</value>
+  </data>
+    <data name="Willowsoft_Overture_File_System" xml:space="preserve">
+    <value>Sistema de ficheros Overture de Willowsoft</value>
+  </data>
+    <data name="Willowtech_Photon_coS" xml:space="preserve">
+    <value>Willowtech Photon coS</value>
+  </data>
+    <data name="Windows_Recovery_Environment" xml:space="preserve">
+    <value>Entorno de recuperación de Windows</value>
+  </data>
+    <data name="Windows_Storage_Spaces" xml:space="preserve">
+    <value>Espacios de almacenamiento de Windows (WSS)</value>
+  </data>
+    <data name="Windows_Volume_Set" xml:space="preserve">
+    <value>Conjunto de volúmenes de Windows</value>
+  </data>
+    <data name="Xbox_backwards_compatibility" xml:space="preserve">
+    <value>Compatibilidad anterior de Xbox</value>
+  </data>
+    <data name="Xbox_Name" xml:space="preserve">
+    <value>Sistema de particiones de Xbox</value>
+  </data>
+    <data name="Xenix_bad_block" xml:space="preserve">
+    <value>Bloques dañados de XENIX</value>
+  </data>
+    <data name="XENIX_Name" xml:space="preserve">
+    <value>XENIX</value>
+  </data>
+    <data name="XENIX_root" xml:space="preserve">
+    <value>Raíz de XENIX</value>
+  </data>
+    <data name="XENIX_usr" xml:space="preserve">
+    <value>/usr de XENIX</value>
+  </data>
+    <data name="XFS" xml:space="preserve">
+    <value>XFS</value>
+  </data>
+    <data name="XFS_log_device" xml:space="preserve">
+    <value>Dispositivo registro de XFS</value>
+  </data>
+    <data name="XLV_volume" xml:space="preserve">
+    <value>Volumen XLV</value>
+  </data>
+    <data name="ZFS" xml:space="preserve">
+    <value>ZFS</value>
+  </data>
+    <data name="_0_bytes_per_block" xml:space="preserve">
+    <value>{0} bytes por bloque</value>
+  </data>
+    <data name="_0_bytes_per_fragment" xml:space="preserve">
+    <value>{0} bytes por fragmento</value>
+  </data>
+    <data name="_0_bytes_per_inode" xml:space="preserve">
+    <value>{0} bytes por inodo</value>
+  </data>
+    <data name="_0_cylinders_per_group" xml:space="preserve">
+    <value>{0} cilindros por grupo</value>
+  </data>
+    <data name="_0_of_space_must_be_free_at_minimum" xml:space="preserve">
+    <value>Al menos el {0}% del espacio debe estar libre</value>
+  </data>
+    <data name="_4_2_BSD_Fast_File_System" xml:space="preserve">
+    <value>Sistema de ficheros rápido de 4.2BSD</value>
+  </data>
+    <data name="_4_2_UFS_for_BFFS" xml:space="preserve">
+    <value>4.2UFS, para BFFS</value>
+  </data>
+    <data name="_4_4_LFS" xml:space="preserve">
+    <value>4.4LFS</value>
+  </data>
+    <data name="_read_only_" xml:space="preserve">
+    <value> (sólo lectura)</value>
+  </data>
+    <data name="_unmountable_" xml:space="preserve">
+    <value> (no montable)</value>
+  </data>
+</root>

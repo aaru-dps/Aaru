@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -43,26 +41,29 @@ using Aaru.Console;
 using Aaru.Filters;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class KryoFlux
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(stream.Length < Marshal.SizeOf<OobBlock>())
-            return ErrorNumber.InvalidArgument;
+        if(stream.Length < Marshal.SizeOf<OobBlock>()) return ErrorNumber.InvalidArgument;
 
         var hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
         stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
         hdr = new byte[Marshal.SizeOf<OobBlock>()];
-        stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
+        stream.EnsureRead(hdr, 0, Marshal.SizeOf<OobBlock>());
 
         OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
@@ -79,57 +80,56 @@ public sealed partial class KryoFlux
         byte heads   = 2;
         var  topHead = false;
 
-        string basename = Path.Combine(imageFilter.ParentFolder,
-                                       imageFilter.Filename.Substring(0, imageFilter.Filename.Length - 8));
+        string basename = Path.Combine(imageFilter.ParentFolder, imageFilter.Filename[..^8]);
 
         for(byte t = 0; t < 166; t += step)
         {
             int cylinder = t / heads;
             int head     = topHead ? 1 : t % heads;
 
-            string trackfile = Directory.Exists(basename) ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
+            string trackfile = Directory.Exists(basename)
+                                   ? Path.Combine(basename, $"{cylinder:D2}.{head:D1}.raw")
                                    : $"{basename}{cylinder:D2}.{head:D1}.raw";
 
             if(!File.Exists(trackfile))
-                if(cylinder == 0)
+            {
+                switch(cylinder)
                 {
-                    if(head == 0)
-                    {
-                        AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                                   "Cannot find cyl 0 hd 0, supposing only top head was dumped");
+                    case 0 when head == 0:
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization
+                                                      .Cannot_find_cyl_0_hd_0_supposing_only_top_head_was_dumped);
 
                         topHead = true;
                         heads   = 1;
 
                         continue;
-                    }
+                    case 0:
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization
+                                                      .Cannot_find_cyl_0_hd_1_supposing_only_bottom_head_was_dumped);
 
-                    AaruConsole.DebugWriteLine("KryoFlux plugin",
-                                               "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
+                        heads = 1;
 
-                    heads = 1;
+                        continue;
+                    case 1:
+                        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                                   Localization.Cannot_find_cyl_1_supposing_double_stepping);
 
-                    continue;
+                        step = 2;
+
+                        continue;
                 }
-                else if(cylinder == 1)
-                {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
-                    step = 2;
 
-                    continue;
-                }
-                else
-                {
-                    AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Arrived_end_of_disk_at_cylinder_0, cylinder);
 
-                    break;
-                }
+                break;
+            }
 
             var         trackFilter = new ZZZNoFilter();
             ErrorNumber errno       = trackFilter.Open(trackfile);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             _imageInfo.CreationTime         = DateTime.MaxValue;
             _imageInfo.LastModificationTime = DateTime.MinValue;
@@ -147,7 +147,7 @@ public sealed partial class KryoFlux
                         trackStream.Position--;
 
                         var oob = new byte[Marshal.SizeOf<OobBlock>()];
-                        trackStream.Read(oob, 0, Marshal.SizeOf<OobBlock>());
+                        trackStream.EnsureRead(oob, 0, Marshal.SizeOf<OobBlock>());
 
                         OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
 
@@ -166,13 +166,14 @@ public sealed partial class KryoFlux
                         }
 
                         var kfinfo = new byte[oobBlk.length];
-                        trackStream.Read(kfinfo, 0, oobBlk.length);
+                        trackStream.EnsureRead(kfinfo, 0, oobBlk.length);
                         string kfinfoStr = StringHandlers.CToString(kfinfo);
 
                         string[] lines = kfinfoStr.Split(new[]
-                        {
-                            ','
-                        }, StringSplitOptions.RemoveEmptyEntries);
+                                                         {
+                                                             ','
+                                                         },
+                                                         StringSplitOptions.RemoveEmptyEntries);
 
                         DateTime blockDate = DateTime.Now;
                         DateTime blockTime = DateTime.Now;
@@ -182,19 +183,25 @@ public sealed partial class KryoFlux
                         {
                             kvp[0] = kvp[0].Trim();
                             kvp[1] = kvp[1].Trim();
-                            AaruConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
 
                             switch(kvp[0])
                             {
                                 case HOST_DATE:
-                                    if(DateTime.TryParseExact(kvp[1], "yyyy.MM.dd", CultureInfo.InvariantCulture,
-                                                              DateTimeStyles.AssumeLocal, out blockDate))
+                                    if(DateTime.TryParseExact(kvp[1],
+                                                              "yyyy.MM.dd",
+                                                              CultureInfo.InvariantCulture,
+                                                              DateTimeStyles.AssumeLocal,
+                                                              out blockDate))
                                         foundDate = true;
 
                                     break;
                                 case HOST_TIME:
-                                    DateTime.TryParseExact(kvp[1], "HH:mm:ss", CultureInfo.InvariantCulture,
-                                                           DateTimeStyles.AssumeLocal, out blockTime);
+                                    DateTime.TryParseExact(kvp[1],
+                                                           "HH:mm:ss",
+                                                           CultureInfo.InvariantCulture,
+                                                           DateTimeStyles.AssumeLocal,
+                                                           out blockTime);
 
                                     break;
                                 case KF_NAME:
@@ -210,13 +217,16 @@ public sealed partial class KryoFlux
 
                         if(foundDate)
                         {
-                            var blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
-                                                              blockTime.Hour, blockTime.Minute, blockTime.Second);
+                            var blockTimestamp = new DateTime(blockDate.Year,
+                                                              blockDate.Month,
+                                                              blockDate.Day,
+                                                              blockTime.Hour,
+                                                              blockTime.Minute,
+                                                              blockTime.Second);
 
-                            AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
+                            AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Found_timestamp_0, blockTimestamp);
 
-                            if(blockTimestamp < Info.CreationTime)
-                                _imageInfo.CreationTime = blockTimestamp;
+                            if(blockTimestamp < Info.CreationTime) _imageInfo.CreationTime = blockTimestamp;
 
                             if(blockTimestamp > Info.LastModificationTime)
                                 _imageInfo.LastModificationTime = blockTimestamp;
@@ -241,7 +251,8 @@ public sealed partial class KryoFlux
                         trackStream.Position += 2;
 
                         continue;
-                    default: continue;
+                    default:
+                        continue;
                 }
             }
 
@@ -251,7 +262,7 @@ public sealed partial class KryoFlux
         _imageInfo.Heads     = heads;
         _imageInfo.Cylinders = (uint)(tracks.Count / heads);
 
-        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+        AaruConsole.ErrorWriteLine(Localization.Flux_decoding_is_not_yet_implemented);
 
         return ErrorNumber.NotImplemented;
     }
@@ -298,4 +309,6 @@ public sealed partial class KryoFlux
 
         return ErrorNumber.NotImplemented;
     }
+
+#endregion
 }

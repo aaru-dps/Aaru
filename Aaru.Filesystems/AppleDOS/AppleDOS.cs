@@ -7,10 +7,6 @@
 //
 // Component      : Apple DOS filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the Apple DOS filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,42 +23,49 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements the Apple DOS 3 filesystem</summary>
 public sealed partial class AppleDOS : IReadOnlyFilesystem
 {
-    bool        _debug;
-    IMediaImage _device;
-    bool        _mounted;
-    int         _sectorsPerTrack;
-    ulong       _start;
-    ulong       _totalFileEntries;
-    bool        _track1UsedByFiles;
-    bool        _track2UsedByFiles;
-    uint        _usedSectors;
-    Vtoc        _vtoc;
+    // Do not translate
+    const string FS_TYPE     = "appledos";
+    const string MODULE_NAME = "Apple DOS plugin";
+    bool         _debug;
+    IMediaImage  _device;
+    Encoding     _encoding;
+    bool         _mounted;
+    int          _sectorsPerTrack;
+    ulong        _start;
+    ulong        _totalFileEntries;
+    bool         _track1UsedByFiles;
+    bool         _track2UsedByFiles;
+    uint         _usedSectors;
+    Vtoc         _vtoc;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Name => "Apple DOS File System";
+    public string Name => Localization.AppleDOS_Name;
+
     /// <inheritdoc />
     public Guid Id => new("8658A1E9-B2E7-4BCC-9638-157A31B0A700\n");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
@@ -71,6 +74,8 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
         {
@@ -78,7 +83,8 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
         }
     };
 
-    #region Caches
+#region Caches
+
     /// <summary>Caches track/sector lists</summary>
     Dictionary<string, byte[]> _extentCache;
     /// <summary>Caches files</summary>
@@ -97,5 +103,6 @@ public sealed partial class AppleDOS : IReadOnlyFilesystem
     Dictionary<string, byte> _fileTypeCache;
     /// <summary>Caches locked files</summary>
     List<string> _lockedFiles;
-    #endregion Caches
+
+#endregion Caches
 }

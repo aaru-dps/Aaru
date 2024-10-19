@@ -27,10 +27,10 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
+namespace Aaru.Images;
 
 public sealed partial class DiskCopy42
 {
@@ -38,14 +38,13 @@ public sealed partial class DiskCopy42
     {
         uint dc42Chk = 0;
 
-        if((buffer.Length & 0x01) == 0x01)
-            return 0xFFFFFFFF;
+        if((buffer.Length & 0x01) == 0x01) return 0xFFFFFFFF;
 
         for(uint i = 0; i < buffer.Length; i += 2)
         {
             dc42Chk += (uint)(buffer[i] << 8);
             dc42Chk += buffer[i + 1];
-            dc42Chk =  (dc42Chk >> 1) | (dc42Chk << 31);
+            dc42Chk =  dc42Chk >> 1 | dc42Chk << 31;
         }
 
         return dc42Chk;

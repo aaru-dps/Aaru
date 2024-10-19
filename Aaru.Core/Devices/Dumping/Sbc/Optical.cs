@@ -1,20 +1,20 @@
-
-
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace Aaru.Core.Devices.Dumping;
-
 using System;
 using System.Linq;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Extents;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core.Logging;
 using Aaru.Decoders.SCSI;
 using Aaru.Helpers;
-using Schemas;
+using Humanizer;
+using Humanizer.Bytes;
+
+namespace Aaru.Core.Devices.Dumping;
 
 partial class Dump
 {
@@ -37,10 +37,10 @@ partial class Dump
     /// <param name="imageWriteDuration">Total time spent writing to image</param>
     /// <param name="newTrim">Set if we need to start a trim</param>
     /// <param name="blankExtents">Blank extents</param>
-    void ReadOpticalData(in ulong blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardwareType currentTry,
+    void ReadOpticalData(in ulong     blocks, in uint maxBlocksToRead, in uint blockSize, DumpHardware currentTry,
                          ExtentsULong extents, ref double currentSpeed, ref double minSpeed, ref double maxSpeed,
-                         ref double totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
-                         ref double imageWriteDuration, ref bool newTrim, ref ExtentsULong blankExtents)
+                         ref double   totalDuration, Reader scsiReader, MhddLog mhddLog, IbgLog ibgLog,
+                         ref double   imageWriteDuration, ref bool newTrim, ref ExtentsULong blankExtents)
     {
         const uint maxBlocks      = 256;
         var        writtenExtents = new ExtentsULong();
@@ -53,7 +53,6 @@ partial class Dump
         bool       sense;
         byte[]     buffer;
         ulong      sectorSpeedStart = 0;
-        DateTime   timeSpeedStart   = DateTime.UtcNow;
         var        canMediumScan    = true;
         var        outputFormat     = _outputPlugin as IWritableImage;
 
@@ -63,40 +62,46 @@ partial class Dump
         {
             blankExtents = new ExtentsULong();
 
-            written = _dev.MediumScan(out buffer, true, false, false, false, false, 0, 1, 1, out _, out _,
-                                      uint.MaxValue, out _);
+            written = _dev.MediumScan(out buffer,
+                                      true,
+                                      false,
+                                      false,
+                                      false,
+                                      false,
+                                      0,
+                                      1,
+                                      1,
+                                      out _,
+                                      out _,
+                                      uint.MaxValue,
+                                      out _);
 
             DecodedSense? decodedSense = Sense.Decode(buffer);
 
-            if(_dev.LastError         != 0 ||
-               decodedSense?.SenseKey == SenseKeys.IllegalRequest)
+            if(_dev.LastError != 0 || decodedSense?.SenseKey == SenseKeys.IllegalRequest)
             {
-                UpdateStatus?.
-                    Invoke("The current environment doesn't support the medium scan command, dump will take much longer than normal.");
+                UpdateStatus?.Invoke(Localization.Core.The_current_environment_doesn_t_support_the_medium_scan_command);
 
                 canMediumScan = false;
                 writtenExtents.Add(0, blocks - 1);
             }
 
             // TODO: Find a place where MEDIUM SCAN works properly
-            else if(buffer?.Length > 0 &&
-                    !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
-                AaruConsole.
-                    WriteLine("Please open a bug report in github with the manufacturer and model of this device, as well as your operating system name and version and this message: This environment correctly supports MEDIUM SCAN command.");
+            else if(buffer?.Length > 0 && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
+                AaruConsole.WriteLine(Localization.Core.MEDIUM_SCAN_github_plead_message);
 
             changingCounter = false;
             changingWritten = false;
 
             for(uint b = 0; b < blocks; b += c)
             {
-                if(!canMediumScan)
-                    break;
+                if(!canMediumScan) break;
 
                 if(_aborted)
                 {
                     _resume.BlankExtents = null;
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
@@ -114,15 +119,33 @@ partial class Dump
                     changingCounter =  false;
                 }
 
-                if(b + c >= blocks)
-                    c = (uint)(blocks - b);
+                if(b + c >= blocks) c = (uint)(blocks - b);
 
-                UpdateProgress?.
-                    Invoke($"Scanning for {c} {(written ? "written" : "blank")} blocks starting in block {b}", b,
-                           (long)blocks);
+                UpdateProgress?.Invoke(written
+                                           ? string.Format(Localization.Core
+                                                                       .Scanning_for_0_written_blocks_starting_in_block_1,
+                                                           c,
+                                                           b)
+                                           : string.Format(Localization.Core
+                                                                       .Scanning_for_0_blank_blocks_starting_in_block_1,
+                                                           c,
+                                                           b),
+                                       b,
+                                       (long)blocks);
 
-                conditionMet = _dev.MediumScan(out _, written, false, false, false, false, b, c, c, out _, out _,
-                                               uint.MaxValue, out _);
+                conditionMet = _dev.MediumScan(out _,
+                                               written,
+                                               false,
+                                               false,
+                                               false,
+                                               false,
+                                               b,
+                                               c,
+                                               c,
+                                               out _,
+                                               out _,
+                                               uint.MaxValue,
+                                               out _);
 
                 if(conditionMet)
                 {
@@ -131,8 +154,7 @@ partial class Dump
                     else
                         blankExtents.Add(b, c, true);
 
-                    if(c < maxBlocks)
-                        changingWritten = true;
+                    if(c < maxBlocks) changingWritten = true;
                 }
                 else
                 {
@@ -143,8 +165,7 @@ partial class Dump
 
                     changingCounter = true;
 
-                    if(c != 0)
-                        continue;
+                    if(c != 0) continue;
 
                     written = !written;
                     c       = maxBlocks;
@@ -152,7 +173,7 @@ partial class Dump
             }
 
             if(_resume != null && canMediumScan)
-                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents);
+                _resume.BlankExtents = ExtentsConverter.ToMetadata(blankExtents).ToArray();
 
             EndProgress?.Invoke();
         }
@@ -167,8 +188,8 @@ partial class Dump
 
         if(writtenExtents.Count == 0)
         {
-            UpdateStatus?.Invoke("Cannot dump empty media!");
-            _dumpLog.WriteLine("Cannot dump empty media!");
+            UpdateStatus?.Invoke(Localization.Core.Cannot_dump_empty_media);
+            _dumpLog.WriteLine(Localization.Core.Cannot_dump_empty_media);
 
             return;
         }
@@ -179,91 +200,87 @@ partial class Dump
 
         foreach(Tuple<ulong, ulong> extent in extentsToDump)
         {
-            if(extent.Item2 < _resume.NextBlock)
-                continue; // Skip this extent
+            if(extent.Item2 < _resume.NextBlock) continue; // Skip this extent
 
             ulong nextBlock = extent.Item1;
 
-            if(extent.Item1 < _resume.NextBlock)
-                nextBlock = (uint)_resume.NextBlock;
+            if(extent.Item1 < _resume.NextBlock) nextBlock = (uint)_resume.NextBlock;
+
+            _speedStopwatch.Restart();
 
             for(ulong i = nextBlock; i <= extent.Item2; i += blocksToRead)
             {
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    UpdateStatus?.Invoke("Aborted!");
-                    _dumpLog.WriteLine("Aborted!");
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
+                    _dumpLog.WriteLine(Localization.Core.Aborted);
 
                     break;
                 }
 
-                if(extent.Item2 + 1 - i < blocksToRead)
-                    blocksToRead = (uint)(extent.Item2 + 1 - i);
+                if(extent.Item2 + 1 - i < blocksToRead) blocksToRead = (uint)(extent.Item2 + 1 - i);
 
-                if(currentSpeed > maxSpeed &&
-                   currentSpeed > 0)
-                    maxSpeed = currentSpeed;
+                if(currentSpeed > maxSpeed && currentSpeed > 0) maxSpeed = currentSpeed;
 
-                if(currentSpeed < minSpeed &&
-                   currentSpeed > 0)
-                    minSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed > 0) minSpeed = currentSpeed;
 
-                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                UpdateProgress?.Invoke(string.Format(Localization.Core.Reading_sector_0_of_1_2,
+                                                     i,
+                                                     blocks,
+                                                     ByteSize.FromMegabytes(currentSpeed).Per(_oneSecond).Humanize()),
+                                       (long)i,
                                        (long)blocks);
 
                 sense = scsiReader.ReadBlocks(out buffer, i, blocksToRead, out double cmdDuration, out _, out _);
                 totalDuration += cmdDuration;
 
-                if(!sense &&
-                   !_dev.Error)
+                if(!sense && !_dev.Error)
                 {
-                    mhddLog.Write(i, cmdDuration);
+                    mhddLog.Write(i, cmdDuration, blocksToRead);
                     ibgLog.Write(i, currentSpeed * 1024);
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
                     outputFormat.WriteSectors(buffer, i, blocksToRead);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
                 else
                 {
                     // TODO: Reset device after X errors
-                    if(_stopOnError)
-                        return; // TODO: Return more cleanly
+                    if(_stopOnError) return; // TODO: Return more cleanly
 
-                    if(i + _skip > extent.Item2 + 1)
-                        _skip = (uint)(extent.Item2 + 1 - i);
+                    if(i + _skip > extent.Item2 + 1) _skip = (uint)(extent.Item2 + 1 - i);
 
                     // Write empty data
-                    DateTime writeStart = DateTime.Now;
+                    _writeStopwatch.Restart();
                     outputFormat.WriteSectors(new byte[blockSize * _skip], i, _skip);
-                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                    for(ulong b = i; b < i + _skip; b++)
-                        _resume.BadBlocks.Add(b);
+                    for(ulong b = i; b < i + _skip; b++) _resume.BadBlocks.Add(b);
 
-                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration, _skip);
 
                     ibgLog.Write(i, 0);
-                    _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                    _dumpLog.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);
                     i       += _skip - blocksToRead;
                     newTrim =  true;
                 }
 
+                _writeStopwatch.Stop();
                 sectorSpeedStart  += blocksToRead;
                 _resume.NextBlock =  i + blocksToRead;
 
-                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                double elapsed = _speedStopwatch.Elapsed.TotalSeconds;
 
-                if(elapsed <= 0)
-                    continue;
+                if(elapsed <= 0) continue;
 
                 currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
                 sectorSpeedStart = 0;
-                timeSpeedStart   = DateTime.UtcNow;
+                _speedStopwatch.Restart();
             }
         }
 
+        _speedStopwatch.Stop();
         _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
 
         EndProgress?.Invoke();

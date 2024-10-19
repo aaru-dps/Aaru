@@ -23,26 +23,27 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.AppleDOS;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.AppleDOS;
 
 [TestFixture]
 public class ProDOS : BlockMediaImageTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "Apple ProDOS Order");
+        Path.Combine(Consts.TestFilesRoot, "Media image formats", "Apple ProDOS Order");
+
     public override IMediaImage Plugin => new AppleDos();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "dos33.po.lz",
@@ -50,14 +51,14 @@ public class ProDOS : BlockMediaImageTest
             Sectors    = 560,
             SectorSize = 256,
             Md5        = "0ffcbd4180306192726926b43755db2f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 0,
                     Length = 560
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -131,5 +132,5 @@ public class ProDOS : BlockMediaImageTest
             SectorSize = 256,
             Md5        = "11ef56c80c94347d2e3f921d5c36c8de"
         }
-    };
+    ];
 }

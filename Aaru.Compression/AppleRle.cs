@@ -27,23 +27,25 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // Copyright © 2018-2019 David Ryskalczyk
 // ****************************************************************************/
 
-namespace Aaru.Compression;
-
 using System.Runtime.InteropServices;
 
+namespace Aaru.Compression;
+
 /// <summary>Implements the Apple version of RLE</summary>
-public static class AppleRle
+public static partial class AppleRle
 {
     const uint DART_CHUNK = 20960;
+
     /// <summary>Set to <c>true</c> if this algorithm is supported, <c>false</c> otherwise.</summary>
     public static bool IsSupported => true;
 
-    [DllImport("libAaru.Compression.Native", SetLastError = true)]
-    static extern int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer, int srcSize);
+    [LibraryImport("libAaru.Compression.Native", SetLastError = true)]
+    private static partial int AARU_apple_rle_decode_buffer(byte[] dstBuffer, int dstSize, byte[] srcBuffer,
+                                                            int    srcSize);
 
     /// <summary>Decodes a buffer compressed with Apple RLE</summary>
     /// <param name="source">Encoded buffer</param>
@@ -60,8 +62,7 @@ public static class AppleRle
         var  repeatMode    = false; // true if we're repeating, false if we're just copying
         int  inPosition    = 0, outPosition = 0;
 
-        while(inPosition  <= source.Length &&
-              outPosition <= destination.Length)
+        while(inPosition <= source.Length && outPosition <= destination.Length)
         {
             switch(repeatMode)
             {
@@ -92,19 +93,15 @@ public static class AppleRle
                     continue;
             }
 
-            if(inPosition == source.Length)
-                break;
+            if(inPosition == source.Length) break;
 
             while(true)
             {
                 byte b1 = source[inPosition++];
                 byte b2 = source[inPosition++];
-                var  s  = (short)((b1 << 8) | b2);
+                var  s  = (short)(b1 << 8 | b2);
 
-                if(s == 0          ||
-                   s >= DART_CHUNK ||
-                   s <= -DART_CHUNK)
-                    continue;
+                if(s == 0 || s >= DART_CHUNK || s <= -DART_CHUNK) continue;
 
                 if(s < 0)
                 {

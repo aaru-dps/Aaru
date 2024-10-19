@@ -27,45 +27,47 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core;
 
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
-using Schemas;
+using Aaru.Helpers;
+
+namespace Aaru.Core;
 
 public sealed partial class Sidecar
 {
-    readonly ChecksumType[] _emptyChecksums;
-    readonly Encoding       _encoding;
-    readonly FileInfo       _fi;
-    readonly Guid           _filterId;
-    readonly IBaseImage     _image;
-    readonly string         _imagePath;
-    readonly Checksum       _imgChkWorker;
-    readonly PluginBase     _plugins;
-    bool                    _aborted;
-    FileStream              _fs;
-    CICMMetadataType        _sidecar;
+    const    string                                  MODULE_NAME = "Sidecar creation";
+    readonly List<CommonTypes.AaruMetadata.Checksum> _emptyChecksums;
+    readonly Encoding                                _encoding;
+    readonly FileInfo                                _fi;
+    readonly Guid                                    _filterId;
+    readonly IBaseImage                              _image;
+    readonly string                                  _imagePath;
+    readonly Checksum                                _imgChkWorker;
+    readonly PluginRegister                          _plugins;
+    bool                                             _aborted;
+    FileStream                                       _fs;
+    Metadata                                         _sidecar;
 
     /// <summary>Initializes a new instance of this class</summary>
     public Sidecar()
     {
-        _plugins      = GetPluginBase.Instance;
+        _plugins      = PluginRegister.Singleton;
         _imgChkWorker = new Checksum();
         _aborted      = false;
 
         var emptyChkWorker = new Checksum();
-        emptyChkWorker.Update(Array.Empty<byte>());
-        _emptyChecksums = emptyChkWorker.End().ToArray();
+        emptyChkWorker.Update([]);
+        _emptyChecksums = emptyChkWorker.End();
     }
 
     /// <param name="image">Image</param>
@@ -78,8 +80,8 @@ public sealed partial class Sidecar
         _imagePath    = imagePath;
         _filterId     = filterId;
         _encoding     = encoding;
-        _sidecar      = image.CicmMetadata ?? new CICMMetadataType();
-        _plugins      = GetPluginBase.Instance;
+        _sidecar      = image.AaruMetadata ?? new Metadata();
+        _plugins      = PluginRegister.Singleton;
         _fi           = new FileInfo(imagePath);
         _fs           = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
         _imgChkWorker = new Checksum();
@@ -88,25 +90,24 @@ public sealed partial class Sidecar
 
     /// <summary>Implements creating a metadata sidecar</summary>
     /// <returns>The metadata sidecar</returns>
-    public CICMMetadataType Create()
+    public Metadata Create()
     {
         // For fast debugging, skip checksum
         //goto skipImageChecksum;
 
         byte[] data;
         long   position = 0;
-        UpdateStatus("Hashing image file...");
+        UpdateStatus(Localization.Core.Hashing_image_file);
         InitProgress();
 
         while(position < _fi.Length - 1048576)
         {
-            if(_aborted)
-                return _sidecar;
+            if(_aborted) return _sidecar;
 
             data = new byte[1048576];
-            _fs.Read(data, 0, 1048576);
+            _fs.EnsureRead(data, 0, 1048576);
 
-            UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
+            UpdateProgress(Localization.Core.Hashing_image_file_byte_0_of_1, position, _fi.Length);
 
             _imgChkWorker.Update(data);
 
@@ -114,9 +115,9 @@ public sealed partial class Sidecar
         }
 
         data = new byte[_fi.Length - position];
-        _fs.Read(data, 0, (int)(_fi.Length - position));
+        _fs.EnsureRead(data, 0, (int)(_fi.Length - position));
 
-        UpdateProgress("Hashing image file byte {0} of {1}", position, _fi.Length);
+        UpdateProgress(Localization.Core.Hashing_image_file_byte_0_of_1, position, _fi.Length);
 
         _imgChkWorker.Update(data);
 
@@ -126,57 +127,67 @@ public sealed partial class Sidecar
         EndProgress();
         _fs.Close();
 
-        List<ChecksumType> imgChecksums = _imgChkWorker.End();
+        List<CommonTypes.AaruMetadata.Checksum> imgChecksums = _imgChkWorker.End();
 
-        _sidecar.OpticalDisc = null;
-        _sidecar.BlockMedia  = null;
-        _sidecar.AudioMedia  = null;
-        _sidecar.LinearMedia = null;
+        if(_aborted) return _sidecar;
 
-        if(_aborted)
-            return _sidecar;
-
-        switch(_image.Info.XmlMediaType)
+        switch(_image.Info.MetadataMediaType)
         {
-            case XmlMediaType.OpticalDisc:
+            case MetadataMediaType.OpticalDisc:
                 if(_image is IOpticalMediaImage opticalImage)
-                    OpticalDisc(opticalImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                {
+                    OpticalDisc(opticalImage,
+                                _filterId,
+                                _imagePath,
+                                _fi,
+                                _plugins,
+                                imgChecksums,
+                                ref _sidecar,
                                 _encoding);
+                }
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_an_optical_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
-            case XmlMediaType.BlockMedia:
+            case MetadataMediaType.BlockMedia:
                 if(_image is IMediaImage blockImage)
                     BlockMedia(blockImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains a block addressable media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_a_block_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
-            case XmlMediaType.LinearMedia:
+            case MetadataMediaType.LinearMedia:
                 if(_image is IByteAddressableImage byteAddressableImage)
-                    LinearMedia(byteAddressableImage, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar,
+                {
+                    LinearMedia(byteAddressableImage,
+                                _filterId,
+                                _imagePath,
+                                _fi,
+                                _plugins,
+                                imgChecksums,
+                                ref _sidecar,
                                 _encoding);
+                }
                 else
                 {
-                    AaruConsole.
-                        ErrorWriteLine("The specified image says it contains a byte addressable media but at the same time says it does not support them.");
+                    AaruConsole.ErrorWriteLine(Localization.Core
+                                                           .The_specified_image_says_it_contains_a_byte_addressable_media_but_at_the_same_time_says_it_does_not_support_them);
 
-                    AaruConsole.ErrorWriteLine("Please open an issue at Github.");
+                    AaruConsole.ErrorWriteLine(Localization.Core.Please_open_an_issue_at_Github);
                 }
 
                 break;
-            case XmlMediaType.AudioMedia:
+            case MetadataMediaType.AudioMedia:
                 AudioMedia(_image, _filterId, _imagePath, _fi, _plugins, imgChecksums, ref _sidecar, _encoding);
 
                 break;
@@ -188,7 +199,7 @@ public sealed partial class Sidecar
     /// <summary>Aborts sidecar running operation</summary>
     public void Abort()
     {
-        UpdateStatus("Aborting...");
+        UpdateStatus(Localization.Core.Aborting);
         _aborted = true;
     }
 }

@@ -27,15 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Core;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+
+namespace Aaru.Core;
 
 /// <summary>Core filesystem operations</summary>
 public static class Filesystems
@@ -49,11 +51,27 @@ public static class Filesystems
     /// <param name="partition">Partition</param>
     /// <param name="getGuid">Gets plugin GUID</param>
     public static void Identify(IMediaImage imagePlugin, out List<string> idPlugins, Partition partition,
-                                bool getGuid = false)
+                                bool        getGuid = false)
     {
-        PluginBase plugins = GetPluginBase.Instance;
+        PluginRegister plugins = PluginRegister.Singleton;
 
-        idPlugins = (from plugin in plugins.PluginsList.Values where plugin.Identify(imagePlugin, partition)
-                     select getGuid ? plugin.Id.ToString() : plugin.Name.ToLower()).ToList();
+        idPlugins = [];
+
+        foreach(IFilesystem plugin in plugins.Filesystems.Values.Where(p => p is not null))
+        {
+            try
+            {
+                if(plugin.Identify(imagePlugin, partition))
+                    idPlugins.Add(getGuid ? plugin.Id.ToString() : plugin.Name.ToLower());
+            }
+            catch(Exception ex)
+            {
+                AaruConsole
+                   .ErrorWriteLine("Error identifying filesystem {0}. Please open a report with the following line in a Github issue.",
+                                   plugin.Name);
+
+                AaruConsole.WriteException(ex);
+            }
+        }
     }
 }

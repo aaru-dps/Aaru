@@ -27,17 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.Models;
 
 using System.Collections.ObjectModel;
 using Aaru.CommonTypes.Interfaces;
 
+namespace Aaru.Gui.Models;
+
 public sealed class SubdirectoryModel
 {
-    public SubdirectoryModel() => Subdirectories = new ObservableCollection<SubdirectoryModel>();
+    public SubdirectoryModel() => Subdirectories = [];
 
     public string                                  Name           { get; set; }
     public string                                  Path           { get; set; }

@@ -23,15 +23,16 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Checksums;
 
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Checksums;
 
 [TestFixture]
 public class SpamSum
@@ -44,14 +45,15 @@ public class SpamSum
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         string result = SpamSumContext.Data(data, out _);
-        Assert.AreEqual(EXPECTED_EMPTY, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_EMPTY));
     }
 
     [Test]
@@ -59,16 +61,17 @@ public class SpamSum
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "empty"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "empty"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new SpamSumContext();
         ctx.Update(data);
         string result = ctx.End();
-        Assert.AreEqual(EXPECTED_EMPTY, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_EMPTY));
     }
 
     [Test]
@@ -76,14 +79,15 @@ public class SpamSum
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         string result = SpamSumContext.Data(data, out _);
-        Assert.AreEqual(EXPECTED_RANDOM, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_RANDOM));
     }
 
     [Test]
@@ -91,15 +95,16 @@ public class SpamSum
     {
         var data = new byte[1048576];
 
-        var fs = new FileStream(Path.Combine(Consts.TEST_FILES_ROOT, "Checksum test files", "random"), FileMode.Open,
+        var fs = new FileStream(Path.Combine(Consts.TestFilesRoot, "Checksum test files", "random"),
+                                FileMode.Open,
                                 FileAccess.Read);
 
-        fs.Read(data, 0, 1048576);
+        fs.EnsureRead(data, 0, 1048576);
         fs.Close();
         fs.Dispose();
         IChecksum ctx = new SpamSumContext();
         ctx.Update(data);
         string result = ctx.End();
-        Assert.AreEqual(EXPECTED_RANDOM, result);
+        Assert.That(result, Is.EqualTo(EXPECTED_RANDOM));
     }
 }

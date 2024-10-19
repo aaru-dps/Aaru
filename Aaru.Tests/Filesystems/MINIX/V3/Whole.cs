@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.MINIX.V3;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,16 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.MINIX.V3;
+
 [TestFixture]
 public class Whole : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "MINIX v3 filesystem");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v3 filesystem");
 
     public override IFilesystem Plugin     => new MinixFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "minix_3.1.2a_dsdd.img.lz",
@@ -52,7 +52,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 90,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -62,7 +62,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 300,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -72,7 +72,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 180,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         },
         new FileSystemTest
         {
@@ -82,7 +82,7 @@ public class Whole : FilesystemTest
             SectorSize  = 512,
             Clusters    = 360,
             ClusterSize = 4096,
-            Type        = "Minix v3"
+            Type        = "minix3"
         }
-    };
+    ];
 }

@@ -27,49 +27,16 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Runtime.InteropServices;
 
+namespace Aaru.Images;
+
 public sealed partial class SuperCardPro
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ScpHeader
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] signature;
-        public byte        version;
-        public ScpDiskType type;
-        public byte        revolutions;
-        public byte        start;
-        public byte        end;
-        public ScpFlags    flags;
-        public byte        bitCellEncoding;
-        public byte        heads;
-        public byte        reserved;
-        public uint        checksum;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
-        public uint[] offsets;
-    }
-
-    public struct TrackHeader
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] Signature;
-        public byte         TrackNumber;
-        public TrackEntry[] Entries;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct TrackEntry
-    {
-        public uint indexTime;
-        public uint trackLength;
-        public uint dataOffset;
-    }
+#region Nested type: Footer
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct Footer
@@ -88,4 +55,53 @@ public sealed partial class SuperCardPro
         public readonly byte imageVersion;
         public readonly uint signature;
     }
+
+#endregion
+
+#region Nested type: ScpHeader
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct ScpHeader
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] signature;
+        public byte        version;
+        public ScpDiskType type;
+        public byte        revolutions;
+        public byte        start;
+        public byte        end;
+        public ScpFlags    flags;
+        public byte        bitCellEncoding; // 0 = 16 bit, otherwise value represent bits
+        public byte        heads;           // 1 = bottom side, 2 = top side, 0 = both
+        public byte        resolution;      // 25ns increments, ergo algorithm is 25ns + resolution * 25ns
+        public uint        checksum;        // for data starting at 0x10
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 168)]
+        public uint[] offsets;
+    }
+
+#endregion
+
+#region Nested type: TrackEntry
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TrackEntry
+    {
+        public uint indexTime;
+        public uint trackLength;
+        public uint dataOffset;
+    }
+
+#endregion
+
+#region Nested type: TrackHeader
+
+    public struct TrackHeader
+    {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public byte[] Signature;
+        public byte         TrackNumber;
+        public TrackEntry[] Entries;
+    }
+
+#endregion
 }

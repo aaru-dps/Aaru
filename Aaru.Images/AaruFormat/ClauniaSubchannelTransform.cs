@@ -27,20 +27,20 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
+using System.Diagnostics;
 using Aaru.Console;
+
+namespace Aaru.Images;
 
 public sealed partial class AaruFormat
 {
     static byte[] ClauniaSubchannelTransform(byte[] interleaved)
     {
-        if(interleaved == null)
-            return null;
+        if(interleaved == null) return null;
 
         var p = new int[interleaved.Length / 8];
         var q = new int[interleaved.Length / 8];
@@ -51,7 +51,8 @@ public sealed partial class AaruFormat
         var v = new int[interleaved.Length / 8];
         var w = new int[interleaved.Length / 8];
 
-        DateTime start = DateTime.UtcNow;
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
         for(var i = 0; i < interleaved.Length; i += 8)
         {
@@ -128,11 +129,11 @@ public sealed partial class AaruFormat
             w[i / 8] += interleaved[i + 7] & 0x01;
         }
 
-        DateTime end          = DateTime.UtcNow;
-        TimeSpan deinterleave = end - start;
+        stopwatch.Stop();
+        TimeSpan deinterleave = stopwatch.Elapsed;
 
         var sequential = new byte[interleaved.Length];
-        start = DateTime.UtcNow;
+        stopwatch.Restart();
 
         int qStart = p.Length * 1;
         int rStart = p.Length * 2;
@@ -154,16 +155,19 @@ public sealed partial class AaruFormat
             sequential[wStart + i] = (byte)w[i];
         }
 
-        end = DateTime.UtcNow;
-        TimeSpan sequentialize = end - start;
+        stopwatch.Stop();
+        TimeSpan sequentialize = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to deinterleave subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_deinterleave_subchannel,
                                    deinterleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to sequentialize subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_sequentialize_subchannel,
                                    sequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to transform subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_transform_subchannel,
                                    deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
         return sequential;
@@ -171,8 +175,7 @@ public sealed partial class AaruFormat
 
     static byte[] ClauniaSubchannelUntransform(byte[] sequential)
     {
-        if(sequential == null)
-            return null;
+        if(sequential == null) return null;
 
         var p = new int[sequential.Length / 8];
         var q = new int[sequential.Length / 8];
@@ -191,7 +194,8 @@ public sealed partial class AaruFormat
         int vStart = p.Length * 6;
         int wStart = p.Length * 7;
 
-        DateTime start = DateTime.UtcNow;
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
         for(var i = 0; i < p.Length; i++)
         {
@@ -205,11 +209,11 @@ public sealed partial class AaruFormat
             w[i] = sequential[wStart + i];
         }
 
-        DateTime end             = DateTime.UtcNow;
-        TimeSpan desequentialize = end - start;
+        stopwatch.Stop();
+        TimeSpan desequentialize = stopwatch.Elapsed;
 
         var interleaved = new byte[sequential.Length];
-        start = DateTime.UtcNow;
+        stopwatch.Restart();
 
         for(var i = 0; i < interleaved.Length; i += 8)
         {
@@ -286,16 +290,19 @@ public sealed partial class AaruFormat
             interleaved[i + 7] += (byte)((w[i / 8] & 0x01) == 0x01 ? 0x01 : 0);
         }
 
-        end = DateTime.UtcNow;
-        TimeSpan interleave = end - start;
+        stopwatch.Stop();
+        TimeSpan interleave = stopwatch.Elapsed;
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to de-sequentialize subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_desequentialize_subchannel,
                                    desequentialize.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to interleave subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_interleave_subchannel,
                                    interleave.TotalMilliseconds);
 
-        AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to untransform subchannel.",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   Localization.Took_0_ms_to_untransform_subchannel,
                                    interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
         return interleaved;

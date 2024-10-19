@@ -27,15 +27,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filters;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>No filter for reading files not recognized by any filter</summary>
@@ -43,12 +43,16 @@ public sealed class ZZZNoFilter : IFilter
 {
     Stream _dataStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
-    public string Name => "No filter";
+    public string Name => Localization.ZZZNoFilter_Name;
+
     /// <inheritdoc />
     public Guid Id => new("12345678-AAAA-BBBB-CCCC-123456789000");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()
@@ -74,10 +78,10 @@ public sealed class ZZZNoFilter : IFilter
     public bool HasResourceFork => false;
 
     /// <inheritdoc />
-    public bool Identify(byte[] buffer) => buffer != null && buffer.Length > 0;
+    public bool Identify(byte[] buffer) => buffer is { Length: > 0 };
 
     /// <inheritdoc />
-    public bool Identify(Stream stream) => stream != null && stream.Length > 0;
+    public bool Identify(Stream stream) => stream is { Length: > 0 };
 
     /// <inheritdoc />
     public bool Identify(string path) => File.Exists(path);
@@ -136,4 +140,6 @@ public sealed class ZZZNoFilter : IFilter
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }

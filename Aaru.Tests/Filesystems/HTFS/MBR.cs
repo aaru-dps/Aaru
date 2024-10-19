@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.HTFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class MBR : FilesystemTest
-{
-    public MBR() : base("HTFS") {}
+namespace Aaru.Tests.Filesystems.HTFS;
 
+[TestFixture]
+public class MBR() : FilesystemTest("HTFS")
+{
     public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "High Throughtput File System (MBR)");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Throughput File System (MBR)");
+
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "scoopenserver_5.0.7hw.aif",
@@ -56,5 +55,5 @@ public class MBR : FilesystemTest
             ClusterSize = 1024,
             VolumeName  = "Volume label"
         }
-    };
+    ];
 }

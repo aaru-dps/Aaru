@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System;
 using System.Collections.Generic;
@@ -40,19 +38,21 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
 public sealed partial class DiscFerret
 {
+#region IMediaImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
         var    magicB = new byte[4];
         Stream stream = imageFilter.GetDataForkStream();
-        stream.Read(magicB, 0, 4);
+        stream.EnsureRead(magicB, 0, 4);
         var magic = BitConverter.ToUInt32(magicB, 0);
 
-        if(magic != DFI_MAGIC &&
-           magic != DFI_MAGIC2)
-            return ErrorNumber.InvalidArgument;
+        if(magic != DFI_MAGIC && magic != DFI_MAGIC2) return ErrorNumber.InvalidArgument;
 
         TrackOffsets = new SortedDictionary<int, long>();
         TrackLengths = new SortedDictionary<int, long>();
@@ -65,29 +65,27 @@ public sealed partial class DiscFerret
             long thisOffset = stream.Position;
 
             var blk = new byte[Marshal.SizeOf<BlockHeader>()];
-            stream.Read(blk, 0, Marshal.SizeOf<BlockHeader>());
+            stream.EnsureRead(blk, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(blk);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
-                                       blockHeader.cylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.cylinder = {1}", thisOffset, blockHeader.cylinder);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.head = {1}", thisOffset, blockHeader.head);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset, blockHeader.sector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.sector = {1}", thisOffset, blockHeader.sector);
 
-            AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset, blockHeader.length);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "block@{0}.length = {1}", thisOffset, blockHeader.length);
 
             if(stream.Position + blockHeader.length > stream.Length)
             {
-                AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
+                AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Invalid_track_block_found_at_0, thisOffset);
 
                 break;
             }
 
             stream.Position += blockHeader.length;
 
-            if(blockHeader.cylinder > 0 &&
-               blockHeader.cylinder > lastCylinder)
+            if(blockHeader.cylinder > 0 && blockHeader.cylinder > lastCylinder)
             {
                 lastCylinder = blockHeader.cylinder;
                 lastHead     = 0;
@@ -96,8 +94,7 @@ public sealed partial class DiscFerret
                 offset = thisOffset;
                 t++;
             }
-            else if(blockHeader.head > 0 &&
-                    blockHeader.head > lastHead)
+            else if(blockHeader.head > 0 && blockHeader.head > lastHead)
             {
                 lastHead = blockHeader.head;
                 TrackOffsets.Add(t, offset);
@@ -106,11 +103,9 @@ public sealed partial class DiscFerret
                 t++;
             }
 
-            if(blockHeader.cylinder > _imageInfo.Cylinders)
-                _imageInfo.Cylinders = blockHeader.cylinder;
+            if(blockHeader.cylinder > _imageInfo.Cylinders) _imageInfo.Cylinders = blockHeader.cylinder;
 
-            if(blockHeader.head > _imageInfo.Heads)
-                _imageInfo.Heads = blockHeader.head;
+            if(blockHeader.head > _imageInfo.Heads) _imageInfo.Heads = blockHeader.head;
         }
 
         _imageInfo.Heads++;
@@ -119,7 +114,7 @@ public sealed partial class DiscFerret
         _imageInfo.Application        = "DiscFerret";
         _imageInfo.ApplicationVersion = magic == DFI_MAGIC2 ? "2.0" : "1.0";
 
-        AaruConsole.ErrorWriteLine("Flux decoding is not yet implemented.");
+        AaruConsole.ErrorWriteLine(Localization.Flux_decoding_is_not_yet_implemented);
 
         return ErrorNumber.NotImplemented;
     }
@@ -170,4 +165,6 @@ public sealed partial class DiscFerret
 
         return ErrorNumber.NotImplemented;
     }
+
+#endregion
 }

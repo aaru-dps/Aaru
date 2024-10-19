@@ -27,16 +27,18 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filters;
 
 using System;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
+using Aaru.Helpers.IO;
 using Ionic.BZip2;
+
+namespace Aaru.Filters;
 
 /// <inheritdoc />
 /// <summary>Decompress bz2 files while reading</summary>
@@ -45,12 +47,16 @@ public class BZip2 : IFilter
     Stream _dataStream;
     Stream _innerStream;
 
+#region IFilter Members
+
     /// <inheritdoc />
-    public string Name => "BZip2";
+    public string Name => Localization.BZip2_Name;
+
     /// <inheritdoc />
     public Guid Id => new("FCCFB0C3-32EF-40D8-9714-2333F6AC72A9");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public void Close()
@@ -78,15 +84,10 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(byte[] buffer)
     {
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(buffer.Length <= 512)
-            return true;
+        if(buffer.Length <= 512) return true;
 
         return buffer[^512] != 0x6B || buffer[^511] != 0x6F || buffer[^510] != 0x6C || buffer[^509] != 0x79;
     }
@@ -97,21 +98,16 @@ public class BZip2 : IFilter
         var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(stream.Length <= 512)
-            return true;
+        if(stream.Length <= 512) return true;
 
         stream.Seek(-512, SeekOrigin.End);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         // Check it is not an UDIF
@@ -121,28 +117,22 @@ public class BZip2 : IFilter
     /// <inheritdoc />
     public bool Identify(string path)
     {
-        if(!File.Exists(path))
-            return false;
+        if(!File.Exists(path)) return false;
 
         var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         var buffer = new byte[4];
 
         stream.Seek(0, SeekOrigin.Begin);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
-        if(buffer[0] != 0x42 ||
-           buffer[1] != 0x5A ||
-           buffer[2] != 0x68 ||
-           buffer[3] < 0x31  ||
-           buffer[3] > 0x39)
+        if(buffer[0] != 0x42 || buffer[1] != 0x5A || buffer[2] != 0x68 || buffer[3] < 0x31 || buffer[3] > 0x39)
             return false;
 
-        if(stream.Length <= 512)
-            return true;
+        if(stream.Length <= 512) return true;
 
         stream.Seek(-512, SeekOrigin.End);
-        stream.Read(buffer, 0, 4);
+        stream.EnsureRead(buffer, 0, 4);
         stream.Seek(0, SeekOrigin.Begin);
 
         // Check it is not an UDIF
@@ -210,14 +200,16 @@ public class BZip2 : IFilter
     {
         get
         {
-            if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true)
-                return BasePath.Substring(0, BasePath.Length - 4);
+            if(BasePath?.EndsWith(".bz2", StringComparison.InvariantCultureIgnoreCase) == true) return BasePath[..^4];
 
             return BasePath?.EndsWith(".bzip2", StringComparison.InvariantCultureIgnoreCase) == true
-                       ? BasePath.Substring(0, BasePath.Length - 6) : BasePath;
+                       ? BasePath[..^6]
+                       : BasePath;
         }
     }
 
     /// <inheritdoc />
     public string ParentFolder => System.IO.Path.GetDirectoryName(BasePath);
+
+#endregion
 }

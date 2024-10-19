@@ -23,28 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.exFAT;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class APM : FilesystemTest
-{
-    public APM() : base("exFAT") {}
+namespace Aaru.Tests.Filesystems.exFAT;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "exFAT (APM)");
-    public override IFilesystem Plugin     => new exFAT();
+[TestFixture]
+public class APM() : FilesystemTest("exfat")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -55,5 +52,5 @@ public class APM : FilesystemTest
             ClusterSize  = 4096,
             VolumeSerial = "595AC82C"
         }
-    };
+    ];
 }

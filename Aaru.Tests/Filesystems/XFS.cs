@@ -23,27 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-[TestFixture]
-public class XFS : FilesystemTest
-{
-    public XFS() : base("XFS filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "XFS");
+[TestFixture]
+public class XFS() : FilesystemTest("xfs")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XFS");
     public override IFilesystem Plugin     => new Aaru.Filesystems.XFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -66,5 +64,5 @@ public class XFS : FilesystemTest
             VolumeName   = "DicSetter",
             VolumeSerial = "ed6b4d35-aa66-ce4a-9d8f-c56dbc6d7c8c"
         }
-    };
+    ];
 }

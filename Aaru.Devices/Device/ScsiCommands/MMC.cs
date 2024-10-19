@@ -27,16 +27,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Aaru.Console;
 
+// ReSharper disable UnusedMember.Global
+
+namespace Aaru.Devices;
+
+[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
 public partial class Device
 {
     /// <summary>Sends the MMC GET CONFIGURATION command for all Features</summary>
@@ -57,7 +60,11 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber, uint timeout,
                                  out double duration) =>
-        GetConfiguration(out buffer, out senseBuffer, startingFeatureNumber, MmcGetConfigurationRt.All, timeout,
+        GetConfiguration(out buffer,
+                         out senseBuffer,
+                         startingFeatureNumber,
+                         MmcGetConfigurationRt.All,
+                         timeout,
                          out duration);
 
     /// <summary>Sends the MMC GET CONFIGURATION command</summary>
@@ -68,8 +75,8 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="startingFeatureNumber">Starting Feature number.</param>
     /// <param name="rt">Return type, <see cref="MmcGetConfigurationRt" />.</param>
-    public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, ushort startingFeatureNumber,
-                                 MmcGetConfigurationRt rt, uint timeout, out double duration)
+    public bool GetConfiguration(out byte[]            buffer, out byte[] senseBuffer, ushort     startingFeatureNumber,
+                                 MmcGetConfigurationRt rt,     uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[10];
@@ -83,13 +90,17 @@ public partial class Device
         cdb[8] = (byte)(buffer.Length & 0xFF);
         cdb[9] = 0;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var confLength = (ushort)((buffer[2] << 8) + buffer[3] + 4);
         buffer      = new byte[confLength];
@@ -97,14 +108,24 @@ public partial class Device
         cdb[8]      = (byte)(buffer.Length & 0xFF);
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "GET CONFIGURATION (Starting Feature Number: {1}, Return Type: {2}, Sense: {3}, Last Error: {4}) took {0} ms.",
-                                   duration, startingFeatureNumber, rt, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .GET_CONFIGURATION_Starting_Feature_Number_1_Return_Type_2_Sense_3_Last_Error_4_took_0_ms,
+                                   duration,
+                                   startingFeatureNumber,
+                                   rt,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -120,9 +141,9 @@ public partial class Device
     /// <param name="format">Which disc structure are we requesting</param>
     /// <param name="agid">AGID used in medium copy protection</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadDiscStructure(out byte[] buffer, out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
-                                  uint address, byte layerNumber, MmcDiscStructureFormat format, byte agid,
-                                  uint timeout, out double duration)
+    public bool ReadDiscStructure(out byte[] buffer,  out byte[] senseBuffer, MmcDiscStructureMediaType mediaType,
+                                  uint       address, byte       layerNumber, MmcDiscStructureFormat format, byte agid,
+                                  uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[12];
@@ -140,45 +161,33 @@ public partial class Device
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((agid & 0x03) << 6);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        if(sense)
-            return true;
+        if(sense) return true;
 
         var strctLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
 
         // WORKAROUND: Some drives return incorrect length information. As these structures are fixed length just apply known length.
         if(mediaType == MmcDiscStructureMediaType.Bd)
-            switch(format)
-            {
-                case MmcDiscStructureFormat.DiscInformation:
-                    buffer = new byte[4100];
-
-                    break;
-                case MmcDiscStructureFormat.BdBurstCuttingArea:
-                    buffer = new byte[68];
-
-                    break;
-                case MmcDiscStructureFormat.BdDds:
-                    buffer = new byte[strctLength < 100 ? 100 : strctLength];
-
-                    break;
-                case MmcDiscStructureFormat.CartridgeStatus:
-                    buffer = new byte[8];
-
-                    break;
-                case MmcDiscStructureFormat.BdSpareAreaInformation:
-                    buffer = new byte[16];
-
-                    break;
-                default:
-                    buffer = new byte[strctLength];
-
-                    break;
-            }
+        {
+            buffer = format switch
+                     {
+                         MmcDiscStructureFormat.DiscInformation => new byte[4100],
+                         MmcDiscStructureFormat.BdBurstCuttingArea => new byte[68],
+                         MmcDiscStructureFormat.BdDds => new byte[strctLength < 100 ? 100 : strctLength],
+                         MmcDiscStructureFormat.CartridgeStatus => new byte[8],
+                         MmcDiscStructureFormat.BdSpareAreaInformation => new byte[16],
+                         _ => new byte[strctLength]
+                     };
+        }
         else
             buffer = new byte[strctLength];
 
@@ -186,14 +195,27 @@ public partial class Device
         cdb[9]      = (byte)(buffer.Length & 0xFF);
         senseBuffer = new byte[64];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ DISC STRUCTURE (Media Type: {1}, Address: {2}, Layer Number: {3}, Format: {4}, AGID: {5}, Sense: {6}, Last Error: {7}) took {0} ms.",
-                                   duration, mediaType, address, layerNumber, format, agid, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .READ_DISC_STRUCTURE_Media_Type_1_Address_2_Layer_Number_3_Format_4_AGID_5_Sense_6_Last_Error_7_took_0_ms,
+                                   duration,
+                                   mediaType,
+                                   address,
+                                   layerNumber,
+                                   format,
+                                   agid,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -287,8 +309,8 @@ public partial class Device
     /// <param name="trackSessionNumber">Track/Session number</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadTocPmaAtip(out byte[] buffer, out byte[] senseBuffer, bool msf, byte format,
-                               byte trackSessionNumber, uint timeout, out double duration)
+    public bool ReadTocPmaAtip(out byte[] buffer,             out byte[] senseBuffer, bool       msf, byte format,
+                               byte       trackSessionNumber, uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[10];
@@ -297,15 +319,19 @@ public partial class Device
 
         cdb[0] = (byte)ScsiCommands.ReadTocPmaAtip;
 
-        if(msf)
-            cdb[1] = 0x02;
+        if(msf) cdb[1] = 0x02;
 
         cdb[2] = (byte)(format & 0x0F);
         cdb[6] = trackSessionNumber;
         cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
         cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref tmpBuffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
@@ -317,25 +343,42 @@ public partial class Device
         {
             Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-            AaruConsole.DebugWriteLine("SCSI Device",
-                                       "READ TOC/PMA/ATIP took (MSF: {1}, Format: {2}, Track/Session Number: {3}, Sense: {4}, LastError: {5}) {0} ms.",
-                                       duration, msf, format, trackSessionNumber, sense, LastError);
+            AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                       Localization
+                                          .READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms,
+                                       duration,
+                                       msf,
+                                       format,
+                                       trackSessionNumber,
+                                       sense,
+                                       LastError);
 
             return sense;
         }
 
         double tmpDuration = duration;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out sense);
 
         Error = LastError != 0;
 
         duration += tmpDuration;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ TOC/PMA/ATIP took (MSF: {1}, Format: {2}, Track/Session Number: {3}, Sense: {4}, LastError: {5}) {0} ms.",
-                                   duration, msf, format, trackSessionNumber, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms,
+                                   duration,
+                                   msf,
+                                   format,
+                                   trackSessionNumber,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -347,7 +390,10 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
-        ReadDiscInformation(out buffer, out senseBuffer, MmcDiscInformationDataTypes.DiscInformation, timeout,
+        ReadDiscInformation(out buffer,
+                            out senseBuffer,
+                            MmcDiscInformationDataTypes.DiscInformation,
+                            timeout,
                             out duration);
 
     /// <summary>Sends the MMC READ DISC INFORMATION command</summary>
@@ -357,8 +403,8 @@ public partial class Device
     /// <param name="dataType">Which disc information to read</param>
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-    public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, MmcDiscInformationDataTypes dataType,
-                                    uint timeout, out double duration)
+    public bool ReadDiscInformation(out byte[] buffer,  out byte[] senseBuffer, MmcDiscInformationDataTypes dataType,
+                                    uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
         var cdb       = new byte[10];
@@ -369,22 +415,29 @@ public partial class Device
         cdb[7] = (byte)((tmpBuffer.Length & 0xFF00) >> 8);
         cdb[8] = (byte)(tmpBuffer.Length & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref tmpBuffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref tmpBuffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
         var strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
 
-        if(strctLength > tmpBuffer.Length)
-            strctLength = (uint)tmpBuffer.Length;
+        if(strctLength > tmpBuffer.Length) strctLength = (uint)tmpBuffer.Length;
 
         buffer = new byte[strctLength];
         Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ DISC INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, dataType, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.READ_DISC_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration,
+                                   dataType,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -418,11 +471,9 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.ReadCd;
         cdb[1] = (byte)((byte)expectedSectorType << 2);
 
-        if(dap)
-            cdb[1] += 0x02;
+        if(dap) cdb[1] += 0x02;
 
-        if(relAddr)
-            cdb[1] += 0x01;
+        if(relAddr) cdb[1] += 0x01;
 
         cdb[2] =  (byte)((lba & 0xFF000000) >> 24);
         cdb[3] =  (byte)((lba & 0xFF0000)   >> 16);
@@ -434,28 +485,44 @@ public partial class Device
         cdb[9] =  (byte)((byte)c2Error     << 1);
         cdb[9] += (byte)((byte)headerCodes << 5);
 
-        if(sync)
-            cdb[9] += 0x80;
+        if(sync) cdb[9] += 0x80;
 
-        if(userData)
-            cdb[9] += 0x10;
+        if(userData) cdb[9] += 0x10;
 
-        if(edcEcc)
-            cdb[9] += 0x08;
+        if(edcEcc) cdb[9] += 0x08;
 
         cdb[10] = (byte)subchannel;
 
         buffer = new byte[blockSize * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ CD (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Expected Sector Type: {4}, DAP: {5}, Relative Address: {6}, Sync: {7}, Headers: {8}, User Data: {9}, ECC/EDC: {10}, C2: {11}, Subchannel: {12}, Sense: {13}, Last Error: {14}) took {0} ms.",
-                                   duration, lba, blockSize, transferLength, expectedSectorType, dap, relAddr, sync,
-                                   headerCodes, userData, edcEcc, c2Error, subchannel, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .READ_CD_LBA_1_Block_Size_2_Transfer_Length_3_Expected_Sector_Type_4_DAP_5_Relative_Address_6_Sync_7_Headers_8_User_Data_9_ECC_EDC_10_C2_11_Subchannel_12_Sense_13_Last_Error_14_took_0_ms,
+                                   duration,
+                                   lba,
+                                   blockSize,
+                                   transferLength,
+                                   expectedSectorType,
+                                   dap,
+                                   relAddr,
+                                   sync,
+                                   headerCodes,
+                                   userData,
+                                   edcEcc,
+                                   c2Error,
+                                   subchannel,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -488,8 +555,7 @@ public partial class Device
         cdb[0] = (byte)ScsiCommands.ReadCdMsf;
         cdb[1] = (byte)((byte)expectedSectorType << 2);
 
-        if(dap)
-            cdb[1] += 0x02;
+        if(dap) cdb[1] += 0x02;
 
         cdb[3] =  (byte)((startMsf & 0xFF0000) >> 16);
         cdb[4] =  (byte)((startMsf & 0xFF00)   >> 8);
@@ -500,14 +566,11 @@ public partial class Device
         cdb[9] =  (byte)((byte)c2Error     << 1);
         cdb[9] += (byte)((byte)headerCodes << 5);
 
-        if(sync)
-            cdb[9] += 0x80;
+        if(sync) cdb[9] += 0x80;
 
-        if(userData)
-            cdb[9] += 0x10;
+        if(userData) cdb[9] += 0x10;
 
-        if(edcEcc)
-            cdb[9] += 0x08;
+        if(edcEcc) cdb[9] += 0x08;
 
         cdb[10] = (byte)subchannel;
 
@@ -515,15 +578,33 @@ public partial class Device
 
         buffer = new byte[blockSize * transferLength];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ CD MSF (Start MSF: {1}, End MSF: {2}, Block Size: {3}, Expected Sector Type: {4}, DAP: {5}, Sync: {6}, Headers: {7}, User Data: {8}, ECC/EDC: {9}, C2: {10}, Subchannel: {11}, Sense: {12}, LastError: {13}) took {0} ms.",
-                                   duration, startMsf, endMsf, blockSize, expectedSectorType, dap, sync, headerCodes,
-                                   userData, edcEcc, c2Error, subchannel, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .READ_CD_MSF_Start_MSF_1_End_MSF_2_Block_Size_3_Expected_Sector_Type_4_DAP_5_Sync_6_Headers_7_User_Data_8_ECC_EDC_9_C2_10_Subchannel_11_Sense_12_LastError_13_took_0_ms,
+                                   duration,
+                                   startMsf,
+                                   endMsf,
+                                   blockSize,
+                                   expectedSectorType,
+                                   dap,
+                                   sync,
+                                   headerCodes,
+                                   userData,
+                                   edcEcc,
+                                   c2Error,
+                                   subchannel,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -556,24 +637,32 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.PreventAllowMediumRemoval;
 
-        if(prevent)
-            cdb[4] += 0x01;
+        if(prevent) cdb[4] += 0x01;
 
-        if(persistent)
-            cdb[4] += 0x02;
+        if(persistent) cdb[4] += 0x02;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "PREVENT ALLOW MEDIUM REMOVAL (Persistent: {1}, Prevent: {2}, Sense: {3}, LastError: {4}) took {0} ms.",
-                                   duration, persistent, prevent, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .PREVENT_ALLOW_MEDIUM_REMOVAL_Persistent_1_Prevent_2_Sense_3_LastError_4_took_0_ms,
+                                   duration,
+                                   persistent,
+                                   prevent,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -626,12 +715,11 @@ public partial class Device
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[6];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.StartStopUnit;
 
-        if(immediate)
-            cdb[1] += 0x01;
+        if(immediate) cdb[1] += 0x01;
 
         if(changeFormatLayer)
         {
@@ -640,24 +728,35 @@ public partial class Device
         }
         else
         {
-            if(loadEject)
-                cdb[4] += 0x02;
+            if(loadEject) cdb[4] += 0x02;
 
-            if(start)
-                cdb[4] += 0x01;
+            if(start) cdb[4] += 0x01;
         }
 
         cdb[4] += (byte)((powerConditions & 0x0F) << 4);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "START STOP UNIT (Immediate: {1}, FormatLayer: {2}, Power Conditions: {3}, Change Format Layer: {4}, Load/Eject: {5}, Start: {6}, Sense: {7}, Last Error: {8}) took {0} ms.",
-                                   duration, immediate, formatLayer, powerConditions, changeFormatLayer, loadEject,
-                                   start, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .START_STOP_UNIT_Immediate_1_FormatLayer_2_Power_Conditions_3_Change_Format_Layer_4_Load_Eject_5_Start_6_Sense_7_Last_Error_8_took_0_ms,
+                                   duration,
+                                   immediate,
+                                   formatLayer,
+                                   powerConditions,
+                                   changeFormatLayer,
+                                   loadEject,
+                                   start,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -685,17 +784,23 @@ public partial class Device
 
         buffer = new byte[23];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device", "READ READ SUB-CHANNEL (MCN, Sense {1}, Last Error {2}) took {0} ms.",
-                                   duration, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.READ_READ_SUB_CHANNEL_MCN_Sense_1_Last_Error_2_took_0_ms,
+                                   duration,
+                                   sense,
+                                   LastError);
 
-        if(!sense &&
-           (buffer[8] & 0x80) == 0x80)
-            mcn = Encoding.ASCII.GetString(buffer, 9, 13);
+        if(!sense && (buffer[8] & 0x80) == 0x80) mcn = Encoding.ASCII.GetString(buffer, 9, 13);
 
         return sense;
     }
@@ -726,18 +831,25 @@ public partial class Device
 
         buffer = new byte[23];
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ READ SUB-CHANNEL (ISRC, Track Number: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, trackNumber, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .READ_READ_SUB_CHANNEL_ISRC_Track_Number_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration,
+                                   trackNumber,
+                                   sense,
+                                   LastError);
 
-        if(!sense &&
-           (buffer[8] & 0x80) == 0x80)
-            isrc = Encoding.ASCII.GetString(buffer, 9, 12);
+        if(!sense && (buffer[8] & 0x80) == 0x80) isrc = Encoding.ASCII.GetString(buffer, 9, 12);
 
         return sense;
     }
@@ -750,12 +862,12 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort readSpeed,
-                           ushort writeSpeed, uint timeout, out double duration)
+    public bool SetCdSpeed(out byte[] senseBuffer, RotationalControl rotationalControl, ushort     readSpeed,
+                           ushort     writeSpeed,  uint              timeout,           out double duration)
     {
         senseBuffer = new byte[64];
         var    cdb    = new byte[12];
-        byte[] buffer = Array.Empty<byte>();
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.SetCdRomSpeed;
         cdb[1] = (byte)((byte)rotationalControl & 0x03);
@@ -764,14 +876,25 @@ public partial class Device
         cdb[4] = (byte)((writeSpeed & 0xFF00) >> 8);
         cdb[5] = (byte)(writeSpeed & 0xFF);
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.None, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.None,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "SET CD SPEED (Rotational Control: {1}, Read Speed: {2}, Write Speed: {3}, Sense: {4}, Last Error: {5}) took {0} ms.",
-                                   duration, rotationalControl, readSpeed, writeSpeed, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization
+                                      .SET_CD_SPEED_Rotational_Control_1_Read_Speed_2_Write_Speed_3_Sense_4_Last_Error_5_took_0_ms,
+                                   duration,
+                                   rotationalControl,
+                                   readSpeed,
+                                   writeSpeed,
+                                   sense,
+                                   LastError);
 
         return sense;
     }
@@ -785,8 +908,8 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="open">Report information of non-closed tracks</param>
     /// <param name="type">Type of information to retrieve</param>
-    public bool ReadTrackInformation(out byte[] buffer, out byte[] senseBuffer, bool open, TrackInformationType type,
-                                     uint address, uint timeout, out double duration)
+    public bool ReadTrackInformation(out byte[] buffer,  out byte[] senseBuffer, bool open, TrackInformationType type,
+                                     uint       address, uint       timeout,     out double duration)
     {
         senseBuffer = new byte[64];
         var cdb = new byte[10];
@@ -801,17 +924,24 @@ public partial class Device
         cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8] = (byte)(buffer.Length & 0xFF);
 
-        if(open)
-            cdb[1] += 4;
+        if(open) cdb[1] += 4;
 
-        LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
+        LastError = SendScsiCommand(cdb,
+                                    ref buffer,
+                                    out senseBuffer,
+                                    timeout,
+                                    ScsiDirection.In,
+                                    out duration,
                                     out bool sense);
 
         Error = LastError != 0;
 
-        AaruConsole.DebugWriteLine("SCSI Device",
-                                   "READ TRACK INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                   duration, type, sense, LastError);
+        AaruConsole.DebugWriteLine(SCSI_MODULE_NAME,
+                                   Localization.READ_TRACK_INFORMATION_Data_Type_1_Sense_2_Last_Error_3_took_0_ms,
+                                   duration,
+                                   type,
+                                   sense,
+                                   LastError);
 
         return sense;
     }

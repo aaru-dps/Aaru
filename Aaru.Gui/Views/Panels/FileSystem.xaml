@@ -28,41 +28,61 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐‐
-// Copyright © 2011‐2020 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 -->
-<UserControl xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels" mc:Ignorable="d" d:DesignWidth="800"
-             d:DesignHeight="450" x:Class="Aaru.Gui.Views.Panels.FileSystem">
+             xmlns:panels="clr-namespace:Aaru.Gui.ViewModels.Panels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Aaru.Gui.Views.Panels.FileSystem">
     <Design.DataContext>
         <panels:FileSystemViewModel />
     </Design.DataContext>
     <StackPanel>
         <TextBlock Text="{Binding TypeText}" />
-        <TextBlock Text="{Binding VolumeNameText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding SerialNumberText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding ApplicationIdentifierText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding SystemIdentifierText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding VolumeSetIdentifierText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding DataPreparerIdentifierText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding PublisherIdentifierText}" IsVisible="{Binding !!VolumeNameText}" />
-        <TextBlock Text="{Binding CreationDateText}" IsVisible="{Binding CreationDateVisible}" />
-        <TextBlock Text="{Binding EffectiveDateText}" IsVisible="{Binding EffectiveDateVisible}" />
-        <TextBlock Text="{Binding ModificationDateText}" IsVisible="{Binding ModificationDateVisible}" />
-        <TextBlock Text="{Binding ExpirationDateText}" IsVisible="{Binding ExpirationDateVisible}" />
-        <TextBlock Text="{Binding BackupDateText}" IsVisible="{Binding BackupDateVisible}" />
+        <TextBlock Text="{Binding VolumeNameText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding SerialNumberText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding ApplicationIdentifierText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding SystemIdentifierText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding VolumeSetIdentifierText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding DataPreparerIdentifierText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding PublisherIdentifierText}"
+                   IsVisible="{Binding !!VolumeNameText}" />
+        <TextBlock Text="{Binding CreationDateText}"
+                   IsVisible="{Binding CreationDateVisible}" />
+        <TextBlock Text="{Binding EffectiveDateText}"
+                   IsVisible="{Binding EffectiveDateVisible}" />
+        <TextBlock Text="{Binding ModificationDateText}"
+                   IsVisible="{Binding ModificationDateVisible}" />
+        <TextBlock Text="{Binding ExpirationDateText}"
+                   IsVisible="{Binding ExpirationDateVisible}" />
+        <TextBlock Text="{Binding BackupDateText}"
+                   IsVisible="{Binding BackupDateVisible}" />
         <TextBlock Text="{Binding ClustersText}" />
-        <TextBlock Text="{Binding FreeClustersText}" IsVisible="{Binding FreeClustersVisible}" />
-        <TextBlock Text="{Binding FilesText}" IsVisible="{Binding FilesVisible}" />
+        <TextBlock Text="{Binding FreeClustersText}"
+                   IsVisible="{Binding FreeClustersVisible}" />
+        <TextBlock Text="{Binding FilesText}"
+                   IsVisible="{Binding FilesVisible}" />
         <CheckBox IsEnabled="{Binding BootableChecked}">
-            <TextBlock Text="Filesystem contains boot code" />
+            <TextBlock Text="{Binding BootableLabel}" />
         </CheckBox>
         <CheckBox IsEnabled="{Binding DirtyChecked}">
-            <TextBlock Text="Filesystem has not been unmounted correctly or contains errors" />
+            <TextBlock Text="{Binding DirtyLabel}" />
         </CheckBox>
-        <TextBlock Text="Details" IsVisible="{Binding !!InformationText}" />
-        <TextBox Text="{Binding InformationText}" IsReadOnly="True" />
+        <TextBlock Text="{Binding DetailsLabel}"
+                   IsVisible="{Binding !!InformationText}" />
+        <TextBox Text="{Binding InformationText}"
+                 IsReadOnly="True" />
     </StackPanel>
 </UserControl>

@@ -28,17 +28,15 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable UnusedMember.Global
 
-namespace Aaru.Devices.Windows;
-
 using System;
 using System.Diagnostics.CodeAnalysis;
+
+namespace Aaru.Devices.Windows;
 
 [Flags]
 enum FileAttributes : uint
@@ -246,11 +244,12 @@ enum WindowsIoctl : uint
     IoctlScsiPassThroughDirect = 0x4D014,
 
     /// <summary>ScsiGetAddress</summary>
-    IoctlScsiGetAddress = 0x41018, IoctlStorageQueryProperty = 0x2D1400,
-    IoctlIdePassThrough                                      = 0x4D028,
-    IoctlStorageGetDeviceNumber                              = 0x2D1080,
-    IoctlSffdiskQueryDeviceProtocol                          = 0x71E80,
-    IoctlSffdiskDeviceCommand                                = 0x79E84
+    IoctlScsiGetAddress = 0x41018,
+    IoctlStorageQueryProperty       = 0x2D1400,
+    IoctlIdePassThrough             = 0x4D028,
+    IoctlStorageGetDeviceNumber     = 0x2D1080,
+    IoctlSffdiskQueryDeviceProtocol = 0x71E80,
+    IoctlSffdiskDeviceCommand       = 0x79E84
 }
 
 [Flags]

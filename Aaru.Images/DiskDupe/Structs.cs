@@ -27,18 +27,54 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2021-2022 Michael Drüing
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2021-2024 Michael Drüing
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
+namespace Aaru.Images;
+
 [SuppressMessage("ReSharper", "UnusedType.Local")]
 public sealed partial class DiskDupe
 {
+    readonly DiskType[] _diskTypes =
+    [
+        new DiskType
+        {
+            cyl = 0,
+            hd  = 0,
+            spt = 0
+        }, // Type 0 - invalid
+        new DiskType
+        {
+            cyl = 40,
+            hd  = 2,
+            spt = 9
+        }, // Type 1 - 360k
+        new DiskType
+        {
+            cyl = 80,
+            hd  = 2,
+            spt = 15
+        }, // Type 2 - 1.2m
+        new DiskType
+        {
+            cyl = 80,
+            hd  = 2,
+            spt = 9
+        }, // Type 3 - 720k
+        new DiskType
+        {
+            cyl = 80,
+            hd  = 2,
+            spt = 18
+        } // Type 4 - 1.44m
+    ];
+
+#region Nested type: DiskType
+
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     struct DiskType
     {
@@ -47,50 +83,9 @@ public sealed partial class DiskDupe
         public byte spt;
     }
 
-    readonly DiskType[] _diskTypes =
-    {
-        new()
-        {
-            cyl = 0,
-            hd  = 0,
-            spt = 0
-        }, // Type 0 - invalid
-        new()
-        {
-            cyl = 40,
-            hd  = 2,
-            spt = 9
-        }, // Type 1 - 360k
-        new()
-        {
-            cyl = 80,
-            hd  = 2,
-            spt = 15
-        }, // Type 2 - 1.2m
-        new()
-        {
-            cyl = 80,
-            hd  = 2,
-            spt = 9
-        }, // Type 3 - 720k
-        new()
-        {
-            cyl = 80,
-            hd  = 2,
-            spt = 18
-        } // Type 4 - 1.44m
-    };
+#endregion
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct TrackInfo
-    {
-        public readonly byte present; // 1 = present, 0 = absent
-        public readonly byte trackNumber;
-        public readonly byte zero1;
-        public readonly byte zero2;
-        public readonly byte zero3;
-        public readonly byte unknown; // always 1?
-    }
+#region Nested type: FileHeader
 
     /// <summary>The global header of a DDI image file</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -103,4 +98,21 @@ public sealed partial class DiskDupe
         /// <summary>Disk type</summary>
         public byte diskType;
     }
+
+#endregion
+
+#region Nested type: TrackInfo
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct TrackInfo
+    {
+        public readonly byte present; // 1 = present, 0 = absent
+        public readonly byte trackNumber;
+        public readonly byte zero1;
+        public readonly byte zero2;
+        public readonly byte zero3;
+        public readonly byte unknown; // always 1?
+    }
+
+#endregion
 }

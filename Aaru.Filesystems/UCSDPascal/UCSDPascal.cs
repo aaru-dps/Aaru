@@ -27,43 +27,48 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.UCSDPascal;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
 /// <inheritdoc />
 /// <summary>Implements the U.C.S.D. Pascal filesystem</summary>
 public sealed partial class PascalPlugin : IReadOnlyFilesystem
 {
+    const string          MODULE_NAME = "U.C.S.D. Pascal Plugin";
     byte[]                _bootBlocks;
     byte[]                _catalogBlocks;
     bool                  _debug;
     IMediaImage           _device;
+    Encoding              _encoding;
     List<PascalFileEntry> _fileEntries;
     bool                  _mounted;
     PascalVolumeEntry     _mountedVolEntry;
     /// <summary>Apple II disks use 256 bytes / sector, but filesystem assumes it's 512 bytes / sector</summary>
     uint _multiplier;
 
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
+    public string Name => Localization.PascalPlugin_Name;
+
     /// <inheritdoc />
-    public string Name => "U.C.S.D. Pascal filesystem";
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("B0AC2CB5-72AA-473A-9200-270B5A2C2D53");
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     /// <inheritdoc />
     public ErrorNumber ListXAttr(string path, out List<string> xattrs)
@@ -90,6 +95,8 @@ public sealed partial class PascalPlugin : IReadOnlyFilesystem
 
     /// <inheritdoc />
     public Dictionary<string, string> Namespaces => null;
+
+#endregion
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {

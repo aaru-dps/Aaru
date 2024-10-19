@@ -27,15 +27,11 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedParameter.Local
-
-namespace Aaru.Gui;
 
 using System;
 using Aaru.Gui.ViewModels.Windows;
@@ -44,6 +40,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+
+namespace Aaru.Gui;
 
 public sealed class App : Application
 {
@@ -65,8 +63,7 @@ public sealed class App : Application
 
     void OnSplashFinished(object sender, EventArgs e)
     {
-        if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop))
-            return;
+        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
 
         // Ensure not exit
         desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
@@ -85,10 +82,13 @@ public sealed class App : Application
 
     void OnAboutClicked(object sender, EventArgs args)
     {
-        if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                                    {
-                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                                    }))
+        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+                                      {
+                                          MainWindow: MainWindow
+                                                      {
+                                                          DataContext: MainWindowViewModel mainWindowViewModel
+                                                      }
+                                      })
             return;
 
         mainWindowViewModel.ExecuteAboutCommand();
@@ -96,10 +96,13 @@ public sealed class App : Application
 
     void OnQuitClicked(object sender, EventArgs args)
     {
-        if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                                    {
-                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                                    }))
+        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+                                      {
+                                          MainWindow: MainWindow
+                                                      {
+                                                          DataContext: MainWindowViewModel mainWindowViewModel
+                                                      }
+                                      })
             return;
 
         mainWindowViewModel.ExecuteExitCommand();
@@ -107,10 +110,13 @@ public sealed class App : Application
 
     void OnPreferencesClicked(object sender, EventArgs args)
     {
-        if(!(ApplicationLifetime is IClassicDesktopStyleApplicationLifetime
-                                    {
-                                        MainWindow: MainWindow { DataContext: MainWindowViewModel mainWindowViewModel }
-                                    }))
+        if(ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime
+                                      {
+                                          MainWindow: MainWindow
+                                                      {
+                                                          DataContext: MainWindowViewModel mainWindowViewModel
+                                                      }
+                                      })
             return;
 
         mainWindowViewModel.ExecuteSettingsCommand();

@@ -27,13 +27,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Commands;
-
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using System.Linq;
@@ -42,12 +39,17 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
+using Aaru.Localization;
 using Spectre.Console;
+
+namespace Aaru.Commands;
 
 sealed class FormatsCommand : Command
 {
-    public FormatsCommand() : base("formats", "Lists all supported disc images, partition schemes and file systems.") =>
-        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+    const string MODULE_NAME = "Formats command";
+
+    public FormatsCommand() : base("formats", UI.List_Formats_Command_Description) =>
+        Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)) ?? throw new NullReferenceException());
 
     public static int Invoke(bool verbose, bool debug)
     {
@@ -57,7 +59,7 @@ sealed class FormatsCommand : Command
         {
             IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
             {
-                Out = new AnsiConsoleOutput(Console.Error)
+                Out = new AnsiConsoleOutput(System.Console.Error)
             });
 
             AaruConsole.DebugWriteLineEvent += (format, objects) =>
@@ -67,9 +69,12 @@ sealed class FormatsCommand : Command
                 else
                     stderrConsole.MarkupLine(format, objects);
             };
+
+            AaruConsole.WriteExceptionEvent += ex => { stderrConsole.WriteException(ex); };
         }
 
         if(verbose)
+        {
             AaruConsole.WriteEvent += (format, objects) =>
             {
                 if(objects is null)
@@ -77,30 +82,31 @@ sealed class FormatsCommand : Command
                 else
                     AnsiConsole.Markup(format, objects);
             };
+        }
 
         Statistics.AddCommand("formats");
 
-        AaruConsole.DebugWriteLine("Formats command", "--debug={0}", debug);
-        AaruConsole.DebugWriteLine("Formats command", "--verbose={0}", verbose);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--debug={0}",   debug);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "--verbose={0}", verbose);
 
-        PluginBase plugins     = GetPluginBase.Instance;
-        var        filtersList = new FiltersList();
+        PluginRegister plugins = PluginRegister.Singleton;
 
         Table table = new()
         {
-            Title = new TableTitle($"Supported filters ({filtersList.Filters.Count}):")
+            Title = new TableTitle(string.Format(UI.Supported_filters_0, PluginRegister.Singleton.Filters.Count))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Filter");
+        table.AddColumn(UI.Title_Filter);
 
-        foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
+        foreach(IFilter filter in PluginRegister.Singleton.Filters.Values)
+        {
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(filter.Id.ToString(), Markup.Escape(filter.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(filter.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -108,23 +114,23 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Read-only media image formats ({0}):",
-                                                 plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                                    Contains(typeof(
-                                                                                        IWritableImage)))))
+            Title = new TableTitle(string.Format(UI.Read_only_media_image_formats_0,
+                                                 plugins.MediaImages.Count(t => !plugins.WritableImages
+                                                                              .ContainsKey(t.Key))))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Media image format");
+        table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType().
-                    GetInterfaces().Contains(typeof(IWritableImage))))
+        foreach(IMediaImage imagePlugin in
+                plugins.MediaImages.Values.Where(t => !plugins.WritableImages.ContainsKey(t.Name)))
+        {
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(imagePlugin.Id.ToString(), Markup.Escape(imagePlugin.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(imagePlugin.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -132,19 +138,49 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Read/write media image formats ({0}):", plugins.WritableImages.Count))
+            Title = new TableTitle(string.Format(UI.Read_write_media_image_formats_0, plugins.WritableImages.Count))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Media image format");
+        table.AddColumn(UI.Title_Media_image_format);
 
-        foreach(KeyValuePair<string, IBaseWritableImage> kvp in plugins.WritableImages)
+        foreach(IBaseWritableImage plugin in plugins.WritableImages.Values)
+        {
+            if(plugin is null) continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(plugin.Name));
+        }
+
+        AnsiConsole.Write(table);
+
+        AaruConsole.WriteLine();
+
+        var idOnlyFilesystems = plugins.Filesystems.Where(t => !plugins.ReadOnlyFilesystems.ContainsKey(t.Key))
+                                       .Select(t => t.Value)
+                                       .Where(t => t is not null)
+                                       .ToList();
+
+        table = new Table
+        {
+            Title = new TableTitle(string.Format(UI.Supported_filesystems_for_identification_and_information_only_0,
+                                                 idOnlyFilesystems.Count))
+        };
+
+        if(verbose) table.AddColumn(UI.Title_GUID);
+
+        table.AddColumn(UI.Title_Filesystem);
+
+        foreach(IFilesystem fs in idOnlyFilesystems)
+        {
+            if(verbose)
+                table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
+            else
+                table.AddRow(Markup.Escape(fs.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -152,44 +188,23 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported filesystems for identification and information only ({0}):",
-                                                 plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces().
-                                                                               Contains(typeof(
-                                                                                   IReadOnlyFilesystem)))))
-        };
-
-        if(verbose)
-            table.AddColumn("GUID");
-
-        table.AddColumn("Filesystem");
-
-        foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType().
-                    GetInterfaces().Contains(typeof(IReadOnlyFilesystem))))
-            if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
-            else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
-
-        AnsiConsole.Write(table);
-
-        AaruConsole.WriteLine();
-
-        table = new Table
-        {
-            Title = new TableTitle(string.Format("Supported filesystems that can read their contents ({0}):",
+            Title = new TableTitle(string.Format(UI.Supported_filesystems_that_can_read_their_contents_0,
                                                  plugins.ReadOnlyFilesystems.Count))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Filesystem");
+        table.AddColumn(UI.Title_Filesystem);
 
-        foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+        foreach(IReadOnlyFilesystem fs in plugins.ReadOnlyFilesystems.Values)
+        {
+            if(fs is null) continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(fs.Id.ToString(), Markup.Escape(fs.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(fs.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -197,20 +212,22 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported partitioning schemes ({0}):",
-                                                 plugins.PartPluginsList.Count))
+            Title = new TableTitle(string.Format(UI.Supported_partitioning_schemes_0, plugins.Partitions.Count))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
-        table.AddColumn("Scheme");
+        table.AddColumn(UI.Title_Scheme);
 
-        foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
+        foreach(IPartition plugin in plugins.Partitions.Values)
+        {
+            if(plugin is null) continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(plugin.Id.ToString(), Markup.Escape(plugin.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(plugin.Name));
+        }
 
         AnsiConsole.Write(table);
 
@@ -218,19 +235,22 @@ sealed class FormatsCommand : Command
 
         table = new Table
         {
-            Title = new TableTitle(string.Format("Supported archive formats ({0}):", plugins.Archives.Count))
+            Title = new TableTitle(string.Format(UI.Supported_archive_formats_0, plugins.Archives.Count))
         };
 
-        if(verbose)
-            table.AddColumn("GUID");
+        if(verbose) table.AddColumn(UI.Title_GUID);
 
         table.AddColumn("Archive format");
 
-        foreach(KeyValuePair<string, IArchive> kvp in plugins.Archives)
+        foreach(IArchive archive in plugins.Archives.Values)
+        {
+            if(archive is null) continue;
+
             if(verbose)
-                table.AddRow(kvp.Value.Id.ToString(), Markup.Escape(kvp.Value.Name));
+                table.AddRow(archive.Id.ToString(), Markup.Escape(archive.Name));
             else
-                table.AddRow(Markup.Escape(kvp.Value.Name));
+                table.AddRow(Markup.Escape(archive.Name));
+        }
 
         AnsiConsole.Write(table);
 

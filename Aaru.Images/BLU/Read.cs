@@ -27,12 +27,11 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -40,8 +39,13 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Helpers;
 
+namespace Aaru.Images;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public sealed partial class Blu
 {
+#region IWritableImage Members
+
     /// <inheritdoc />
     public ErrorNumber Open(IFilter imageFilter)
     {
@@ -54,29 +58,29 @@ public sealed partial class Blu
         };
 
         var header = new byte[0x17];
-        stream.Read(header, 0, 0x17);
+        stream.EnsureRead(header, 0, 0x17);
         Array.Copy(header, 0, _imageHeader.DeviceName, 0, 0x0D);
         _imageHeader.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;
         _imageHeader.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
         _imageHeader.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
+        AaruConsole.DebugWriteLine(MODULE_NAME,
+                                   "ImageHeader.deviceName = \"{0}\"",
                                    StringHandlers.CToString(_imageHeader.DeviceName));
 
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}", _imageHeader.DeviceType);
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}", _imageHeader.DeviceBlocks);
-        AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", _imageHeader.BytesPerBlock);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.deviceType = {0}",    _imageHeader.DeviceType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.deviceBlock = {0}",   _imageHeader.DeviceBlocks);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "ImageHeader.bytesPerBlock = {0}", _imageHeader.BytesPerBlock);
 
         for(var i = 0; i < 0xD; i++)
             if(_imageHeader.DeviceName[i] < 0x20)
                 return ErrorNumber.InvalidArgument;
 
-        if((_imageHeader.BytesPerBlock & 0xFE00) != 0x200)
-            return ErrorNumber.InvalidArgument;
+        if((_imageHeader.BytesPerBlock & 0xFE00) != 0x200) return ErrorNumber.InvalidArgument;
 
         stream.Seek(0, SeekOrigin.Begin);
         header = new byte[_imageHeader.BytesPerBlock];
-        stream.Read(header, 0, _imageHeader.BytesPerBlock);
+        stream.EnsureRead(header, 0, _imageHeader.BytesPerBlock);
 
         _imageInfo.SectorSize = 0x200;
 
@@ -113,7 +117,8 @@ public sealed partial class Blu
 
                 break;
             case PRIAM_NAME:
-                _imageInfo.MediaType = _imageInfo.Sectors == 0x022C7C ? MediaType.PriamDataTower
+                _imageInfo.MediaType = _imageInfo.Sectors == 0x022C7C
+                                           ? MediaType.PriamDataTower
                                            : MediaType.GENERIC_HDD;
 
                 // This values are invented...
@@ -139,12 +144,11 @@ public sealed partial class Blu
 
         _bluImageFilter = imageFilter;
 
-        _imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
+        _imageInfo.MetadataMediaType = MetadataMediaType.BlockMedia;
 
-        if(_bptag > 0)
-            _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
+        if(_bptag > 0) _imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
-        AaruConsole.VerboseWriteLine("BLU image contains a disk of type {0}", _imageInfo.MediaType);
+        AaruConsole.VerboseWriteLine(Localization.BLU_image_contains_a_disk_of_type_0, _imageInfo.MediaType);
 
         return ErrorNumber.NoError;
     }
@@ -161,25 +165,21 @@ public sealed partial class Blu
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        var ms   = new MemoryStream();
-        var seek = 0;
-        var read = 0x200;
-        int skip = _bptag;
+        var       ms   = new MemoryStream();
+        const int read = 0x200;
+        int       skip = _bptag;
 
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
 
         for(var i = 0; i < length; i++)
         {
-            stream.Seek(seek, SeekOrigin.Current);
             var sector = new byte[read];
-            stream.Read(sector, 0, read);
+            stream.EnsureRead(sector, 0, read);
             ms.Write(sector, 0, read);
             stream.Seek(skip, SeekOrigin.Current);
         }
@@ -194,22 +194,17 @@ public sealed partial class Blu
     {
         buffer = null;
 
-        if(tag != SectorTagType.AppleSectorTag)
-            return ErrorNumber.NotSupported;
+        if(tag != SectorTagType.AppleSectorTag) return ErrorNumber.NotSupported;
 
-        if(_bptag == 0)
-            return ErrorNumber.NoData;
+        if(_bptag == 0) return ErrorNumber.NoData;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.SectorNotFound;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.SectorNotFound;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.SectorNotFound;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.SectorNotFound;
 
-        var ms   = new MemoryStream();
-        var seek = 0x200;
-        int read = _bptag;
-        var skip = 0;
+        var       ms   = new MemoryStream();
+        const int seek = 0x200;
+        int       read = _bptag;
 
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
@@ -218,9 +213,8 @@ public sealed partial class Blu
         {
             stream.Seek(seek, SeekOrigin.Current);
             var sector = new byte[read];
-            stream.Read(sector, 0, read);
+            stream.EnsureRead(sector, 0, read);
             ms.Write(sector, 0, read);
-            stream.Seek(skip, SeekOrigin.Current);
         }
 
         buffer = ms.ToArray();
@@ -237,17 +231,17 @@ public sealed partial class Blu
     {
         buffer = null;
 
-        if(sectorAddress > _imageInfo.Sectors - 1)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(sectorAddress + length > _imageInfo.Sectors)
-            return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         buffer = new byte[length * _imageHeader.BytesPerBlock];
         Stream stream = _bluImageFilter.GetDataForkStream();
         stream.Seek((long)((sectorAddress + 1) * _imageHeader.BytesPerBlock), SeekOrigin.Begin);
-        stream.Read(buffer, 0, buffer.Length);
+        stream.EnsureRead(buffer, 0, buffer.Length);
 
         return ErrorNumber.NoError;
     }
+
+#endregion
 }

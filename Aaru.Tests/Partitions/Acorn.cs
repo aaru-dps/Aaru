@@ -23,64 +23,55 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Partitions;
 
 using System.IO;
 using Aaru.CommonTypes;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Partitions;
+
 [TestFixture]
 public class Acorn : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Partitioning schemes", "Acorn");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Acorn");
 
-    public override PartitionTest[] Tests => new[]
-    {
+    public override PartitionTest[] Tests =>
+    [
         new PartitionTest
         {
             TestFile = "linux_ics.aif",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new Partition
                 {
-                    Length   = 61440,
-                    Offset   = 512,
+                    Length   = 99792,
+                    Offset   = 519096,
                     Sequence = 0,
-                    Size     = 31457280,
-                    Start    = 1,
-                    Type     = "GEM"
+                    Size     = 51093504,
+                    Start    = 1008,
+                    Type     = "Linux"
                 },
                 new Partition
                 {
-                    Length   = 81920,
-                    Offset   = 31457792,
+                    Length   = 368928,
+                    Offset   = 103219200,
                     Sequence = 1,
-                    Size     = 41943040,
-                    Start    = 61441,
-                    Type     = "BGM"
+                    Size     = 188891136,
+                    Start    = 201600,
+                    Type     = "Linux"
                 },
                 new Partition
                 {
-                    Length   = 110161,
-                    Offset   = 73400832,
+                    Length   = 359856,
+                    Offset   = 343719936,
                     Sequence = 2,
-                    Size     = 56402432,
-                    Start    = 143361,
-                    Type     = "LNX"
-                },
-                new Partition
-                {
-                    Length   = 84400,
-                    Offset   = 129803264,
-                    Sequence = 3,
-                    Size     = 43212800,
-                    Start    = 253522,
-                    Type     = "MAC"
+                    Size     = 184246272,
+                    Start    = 671328,
+                    Type     = "Linux swap"
                 }
-            }
+            ]
         }
-    };
+    ];
 }

@@ -7,10 +7,6 @@
 //
 // Component      : Apple Lisa filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Constructors and common variables for the Apple Lisa filesystem plugin.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,16 +23,16 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.LisaFS;
 
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
-using Schemas;
+
+namespace Aaru.Filesystems;
 
 // All information by Natalia Portillo
 // Variable names from Lisa API
@@ -44,24 +40,29 @@ using Schemas;
 /// <summary>Implements the Apple Lisa File System</summary>
 public sealed partial class LisaFS : IReadOnlyFilesystem
 {
-    bool        _debug;
-    IMediaImage _device;
-    int         _devTagSize;
-    MDDF        _mddf;
-    bool        _mounted;
-    SRecord[]   _srecords;
-    ulong       _volumePrefix;
+    const string MODULE_NAME = "LisaFS plugin";
+    bool         _debug;
+    IMediaImage  _device;
+    int          _devTagSize;
+    Encoding     _encoding;
+    MDDF         _mddf;
+    bool         _mounted;
+    SRecord[]    _srecords;
+    ulong        _volumePrefix;
+
+#region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
     public string Name => "Apple Lisa File System";
+
+    /// <inheritdoc />
+    public FileSystem Metadata { get; private set; }
+
     /// <inheritdoc />
     public Guid Id => new("7E6034D1-D823-4248-A54D-239742B28391");
+
     /// <inheritdoc />
-    public Encoding Encoding { get; private set; }
-    /// <inheritdoc />
-    public FileSystemType XmlFsType { get; private set; }
-    /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NataliaPortillo;
 
     // TODO: Implement Lisa 7/7 namespace (needs decoding {!CATALOG} file)
     /// <inheritdoc />
@@ -79,6 +80,8 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
         }
     };
 
+#endregion
+
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
         {
@@ -86,7 +89,8 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
         }
     };
 
-    #region Caches
+#region Caches
+
     /// <summary>Caches Extents Files</summary>
     Dictionary<short, ExtentFile> _extentCache;
     /// <summary>Caches system files</summary>
@@ -101,5 +105,6 @@ public sealed partial class LisaFS : IReadOnlyFilesystem
     List<short> _printedExtents;
     /// <summary>Caches the creation times for subdirectories as to not have to traverse the Catalog File on each stat</summary>
     Dictionary<short, DateTime> _directoryDtcCache;
-    #endregion Caches
+
+#endregion Caches
 }

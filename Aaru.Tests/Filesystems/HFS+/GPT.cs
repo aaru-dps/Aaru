@@ -23,14 +23,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-
-
 // ReSharper disable CheckNamespace
-
-namespace Aaru.Tests.Filesystems.HFSPlus;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -38,17 +34,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class GPT : FilesystemTest
-{
-    public GPT() : base("HFS+") {}
+namespace Aaru.Tests.Filesystems.HFSPlus;
 
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Apple HFS+ (GPT)");
+[TestFixture]
+public class GPT() : FilesystemTest("hfsplus")
+{
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS+ (GPT)");
     public override IFilesystem Plugin     => new AppleHFSPlus();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "macosx_10.11.aif",
@@ -71,5 +67,5 @@ public class GPT : FilesystemTest
             SystemId     = "HFSJ",
             VolumeSerial = "FD3CB598F3C6294A"
         }
-    };
+    ];
 }

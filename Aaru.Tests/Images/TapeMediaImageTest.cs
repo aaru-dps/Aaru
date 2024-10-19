@@ -1,14 +1,15 @@
-namespace Aaru.Tests.Images;
-
 using System;
 using System.IO;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Core;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images;
 
 public abstract class TapeMediaImageTest : BaseMediaImageTest
 {
@@ -16,6 +17,10 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
     const uint SECTORS_TO_READ = 256;
 
     public abstract TapeImageTestExpected[] Tests { get; }
+
+    [OneTimeSetUp]
+    public void InitTest() => PluginBase.Init();
+
 
     [Test]
     public void Tape()
@@ -29,35 +34,39 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as ITapeImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
-                Assert.AreEqual(true, image.IsTape, $"Is tape?: {testFile}");
+                Assert.That(image.IsTape, Is.True, string.Format(Localization.Is_tape_0, testFile));
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
-                        image.Files.Should().BeEquivalentTo(test.Files, $"Tape files: {testFile}");
+                        image.Files.Should()
+                             .BeEquivalentTo(test.Files, string.Format(Localization.Tape_files_0, testFile));
 
-                        image.TapePartitions.Should().BeEquivalentTo(test.Partitions, $"Tape partitions: {testFile}");
+                        image.TapePartitions.Should()
+                             .BeEquivalentTo(test.Partitions, string.Format(Localization.Tape_partitions_0, testFile));
                     });
+                }
             }
         });
     }
@@ -74,33 +83,43 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 using(new AssertionScope())
+                {
                     Assert.Multiple(() =>
                     {
-                        Assert.AreEqual(test.Sectors, image.Info.Sectors, $"Sectors: {testFile}");
-                        Assert.AreEqual(test.SectorSize, image.Info.SectorSize, $"Sector size: {testFile}");
-                        Assert.AreEqual(test.MediaType, image.Info.MediaType, $"Media type: {testFile}");
+                        Assert.That(image.Info.Sectors,
+                                    Is.EqualTo(test.Sectors),
+                                    string.Format(Localization.Sectors_0, testFile));
+
+                        Assert.That(image.Info.SectorSize,
+                                    Is.EqualTo(test.SectorSize),
+                                    string.Format(Localization.Sector_size_0, testFile));
+
+                        Assert.That(image.Info.MediaType,
+                                    Is.EqualTo(test.MediaType),
+                                    string.Format(Localization.Media_type_0, testFile));
                     });
+                }
             }
         });
     }
@@ -118,25 +137,25 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                 string testFile = test.TestFile;
 
                 bool exists = File.Exists(testFile);
-                Assert.True(exists, $"{testFile} not found");
+                Assert.That(exists, string.Format(Localization._0_not_found, testFile));
 
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                 // It arrives here...
-                if(!exists)
-                    continue;
+                if(!exists) continue;
 
-                var     filtersList = new FiltersList();
-                IFilter filter      = filtersList.GetFilter(testFile);
+                IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
                 var image = Activator.CreateInstance(Plugin.GetType()) as IMediaImage;
-                Assert.NotNull(image, $"Could not instantiate filesystem for {testFile}");
+
+                Assert.That(image,
+                            Is.Not.Null,
+                            string.Format(Localization.Could_not_instantiate_filesystem_for_0, testFile));
 
                 ErrorNumber opened = image.Open(filter);
-                Assert.AreEqual(ErrorNumber.NoError, opened, $"Open: {testFile}");
+                Assert.That(opened, Is.EqualTo(ErrorNumber.NoError), string.Format(Localization.Open_0, testFile));
 
-                if(opened != ErrorNumber.NoError)
-                    continue;
+                if(opened != ErrorNumber.NoError) continue;
 
                 ulong doneSectors = 0;
                 var   ctx         = new Md5Context();
@@ -157,11 +176,11 @@ public abstract class TapeMediaImageTest : BaseMediaImageTest
                         doneSectors += image.Info.Sectors - doneSectors;
                     }
 
-                    Assert.AreEqual(ErrorNumber.NoError, errno);
+                    Assert.That(errno, Is.EqualTo(ErrorNumber.NoError));
                     ctx.Update(sector);
                 }
 
-                Assert.AreEqual(test.Md5, ctx.End(), $"Hash: {testFile}");
+                Assert.That(ctx.End(), Is.EqualTo(test.Md5), string.Format(Localization.Hash_0, testFile));
             }
         });
     }

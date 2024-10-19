@@ -27,16 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Localization;
 using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ViewSectorViewModel : ViewModelBase
 {
@@ -64,6 +65,9 @@ public sealed class ViewSectorViewModel : ViewModelBase
         SectorNumber     = 0;
     }
 
+    public string SectorLabel     => UI.Title_Sector;
+    public string LongSectorLabel => UI.Show_long_sector;
+
     public string Title
     {
         get => _title;
@@ -77,14 +81,11 @@ public sealed class ViewSectorViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _sectorNumber, value);
 
-            byte[]      sector;
-            ErrorNumber errno;
+            ErrorNumber errno = LongSectorChecked
+                                    ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out byte[] sector)
+                                    : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
 
-            errno = LongSectorChecked ? _inputFormat.ReadSectorLong((ulong)SectorNumber, out sector)
-                        : _inputFormat.ReadSector((ulong)SectorNumber, out sector);
-
-            if(errno == ErrorNumber.NoError)
-                PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
+            if(errno == ErrorNumber.NoError) PrintHexText = PrintHex.ByteArrayToHexArrayString(sector, HEX_COLUMNS);
         }
     }
 

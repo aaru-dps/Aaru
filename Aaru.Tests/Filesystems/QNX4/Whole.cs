@@ -23,29 +23,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.QNX4;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.QNX4;
+
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole() : FilesystemTest("qnx4")
 {
-    public Whole() : base("QNX4 filesystem") {}
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "QNX 4 filesystem");
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "QNX 4 filesystem");
-
-    public override IFilesystem Plugin     => new QNX4();
+    public override IFilesystem Plugin     => new Aaru.Filesystems.QNX4();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "qnx_4.24_dsdd.img.lz",
@@ -82,5 +79,5 @@ public class Whole : FilesystemTest
             Clusters    = 2880,
             ClusterSize = 512
         }
-    };
+    ];
 }

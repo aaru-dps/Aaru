@@ -27,21 +27,24 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Filesystems.LisaFS;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders;
 using Aaru.Helpers;
 
+namespace Aaru.Filesystems;
+
 public sealed partial class LisaFS
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public ErrorNumber ReadLink(string path, out string dest)
     {
@@ -52,23 +55,21 @@ public sealed partial class LisaFS
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDir(string path, out List<string> contents)
+    public ErrorNumber OpenDir(string path, out IDirNode node)
     {
-        contents = null;
+        node = null;
         ErrorNumber error = LookupFileId(path, out short fileId, out bool isDir);
 
-        if(error != ErrorNumber.NoError)
-            return error;
+        if(error != ErrorNumber.NoError) return error;
 
-        if(!isDir)
-            return ErrorNumber.NotDirectory;
+        if(!isDir) return ErrorNumber.NotDirectory;
 
         /*List<CatalogEntry> catalog;
         error = ReadCatalog(fileId, out catalog);
         if(error != ErrorNumber.NoError)
             return error;*/
 
-        ReadDir(fileId, out contents);
+        ReadDir(fileId, out List<string> contents);
 
         // On debug add system files as readable files
         // Syntax similar to NTFS
@@ -84,36 +85,73 @@ public sealed partial class LisaFS
 
         contents.Sort();
 
+        node = new LisaDirNode
+        {
+            Path     = path,
+            Contents = contents.ToArray(),
+            Position = 0
+        };
+
         return ErrorNumber.NoError;
     }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDir(IDirNode node, out string filename)
+    {
+        filename = null;
+
+        if(!_mounted) return ErrorNumber.AccessDenied;
+
+        if(node is not LisaDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position < 0) return ErrorNumber.InvalidArgument;
+
+        if(mynode.Position >= mynode.Contents.Length) return ErrorNumber.NoError;
+
+        filename = mynode.Contents[mynode.Position++];
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber CloseDir(IDirNode node)
+    {
+        if(node is not LisaDirNode mynode) return ErrorNumber.InvalidArgument;
+
+        mynode.Position = -1;
+        mynode.Contents = null;
+
+        return ErrorNumber.NoError;
+    }
+
+#endregion
 
     void ReadDir(short dirId, out List<string> contents) =>
 
         // Do same trick as Mac OS X, replace filesystem '/' with '-',
         // as '-' is the path separator in Lisa OS
-        contents = (from entry in _catalogCache where entry.parentID == dirId
-                    select StringHandlers.CToString(entry.filename, Encoding).Replace('/', '-')).ToList();
+        contents = (from entry in _catalogCache
+                    where entry.parentID == dirId
+                    select StringHandlers.CToString(entry.filename, _encoding).Replace('/', '-')).ToList();
 
     /// <summary>Reads, interprets and caches the Catalog File</summary>
     ErrorNumber ReadCatalog()
     {
         ErrorNumber errno;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
-        _catalogCache = new List<CatalogEntry>();
+        _catalogCache = [];
 
         // Do differently for V1 and V2
         if(_mddf.fsversion is LISA_V2 or LISA_V1)
         {
             ErrorNumber error = ReadFile((short)FILEID_CATALOG, out byte[] buf);
 
-            if(error != ErrorNumber.NoError)
-                return error;
+            if(error != ErrorNumber.NoError) return error;
 
             var                  offset    = 0;
-            List<CatalogEntryV2> catalogV2 = new();
+            List<CatalogEntryV2> catalogV2 = [];
 
             // For each entry on the catalog
             while(offset + 54 < buf.Length)
@@ -135,10 +173,7 @@ public sealed partial class LisaFS
                 offset += 54;
 
                 // Check that the entry is correct, not empty or garbage
-                if(entV2.filenameLen != 0      &&
-                   entV2.filenameLen <= E_NAME &&
-                   entV2.fileType    != 0      &&
-                   entV2.fileID      > 0)
+                if(entV2.filenameLen != 0 && entV2.filenameLen <= E_NAME && entV2.fileType != 0 && entV2.fileID > 0)
                     catalogV2.Add(entV2);
             }
 
@@ -147,8 +182,7 @@ public sealed partial class LisaFS
             {
                 error = ReadExtentsFile(entV2.fileID, out ExtentFile ext);
 
-                if(error != ErrorNumber.NoError)
-                    continue;
+                if(error != ErrorNumber.NoError) continue;
 
                 var entV3 = new CatalogEntry
                 {
@@ -177,26 +211,21 @@ public sealed partial class LisaFS
         {
             errno = _device.ReadSectorTag(i, SectorTagType.AppleSectorTag, out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                continue;
+            if(errno != ErrorNumber.NoError) continue;
 
             DecodeTag(tag, out LisaTag.PriamTag catTag);
 
-            if(catTag.FileId  != FILEID_CATALOG ||
-               catTag.RelPage != 0)
-                continue;
+            if(catTag.FileId != FILEID_CATALOG || catTag.RelPage != 0) continue;
 
             errno = _device.ReadSectors(i, 4, out firstCatalogBlock);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             break;
         }
 
         // Catalog not found
-        if(firstCatalogBlock == null)
-            return ErrorNumber.NoSuchFile;
+        if(firstCatalogBlock == null) return ErrorNumber.NoSuchFile;
 
         ulong prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
 
@@ -204,51 +233,46 @@ public sealed partial class LisaFS
         while(prevCatalogPointer != 0xFFFFFFFF)
         {
             errno = _device.ReadSectorTag(prevCatalogPointer + _mddf.mddf_block + _volumePrefix,
-                                          SectorTagType.AppleSectorTag, out byte[] tag);
+                                          SectorTagType.AppleSectorTag,
+                                          out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             DecodeTag(tag, out LisaTag.PriamTag prevTag);
 
-            if(prevTag.FileId != FILEID_CATALOG)
-                return ErrorNumber.InvalidArgument;
+            if(prevTag.FileId != FILEID_CATALOG) return ErrorNumber.InvalidArgument;
 
-            errno = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix, 4,
+            errno = _device.ReadSectors(prevCatalogPointer + _mddf.mddf_block + _volumePrefix,
+                                        4,
                                         out firstCatalogBlock);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             prevCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7F6);
         }
 
         ulong nextCatalogPointer = BigEndianBitConverter.ToUInt32(firstCatalogBlock, 0x7FA);
 
-        List<byte[]> catalogBlocks = new()
-        {
-            firstCatalogBlock
-        };
+        List<byte[]> catalogBlocks = [firstCatalogBlock];
 
         // Traverse double-linked list to read full catalog
         while(nextCatalogPointer != 0xFFFFFFFF)
         {
             errno = _device.ReadSectorTag(nextCatalogPointer + _mddf.mddf_block + _volumePrefix,
-                                          SectorTagType.AppleSectorTag, out byte[] tag);
+                                          SectorTagType.AppleSectorTag,
+                                          out byte[] tag);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             DecodeTag(tag, out LisaTag.PriamTag nextTag);
 
-            if(nextTag.FileId != FILEID_CATALOG)
-                return ErrorNumber.InvalidArgument;
+            if(nextTag.FileId != FILEID_CATALOG) return ErrorNumber.InvalidArgument;
 
-            errno = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix, 4,
+            errno = _device.ReadSectors(nextCatalogPointer + _mddf.mddf_block + _volumePrefix,
+                                        4,
                                         out byte[] nextCatalogBlock);
 
-            if(errno != ErrorNumber.NoError)
-                return errno;
+            if(errno != ErrorNumber.NoError) return errno;
 
             nextCatalogPointer = BigEndianBitConverter.ToUInt32(nextCatalogBlock, 0x7FA);
             catalogBlocks.Add(nextCatalogBlock);
@@ -263,6 +287,7 @@ public sealed partial class LisaFS
             while(offset + 64 <= buf.Length)
 
                 // Catalog block header
+            {
                 if(buf[offset + 0x24] == 0x08)
                     offset += 78;
 
@@ -275,8 +300,7 @@ public sealed partial class LisaFS
                     break;
 
                 // Normal entry
-                else if(buf[offset + 0x24] == 0x03 &&
-                        buf[offset]        == 0x24)
+                else if(buf[offset + 0x24] == 0x03 && buf[offset] == 0x24)
                 {
                     var entry = new CatalogEntry
                     {
@@ -295,21 +319,22 @@ public sealed partial class LisaFS
                     };
 
                     Array.Copy(buf, offset + 0x03, entry.filename, 0, E_NAME);
-                    Array.Copy(buf, offset + 0x38, entry.tail, 0, 8);
+                    Array.Copy(buf, offset + 0x38, entry.tail,     0, 8);
 
                     if(ReadExtentsFile(entry.fileID, out _) == ErrorNumber.NoError)
+                    {
                         if(!_fileSizeCache.ContainsKey(entry.fileID))
                         {
                             _catalogCache.Add(entry);
                             _fileSizeCache.Add(entry.fileID, entry.length);
                         }
+                    }
 
                     offset += 64;
                 }
 
                 // Subdirectory entry
-                else if(buf[offset + 0x24] == 0x01 &&
-                        buf[offset]        == 0x24)
+                else if(buf[offset + 0x24] == 0x01 && buf[offset] == 0x24)
                 {
                     var entry = new CatalogEntry
                     {
@@ -338,6 +363,7 @@ public sealed partial class LisaFS
                 }
                 else
                     break;
+            }
         }
 
         return ErrorNumber.NoError;
@@ -347,8 +373,7 @@ public sealed partial class LisaFS
     {
         stat = null;
 
-        if(!_mounted)
-            return ErrorNumber.AccessDenied;
+        if(!_mounted) return ErrorNumber.AccessDenied;
 
         stat = new FileEntryInfo
         {

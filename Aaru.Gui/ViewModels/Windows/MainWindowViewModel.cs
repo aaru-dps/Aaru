@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.Generic;
@@ -55,25 +53,27 @@ using Aaru.Gui.ViewModels.Panels;
 using Aaru.Gui.Views.Dialogs;
 using Aaru.Gui.Views.Panels;
 using Aaru.Gui.Views.Windows;
-using Aaru.Settings;
+using Aaru.Localization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Platform.Storage;
 using JetBrains.Annotations;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
-using Console = Aaru.Gui.Views.Dialogs.Console;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 using ImageInfo = Aaru.Gui.Views.Panels.ImageInfo;
 using Partition = Aaru.Gui.Views.Panels.Partition;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
+namespace Aaru.Gui.ViewModels.Windows;
+
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    readonly IAssetLoader     _assets;
+    const    string           MODULE_NAME = "Main Window ViewModel";
     readonly DevicesRootModel _devicesRoot;
     readonly Bitmap           _ejectIcon;
     readonly Bitmap           _genericFolderIcon;
@@ -85,7 +85,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     readonly Bitmap           _sdIcon;
     readonly Bitmap           _usbIcon;
     readonly MainWindow       _view;
-    Console                   _console;
+    Views.Dialogs.Console     _console;
     object                    _contentPanel;
     bool                      _devicesSupported;
     object                    _treeViewSelectedItem;
@@ -109,13 +109,12 @@ public sealed class MainWindowViewModel : ViewModelBase
         DecodeImageMediaTagsCommand = ReactiveCommand.Create(ExecuteDecodeImageMediaTagsCommand);
         RefreshDevicesCommand       = ReactiveCommand.Create(ExecuteRefreshDevicesCommand);
         _view                       = view;
-        TreeRoot                    = new ObservableCollection<RootModel>();
-        _assets                     = AvaloniaLocator.Current.GetService<IAssetLoader>();
+        TreeRoot                    = [];
         ContentPanel                = Greeting;
 
         _imagesRoot = new ImagesRootModel
         {
-            Name = "Images"
+            Name = UI.Title_Images
         };
 
         TreeRoot.Add(_imagesRoot);
@@ -127,7 +126,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             case PlatformID.FreeBSD:
                 _devicesRoot = new DevicesRootModel
                 {
-                    Name = "Devices"
+                    Name = UI.Title_Devices
                 };
 
                 TreeRoot.Add(_devicesRoot);
@@ -136,33 +135,55 @@ public sealed class MainWindowViewModel : ViewModelBase
                 break;
         }
 
-        if(_assets == null)
-            return;
-
         _genericHddIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
 
         _genericOpticalIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
 
         _genericTapeIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-tape.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-tape.png")));
 
         _genericFolderIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         _usbIcon =
             new
-                Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
+                Bitmap(AssetLoader.Open(new
+                                            Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media-usb.png")));
 
         _removableIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
+            new
+                Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-removable-media.png")));
 
         _sdIcon =
-            new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-flash-sd-mmc.png")));
 
-        _ejectIcon = new Bitmap(_assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
+        _ejectIcon =
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/media-eject.png")));
     }
+
+    public string FileLabel                 => UI.Menu_File;
+    public string OpenLabel                 => UI.Menu_Open;
+    public string SettingsLabel             => UI.Menu_Settings;
+    public string ExitLabel                 => UI.Menu_Exit;
+    public string DevicesLabel              => UI.Menu_Devices;
+    public string RefreshDevicesLabel       => UI.Menu_Refresh;
+    public string WindowLabel               => UI.Menu_Window;
+    public string ConsoleLabel              => UI.Menu_Console;
+    public string HelpLabel                 => UI.Menu_Help;
+    public string EncodingsLabel            => UI.Menu_Encodings;
+    public string PluginsLabel              => UI.Menu_Plugins;
+    public string StatisticsLabel           => UI.Menu_Statistics;
+    public string AboutLabel                => UI.Menu_About;
+    public string RefreshDevicesFullLabel   => UI.Menu_Refresh_devices;
+    public string CloseAllImagesLabel       => UI.Menu_Close_all_images;
+    public string CalculateEntropyLabel     => UI.ButtonLabel_Calculate_entropy;
+    public string VerifyImageLabel          => UI.ButtonLabel_Verify;
+    public string ChecksumImageLabel        => UI.ButtonLabel_Checksum;
+    public string CreateSidecarLabel        => UI.ButtonLabel_Create_Aaru_Metadata_sidecar;
+    public string ViewImageSectorsLabel     => UI.ButtonLabel_View_sectors;
+    public string DecodeImageMediaTagsLabel => UI.ButtonLabel_Decode_media_tags;
 
     public bool DevicesSupported
     {
@@ -170,12 +191,20 @@ public sealed class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _devicesSupported, value);
     }
 
-    public bool NativeMenuSupported =>
-        NativeMenu.GetIsNativeMenuExported((Application.Current?.ApplicationLifetime as
-                                                IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+    public bool NativeMenuSupported
+    {
+        get
+        {
+            Window mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+              ?.MainWindow;
+
+            return mainWindow is not null && NativeMenu.GetIsNativeMenuExported(mainWindow);
+        }
+    }
 
     [NotNull]
-    public string Greeting => "Welcome to Aaru!";
+    public string Greeting => UI.Welcome_to_Aaru;
+
     public ObservableCollection<RootModel> TreeRoot                    { get; }
     public ReactiveCommand<Unit, Unit>     AboutCommand                { get; }
     public ReactiveCommand<Unit, Unit>     ConsoleCommand              { get; }
@@ -205,8 +234,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         get => _treeViewSelectedItem;
         set
         {
-            if(value == _treeViewSelectedItem)
-                return;
+            if(value == _treeViewSelectedItem) return;
 
             this.RaiseAndSetIfChanged(ref _treeViewSelectedItem, value);
 
@@ -251,11 +279,12 @@ public sealed class MainWindowViewModel : ViewModelBase
                         switch(dev)
                         {
                             case null:
-                                ContentPanel = $"Error {devErrno} opening device";
+                                ContentPanel = string.Format(UI.Error_0_opening_device, devErrno);
 
                                 return;
                             case Devices.Remote.Device remoteDev:
-                                Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
+                                Statistics.AddRemote(remoteDev.RemoteApplication,
+                                                     remoteDev.RemoteVersion,
                                                      remoteDev.RemoteOperatingSystem,
                                                      remoteDev.RemoteOperatingSystemVersion,
                                                      remoteDev.RemoteArchitecture);
@@ -265,7 +294,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                         if(dev.Error)
                         {
-                            ContentPanel = $"Error {dev.LastError} opening device";
+                            ContentPanel = string.Format(UI.Error_0_opening_device, dev.LastError);
 
                             return;
                         }
@@ -275,23 +304,27 @@ public sealed class MainWindowViewModel : ViewModelBase
                         deviceModel.ViewModel = new DeviceInfoViewModel(devInfo, _view);
 
                         if(!dev.IsRemovable)
+                        {
                             deviceModel.Media.Add(new MediaModel
                             {
                                 NonRemovable = true,
-                                Name         = "Non-removable device commands not yet implemented"
+                                Name         = UI.Non_removable_device_commands_not_yet_implemented
                             });
+                        }
                         else
                         {
                             // TODO: Removable non-SCSI?
                             var scsiInfo = new ScsiInfo(dev);
 
                             if(!scsiInfo.MediaInserted)
+                            {
                                 deviceModel.Media.Add(new MediaModel
                                 {
                                     NoMediaInserted = true,
                                     Icon            = _ejectIcon,
-                                    Name            = "No media inserted"
+                                    Name            = UI.No_media_inserted
                                 });
+                            }
                             else
                             {
                                 var mediaResource =
@@ -300,7 +333,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 deviceModel.Media.Add(new MediaModel
                                 {
                                     DevicePath = deviceModel.Path,
-                                    Icon = _assets.Exists(mediaResource) ? new Bitmap(_assets.Open(mediaResource))
+                                    Icon = AssetLoader.Exists(mediaResource)
+                                               ? new Bitmap(AssetLoader.Open(mediaResource))
                                                : null,
                                     Name      = $"{scsiInfo.MediaType}",
                                     ViewModel = new MediaInfoViewModel(scsiInfo, deviceModel.Path, _view)
@@ -319,20 +353,22 @@ public sealed class MainWindowViewModel : ViewModelBase
                     break;
                 }
                 case MediaModel { NonRemovable: true }:
-                    ContentPanel = "Non-removable device commands not yet implemented";
+                    ContentPanel = UI.Non_removable_device_commands_not_yet_implemented;
 
                     break;
                 case MediaModel { NoMediaInserted: true }:
-                    ContentPanel = "No media inserted";
+                    ContentPanel = UI.No_media_inserted;
 
                     break;
                 case MediaModel mediaModel:
                 {
                     if(mediaModel.ViewModel != null)
+                    {
                         ContentPanel = new MediaInfo
                         {
                             DataContext = mediaModel.ViewModel
                         };
+                    }
 
                     break;
                 }
@@ -342,8 +378,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCalculateEntropyCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageEntropyWindow = new ImageEntropy();
         imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
@@ -355,8 +390,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteVerifyImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageVerifyWindow = new ImageVerify();
         imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
@@ -368,8 +402,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteChecksumImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageChecksumWindow = new ImageChecksum();
         imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
@@ -381,8 +414,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteConvertImageCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageConvertWindow = new ImageConvert();
 
@@ -396,14 +428,16 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteCreateSidecarCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         var imageSidecarWindow = new ImageSidecar();
 
         // TODO: Pass thru chosen default encoding
         imageSidecarWindow.DataContext =
-            new ImageSidecarViewModel(imageModel.Image, imageModel.Path, imageModel.Filter.Id, null,
+            new ImageSidecarViewModel(imageModel.Image,
+                                      imageModel.Path,
+                                      imageModel.Filter.Id,
+                                      null,
                                       imageSidecarWindow);
 
         imageSidecarWindow.Show();
@@ -411,8 +445,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteViewImageSectorsCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         new ViewSector
         {
@@ -422,8 +455,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteDecodeImageMediaTagsCommand()
     {
-        if(!(TreeViewSelectedItem is ImageModel imageModel))
-            return;
+        if(TreeViewSelectedItem is not ImageModel imageModel) return;
 
         new DecodeMediaTags
         {
@@ -454,7 +486,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void ExecuteStatisticsCommand()
     {
-        using var ctx = AaruContext.Create(Settings.LocalDbPath);
+        using var ctx = AaruContext.Create(Settings.Settings.LocalDbPath);
 
         if(!ctx.Commands.Any()     &&
            !ctx.Filesystems.Any()  &&
@@ -464,7 +496,8 @@ public sealed class MainWindowViewModel : ViewModelBase
            !ctx.Partitions.Any()   &&
            !ctx.SeenDevices.Any())
         {
-            MessageBoxManager.GetMessageBoxStandardWindow("Warning", "There are no statistics.").ShowDialog(_view);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Warning, UI.There_are_no_statistics)
+                             .ShowWindowDialogAsync(_view);
 
             return;
         }
@@ -488,7 +521,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         if(_console is null)
         {
-            _console             = new Console();
+            _console             = new Views.Dialogs.Console();
             _console.DataContext = new ConsoleViewModel(_console);
         }
 
@@ -498,41 +531,43 @@ public sealed class MainWindowViewModel : ViewModelBase
     async Task ExecuteOpenCommand()
     {
         // TODO: Extensions
-        var dlgOpenImage = new OpenFileDialog
+        IReadOnlyList<IStorageFile> result = await _view.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
         {
-            Title         = "Choose image to open",
-            AllowMultiple = false
-        };
+            Title         = UI.Dialog_Choose_image_to_open,
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
+            {
+                FilePickerFileTypes.All
+            }
+        });
 
-        string[] result = await dlgOpenImage.ShowAsync(_view);
+        if(result.Count != 1) return;
 
-        if(result?.Length != 1)
-            return;
-
-        var     filtersList = new FiltersList();
-        IFilter inputFilter = filtersList.GetFilter(result[0]);
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(result[0].Path.AbsolutePath);
 
         if(inputFilter == null)
         {
-            MessageBoxManager.GetMessageBoxStandardWindow("Error", "Cannot open specified file.", ButtonEnum.Ok,
-                                                          Icon.Error);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                    UI.Cannot_open_specified_file,
+                                                    ButtonEnum.Ok,
+                                                    Icon.Error);
 
             return;
         }
 
         try
         {
-            var imageFormat = ImageFormat.Detect(inputFilter) as IMediaImage;
-
-            if(imageFormat == null)
+            if(ImageFormat.Detect(inputFilter) is not IMediaImage imageFormat)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Image format not identified.", ButtonEnum.Ok,
-                                                              Icon.Error);
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                        UI.Image_format_not_identified,
+                                                        ButtonEnum.Ok,
+                                                        Icon.Error);
 
                 return;
             }
 
-            AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+            AaruConsole.WriteLine(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
 
             try
             {
@@ -540,11 +575,13 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 if(opened != ErrorNumber.NoError)
                 {
-                    MessageBoxManager.GetMessageBoxStandardWindow("Error", $"Error {opened} opening image format.",
-                                                                  ButtonEnum.Ok, Icon.Error);
+                    MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                            string.Format(UI.Error_0_opening_image_format, opened),
+                                                            ButtonEnum.Ok,
+                                                            Icon.Error);
 
-                    AaruConsole.ErrorWriteLine("Unable to open image format");
-                    AaruConsole.ErrorWriteLine("No error given");
+                    AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                    AaruConsole.ErrorWriteLine(UI.No_error_given);
 
                     return;
                 }
@@ -553,37 +590,36 @@ public sealed class MainWindowViewModel : ViewModelBase
 
                 var imageModel = new ImageModel
                 {
-                    Path = result[0],
-                    Icon = _assets.Exists(mediaResource)
-                               ? new Bitmap(_assets.Open(mediaResource))
-                               : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+                    Path = result[0].Path.AbsolutePath,
+                    Icon = AssetLoader.Exists(mediaResource)
+                               ? new Bitmap(AssetLoader.Open(mediaResource))
+                               : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                                    ? _genericHddIcon
-                                   : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                                   : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
                                        ? _genericOpticalIcon
                                        : _genericFolderIcon,
-                    FileName  = Path.GetFileName(result[0]),
+                    FileName  = Path.GetFileName(result[0].Path.AbsolutePath),
                     Image     = imageFormat,
-                    ViewModel = new ImageInfoViewModel(result[0], inputFilter, imageFormat, _view),
+                    ViewModel = new ImageInfoViewModel(result[0].Path.AbsolutePath, inputFilter, imageFormat, _view),
                     Filter    = inputFilter
                 };
 
-                List<CommonTypes.Partition> partitions = Partitions.GetAll(imageFormat);
-                Partitions.AddSchemesToStats(partitions);
+                List<CommonTypes.Partition> partitions = Core.Partitions.GetAll(imageFormat);
+                Core.Partitions.AddSchemesToStats(partitions);
 
-                var          checkRaw = false;
-                List<string> idPlugins;
-                IFilesystem  plugin;
-                PluginBase   plugins = GetPluginBase.Instance;
+                var            checkRaw = false;
+                List<string>   idPlugins;
+                PluginRegister plugins = PluginRegister.Singleton;
 
                 if(partitions.Count == 0)
                 {
-                    AaruConsole.DebugWriteLine("Fs-info command", "No partitions found");
+                    AaruConsole.DebugWriteLine(MODULE_NAME, UI.No_partitions_found);
 
                     checkRaw = true;
                 }
                 else
                 {
-                    AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
+                    AaruConsole.WriteLine(UI._0_partitions_found, partitions.Count);
 
                     foreach(string scheme in partitions.Select(p => p.Scheme).Distinct().OrderBy(s => s))
                     {
@@ -593,8 +629,8 @@ public sealed class MainWindowViewModel : ViewModelBase
                             Name = scheme
                         };
 
-                        foreach(CommonTypes.Partition partition in partitions.Where(p => p.Scheme == scheme).
-                                                                              OrderBy(p => p.Start))
+                        foreach(CommonTypes.Partition partition in partitions.Where(p => p.Scheme == scheme)
+                                                                             .OrderBy(p => p.Start))
                         {
                             var partitionModel = new PartitionModel
                             {
@@ -604,59 +640,68 @@ public sealed class MainWindowViewModel : ViewModelBase
                                 ViewModel = new PartitionViewModel(partition)
                             };
 
-                            AaruConsole.WriteLine("Identifying filesystem on partition");
+                            AaruConsole.WriteLine(UI.Identifying_filesystems_on_partition);
 
-                            Filesystems.Identify(imageFormat, out idPlugins, partition);
+                            Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                             if(idPlugins.Count == 0)
-                                AaruConsole.WriteLine("Filesystem not identified");
+                                AaruConsole.WriteLine(UI.Filesystem_not_identified);
                             else
                             {
-                                AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                                AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                                 foreach(string pluginName in idPlugins)
-                                    if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                                {
+                                    if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs)) continue;
+                                    if(fs is null) continue;
+
+                                    fs.GetInformation(imageFormat,
+                                                      partition,
+                                                      null,
+                                                      out string information,
+                                                      out CommonTypes.AaruMetadata.FileSystem fsMetadata);
+
+                                    var rofs = fs as IReadOnlyFilesystem;
+
+                                    if(rofs != null)
                                     {
-                                        plugin.GetInformation(imageFormat, partition, out string information, null);
+                                        ErrorNumber error = rofs.Mount(imageFormat,
+                                                                       partition,
+                                                                       null,
+                                                                       new Dictionary<string, string>(),
+                                                                       null);
 
-                                        var fsPlugin = plugin as IReadOnlyFilesystem;
-
-                                        if(fsPlugin != null)
-                                        {
-                                            ErrorNumber error =
-                                                fsPlugin.Mount(imageFormat, partition, null,
-                                                               new Dictionary<string, string>(), null);
-
-                                            if(error != ErrorNumber.NoError)
-                                                fsPlugin = null;
-                                        }
-
-                                        var filesystemModel = new FileSystemModel
-                                        {
-                                            VolumeName =
-                                                plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
-                                                    : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                            Filesystem         = plugin,
-                                            ReadOnlyFilesystem = fsPlugin,
-                                            ViewModel          = new FileSystemViewModel(plugin.XmlFsType, information)
-                                        };
-
-                                        // TODO: Trap expanding item
-                                        if(fsPlugin != null)
-                                        {
-                                            filesystemModel.Roots.Add(new SubdirectoryModel
-                                            {
-                                                Name   = "/",
-                                                Path   = "",
-                                                Plugin = fsPlugin
-                                            });
-
-                                            Statistics.AddCommand("ls");
-                                        }
-
-                                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
-                                        partitionModel.FileSystems.Add(filesystemModel);
+                                        if(error != ErrorNumber.NoError) rofs = null;
                                     }
+
+                                    var filesystemModel = new FileSystemModel
+                                    {
+                                        VolumeName = rofs?.Metadata.VolumeName is null
+                                                         ? fsMetadata.VolumeName is null
+                                                               ? $"{fsMetadata.Type}"
+                                                               : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                         : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
+                                        Filesystem = fs,
+                                        ReadOnlyFilesystem = rofs,
+                                        ViewModel = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
+                                    };
+
+                                    // TODO: Trap expanding item
+                                    if(rofs != null)
+                                    {
+                                        filesystemModel.Roots.Add(new SubdirectoryModel
+                                        {
+                                            Name   = "/",
+                                            Path   = "",
+                                            Plugin = rofs
+                                        });
+
+                                        Statistics.AddCommand("ls");
+                                    }
+
+                                    Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
+                                    partitionModel.FileSystems.Add(filesystemModel);
+                                }
                             }
 
                             schemeModel.Partitions.Add(partitionModel);
@@ -670,60 +715,71 @@ public sealed class MainWindowViewModel : ViewModelBase
                 {
                     var wholePart = new CommonTypes.Partition
                     {
-                        Name   = "Whole device",
+                        Name   = Localization.Core.Whole_device,
                         Length = imageFormat.Info.Sectors,
                         Size   = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                     };
 
-                    Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                    Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                     if(idPlugins.Count == 0)
-                        AaruConsole.WriteLine("Filesystem not identified");
+                        AaruConsole.WriteLine(UI.Filesystem_not_identified);
                     else
                     {
-                        AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                        AaruConsole.WriteLine(string.Format(UI.Identified_by_0_plugins, idPlugins.Count));
 
                         foreach(string pluginName in idPlugins)
-                            if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
+                        {
+                            if(!plugins.Filesystems.TryGetValue(pluginName, out IFilesystem fs)) continue;
+                            if(fs is null) continue;
+
+                            fs.GetInformation(imageFormat,
+                                              wholePart,
+                                              null,
+                                              out string information,
+                                              out CommonTypes.AaruMetadata.FileSystem fsMetadata);
+
+                            var rofs = fs as IReadOnlyFilesystem;
+
+                            if(rofs != null)
                             {
-                                plugin.GetInformation(imageFormat, wholePart, out string information, null);
+                                ErrorNumber error = rofs.Mount(imageFormat,
+                                                               wholePart,
+                                                               null,
+                                                               new Dictionary<string, string>(),
+                                                               null);
 
-                                var fsPlugin = plugin as IReadOnlyFilesystem;
-
-                                if(fsPlugin != null)
-                                {
-                                    ErrorNumber error = fsPlugin.Mount(imageFormat, wholePart, null,
-                                                                       new Dictionary<string, string>(), null);
-
-                                    if(error != ErrorNumber.NoError)
-                                        fsPlugin = null;
-                                }
-
-                                var filesystemModel = new FileSystemModel
-                                {
-                                    VolumeName = plugin.XmlFsType.VolumeName is null ? $"{plugin.XmlFsType.Type}"
-                                                     : $"{plugin.XmlFsType.VolumeName} ({plugin.XmlFsType.Type})",
-                                    Filesystem         = plugin,
-                                    ReadOnlyFilesystem = fsPlugin,
-                                    ViewModel          = new FileSystemViewModel(plugin.XmlFsType, information)
-                                };
-
-                                // TODO: Trap expanding item
-                                if(fsPlugin != null)
-                                {
-                                    filesystemModel.Roots.Add(new SubdirectoryModel
-                                    {
-                                        Name   = "/",
-                                        Path   = "",
-                                        Plugin = fsPlugin
-                                    });
-
-                                    Statistics.AddCommand("ls");
-                                }
-
-                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
-                                imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
+                                if(error != ErrorNumber.NoError) rofs = null;
                             }
+
+                            var filesystemModel = new FileSystemModel
+                            {
+                                VolumeName = rofs?.Metadata.VolumeName is null
+                                                 ? fsMetadata.VolumeName is null
+                                                       ? $"{fsMetadata.Type}"
+                                                       : $"{fsMetadata.VolumeName} ({fsMetadata.Type})"
+                                                 : $"{rofs.Metadata.VolumeName} ({rofs.Metadata.Type})",
+                                Filesystem         = fs,
+                                ReadOnlyFilesystem = rofs,
+                                ViewModel          = new FileSystemViewModel(rofs?.Metadata ?? fsMetadata, information)
+                            };
+
+                            // TODO: Trap expanding item
+                            if(rofs != null)
+                            {
+                                filesystemModel.Roots.Add(new SubdirectoryModel
+                                {
+                                    Name   = "/",
+                                    Path   = "",
+                                    Plugin = rofs
+                                });
+
+                                Statistics.AddCommand("ls");
+                            }
+
+                            Statistics.AddFilesystem(rofs?.Metadata.Type ?? fsMetadata.Type);
+                            imageModel.PartitionSchemesOrFileSystems.Add(filesystemModel);
+                        }
                     }
                 }
 
@@ -735,21 +791,25 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             catch(Exception ex)
             {
-                MessageBoxManager.GetMessageBoxStandardWindow("Error", "Unable to open image format.", ButtonEnum.Ok,
-                                                              Icon.Error);
+                MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                        UI.Unable_to_open_image_format,
+                                                        ButtonEnum.Ok,
+                                                        Icon.Error);
 
-                AaruConsole.ErrorWriteLine("Unable to open image format");
-                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine(UI.Unable_to_open_image_format);
+                AaruConsole.ErrorWriteLine(Localization.Core.Error_0, ex.Message);
+                AaruConsole.WriteException(ex);
             }
         }
         catch(Exception ex)
         {
-            MessageBoxManager.GetMessageBoxStandardWindow("Error", "Exception reading file.", ButtonEnum.Ok,
-                                                          Icon.Error);
+            MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
+                                                    UI.Exception_reading_file,
+                                                    ButtonEnum.Ok,
+                                                    Icon.Error);
 
-            AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-            AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+            AaruConsole.ErrorWriteLine(string.Format(UI.Error_reading_file_0, ex.Message));
+            AaruConsole.WriteException(ex);
         }
 
         Statistics.AddCommand("image-info");
@@ -761,20 +821,24 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     void RefreshDevices()
     {
-        if(!DevicesSupported)
-            return;
+        if(!DevicesSupported) return;
 
         try
         {
-            AaruConsole.WriteLine("Refreshing devices");
+            AaruConsole.WriteLine(UI.Refreshing_devices);
             _devicesRoot.Devices.Clear();
 
-            foreach(Devices.DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
-                                                        ThenBy(d => d.Model))
+            foreach(Devices.DeviceInfo device in Device.ListDevices()
+                                                       .Where(d => d.Supported)
+                                                       .OrderBy(d => d.Vendor)
+                                                       .ThenBy(d => d.Model))
             {
-                AaruConsole.DebugWriteLine("Main window",
-                                           "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
-                                           device.Model, device.Vendor, device.Bus, device.Path);
+                AaruConsole.DebugWriteLine(MODULE_NAME,
+                                           UI.Found_supported_device_model_0_by_manufacturer_1_on_bus_2_and_path_3,
+                                           device.Model,
+                                           device.Vendor,
+                                           device.Bus,
+                                           device.Path);
 
                 var deviceModel = new DeviceModel
                 {
@@ -788,51 +852,34 @@ public sealed class MainWindowViewModel : ViewModelBase
                 if(dev != null)
                 {
                     if(dev is Devices.Remote.Device remoteDev)
-                        Statistics.AddRemote(remoteDev.RemoteApplication, remoteDev.RemoteVersion,
-                                             remoteDev.RemoteOperatingSystem, remoteDev.RemoteOperatingSystemVersion,
-                                             remoteDev.RemoteArchitecture);
-
-                    switch(dev.Type)
                     {
-                        case DeviceType.ATAPI:
-                        case DeviceType.SCSI:
-                            switch(dev.ScsiType)
-                            {
-                                case PeripheralDeviceTypes.DirectAccess:
-                                case PeripheralDeviceTypes.SCSIZonedBlockDevice:
-                                case PeripheralDeviceTypes.SimplifiedDevice:
-                                    deviceModel.Icon = dev.IsRemovable ? dev.IsUsb
-                                                                             ? _usbIcon
-                                                                             : _removableIcon : _genericHddIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.SequentialAccess:
-                                    deviceModel.Icon = _genericTapeIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.OpticalDevice:
-                                case PeripheralDeviceTypes.WriteOnceDevice:
-                                case PeripheralDeviceTypes.OCRWDevice:
-                                    deviceModel.Icon = _removableIcon;
-
-                                    break;
-                                case PeripheralDeviceTypes.MultiMediaDevice:
-                                    deviceModel.Icon = _genericOpticalIcon;
-
-                                    break;
-                            }
-
-                            break;
-                        case DeviceType.SecureDigital:
-                        case DeviceType.MMC:
-                            deviceModel.Icon = _sdIcon;
-
-                            break;
-                        case DeviceType.NVMe:
-                            deviceModel.Icon = null;
-
-                            break;
+                        Statistics.AddRemote(remoteDev.RemoteApplication,
+                                             remoteDev.RemoteVersion,
+                                             remoteDev.RemoteOperatingSystem,
+                                             remoteDev.RemoteOperatingSystemVersion,
+                                             remoteDev.RemoteArchitecture);
                     }
+
+                    deviceModel.Icon = dev.Type switch
+                                       {
+                                           DeviceType.ATAPI or DeviceType.SCSI => dev.ScsiType switch
+                                               {
+                                                   PeripheralDeviceTypes.DirectAccess
+                                                    or PeripheralDeviceTypes.SCSIZonedBlockDevice
+                                                    or PeripheralDeviceTypes.SimplifiedDevice => dev.IsRemovable
+                                                           ? dev.IsUsb ? _usbIcon : _removableIcon
+                                                           : _genericHddIcon,
+                                                   PeripheralDeviceTypes.SequentialAccess => _genericTapeIcon,
+                                                   PeripheralDeviceTypes.OpticalDevice
+                                                    or PeripheralDeviceTypes.WriteOnceDevice
+                                                    or PeripheralDeviceTypes.OCRWDevice => _removableIcon,
+                                                   PeripheralDeviceTypes.MultiMediaDevice => _genericOpticalIcon,
+                                                   _                                      => deviceModel.Icon
+                                               },
+                                           DeviceType.SecureDigital or DeviceType.MMC => _sdIcon,
+                                           DeviceType.NVMe                            => null,
+                                           _                                          => deviceModel.Icon
+                                       };
 
                     dev.Close();
                 }
@@ -842,7 +889,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
         catch(InvalidOperationException ex)
         {
-            AaruConsole.ErrorWriteLine(ex.Message);
+            AaruConsole.WriteException(ex);
         }
     }
 }

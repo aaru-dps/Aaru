@@ -27,10 +27,8 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Partitions;
 
 using System;
 using System.Collections.Generic;
@@ -43,6 +41,8 @@ using Aaru.Console;
 using Aaru.Helpers;
 using Marshal = Aaru.Helpers.Marshal;
 
+namespace Aaru.Partitions;
+
 // TODO: Support AAP extensions
 /// <inheritdoc />
 /// <summary>Implements decoding of Intel/Microsoft Master Boot Record and extensions</summary>
@@ -50,212 +50,269 @@ public sealed class MBR : IPartition
 {
     const ulong GPT_MAGIC = 0x5452415020494645;
 
-    const ushort MBR_MAGIC = 0xAA55;
-    const ushort NEC_MAGIC = 0xA55A;
-    const ushort DM_MAGIC  = 0x55AA;
+    const ushort MBR_MAGIC   = 0xAA55;
+    const ushort NEC_MAGIC   = 0xA55A;
+    const ushort DM_MAGIC    = 0x55AA;
+    const string MODULE_NAME = "Master Boot Record (MBR) plugin";
 
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     static readonly string[] _mbrTypes =
-    {
+    [
         // 0x00
-        "Empty", "FAT12", "XENIX root", "XENIX /usr",
+        Localization.Empty, Localization.FAT12, Localization.XENIX_root, Localization.XENIX_usr,
 
         // 0x04
-        "FAT16 < 32 MiB", "Extended", "FAT16", "IFS (HPFS/NTFS)",
+        Localization.FAT16_32_MiB, Localization.Extended, Localization.FAT16, Localization.IFS_HPFS_NTFS,
 
         // 0x08
-        "AIX boot, OS/2, Commodore DOS", "AIX data, Coherent, QNX", "Coherent swap, OPUS, OS/2 Boot Manager", "FAT32",
+        Localization.AIX_boot_OS2_Commodore_DOS, Localization.AIX_data_Coherent_QNX,
+        Localization.Coherent_swap_OPUS_OS_2_Boot_Manager, Localization.FAT32,
 
         // 0x0C
-        "FAT32 (LBA)", "Unknown", "FAT16 (LBA)", "Extended (LBA)",
+        Localization.FAT32_LBA, Localization.Unknown_partition_type, Localization.FAT16_LBA, Localization.Extended_LBA,
 
         // 0x10
-        "OPUS", "Hidden FAT12", "Compaq diagnostics, recovery partition", "Unknown",
+        Localization.OPUS, Localization.Hidden_FAT12, Localization.Compaq_diagnostics_recovery_partition,
+        Localization.Unknown_partition_type,
 
         // 0x14
-        "Hidden FAT16 < 32 MiB, AST-DOS", "Unknown", "Hidden FAT16", "Hidden IFS (HPFS/NTFS)",
+        Localization.Hidden_FAT16_32_MiB_AST_DOS, Localization.Unknown_partition_type, Localization.Hidden_FAT16,
+        Localization.Hidden_IFS_HPFS_NTFS,
 
         // 0x18
-        "AST-Windows swap", "Willowtech Photon coS", "Unknown", "Hidden FAT32",
+        Localization.AST_Windows_swap, Localization.Willowtech_Photon_coS, Localization.Unknown_partition_type,
+        Localization.Hidden_FAT32,
 
         // 0x1C
-        "Hidden FAT32 (LBA)", "Unknown", "Hidden FAT16 (LBA)", "Unknown",
+        Localization.Hidden_FAT32_LBA, Localization.Unknown_partition_type, Localization.Hidden_FAT16_LBA,
+        Localization.Unknown_partition_type,
 
         // 0x20
-        "Willowsoft Overture File System", "Oxygen FSo2", "Oxygen Extended ", "SpeedStor reserved",
+        Localization.Willowsoft_Overture_File_System, Localization.Oxygen_FSo2, Localization.Oxygen_Extended,
+        Localization.SpeedStor_reserved,
 
         // 0x24
-        "NEC-DOS", "Unknown", "SpeedStor reserved", "Hidden NTFS",
+        Localization.NEC_DOS, Localization.Unknown_partition_type, Localization.SpeedStor_reserved,
+        Localization.Hidden_NTFS,
 
         // 0x28
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x2C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x30
-        "Unknown", "SpeedStor reserved", "Unknown", "SpeedStor reserved",
+        Localization.Unknown_partition_type, Localization.SpeedStor_reserved, Localization.Unknown_partition_type,
+        Localization.SpeedStor_reserved,
 
         // 0x34
-        "SpeedStor reserved", "Unknown", "SpeedStor reserved", "Unknown",
+        Localization.SpeedStor_reserved, Localization.Unknown_partition_type, Localization.SpeedStor_reserved,
+        Localization.Unknown_partition_type,
 
         // 0x38
-        "Theos", "Plan 9", "Unknown", "Unknown",
+        Localization.Theos, Localization.Plan_9, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x3C
-        "Partition Magic", "Hidden NetWare", "Unknown", "Unknown",
+        Localization.Partition_Magic, Localization.Hidden_NetWare, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x40
-        "VENIX 80286", "PReP Boot", "Secure File System", "PTS-DOS",
+        Localization.VENIX_80286, Localization.PReP_Boot, Localization.Secure_File_System, Localization.PTS_DOS,
 
         // 0x44
-        "Unknown", "Priam, EUMEL/Elan", "EUMEL/Elan", "EUMEL/Elan",
+        Localization.Unknown_partition_type, Localization.Priam_EUMEL_Elan, Localization.EUMEL_Elan,
+        Localization.EUMEL_Elan,
 
         // 0x48
-        "EUMEL/Elan", "Unknown", "ALFS/THIN lightweight filesystem for DOS", "Unknown",
+        Localization.EUMEL_Elan, Localization.Unknown_partition_type,
+        Localization.ALFS_THIN_lightweight_filesystem_for_DOS, Localization.Unknown_partition_type,
 
         // 0x4C
-        "Unknown", "QNX 4", "QNX 4", "QNX 4, Oberon",
+        Localization.Unknown_partition_type, Localization.QNX_4, Localization.QNX_4, Localization.QNX_4_Oberon,
 
         // 0x50
-        "Ontrack DM, R/O, FAT", "Ontrack DM, R/W, FAT", "CP/M, Microport UNIX", "Ontrack DM 6",
+        Localization.Ontrack_DM_RO_FAT, Localization.Ontrack_DM_RW_FAT, Localization.CPM_Microport_UNIX,
+        Localization.Ontrack_DM_6,
 
         // 0x54
-        "Ontrack DM 6", "EZ-Drive", "Golden Bow VFeature", "Unknown",
+        Localization.Ontrack_DM_6, Localization.EZ_Drive, Localization.Golden_Bow_VFeature,
+        Localization.Unknown_partition_type,
 
         // 0x58
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x5C
-        "Priam EDISK", "Unknown", "Unknown", "Unknown",
+        Localization.Priam_EDISK, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x60
-        "Unknown", "SpeedStor", "Unknown", "GNU Hurd, System V, 386/ix",
+        Localization.Unknown_partition_type, Localization.SpeedStor, Localization.Unknown_partition_type,
+        Localization.GNU_Hurd_System_V_386ix,
 
         // 0x64
-        "NetWare 286", "NetWare", "NetWare 386", "NetWare",
+        Localization.NetWare_286, Localization.NetWare, Localization.NetWare_386, Localization.NetWare,
 
         // 0x68
-        "NetWare", "NetWare NSS", "Unknown", "Unknown",
+        Localization.NetWare, Localization.NetWare_NSS, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x6C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x70
-        "DiskSecure Multi-Boot", "Unknown", "UNIX 7th Edition", "Unknown",
+        Localization.DiskSecure_Multi_Boot, Localization.Unknown_partition_type, Localization.UNIX_7th_Edition,
+        Localization.Unknown_partition_type,
 
         // 0x74
-        "Unknown", "IBM PC/IX", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.IBM_PC_IX, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x78
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x7C
-        "Unknown", "Unknown", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x80
-        "Old MINIX", "MINIX, Old Linux", "Linux swap, Solaris", "Linux",
+        Localization.Old_MINIX, Localization.MINIX_Old_Linux, Localization.Linux_swap_Solaris, Localization.Linux,
 
         // 0x84
-        "Hidden by OS/2, APM hibernation", "Linux extended", "NT Stripe Set", "NT Stripe Set",
+        Localization.Hidden_by_OS2_APM_hibernation, Localization.Linux_extended, Localization.NT_Stripe_Set,
+        Localization.NT_Stripe_Set,
 
         // 0x88
-        "Linux Plaintext", "Unknown", "Unknown", "Unknown",
+        Localization.Linux_Plaintext, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x8C
-        "Unknown", "Unknown", "Linux LVM", "Unknown",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Linux_LVM,
+        Localization.Unknown_partition_type,
 
         // 0x90
-        "Unknown", "Unknown", "Unknown", "Amoeba, Hidden Linux",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Amoeba_Hidden_Linux,
 
         // 0x94
-        "Amoeba bad blocks", "Unknown", "Unknown", "Unknown",
+        Localization.Amoeba_bad_blocks, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x98
-        "Unknown", "Mylex EISA SCSI", "Unknown", "Unknown",
+        Localization.Unknown_partition_type, Localization.Mylex_EISA_SCSI, Localization.Unknown_partition_type,
+        Localization.Unknown_partition_type,
 
         // 0x9C
-        "Unknown", "Unknown", "Unknown", "BSD/OS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.BSD_OS,
 
         // 0xA0
-        "Hibernation", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+        Localization.Hibernation, Localization.HP_Volume_Expansion, Localization.Unknown_partition_type,
+        Localization.HP_Volume_Expansion,
 
         // 0xA4
-        "HP Volume Expansion", "FreeBSD", "OpenBSD", "NeXTStep",
+        Localization.HP_Volume_Expansion, Localization.FreeBSD, Localization.OpenBSD, Localization.NeXTStep,
 
         // 0xA8
-        "Apple UFS", "NetBSD", "Olivetti DOS FAT12", "Apple Boot",
+        Localization.Apple_UFS, Localization.NetBSD, Localization.Olivetti_DOS_FAT12, Localization.Apple_Boot,
 
         // 0xAC
-        "Unknown", "Unknown", "Unknown", "Apple HFS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.Apple_HFS,
 
         // 0xB0
-        "BootStar", "HP Volume Expansion", "Unknown", "HP Volume Expansion",
+        Localization.BootStar, Localization.HP_Volume_Expansion, Localization.Unknown_partition_type,
+        Localization.HP_Volume_Expansion,
 
         // 0xB4
-        "HP Volume Expansion", "Unknown", "HP Volume Expansion", "BSDi",
+        Localization.HP_Volume_Expansion, Localization.Unknown_partition_type, Localization.HP_Volume_Expansion,
+        Localization.BSDi,
 
         // 0xB8
-        "BSDi swap", "Unknown", "Unknown", "PTS BootWizard",
+        "BSDi swap", Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.PTS_BootWizard,
 
         // 0xBC
-        "Unknown", "Unknown", "Solaris boot", "Solaris",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Solaris_boot,
+        Localization.Solaris,
 
         // 0xC0
-        "Novell DOS, DR-DOS secured", "DR-DOS secured FAT12", "DR-DOS reserved", "DR-DOS reserved",
+        Localization.Novell_DOS_DR_DOS_secured, Localization.DR_DOS_secured_FAT12, Localization.DR_DOS_reserved,
+        Localization.DR_DOS_reserved,
 
         // 0xC4
-        "DR-DOS secured FAT16 < 32 MiB", "Unknown", "DR-DOS secured FAT16", "Syrinx",
+        Localization.DR_DOS_secured_FAT16_32_MiB, Localization.Unknown_partition_type,
+        Localization.DR_DOS_secured_FAT16, Localization.Syrinx,
 
         // 0xC8
-        "DR-DOS reserved", "DR-DOS reserved", "DR-DOS reserved", "DR-DOS secured FAT32",
+        Localization.DR_DOS_reserved, Localization.DR_DOS_reserved, Localization.DR_DOS_reserved,
+        Localization.DR_DOS_secured_FAT32,
 
         // 0xCC
-        "DR-DOS secured FAT32 (LBA)", "DR-DOS reserved", "DR-DOS secured FAT16 (LBA)", "DR-DOS secured extended (LBA)",
+        Localization.DR_DOS_secured_FAT32_LBA, Localization.DR_DOS_reserved, Localization.DR_DOS_secured_FAT16_LBA,
+        Localization.DR_DOS_secured_extended_LBA,
 
         // 0xD0
-        "Multiuser DOS secured FAT12", "Multiuser DOS secured FAT12", "Unknown", "Unknown",
+        Localization.Multiuser_DOS_secured_FAT12, Localization.Multiuser_DOS_secured_FAT12,
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type,
 
         // 0xD4
-        "Multiuser DOS secured FAT16 < 32 MiB", "Multiuser DOS secured extended", "Multiuser DOS secured FAT16",
-        "Unknown",
+        Localization.Multiuser_DOS_secured_FAT16_32_MiB, Localization.Multiuser_DOS_secured_extended,
+        Localization.Multiuser_DOS_secured_FAT16, Localization.Unknown_partition_type,
 
         // 0xD8
-        "CP/M", "Unknown", "Filesystem-less data", "CP/M, CCP/M, CTOS",
+        Localization.CPM, Localization.Unknown_partition_type, Localization.Filesystem_less_data,
+        Localization.CPM_CCPM_CTOS,
 
         // 0xDC
-        "Unknown", "Unknown", "Dell partition", "BootIt EMBRM",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Dell_partition,
+        Localization.BootIt_EMBRM,
 
         // 0xE0
-        "Unknown", "SpeedStor", "DOS read/only", "SpeedStor",
+        Localization.Unknown_partition_type, Localization.SpeedStor, Localization.DOS_read_only, Localization.SpeedStor,
 
         // 0xE4
-        "SpeedStor", "Tandy DOS", "SpeedStor", "Unknown",
+        Localization.SpeedStor, Localization.Tandy_DOS, Localization.SpeedStor, Localization.Unknown_partition_type,
 
         // 0xE8
-        "Unknown", "Unknown", "Unknown", "BeOS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.BeOS,
 
         // 0xEC
-        "Unknown", "Spryt*x", "Guid Partition Table", "EFI system partition",
+        Localization.Unknown_partition_type, Localization.Sprytx, Localization.Guid_Partition_Table,
+        Localization.EFI_system_partition,
 
         // 0xF0
-        "Linux boot", "SpeedStor", "DOS 3.3 secondary, Unisys DOS", "SpeedStor",
+        Localization.Linux_boot, Localization.SpeedStor, Localization.DOS_3_3_secondary_Unisys_DOS,
+        Localization.SpeedStor,
 
         // 0xF4
-        "SpeedStor", "Prologue", "SpeedStor", "Unknown",
+        Localization.SpeedStor, Localization.Prologue, Localization.SpeedStor, Localization.Unknown_partition_type,
 
         // 0xF8
-        "Unknown", "Unknown", "Unknown", "VMWare VMFS",
+        Localization.Unknown_partition_type, Localization.Unknown_partition_type, Localization.Unknown_partition_type,
+        Localization.VMware_VMFS,
 
         // 0xFC
-        "VMWare VMKCORE", "Linux RAID, FreeDOS", "SpeedStor, LANStep, PS/2 IML", "Xenix bad block"
-    };
+        Localization.VMWare_VMKCORE, Localization.Linux_RAID_FreeDOS, Localization.SpeedStor_LANStep_PS2_IML,
+        Localization.Xenix_bad_block
+    ];
+
+#region IPartition Members
 
     /// <inheritdoc />
-    public string Name => "Master Boot Record";
+    public string Name => Localization.MBR_Name;
+
     /// <inheritdoc />
     public Guid Id => new("5E8A34E8-4F1A-59E6-4BF7-7EA647063A76");
+
     /// <inheritdoc />
-    public string Author => "Natalia Portillo";
+    public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
     [SuppressMessage("ReSharper", "UnusedVariable")]
@@ -263,17 +320,16 @@ public sealed class MBR : IPartition
     {
         ulong counter = 0;
 
-        partitions = new List<Partition>();
+        partitions = [];
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         uint sectorSize = imagePlugin.Info.SectorSize;
 
         // Divider of sector size in MBR between real sector size
         ulong divider = 1;
 
-        if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             sectorSize = 512;
             divider    = 4;
@@ -281,8 +337,7 @@ public sealed class MBR : IPartition
 
         ErrorNumber errno = imagePlugin.ReadSector(sectorOffset, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         MasterBootRecord      mbr     = Marshal.ByteArrayToStructureLittleEndian<MasterBootRecord>(sector);
         TimedMasterBootRecord mbrTime = Marshal.ByteArrayToStructureLittleEndian<TimedMasterBootRecord>(sector);
@@ -296,37 +351,31 @@ public sealed class MBR : IPartition
         DiskManagerMasterBootRecord mbrOntrack =
             Marshal.ByteArrayToStructureLittleEndian<DiskManagerMasterBootRecord>(sector);
 
-        AaruConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}", imagePlugin.Info.XmlMediaType);
-        AaruConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "xmlmedia = {0}",     imagePlugin.Info.MetadataMediaType);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "mbr.magic = {0:X4}", mbr.magic);
 
-        if(mbr.magic != MBR_MAGIC)
-            return false; // Not MBR
+        if(mbr.magic != MBR_MAGIC) return false; // Not MBR
 
         errno = imagePlugin.ReadSector(1 + sectorOffset, out byte[] hdrBytes);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         var signature = BitConverter.ToUInt64(hdrBytes, 0);
 
-        AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "gpt.signature = 0x{0:X16}", signature);
 
-        if(signature == GPT_MAGIC)
-            return false;
+        if(signature == GPT_MAGIC) return false;
 
-        if(signature                     != GPT_MAGIC &&
-           imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+        if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
             errno = imagePlugin.ReadSector(sectorOffset, out hdrBytes);
 
-            if(errno != ErrorNumber.NoError)
-                return false;
+            if(errno != ErrorNumber.NoError) return false;
 
             signature = BitConverter.ToUInt64(hdrBytes, 512);
-            AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "gpt.signature @ 0x200 = 0x{0:X16}", signature);
 
-            if(signature == GPT_MAGIC)
-                return false;
+            if(signature == GPT_MAGIC) return false;
         }
 
         PartitionEntry[] entries;
@@ -341,9 +390,9 @@ public sealed class MBR : IPartition
         foreach(PartitionEntry entry in entries)
         {
             var   startSector   = (byte)(entry.start_sector & 0x3F);
-            var   startCylinder = (ushort)(((entry.start_sector & 0xC0) << 2) | entry.start_cylinder);
+            var   startCylinder = (ushort)((entry.start_sector & 0xC0) << 2 | entry.start_cylinder);
             var   endSector     = (byte)(entry.end_sector & 0x3F);
-            var   endCylinder   = (ushort)(((entry.end_sector & 0xC0) << 2) | entry.end_cylinder);
+            var   endCylinder   = (ushort)((entry.end_sector & 0xC0) << 2 | entry.end_cylinder);
             ulong lbaStart      = entry.lba_start;
             ulong lbaSectors    = entry.lba_sectors;
 
@@ -353,9 +402,7 @@ public sealed class MBR : IPartition
             var extended = false;
             var minix    = false;
 
-            if(entry.status != 0x00 &&
-               entry.status != 0x80)
-                return false; // Maybe a FAT filesystem
+            if(entry.status != 0x00 && entry.status != 0x80) return false; // Maybe a FAT filesystem
 
             valid &= entry.type != 0x00;
 
@@ -367,27 +414,36 @@ public sealed class MBR : IPartition
 
             minix |= entry.type is 0x81 or 0x80; // MINIX partition
 
-            valid &= entry.lba_start  != 0 || entry.lba_sectors  != 0 || entry.start_cylinder != 0 ||
-                     entry.start_head != 0 || entry.start_sector != 0 || entry.end_cylinder   != 0 ||
-                     entry.end_head   != 0 || entry.end_sector   != 0;
+            valid &= entry.lba_start      != 0 ||
+                     entry.lba_sectors    != 0 ||
+                     entry.start_cylinder != 0 ||
+                     entry.start_head     != 0 ||
+                     entry.start_sector   != 0 ||
+                     entry.end_cylinder   != 0 ||
+                     entry.end_head       != 0 ||
+                     entry.end_sector     != 0;
 
-            if(entry.lba_start   == 0 &&
-               entry.lba_sectors == 0 &&
-               valid)
+            if(entry is { lba_start: 0, lba_sectors: 0 } && valid)
             {
-                lbaStart = CHS.ToLBA(startCylinder, entry.start_head, startSector, imagePlugin.Info.Heads,
+                lbaStart = CHS.ToLBA(startCylinder,
+                                     entry.start_head,
+                                     startSector,
+                                     imagePlugin.Info.Heads,
                                      imagePlugin.Info.SectorsPerTrack);
 
-                lbaSectors = CHS.ToLBA(endCylinder, entry.end_head, entry.end_sector, imagePlugin.Info.Heads,
-                                       imagePlugin.Info.SectorsPerTrack) - lbaStart;
+                lbaSectors = CHS.ToLBA(endCylinder,
+                                       entry.end_head,
+                                       entry.end_sector,
+                                       imagePlugin.Info.Heads,
+                                       imagePlugin.Info.SectorsPerTrack) -
+                             lbaStart;
             }
 
             // For optical media
             lbaStart   /= divider;
             lbaSectors /= divider;
 
-            if(minix && lbaStart == sectorOffset)
-                minix = false;
+            if(minix && lbaStart == sectorOffset) minix = false;
 
             if(lbaStart > imagePlugin.Info.Sectors)
             {
@@ -396,36 +452,37 @@ public sealed class MBR : IPartition
             }
 
             // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-            if(lbaStart + lbaSectors > imagePlugin.Info.Sectors)
-                lbaSectors = imagePlugin.Info.Sectors - lbaStart;
+            if(lbaStart + lbaSectors > imagePlugin.Info.Sectors) lbaSectors = imagePlugin.Info.Sectors - lbaStart;
 
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.status {0}", entry.status);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.type {0}", entry.type);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.lba_start {0}", entry.lba_start);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.lba_sectors {0}", entry.lba_sectors);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.start_cylinder {0}", startCylinder);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.start_head {0}", entry.start_head);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.start_sector {0}", startSector);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.end_cylinder {0}", endCylinder);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.end_head {0}", entry.end_head);
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.end_sector {0}", endSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.status {0}",         entry.status);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.type {0}",           entry.type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_start {0}",      entry.lba_start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.lba_sectors {0}",    entry.lba_sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_cylinder {0}", startCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_head {0}",     entry.start_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.start_sector {0}",   startSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_cylinder {0}",   endCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_head {0}",       entry.end_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.end_sector {0}",     endSector);
 
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.minix = {0}", minix);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.minix = {0}", minix);
 
-            AaruConsole.DebugWriteLine("MBR plugin", "lba_start {0}", lbaStart);
-            AaruConsole.DebugWriteLine("MBR plugin", "lba_sectors {0}", lbaSectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "lba_start {0}",   lbaStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "lba_sectors {0}", lbaSectors);
 
             if(valid && minix) // Let's mix the fun
+            {
                 if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize, out List<Partition> mnxParts))
                     partitions.AddRange(mnxParts);
                 else
                     minix = false;
+            }
 
             if(valid && !minix)
             {
                 var part = new Partition();
 
-                if((lbaStart > 0 || imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc) &&
+                if((lbaStart > 0 || imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc) &&
                    lbaSectors > 0)
                 {
                     part.Start  = lbaStart + sectorOffset;
@@ -441,7 +498,7 @@ public sealed class MBR : IPartition
                     part.Type        = $"0x{entry.type:X2}";
                     part.Name        = DecodeMbrType(entry.type);
                     part.Sequence    = counter;
-                    part.Description = entry.status == 0x80 ? "Partition is bootable." : "";
+                    part.Description = entry.status == 0x80 ? Localization.Partition_is_bootable : "";
                     part.Scheme      = Name;
 
                     counter++;
@@ -450,10 +507,9 @@ public sealed class MBR : IPartition
                 }
             }
 
-            AaruConsole.DebugWriteLine("MBR plugin", "entry.extended = {0}", extended);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "entry.extended = {0}", extended);
 
-            if(!extended)
-                continue;
+            if(!extended) continue;
 
             var   processingExtended = true;
             ulong chainStart         = lbaStart;
@@ -462,15 +518,13 @@ public sealed class MBR : IPartition
             {
                 errno = imagePlugin.ReadSector(lbaStart, out sector);
 
-                if(errno != ErrorNumber.NoError)
-                    break;
+                if(errno != ErrorNumber.NoError) break;
 
                 ExtendedBootRecord ebr = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
-                AaruConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
 
-                if(ebr.magic != MBR_MAGIC)
-                    break;
+                if(ebr.magic != MBR_MAGIC) break;
 
                 ulong nextStart = 0;
 
@@ -478,41 +532,51 @@ public sealed class MBR : IPartition
                 {
                     var extValid = true;
                     startSector   = (byte)(ebrEntry.start_sector & 0x3F);
-                    startCylinder = (ushort)(((ebrEntry.start_sector & 0xC0) << 2) | ebrEntry.start_cylinder);
+                    startCylinder = (ushort)((ebrEntry.start_sector & 0xC0) << 2 | ebrEntry.start_cylinder);
                     endSector     = (byte)(ebrEntry.end_sector & 0x3F);
-                    endCylinder   = (ushort)(((ebrEntry.end_sector & 0xC0) << 2) | ebrEntry.end_cylinder);
+                    endCylinder   = (ushort)((ebrEntry.end_sector & 0xC0) << 2 | ebrEntry.end_cylinder);
                     ulong extStart   = ebrEntry.lba_start;
                     ulong extSectors = ebrEntry.lba_sectors;
                     var   extMinix   = false;
 
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}", ebrEntry.status);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}", ebrEntry.type);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_start {0}", ebrEntry.lba_start);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_sectors {0}", ebrEntry.lba_sectors);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_cylinder {0}", startCylinder);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_head {0}", ebrEntry.start_head);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_sector {0}", startSector);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_cylinder {0}", endCylinder);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_head {0}", ebrEntry.end_head);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_sector {0}", endSector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.status {0}",         ebrEntry.status);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.type {0}",           ebrEntry.type);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_start {0}",      ebrEntry.lba_start);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.lba_sectors {0}",    ebrEntry.lba_sectors);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_cylinder {0}", startCylinder);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_head {0}",     ebrEntry.start_head);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.start_sector {0}",   startSector);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_cylinder {0}",   endCylinder);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_head {0}",       ebrEntry.end_head);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ebr_entry.end_sector {0}",     endSector);
 
                     // Let's start the fun...
                     extValid &= ebrEntry.status is 0x00 or 0x80;
                     extValid &= ebrEntry.type != 0x00;
 
-                    extValid &= ebrEntry.lba_start  != 0 || ebrEntry.lba_sectors != 0 || ebrEntry.start_cylinder != 0 ||
-                                ebrEntry.start_head != 0 || ebrEntry.start_sector != 0 || ebrEntry.end_cylinder != 0 ||
-                                ebrEntry.end_head   != 0 || ebrEntry.end_sector != 0;
+                    extValid &= ebrEntry.lba_start      != 0 ||
+                                ebrEntry.lba_sectors    != 0 ||
+                                ebrEntry.start_cylinder != 0 ||
+                                ebrEntry.start_head     != 0 ||
+                                ebrEntry.start_sector   != 0 ||
+                                ebrEntry.end_cylinder   != 0 ||
+                                ebrEntry.end_head       != 0 ||
+                                ebrEntry.end_sector     != 0;
 
-                    if(ebrEntry.lba_start   == 0 &&
-                       ebrEntry.lba_sectors == 0 &&
-                       extValid)
+                    if(ebrEntry is { lba_start: 0, lba_sectors: 0 } && extValid)
                     {
-                        extStart = CHS.ToLBA(startCylinder, ebrEntry.start_head, startSector, imagePlugin.Info.Heads,
+                        extStart = CHS.ToLBA(startCylinder,
+                                             ebrEntry.start_head,
+                                             startSector,
+                                             imagePlugin.Info.Heads,
                                              imagePlugin.Info.SectorsPerTrack);
 
-                        extSectors = CHS.ToLBA(endCylinder, ebrEntry.end_head, ebrEntry.end_sector,
-                                               imagePlugin.Info.Heads, imagePlugin.Info.SectorsPerTrack) - extStart;
+                        extSectors = CHS.ToLBA(endCylinder,
+                                               ebrEntry.end_head,
+                                               ebrEntry.end_sector,
+                                               imagePlugin.Info.Heads,
+                                               imagePlugin.Info.SectorsPerTrack) -
+                                     extStart;
                     }
 
                     extMinix |= ebrEntry.type is 0x81 or 0x80;
@@ -521,8 +585,8 @@ public sealed class MBR : IPartition
                     extStart   /= divider;
                     extSectors /= divider;
 
-                    AaruConsole.DebugWriteLine("MBR plugin", "ext_start {0}", extStart);
-                    AaruConsole.DebugWriteLine("MBR plugin", "ext_sectors {0}", extSectors);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ext_start {0}",   extStart);
+                    AaruConsole.DebugWriteLine(MODULE_NAME, "ext_sectors {0}", extSectors);
 
                     if(ebrEntry.type is 0x05 or 0x0F or 0x15 or 0x1F or 0x85 or 0x91 or 0x9B or 0xC5 or 0xCF or 0xD5)
                     {
@@ -538,19 +602,23 @@ public sealed class MBR : IPartition
                         extSectors = imagePlugin.Info.Sectors - extStart;
 
                     if(extValid && extMinix) // Let's mix the fun
-                        if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize,
+                    {
+                        if(GetMinix(imagePlugin,
+                                    lbaStart,
+                                    divider,
+                                    sectorOffset,
+                                    sectorSize,
                                     out List<Partition> mnxParts))
                             partitions.AddRange(mnxParts);
                         else
                             extMinix = false;
+                    }
 
-                    if(!extValid || extMinix)
-                        continue;
+                    if(!extValid || extMinix) continue;
 
                     var part = new Partition();
 
-                    if(extStart   > 0 &&
-                       extSectors > 0)
+                    if(extStart > 0 && extSectors > 0)
                     {
                         part.Start  = extStart + sectorOffset;
                         part.Length = extSectors;
@@ -560,20 +628,19 @@ public sealed class MBR : IPartition
                     else
                         extValid = false;
 
-                    if(!extValid)
-                        continue;
+                    if(!extValid) continue;
 
                     part.Type        = $"0x{ebrEntry.type:X2}";
                     part.Name        = DecodeMbrType(ebrEntry.type);
                     part.Sequence    = counter;
-                    part.Description = ebrEntry.status == 0x80 ? "Partition is bootable." : "";
+                    part.Description = ebrEntry.status == 0x80 ? Localization.Partition_is_bootable : "";
                     part.Scheme      = Name;
                     counter++;
 
                     partitions.Add(part);
                 }
 
-                AaruConsole.DebugWriteLine("MBR plugin", "next_start {0}", nextStart);
+                AaruConsole.DebugWriteLine(MODULE_NAME, "next_start {0}", nextStart);
                 processingExtended &= nextStart != 0;
                 processingExtended &= nextStart <= imagePlugin.Info.Sectors;
                 lbaStart           =  nextStart;
@@ -584,22 +651,22 @@ public sealed class MBR : IPartition
         return partitions.Count != 0;
     }
 
+#endregion
+
     static bool GetMinix(IMediaImage imagePlugin, ulong start, ulong divider, ulong sectorOffset, uint sectorSize,
                          out List<Partition> partitions)
     {
-        partitions = new List<Partition>();
+        partitions = [];
 
         ErrorNumber errno = imagePlugin.ReadSector(start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         ExtendedBootRecord mnx = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
-        AaruConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
+        AaruConsole.DebugWriteLine(MODULE_NAME, "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
 
-        if(mnx.magic != MBR_MAGIC)
-            return false;
+        if(mnx.magic != MBR_MAGIC) return false;
 
         var anyMnx = false;
 
@@ -607,55 +674,63 @@ public sealed class MBR : IPartition
         {
             var   mnxValid      = true;
             var   startSector   = (byte)(mnxEntry.start_sector & 0x3F);
-            var   startCylinder = (ushort)(((mnxEntry.start_sector & 0xC0) << 2) | mnxEntry.start_cylinder);
+            var   startCylinder = (ushort)((mnxEntry.start_sector & 0xC0) << 2 | mnxEntry.start_cylinder);
             var   endSector     = (byte)(mnxEntry.end_sector & 0x3F);
-            var   endCylinder   = (ushort)(((mnxEntry.end_sector & 0xC0) << 2) | mnxEntry.end_cylinder);
+            var   endCylinder   = (ushort)((mnxEntry.end_sector & 0xC0) << 2 | mnxEntry.end_cylinder);
             ulong mnxStart      = mnxEntry.lba_start;
             ulong mnxSectors    = mnxEntry.lba_sectors;
 
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.status {0}", mnxEntry.status);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.type {0}", mnxEntry.type);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_start {0}", mnxEntry.lba_start);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_sectors {0}", mnxEntry.lba_sectors);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_cylinder {0}", startCylinder);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_head {0}", mnxEntry.start_head);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_sector {0}", startSector);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_cylinder {0}", endCylinder);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_head {0}", mnxEntry.end_head);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_sector {0}", endSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.status {0}",         mnxEntry.status);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.type {0}",           mnxEntry.type);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_start {0}",      mnxEntry.lba_start);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.lba_sectors {0}",    mnxEntry.lba_sectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_cylinder {0}", startCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_head {0}",     mnxEntry.start_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.start_sector {0}",   startSector);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_cylinder {0}",   endCylinder);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_head {0}",       mnxEntry.end_head);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_entry.end_sector {0}",     endSector);
 
             mnxValid &= mnxEntry.status is 0x00 or 0x80;
             mnxValid &= mnxEntry.type is 0x81 or 0x80;
 
-            mnxValid &= mnxEntry.lba_start  != 0 || mnxEntry.lba_sectors  != 0 || mnxEntry.start_cylinder != 0 ||
-                        mnxEntry.start_head != 0 || mnxEntry.start_sector != 0 || mnxEntry.end_cylinder   != 0 ||
-                        mnxEntry.end_head   != 0 || mnxEntry.end_sector   != 0;
+            mnxValid &= mnxEntry.lba_start      != 0 ||
+                        mnxEntry.lba_sectors    != 0 ||
+                        mnxEntry.start_cylinder != 0 ||
+                        mnxEntry.start_head     != 0 ||
+                        mnxEntry.start_sector   != 0 ||
+                        mnxEntry.end_cylinder   != 0 ||
+                        mnxEntry.end_head       != 0 ||
+                        mnxEntry.end_sector     != 0;
 
-            if(mnxEntry.lba_start   == 0 &&
-               mnxEntry.lba_sectors == 0 &&
-               mnxValid)
+            if(mnxEntry is { lba_start: 0, lba_sectors: 0 } && mnxValid)
             {
-                mnxStart = CHS.ToLBA(startCylinder, mnxEntry.start_head, startSector, imagePlugin.Info.Heads,
+                mnxStart = CHS.ToLBA(startCylinder,
+                                     mnxEntry.start_head,
+                                     startSector,
+                                     imagePlugin.Info.Heads,
                                      imagePlugin.Info.SectorsPerTrack);
 
-                mnxSectors = CHS.ToLBA(endCylinder, mnxEntry.end_head, mnxEntry.end_sector, imagePlugin.Info.Heads,
-                                       imagePlugin.Info.SectorsPerTrack) - mnxStart;
+                mnxSectors = CHS.ToLBA(endCylinder,
+                                       mnxEntry.end_head,
+                                       mnxEntry.end_sector,
+                                       imagePlugin.Info.Heads,
+                                       imagePlugin.Info.SectorsPerTrack) -
+                             mnxStart;
             }
 
             // For optical media
             mnxStart   /= divider;
             mnxSectors /= divider;
 
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_start {0}", mnxStart);
-            AaruConsole.DebugWriteLine("MBR plugin", "mnx_sectors {0}", mnxSectors);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_start {0}",   mnxStart);
+            AaruConsole.DebugWriteLine(MODULE_NAME, "mnx_sectors {0}", mnxSectors);
 
-            if(!mnxValid)
-                continue;
+            if(!mnxValid) continue;
 
             var part = new Partition();
 
-            if(mnxStart   > 0 &&
-               mnxSectors > 0)
+            if(mnxStart > 0 && mnxSectors > 0)
             {
                 part.Start  = mnxStart + sectorOffset;
                 part.Length = mnxSectors;
@@ -665,13 +740,12 @@ public sealed class MBR : IPartition
             else
                 mnxValid = false;
 
-            if(!mnxValid)
-                continue;
+            if(!mnxValid) continue;
 
             anyMnx           = true;
             part.Type        = "MINIX";
-            part.Name        = "MINIX";
-            part.Description = mnxEntry.status == 0x80 ? "Partition is bootable." : "";
+            part.Name        = Localization.MINIX;
+            part.Description = mnxEntry.status == 0x80 ? Localization.Partition_is_bootable : "";
             part.Scheme      = "MINIX";
 
             partitions.Add(part);
@@ -682,20 +756,30 @@ public sealed class MBR : IPartition
 
     static string DecodeMbrType(byte type) => _mbrTypes[type];
 
+#region Nested type: DiskManagerMasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct MasterBootRecord
+    readonly struct DiskManagerMasterBootRecord
     {
         /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
         public readonly byte[] boot_code;
+        /// <summary>
+        ///     <see cref="MBR.DM_MAGIC" />
+        /// </summary>
+        public readonly ushort dm_magic;
         /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly PartitionEntry[] entries;
         /// <summary>
         ///     <see cref="MBR.MBR_MAGIC" />
         /// </summary>
         public readonly ushort magic;
     }
+
+#endregion
+
+#region Nested type: ExtendedBootRecord
 
     // TODO: IBM Boot Manager
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -713,25 +797,16 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
+#endregion
+
+#region Nested type: MasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct TimedMasterBootRecord
+    readonly struct MasterBootRecord
     {
         /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 446)]
         public readonly byte[] boot_code;
-        /// <summary>Set to 0</summary>
-        public readonly ushort zero;
-        /// <summary>Original physical drive</summary>
-        public readonly byte drive;
-        /// <summary>Disk timestamp, seconds</summary>
-        public readonly byte seconds;
-        /// <summary>Disk timestamp, minutes</summary>
-        public readonly byte minutes;
-        /// <summary>Disk timestamp, hours</summary>
-        public readonly byte hours;
-        /// <summary>Boot code, continuation</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
-        public readonly byte[] boot_code2;
         /// <summary>Partitions</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public readonly PartitionEntry[] entries;
@@ -741,24 +816,9 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct SerializedMasterBootRecord
-    {
-        /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
-        public readonly byte[] boot_code;
-        /// <summary>Disk serial number</summary>
-        public readonly uint serial;
-        /// <summary>Set to 0</summary>
-        public readonly ushort zero;
-        /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly PartitionEntry[] entries;
-        /// <summary>
-        ///     <see cref="MBR.MBR_MAGIC" />
-        /// </summary>
-        public readonly ushort magic;
-    }
+#endregion
+
+#region Nested type: ModernMasterBootRecord
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct ModernMasterBootRecord
@@ -792,6 +852,10 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
+#endregion
+
+#region Nested type: NecMasterBootRecord
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct NecMasterBootRecord
     {
@@ -811,24 +875,9 @@ public sealed class MBR : IPartition
         public readonly ushort magic;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct DiskManagerMasterBootRecord
-    {
-        /// <summary>Boot code</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 252)]
-        public readonly byte[] boot_code;
-        /// <summary>
-        ///     <see cref="MBR.DM_MAGIC" />
-        /// </summary>
-        public readonly ushort dm_magic;
-        /// <summary>Partitions</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public readonly PartitionEntry[] entries;
-        /// <summary>
-        ///     <see cref="MBR.MBR_MAGIC" />
-        /// </summary>
-        public readonly ushort magic;
-    }
+#endregion
+
+#region Nested type: PartitionEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct PartitionEntry
@@ -854,4 +903,61 @@ public sealed class MBR : IPartition
         /// <summary>Total sectors</summary>
         public readonly uint lba_sectors;
     }
+
+#endregion
+
+#region Nested type: SerializedMasterBootRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct SerializedMasterBootRecord
+    {
+        /// <summary>Boot code</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
+        public readonly byte[] boot_code;
+        /// <summary>Disk serial number</summary>
+        public readonly uint serial;
+        /// <summary>Set to 0</summary>
+        public readonly ushort zero;
+        /// <summary>Partitions</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly PartitionEntry[] entries;
+        /// <summary>
+        ///     <see cref="MBR.MBR_MAGIC" />
+        /// </summary>
+        public readonly ushort magic;
+    }
+
+#endregion
+
+#region Nested type: TimedMasterBootRecord
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    readonly struct TimedMasterBootRecord
+    {
+        /// <summary>Boot code</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 218)]
+        public readonly byte[] boot_code;
+        /// <summary>Set to 0</summary>
+        public readonly ushort zero;
+        /// <summary>Original physical drive</summary>
+        public readonly byte drive;
+        /// <summary>Disk timestamp, seconds</summary>
+        public readonly byte seconds;
+        /// <summary>Disk timestamp, minutes</summary>
+        public readonly byte minutes;
+        /// <summary>Disk timestamp, hours</summary>
+        public readonly byte hours;
+        /// <summary>Boot code, continuation</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
+        public readonly byte[] boot_code2;
+        /// <summary>Partitions</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public readonly PartitionEntry[] entries;
+        /// <summary>
+        ///     <see cref="MBR.MBR_MAGIC" />
+        /// </summary>
+        public readonly ushort magic;
+    }
+
+#endregion
 }

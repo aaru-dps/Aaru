@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,19 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class ReFsMbr : FilesystemTest
-{
-    public ReFsMbr() : base("Resilient File System") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems",
-                                                      "Resilient File System (MBR)");
+[TestFixture]
+public class ReFsMbr() : FilesystemTest("refs")
+{
+    public override string DataFolder =>
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Resilient File System (MBR)");
+
     public override IFilesystem Plugin     => new ReFS();
     public override bool        Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "win10.vdi.lz",
@@ -55,5 +54,5 @@ public class ReFsMbr : FilesystemTest
             Clusters    = 8372224,
             ClusterSize = 4096
         }
-    };
+    ];
 }

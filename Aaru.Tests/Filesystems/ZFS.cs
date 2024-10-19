@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,18 +32,18 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-[TestFixture]
-public class Zfs : FilesystemTest
-{
-    public Zfs() : base("ZFS filesystem") {}
+namespace Aaru.Tests.Filesystems;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Zettabyte File System");
+[TestFixture]
+public class Zfs() : FilesystemTest("zfs")
+{
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Zettabyte File System");
 
     public override IFilesystem Plugin     => new ZFS();
     public override bool        Partitions => false;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "netbsd_7.1.aif",
@@ -55,5 +53,5 @@ public class Zfs : FilesystemTest
             VolumeName   = "NetBSD 7.1",
             VolumeSerial = "2639895335654686206"
         }
-    };
+    ];
 }

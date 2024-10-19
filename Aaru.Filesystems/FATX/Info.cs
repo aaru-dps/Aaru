@@ -7,10 +7,6 @@
 //
 // Component      : FATX filesystem plugin.
 //
-// --[ Description ] ----------------------------------------------------------
-//
-//     Identifies the FATX filesystem and shows information.
-//
 // --[ License ] --------------------------------------------------------------
 //
 //     This library is free software; you can redistribute it and/or modify
@@ -27,30 +23,30 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.Filesystems;
-
 using System.Text;
-using Aaru.CommonTypes;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
-using Schemas;
+using Partition = Aaru.CommonTypes.Partition;
+
+namespace Aaru.Filesystems;
 
 public sealed partial class XboxFatPlugin
 {
+#region IReadOnlyFilesystem Members
+
     /// <inheritdoc />
     public bool Identify(IMediaImage imagePlugin, Partition partition)
     {
-        if(imagePlugin.Info.SectorSize < 512)
-            return false;
+        if(imagePlugin.Info.SectorSize < 512) return false;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return false;
+        if(errno != ErrorNumber.NoError) return false;
 
         Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -58,20 +54,19 @@ public sealed partial class XboxFatPlugin
     }
 
     /// <inheritdoc />
-    public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information, Encoding encoding)
+    public void GetInformation(IMediaImage imagePlugin, Partition partition, Encoding encoding, out string information,
+                               out FileSystem metadata)
     {
-        Encoding    = Encoding.UTF8;
         information = "";
+        metadata    = new FileSystem();
 
-        if(imagePlugin.Info.SectorSize < 512)
-            return;
+        if(imagePlugin.Info.SectorSize < 512) return;
 
         var bigEndian = true;
 
         ErrorNumber errno = imagePlugin.ReadSector(partition.Start, out byte[] sector);
 
-        if(errno != ErrorNumber.NoError)
-            return;
+        if(errno != ErrorNumber.NoError) return;
 
         Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
@@ -81,42 +76,47 @@ public sealed partial class XboxFatPlugin
             bigEndian = false;
         }
 
-        if(fatxSb.magic != FATX_MAGIC)
-            return;
+        if(fatxSb.magic != FATX_MAGIC) return;
 
         int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && !bigEndian ? 8 : 1;
 
         var sb = new StringBuilder();
 
-        sb.AppendLine("FATX filesystem");
+        sb.AppendLine(Localization.FATX_filesystem);
 
-        sb.AppendFormat("{0} logical sectors ({1} bytes) per physical sector", logicalSectorsPerPhysicalSectors,
-                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
+        sb.AppendFormat(Localization._0_logical_sectors_1_bytes_per_physical_sector,
+                        logicalSectorsPerPhysicalSectors,
+                        logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
+          .AppendLine();
 
-        sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
-                        fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).
-           AppendLine();
+        sb.AppendFormat(Localization._0_sectors_1_bytes_per_cluster,
+                        fatxSb.sectorsPerCluster,
+                        fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
+          .AppendLine();
 
-        sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
+        sb.AppendFormat(Localization.Root_directory_starts_at_cluster_0, fatxSb.rootDirectoryCluster).AppendLine();
 
         string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
-                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode, true);
+                                                      bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
+                                                      true);
 
-        sb.AppendFormat("Volume label: {0}", volumeLabel).AppendLine();
-        sb.AppendFormat("Volume serial: {0:X8}", fatxSb.id).AppendLine();
+        sb.AppendFormat(Localization.Volume_label_0,     volumeLabel).AppendLine();
+        sb.AppendFormat(Localization.Volume_serial_0_X8, fatxSb.id).AppendLine();
 
         information = sb.ToString();
 
-        XmlFsType = new FileSystemType
+        metadata = new FileSystem
         {
-            Type = "FATX filesystem",
-            ClusterSize = (uint)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+            Type = FS_TYPE,
+            ClusterSize = (uint)(fatxSb.sectorsPerCluster         *
+                                 logicalSectorsPerPhysicalSectors *
                                  imagePlugin.Info.SectorSize),
             VolumeName   = volumeLabel,
             VolumeSerial = $"{fatxSb.id:X8}"
         };
 
-        XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                             XmlFsType.ClusterSize;
+        metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;
     }
+
+#endregion
 }

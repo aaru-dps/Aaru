@@ -27,19 +27,17 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Structs;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
 using Aaru.Decoders.CD;
 using Aaru.Decoders.DVD;
@@ -51,14 +49,18 @@ using Aaru.Gui.ViewModels.Windows;
 using Aaru.Gui.Views.Tabs;
 using Aaru.Gui.Views.Windows;
 using Aaru.Helpers;
-using Avalonia;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Humanizer;
+using Humanizer.Bytes;
 using ReactiveUI;
-using Schemas;
 using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = Aaru.CommonTypes.Structs.Session;
+using Track = Aaru.CommonTypes.Structs.Track;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class ImageInfoViewModel : ViewModelBase
 {
@@ -76,15 +78,14 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public ImageInfoViewModel(string imagePath, IFilter filter, IMediaImage imageFormat, Window view)
 
     {
-        _imagePath   = imagePath;
-        _filter      = filter;
-        _imageFormat = imageFormat;
-        IAssetLoader assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-        MediaTagsList         = new ObservableCollection<string>();
-        SectorTagsList        = new ObservableCollection<string>();
-        Sessions              = new ObservableCollection<Session>();
-        Tracks                = new ObservableCollection<Track>();
-        DumpHardwareList      = new ObservableCollection<DumpHardwareModel>();
+        _imagePath            = imagePath;
+        _filter               = filter;
+        _imageFormat          = imageFormat;
+        MediaTagsList         = [];
+        SectorTagsList        = [];
+        Sessions              = [];
+        Tracks                = [];
+        DumpHardwareList      = [];
         EntropyCommand        = ReactiveCommand.Create(ExecuteEntropyCommand);
         VerifyCommand         = ReactiveCommand.Create(ExecuteVerifyCommand);
         ChecksumCommand       = ReactiveCommand.Create(ExecuteChecksumCommand);
@@ -94,109 +95,137 @@ public sealed class ImageInfoViewModel : ViewModelBase
         DecodeMediaTagCommand = ReactiveCommand.Create(ExecuteDecodeMediaTagCommand);
 
         var genericHddIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-harddisk.png")));
 
         var genericOpticalIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/drive-optical.png")));
 
         var genericFolderIcon =
-            new Bitmap(assets.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
+            new Bitmap(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/32x32/inode-directory.png")));
 
         var mediaResource = new Uri($"avares://Aaru.Gui/Assets/Logos/Media/{imageFormat.Info.MediaType}.png");
 
-        MediaLogo = assets.Exists(mediaResource)
-                        ? new Bitmap(assets.Open(mediaResource))
-                        : imageFormat.Info.XmlMediaType == XmlMediaType.BlockMedia
+        MediaLogo = AssetLoader.Exists(mediaResource)
+                        ? new Bitmap(AssetLoader.Open(mediaResource))
+                        : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
                             ? genericHddIcon
-                            : imageFormat.Info.XmlMediaType == XmlMediaType.OpticalDisc
+                            : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
                                 ? genericOpticalIcon
                                 : genericFolderIcon;
 
-        ImagePathText       = $"Path: {imagePath}";
-        FilterText          = $"Filter: {filter.Name}";
-        ImageIdentifiedText = $"Image format identified by {imageFormat.Name} ({imageFormat.Id}).";
+        ImagePathText       = string.Format(UI.Path_0,                         imagePath);
+        FilterText          = string.Format(UI.Filter_0,                       filter.Name);
+        ImageIdentifiedText = string.Format(UI.Image_format_identified_by_0_1, imageFormat.Name, imageFormat.Id);
 
         ImageFormatText = !string.IsNullOrWhiteSpace(imageFormat.Info.Version)
-                              ? $"Format: {imageFormat.Format} version {imageFormat.Info.Version}"
-                              : $"Format: {imageFormat.Format}";
+                              ? string.Format(UI.Format_0_version_1, imageFormat.Format, imageFormat.Info.Version)
+                              : string.Format(UI.Format_0,           imageFormat.Format);
 
-        ImageSizeText = $"Image without headers is {imageFormat.Info.ImageSize} bytes long";
+        ImageSizeText = string.Format(Localization.Core.Image_without_headers_is_0_bytes_long,
+                                      imageFormat.Info.ImageSize);
 
         SectorsText =
-            $"Contains a media of {imageFormat.Info.Sectors} sectors with a maximum sector size of {imageFormat.Info.SectorSize} bytes (if all sectors are of the same size this would be {imageFormat.Info.Sectors * imageFormat.Info.SectorSize} bytes)";
+            string.Format(Localization.Core.Contains_a_media_of_0_sectors_with_a_maximum_sector_size_of_1_bytes_etc,
+                          imageFormat.Info.Sectors,
+                          imageFormat.Info.SectorSize,
+                          ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize).Humanize());
 
-        MediaTypeText =
-            $"Contains a media of type {imageFormat.Info.MediaType} and XML type {imageFormat.Info.XmlMediaType}";
+        MediaTypeText = string.Format(Localization.Core.Contains_a_media_of_type_0_and_XML_type_1,
+                                      imageFormat.Info.MediaType,
+                                      imageFormat.Info.MetadataMediaType);
 
-        HasPartitionsText = $"{(imageFormat.Info.HasPartitions ? "Has" : "Doesn't have")} partitions";
-        HasSessionsText   = $"{(imageFormat.Info.HasSessions ? "Has" : "Doesn't have")} sessions";
+        HasPartitionsText = imageFormat.Info.HasPartitions ? UI.Has_partitions : UI.Doesnt_have_partitions;
+        HasSessionsText   = imageFormat.Info.HasSessions ? UI.Has_sessions : UI.Doesnt_have_sessions;
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
+        {
             ApplicationText = !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion)
-                                  ? $"Was created with {imageFormat.Info.Application} version {imageFormat.Info.ApplicationVersion}"
-                                  : $"Was created with {imageFormat.Info.Application}";
+                                  ? string.Format(Localization.Core.Was_created_with_0_version_1,
+                                                  imageFormat.Info.Application,
+                                                  imageFormat.Info.ApplicationVersion)
+                                  : string.Format(Localization.Core.Was_created_with_0, imageFormat.Info.Application);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
-            CreatorText = $"Created by: {imageFormat.Info.Creator}";
+            CreatorText = string.Format(Localization.Core.Created_by_0, imageFormat.Info.Creator);
 
         if(imageFormat.Info.CreationTime != DateTime.MinValue)
-            CreationTimeText = $"Created on {imageFormat.Info.CreationTime}";
+            CreationTimeText = string.Format(Localization.Core.Created_on_0, imageFormat.Info.CreationTime);
 
         if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
-            LastModificationTimeText = $"Last modified on {imageFormat.Info.LastModificationTime}";
+        {
+            LastModificationTimeText =
+                string.Format(Localization.Core.Last_modified_on_0, imageFormat.Info.LastModificationTime);
+        }
 
-        if(imageFormat.Info.MediaSequence     != 0 &&
-           imageFormat.Info.LastMediaSequence != 0)
-            MediaSequenceText =
-                $"Media is number {imageFormat.Info.MediaSequence} on a set of {imageFormat.Info.LastMediaSequence} medias";
+        if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
+        {
+            MediaSequenceText = string.Format(Localization.Core.Media_is_number_0_on_a_set_of_1_medias,
+                                              imageFormat.Info.MediaSequence,
+                                              imageFormat.Info.LastMediaSequence);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
-            MediaTitleText = $"Media title: {imageFormat.Info.MediaTitle}";
+            MediaTitleText = string.Format(UI.Media_title_0, imageFormat.Info.MediaTitle);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
-            MediaManufacturerText = $"Media manufacturer: {imageFormat.Info.MediaManufacturer}";
+        {
+            MediaManufacturerText =
+                string.Format(Localization.Core.Media_manufacturer_0, imageFormat.Info.MediaManufacturer);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
-            MediaModelText = $"Media model: {imageFormat.Info.MediaModel}";
+            MediaModelText = string.Format(UI.Media_model_0, imageFormat.Info.MediaModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
-            MediaSerialNumberText = $"Media serial number: {imageFormat.Info.MediaSerialNumber}";
+        {
+            MediaSerialNumberText =
+                string.Format(Localization.Core.Media_serial_number_0, imageFormat.Info.MediaSerialNumber);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
-            MediaBarcodeText = $"Media barcode: {imageFormat.Info.MediaBarcode}";
+            MediaBarcodeText = string.Format(UI.Media_barcode_0, imageFormat.Info.MediaBarcode);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
-            MediaPartNumberText = $"Media part number: {imageFormat.Info.MediaPartNumber}";
+            MediaPartNumberText = string.Format(UI.Media_part_number_0, imageFormat.Info.MediaPartNumber);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
-            DriveManufacturerText = $"Drive manufacturer: {imageFormat.Info.DriveManufacturer}";
+            DriveManufacturerText = string.Format(UI.Drive_manufacturer_0, imageFormat.Info.DriveManufacturer);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
-            DriveModelText = $"Drive model: {imageFormat.Info.DriveModel}";
+            DriveModelText = string.Format(UI.Drive_model_0, imageFormat.Info.DriveModel);
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
-            DriveSerialNumberText = $"Drive serial number: {imageFormat.Info.DriveSerialNumber}";
+        {
+            DriveSerialNumberText =
+                string.Format(Localization.Core.Drive_serial_number_0, imageFormat.Info.DriveSerialNumber);
+        }
 
         if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
-            DriveFirmwareRevisionText = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
+            DriveFirmwareRevisionText = string.Format(UI.Drive_firmware_info_0, imageFormat.Info.DriveFirmwareRevision);
 
-        if(imageFormat.Info.Cylinders       > 0                         &&
-           imageFormat.Info.Heads           > 0                         &&
-           imageFormat.Info.SectorsPerTrack > 0                         &&
-           imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
-           (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
-            MediaGeometryText =
-                $"Media geometry: {imageFormat.Info.Cylinders} cylinders, {imageFormat.Info.Heads} heads, {imageFormat.Info.SectorsPerTrack} sectors per track";
+        if(imageFormat.Info.Cylinders > 0                                      &&
+           imageFormat.Info is { Heads: > 0, SectorsPerTrack: > 0 }            &&
+           imageFormat.Info.MetadataMediaType != MetadataMediaType.OpticalDisc &&
+           imageFormat is not ITapeImage { IsTape: true })
+        {
+            MediaGeometryText = string.Format(UI.Media_geometry_0_cylinders_1_heads_2_sectors_per_track,
+                                              imageFormat.Info.Cylinders,
+                                              imageFormat.Info.Heads,
+                                              imageFormat.Info.SectorsPerTrack);
+        }
 
-        if(imageFormat.Info.ReadableMediaTags       != null &&
-           imageFormat.Info.ReadableMediaTags.Count > 0)
+        if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
+        {
             foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
                 MediaTagsList.Add(tag.ToString());
+        }
 
-        if(imageFormat.Info.ReadableSectorTags       != null &&
-           imageFormat.Info.ReadableSectorTags.Count > 0)
+        if(imageFormat.Info.ReadableSectorTags is { Count: > 0 })
+        {
             foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 SectorTagsList.Add(tag.ToString());
+        }
 
         PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
         byte[]                scsiInquiryData = null;
@@ -222,22 +251,27 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_6, out scsiModeSense6);
 
-            if(errno == ErrorNumber.NoError)
-                scsiMode = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
+            if(errno == ErrorNumber.NoError) scsiMode = Modes.DecodeMode6(scsiModeSense6, scsiDeviceType);
         }
 
         if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.SCSI_MODESENSE_10) == true)
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_MODESENSE_10, out scsiModeSense10);
 
-            if(errno == ErrorNumber.NoError)
-                scsiMode = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
+            if(errno == ErrorNumber.NoError) scsiMode = Modes.DecodeMode10(scsiModeSense10, scsiDeviceType);
         }
 
         ScsiInfo = new ScsiInfo
         {
-            DataContext = new ScsiInfoViewModel(scsiInquiryData, scsiInquiry, null, scsiMode, scsiDeviceType,
-                                                scsiModeSense6, scsiModeSense10, null, view)
+            DataContext = new ScsiInfoViewModel(scsiInquiryData,
+                                                scsiInquiry,
+                                                null,
+                                                scsiMode,
+                                                scsiDeviceType,
+                                                scsiModeSense6,
+                                                scsiModeSense10,
+                                                null,
+                                                view)
         };
 
         byte[] ataIdentify   = null;
@@ -251,10 +285,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
             errno = imageFormat.ReadMediaTag(MediaTagType.ATAPI_IDENTIFY, out atapiIdentify);
 
         if(errno == ErrorNumber.NoError)
+        {
             AtaInfo = new AtaInfo
             {
                 DataContext = new AtaInfoViewModel(ataIdentify, atapiIdentify, null, view)
             };
+        }
 
         byte[]                 toc                  = null;
         TOC.CDTOC?             decodedToc           = null;
@@ -271,8 +307,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_TOC, out toc);
 
-            if(errno      == ErrorNumber.NoError &&
-               toc.Length > 0)
+            if(errno == ErrorNumber.NoError && toc.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
 
@@ -293,8 +328,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_FullTOC, out fullToc);
 
-            if(errno          == ErrorNumber.NoError &&
-               fullToc.Length > 0)
+            if(errno == ErrorNumber.NoError && fullToc.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(fullToc, 0));
 
@@ -315,8 +349,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_PMA, out pma);
 
-            if(errno      == ErrorNumber.NoError &&
-               pma.Length > 0)
+            if(errno == ErrorNumber.NoError && pma.Length > 0)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
 
@@ -381,15 +414,27 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_MCN, out byte[] mcn);
 
-            if(errno == ErrorNumber.NoError)
-                mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
+            if(errno == ErrorNumber.NoError) mediaCatalogueNumber = Encoding.UTF8.GetString(mcn);
         }
 
         CompactDiscInfo = new CompactDiscInfo
         {
-            DataContext = new CompactDiscInfoViewModel(toc, atip, null, null, fullToc, pma, cdtext, decodedToc,
-                                                       decodedAtip, null, decodedFullToc, decodedCdText, null,
-                                                       mediaCatalogueNumber, null, view)
+            DataContext = new CompactDiscInfoViewModel(toc,
+                                                       atip,
+                                                       null,
+                                                       null,
+                                                       fullToc,
+                                                       pma,
+                                                       cdtext,
+                                                       decodedToc,
+                                                       decodedAtip,
+                                                       null,
+                                                       decodedFullToc,
+                                                       decodedCdText,
+                                                       null,
+                                                       mediaCatalogueNumber,
+                                                       null,
+                                                       view)
         };
 
         byte[]                         dvdPfi                    = null;
@@ -403,8 +448,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.DVD_PFI, out dvdPfi);
 
-            if(errno == ErrorNumber.NoError)
-                decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
+            if(errno == ErrorNumber.NoError) decodedPfi = PFI.Decode(dvdPfi, imageFormat.Info.MediaType);
         }
 
         if(imageFormat.Info.ReadableMediaTags?.Contains(MediaTagType.DVD_DMI) == true)
@@ -421,8 +465,14 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdInfo = new DvdInfo
         {
-            DataContext = new DvdInfoViewModel(imageFormat.Info.MediaType, dvdPfi, dvdDmi, dvdCmi,
-                                               hddvdCopyrightInformation, dvdBca, null, decodedPfi, view)
+            DataContext = new DvdInfoViewModel(dvdPfi,
+                                               dvdDmi,
+                                               dvdCmi,
+                                               hddvdCopyrightInformation,
+                                               dvdBca,
+                                               null,
+                                               decodedPfi,
+                                               view)
         };
 
         byte[] dvdRamDds                     = null;
@@ -484,12 +534,23 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         DvdWritableInfo = new DvdWritableInfo
         {
-            DataContext = new DvdWritableInfoViewModel(imageFormat.Info.MediaType, dvdRamDds, dvdRamCartridgeStatus,
-                                                       dvdRamSpareArea, lastBorderOutRmd, dvdPreRecordedInfo,
-                                                       dvdrMediaIdentifier, dvdrPhysicalInformation, hddvdrMediumStatus,
-                                                       null, dvdrLayerCapacity, dvdrDlMiddleZoneStart,
-                                                       dvdrDlJumpIntervalSize, dvdrDlManualLayerJumpStartLba, null,
-                                                       dvdPlusAdip, dvdPlusDcb, view)
+            DataContext = new DvdWritableInfoViewModel(dvdRamDds,
+                                                       dvdRamCartridgeStatus,
+                                                       dvdRamSpareArea,
+                                                       lastBorderOutRmd,
+                                                       dvdPreRecordedInfo,
+                                                       dvdrMediaIdentifier,
+                                                       dvdrPhysicalInformation,
+                                                       hddvdrMediumStatus,
+                                                       null,
+                                                       dvdrLayerCapacity,
+                                                       dvdrDlMiddleZoneStart,
+                                                       dvdrDlJumpIntervalSize,
+                                                       dvdrDlManualLayerJumpStartLba,
+                                                       null,
+                                                       dvdPlusAdip,
+                                                       dvdPlusDcb,
+                                                       view)
         };
 
         byte[] blurayBurstCuttingArea     = null;
@@ -523,9 +584,16 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
         BlurayInfo = new BlurayInfo
         {
-            DataContext = new BlurayInfoViewModel(blurayDiscInformation, blurayBurstCuttingArea, blurayDds,
-                                                  blurayCartridgeStatus, bluraySpareAreaInformation, blurayPowResources,
-                                                  blurayTrackResources, null, null, view)
+            DataContext = new BlurayInfoViewModel(blurayDiscInformation,
+                                                  blurayBurstCuttingArea,
+                                                  blurayDds,
+                                                  blurayCartridgeStatus,
+                                                  bluraySpareAreaInformation,
+                                                  blurayPowResources,
+                                                  blurayTrackResources,
+                                                  null,
+                                                  null,
+                                                  view)
         };
 
         byte[]             xboxDmi                   = null;
@@ -539,8 +607,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.Xbox_SecuritySector, out xboxSecuritySector);
 
-            if(errno == ErrorNumber.NoError)
-                decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
+            if(errno == ErrorNumber.NoError) decodedXboxSecuritySector = SS.Decode(xboxSecuritySector);
         }
 
         XboxInfo = new XboxInfo
@@ -555,10 +622,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
             errno = imageFormat.ReadMediaTag(MediaTagType.PCMCIA_CIS, out pcmciaCis);
 
         if(errno == ErrorNumber.NoError)
+        {
             PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(pcmciaCis, view)
             };
+        }
 
         DeviceType deviceType  = DeviceType.Unknown;
         byte[]     cid         = null;
@@ -624,8 +693,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             try
             {
-                if(opticalMediaImage.Sessions       != null &&
-                   opticalMediaImage.Sessions.Count > 0)
+                if(opticalMediaImage.Sessions is { Count: > 0 })
                     foreach(Session session in opticalMediaImage.Sessions)
                         Sessions.Add(session);
             }
@@ -636,8 +704,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
             try
             {
-                if(opticalMediaImage.Tracks       != null &&
-                   opticalMediaImage.Tracks.Count > 0)
+                if(opticalMediaImage.Tracks is { Count: > 0 })
                     foreach(Track track in opticalMediaImage.Tracks)
                         Tracks.Add(track);
             }
@@ -647,12 +714,12 @@ public sealed class ImageInfoViewModel : ViewModelBase
             }
         }
 
-        if(imageFormat.DumpHardware is null)
-            return;
+        if(imageFormat.DumpHardware is null) return;
 
-        foreach(DumpHardwareType dump in imageFormat.DumpHardware)
+        foreach(DumpHardware dump in imageFormat.DumpHardware)
         {
-            foreach(ExtentType extent in dump.Extents)
+            foreach(Extent extent in dump.Extents)
+            {
                 DumpHardwareList.Add(new DumpHardwareModel
                 {
                     Manufacturer    = dump.Manufacturer,
@@ -664,6 +731,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
                     Start           = extent.Start,
                     End             = extent.End
                 });
+            }
         }
     }
 
@@ -715,13 +783,66 @@ public sealed class ImageInfoViewModel : ViewModelBase
     public ReactiveCommand<Unit, Unit>             CreateSidecarCommand      { get; }
     public ReactiveCommand<Unit, Unit>             ViewSectorsCommand        { get; }
     public ReactiveCommand<Unit, Unit>             DecodeMediaTagCommand     { get; }
-    public bool DriveInformationVisible => DriveManufacturerText != null || DriveModelText            != null ||
-                                           DriveSerialNumberText != null || DriveFirmwareRevisionText != null ||
-                                           MediaGeometryText     != null;
-    public bool MediaInformationVisible => MediaSequenceText     != null || MediaTitleText   != null ||
-                                           MediaManufacturerText != null || MediaModelText   != null ||
-                                           MediaSerialNumberText != null || MediaBarcodeText != null ||
+
+    public bool DriveInformationVisible => DriveManufacturerText     != null ||
+                                           DriveModelText            != null ||
+                                           DriveSerialNumberText     != null ||
+                                           DriveFirmwareRevisionText != null ||
+                                           MediaGeometryText         != null;
+
+    public bool MediaInformationVisible => MediaSequenceText     != null ||
+                                           MediaTitleText        != null ||
+                                           MediaManufacturerText != null ||
+                                           MediaModelText        != null ||
+                                           MediaSerialNumberText != null ||
+                                           MediaBarcodeText      != null ||
                                            MediaPartNumberText   != null;
+
+    public string ImageInformationLabel   => UI.Title_Image_information;
+    public string GeneralLabel            => UI.Title_General;
+    public string CommentsLabel           => UI.Title_Comments;
+    public string MediaInformationLabel   => UI.Title_Media_information;
+    public string DriveInformationLabel   => UI.Title_Drive_information;
+    public string ReadableMediaTagsLabel  => UI.Title_Readable_media_tags;
+    public string TagLabel                => UI.Title_Readable_media_tags;
+    public string ReadableSectorTagsLabel => UI.Title_Readable_sector_tags;
+    public string SessionsLabel           => UI.Title_Sessions;
+    public string SessionLabel            => Localization.Core.Title_Session;
+    public string FirstTrackLabel         => Localization.Core.Title_First_track;
+    public string LastTrackLabel          => Localization.Core.Title_Last_track;
+    public string StartLabel              => Localization.Core.Title_Start;
+    public string EndLabel                => Localization.Core.Title_End;
+    public string TracksLabel             => UI.Title_Tracks;
+    public string TrackLabel              => Localization.Core.Title_Track;
+    public string TypeLabel               => UI.Title_Type;
+    public string BpsLabel                => Localization.Core.Title_Bps;
+    public string RawBpsLabel             => Localization.Core.Title_Raw_bps;
+    public string SubchannelLabel         => Localization.Core.Title_Subchannel;
+    public string PregapLabel             => Localization.Core.Title_Pregap;
+    public string DumpHardwareLabel       => UI.Title_Dump_hardware;
+    public string ManufacturerLabel       => UI.Title_Manufacturer;
+    public string ModelLabel              => UI.Title_Model;
+    public string RevisionLabel           => UI.Title_Revision;
+    public string SerialLabel             => UI.Serial;
+    public string SoftwareLabel           => UI.Title_Software;
+    public string VersionLabel            => UI.Title_Version;
+    public string OperatingSystemLabel    => UI.Title_Operating_system;
+    public string SCSILabel               => UI.Title_SCSI;
+    public string ATA_ATAPILabel          => UI.Title_ATA_ATAPI;
+    public string CompactDiscLabel        => Localization.Core.Title_CompactDisc;
+    public string Dvd_Hd_DvdLabel         => Localization.Core.Title_DVD_HD_DVD;
+    public string Dvd_R_WLabel            => Localization.Core.Title_DVD_Plus_Dash_R_W;
+    public string BluRayLabel             => Localization.Core.Title_Blu_ray;
+    public string PcmciaLabel             => UI.Title_PCMCIA;
+    public string Sd_MMCLabel             => UI.Title_SD_MMC;
+    public string XboxLabel               => Localization.Core.Title_Xbox;
+    public string EntropyLabel            => UI.ButtonLabel_Calculate_entropy;
+    public string VerifyLabel             => UI.ButtonLabel_Verify;
+    public string ChecksumLabel           => UI.ButtonLabel_Checksum;
+    public string ConvertLabel            => UI.ButtonLabel_Convert_to;
+    public string CreateSidecarLabel      => UI.ButtonLabel_Create_Aaru_Metadata_sidecar;
+    public string ViewSectorsLabel        => UI.ButtonLabel_View_sectors;
+    public string DecodeMediaTagLabel     => UI.ButtonLabel_Decode_media_tags;
 
     void ExecuteEntropyCommand()
     {

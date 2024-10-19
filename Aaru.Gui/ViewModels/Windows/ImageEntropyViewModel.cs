@@ -27,25 +27,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Windows;
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reactive;
 using System.Threading;
-using System.Threading.Tasks;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Console;
 using Aaru.Core;
 using Aaru.Gui.Models;
+using Aaru.Localization;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using JetBrains.Annotations;
 using ReactiveUI;
+
+namespace Aaru.Gui.ViewModels.Windows;
 
 public sealed class ImageEntropyViewModel : ViewModelBase
 {
@@ -86,7 +86,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
     {
         _inputFormat             = inputFormat;
         _view                    = view;
-        TrackEntropy             = new ObservableCollection<TrackEntropyModel>();
+        TrackEntropy             = [];
         StartCommand             = ReactiveCommand.Create(ExecuteStartCommand);
         CloseCommand             = ReactiveCommand.Create(ExecuteCloseCommand);
         StopCommand              = ReactiveCommand.Create(ExecuteStopCommand);
@@ -109,6 +109,17 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             WholeDiscChecked       = true;
         }
     }
+
+    public string DuplicatedSectorsLabel => UI.Calculates_how_many_sectors_are_duplicated;
+    public string SeparatedTracksLabel   => UI.Calculates_entropy_for_each_track_separately;
+    public string WholeDiscLabel         => UI.Calculates_entropy_for_the_whole_disc;
+    public string TrackEntropyLabel      => UI.Title_Track_entropy;
+    public string TrackLabel             => Localization.Core.Title_Track;
+    public string EntropyLabel           => UI.Title_Entropy;
+    public string UniqueSectorsLabel     => UI.Title_Unique_sectors;
+    public string StartLabel             => UI.ButtonLabel_Start;
+    public string CloseLabel             => UI.ButtonLabel_Close;
+    public string StopLabel              => UI.ButtonLabel_Stop;
 
     public bool SeparatedTracksVisible
     {
@@ -278,8 +289,9 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _progress2Value, value);
     }
 
-    [NotNull]
-    public string Title => "Calculating entropy";
+    [JetBrains.Annotations.NotNull]
+    public string Title => UI.Title_Calculating_entropy;
+
     public ObservableCollection<TrackEntropyModel> TrackEntropy { get; }
     public ReactiveCommand<Unit, Unit>             StartCommand { get; }
     public ReactiveCommand<Unit, Unit>             CloseCommand { get; }
@@ -302,14 +314,13 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         StopVisible                            =  false;
         ProgressVisible                        =  true;
 
-        if(WholeDiscChecked                                 &&
-           _inputFormat is IOpticalMediaImage opticalFormat &&
-           opticalFormat.Sessions?.Count > 1)
+        if(WholeDiscChecked && _inputFormat is IOpticalMediaImage { Sessions.Count: > 1 })
         {
-            AaruConsole.ErrorWriteLine("Calculating disc entropy of multisession images is not yet implemented.");
+            AaruConsole.ErrorWriteLine(UI.Calculating_disc_entropy_of_multisession_images_is_not_yet_implemented);
             WholeDiscChecked = false;
         }
 
+        // ReSharper disable once AsyncVoidLambda
         var thread = new Thread(async () =>
         {
             if(SeparatedTracksChecked)
@@ -318,17 +329,19 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
                 foreach(EntropyResults trackEntropy in _tracksEntropy)
                 {
-                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
+                    AaruConsole.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track, trackEntropy.Entropy);
 
                     if(trackEntropy.UniqueSectors != null)
-                        AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
+                    {
+                        AaruConsole.WriteLine(UI.Track_0_has_1_unique_sectors_2,
+                                              trackEntropy.Track,
                                               trackEntropy.UniqueSectors,
                                               (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
+                    }
                 }
             }
 
-            if(WholeDiscChecked != true)
-                return;
+            if(WholeDiscChecked != true) return;
 
             _entropy = entropyCalculator.CalculateMediaEntropy(DuplicatedSectorsChecked);
 
@@ -348,26 +361,29 @@ public sealed class ImageEntropyViewModel : ViewModelBase
         ResultsVisible  = true;
 
         if(SeparatedTracksChecked)
+        {
             foreach(EntropyResults trackEntropy in _tracksEntropy)
+            {
                 TrackEntropy.Add(new TrackEntropyModel
                 {
-                    Track = trackEntropy.Track.ToString(),
+                    Track   = trackEntropy.Track.ToString(),
                     Entropy = trackEntropy.Entropy.ToString(CultureInfo.CurrentUICulture),
-                    UniqueSectors =
-                        $"{trackEntropy.UniqueSectors} ({(trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
+                    UniqueSectors = $"{trackEntropy.UniqueSectors} ({
+                        (trackEntropy.UniqueSectors ?? 0) / (double)trackEntropy.Sectors:P3})"
                 });
+            }
+        }
 
-        if(WholeDiscChecked != true)
-            return;
+        if(WholeDiscChecked != true) return;
 
-        MediaEntropyText    = $"Entropy for disk is {_entropy.Entropy:F4}.";
+        MediaEntropyText    = string.Format(UI.Entropy_for_disk_is_0, _entropy.Entropy);
         MediaEntropyVisible = true;
 
-        if(_entropy.UniqueSectors == null)
-            return;
+        if(_entropy.UniqueSectors == null) return;
 
-        MediaUniqueSectorsText =
-            $"Disk has {_entropy.UniqueSectors} unique sectors ({(double)_entropy.UniqueSectors / _entropy.Sectors:P3})";
+        MediaUniqueSectorsText = string.Format(UI.Disk_has_0_unique_sectors_1,
+                                               _entropy.UniqueSectors,
+                                               (double)_entropy.UniqueSectors / _entropy.Sectors);
 
         MediaUniqueSectorsVisible = true;
     }
@@ -384,6 +400,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
 
     void EndProgress2() => Progress2Visible = false;
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         ProgressText = text;
@@ -395,13 +412,13 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             return;
         }
 
-        if(ProgressIndeterminate)
-            ProgressIndeterminate = false;
+        if(ProgressIndeterminate) ProgressIndeterminate = false;
 
         ProgressMax   = maximum;
         ProgressValue = current;
     });
 
+    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
     async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
         Progress2Text = text;
@@ -413,8 +430,7 @@ public sealed class ImageEntropyViewModel : ViewModelBase
             return;
         }
 
-        if(Progress2Indeterminate)
-            Progress2Indeterminate = false;
+        if(Progress2Indeterminate) Progress2Indeterminate = false;
 
         Progress2Max   = maximum;
         Progress2Value = current;

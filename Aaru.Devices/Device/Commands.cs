@@ -27,13 +27,13 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Devices;
 
 using System.Diagnostics.CodeAnalysis;
 using Aaru.Decoders.ATA;
+
+namespace Aaru.Devices;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public partial class Device
@@ -50,7 +50,7 @@ public partial class Device
     ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
     ///     SCSI sense
     /// </param>
-    public virtual int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+    public virtual int SendScsiCommand(byte[]        cdb,       ref byte[] buffer, out byte[] senseBuffer, uint timeout,
                                        ScsiDirection direction, out double duration, out bool sense)
     {
         duration    = 0;
@@ -75,8 +75,8 @@ public partial class Device
     /// <param name="duration">Time it took to execute the command in milliseconds</param>
     /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
     public virtual int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                                      AtaProtocol protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
-                                      uint timeout, bool transferBlocks, out double duration, out bool sense)
+                                      AtaProtocol     protocol, AtaTransferRegister transferRegister, ref byte[] buffer,
+                                      uint            timeout, bool transferBlocks, out double duration, out bool sense)
     {
         duration       = 0;
         sense          = true;
@@ -149,39 +149,15 @@ public partial class Device
     /// <param name="argument">Command argument</param>
     /// <param name="response">Response registers</param>
     /// <param name="blockSize">Size of block in bytes</param>
-    public virtual int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                      uint argument, uint blockSize, uint blocks, ref byte[] buffer,
-                                      out uint[] response, out double duration, out bool sense, uint timeout = 15)
+    public virtual int SendMmcCommand(MmcCommands command,  bool       write,     bool isApplication, MmcFlags flags,
+                                      uint        argument, uint       blockSize, uint blocks, ref byte[] buffer,
+                                      out uint[]  response, out double duration,  out bool sense, uint timeout = 15)
     {
         response = null;
         duration = 0;
         sense    = true;
 
         return -1;
-    }
-
-    /// <summary>Encapsulates a single MMC command to send in a queue</summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    public class MmcSingleCommand
-    {
-        /// <summary>Command argument</summary>
-        public uint argument;
-        /// <summary>How many blocks to transfer</summary>
-        public uint blocks;
-        /// <summary>Size of block in bytes</summary>
-        public uint blockSize;
-        /// <summary>Buffer for MMC/SD command response</summary>
-        public byte[] buffer;
-        /// <summary>MMC/SD opcode</summary>
-        public MmcCommands command;
-        /// <summary>Flags indicating kind and place of response</summary>
-        public MmcFlags flags;
-        /// <summary><c>True</c> if command should be preceded with CMD55</summary>
-        public bool isApplication;
-        /// <summary>Response registers</summary>
-        public uint[] response;
-        /// <summary><c>True</c> if data is sent from host to card</summary>
-        public bool write;
     }
 
     /// <summary>
@@ -194,7 +170,7 @@ public partial class Device
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
     public virtual int SendMultipleMmcCommands(MmcSingleCommand[] commands, out double duration, out bool sense,
-                                               uint timeout = 15)
+                                               uint               timeout = 15)
     {
         duration = 0;
         sense    = true;
@@ -219,4 +195,33 @@ public partial class Device
 
         return false;
     }
+
+#region Nested type: MmcSingleCommand
+
+    /// <summary>Encapsulates a single MMC command to send in a queue</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
+    public class MmcSingleCommand
+    {
+        /// <summary>Command argument</summary>
+        public uint argument;
+        /// <summary>How many blocks to transfer</summary>
+        public uint blocks;
+        /// <summary>Size of block in bytes</summary>
+        public uint blockSize;
+        /// <summary>Buffer for MMC/SD command response</summary>
+        public byte[] buffer;
+        /// <summary>MMC/SD opcode</summary>
+        public MmcCommands command;
+        /// <summary>Flags indicating kind and place of response</summary>
+        public MmcFlags flags;
+        /// <summary><c>True</c> if command should be preceded with CMD55</summary>
+        public bool isApplication;
+        /// <summary>Response registers</summary>
+        public uint[] response;
+        /// <summary><c>True</c> if data is sent from host to card</summary>
+        public bool write;
+    }
+
+#endregion
 }

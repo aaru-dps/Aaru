@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
 // ReSharper disable InconsistentNaming
@@ -37,5 +37,5 @@ namespace Aaru.Core.Devices.Dumping;
 public partial class Dump
 {
     /// <summary>Dumps an NVMe device</summary>
-    public void NVMe() => StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+    public void NVMe() => StoppingErrorMessage?.Invoke(Localization.Core.NVMe_devices_not_yet_supported);
 }

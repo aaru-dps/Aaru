@@ -1,19 +1,21 @@
-namespace Aaru.Tests.WritableImages.CDRDAO;
-
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 
+namespace Aaru.Tests.WritableImages.CDRDAO;
+
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class FromAaru : WritableOpticalMediaImageTest
 {
-    public override string DataFolder =>
-        Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "AaruFormat", "V1");
-    public override IMediaImage    InputPlugin     => new AaruFormat();
-    public override IWritableImage OutputPlugin    => new Cdrdao();
-    public override string         OutputExtension => "toc";
-    public override OpticalImageTestExpected[] Tests => new[]
-    {
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "AaruFormat", "V1");
+    public override IMediaImage InputPlugin => new Aaru.Images.AaruFormat();
+    public override IWritableImage OutputPlugin => new Cdrdao();
+    public override string OutputExtension => "toc";
+
+    public override OpticalImageTestExpected[] Tests =>
+    [
         new OpticalImageTestExpected
         {
             TestFile      = "test_multisession.aif",
@@ -23,8 +25,8 @@ public class FromAaru : WritableOpticalMediaImageTest
             Md5           = "e2e19cf38891e67a0829d01842b4052e",
             LongMd5       = "b31f2d228dd564c88ad851b12b43c01d",
             SubchannelMd5 = "989c696ee5bb336b4ad30474da573925",
-            Tracks = new[]
-            {
+            Tracks =
+            [
                 new TrackInfoTestExpected
                 {
                     Session = 1,
@@ -57,7 +59,7 @@ public class FromAaru : WritableOpticalMediaImageTest
                     Pregap  = 150,
                     Flags   = 4
                 }
-            }
+            ]
         }
-    };
+    ];
 }

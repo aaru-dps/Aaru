@@ -27,10 +27,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Gui.ViewModels.Panels;
 
 using System;
 using System.Collections.Generic;
@@ -41,9 +39,15 @@ using Aaru.Decoders.SCSI.SSC;
 using Aaru.Devices;
 using Aaru.Gui.ViewModels.Tabs;
 using Aaru.Gui.Views.Tabs;
+using Aaru.Localization;
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using Humanizer;
+using Humanizer.Localisation;
 using ReactiveUI;
 using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+
+namespace Aaru.Gui.ViewModels.Panels;
 
 public sealed class DeviceInfoViewModel : ViewModelBase
 {
@@ -176,26 +180,35 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         }
 
         if(devInfo.IsPcmcia)
+        {
             PcmciaInfo = new PcmciaInfo
             {
                 DataContext = new PcmciaInfoViewModel(devInfo.Cis, _view)
             };
+        }
 
-        if(devInfo.AtaIdentify   != null ||
-           devInfo.AtapiIdentify != null)
+        if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
+        {
             AtaInfo = new AtaInfo
             {
                 DataContext =
                     new AtaInfoViewModel(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError, _view)
             };
+        }
 
         if(devInfo.ScsiInquiryData != null)
         {
             ScsiInfo = new ScsiInfo
             {
-                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData, devInfo.ScsiInquiry, devInfo.ScsiEvpdPages,
-                                                    devInfo.ScsiMode, devInfo.ScsiType, devInfo.ScsiModeSense6,
-                                                    devInfo.ScsiModeSense10, devInfo.MmcConfiguration, _view)
+                DataContext = new ScsiInfoViewModel(devInfo.ScsiInquiryData,
+                                                    devInfo.ScsiInquiry,
+                                                    devInfo.ScsiEvpdPages,
+                                                    devInfo.ScsiMode,
+                                                    devInfo.ScsiType,
+                                                    devInfo.ScsiModeSense6,
+                                                    devInfo.ScsiModeSense10,
+                                                    devInfo.MmcConfiguration,
+                                                    _view)
             };
 
             if(devInfo.PlextorFeatures != null)
@@ -205,18 +218,21 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 if(devInfo.PlextorFeatures.Eeprom != null)
                 {
                     PlextorEepromVisible = true;
-                    PlextorDiscs         = $"{devInfo.PlextorFeatures.Discs}";
-                    PlextorCdReadTime    = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdReadTime).ToString();
+                    PlextorDiscs = $"{devInfo.PlextorFeatures.Discs}";
+                    PlextorCdReadTime = devInfo.PlextorFeatures.CdReadTime.Seconds().Humanize(minUnit: TimeUnit.Second);
 
-                    PlextorCdWriteTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdWriteTime).ToString();
+                    PlextorCdWriteTime =
+                        devInfo.PlextorFeatures.CdWriteTime.Seconds().Humanize(minUnit: TimeUnit.Second);
 
                     if(devInfo.PlextorFeatures.IsDvd)
                     {
                         PlextorDvdTimesVisible = true;
 
-                        PlextorDvdReadTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdReadTime).ToString();
+                        PlextorDvdReadTime = devInfo.PlextorFeatures.DvdReadTime.Seconds()
+                                                    .Humanize(minUnit: TimeUnit.Second);
 
-                        PlextorDvdWriteTime = TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdWriteTime).ToString();
+                        PlextorDvdWriteTime = devInfo.PlextorFeatures.DvdWriteTime.Seconds()
+                                                     .Humanize(minUnit: TimeUnit.Second);
                     }
                 }
 
@@ -234,26 +250,28 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                         {
                             PlextorPoweRecRecommendedVisible = true;
 
-                            PlextorPoweRecRecommended = $"{devInfo.PlextorFeatures.PoweRecRecommendedSpeed} Kb/sec.";
+                            PlextorPoweRecRecommended =
+                                string.Format(UI._0_Kb_sec, devInfo.PlextorFeatures.PoweRecRecommendedSpeed);
                         }
 
                         if(devInfo.PlextorFeatures.PoweRecSelected > 0)
                         {
                             PlextorPoweRecSelectedVisible = true;
 
-                            PlextorPoweRecSelected = $"{devInfo.PlextorFeatures.PoweRecSelected} Kb/sec.";
+                            PlextorPoweRecSelected =
+                                string.Format(UI._0_Kb_sec, devInfo.PlextorFeatures.PoweRecSelected);
                         }
 
                         if(devInfo.PlextorFeatures.PoweRecMax > 0)
                         {
                             PlextorPoweRecMaxVisible = true;
-                            PlextorPoweRecMax        = $"{devInfo.PlextorFeatures.PoweRecMax} Kb/sec.";
+                            PlextorPoweRecMax        = string.Format(UI._0_Kb_sec, devInfo.PlextorFeatures.PoweRecMax);
                         }
 
                         if(devInfo.PlextorFeatures.PoweRecLast > 0)
                         {
                             PlextorPoweRecLastVisible = true;
-                            PlextorPoweRecLast        = $"{devInfo.PlextorFeatures.PoweRecLast} Kb/sec.";
+                            PlextorPoweRecLast = string.Format(UI._0_Kb_sec, devInfo.PlextorFeatures.PoweRecLast);
                         }
                     }
                 }
@@ -267,15 +285,18 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                     if(devInfo.PlextorFeatures.SilentModeEnabled)
                     {
                         PlextorSilentModeAccessTime = devInfo.PlextorFeatures.AccessTimeLimit == 2
-                                                          ? "\tAccess time is slow" : "\tAccess time is fast";
+                                                          ? Localization.Core.Access_time_is_slow
+                                                          : Localization.Core.Access_time_is_fast;
 
                         PlextorSilentModeCdReadSpeedLimit =
                             devInfo.PlextorFeatures.CdReadSpeedLimit > 0
-                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : "unlimited";
+                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                : UI.unlimited_as_in_speed;
 
                         PlextorSilentModeCdWriteSpeedLimit =
                             devInfo.PlextorFeatures.CdWriteSpeedLimit > 0
-                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : "unlimited";
+                                ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                : UI.unlimited_as_in_speed;
 
                         if(devInfo.PlextorFeatures.IsDvd)
                         {
@@ -283,7 +304,8 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
                             PlextorSilentModeDvdReadSpeedLimit =
                                 devInfo.PlextorFeatures.DvdReadSpeedLimit > 0
-                                    ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x" : "unlimited";
+                                    ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x"
+                                    : UI.unlimited_as_in_speed;
                         }
                     }
                 }
@@ -292,8 +314,7 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                 PlextorSecuRec   = devInfo.PlextorFeatures.SecuRec;
                 PlextorSpeedRead = devInfo.PlextorFeatures.SpeedRead;
 
-                if(devInfo.PlextorFeatures.SpeedRead)
-                    PlextorSpeedEnabled = devInfo.PlextorFeatures.SpeedReadEnabled;
+                if(devInfo.PlextorFeatures.SpeedRead) PlextorSpeedEnabled = devInfo.PlextorFeatures.SpeedReadEnabled;
 
                 PlextorHiding = devInfo.PlextorFeatures.Hiding;
 
@@ -340,25 +361,36 @@ public sealed class DeviceInfoViewModel : ViewModelBase
                     Ssc = true;
 
                     if(blockLimits.Value.minBlockLen == blockLimits.Value.maxBlockLen)
-                        MinBlockSize = $"Device's block size is fixed at {blockLimits.Value.minBlockLen} bytes";
+                    {
+                        MinBlockSize = string.Format(Localization.Core.Device_block_size_is_fixed_at_0_bytes,
+                                                     blockLimits.Value.minBlockLen);
+                    }
                     else
                     {
                         MaxBlockSize = blockLimits.Value.maxBlockLen > 0
-                                           ? $"Device's maximum block size is {blockLimits.Value.maxBlockLen} bytes"
-                                           : "Device does not specify a maximum block size";
+                                           ? string.Format(Localization.Core.Device_maximum_block_size_is_0_bytes,
+                                                           blockLimits.Value.maxBlockLen)
+                                           : Localization.Core.Device_does_not_specify_a_maximum_block_size;
 
-                        MinBlockSize = $"Device's minimum block size is {blockLimits.Value.minBlockLen} bytes";
+                        MinBlockSize = string.Format(Localization.Core.Device_minimum_block_size_is_0_bytes,
+                                                     blockLimits.Value.minBlockLen);
 
                         if(blockLimits.Value.granularity > 0)
+                        {
                             BlockSizeGranularity =
-                                $"Device's needs a block size granularity of 2^{blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
+                                string.Format(Localization.Core.Device_needs_a_block_size_granularity_of_pow_0_1_bytes,
+                                              blockLimits.Value.granularity,
+                                              Math.Pow(2, blockLimits.Value.granularity));
+                        }
                     }
                 }
             }
 
             if(devInfo.DensitySupport != null)
+            {
                 if(devInfo.DensitySupportHeader.HasValue)
                     Densities = DensitySupport.PrettifyDensity(devInfo.DensitySupportHeader);
+            }
 
             if(devInfo.MediumDensitySupport != null)
             {
@@ -371,8 +403,12 @@ public sealed class DeviceInfoViewModel : ViewModelBase
 
         SdMmcInfo = new SdMmcInfo
         {
-            DataContext = new SdMmcInfoViewModel(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR,
-                                                 devInfo.ExtendedCSD, devInfo.SCR)
+            DataContext = new SdMmcInfoViewModel(devInfo.Type,
+                                                 devInfo.CID,
+                                                 devInfo.CSD,
+                                                 devInfo.OCR,
+                                                 devInfo.ExtendedCSD,
+                                                 devInfo.SCR)
         };
     }
 
@@ -912,25 +948,89 @@ public sealed class DeviceInfoViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _sdMmcInfo, value);
     }
 
+    public string DeviceInformationLabel => UI.Title_Device_information;
+    public string GeneralLabel => UI.Title_General;
+    public string DeviceTypeLabel => UI.Title_Device_type;
+    public string ManufacturerLabel => UI.Title_Manufacturer;
+    public string ModelLabel => UI.Title_Model;
+    public string RevisionLabel => UI.Title_Revision;
+    public string SerialNumberLabel => UI.Title_Serial_number;
+    public string ScsiTypeLabel => UI.Title_Peripheral_device_type;
+    public string RemovableMediaLabel => UI.Title_Removable_media;
+    public string UsbConnectedLabel => UI.Title_Connected_by_USB;
+    public string UsbLabel => UI.Title_USB;
+    public string VendorIDLabel => UI.Title_Vendor_ID;
+    public string ProductIDLabel => UI.Title_Product_ID;
+    public string ProductLabel => UI.Title_Product;
+    public string SaveUsbDescriptorsLabel => UI.Save_descriptors_to_file;
+    public string FireWireLabel => UI.Title_FireWire;
+    public string ModelIDLabel => UI.Title_Model_ID;
+    public string GuidLabel => UI.Title_GUID;
+    public string PlextorLabel => UI.Title_Plextor;
+    public string PlextorDiscsLabel => UI.Total_loaded_discs;
+    public string PlextorCdReadTimeLabel => UI.Time_spent_reading_CDs;
+    public string PlextorCdWriteTimeLabel => UI.Time_spent_writing_CDs;
+    public string PlextorDvdReadTimeLabel => UI.Time_spent_reading_DVDs;
+    public string PlextorDvdWriteTimeLabel => UI.Time_spent_writing_DVDs;
+    public string PlextorPoweRecLabel => UI.Supports_PoweRec;
+    public string PlextorPoweRecEnabledLabel => UI.PoweRec_is_enabled;
+    public string PlextorPoweRecRecommendedLabel => UI.Recommended_speed;
+    public string PlextorPoweRecSelectedLabel => UI.Selected_PoweRec_speed_for_currently_inserted_media;
+    public string PlextorPoweRecMaxLabel => UI.Maximum_PoweRec_speed_for_currently_inserted_media;
+    public string PlextorPoweRecLastLabel => UI.Last_PoweRec_used_speed;
+    public string PlextorSilentModeLabel => UI.Supports_SilentMode;
+    public string PlextorSilentModeEnabledLabel => UI.SilentMode_is_enabled;
+    public string PlextorSilentModeCdReadSpeedLimitLabel => UI.CD_read_speed_limited_to;
+    public string PlextorSilentModeCdWriteSpeedLimitLabel => UI.CD_write_speed_limited_to;
+    public string PlextorSilentModeDvdReadSpeedLimitLabel => UI.DVD_read_speed_limited_to;
+    public string PlextorGigaRecLabel => UI.Supports_GigaRec;
+    public string PlextorSecuRecLabel => UI.Supports_SecuRec;
+    public string PlextorSpeedReadLabel => UI.Supports_SpeedRead;
+    public string PlextorSpeedEnabledLabel => UI.SpeedRead_is_enabled;
+    public string PlextorHidingLabel => UI.Supports_hiding_CD_Rs_and_sessions;
+    public string PlextorHidesRecordablesLabel => UI.Is_hiding_CD_Rs;
+    public string PlextorHidesSessionsLabel => UI.Is_forcing_only_first_session;
+    public string PlextorVariRecLabel => UI.Supports_VariRec;
+    public string PlextorVariRecDvdLabel => UI.Supports_VariRec_on_DVDs;
+    public string PlextorBitSettingLabel => UI.Supports_bitsetting_DVD_R_book_type;
+    public string PlextorBitSettingDlLabel => UI.Supports_bitsetting_DVD_R_DL_book_type;
+    public string PlextorDvdPlusWriteTestLabel => UI.Supports_test_writing_DVD_Plus;
+    public string KreonLabel => UI.Title_Kreon;
+    public string KreonChallengeResponseLabel => Localization.Core.Can_do_challenge_response_with_Xbox_discs;
+    public string KreonDecryptSsLabel => Localization.Core.Can_read_and_decrypt_SS_from_Xbox_discs;
+    public string KreonXtremeUnlockLabel => Localization.Core.Can_set_xtreme_unlock_state_with_Xbox_discs;
+    public string KreonWxripperUnlockLabel => Localization.Core.Can_set_wxripper_unlock_state_with_Xbox_discs;
+    public string KreonChallengeResponse360Label => Localization.Core.Can_do_challenge_response_with_Xbox_360_discs;
+    public string KreonDecryptSs360Label => Localization.Core.Can_read_and_decrypt_SS_from_Xbox_360_discs;
+    public string KreonXtremeUnlock360Label => Localization.Core.Can_set_xtreme_unlock_state_with_Xbox_360_discs;
+    public string KreonWxripperUnlock360Label => Localization.Core.Can_set_wxripper_unlock_state_with_Xbox_360_discs;
+    public string KreonSetLockedLabel => Localization.Core.Can_set_Kreon_locked_state;
+    public string KreonErrorSkippingLabel => Localization.Core.Kreon_Can_skip_read_errors;
+    public string DensitiesSupportedByDeviceLabel => UI.Densities_supported_by_device;
+    public string MediumTypesSupportedByDeviceLabel => UI.Medium_types_supported_by_device;
+    public string CIDLabel => UI.Title_CID;
+    public string CSDLabel => UI.Title_CSD;
+    public string OCRLabel => UI.Title_OCR;
+    public string ExtendedCSDLabel => UI.Title_Extended_CSD;
+    public string SCRLabel => UI.Title_SCR;
+    public string PcmciaLabel => UI.Title_PCMCIA;
+    public string ATA_ATAPILabel => UI.Title_ATA_ATAPI;
+    public string SCSILabel => UI.Title_SCSI;
+    public string Sd_MMCLabel => UI.Title_SD_MMC;
+
     async Task ExecuteSaveUsbDescriptorsCommand()
     {
-        var dlgSaveBinary = new SaveFileDialog();
-
-        dlgSaveBinary.Filters.Add(new FileDialogFilter
+        IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Extensions = new List<string>(new[]
+            FileTypeChoices = new List<FilePickerFileType>
             {
-                "*.bin"
-            }),
-            Name = "Binary"
+                FilePickerFileTypes.Binary
+            }
         });
 
-        string result = await dlgSaveBinary.ShowAsync(_view);
+        if(result is null) return;
 
-        if(result is null)
-            return;
-
-        var saveFs = new FileStream(result, FileMode.Create);
+        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
         saveFs.Write(_devInfo.UsbDescriptors, 0, _devInfo.UsbDescriptors.Length);
 
         saveFs.Close();

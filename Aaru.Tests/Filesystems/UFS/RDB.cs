@@ -23,10 +23,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems.UFS;
 
 using System.IO;
 using Aaru.CommonTypes;
@@ -34,15 +32,17 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems.UFS;
+
 [TestFixture]
 public class RDB : FilesystemTest
 {
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "UNIX filesystem (RDB)");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (RDB)");
     public override IFilesystem Plugin => new FFSPlugin();
     public override bool Partitions => true;
 
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile    = "amix.aif",
@@ -51,7 +51,7 @@ public class RDB : FilesystemTest
             SectorSize  = 512,
             Clusters    = 511424,
             ClusterSize = 1024,
-            Type        = "UFS"
+            Type        = "ufs"
         }
-    };
+    ];
 }

@@ -23,14 +23,14 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Core.Logging;
 
 using System;
 using System.IO;
 using Aaru.Decoders.CD;
+
+namespace Aaru.Core.Logging;
 
 /// <summary>Logs subchannel data</summary>
 public class SubchannelLog
@@ -44,23 +44,22 @@ public class SubchannelLog
     /// <param name="bcd">Drive returns subchannel in BCD format</param>
     public SubchannelLog(string outputFile, bool bcd)
     {
-        if(string.IsNullOrEmpty(outputFile))
-            return;
+        if(string.IsNullOrEmpty(outputFile)) return;
 
         _bcd = bcd;
 
         _logSw = new StreamWriter(outputFile, true);
 
-        _logSw.WriteLine("Start subchannel logging at {0}", DateTime.Now);
-        _logSw.WriteLine("######################################################");
+        _logSw.WriteLine(Localization.Core.Start_subchannel_logging_at_0, DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Log_section_separator);
         _logSw.Flush();
     }
 
     /// <summary>Finishes and closes the subchannel log</summary>
     public void Close()
     {
-        _logSw.WriteLine("######################################################");
-        _logSw.WriteLine("End logging at {0}", DateTime.Now);
+        _logSw.WriteLine(Localization.Core.Log_section_separator);
+        _logSw.WriteLine(Localization.Core.End_logging_on_0, DateTime.Now);
         _logSw.Close();
     }
 
@@ -75,7 +74,7 @@ public class SubchannelLog
     {
         if(subchannel.Length / SUB_SIZE != blocks)
         {
-            _logSw.WriteLine("Data length is invalid!");
+            _logSw.WriteLine(Localization.Core.Data_length_is_invalid);
             _logSw.Flush();
 
             return;
@@ -170,6 +169,7 @@ public class SubchannelLog
             var rwEmpty = true;
 
             if(raw)
+            {
                 for(uint i = 12 * block; i < 12 * block + 12; i++)
                 {
                     if(r[i] == 0    && s[i] == 0    && t[i] == 0    && u[i] == 0    && v[i] == 0    && w[i] == 0 ||
@@ -180,23 +180,21 @@ public class SubchannelLog
 
                     break;
                 }
+            }
 
             var corruptedPause = false;
             var pause          = false;
 
             for(var i = 0; i < 12; i++)
             {
-                if(p[i] == 0 ||
-                   p[i] == 0xFF)
-                    continue;
+                if(p[i] == 0 || p[i] == 0xFF) continue;
 
                 corruptedPause = true;
 
                 break;
             }
 
-            if(!corruptedPause)
-                pause = p[0] == 1;
+            if(!corruptedPause) pause = p[0] == 1;
 
             var subBuf = new byte[12];
             subBuf[0]  = (byte)q[0  + block * 12];
@@ -212,13 +210,16 @@ public class SubchannelLog
             subBuf[10] = (byte)q[10 + block * 12];
             subBuf[11] = (byte)q[11 + block * 12];
 
-            string prettyQ = Subchannel.PrettifyQ(subBuf, generated || _bcd, startingLba + block, corruptedPause, pause,
+            string prettyQ = Subchannel.PrettifyQ(subBuf,
+                                                  generated || _bcd,
+                                                  startingLba + block,
+                                                  corruptedPause,
+                                                  pause,
                                                   rwEmpty);
 
             if(generated)
-                prettyQ += " (GENERATED)";
-            else if(@fixed)
-                prettyQ += " (FIXED)";
+                prettyQ             += Localization.Core._GENERATED;
+            else if(@fixed) prettyQ += Localization.Core._FIXED;
 
             _logSw.WriteLine(prettyQ);
         }
@@ -228,53 +229,63 @@ public class SubchannelLog
 
     /// <summary>Logs message indicating the P subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WritePFix(long lba) => WriteMessageWithPosition(lba, "fixed P subchannel using weight average.");
+    public void WritePFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_P_subchannel_using_weight_average);
 
     /// <summary>Logs message indicating the R-W subchannels have been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteRwFix(long lba) => WriteMessageWithPosition(lba, "fixed R-W subchannels writing empty data.");
+    public void WriteRwFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_R_W_subchannels_writing_empty_data);
 
     /// <summary>Logs message indicating the ADR field of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQAdrFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ADR.");
+    public void WriteQAdrFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_ADR);
 
     /// <summary>Logs message indicating the CONTROL field of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQCtrlFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct CONTROL.");
+    public void WriteQCtrlFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_CONTROL);
 
     /// <summary>Logs message indicating the ZERO field of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQZeroFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct ZERO.");
+    public void WriteQZeroFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_ZERO);
 
     /// <summary>Logs message indicating the TNO field of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQTnoFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct TNO.");
+    public void WriteQTnoFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_TNO);
 
     /// <summary>Logs message indicating the INDEX field of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQIndexFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct INDEX.");
+    public void WriteQIndexFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_INDEX);
 
     /// <summary>Logs message indicating the relative position of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
     public void WriteQRelPosFix(long lba) =>
-        WriteMessageWithPosition(lba, "fixed Q subchannel with correct RELATIVE POSITION.");
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_RELATIVE_POSITION);
 
     /// <summary>Logs message indicating the absolute position of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
     public void WriteQAbsPosFix(long lba) =>
-        WriteMessageWithPosition(lba, "fixed Q subchannel with correct ABSOLUTE POSITION.");
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_ABSOLUTE_POSITION);
 
     /// <summary>Logs message indicating the CRC of the Q subchannel has been fixed</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQCrcFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with correct CRC.");
+    public void WriteQCrcFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_correct_CRC);
 
     /// <summary>Logs message indicating the the Q subchannel has been fixed with a known good MCN</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQMcnFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with known good MCN.");
+    public void WriteQMcnFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_known_good_MCN);
 
     /// <summary>Logs message indicating the the Q subchannel has been fixed with a known good ISRC</summary>
     /// <param name="lba">LBA fix belongs to</param>
-    public void WriteQIsrcFix(long lba) => WriteMessageWithPosition(lba, "fixed Q subchannel with known good ISRC.");
+    public void WriteQIsrcFix(long lba) =>
+        WriteMessageWithPosition(lba, Localization.Core.fixed_Q_subchannel_with_known_good_ISRC);
 
     /// <summary>Logs a message with a specified position</summary>
     /// <param name="lba">LBA position</param>
@@ -284,9 +295,9 @@ public class SubchannelLog
         long   minute = (lba + 150)        / 4500;
         long   second = (lba + 150) % 4500 / 75;
         long   frame  = (lba + 150)        % 4500 % 75;
-        string area   = lba < 0 ? "Lead-In" : "Program";
+        string area   = lba < 0 ? Localization.Core.Lead_In : Localization.Core.Program;
 
-        _logSw.WriteLine($"{minute:D2}:{second:D2}:{frame:D2} - LBA {lba,6}: {area} area, {message}");
+        _logSw.WriteLine(Localization.Core._0_1_2_LBA_3_4_area_5, minute, second, frame, lba, area, message);
         _logSw.Flush();
     }
 }

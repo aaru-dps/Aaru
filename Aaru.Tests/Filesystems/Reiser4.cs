@@ -23,27 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Filesystems;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
+namespace Aaru.Tests.Filesystems;
+
 [TestFixture]
-public class Reiser4 : FilesystemTest
+public class Reiser4() : FilesystemTest("reiser4")
 {
-    public Reiser4() : base("Reiser 4 filesystem") {}
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Reiser filesystem v4");
+    public override IFilesystem Plugin     => new Aaru.Filesystems.Reiser4();
+    public override bool        Partitions => true;
 
-    public override string DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Filesystems", "Reiser filesystem v4");
-    public override IFilesystem Plugin => new Aaru.Filesystems.Reiser4();
-    public override bool Partitions => true;
-
-    public override FileSystemTest[] Tests => new[]
-    {
+    public override FileSystemTest[] Tests =>
+    [
         new FileSystemTest
         {
             TestFile     = "linux.aif",
@@ -55,5 +53,5 @@ public class Reiser4 : FilesystemTest
             VolumeName   = "Volume label",
             VolumeSerial = "b0c1924e-6f10-8c42-b6c5-66a457896460"
         }
-    };
+    ];
 }

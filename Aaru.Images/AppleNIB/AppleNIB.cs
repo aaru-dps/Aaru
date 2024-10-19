@@ -27,21 +27,21 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
 
-namespace Aaru.DiscImages;
-
 using System.Collections.Generic;
-using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
+
+namespace Aaru.Images;
 
 // TODO: Checksum sectors
 /// <inheritdoc />
 /// <summary>Implements reading nibbelized Apple II disk images</summary>
 public sealed partial class AppleNib : IMediaImage
 {
+    const string              MODULE_NAME = "Apple NIB Plugin";
     Dictionary<ulong, byte[]> _addressFields;
     Dictionary<ulong, byte[]> _cookedSectors;
     ImageInfo                 _imageInfo;
@@ -49,8 +49,8 @@ public sealed partial class AppleNib : IMediaImage
 
     public AppleNib() => _imageInfo = new ImageInfo
     {
-        ReadableSectorTags    = new List<SectorTagType>(),
-        ReadableMediaTags     = new List<MediaTagType>(),
+        ReadableSectorTags    = [],
+        ReadableMediaTags     = [],
         HasPartitions         = false,
         HasSessions           = false,
         Version               = null,

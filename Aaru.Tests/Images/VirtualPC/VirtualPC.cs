@@ -23,25 +23,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.Tests.Images.VirtualPC;
 
 using System.IO;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.DiscImages;
+using Aaru.Images;
 using NUnit.Framework;
+
+namespace Aaru.Tests.Images.VirtualPC;
 
 [TestFixture]
 public class VirtualPc : BlockMediaImageTest
 {
-    public override string      DataFolder => Path.Combine(Consts.TEST_FILES_ROOT, "Media image formats", "VirtualPC");
-    public override IMediaImage Plugin    => new Vhd();
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Media image formats", "VirtualPC");
+    public override IMediaImage Plugin     => new Vhd();
 
-    public override BlockImageTestExpected[] Tests => new[]
-    {
+    public override BlockImageTestExpected[] Tests =>
+    [
         new BlockImageTestExpected
         {
             TestFile   = "vpc40_dynamic_128mb.vhd.lz",
@@ -49,14 +49,14 @@ public class VirtualPc : BlockMediaImageTest
             Sectors    = 261936,
             SectorSize = 512,
             Md5        = "cc634bb9bbf2dcdd88cfe251390e2049",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 17,
                     Length = 261647
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -65,14 +65,14 @@ public class VirtualPc : BlockMediaImageTest
             Sectors    = 261936,
             SectorSize = 512,
             Md5        = "0b6f655387e101c0249e922b1714a484",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 17,
                     Length = 261647
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -81,14 +81,14 @@ public class VirtualPc : BlockMediaImageTest
             Sectors    = 1052352,
             SectorSize = 512,
             Md5        = "12ebc62199ecaae97efe406ee891d68f",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 1052289
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -97,14 +97,14 @@ public class VirtualPc : BlockMediaImageTest
             Sectors    = 1052352,
             SectorSize = 512,
             Md5        = "4943fc799eddd6f386b2923847824ffc",
-            Partitions = new[]
-            {
+            Partitions =
+            [
                 new BlockPartitionVolumes
                 {
                     Start  = 63,
                     Length = 1052289
                 }
-            }
+            ]
         },
         new BlockImageTestExpected
         {
@@ -202,5 +202,5 @@ public class VirtualPc : BlockMediaImageTest
             SectorSize = 512,
             Md5        = "4b4e98a5bba2469382132f9289ae1c57"
         }
-    };
+    ];
 }

@@ -1,336 +1,247 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-        <SchemaVersion>2.0</SchemaVersion>
-        <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
-        <OutputType>Exe</OutputType>
-        <RootNamespace>Aaru</RootNamespace>
-        <AssemblyName>aaru</AssemblyName>
-        <ReleaseVersion>$(Version)</ReleaseVersion>
-        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-        <TargetFramework>net6.0</TargetFramework>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-        <Version>6.0.0-alpha8</Version>
-        <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2022 Natalia Portillo</Copyright>
-        <Product>Aaru Data Preservation Suite</Product>
-        <Title>Aaru</Title>
-        <ApplicationVersion>$(Version)</ApplicationVersion>
-        <RuntimeIdentifiers>alpine-x64;linux-arm64;linux-arm;linux-x64;osx-x64;win-arm64;win-arm;win-x64;win-x86;debian-arm;debian-arm64;debian-x64;rhel-arm64;rhel-x64;sles-x64</RuntimeIdentifiers>
-        <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-        <LangVersion>10</LangVersion>
-        <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-        <Platforms>x86;AnyCPU</Platforms>
-    </PropertyGroup>
-    <PropertyGroup>
-        <NrtRevisionFormat>$(Version)+{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
-        <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
-        <NrtShowRevision>false</NrtShowRevision>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-        <DebugSymbols>True</DebugSymbols>
-        <DebugType>full</DebugType>
-        <Optimize>False</Optimize>
-        <OutputPath>bin\Debug</OutputPath>
-        <DefineConstants>DEBUG</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <PlatformTarget>x86</PlatformTarget>
-        <Externalconsole>false</Externalconsole>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-        <DebugType>none</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release</OutputPath>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
-        <PlatformTarget>x86</PlatformTarget>
-        <Externalconsole>false</Externalconsole>
-        <ConsolePause>false</ConsolePause>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="Commands\Database\DatabaseFamily.cs" />
-        <Compile Include="Commands\Database\Statistics.cs" />
-        <Compile Include="Commands\Database\Update.cs" />
-        <Compile Include="Commands\Device\DeviceFamily.cs" />
-        <Compile Include="Commands\Device\Info.cs" />
-        <Compile Include="Commands\Device\DeviceReport.cs" />
-        <Compile Include="Commands\Device\List.cs" />
-        <Compile Include="Commands\Filesystem\Info.cs" />
-        <Compile Include="Commands\Filesystem\ExtractFiles.cs" />
-        <Compile Include="Commands\Filesystem\FilesystemFamily.cs" />
-        <Compile Include="Commands\Filesystem\Options.cs" />
-        <Compile Include="Commands\Filesystem\Ls.cs" />
-        <Compile Include="Commands\Formats.cs" />
-        <Compile Include="Commands\Image\Checksum.cs" />
-        <Compile Include="Commands\Image\Compare.cs" />
-        <Compile Include="Commands\Image\Convert.cs" />
-        <Compile Include="Commands\Image\CreateSidecar.cs" />
-        <Compile Include="Commands\Image\Decode.cs" />
-        <Compile Include="Commands\Image\Entropy.cs" />
-        <Compile Include="Commands\Image\ImageFamily.cs" />
-        <Compile Include="Commands\Image\Info.cs" />
-        <Compile Include="Commands\Image\Options.cs" />
-        <Compile Include="Commands\Image\Print.cs" />
-        <Compile Include="Commands\Image\Verify.cs" />
-        <Compile Include="Commands\ListNamespaces.cs" />
-        <Compile Include="Commands\Media\Dump.cs" />
-        <Compile Include="Commands\Media\MediaFamily.cs" />
-        <Compile Include="Commands\Media\Info.cs" />
-        <Compile Include="Commands\Media\Scan.cs" />
-        <Compile Include="Commands\Archive\ArchiveFamily.cs" />
-        <Compile Include="Commands\Archive\Info.cs" />
-        <Compile Include="Commands\Remote.cs" />
-        <Compile Include="Main.cs" />
-        <Compile Include="Commands\Configure.cs" />
-        <Compile Include="Commands\ListEncodings.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Commands\" />
-    </ItemGroup>
-    <ProjectExtensions>
-        <MonoDevelop>
-            <Properties>
-                <Policies>
-                    <VersionControlPolicy>
-                        <CommitMessageStyle Indent=" " LastFilePostfix=":&#xA;  " LineAlign="0" IncludeDirectoryPaths="True" />
-                    </VersionControlPolicy>
-                    <ChangeLogPolicy UpdateMode="ProjectRoot" VcsIntegration="RequireEntry">
-                        <MessageStyle Header="" Indent="" LastFilePostfix=":&#xA;  " LineAlign="2" IncludeDirectoryPaths="True" />
-                        <inheritsSet />
-                        <inheritsScope />
-                    </ChangeLogPolicy>
-                    <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="MSBuild" />
-                    <TextStylePolicy TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" FileWidth="80" TabsToSpaces="True" scope="text/plain" />
-                    <NameConventionPolicy>
-                        <Rules>
-                            <NamingRule Name="Namespaces" AffectedEntity="Namespace" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Types" AffectedEntity="Class, Struct, Enum, Delegate" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Interfaces" AffectedEntity="Interface" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True">
-                                <RequiredPrefixes>
-                                    <String>I</String>
-                                </RequiredPrefixes>
-                            </NamingRule>
-                            <NamingRule Name="Attributes" AffectedEntity="CustomAttributes" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True">
-                                <RequiredSuffixes>
-                                    <String>Attribute</String>
-                                </RequiredSuffixes>
-                            </NamingRule>
-                            <NamingRule Name="Event Arguments" AffectedEntity="CustomEventArgs" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True">
-                                <RequiredSuffixes>
-                                    <String>EventArgs</String>
-                                </RequiredSuffixes>
-                            </NamingRule>
-                            <NamingRule Name="Exceptions" AffectedEntity="CustomExceptions" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True">
-                                <RequiredSuffixes>
-                                    <String>Exception</String>
-                                </RequiredSuffixes>
-                            </NamingRule>
-                            <NamingRule Name="Methods" AffectedEntity="Methods" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Static Readonly Fields" AffectedEntity="ReadonlyField" VisibilityMask="Internal, Protected, Public" NamingStyle="PascalCase" IncludeInstanceMembers="False" IncludeStaticEntities="True" />
-                            <NamingRule Name="Fields (Non Private)" AffectedEntity="Field" VisibilityMask="Internal, Protected, Public" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="ReadOnly Fields (Non Private)" AffectedEntity="ReadonlyField" VisibilityMask="Internal, Protected, Public" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="False" />
-                            <NamingRule Name="Fields (Private)" AffectedEntity="Field, ReadonlyField" VisibilityMask="Private" NamingStyle="CamelCase" IncludeInstanceMembers="True" IncludeStaticEntities="False">
-                                <AllowedPrefixes>
-                                    <String>_</String>
-                                    <String>m_</String>
-                                </AllowedPrefixes>
-                            </NamingRule>
-                            <NamingRule Name="Static Fields (Private)" AffectedEntity="Field" VisibilityMask="Private" NamingStyle="CamelCase" IncludeInstanceMembers="False" IncludeStaticEntities="True" />
-                            <NamingRule Name="ReadOnly Fields (Private)" AffectedEntity="ReadonlyField" VisibilityMask="Private" NamingStyle="CamelCase" IncludeInstanceMembers="True" IncludeStaticEntities="False">
-                                <AllowedPrefixes>
-                                    <String>_</String>
-                                    <String>m_</String>
-                                </AllowedPrefixes>
-                            </NamingRule>
-                            <NamingRule Name="Constant Fields" AffectedEntity="ConstantField" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Properties" AffectedEntity="Property" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Events" AffectedEntity="Event" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Enum Members" AffectedEntity="EnumMember" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Parameters" AffectedEntity="Parameter" VisibilityMask="VisibilityMask" NamingStyle="CamelCase" IncludeInstanceMembers="True" IncludeStaticEntities="True" />
-                            <NamingRule Name="Type Parameters" AffectedEntity="TypeParameter" VisibilityMask="VisibilityMask" NamingStyle="PascalCase" IncludeInstanceMembers="True" IncludeStaticEntities="True">
-                                <RequiredPrefixes>
-                                    <String>T</String>
-                                </RequiredPrefixes>
-                            </NamingRule>
-                        </Rules>
-                    </NameConventionPolicy>
-                    <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Data Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This program is free software: you can redistribute it and/or modify&#xA;    it under the terms of the GNU General Public License as&#xA;    published by the Free Software Foundation, either version 3 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This program is distributed in the hope that it will be useful,&#xA;    but WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#xA;    GNU General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU General Public License&#xA;    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
-                    <TextStylePolicy FileWidth="120" TabWidth="4" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Native" TabsToSpaces="True" scope="text/x-csharp" />
-                    <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" NewLineForMembersInObjectInit="True" NewLineForMembersInAnonymousTypes="True" NewLineForClausesInQuery="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
-                </Policies>
-            </Properties>
-        </MonoDevelop>
-    </ProjectExtensions>
-    <ItemGroup>
-        <None Remove="Packaging.Targets" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\README.md">
-            <Link>README.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\.travis.yml">
-            <Link>.travis.yml</Link>
-        </None>
-        <None Include="..\CONTRIBUTING.md">
-            <Link>CONTRIBUTING.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\NEEDED.md">
-            <Link>NEEDED.md</Link>
-        </None>
-        <None Include="..\Changelog.md">
-            <Link>Changelog.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
-        <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
-        <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"></ProjectReference>
-        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"></ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.MIT">
-            <Link>LICENSE.MIT</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <Folder Include="..\LICENSE"></Folder>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\.github\CODE_OF_CONDUCT.md" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="Spectre.Console" Version="0.43.0" />
-        <PackageReference Include="Spectre.Console.Analyzer" Version="0.43.0" />
-        <PackageReference Include="System.CommandLine" Version="2.0.0-beta3.22114.1" />
-        <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta3.22114.1" />
-        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
-        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.2">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="System.Collections" Version="4.3.0" />
-        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
-        <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-        <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
-        <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
-        <PackageReference Update="Packaging.Targets" Version="0.1.189"></PackageReference>
-        <PackageReference Include="Packaging.Targets" Version="0.1.220" />
-    </ItemGroup>
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-        <DebugPackage>-dbg</DebugPackage>
-        <Optimize>false</Optimize>
-        <DebugSymbols>true</DebugSymbols>
-        <DefineDebug>true</DefineDebug>
-        <DebugType>portable</DebugType>
-    </PropertyGroup>
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Aaru</RootNamespace>
+    <AssemblyName>aaru</AssemblyName>
+    <ReleaseVersion>$(Version)</ReleaseVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Version>6.0.0~alpha9</Version>
+    <Company>Claunia.com</Company>
+    <Copyright>Copyright © 2011-2024 Natalia Portillo</Copyright>
+    <Product>Aaru Data Preservation Suite</Product>
+    <Title>Aaru</Title>
+    <ApplicationVersion>$(Version)</ApplicationVersion>
+    <!-- TODO win-arm doesn't seem to work in RC1, try again in final -->
+    <RuntimeIdentifiers>linux-musl-arm;linux-musl-arm64;linux-musl-x64;linux-arm64;linux-arm;linux-x64;osx-x64;osx-arm64;win-arm64;win-x64;win-x86</RuntimeIdentifiers>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <LangVersion>12</LangVersion>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NrtRevisionFormat>$(Version)+{chash:8}</NrtRevisionFormat>
+    <NrtResolveSimpleAttributes>true</NrtResolveSimpleAttributes>
+    <NrtShowRevision>false</NrtShowRevision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugPackage>-dbg</DebugPackage>
+    <NoWarn>CS1591;CS1574</NoWarn>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <InternalsVisibleTo Include="Aaru.Tests"/>
+    <InternalsVisibleTo Include="Aaru.Tests.Devices"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Packaging.Targets"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\.travis.yml">
+      <Link>.travis.yml</Link>
+    </None>
+    <None Include="..\CONTRIBUTING.md">
+      <Link>CONTRIBUTING.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\NEEDED.md">
+      <Link>NEEDED.md</Link>
+    </None>
+    <None Include="..\Changelog.md">
+      <Link>Changelog.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj"/>
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj"/>
+    <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj"/>
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj"/>
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj"/>
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj"/>
+    <ProjectReference Include="..\Aaru.Localization\Aaru.Localization.csproj"/>
+    <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj"/>
+    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj"/>
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj"/>
+    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj"/>
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj"/>
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj"/>
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj"/>
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Folder Include="..\LICENSE"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.github\CODE_OF_CONDUCT.md"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ErrorProne.NET.Structs" Version="0.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Humanizer" Version="2.14.1"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.4"/>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.10.48">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageReference Include="Spectre.Console" Version="0.49.1" />
+    <PackageReference Include="Spectre.Console.Analyzer" Version="0.49.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="System.CommandLine.NamingConventionBinder" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0"/>
+    <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+    <PackageReference Include="Text.Analyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Collections" Version="4.3.0"/>
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.1"/>
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
+    <PackageReference Include="System.Net.Primitives" Version="4.3.1"/>
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0"/>
+    <PackageReference Update="Packaging.Targets" Version="0.1.226" />
+  </ItemGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
-        <Optimize>true</Optimize>
-        <DebugSymbols>false</DebugSymbols>
-        <DefineDebug>false</DefineDebug>
-        <DebugType>none</DebugType>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackageVersion>6.0.0-alpha9</PackageVersion>
+    <PackagePrefix>aaru</PackagePrefix>
+    <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+    <Section>net</Section>
+    <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <PackageVersion>6.0.0-alpha3</PackageVersion>
-        <PackagePrefix>aaru</PackagePrefix>
-        <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
-        <Section>net</Section>
-        <PackageDescription>Disc image management and creation tool for disks, tapes, optical and solid state media</PackageDescription>
-    </PropertyGroup>
+  <ItemGroup>
+    <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
+      <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
+    </Content>
+  </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="aaruformat.xml" CopyToPublishDirectory="PreserveNewest" LinuxFileMode="0644">
-            <LinuxPath>/usr/share/mime/packages/aaruformat.xml</LinuxPath>
-        </Content>
-    </ItemGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'alpine-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_arm64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-musl-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_alpine_x86_64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_arm64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_armhf$(DebugPackage)</PackageName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_linux_amd64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_macos$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_aarch64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_macos_applesilicon$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_arm$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_aarch64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x64$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-arm'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_arm$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x64$(DebugPackage)</PackageName>
+  </PropertyGroup>
 
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x86'">
+    <PackageName>$(PackagePrefix)-$(PackageVersion)_windows_x86$(DebugPackage)</PackageName>
+  </PropertyGroup>
+
+  <!-- TODO: Distribution specific RIDs where removed in .NET 8.0. We need to detect packaging in another way
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm64'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_arm64$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-arm'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_armhf$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_armhf$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'debian-x64'">
-        <PackageName>$(PackagePrefix)_$(PackageVersion)_amd64$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)_$(PackageVersion)_amd64$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-arm64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)-$(PackageVersion).el.aarch64$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'rhel-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)-$(PackageVersion).el.x86_64$(DebugPackage)</PackageName>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'sles-x64'">
-        <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
+      <PackageName>$(PackagePrefix)-$(PackageVersion).sles.x86_64$(DebugPackage)</PackageName>
     </PropertyGroup>
+  -->
 </Project>

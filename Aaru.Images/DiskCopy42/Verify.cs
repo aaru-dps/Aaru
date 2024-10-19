@@ -27,16 +27,19 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2022 Natalia Portillo
+// Copyright © 2011-2024 Natalia Portillo
 // ****************************************************************************/
-
-namespace Aaru.DiscImages;
 
 using System.IO;
 using Aaru.Console;
+using Aaru.Helpers;
+
+namespace Aaru.Images;
 
 public sealed partial class DiskCopy42
 {
+#region IVerifiableImage Members
+
     /// <inheritdoc />
     public bool? VerifyMediaImage()
     {
@@ -44,29 +47,30 @@ public sealed partial class DiskCopy42
         var  tags    = new byte[header.TagSize];
         uint tagsChk = 0;
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Reading data");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_data);
         Stream dataStream = dc42ImageFilter.GetDataForkStream();
         dataStream.Seek(dataOffset, SeekOrigin.Begin);
-        dataStream.Read(data, 0, (int)header.DataSize);
+        dataStream.EnsureRead(data, 0, (int)header.DataSize);
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculating_data_checksum);
         uint dataChk = CheckSum(data);
-        AaruConsole.DebugWriteLine("DC42 plugin", "Calculated data checksum = 0x{0:X8}", dataChk);
-        AaruConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}", header.DataChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_data_checksum_equals_0_X8, dataChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_data_checksum_equals_0_X8,     header.DataChecksum);
 
-        if(header.TagSize <= 0)
-            return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
+        if(header.TagSize <= 0) return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Reading tags");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Reading_tags);
         Stream tagStream = dc42ImageFilter.GetDataForkStream();
         tagStream.Seek(tagOffset, SeekOrigin.Begin);
-        tagStream.Read(tags, 0, (int)header.TagSize);
+        tagStream.EnsureRead(tags, 0, (int)header.TagSize);
 
-        AaruConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculating_tag_checksum);
         tagsChk = CheckSum(tags);
-        AaruConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
-        AaruConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}", header.TagChecksum);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Calculated_tag_checksum_equals_0_X8, tagsChk);
+        AaruConsole.DebugWriteLine(MODULE_NAME, Localization.Stored_tag_checksum_equals_0_X8,     header.TagChecksum);
 
         return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
     }
+
+#endregion
 }
