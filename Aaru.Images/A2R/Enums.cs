@@ -57,7 +57,9 @@ public sealed partial class A2R
         DS_525_80trk             = 0x3,
         DS_525_40trk             = 0x4,
         DS_35_80trk              = 0x5,
-        DS_8                     = 0x6
+        DS_8                     = 0x6,
+        DS_3_80trk               = 0x7,
+        DS_3_40trk               = 0x8
     }
 
 #endregion
