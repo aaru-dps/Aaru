@@ -206,6 +206,16 @@ public sealed partial class A2R
                         _imageInfo.Cylinders = 40;
 
                         break;
+                    case A2rDriveType.DS_3_80trk:
+                        _imageInfo.Heads     = 2;
+                        _imageInfo.Cylinders = 80;
+
+                        break;
+                    case A2rDriveType.DS_3_40trk:
+                        _imageInfo.Heads     = 2;
+                        _imageInfo.Cylinders = 40;
+
+                        break;
                     default:
                         return ErrorNumber.OutOfRange;
                 }

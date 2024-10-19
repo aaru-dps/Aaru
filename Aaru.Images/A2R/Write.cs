@@ -155,6 +155,9 @@ public sealed partial class A2R
         _infoChunkV3.driveType = mediaType switch
                                  {
                                      MediaType.DOS_525_DS_DD_9 => A2rDriveType.DS_525_40trk,
+                                     MediaType.DOS_35_HD       => A2rDriveType.DS_35_80trk,
+                                     MediaType.DOS_525_HD      => A2rDriveType.DS_525_80trk,
+                                     MediaType.AppleSonyDS     => A2rDriveType.DS_35_80trk_appleCLV,
                                      MediaType.Apple32SS       => A2rDriveType.SS_525_40trk_quarterStep,
                                      MediaType.Unknown         => A2rDriveType.DS_35_80trk,
                                      _                         => _infoChunkV3.driveType

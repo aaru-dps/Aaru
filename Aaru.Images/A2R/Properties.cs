@@ -88,7 +88,7 @@ public sealed partial class A2R
     {
         // TODO: A2R supports a lot more formats, please add more whence tested.
         MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD, MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD,
-        MediaType.Apple32SS, MediaType.Unknown
+        MediaType.Apple32SS, MediaType.AppleSonyDS, MediaType.Unknown
     };
 
     /// <inheritdoc />

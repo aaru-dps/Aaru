@@ -54,6 +54,8 @@ public class PluginRegisterGenerator : ISourceGenerator
         List<string> writableFloppyImagePlugins  = ((PluginFinder)context.SyntaxReceiver)?.WritableFloppyImagePlugins;
         List<string> writableImagePlugins        = ((PluginFinder)context.SyntaxReceiver)?.WritableImagePlugins;
         List<string> byteAddressableImagePlugins = ((PluginFinder)context.SyntaxReceiver)?.ByteAddressableImagePlugins;
+        List<string> fluxImagePlugins            = ((PluginFinder)context.SyntaxReceiver)?.FluxImagePlugins;
+        List<string> writableFluxImagePlugins    = ((PluginFinder)context.SyntaxReceiver)?.WritableFluxImagePlugins;
 
         StringBuilder sb = new();
 
@@ -269,6 +271,32 @@ public class PluginRegisterGenerator : ISourceGenerator
         else
             sb.AppendLine("    public void RegisterByteAddressablePlugins(IServiceCollection services) {}");
 
+        if(fluxImagePlugins?.Count > 0)
+        {
+            sb.AppendLine("    public void RegisterFluxImagePlugins(IServiceCollection services)");
+            sb.AppendLine("    {");
+
+            foreach(string plugin in fluxImagePlugins.Distinct())
+                sb.AppendLine($"        services.AddTransient<IFluxImage, {plugin}>();");
+
+            sb.AppendLine("    }");
+        }
+        else
+            sb.AppendLine("    public void RegisterFluxImagePlugins(IServiceCollection services) {}");
+
+        if(writableFluxImagePlugins?.Count > 0)
+        {
+            sb.AppendLine("    public void RegisterWritableFluxImagePlugins(IServiceCollection services)");
+            sb.AppendLine("    {");
+
+            foreach(string plugin in writableFluxImagePlugins.Distinct())
+                sb.AppendLine($"        services.AddTransient<IWritableFluxImage, {plugin}>();");
+
+            sb.AppendLine("    }");
+        }
+        else
+            sb.AppendLine("    public void RegisterWritableFluxImagePlugins(IServiceCollection services) {}");
+
         sb.AppendLine("}");
 
         context.AddSource("Register.g.cs", sb.ToString());
@@ -291,6 +319,8 @@ public class PluginRegisterGenerator : ISourceGenerator
         public List<string>           WritableFloppyImagePlugins  { get; } = [];
         public List<string>           WritableImagePlugins        { get; } = [];
         public List<string>           ByteAddressableImagePlugins { get; } = [];
+        public List<string>           FluxImagePlugins            { get; } = [];
+        public List<string>           WritableFluxImagePlugins    { get; } = [];
         public ClassDeclarationSyntax Register                    { get; private set; }
 
 #region ISyntaxReceiver Members
@@ -341,10 +371,19 @@ public class PluginRegisterGenerator : ISourceGenerator
                     FloppyImagePlugins.Add(plugin.Identifier.Text);
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
+                                              .ValueText ==
+                                               "IFluxImage") ==
+               true)
+                if(!FluxImagePlugins.Contains(plugin.Identifier.Text))
+                    FluxImagePlugins.Add(plugin.Identifier.Text);
+
+
+            if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText is "IMediaImage"
                                                          or "IOpticalMediaImage"
                                                          or "IFloppyImage"
-                                                         or "ITapeImage") ==
+                                                         or "ITapeImage"
+                                                         or "IFluxImage") ==
                true)
                 if(!MediaImagePlugins.Contains(plugin.Identifier.Text))
                     MediaImagePlugins.Add(plugin.Identifier.Text);
@@ -375,10 +414,20 @@ public class PluginRegisterGenerator : ISourceGenerator
             }
 
             if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
+                                              .ValueText ==
+                                               "IWritableFluxImage") ==
+               true)
+            {
+                if(!WritableFluxImagePlugins.Contains(plugin.Identifier.Text))
+                    WritableFluxImagePlugins.Add(plugin.Identifier.Text);
+            }
+
+            if(plugin.BaseList?.Types.Any(t => ((t as SimpleBaseTypeSyntax)?.Type as IdentifierNameSyntax)?.Identifier
                                               .ValueText is "IWritableImage"
                                                          or "IWritableOpticalImage"
                                                          or "IWritableTapeImage"
-                                                         or "IByteAddressableImage") ==
+                                                         or "IByteAddressableImage"
+                                                         or "IWritableFluxImage") ==
                true)
             {
                 if(!WritableImagePlugins.Contains(plugin.Identifier.Text))
