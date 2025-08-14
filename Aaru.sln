@@ -40,6 +40,28 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Tests.Devices", "Aaru.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Decryption", "Aaru.Decryption\Aaru.Decryption.csproj", "{B609D333-80C5-4503-BF46-8B9B91F04E97}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AF25D4CD-0DA5-4595-99BD-FA4ADB844FD2}"
+				ProjectSection(SolutionItems) = preProject
+								build.sh = build.sh
+								Changelog.md = Changelog.md
+								CONTRIBUTING.md = CONTRIBUTING.md
+								GOVERNANCE.md = GOVERNANCE.md
+								LICENSE = LICENSE
+								LICENSE.LGPL = LICENSE.LGPL
+								LICENSE.MIT = LICENSE.MIT
+								MAINTAINERS.md = MAINTAINERS.md
+								NEEDED.md = NEEDED.md
+								README.md = README.md
+								azure-pipelines.yml = azure-pipelines.yml
+								.editorconfig = .editorconfig
+								.gitignore = .gitignore
+								.travis.yml = .travis.yml
+								codealike.json = codealike.json
+								release-checklist.md = release-checklist.md
+								Aaru.sln.DotSettings = Aaru.sln.DotSettings
+					global.json = global.json
+				EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
