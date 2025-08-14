@@ -1,3 +1,7 @@
+# [5.4] - 2025-08-14
+
+- Updated to run on more modern systems. No changes applied.
+
 # [5.3.2] - 2022-12-23
 
 ## Fixed
@@ -2298,6 +2302,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[5.4]: https://github.com/aaru-dps/Aaru/releases/tag/v5.4
 
 [5.3.2]: https://github.com/aaru-dps/Aaru/releases/tag/v5.3.2
 
