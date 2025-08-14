@@ -1,0 +1,3419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+    <xs:element name="CICMMetadata" type="CICMMetadataType"/>
+    <xs:complexType name="ScanType">
+        <xs:sequence>
+            <xs:element type="FileType" name="File">
+                <xs:annotation>
+                    <xs:documentation>File containing the scan</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksum of scan file pointed above</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScannerType" name="Scanner" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Information about scanning</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScanProcessingType" name="ScanProcessing" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Information about any scan processing done</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="OCRType" name="OCR" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Information about OCR</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CaseType">
+        <xs:sequence>
+            <xs:element name="CaseType">
+                <xs:annotation>
+                    <xs:documentation>Original case type: jewel, bigjewel, dvdcase, etc</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="jewel"/>
+                        <xs:enumeration value="bigjewel"/>
+                        <xs:enumeration value="slimjewel"/>
+                        <xs:enumeration value="sleeve"/>
+                        <xs:enumeration value="qpack"/>
+                        <xs:enumeration value="digisleeve"/>
+                        <xs:enumeration value="discboxslider"/>
+                        <xs:enumeration value="compacplus"/>
+                        <xs:enumeration value="keepcase"/>
+                        <xs:enumeration value="snapcase"/>
+                        <xs:enumeration value="softcase"/>
+                        <xs:enumeration value="ecopack"/>
+                        <xs:enumeration value="liftlock"/>
+                        <xs:enumeration value="spindle"/>
+                        <xs:enumeration value="ps2case"/>
+                        <xs:enumeration value="ps3case"/>
+                        <xs:enumeration value="bluraykeepcase"/>
+                        <xs:enumeration value="pscase"/>
+                        <xs:enumeration value="dccase"/>
+                        <xs:enumeration value="saturncase"/>
+                        <xs:enumeration value="xboxcase"/>
+                        <xs:enumeration value="xbox360case"/>
+                        <xs:enumeration value="xboxonecase"/>
+                        <xs:enumeration value="saturnbigcase"/>
+                        <xs:enumeration value="gccase"/>
+                        <xs:enumeration value="wiicase"/>
+                        <xs:enumeration value="unknown"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="ScansType" name="Scans"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ImageType">
+        <xs:annotation>
+            <xs:documentation>File containing track dump, and format, binary, yranib, or audio/video container
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="format"/>
+                <xs:attribute type="xs:unsignedLong" name="offset"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="ArchitecturesType">
+        <xs:annotation>
+            <xs:documentation>CPU architectures this set is intended to be run on
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Architecture" maxOccurs="unbounded">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="4004"/>
+                        <xs:enumeration value="4040"/>
+                        <xs:enumeration value="6502"/>
+                        <xs:enumeration value="65816"/>
+                        <xs:enumeration value="8008"/>
+                        <xs:enumeration value="8051"/>
+                        <xs:enumeration value="8080"/>
+                        <xs:enumeration value="8085"/>
+                        <xs:enumeration value="aarch64"/>
+                        <xs:enumeration value="am29000"/>
+                        <xs:enumeration value="amd64"/>
+                        <xs:enumeration value="apx432"/>
+                        <xs:enumeration value="arm"/>
+                        <xs:enumeration value="avr"/>
+                        <xs:enumeration value="avr32"/>
+                        <xs:enumeration value="axp"/>
+                        <xs:enumeration value="clipper"/>
+                        <xs:enumeration value="cray"/>
+                        <xs:enumeration value="esa390"/>
+                        <xs:enumeration value="hobbit"/>
+                        <xs:enumeration value="i86"/>
+                        <xs:enumeration value="i860"/>
+                        <xs:enumeration value="i960"/>
+                        <xs:enumeration value="ia32"/>
+                        <xs:enumeration value="ia64"/>
+                        <xs:enumeration value="m56k"/>
+                        <xs:enumeration value="m6800"/>
+                        <xs:enumeration value="m6801"/>
+                        <xs:enumeration value="m6805"/>
+                        <xs:enumeration value="m6809"/>
+                        <xs:enumeration value="m68k"/>
+                        <xs:enumeration value="m88k"/>
+                        <xs:enumeration value="mcs41"/>
+                        <xs:enumeration value="mcs48"/>
+                        <xs:enumeration value="mips32"/>
+                        <xs:enumeration value="mips64"/>
+                        <xs:enumeration value="msp430"/>
+                        <xs:enumeration value="nios2"/>
+                        <xs:enumeration value="openrisc"/>
+                        <xs:enumeration value="parisc"/>
+                        <xs:enumeration value="pdp1"/>
+                        <xs:enumeration value="pdp10"/>
+                        <xs:enumeration value="pdp11"/>
+                        <xs:enumeration value="pdp7"/>
+                        <xs:enumeration value="pdp8"/>
+                        <xs:enumeration value="pic"/>
+                        <xs:enumeration value="power"/>
+                        <xs:enumeration value="ppc"/>
+                        <xs:enumeration value="ppc64"/>
+                        <xs:enumeration value="prism"/>
+                        <xs:enumeration value="renesasrx"/>
+                        <xs:enumeration value="riscv"/>
+                        <xs:enumeration value="s360"/>
+                        <xs:enumeration value="s370"/>
+                        <xs:enumeration value="sh"/>
+                        <xs:enumeration value="sh1"/>
+                        <xs:enumeration value="sh2"/>
+                        <xs:enumeration value="sh3"/>
+                        <xs:enumeration value="sh4"/>
+                        <xs:enumeration value="sh5"/>
+                        <xs:enumeration value="sh64"/>
+                        <xs:enumeration value="sparc"/>
+                        <xs:enumeration value="sparc64"/>
+                        <xs:enumeration value="transputer"/>
+                        <xs:enumeration value="vax"/>
+                        <xs:enumeration value="we32000"/>
+                        <xs:enumeration value="x32"/>
+                        <xs:enumeration value="z80"/>
+                        <xs:enumeration value="z800"/>
+                        <xs:enumeration value="z8000"/>
+                        <xs:enumeration value="z80000"/>
+                        <xs:enumeration value="zarch"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExtentType">
+        <xs:sequence>
+            <xs:element type="xs:unsignedLong" name="Start">
+                <xs:annotation>
+                    <xs:documentation>Starting sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="End">
+                <xs:annotation>
+                    <xs:documentation>Ending sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BorderType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing border dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of border dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of border dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="session">
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="TrackType">
+        <xs:annotation>
+            <xs:documentation>Track information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing track dump, and format, binary, yranib, or audio/video container
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of track dump in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="TrackSequenceType" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Track sequence information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="StartMSF" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track start address in MM:SS:FF</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="EndMSF" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track end address in MM:SS:FF</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="StartSector">
+                <xs:annotation>
+                    <xs:documentation>Track start sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="EndSector">
+                <xs:annotation>
+                    <xs:documentation>Track end sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="TrackIndexesType" name="Indexes" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track indexes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="TrackFlagsType" name="Flags" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track indexes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="ISRC" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>ISRC</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TrackType">
+                <xs:annotation>
+                    <xs:documentation>Track type: audio, mode0, mode1, mode2</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="audio"/>
+                        <xs:enumeration value="mode0"/>
+                        <xs:enumeration value="mode1"/>
+                        <xs:enumeration value="mode2"/>
+                        <xs:enumeration value="m2f1"/>
+                        <xs:enumeration value="m2f2"/>
+                        <xs:enumeration value="dvd"/>
+                        <xs:enumeration value="hddvd"/>
+                        <xs:enumeration value="bluray"/>
+                        <xs:enumeration value="ddcd"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="BytesPerSector">
+                <xs:annotation>
+                    <xs:documentation>Bytes per sector: 2048, 2352, 2448, etc, etc (as stored in image, not in physical
+                        format)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="AccoustID" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>AccoustID for audio tracks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of track dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SubChannelType" name="SubChannel" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track's subchannel information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="FileSystemInformationType" name="FileSystemInformation" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Information about filesystems and partitions contained in that track
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MagazineType">
+        <xs:sequence>
+            <xs:element type="BarcodesType" name="Barcodes" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Barcodes for this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="CoverType" name="Cover" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Cover of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Name">
+                <xs:annotation>
+                    <xs:documentation>Name of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Editorial" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Editorial of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:date" name="PublicationDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Publication date of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Number" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Sequential number of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LanguagesType" name="Language" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Languages this magazine is written in</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Pages" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Pages of this magazine, including cover and back</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PageSize" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Page size of this magazine, standard or in WxH milimeters</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScanType" name="Scan" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Scan of this magazine</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FileSystemType">
+        <xs:annotation>
+            <xs:documentation>Information about a filesystem</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Type">
+                <xs:annotation>
+                    <xs:documentation>Filesystem type</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="CreationDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem creation date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="ModificationDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem last modification date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="BackupDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem last backup date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="ClusterSize">
+                <xs:annotation>
+                    <xs:documentation>Bytes per cluster</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Clusters">
+                <xs:annotation>
+                    <xs:documentation>Clusters in filesystem</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Files" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Files in filesystem</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:boolean" name="Bootable">
+                <xs:annotation>
+                    <xs:documentation>Bootable filesystem?</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="VolumeSerial" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem serial number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="VolumeName" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem volume name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="FreeClusters" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Free clusters in filesystem</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:boolean" name="Dirty">
+                <xs:annotation>
+                    <xs:documentation>Dirty/unclean filesystem</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="ExpirationDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem expiration date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="EffectiveDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem effective date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SystemIdentifier" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>System identifier filesystem applies to</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="VolumeSetIdentifier" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Volume set identifier</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PublisherIdentifier" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem publisher identifier</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="DataPreparerIdentifier" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem data preparer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="ApplicationIdentifier" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Filesystem application preparer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="FilesystemContentsType" name="Contents" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contents of filesystem</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CaseScanType">
+        <xs:sequence>
+            <xs:element name="CaseScanElement">
+                <xs:annotation>
+                    <xs:documentation>Scanned element: cover, back, inlay, etc</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="sleeve"/>
+                        <xs:enumeration value="inner"/>
+                        <xs:enumeration value="inlay"/>
+                        <xs:enumeration value="frontback"/>
+                        <xs:enumeration value="frontfull"/>
+                        <xs:enumeration value="boxfront"/>
+                        <xs:enumeration value="boxback"/>
+                        <xs:enumeration value="boxspine"/>
+                        <xs:enumeration value="external"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="ScanType" name="Scan">
+                <xs:annotation>
+                    <xs:documentation>Scanning information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExtentsType">
+        <xs:sequence>
+            <xs:element type="ExtentType" name="Extent" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Array of dumped extents</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DumpHardwareType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Manufacturer">
+                <xs:annotation>
+                    <xs:documentation>Drive manufacturer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Model">
+                <xs:annotation>
+                    <xs:documentation>Drive model</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Revision">
+                <xs:annotation>
+                    <xs:documentation>Drive revision</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Firmware">
+                <xs:annotation>
+                    <xs:documentation>Drive firmware version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Serial">
+                <xs:annotation>
+                    <xs:documentation>Drive serial number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ExtentsType" name="Extents">
+                <xs:annotation>
+                    <xs:documentation>Extents of sectors read with this drive</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SoftwareType" name="Software">
+                <xs:annotation>
+                    <xs:documentation>Software used to read with this drive</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FileType">
+        <xs:annotation>
+            <xs:documentation>File</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="format"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="CoverType">
+        <xs:sequence>
+            <xs:element type="FileType" name="File">
+                <xs:annotation>
+                    <xs:documentation>Cover file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Cover file checksum</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:base64Binary" name="Thumbnail">
+                <xs:annotation>
+                    <xs:documentation>Base64 of JPEG thumbnail</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OpticalDiscType">
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>Image file, or image description file, plus format (cue, toc, etc, etc)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Image file size</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SequenceType" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Sequence information about this disc</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayersType" name="Layers" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Layering type and sizes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksum of image file pointed above</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PartNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer part no. or SKU</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SerialNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer serial no., not to be confused with software registration serial
+                        number
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayeredTextType" name="RingCode" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Disc/side ring code</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayeredTextType" name="MasteringSID" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Disc/side mastering SID</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayeredTextType" name="Toolstamp" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Disc/side toolstamp</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayeredTextType" name="MouldSID" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Disc/side mould SID</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LayeredTextType" name="MouldText" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Disc/side mould text</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="DiscType">
+                <xs:annotation>
+                    <xs:documentation>Disc type (CD, GD, SACD, DDCD, DVD, HDDVD, BD)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="DiscSubType">
+                <xs:annotation>
+                    <xs:documentation>Disc subtype (CD-ROM, CD-DA, CD+G, etc)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:int" name="Offset" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Offset between subchannel servo and data sectors servo, in bytes
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Tracks" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Tracks on this disc/side</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Sessions">
+                <xs:annotation>
+                    <xs:documentation>Sessions on this disc/side</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="CopyProtection" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Copy protection, if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DimensionsType" name="Dimensions">
+                <xs:annotation>
+                    <xs:documentation>Dimensions of the disc</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="CaseType" name="Case" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Case where the disk came from factory</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScansType" name="Scans" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc scans</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="PFI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Physical Manufacturing Information (DVD and HD DVD)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="DMI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc Manufacturing Information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="CMI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Lead-In Copyright Management Information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="BCA" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Burst Cutting Area</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="ATIP" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Absolute Time In Pre-groove</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="ADIP" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>ADdress In Pre-groove</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="PMA" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>PMA</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="DDS" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc Definition Structure</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="SAI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Spare Area Information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="LastRMD" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Last RMD</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="PRI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Pre-Recorded Information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="MediaID" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media Identification</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="PFIR" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>PFI for recordables</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="DCB" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc Control Blocks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="DI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc Information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="PAC" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>PAC</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="TOC" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>CD TOC</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="LeadInCdText" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>CD-Text in Lead-In</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BorderType" name="FirstTrackPregrap" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Data between first Lead-In/Border-In and first data track</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BorderType" name="LeadIn" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Lead-In, Border-In, or equivalent</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BorderType" name="LeadOut" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Lead-Out, Border-Out, or equivalent</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="XboxType" name="Xbox" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>XGD information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="PS3EncryptionType" name="PS3Encryption" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>PS3 Encryption Key</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="MediaCatalogueNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media catalogue number or MCN</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="TrackType" name="Track" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Array of disc tracks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpHardwareArrayType" name="DumpHardwareArray" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Array of drives used to dump disc</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SoftwareType">
+        <xs:annotation>
+            <xs:documentation>Software used for disc reading</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Name">
+                <xs:annotation>
+                    <xs:documentation>Software name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Version">
+                <xs:annotation>
+                    <xs:documentation>Software version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="OperatingSystem">
+                <xs:annotation>
+                    <xs:documentation>Operating system name and version where the software was run</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PartitionType">
+        <xs:sequence>
+            <xs:element name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Partition sequence number, starting on 1</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedInt">
+                        <xs:minInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="xs:string" name="Name" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Partition name if supported by partition scheme</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Type" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Partition type</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="StartSector">
+                <xs:annotation>
+                    <xs:documentation>Partition starting sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="EndSector">
+                <xs:annotation>
+                    <xs:documentation>Partition ending sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Description" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Partition description if supported by partition scheme</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="FileSystemsType" name="FileSystems">
+                <xs:annotation>
+                    <xs:documentation>Array of filesystems contained in the partition</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DumpHardwareArrayType">
+        <xs:annotation>
+            <xs:documentation>Array of drives information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpHardwareType" name="DumpHardware" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Drives information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LayeredTextType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="layer">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:unsignedInt">
+                            <xs:minInclusive value="0"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="PS3EncryptionType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Key">
+                <xs:annotation>
+                    <xs:documentation>PS3 encryption key</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Serial">
+                <xs:annotation>
+                    <xs:documentation>PS3 encryption key</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="XboxType">
+        <xs:sequence>
+            <xs:element type="DumpType" name="PFI">
+                <xs:annotation>
+                    <xs:documentation>XGD unlocked PFI</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="DMI">
+                <xs:annotation>
+                    <xs:documentation>XGD unlocked DMI</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="XboxSecuritySectorsType" name="SecuritySectors" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>XGD security sectors</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="XboxSecuritySectorsType">
+        <xs:sequence>
+            <xs:element type="xs:unsignedInt" name="RequestVersion">
+                <xs:annotation>
+                    <xs:documentation>Xbox SS Request Version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="RequestNumber">
+                <xs:annotation>
+                    <xs:documentation>Xbox SS Request Number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="SecuritySectors">
+                <xs:annotation>
+                    <xs:documentation>XGD Security Sectors</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DimensionsType">
+        <xs:annotation>
+            <xs:documentation>Dimensions of media</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:double" name="Diameter" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Diameter in milimeters for circular discs</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="Height" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Height in milimeters for non-circular disks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="Width" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Width in milimeters for non-circular disks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="Thickness">
+                <xs:annotation>
+                    <xs:documentation>Thickness in milimeters for non-circular disks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ScannerType">
+        <xs:annotation>
+            <xs:documentation>Information about scanning</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Author">
+                <xs:annotation>
+                    <xs:documentation>Who scanned it?</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Manufacturer">
+                <xs:annotation>
+                    <xs:documentation>Who built the scanner</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Model">
+                <xs:annotation>
+                    <xs:documentation>Scanner model</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Serial">
+                <xs:annotation>
+                    <xs:documentation>Scanner serial number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Software">
+                <xs:annotation>
+                    <xs:documentation>Software used for scanning</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SoftwareVersion">
+                <xs:annotation>
+                    <xs:documentation>Software version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="KeywordsType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Keyword" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Keywords</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SystemsType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="System" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Operating systems this set is intended to be run on</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SequenceType">
+        <xs:annotation>
+            <xs:documentation>Sequence information about a disc
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="MediaTitle" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Sequence information about this media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="MediaSequence">
+                <xs:annotation>
+                    <xs:documentation>Media title as printed in label</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TotalMedia">
+                <xs:annotation>
+                    <xs:documentation>Total number of discs in this set</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedInt">
+                        <xs:minInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Side" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Side of disc described by this field</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedByte">
+                        <xs:maxInclusive value="2"/>
+                        <xs:minInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Layer" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>On PTP layering, layer of disc described by this field, starting on 0
+                    </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedByte">
+                        <xs:minInclusive value="0"/>
+                        <xs:maxInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TrackSequenceType">
+        <xs:annotation>
+            <xs:documentation>Sequence information about a track
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:unsignedInt" name="TrackNumber">
+                <xs:annotation>
+                    <xs:documentation>Track number</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Session">
+                <xs:annotation>
+                    <xs:documentation>Session this track belongs to</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedInt">
+                        <xs:minInclusive value="1"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BookType">
+        <xs:sequence>
+            <xs:element type="BarcodesType" name="Barcodes">
+                <xs:annotation>
+                    <xs:documentation>Barcodes from this book</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="CoverType" name="Cover" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Book cover</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Name">
+                <xs:annotation>
+                    <xs:documentation>Book name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Editorial" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Book publisher</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Author">
+                <xs:annotation>
+                    <xs:documentation>Book author</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:date" name="PublicationDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Book's publication date</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LanguagesType" name="Language" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Book language</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Pages" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Book pages</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PageSize" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Magazine page size in WxH milimeters</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScanType" name="Scan">
+                <xs:annotation>
+                    <xs:documentation>Scan of the book</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FileSystemInformationType">
+        <xs:sequence>
+            <xs:element type="PartitionType" name="Partition" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Partition</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LayersType">
+        <xs:sequence>
+            <xs:element type="SectorsType" name="Sectors" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Layering type and sizes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="type">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="PTP"/>
+                    <xs:enumeration value="OTP"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="DumpType">
+        <xs:annotation>
+            <xs:documentation>Information about dumped structure
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FileSystemsType">
+        <xs:sequence>
+            <xs:element type="FileSystemType" name="FileSystem" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Array of filesystems</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RequiredOperatingSystemType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Name">
+                <xs:annotation>
+                    <xs:documentation>Minimal supported operating system</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Version" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CICMMetadataType">
+        <xs:annotation>
+            <xs:documentation>Digital Asset Metadata</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Developer" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Developer of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Publisher" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Publisher of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Author" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Author/writer of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Performer" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Performer/narrator of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Name">
+                <xs:annotation>
+                    <xs:documentation>Name of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Version" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Version of the set if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="ReleaseType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Kind of release: OEM, Bundle, Coverdisc, Retail, Demo</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="Retail"/>
+                        <xs:enumeration value="Bundle"/>
+                        <xs:enumeration value="Coverdisc"/>
+                        <xs:enumeration value="Subscription"/>
+                        <xs:enumeration value="Demo"/>
+                        <xs:enumeration value="OEM"/>
+                        <xs:enumeration value="Shareware"/>
+                        <xs:enumeration value="FOSS"/>
+                        <xs:enumeration value="Adware"/>
+                        <xs:enumeration value="Donationware"/>
+                        <xs:enumeration value="Digital download"/>
+                        <xs:enumeration value="SaaS"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="xs:date" name="ReleaseDate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Date of release in YYYY-MM-DD</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BarcodesType" name="Barcodes" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Barcodes for this release</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PartNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer part no. or SKU</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SerialNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer serial no., not to be confused with software registration serial
+                        number
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="KeywordsType" name="Keywords" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Keywords</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="MagazineType" name="Magazine" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Magazine on this set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BookType" name="Book" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Books on this set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="CategoriesType" name="Categories" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Categories this set belongs to</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SubcategoriesType" name="Subcategories" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Subcategories this set belongs to</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LanguagesType" name="Languages" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Languages this set comes in</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SystemsType" name="Systems" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Systems this set is designed to run on, if it includes software</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ArchitecturesType" name="Architectures" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>CPU architectures this set is designed to run on, if it includes software
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="RequiredOperatingSystemsType" name="RequiredOperatingSystems" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Required operating systems and versions this set runs on, if it includes
+                        software
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="UserManualType" name="UserManual" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>User manual/guide, installation manual/guide and any applicable entity
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="OpticalDiscType" name="OpticalDisc" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Optical discs this set contains</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="AdvertisementType" name="Advertisement" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Advertisement</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LinearMediaType" name="LinearMedia" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Linear media (flash, ram, rom, cartridges)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="PCIType" name="PCICard" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Dump of a PCI/PCI-X/PCIe configuration space and/or expansion ROM
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BlockMediaType" name="BlockMedia" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Dump of media that is block constructed (floppy, hard drive) or abstracted (most
+                        memory cards, flash drives, SSDs)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="AudioMediaType" name="AudioMedia" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Dump of media that is stored as audio, like C64/Speccy/CPC cassettes.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BarcodesType">
+        <xs:annotation>
+            <xs:documentation>Barcodes for this release</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="BarcodeType" name="Barcode" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ScanProcessingType">
+        <xs:annotation>
+            <xs:documentation>Information about any scan processing done
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:string" name="Author">
+                <xs:annotation>
+                    <xs:documentation>Who processed it?</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Software">
+                <xs:annotation>
+                    <xs:documentation>Software used for processing</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SoftwareVersion">
+                <xs:annotation>
+                    <xs:documentation>Software version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SectorsType">
+        <xs:simpleContent>
+            <xs:extension base="xs:unsignedLong">
+                <xs:attribute type="xs:unsignedInt" name="layer"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="CategoriesType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Category" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Category of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ChecksumType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="fletcher16"/>
+                            <xs:enumeration value="fletcher32"/>
+                            <xs:enumeration value="adler32"/>
+                            <xs:enumeration value="crc16"/>
+                            <xs:enumeration value="crc16ccitt"/>
+                            <xs:enumeration value="crc32"/>
+                            <xs:enumeration value="crc64"/>
+                            <xs:enumeration value="md4"/>
+                            <xs:enumeration value="md5"/>
+                            <xs:enumeration value="dm6"/>
+                            <xs:enumeration value="ripemd128"/>
+                            <xs:enumeration value="ripemd160"/>
+                            <xs:enumeration value="ripemed320"/>
+                            <xs:enumeration value="sha1"/>
+                            <xs:enumeration value="sha224"/>
+                            <xs:enumeration value="sha256"/>
+                            <xs:enumeration value="sha384"/>
+                            <xs:enumeration value="sha512"/>
+                            <xs:enumeration value="sha3"/>
+                            <xs:enumeration value="skein"/>
+                            <xs:enumeration value="snefru"/>
+                            <xs:enumeration value="blake256"/>
+                            <xs:enumeration value="blake512"/>
+                            <xs:enumeration value="tiger"/>
+                            <xs:enumeration value="whirlpool"/>
+                            <xs:enumeration value="spamsum"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="MediaScanType">
+        <xs:sequence>
+            <xs:element name="MediaScanElement">
+                <xs:annotation>
+                    <xs:documentation>Scanned element: up, down, label, data, etc</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="up"/>
+                        <xs:enumeration value="down"/>
+                        <xs:enumeration value="front"/>
+                        <xs:enumeration value="back"/>
+                        <xs:enumeration value="left"/>
+                        <xs:enumeration value="right"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="ScanType" name="Scan">
+                <xs:annotation>
+                    <xs:documentation>Scan of disk part</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BarcodeType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="aztec"/>
+                            <xs:enumeration value="codabar"/>
+                            <xs:enumeration value="code11"/>
+                            <xs:enumeration value="code128"/>
+                            <xs:enumeration value="code39"/>
+                            <xs:enumeration value="code93"/>
+                            <xs:enumeration value="cpcbinary"/>
+                            <xs:enumeration value="ezcode"/>
+                            <xs:enumeration value="fim"/>
+                            <xs:enumeration value="itf"/>
+                            <xs:enumeration value="itf14"/>
+                            <xs:enumeration value="ean13"/>
+                            <xs:enumeration value="ean8"/>
+                            <xs:enumeration value="maxicode"/>
+                            <xs:enumeration value="isbn"/>
+                            <xs:enumeration value="isrc"/>
+                            <xs:enumeration value="msi"/>
+                            <xs:enumeration value="tof"/>
+                            <xs:enumeration value="shotcode"/>
+                            <xs:enumeration value="rm4scc"/>
+                            <xs:enumeration value="qr"/>
+                            <xs:enumeration value="ean5"/>
+                            <xs:enumeration value="ean2"/>
+                            <xs:enumeration value="qr"/>
+                            <xs:enumeration value="postnet"/>
+                            <xs:enumeration value="postbar"/>
+                            <xs:enumeration value="plessey"/>
+                            <xs:enumeration value="pharmacode"/>
+                            <xs:enumeration value="pdf417"/>
+                            <xs:enumeration value="patchcode"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="SubcategoriesType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Subcategory" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Subcategory of the set</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="UserManualType">
+        <xs:annotation>
+            <xs:documentation>User manual or user guide accompanying this set. Can be more than one.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="LanguagesType" name="Language" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Language of the user manual</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Pages">
+                <xs:annotation>
+                    <xs:documentation>Pages of the user manual</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PageSize" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Paper size in standard name or in WxH milimeters</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScanType" name="Scan" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>User manual scanning</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ChecksumsType">
+        <xs:annotation>
+            <xs:documentation>Checksum of file element</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ChecksumType" name="Checksum" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SecuritySectorsType">
+        <xs:annotation>
+            <xs:documentation>Start and end of XGD's security sectors
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="xs:unsignedLong" name="Start">
+                <xs:annotation>
+                    <xs:documentation>Start of XGD's security sectors</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="End">
+                <xs:annotation>
+                    <xs:documentation>End of XGD's security sectors</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OCRType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Author">
+                <xs:annotation>
+                    <xs:documentation>Who did the OCR</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Software">
+                <xs:annotation>
+                    <xs:documentation>Using what software</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SoftwareVersion">
+                <xs:annotation>
+                    <xs:documentation>And the software version</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LanguagesType" name="Language">
+                <xs:annotation>
+                    <xs:documentation>OCR applied for which languages</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LanguagesType">
+        <xs:sequence>
+            <xs:element name="Language" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Languages included in the set, ISO 3-letter code</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="aar"/>
+                        <xs:enumeration value="abk"/>
+                        <xs:enumeration value="ace"/>
+                        <xs:enumeration value="ach"/>
+                        <xs:enumeration value="ada"/>
+                        <xs:enumeration value="ady"/>
+                        <xs:enumeration value="afa"/>
+                        <xs:enumeration value="afh"/>
+                        <xs:enumeration value="afr"/>
+                        <xs:enumeration value="ain"/>
+                        <xs:enumeration value="aka"/>
+                        <xs:enumeration value="akk"/>
+                        <xs:enumeration value="alb"/>
+                        <xs:enumeration value="ale"/>
+                        <xs:enumeration value="alg"/>
+                        <xs:enumeration value="alt"/>
+                        <xs:enumeration value="amh"/>
+                        <xs:enumeration value="ang"/>
+                        <xs:enumeration value="anp"/>
+                        <xs:enumeration value="apa"/>
+                        <xs:enumeration value="ara"/>
+                        <xs:enumeration value="arc"/>
+                        <xs:enumeration value="arg"/>
+                        <xs:enumeration value="arm"/>
+                        <xs:enumeration value="arn"/>
+                        <xs:enumeration value="arp"/>
+                        <xs:enumeration value="art"/>
+                        <xs:enumeration value="arw"/>
+                        <xs:enumeration value="asm"/>
+                        <xs:enumeration value="ast"/>
+                        <xs:enumeration value="ath"/>
+                        <xs:enumeration value="aus"/>
+                        <xs:enumeration value="ava"/>
+                        <xs:enumeration value="ave"/>
+                        <xs:enumeration value="awa"/>
+                        <xs:enumeration value="aym"/>
+                        <xs:enumeration value="aze"/>
+                        <xs:enumeration value="bad"/>
+                        <xs:enumeration value="bai"/>
+                        <xs:enumeration value="bak"/>
+                        <xs:enumeration value="bal"/>
+                        <xs:enumeration value="bam"/>
+                        <xs:enumeration value="ban"/>
+                        <xs:enumeration value="baq"/>
+                        <xs:enumeration value="bas"/>
+                        <xs:enumeration value="bat"/>
+                        <xs:enumeration value="bej"/>
+                        <xs:enumeration value="bel"/>
+                        <xs:enumeration value="bem"/>
+                        <xs:enumeration value="ben"/>
+                        <xs:enumeration value="ber"/>
+                        <xs:enumeration value="bho"/>
+                        <xs:enumeration value="bih"/>
+                        <xs:enumeration value="bik"/>
+                        <xs:enumeration value="bin"/>
+                        <xs:enumeration value="bis"/>
+                        <xs:enumeration value="bla"/>
+                        <xs:enumeration value="bnt"/>
+                        <xs:enumeration value="bos"/>
+                        <xs:enumeration value="bra"/>
+                        <xs:enumeration value="bre"/>
+                        <xs:enumeration value="btk"/>
+                        <xs:enumeration value="bua"/>
+                        <xs:enumeration value="bug"/>
+                        <xs:enumeration value="bul"/>
+                        <xs:enumeration value="bur"/>
+                        <xs:enumeration value="byn"/>
+                        <xs:enumeration value="cad"/>
+                        <xs:enumeration value="cai"/>
+                        <xs:enumeration value="car"/>
+                        <xs:enumeration value="cat"/>
+                        <xs:enumeration value="cau"/>
+                        <xs:enumeration value="ceb"/>
+                        <xs:enumeration value="cel"/>
+                        <xs:enumeration value="cha"/>
+                        <xs:enumeration value="chb"/>
+                        <xs:enumeration value="che"/>
+                        <xs:enumeration value="chg"/>
+                        <xs:enumeration value="chi"/>
+                        <xs:enumeration value="chk"/>
+                        <xs:enumeration value="chm"/>
+                        <xs:enumeration value="chn"/>
+                        <xs:enumeration value="cho"/>
+                        <xs:enumeration value="chp"/>
+                        <xs:enumeration value="chr"/>
+                        <xs:enumeration value="chu"/>
+                        <xs:enumeration value="chv"/>
+                        <xs:enumeration value="chy"/>
+                        <xs:enumeration value="cmc"/>
+                        <xs:enumeration value="cop"/>
+                        <xs:enumeration value="cor"/>
+                        <xs:enumeration value="cos"/>
+                        <xs:enumeration value="cpe"/>
+                        <xs:enumeration value="cpf"/>
+                        <xs:enumeration value="cpp"/>
+                        <xs:enumeration value="cre"/>
+                        <xs:enumeration value="crh"/>
+                        <xs:enumeration value="crp"/>
+                        <xs:enumeration value="csb"/>
+                        <xs:enumeration value="cus"/>
+                        <xs:enumeration value="cze"/>
+                        <xs:enumeration value="dak"/>
+                        <xs:enumeration value="dan"/>
+                        <xs:enumeration value="dar"/>
+                        <xs:enumeration value="day"/>
+                        <xs:enumeration value="del"/>
+                        <xs:enumeration value="den"/>
+                        <xs:enumeration value="dgr"/>
+                        <xs:enumeration value="din"/>
+                        <xs:enumeration value="div"/>
+                        <xs:enumeration value="doi"/>
+                        <xs:enumeration value="dra"/>
+                        <xs:enumeration value="dsb"/>
+                        <xs:enumeration value="dua"/>
+                        <xs:enumeration value="dum"/>
+                        <xs:enumeration value="dut"/>
+                        <xs:enumeration value="dyu"/>
+                        <xs:enumeration value="dzo"/>
+                        <xs:enumeration value="efi"/>
+                        <xs:enumeration value="egy"/>
+                        <xs:enumeration value="eka"/>
+                        <xs:enumeration value="elx"/>
+                        <xs:enumeration value="eng"/>
+                        <xs:enumeration value="enm"/>
+                        <xs:enumeration value="epo"/>
+                        <xs:enumeration value="est"/>
+                        <xs:enumeration value="ewe"/>
+                        <xs:enumeration value="ewo"/>
+                        <xs:enumeration value="fan"/>
+                        <xs:enumeration value="fao"/>
+                        <xs:enumeration value="fat"/>
+                        <xs:enumeration value="fij"/>
+                        <xs:enumeration value="fil"/>
+                        <xs:enumeration value="fin"/>
+                        <xs:enumeration value="fiu"/>
+                        <xs:enumeration value="fon"/>
+                        <xs:enumeration value="fre"/>
+                        <xs:enumeration value="frm"/>
+                        <xs:enumeration value="fro"/>
+                        <xs:enumeration value="frr"/>
+                        <xs:enumeration value="frs"/>
+                        <xs:enumeration value="fry"/>
+                        <xs:enumeration value="ful"/>
+                        <xs:enumeration value="fur"/>
+                        <xs:enumeration value="gaa"/>
+                        <xs:enumeration value="gay"/>
+                        <xs:enumeration value="gba"/>
+                        <xs:enumeration value="gem"/>
+                        <xs:enumeration value="geo"/>
+                        <xs:enumeration value="ger"/>
+                        <xs:enumeration value="gez"/>
+                        <xs:enumeration value="gil"/>
+                        <xs:enumeration value="gla"/>
+                        <xs:enumeration value="gle"/>
+                        <xs:enumeration value="glg"/>
+                        <xs:enumeration value="glv"/>
+                        <xs:enumeration value="gmh"/>
+                        <xs:enumeration value="goh"/>
+                        <xs:enumeration value="gon"/>
+                        <xs:enumeration value="gor"/>
+                        <xs:enumeration value="got"/>
+                        <xs:enumeration value="grb"/>
+                        <xs:enumeration value="grc"/>
+                        <xs:enumeration value="gre"/>
+                        <xs:enumeration value="grn"/>
+                        <xs:enumeration value="gsw"/>
+                        <xs:enumeration value="guj"/>
+                        <xs:enumeration value="gwi"/>
+                        <xs:enumeration value="hai"/>
+                        <xs:enumeration value="hat"/>
+                        <xs:enumeration value="hau"/>
+                        <xs:enumeration value="haw"/>
+                        <xs:enumeration value="heb"/>
+                        <xs:enumeration value="her"/>
+                        <xs:enumeration value="hil"/>
+                        <xs:enumeration value="him"/>
+                        <xs:enumeration value="hin"/>
+                        <xs:enumeration value="hit"/>
+                        <xs:enumeration value="hmn"/>
+                        <xs:enumeration value="hmo"/>
+                        <xs:enumeration value="hrv"/>
+                        <xs:enumeration value="hsb"/>
+                        <xs:enumeration value="hun"/>
+                        <xs:enumeration value="hup"/>
+                        <xs:enumeration value="iba"/>
+                        <xs:enumeration value="ibo"/>
+                        <xs:enumeration value="ice"/>
+                        <xs:enumeration value="ido"/>
+                        <xs:enumeration value="iii"/>
+                        <xs:enumeration value="ijo"/>
+                        <xs:enumeration value="iku"/>
+                        <xs:enumeration value="ile"/>
+                        <xs:enumeration value="ilo"/>
+                        <xs:enumeration value="ina"/>
+                        <xs:enumeration value="inc"/>
+                        <xs:enumeration value="ind"/>
+                        <xs:enumeration value="ine"/>
+                        <xs:enumeration value="inh"/>
+                        <xs:enumeration value="ipk"/>
+                        <xs:enumeration value="ira"/>
+                        <xs:enumeration value="iro"/>
+                        <xs:enumeration value="ita"/>
+                        <xs:enumeration value="jav"/>
+                        <xs:enumeration value="jbo"/>
+                        <xs:enumeration value="jpn"/>
+                        <xs:enumeration value="jpr"/>
+                        <xs:enumeration value="jrb"/>
+                        <xs:enumeration value="kaa"/>
+                        <xs:enumeration value="kab"/>
+                        <xs:enumeration value="kac"/>
+                        <xs:enumeration value="kal"/>
+                        <xs:enumeration value="kam"/>
+                        <xs:enumeration value="kan"/>
+                        <xs:enumeration value="kar"/>
+                        <xs:enumeration value="kas"/>
+                        <xs:enumeration value="kau"/>
+                        <xs:enumeration value="kaw"/>
+                        <xs:enumeration value="kaz"/>
+                        <xs:enumeration value="kbd"/>
+                        <xs:enumeration value="kha"/>
+                        <xs:enumeration value="khi"/>
+                        <xs:enumeration value="khm"/>
+                        <xs:enumeration value="kho"/>
+                        <xs:enumeration value="kik"/>
+                        <xs:enumeration value="kin"/>
+                        <xs:enumeration value="kir"/>
+                        <xs:enumeration value="kmb"/>
+                        <xs:enumeration value="kok"/>
+                        <xs:enumeration value="kom"/>
+                        <xs:enumeration value="kon"/>
+                        <xs:enumeration value="kor"/>
+                        <xs:enumeration value="kos"/>
+                        <xs:enumeration value="kpe"/>
+                        <xs:enumeration value="krc"/>
+                        <xs:enumeration value="krl"/>
+                        <xs:enumeration value="kro"/>
+                        <xs:enumeration value="kru"/>
+                        <xs:enumeration value="kua"/>
+                        <xs:enumeration value="kum"/>
+                        <xs:enumeration value="kur"/>
+                        <xs:enumeration value="kut"/>
+                        <xs:enumeration value="lad"/>
+                        <xs:enumeration value="lah"/>
+                        <xs:enumeration value="lam"/>
+                        <xs:enumeration value="lao"/>
+                        <xs:enumeration value="lat"/>
+                        <xs:enumeration value="lav"/>
+                        <xs:enumeration value="lez"/>
+                        <xs:enumeration value="lim"/>
+                        <xs:enumeration value="lin"/>
+                        <xs:enumeration value="lit"/>
+                        <xs:enumeration value="lol"/>
+                        <xs:enumeration value="loz"/>
+                        <xs:enumeration value="ltz"/>
+                        <xs:enumeration value="lua"/>
+                        <xs:enumeration value="lub"/>
+                        <xs:enumeration value="lug"/>
+                        <xs:enumeration value="lui"/>
+                        <xs:enumeration value="lun"/>
+                        <xs:enumeration value="luo"/>
+                        <xs:enumeration value="lus"/>
+                        <xs:enumeration value="mac"/>
+                        <xs:enumeration value="mad"/>
+                        <xs:enumeration value="mag"/>
+                        <xs:enumeration value="mah"/>
+                        <xs:enumeration value="mai"/>
+                        <xs:enumeration value="mak"/>
+                        <xs:enumeration value="mal"/>
+                        <xs:enumeration value="man"/>
+                        <xs:enumeration value="mao"/>
+                        <xs:enumeration value="map"/>
+                        <xs:enumeration value="mar"/>
+                        <xs:enumeration value="mas"/>
+                        <xs:enumeration value="may"/>
+                        <xs:enumeration value="mdf"/>
+                        <xs:enumeration value="mdr"/>
+                        <xs:enumeration value="men"/>
+                        <xs:enumeration value="mga"/>
+                        <xs:enumeration value="mic"/>
+                        <xs:enumeration value="min"/>
+                        <xs:enumeration value="mis"/>
+                        <xs:enumeration value="mkh"/>
+                        <xs:enumeration value="mlg"/>
+                        <xs:enumeration value="mlt"/>
+                        <xs:enumeration value="mnc"/>
+                        <xs:enumeration value="mni"/>
+                        <xs:enumeration value="mno"/>
+                        <xs:enumeration value="moh"/>
+                        <xs:enumeration value="mon"/>
+                        <xs:enumeration value="mos"/>
+                        <xs:enumeration value="mul"/>
+                        <xs:enumeration value="mun"/>
+                        <xs:enumeration value="mus"/>
+                        <xs:enumeration value="mwl"/>
+                        <xs:enumeration value="mwr"/>
+                        <xs:enumeration value="myn"/>
+                        <xs:enumeration value="myv"/>
+                        <xs:enumeration value="nah"/>
+                        <xs:enumeration value="nai"/>
+                        <xs:enumeration value="nap"/>
+                        <xs:enumeration value="nau"/>
+                        <xs:enumeration value="nav"/>
+                        <xs:enumeration value="nbl"/>
+                        <xs:enumeration value="nde"/>
+                        <xs:enumeration value="ndo"/>
+                        <xs:enumeration value="nds"/>
+                        <xs:enumeration value="nep"/>
+                        <xs:enumeration value="new"/>
+                        <xs:enumeration value="nia"/>
+                        <xs:enumeration value="nic"/>
+                        <xs:enumeration value="niu"/>
+                        <xs:enumeration value="nno"/>
+                        <xs:enumeration value="nob"/>
+                        <xs:enumeration value="nog"/>
+                        <xs:enumeration value="non"/>
+                        <xs:enumeration value="nor"/>
+                        <xs:enumeration value="nqo"/>
+                        <xs:enumeration value="nso"/>
+                        <xs:enumeration value="nub"/>
+                        <xs:enumeration value="nwc"/>
+                        <xs:enumeration value="nya"/>
+                        <xs:enumeration value="nym"/>
+                        <xs:enumeration value="nyn"/>
+                        <xs:enumeration value="nyo"/>
+                        <xs:enumeration value="nzi"/>
+                        <xs:enumeration value="oci"/>
+                        <xs:enumeration value="oji"/>
+                        <xs:enumeration value="ori"/>
+                        <xs:enumeration value="orm"/>
+                        <xs:enumeration value="osa"/>
+                        <xs:enumeration value="oss"/>
+                        <xs:enumeration value="ota"/>
+                        <xs:enumeration value="oto"/>
+                        <xs:enumeration value="paa"/>
+                        <xs:enumeration value="pag"/>
+                        <xs:enumeration value="pal"/>
+                        <xs:enumeration value="pam"/>
+                        <xs:enumeration value="pan"/>
+                        <xs:enumeration value="pap"/>
+                        <xs:enumeration value="pau"/>
+                        <xs:enumeration value="peo"/>
+                        <xs:enumeration value="per"/>
+                        <xs:enumeration value="phi"/>
+                        <xs:enumeration value="phn"/>
+                        <xs:enumeration value="pli"/>
+                        <xs:enumeration value="pol"/>
+                        <xs:enumeration value="pon"/>
+                        <xs:enumeration value="por"/>
+                        <xs:enumeration value="pra"/>
+                        <xs:enumeration value="pro"/>
+                        <xs:enumeration value="pus"/>
+                        <xs:enumeration value="qaa-qtz"/>
+                        <xs:enumeration value="que"/>
+                        <xs:enumeration value="raj"/>
+                        <xs:enumeration value="rap"/>
+                        <xs:enumeration value="rar"/>
+                        <xs:enumeration value="roa"/>
+                        <xs:enumeration value="roh"/>
+                        <xs:enumeration value="rom"/>
+                        <xs:enumeration value="rum"/>
+                        <xs:enumeration value="run"/>
+                        <xs:enumeration value="rup"/>
+                        <xs:enumeration value="rus"/>
+                        <xs:enumeration value="sad"/>
+                        <xs:enumeration value="sag"/>
+                        <xs:enumeration value="sah"/>
+                        <xs:enumeration value="sai"/>
+                        <xs:enumeration value="sal"/>
+                        <xs:enumeration value="sam"/>
+                        <xs:enumeration value="san"/>
+                        <xs:enumeration value="sas"/>
+                        <xs:enumeration value="sat"/>
+                        <xs:enumeration value="scn"/>
+                        <xs:enumeration value="sco"/>
+                        <xs:enumeration value="sel"/>
+                        <xs:enumeration value="sem"/>
+                        <xs:enumeration value="sga"/>
+                        <xs:enumeration value="sgn"/>
+                        <xs:enumeration value="shn"/>
+                        <xs:enumeration value="sid"/>
+                        <xs:enumeration value="sin"/>
+                        <xs:enumeration value="sio"/>
+                        <xs:enumeration value="sit"/>
+                        <xs:enumeration value="sla"/>
+                        <xs:enumeration value="slo"/>
+                        <xs:enumeration value="slv"/>
+                        <xs:enumeration value="sma"/>
+                        <xs:enumeration value="sme"/>
+                        <xs:enumeration value="smi"/>
+                        <xs:enumeration value="smj"/>
+                        <xs:enumeration value="smn"/>
+                        <xs:enumeration value="smo"/>
+                        <xs:enumeration value="sms"/>
+                        <xs:enumeration value="sna"/>
+                        <xs:enumeration value="snd"/>
+                        <xs:enumeration value="snk"/>
+                        <xs:enumeration value="sog"/>
+                        <xs:enumeration value="som"/>
+                        <xs:enumeration value="son"/>
+                        <xs:enumeration value="sot"/>
+                        <xs:enumeration value="spa"/>
+                        <xs:enumeration value="srd"/>
+                        <xs:enumeration value="srn"/>
+                        <xs:enumeration value="srp"/>
+                        <xs:enumeration value="srr"/>
+                        <xs:enumeration value="ssa"/>
+                        <xs:enumeration value="ssw"/>
+                        <xs:enumeration value="suk"/>
+                        <xs:enumeration value="sun"/>
+                        <xs:enumeration value="sus"/>
+                        <xs:enumeration value="sux"/>
+                        <xs:enumeration value="swa"/>
+                        <xs:enumeration value="swe"/>
+                        <xs:enumeration value="syc"/>
+                        <xs:enumeration value="syr"/>
+                        <xs:enumeration value="tah"/>
+                        <xs:enumeration value="tai"/>
+                        <xs:enumeration value="tam"/>
+                        <xs:enumeration value="tat"/>
+                        <xs:enumeration value="tel"/>
+                        <xs:enumeration value="tem"/>
+                        <xs:enumeration value="ter"/>
+                        <xs:enumeration value="tet"/>
+                        <xs:enumeration value="tgk"/>
+                        <xs:enumeration value="tgl"/>
+                        <xs:enumeration value="tha"/>
+                        <xs:enumeration value="tib"/>
+                        <xs:enumeration value="tig"/>
+                        <xs:enumeration value="tir"/>
+                        <xs:enumeration value="tiv"/>
+                        <xs:enumeration value="tkl"/>
+                        <xs:enumeration value="tlh"/>
+                        <xs:enumeration value="tli"/>
+                        <xs:enumeration value="tmh"/>
+                        <xs:enumeration value="tog"/>
+                        <xs:enumeration value="ton"/>
+                        <xs:enumeration value="tpi"/>
+                        <xs:enumeration value="tsi"/>
+                        <xs:enumeration value="tsn"/>
+                        <xs:enumeration value="tso"/>
+                        <xs:enumeration value="tuk"/>
+                        <xs:enumeration value="tum"/>
+                        <xs:enumeration value="tup"/>
+                        <xs:enumeration value="tur"/>
+                        <xs:enumeration value="tut"/>
+                        <xs:enumeration value="tvl"/>
+                        <xs:enumeration value="twi"/>
+                        <xs:enumeration value="tyv"/>
+                        <xs:enumeration value="udm"/>
+                        <xs:enumeration value="uga"/>
+                        <xs:enumeration value="uig"/>
+                        <xs:enumeration value="ukr"/>
+                        <xs:enumeration value="umb"/>
+                        <xs:enumeration value="und"/>
+                        <xs:enumeration value="urd"/>
+                        <xs:enumeration value="uzb"/>
+                        <xs:enumeration value="vai"/>
+                        <xs:enumeration value="ven"/>
+                        <xs:enumeration value="vie"/>
+                        <xs:enumeration value="vol"/>
+                        <xs:enumeration value="vot"/>
+                        <xs:enumeration value="wak"/>
+                        <xs:enumeration value="wal"/>
+                        <xs:enumeration value="war"/>
+                        <xs:enumeration value="was"/>
+                        <xs:enumeration value="wel"/>
+                        <xs:enumeration value="wen"/>
+                        <xs:enumeration value="wln"/>
+                        <xs:enumeration value="wol"/>
+                        <xs:enumeration value="xal"/>
+                        <xs:enumeration value="xho"/>
+                        <xs:enumeration value="yao"/>
+                        <xs:enumeration value="yap"/>
+                        <xs:enumeration value="yid"/>
+                        <xs:enumeration value="yor"/>
+                        <xs:enumeration value="ypk"/>
+                        <xs:enumeration value="zap"/>
+                        <xs:enumeration value="zbl"/>
+                        <xs:enumeration value="zen"/>
+                        <xs:enumeration value="zgh"/>
+                        <xs:enumeration value="zha"/>
+                        <xs:enumeration value="znd"/>
+                        <xs:enumeration value="zul"/>
+                        <xs:enumeration value="zun"/>
+                        <xs:enumeration value="zxx"/>
+                        <xs:enumeration value="zza"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RequiredOperatingSystemsType">
+        <xs:sequence>
+            <xs:element type="RequiredOperatingSystemType" name="RequiredOperatingSystem"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SubChannelType">
+        <xs:annotation>
+            <xs:documentation>Track's subchannel information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing track's subchannel dump and format, packed, rw_raw
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of subchannel dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksum of subchannel dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ScansType">
+        <xs:sequence>
+            <xs:element type="CaseScanType" name="CaseScan" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Case scans</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="MediaScanType" name="Scan" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Disc scans</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AudioTracksType">
+        <xs:sequence>
+            <xs:element name="Languages" type="LanguagesType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track languages</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="TrackNumber" use="required">
+            <xs:annotation>
+                <xs:documentation>Track number in media container</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="AccoustID" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Track's AccoustID</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Codec" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Track's codec</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Channels" type="xs:unsignedInt" use="required">
+            <xs:annotation>
+                <xs:documentation>Audio channels</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="SampleRate" type="xs:double" use="required">
+            <xs:annotation>
+                <xs:documentation>Audio sampling rate</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="MeanBitrate" type="xs:long" use="required">
+            <xs:annotation>
+                <xs:documentation>Mean bitrate, or constant bitrate, in bits per second
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="VideoTracksType">
+        <xs:sequence>
+            <xs:element name="Languages" type="LanguagesType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track languages</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="TrackNumber" use="required">
+            <xs:annotation>
+                <xs:documentation>Track number in media container</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Codec" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Track's codec</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Horizontal" type="xs:unsignedInt" use="required">
+            <xs:annotation>
+                <xs:documentation>Horizontal resolution in pixels</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="Vertical" type="xs:unsignedInt" use="required">
+            <xs:annotation>
+                <xs:documentation>Vertical resolution in pixels</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="MeanBitrate" type="xs:long" use="required">
+            <xs:annotation>
+                <xs:documentation>Mean bitrate, or constant bitrate, in bits per second
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="ThreeD" type="xs:boolean" use="required">
+            <xs:annotation>
+                <xs:documentation>Is this video track in 3D?</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SubtitleTracksType">
+        <xs:sequence>
+            <xs:element name="Languages" type="LanguagesType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track languages</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="TrackNumber" use="required">
+            <xs:annotation>
+                <xs:documentation>Track number in media container</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedInt">
+                    <xs:minInclusive value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Codec" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Track's codec</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="CoordinatesType">
+        <xs:sequence>
+            <xs:element type="xs:double" name="Latitude">
+                <xs:annotation>
+                    <xs:documentation>Approximate latitude of recording</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="Longitude">
+                <xs:annotation>
+                    <xs:documentation>Approximate longitude of recording</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="RecordingType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Broadcaster" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Name of the television channel this recording was broadcasted, if applicable
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="BroadcastPlatform" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Platform that broadcasted the television channel, if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="SourceFormat">
+                <xs:annotation>
+                    <xs:documentation>Format of the source of this recording</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="ITU-A"/>
+                        <xs:enumeration value="ITU-B"/>
+                        <xs:enumeration value="ITU-C"/>
+                        <xs:enumeration value="ITU-D"/>
+                        <xs:enumeration value="ITU-E"/>
+                        <xs:enumeration value="ITU-F"/>
+                        <xs:enumeration value="ITU-G"/>
+                        <xs:enumeration value="ITU-H"/>
+                        <xs:enumeration value="ITU-I"/>
+                        <xs:enumeration value="ITU-J"/>
+                        <xs:enumeration value="ITU-K"/>
+                        <xs:enumeration value="ITU-L"/>
+                        <xs:enumeration value="ITU-M"/>
+                        <xs:enumeration value="ITU-N"/>
+                        <xs:enumeration value="PAL-B"/>
+                        <xs:enumeration value="SECAM-B"/>
+                        <xs:enumeration value="PAL-D"/>
+                        <xs:enumeration value="SECAM-D"/>
+                        <xs:enumeration value="PAL-G"/>
+                        <xs:enumeration value="SECAM-G"/>
+                        <xs:enumeration value="PAL-H"/>
+                        <xs:enumeration value="PAL-I"/>
+                        <xs:enumeration value="PAL-K"/>
+                        <xs:enumeration value="SECAM-K"/>
+                        <xs:enumeration value="NTSC-M"/>
+                        <xs:enumeration value="PAL-N"/>
+                        <xs:enumeration value="PAL-M"/>
+                        <xs:enumeration value="SECAM-M"/>
+                        <xs:enumeration value="MUSE"/>
+                        <xs:enumeration value="PALplus"/>
+                        <xs:enumeration value="FM"/>
+                        <xs:enumeration value="AM"/>
+                        <xs:enumeration value="COFDM"/>
+                        <xs:enumeration value="CAM-D"/>
+                        <xs:enumeration value="DAB"/>
+                        <xs:enumeration value="DAB+"/>
+                        <xs:enumeration value="DRM"/>
+                        <xs:enumeration value="DRM+"/>
+                        <xs:enumeration value="FMeXtra"/>
+                        <xs:enumeration value="ATSC"/>
+                        <xs:enumeration value="ATSC2"/>
+                        <xs:enumeration value="ATSC3"/>
+                        <xs:enumeration value="ATSC-M/H"/>
+                        <xs:enumeration value="DVB-T"/>
+                        <xs:enumeration value="DVB-T2"/>
+                        <xs:enumeration value="DVB-S"/>
+                        <xs:enumeration value="DVB-S2"/>
+                        <xs:enumeration value="DVB-S2X"/>
+                        <xs:enumeration value="DVB-C"/>
+                        <xs:enumeration value="DVB-C2"/>
+                        <xs:enumeration value="DVB-H"/>
+                        <xs:enumeration value="DVB-NGH"/>
+                        <xs:enumeration value="DVB-SH"/>
+                        <xs:enumeration value="ISDB-T"/>
+                        <xs:enumeration value="ISDB-Tb"/>
+                        <xs:enumeration value="ISDB-S"/>
+                        <xs:enumeration value="ISDB-C"/>
+                        <xs:enumeration value="1seg"/>
+                        <xs:enumeration value="DTMB"/>
+                        <xs:enumeration value="CCMB"/>
+                        <xs:enumeration value="T-DMB"/>
+                        <xs:enumeration value="S-DMB"/>
+                        <xs:enumeration value="IPTV"/>
+                        <xs:enumeration value="DVB-MT"/>
+                        <xs:enumeration value="DVB-MC"/>
+                        <xs:enumeration value="DVB-MS"/>
+                        <xs:enumeration value="ADR"/>
+                        <xs:enumeration value="SDR"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="xs:dateTime" name="Timestamp">
+                <xs:annotation>
+                    <xs:documentation>Date and time of broadcast</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SoftwareType" name="Software" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Software used to capture, process, convert, the recording</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="CoordinatesType" name="Coordinates" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Approximate coordinates where the recording was done</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AdvertisementType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Manufacturer">
+                <xs:annotation>
+                    <xs:documentation>Manufactured of the advertised product</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Product">
+                <xs:annotation>
+                    <xs:documentation>Advertised product</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="FileType" name="File">
+                <xs:annotation>
+                    <xs:documentation>File containing advertising</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="FileSize">
+                <xs:annotation>
+                    <xs:documentation>Size of file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Frames" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Total video frames</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:double" name="Duration">
+                <xs:annotation>
+                    <xs:documentation>Duration in seconds</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:float" name="MeanFrameRate" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Mean framerate</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of advertisement</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="AudioTracksType" name="AudioTrack" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Audio tracks of advertisement</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="VideoTracksType" name="VideoTrack" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Video tracks of advertisement</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SubtitleTracksType" name="SubtitleTrack" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Subtitle tracks of advertisement</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="RecordingType" name="Recording" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If advertisement has been capture from a television/radio broadcast, here is the
+                        capture information
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="LinearMediaType">
+        <xs:annotation>
+            <xs:documentation>Describes a dump of a linear media, that is, a media that is read byte-by-byte like for
+                example, a ROM chip, a game cartridge, a PCMCIA SRAM card, etc...
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>Image file, or image description file, plus format (cue, toc, etc, etc)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Image file size</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="ImageChecksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of image file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If image file contains several deinterleaved dumps, here are the checkums of the
+                        interleaved dump
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PartNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer part no. or SKU</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SerialNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer serial no., not to be confused with software registration serial
+                        number
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Title">
+                <xs:annotation>
+                    <xs:documentation>Title as it is labeled on media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Sequence" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Sequence of media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="ImageInterleave" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>How many bytes must be read in image file for each byte in media
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Interleave" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>How many bytes must be skipped in image file for each byte in media
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Manufacturer" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media manufacturer</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Model" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media model</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Package">
+                <xs:annotation>
+                    <xs:documentation>Media packaging (DIP, PCMCIA, Cartridge, etc)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Interface" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media interface</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DimensionsType" name="Dimensions" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Dimensions of media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScansType" name="Scans" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Scan of media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpHardwareArrayType" name="DumpHardwareArray" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Array of hardware used to dump media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="PCMCIAType" name="PCMCIA" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Present if media is a PCMCIA Linear Flash or SRAM card, to contain PCMCIA specific
+                        information
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="CopyProtection" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Copy protection, if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PCMCIAType">
+        <xs:annotation>
+            <xs:documentation>Contains PCMCIA card information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpType" name="CIS">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA Card Information Structure dump.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Compliance" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA version standard compliance</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedShort" name="ManufacturerCode" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA manufacturer ID</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedShort" name="CardCode" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA card ID</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Manufacturer" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA manufacturer string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="ProductName" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains the PCMCIA product name string</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="AdditionalInformation" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Contains additional PCMCIA information strings</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PCIType">
+        <xs:annotation>
+            <xs:documentation>Contains PCI/PCI-X/PCIe card information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="VendorID">
+                <xs:annotation>
+                    <xs:documentation>Contains PCI Vendor ID</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedShort">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="65534"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="DeviceID">
+                <xs:annotation>
+                    <xs:documentation>Contains PCI Device ID</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedShort">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="65534"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="DumpType" name="Configuration" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Binary dump of the PCI configuration space</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="LinearMediaType" name="ExpansionROM" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Binary dump of the PCI expansion rom</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EVPDType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing SCSI Extended Vendor Page Descriptor dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of SCSI Extended Vendor Page Descriptor dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of SCSI Extended Vendor Page Descriptor dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="page">
+            <xs:annotation>
+                <xs:documentation>EVPD page</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+                <xs:restriction base="xs:unsignedByte">
+                    <xs:minInclusive value="1"/>
+                    <xs:maxInclusive value="255"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="SCSIType">
+        <xs:annotation>
+            <xs:documentation>Contains SCSI device information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpType" name="Inquiry">
+                <xs:annotation>
+                    <xs:documentation>Contains SCSI INQUIRY result dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="EVPDType" name="EVPD" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Contains SCSI EVPD dumps</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="ModeSense" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SCSI MODE SENSE(6) dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="ModeSense10" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SCSI MODE SENSE(10) dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="LogSense" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SCSI LOG SENSE dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="USBType">
+        <xs:annotation>
+            <xs:documentation>Contains USB device information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="VendorID">
+                <xs:annotation>
+                    <xs:documentation>Contains USB Vendor ID</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedShort">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="65534"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="ProductID">
+                <xs:annotation>
+                    <xs:documentation>Contains USB Product ID</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:unsignedShort">
+                        <xs:minInclusive value="1"/>
+                        <xs:maxInclusive value="65534"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element type="DumpType" name="Descriptors" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Binary dump of the USB descriptors</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SecureDigitalType">
+        <xs:annotation>
+            <xs:documentation>Contains SecureDigital device information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpType" name="CID">
+                <xs:annotation>
+                    <xs:documentation>Contains SD Card Identification Data</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="CSD" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SD Card Status Data</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="SCR" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SD Card Register</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="OCR" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains SD Operation Conditions Register</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MultiMediaCardType">
+        <xs:annotation>
+            <xs:documentation>Contains MultiMediaCard device information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpType" name="CID">
+                <xs:annotation>
+                    <xs:documentation>Contains MultiMediaCard Card Identification Data</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="CSD" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains MultiMediaCard Card Status Data</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="ExtendedCSD" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains MultiMediaCard extended CSD</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="OCR" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Contains MultiMediaCard Operation Conditions Register</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ATAType">
+        <xs:annotation>
+            <xs:documentation>Contains ATA/ATAPI device information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="DumpType" name="Identify">
+                <xs:annotation>
+                    <xs:documentation>Contains ATA/ATAPI IDENTIFY binary dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BlockTrackType">
+        <xs:annotation>
+            <xs:documentation>Information about track in non-abstracted block based media</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing track dump, and format</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of track dump in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedShort" name="Head">
+                <xs:annotation>
+                    <xs:documentation>Head (from 0) where this track resides</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Cylinder">
+                <xs:annotation>
+                    <xs:documentation>Cylinder where this track resides</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="StartSector">
+                <xs:annotation>
+                    <xs:documentation>Track start sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="EndSector">
+                <xs:annotation>
+                    <xs:documentation>Track end sector</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Sectors">
+                <xs:annotation>
+                    <xs:documentation>Sectors in track. Not necessarily EndSector-StartSector, as there can be hidden
+                        sectors
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="BytesPerSector">
+                <xs:annotation>
+                    <xs:documentation>Bytes per sector, physical undecoded tag-less</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of track dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Format" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Track format (IBM FM, IBM MFM, Amiga MFM, Apple GCR, etc)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BlockMediaType">
+        <xs:annotation>
+            <xs:documentation>Describes a dump of a block (sector) layered media</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>Image file, or image description file, plus format (cue, toc, etc, etc)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Image file size</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of image file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="ContentChecksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SequenceType" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Media sequence information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Manufacturer" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media manufacturer (for fixed AND removable media)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Model" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media model (for fixed AND removable media)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Serial" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media serial number (for fixed and, if applicable, removable media)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Firmware" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media firmware version, for fixed media only</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Interface" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media physical interface, for fixed media only</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PartNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer part no. or SKU</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SerialNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer serial no., not to be confused with software registration serial
+                        number
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="PhysicalBlockSize">
+                <xs:annotation>
+                    <xs:documentation>Physical block size in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="LogicalBlockSize">
+                <xs:annotation>
+                    <xs:documentation>Logical block size in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="LogicalBlocks">
+                <xs:annotation>
+                    <xs:documentation>User accessible logical blocks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="VariableBlockSizeType" name="VariableBlockSize" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>List size for variable blocks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="TapeInformationType" name="TapeInformation" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Presents information specific about a digital tape</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScansType" name="Scans" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media scans</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ATAType" name="ATA" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media responds to native ATA/ATAPI commands, information here
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="PCIType" name="PCI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media is PCI/PCI-X/PCIe attached, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="PCMCIAType" name="PCMCIA" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media is PCMCIA attached, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SecureDigitalType" name="SecureDigital" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media is SecureDigital, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="MultiMediaCardType" name="MultiMediaCard" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media is MultiMediaCard, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SCSIType" name="SCSI" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media conforms to SCSI specifications, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="USBType" name="USB" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>If media is USB attached, information here</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpType" name="MAM" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Medium Auxiliary Memory</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedShort" name="Heads" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Real physical heads</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedInt" name="Cylinders" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Real physical cylinders</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="SectorsPerTrack" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Sectors per track, if constant, if not, this field is ommited and separate tracks
+                        must be indicated
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="BlockTrackType" name="Track" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Tracks for block media that allow separate cylinder/head addressing, like
+                        floppies. It can be ommitted for media that strictly follows a standard (no copy protection
+                        either).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="CopyProtection" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Copy protection, if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DimensionsType" name="Dimensions">
+                <xs:annotation>
+                    <xs:documentation>Dimensions of the media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="FileSystemInformationType" name="FileSystemInformation" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Information about filesystems and partitions contained in this media
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpHardwareArrayType" name="DumpHardwareArray" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Array of hardware used to dump media, if removable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="DiskType">
+                <xs:annotation>
+                    <xs:documentation>Disk type (Floppy, Twiggy, Hard Disk)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="DiskSubType">
+                <xs:annotation>
+                    <xs:documentation>Disk subtype</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AudioBlockType">
+        <xs:annotation>
+            <xs:documentation>Information about "blocks" in audio based media</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing block dump, and format</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of block dump in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="AccoustID">
+                <xs:annotation>
+                    <xs:documentation>AccoustID of block</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of block dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Format" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Block format/encoding</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AudioMediaType">
+        <xs:annotation>
+            <xs:documentation>Describes a dump of a media that is stored in an audio device (like a ZX Spectrum
+                cassette)
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>Image file, or image description file, plus format (cue, toc, etc, etc)
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Image file size</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of image file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="SequenceType" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Media sequence information</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="PartNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer part no. or SKU</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="SerialNumber" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Manufacturer serial no., not to be confused with software registration serial
+                        number
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Manufacturer" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media manufacturer (if known)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="Model" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Media model (if known)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="AccoustID" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>AccoustID of media in audio form</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="AudioBlockType" name="Block" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>Blocks on audio media that uses separate blocks</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:string" name="CopyProtection" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Copy protection, if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DimensionsType" name="Dimensions">
+                <xs:annotation>
+                    <xs:documentation>Dimensions of the media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ScansType" name="Scans" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Scan of media</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="DumpHardwareArrayType" name="DumpHardwareArray" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Array of hardware used to dump media, if removable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="VariableBlockSizeType">
+        <xs:sequence>
+            <xs:element type="BlockSizeType" name="BlockSize" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BlockSizeType">
+        <xs:simpleContent>
+            <xs:extension base="xs:unsignedInt">
+                <xs:attribute type="xs:unsignedInt" name="startingBlock" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="TapeInformationType">
+        <xs:sequence>
+            <xs:element type="TapePartitionType" name="Partition" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TapePartitionType">
+        <xs:annotation>
+            <xs:documentation>Partition information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing partition dump, and format, binary, yranib, or audio/video
+                        container
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of partition dump in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>Partition sequence</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="StartBlock">
+                <xs:annotation>
+                    <xs:documentation>Partition start block</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="EndBlock">
+                <xs:annotation>
+                    <xs:documentation>Partition end block</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of track dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:sequence>
+                <xs:element type="TapeFileType" name="File" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TapeFileType">
+        <xs:annotation>
+            <xs:documentation>Tape file information</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="ImageType" name="Image">
+                <xs:annotation>
+                    <xs:documentation>File containing file dump, and format, binary, yranib, or audio/video container
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Size">
+                <xs:annotation>
+                    <xs:documentation>Size of file in bytes</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="Sequence">
+                <xs:annotation>
+                    <xs:documentation>File sequence</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="BlockSize">
+                <xs:annotation>
+                    <xs:documentation>Size of blocks in this file</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="StartBlock">
+                <xs:annotation>
+                    <xs:documentation>File start block</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="xs:unsignedLong" name="EndBlock">
+                <xs:annotation>
+                    <xs:documentation>File end block</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element type="ChecksumsType" name="Checksums">
+                <xs:annotation>
+                    <xs:documentation>Checksums of track dump</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FilesystemContentsType">
+        <xs:sequence>
+            <xs:element type="ContentsFileType" name="File" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="DirectoryType" name="Directory" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="namespace"/>
+    </xs:complexType>
+    <xs:complexType name="DirectoryType">
+        <xs:sequence>
+            <xs:element type="ContentsFileType" name="File" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="DirectoryType" name="Directory" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:dateTime" name="creationTime"/>
+        <xs:attribute type="xs:dateTime" name="accessTime"/>
+        <xs:attribute type="xs:dateTime" name="statusChangeTime"/>
+        <xs:attribute type="xs:dateTime" name="backupTime"/>
+        <xs:attribute type="xs:dateTime" name="lastWriteTime"/>
+        <xs:attribute type="xs:unsignedLong" name="attributes" use="required"/>
+        <xs:attribute type="xs:unsignedInt" name="posixMode"/>
+        <xs:attribute type="xs:unsignedLong" name="deviceNumber"/>
+        <xs:attribute type="xs:unsignedLong" name="posixGroupId"/>
+        <xs:attribute type="xs:unsignedLong" name="inode"/>
+        <xs:attribute type="xs:unsignedLong" name="links"/>
+        <xs:attribute type="xs:unsignedLong" name="posixUserId"/>
+    </xs:complexType>
+    <xs:complexType name="ContentsFileType">
+        <xs:sequence>
+            <xs:element type="ChecksumsType" name="Checksums"/>
+            <xs:element type="ExtendedAttributesType" name="ExtendedAttributes"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:dateTime" name="creationTime"/>
+        <xs:attribute type="xs:dateTime" name="accessTime"/>
+        <xs:attribute type="xs:dateTime" name="statusChangeTime"/>
+        <xs:attribute type="xs:dateTime" name="backupTime"/>
+        <xs:attribute type="xs:dateTime" name="lastWriteTime"/>
+        <xs:attribute type="xs:unsignedLong" name="attributes" use="required"/>
+        <xs:attribute type="xs:unsignedInt" name="posixMode"/>
+        <xs:attribute type="xs:unsignedLong" name="deviceNumber"/>
+        <xs:attribute type="xs:unsignedLong" name="posixGroupId"/>
+        <xs:attribute type="xs:unsignedLong" name="inode" use="required"/>
+        <xs:attribute type="xs:unsignedLong" name="links" use="required"/>
+        <xs:attribute type="xs:unsignedLong" name="posixUserId"/>
+        <xs:attribute type="xs:unsignedLong" name="length" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="ExtendedAttributesType">
+        <xs:sequence>
+            <xs:element type="ExtendedAttributeType" name="ExtendedAttribute" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExtendedAttributeType">
+        <xs:sequence>
+            <xs:element type="ChecksumsType" name="Checksums"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:unsignedLong" name="length" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="TrackIndexesType">
+        <xs:sequence>
+            <xs:element type="TrackIndexType" name="Index" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TrackIndexType">
+        <xs:simpleContent>
+            <xs:extension base="xs:int">
+                <xs:attribute type="xs:unsignedShort" name="index" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="TrackFlagsType">
+        <xs:sequence>
+            <xs:element name="Quadraphonic">
+                <xs:simpleType>
+                    <xs:restriction base="xs:boolean"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="Data">
+                <xs:simpleType>
+                    <xs:restriction base="xs:boolean"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="CopyPermitted">
+                <xs:simpleType>
+                    <xs:restriction base="xs:boolean"/>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="PreEmphasis">
+                <xs:simpleType>
+                    <xs:restriction base="xs:boolean"/>
+                </xs:simpleType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

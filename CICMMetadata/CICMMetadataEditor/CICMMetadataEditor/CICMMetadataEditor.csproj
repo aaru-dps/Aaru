@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <RootNamespace>CICMMetadataEditor</RootNamespace>
+    <PackageVersion>1.0</PackageVersion>
+    <Title>CICMMetadataEditor</Title>
+    <Copyright>Copyright © 2018</Copyright>
+    <Description>Description of CICMMetadataEditor</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Eto.Forms" Version="2.4.1" />
+    <PackageReference Include="Eto.Serialization.Xaml" Version="2.4.1" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\cicm.xsd">
+      <Link>cicm.xsd</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="..\..\cicm.xml">
+      <Link>cicm.xml</Link>
+    </Content>
+    <Content Include="..\LICENSE">
+      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\dotnet\cicm.cs">
+      <Link>cicm.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

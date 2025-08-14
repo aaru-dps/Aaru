@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CICMMetadataEditor", "CICMMetadataEditor\CICMMetadataEditor\CICMMetadataEditor.csproj", "{189CFDC5-2630-46DE-A934-FF182F9F54AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CICMMetadataEditor.Desktop", "CICMMetadataEditor\CICMMetadataEditor.Desktop\CICMMetadataEditor.Desktop.csproj", "{4D52B7A6-E945-4BDD-BAD3-0EB9A48FABB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CICMMetadataEditor.XamMac", "CICMMetadataEditor\CICMMetadataEditor.XamMac\CICMMetadataEditor.XamMac.csproj", "{00CE3E32-7D00-4CB0-8951-3C27BF2D02CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{189CFDC5-2630-46DE-A934-FF182F9F54AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{189CFDC5-2630-46DE-A934-FF182F9F54AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{189CFDC5-2630-46DE-A934-FF182F9F54AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{189CFDC5-2630-46DE-A934-FF182F9F54AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D52B7A6-E945-4BDD-BAD3-0EB9A48FABB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D52B7A6-E945-4BDD-BAD3-0EB9A48FABB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D52B7A6-E945-4BDD-BAD3-0EB9A48FABB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D52B7A6-E945-4BDD-BAD3-0EB9A48FABB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00CE3E32-7D00-4CB0-8951-3C27BF2D02CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00CE3E32-7D00-4CB0-8951-3C27BF2D02CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00CE3E32-7D00-4CB0-8951-3C27BF2D02CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00CE3E32-7D00-4CB0-8951-3C27BF2D02CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

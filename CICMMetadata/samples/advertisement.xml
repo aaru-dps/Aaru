@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CICMMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cicm.xsd">
+  <Developer>Nintendo</Developer>
+  <Name>Luigi's Mansion 2</Name>
+  <Keywords>
+    <Keyword>advertising</Keyword>
+    <Keyword>nintendo</Keyword>
+    <Keyword>3DS</Keyword>
+  </Keywords>
+  <Categories>
+    <Category>Game</Category>
+  </Categories>
+  <Subcategories>
+    <Subcategory>Platformer</Subcategory>
+  </Subcategories>
+  <Languages>
+    <Language>spa</Language>
+  </Languages>
+  <Systems>
+    <System>System</System>
+  </Systems>
+  <Advertisement>
+    <Manufacturer>Nintendo</Manufacturer>
+    <Product>Luigi's Mansion 2</Product>
+    <File format="mpegts">luigi_mansion2_ad.ts</File>
+    <FileSize>8509632</FileSize>
+    <Frames>501</Frames>
+    <Duration>20</Duration>
+    <MeanFrameRate>25</MeanFrameRate>
+    <Checksums>
+      <Checksum type="crc32">8818e1db</Checksum>
+      <Checksum type="md5">bdc169fd31d3142067c532013e7c2446</Checksum>
+      <Checksum type="sha1">521709692e8551748f0d14c791fba823d268cef3</Checksum>
+      <Checksum type="sha256">d28bf7829846cdcc633699f51e551b332bb10ef3f596bdf8948ec0b390f4f3e0</Checksum>
+      <Checksum type="tiger">8b4aaa13b8f417482a8e37293aa33235a1236582fefd63e9</Checksum>
+      <Checksum type="whirlpool">5ac087379b37afb22f65b0f6f2208c2e44708ea0bec0c233ab3ee5b85312fa4e656cc092e160f8626343033937aec90eadd674ee3e714f1243ff9e47285f8fae</Checksum>
+      <Checksum type="spamsum">196608:KPzYb83jgXvTbe8Z48I5qKki6VaBK+qxLrP:szYbOjovTjvjKWV5xX</Checksum>
+    </Checksums>
+    <AudioTrack AccoustID="AQAAjIuSlRqFo2dWVGdwKT36wx2FfJD0nmizC3VyNMj2okqTE-ZCDaGPMxlqH2J-dCdxikee4z8R9vCJY5KzFz-eJZEl6Ki5Ek0v4Uxx9aiH5nrwGM9z7EfFXfCXIMuZoDKN9HqGs0YTOsenRxD8Jdtx_dB35MqMyoflkai-Do-Odq2GkEwIXoZ2wXvQ8vhxJjqaqkFvNF-NkrnACCKHJ8wC6kL4a0V-DtUhKgtzRPyPS3GEJwr-4FKCp5fw45eQdg6RVE7QSY2O87iz4x4qKjaapD1ucdiHSzfC_NCbFeHzGSduOsUfTTiRpbvQPIcQptLAHNeFmsrxHhU3H6eRL-iXQ0u64xEr3B6uoi_4w-VRPulwHl-POybIp9DCBxVFPEk2PGrQzDr8fUSdUMdFBf-xZx7SSzkeycKeHKdTACQMQQB7QIyRBCoBBAACISQAE-ZAAThiRgAhAQGGEQYAEcIAIBgRQhgimGDAEQUJU8AAQoQRRgBCmGKEAAMUBIBQIBQgBgkkDCAGCOINMNgBoZhwRghpBGBEMYCEAcAB4wEAggCHDBCCIAA" Channels="2" Codec="mp2" MeanBitrate="128000" SampleRate="48000" TrackNumber="2"/>
+    <VideoTrack Codec="mpeg2video" Horizontal="720" MeanBitrate="15000000" ThreeD="false" TrackNumber="1" Vertical="576"/>
+    <Recording>
+      <Broadcaster>Xplora</Broadcaster>
+      <SourceFormat>DVB-T</SourceFormat>
+      <Timestamp>2013-04-02T07:15:00</Timestamp>
+      <Software>
+      	<Name>ArgusTV</Name>
+      	<Version>2.0</Version>
+      	<OperatingSystem>Windows 8 Professional</OperatingSystem>
+      </Software>
+      <Coordinates>
+      	<Latitude>28.1666667</Latitude>
+      	<Longitude>15.4166667</Longitude>
+      </Coordinates>
+    </Recording>
+  </Advertisement>
+</CICMMetadata>

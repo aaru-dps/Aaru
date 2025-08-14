@@ -1,0 +1,778 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+//
+//  Author:
+//    Natalia Portillo claunia@claunia.com
+//
+//  Copyright (c) 2017-2018, © Natalia Portillo
+//
+//  All rights reserved.
+//
+//  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+//  following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+//       following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+//       following disclaimer in the documentation and/or other materials provided with the distribution.
+//     * Neither the name of the [ORGANIZATION] nor the names of its contributors may be used to endorse or promote
+//       products derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+//  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+//  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+//  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+//  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+-->
+<Dialog xmlns="http://schema.picoe.ca/eto.forms" Width="800" Height="605" Resizable="True">
+    <StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+            <TabControl>
+                <TabPage Text="General">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Image:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtImage" ReadOnly="True"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Format:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtFormat"/>
+                                </StackLayoutItem>
+                                <Label>Offset:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtOffset" ReadOnly="True"/>
+                                </StackLayoutItem>
+                                <Label>Size:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtSize" ReadOnly="True"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Write offset:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtWriteOffset"/>
+                                </StackLayoutItem>
+                                <Label>bytes</Label>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Tracks:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtMediaTracks"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Sessions:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtMediaSessions"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Copy protection:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtCopyProtection"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Disc type:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtDiscType"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Disc subtype:</Label>
+                                <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                    <TextBox ID="txtDiscSubtype"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                            <StackLayout Orientation="Horizontal">
+                                <StackLayoutItem HorizontalAlignment="Left" Expand="True">
+                                    <GroupBox Text="Sequence">
+                                        <StackLayout Orientation="Vertical">
+                                            <StackLayoutItem HorizontalAlignment="Center">
+                                                <CheckBox ID="chkSequence" CheckedChanged="OnChkSequenceToggled">
+                                                    Sequenced
+                                                </CheckBox>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Center">
+                                                <Label ID="lblDiscTitle" Visible="False">Disc title</Label>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <TextBox ID="txtDiscTitle" Visible="False"/>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label ID="lblSequence" Visible="False">Sequence:</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spSequence" Visible="False"/>
+                                                    </StackLayoutItem>
+                                                    <Label ID="lblTotalMedia" Visible="False">of</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spTotalMedia" Visible="False"/>
+                                                    </StackLayoutItem>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label ID="lblSide" Visible="False">Side:</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spSide" Visible="False"/>
+                                                    </StackLayoutItem>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label ID="lblLayer" Visible="False">Layer:</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spLayer" Visible="False"/>
+                                                    </StackLayoutItem>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </GroupBox>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Right" Expand="True">
+                                    <GroupBox Text="Dimensions">
+                                        <StackLayout Orientation="Vertical">
+                                            <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                                                <CheckBox ID="chkDimensions" CheckedChanged="OnChkDimensionsToggled">
+                                                    Known dimensions
+                                                </CheckBox>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                                                <CheckBox ID="chkRound" CheckedChanged="OnChkRoundToggled"
+                                                          Visible="False">Round?
+                                                </CheckBox>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal" ID="stkDiameter" Visible="False">
+                                                    <Label>Diameter</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spDiameter" DecimalPlaces="5"/>
+                                                    </StackLayoutItem>
+                                                    <Label>mm</Label>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal" ID="stkHeight" Visible="False">
+                                                    <Label>Height</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spHeight" DecimalPlaces="5"/>
+                                                    </StackLayoutItem>
+                                                    <Label>mm</Label>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal" ID="stkWidth" Visible="False">
+                                                    <Label>Width</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spWidth" DecimalPlaces="5"/>
+                                                    </StackLayoutItem>
+                                                    <Label>mm</Label>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                <StackLayout Orientation="Horizontal" ID="stkThickness" Visible="False">
+                                                    <Label>Thickness</Label>
+                                                    <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+                                                        <NumericUpDown ID="spThickness" DecimalPlaces="5"/>
+                                                    </StackLayoutItem>
+                                                    <Label>mm</Label>
+                                                </StackLayout>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </GroupBox>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Layers">
+                    <StackLayout Orientation="Vertical">
+                        <CheckBox ID="chkLayers" ThreeState="False" CheckedChanged="OnChkLayersToggled">Has layers?
+                        </CheckBox>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Layers" ID="frmLayers" Visible="False">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayout Orientation="Horizontal" ID="stkLayers">
+                                        <Label>Layering type:</Label>
+                                        <!-- EnumDropDown<LayerType> goes here -->
+                                    </StackLayout>
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeLayers"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spNewLayer"/>
+                                        <Label>starts at sector</Label>
+                                        <TextBox ID="txtLayerSize"/>
+                                        <Button ID="btnAddLayer" Click="OnBtnAddLayerClicked">Add</Button>
+                                        <Button ID="btnRemoveLayer" Click="OnBtnRemoveLayerClicked">Remove</Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Mastering">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Ring codes">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeRingCodes"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spRingCodeLayer"/>
+                                        <Label>Code:</Label>
+                                        <TextBox ID="txtRingCode"/>
+                                        <Button ID="btnAddRingCode" Click="OnBtnAddRingCodeClicked">Add</Button>
+                                        <Button ID="btnRemoveRingCode" Click="OnBtnRemoveRingCodeClicked">Remove
+                                        </Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Mastering SIDs">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeMasteringSIDs"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spMasteringSIDLayer"/>
+                                        <Label>SID:</Label>
+                                        <TextBox ID="txtMasteringSID"/>
+                                        <Button ID="btnAddMasteringSID" Click="OnBtnAddMasteringSIDClicked">Add</Button>
+                                        <Button ID="btnRemoveMasteringSID" Click="OnBtnRemoveMasteringSIDClicked">
+                                            Remove
+                                        </Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Toolstamps">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeToolstamps"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spToolstampLayer"/>
+                                        <Label>Stamp:</Label>
+                                        <TextBox ID="txtToolstamp"/>
+                                        <Button ID="btnAddToolstamp" Click="OnBtnAddToolstampClicked">Add</Button>
+                                        <Button ID="btnRemoveToolstamp" Click="OnBtnRemoveToolstampClicked">Remove
+                                        </Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Mould SIDs">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeMouldSIDs"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spMouldSIDLayer"/>
+                                        <Label>SID:</Label>
+                                        <TextBox ID="txtMouldSID"/>
+                                        <Button ID="btnAddMouldSID" Click="OnBtnAddMouldSIDClicked">Add</Button>
+                                        <Button ID="btnRemoveMouldSID" Click="OnBtnRemoveMouldSIDClicked">Remove
+                                        </Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Mould texts">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treeMouldTexts"/>
+                                    </StackLayoutItem>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>Layer</Label>
+                                        <NumericUpDown ID="spMouldTextLayer"/>
+                                        <Label>Text:</Label>
+                                        <TextBox ID="txtMouldText"/>
+                                        <Button ID="btnAddMouldText" Click="OnBtnAddMouldTextClicked">Add</Button>
+                                        <Button ID="btnRemoveMouldText" Click="OnBtnRemoveMouldTextClicked">Remove
+                                        </Button>
+                                    </StackLayout>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="CD">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="TOC" ID="frmTOC" Visible="False">
+                                <GridView ID="treeTOC" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="CD-Text" ID="frmCDText" Visible="False">
+                                <GridView ID="treeCDText" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="ATIP" ID="frmATIP" Visible="False">
+                                <GridView ID="treeATIP" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="PMA" ID="frmPMA" Visible="False">
+                                <GridView ID="treePMA" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Sessions">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Lead-Ins" ID="frmLeadIns" Visible="False">
+                                <GridView ID="treeLeadIn" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Lead-Outs" ID="frmLeadOuts" Visible="False">
+                                <GridView ID="treeLeadOut" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="DVD">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Physical Format Information" ID="frmPFI" Visible="False">
+                                <GridView ID="treePFI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Disc Manufacturer Information" ID="frmDMI" Visible="False">
+                                <GridView ID="treeDMI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Copyright Management Information" ID="frmCMI" Visible="False">
+                                <GridView ID="treeCMI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Burst Cutting Area" ID="frmBCA" Visible="False">
+                                <GridView ID="treeBCA" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Disc Control Blocks" ID="frmDCB" Visible="False">
+                                <GridView ID="treeDCB" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="DVD-R">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Pre-recorded information" ID="frmPRI" Visible="False">
+                                <GridView ID="treePRI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Media ID" ID="frmMediaID" Visible="False">
+                                <GridView ID="treeMediaID" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Physical Format Information in Lead-In" ID="frmPFIR" Visible="False">
+                                <GridView ID="treePFIR" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Last RMD" ID="frmLastRMD" Visible="False">
+                                <GridView ID="treeLastRMD" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="DVD+R">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="ADIP" ID="frmADIP" Visible="False">
+                                <GridView ID="treeADIP" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="DVD-RAM / BD-RE">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Disc Definition Structure" ID="frmDDS" Visible="False">
+                                <GridView ID="treeDDS" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Spare Area Information" ID="frmSAI" Visible="False">
+                                <GridView ID="treeSAI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Blu-ray">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="Disc Information" ID="frmDI" Visible="False">
+                                <GridView ID="treeDI" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="PAC" ID="frmPAC" Visible="False">
+                                <GridView ID="treePAC" Enabled="False"/>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="PlayStation">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox Text="PlayStation 3 Encryption Key" ID="frmPS3">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label>Key</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPS3Key"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label>Serial</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPS3Serial"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Tracks">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GridView ID="treeTracks"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal" ID="stkTrackFields1" Visible="False">
+                                <Label>Start LBA</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtTrackStart"/>
+                                </StackLayoutItem>
+                                <Label>End LBA</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtTrackEnd"/>
+                                </StackLayoutItem>
+                                <Label>Start MSF</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtMSFStart"/>
+                                </StackLayoutItem>
+                                <Label>End MSF</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtMSFEnd"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal" ID="stkTrackFields2" Visible="False">
+                                <Label>Track</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtTrackSequence"/>
+                                </StackLayoutItem>
+                                <Label>Session</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtSessionSequence"/>
+                                </StackLayoutItem>
+                                <Label>Track type</Label>
+                                <StackLayoutItem Expand="True">
+                                    <ComboBox ID="cmbTrackType"/>
+                                </StackLayoutItem>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtBytesPerSector"/>
+                                </StackLayoutItem>
+                                <Label>bytes per sector</Label>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal" ID="stkTrackFields3" Visible="False">
+                                <Label>Acoust ID</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtAcoustID"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <GroupBox Text="Partitions" ID="frmPartitions" Visible="False">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GridView ID="treePartitions"/>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Right">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Button ID="btnCancelPartition" Click="OnBtnCancelPartitionClicked"
+                                                    Visible="False">Cancel
+                                            </Button>
+                                            <Button ID="btnRemovePartition" Click="OnBtnRemovePartitionClicked">Remove
+                                            </Button>
+                                            <Button ID="btnEditPartition" Click="OnBtnEditPartitionClicked">Edit
+                                            </Button>
+                                            <Button ID="btnApplyPartition" Click="OnBtnApplyPartitionClicked"
+                                                    Visible="False">Apply
+                                            </Button>
+                                            <Button ID="btnAddPartition" Click="OnBtnAddPartitionClicked">Add</Button>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal" ID="stkPartitionFields1" Visible="False">
+                                            <Label>Sequence</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <NumericUpDown ID="spPartitionSequence"/>
+                                            </StackLayoutItem>
+                                            <Label>Start block</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPartitionStart"/>
+                                            </StackLayoutItem>
+                                            <Label>End block</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPartitionEnd"/>
+                                            </StackLayoutItem>
+                                            <Label>Type</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPartitionType"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal" ID="stkPartitionFields2" Visible="False">
+                                            <Label>Name</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPartitionName"/>
+                                            </StackLayoutItem>
+                                            <Label>Description</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtPartitionDescription"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <GroupBox ID="frmFilesystems" Visible="False">
+                                            <StackLayout Orientation="Vertical">
+                                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                                 VerticalAlignment="Stretch">
+                                                    <GridView ID="treeFilesystems"/>
+                                                </StackLayoutItem>
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Button ID="btnRemoveFilesystem"
+                                                            Click="OnBtnRemoveFilesystemClicked">Remove
+                                                    </Button>
+                                                    <Button ID="btnEditFilesystem" Click="OnBtnEditFilesystemClicked">
+                                                        Edit
+                                                    </Button>
+                                                    <Button ID="btnAddFilesystem" Click="OnBtnAddFilesystemClicked">
+                                                        Add
+                                                    </Button>
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </GroupBox>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Right">
+                            <StackLayout Orientation="Horizontal">
+                                <Button ID="btnCancelTrack" Click="OnBtnCancelTrackClicked" Visible="False">Cancel
+                                </Button>
+                                <Button ID="btnApplyTrack" Click="OnBtnApplyTrackClicked" Visible="False">Apply</Button>
+                                <Button ID="btnEditTrack" Click="OnBtnEditTrackClicked">Edit</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Dump hardware">
+                    <StackLayout Orientation="Vertical">
+                        <CheckBox ID="chkDumpHardware" CheckedChanged="OnChkDumpHardwareToggled">Known dumping
+                            hardware
+                        </CheckBox>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GridView ID="treeDumpHardware" Visible="False"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Right">
+                            <StackLayout Orientation="Horizontal">
+                                <Button ID="btnCancelHardware" Click="OnBtnCancelHardwareClicked" Visible="False">
+                                    Cancel
+                                </Button>
+                                <Button ID="btnRemoveHardware" Click="OnBtnRemoveHardwareClicked" Visible="False">
+                                    Remove
+                                </Button>
+                                <Button ID="btnEditHardware" Click="OnBtnEditHardwareClicked" Visible="False">Edit
+                                </Button>
+                                <Button ID="btnApplyHardware" Click="OnBtnApplyHardwareClicked" Visible="False">Apply
+                                </Button>
+                                <Button ID="btnAddHardware" Click="OnBtnAddHardwareClicked" Visible="False">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GroupBox ID="frmHardware" Visible="False">
+                                <StackLayout Orientation="Vertical">
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label>Manufacturer</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtHWManufacturer"/>
+                                            </StackLayoutItem>
+                                            <Label>Model</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtHWModel"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label>Revision</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtHWRevision"/>
+                                            </StackLayoutItem>
+                                            <Label>Firmware</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtHWFirmware"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem HorizontalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label>Serial number</Label>
+                                            <StackLayoutItem Expand="True">
+                                                <TextBox ID="txtHWSerial"/>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                    <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                     VerticalAlignment="Stretch">
+                                        <StackLayout Orientation="Horizontal">
+                                            <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                             VerticalAlignment="Stretch">
+                                                <GroupBox Text="Extents">
+                                                    <StackLayout Orientation="Vertical">
+                                                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                                         VerticalAlignment="Stretch">
+                                                            <GridView ID="treeExtents"/>
+                                                        </StackLayoutItem>
+                                                        <StackLayout Orientation="Horizontal">
+                                                            <Button ID="btnRemoveExtent"
+                                                                    Click="OnBtnRemoveExtentClicked">Remove
+                                                            </Button>
+                                                            <Button ID="btnAddExtent" Click="OnBtnAddExtentClicked">
+                                                                Add
+                                                            </Button>
+                                                        </StackLayout>
+                                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                                            <StackLayout Orientation="Horizontal">
+                                                                <Label>Start</Label>
+                                                                <StackLayoutItem Expand="True">
+                                                                    <NumericUpDown ID="spExtentStart"/>
+                                                                </StackLayoutItem>
+                                                                <Label>End</Label>
+                                                                <StackLayoutItem Expand="True">
+                                                                    <NumericUpDown ID="spExtentEnd"/>
+                                                                </StackLayoutItem>
+                                                            </StackLayout>
+                                                        </StackLayoutItem>
+                                                    </StackLayout>
+                                                </GroupBox>
+                                            </StackLayoutItem>
+                                            <StackLayoutItem Expand="True" HorizontalAlignment="Stretch"
+                                                             VerticalAlignment="Stretch">
+                                                <GroupBox Text="DumpSoftware">
+                                                    <StackLayout Orientation="Vertical">
+                                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                                            <StackLayout Orientation="Horizontal">
+                                                                <Label>Name</Label>
+                                                                <StackLayoutItem Expand="True">
+                                                                    <TextBox ID="txtDumpName"/>
+                                                                </StackLayoutItem>
+                                                            </StackLayout>
+                                                        </StackLayoutItem>
+                                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                                            <StackLayout Orientation="Horizontal">
+                                                                <Label>Version</Label>
+                                                                <StackLayoutItem Expand="True">
+                                                                    <TextBox ID="txtDumpVersion"/>
+                                                                </StackLayoutItem>
+                                                            </StackLayout>
+                                                        </StackLayoutItem>
+                                                        <StackLayoutItem HorizontalAlignment="Stretch">
+                                                            <StackLayout Orientation="Horizontal">
+                                                                <Label>Operating system</Label>
+                                                                <StackLayoutItem Expand="True">
+                                                                    <TextBox ID="txtDumpOS"/>
+                                                                </StackLayoutItem>
+                                                            </StackLayout>
+                                                        </StackLayoutItem>
+                                                    </StackLayout>
+                                                </GroupBox>
+                                            </StackLayoutItem>
+                                        </StackLayout>
+                                    </StackLayoutItem>
+                                </StackLayout>
+                            </GroupBox>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+            </TabControl>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Center">
+            <StackLayout Orientation="Horizontal">
+                <Button ID="btnCancel" Click="OnBtnCancelClicked">Cancel</Button>
+                <Button ID="btnSave" Click="OnBtnSaveClicked">Save</Button>
+            </StackLayout>
+        </StackLayoutItem>
+    </StackLayout>
+</Dialog>

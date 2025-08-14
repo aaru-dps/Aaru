@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="UTF-8"?><!--
+//
+//  Author:
+//    Natalia Portillo claunia@claunia.com
+//
+//  Copyright (c) 2017-2018, © Natalia Portillo
+//
+//  All rights reserved.
+//
+//  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
+//  following conditions are met:
+//
+//     * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+//       following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+//       following disclaimer in the documentation and/or other materials provided with the distribution.
+//     * Neither the name of the [ORGANIZATION] nor the names of its contributors may be used to endorse or promote
+//       products derived from this software without specific prior written permission.
+//
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+//  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+//  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+//  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+//  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+//  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+//  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+-->
+<Form xmlns="http://schema.picoe.ca/eto.forms" Height="533" Width="909" Resizable="True" Title="Editing metadata...">
+    <StackLayout Orientation="Vertical">
+        <StackLayoutItem HorizontalAlignment="Stretch" Expand="True">
+            <TabControl>
+                <TabPage Text="General" ID="tabGeneral">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Developer</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtDeveloper"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Publisher</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtPublisher"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Author</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtAuthor"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Performer</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtPerformer"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Name</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtName"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Version</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtVersion"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal" ID="stkReleaseType">
+                            <CheckBox ID="chkKnownReleaseType" ThreeState="False"
+                                      CheckedChanged="OnChkKnownReleaseTypeToggled">Known release type?
+                            </CheckBox>
+                            <!-- EnumDropDown<ReleaseType> goes here -->
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal">
+                            <Label>Release date</Label>
+                            <DateTimePicker ID="cldReleaseDate" Enabled="False"/>
+                            <CheckBox ID="chkReleaseDate" ThreeState="False" CheckedChanged="OnChkReleaseDateToggled"
+                                      Checked="True">Unknown or unreleased
+                            </CheckBox>
+                        </StackLayout>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Part number</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtPartNumber"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Serial number</Label>
+                                <StackLayoutItem Expand="True">
+                                    <TextBox ID="txtSerialNumber"/>
+                                </StackLayoutItem>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Required operating systems" ID="tabTargetOs">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New operating system:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewOsName"/>
+                                </StackLayoutItem>
+                                <Label>version:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewOsVersion"/>
+                                </StackLayoutItem>
+                                <Button ID="btnAddNewOs" Click="OnBtnAddNewOsClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeOses"></GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearOses" Click="OnBtnClearOsesClicked">Clear</Button>
+                            <Button ID="btnRemoveRemoveOs" Click="OnBtnRemoveOsClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Keywords" ID="tabKeywords">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New keyword:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewKeyword"/>
+                                </StackLayoutItem>
+                                <Button ID="btnAddKeyword" Click="OnBtnAddKeywordClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GridView ID="treeKeywords"/>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearKeywords" Click="OnBtnClearKeywordsClicked">Clear</Button>
+                            <Button ID="btnRemoveKeyword" Click="OnBtnRemoveKeywordClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Barcodes" ID="tabBarcodes">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New barcode:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <TextBox ID="txtNewBarcode"/>
+                                </StackLayoutItem>
+                                <Label>type</Label>
+                                <ComboBox ID="cmbBarcodes" ReadOnly="True"/>
+                                <Button ID="btnAddBarcode" Click="OnBtnAddBarcodeClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <GridView ID="treeBarcodes"/>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearBarcodes" Click="OnBtnClearBarcodesClicked">Clear</Button>
+                            <Button ID="btnRemoveBarcode" Click="OnBtnRemoveBarcodeClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Categories" ID="tabCategories">
+                    <StackLayout Orientation="Horizontal">
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical">
+                                <StackLayoutItem HorizontalAlignment="Center">
+                                    <Label>Categories</Label>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>New category:</Label>
+                                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                            <TextBox ID="txtNewCategory"/>
+                                        </StackLayoutItem>
+                                        <Button ID="btnAddCategory" Click="OnBtnAddCategoryClicked">Add</Button>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                 Expand="True">
+                                    <GridView ID="treeCategories"/>
+                                </StackLayoutItem>
+                                <StackLayout Orientation="Horizontal">
+                                    <Button ID="btnClearCategories" Click="OnBtnClearCategoriesClicked">Clear</Button>
+                                    <Button ID="btnRemoveCategory" Click="OnBtnRemoveCategoryClicked">Remove</Button>
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <StackLayout Orientation="Vertical">
+                                <StackLayoutItem HorizontalAlignment="Center">
+                                    <Label>Subcategories</Label>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label>New subcategory:</Label>
+                                        <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                            <TextBox ID="txtNewSubcategory"/>
+                                        </StackLayoutItem>
+                                        <Button ID="btnAddSubcategory" Click="OnBtnAddSubcategoryClicked">Add</Button>
+                                    </StackLayout>
+                                </StackLayoutItem>
+                                <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                 Expand="True">
+                                    <GridView ID="treeSubcategories"/>
+                                </StackLayoutItem>
+                                <StackLayout Orientation="Horizontal">
+                                    <Button ID="btnClearSubcategories" Click="OnBtnClearSubcategoriesClicked">Clear
+                                    </Button>
+                                    <Button ID="btnRemoveSubcategory" Click="OnBtnRemoveSubcategoryClicked">Remove
+                                    </Button>
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Languages" ID="tabLanguages">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New language:</Label>
+                                <ComboBox ID="cmbLanguages" ReadOnly="True"/>
+                                <Button ID="btnAddLanguage" Click="OnBtnAddLanguageClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeLanguages"></GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearLanguages" Click="OnBtnClearLanguagesClicked">Clear</Button>
+                            <Button ID="btnRemoveLanguage" Click="OnBtnRemoveLanguageClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Architectures" ID="tabArchitectures">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>New architecture:</Label>
+                                <ComboBox ID="cmbArchitectures" ReadOnly="True"/>
+                                <Button ID="btnAddArchitecture" Click="OnBtnAddArchitectureClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeArchitectures"></GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnClearArchitectures" Click="OnBtnClearArchitecturesClicked">Clear</Button>
+                            <Button ID="btnRemoveArchitecture" Click="OnBtnRemoveArchitectureClicked">Remove</Button>
+                        </StackLayout>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Optical discs" ID="tabDiscs">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Choose disc to add:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <ComboBox ID="cmbFilesForNewDisc" ReadOnly="True"/>
+                                </StackLayoutItem>
+                                <Button ID="btnAddDisc" Click="OnBtnAddDiscClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeDiscs"></GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnStopAddDisc" Click="OnBtnStopAddDiscClicked" Visible="False">Stop</Button>
+                            <Button ID="btnEditDisc" Click="OnBtnEditDiscClicked">Edit</Button>
+                            <Button ID="btnClearDiscs" Click="OnBtnClearDiscsClicked">Clear</Button>
+                            <Button ID="btnRemoveDisc" Click="OnBtnRemoveDiscClicked">Remove</Button>
+                        </StackLayout>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <Label ID="lblAddDisc1" Visible="False">Progress 1</Label>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <ProgressBar ID="prgAddDisc1" Visible="False"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <Label ID="lblAddDisc2" Visible="False">Progress 2</Label>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <ProgressBar ID="prgAddDisc2" Visible="False"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+                <TabPage Text="Block disks" ID="tabDisks">
+                    <StackLayout Orientation="Vertical">
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <StackLayout Orientation="Horizontal">
+                                <Label>Choose disc to add:</Label>
+                                <StackLayoutItem Expand="True" HorizontalAlignment="Stretch">
+                                    <ComboBox ID="cmbFilesForNewDisk" ReadOnly="True"/>
+                                </StackLayoutItem>
+                                <Button ID="btnAddDisk" Click="OnBtnAddDiskClicked">Add</Button>
+                            </StackLayout>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Expand="True">
+                            <GridView ID="treeDisks"></GridView>
+                        </StackLayoutItem>
+                        <StackLayout Orientation="Horizontal">
+                            <Button ID="btnStopAddDisk" Click="OnBtnStopAddDiskClicked" Visible="False">Stop</Button>
+                            <Button ID="btnEditDisk" Click="OnBtnEditDiskClicked">Edit</Button>
+                            <Button ID="btnClearDisks" Click="OnBtnClearDisksClicked">Clear</Button>
+                            <Button ID="btnRemoveDisk" Click="OnBtnRemoveDiskClicked">Remove</Button>
+                        </StackLayout>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <Label ID="lblAddDisk1" Visible="False">Progress 1</Label>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <ProgressBar ID="prgAddDisk1" Visible="False"/>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <Label ID="lblAddDisk2" Visible="False">Progress 2</Label>
+                        </StackLayoutItem>
+                        <StackLayoutItem HorizontalAlignment="Stretch">
+                            <ProgressBar ID="prgAddDisk2" Visible="False"/>
+                        </StackLayoutItem>
+                    </StackLayout>
+                </TabPage>
+            </TabControl>
+        </StackLayoutItem>
+        <StackLayoutItem HorizontalAlignment="Center">
+            <StackLayout Orientation="Horizontal">
+                <Button ID="btnCancel" Click="OnBtnCancelClicked">Cancel</Button>
+                <Button ID="btnOK" Click="OnBtnOKClicked">OK</Button>
+            </StackLayout>
+        </StackLayoutItem>
+    </StackLayout>
+    <Form.Menu>
+        <MenuBar>
+            <ButtonMenuItem Text="F&amp;ile">
+                <ButtonMenuItem Text="New" Shortcut="CommonModifier+N" Click="OnNewClicked"/>
+                <ButtonMenuItem Text="Open" Shortcut="CommonModifier+O" Click="OnOpenClicked"/>
+                <SeparatorMenuItem/>
+                <ButtonMenuItem Text="Save" Shortcut="CommonModifier+S" Click="OnSaveClicked"/>
+                <ButtonMenuItem Text="Save as"
+                                Shortcut="{On Control+Shift+S, Mac=AlternateModifier+Application+Shift+S}"
+                                Click="OnSaveAsClicked"/>
+            </ButtonMenuItem>
+            <MenuBar.ApplicationItems>
+                <ButtonMenuItem Text="Preferences.." Shortcut="{On Control+Shift+Comma, Mac=Application+Comma}"/>
+            </MenuBar.ApplicationItems>
+            <MenuBar.QuitItem>
+                <ButtonMenuItem Text="Quit" Shortcut="CommonModifier+Q" Click="OnQuitClicked"/>
+            </MenuBar.QuitItem>
+            <MenuBar.AboutItem>
+                <ButtonMenuItem Text="About..." Click="OnAboutClicked"/>
+            </MenuBar.AboutItem>
+        </MenuBar>
+    </Form.Menu>
+</Form>

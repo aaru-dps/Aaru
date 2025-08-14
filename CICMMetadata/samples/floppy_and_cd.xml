@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CICMMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cicm.xsd">
+  <Developer>Be</Developer>
+  <Name>BeOS</Name>
+  <Version>R4</Version>
+  <ReleaseType>Retail</ReleaseType>
+  <ReleaseDate>1998-11-04</ReleaseDate>
+  <Keywords>
+    <Keyword>BeOS</Keyword>
+  </Keywords>
+  <Categories>
+    <Category>Operating System</Category>
+  </Categories>
+  <Languages>
+    <Language>eng</Language>
+  </Languages>
+  <Systems>
+    <System>i686</System>
+    <System>Gestalt 67</System>
+    <System>Gestalt 58</System>
+    <System>Gestalt 69</System>
+    <System>Gestalt 68</System>
+    <System>Gestalt 108</System>
+    <System>Gestalt 109</System>
+    <System>Gestalt 514</System>
+  </Systems>
+  <Architectures>
+    <Architecture>ia32</Architecture>
+    <Architecture>ppc</Architecture>
+  </Architectures>
+  <OpticalDisc>
+    <Image format="cdrwin" offset="0">BeOS R4 (Retail).cue</Image>
+    <Size>174</Size>
+    <Sequence>
+      <MediaSequence>1</MediaSequence>
+      <TotalMedia>1</TotalMedia>
+    </Sequence>
+    <Checksums>
+		<Checksum type="md5">c7e095e1fc98e98b36b8cde5b003f08d</Checksum>
+	    <Checksum type="sha1">4f5a6b4e11bf644b1f77566b8149acab15db4276</Checksum>
+    	<Checksum type="sha256">d7eba58afdc121da4fb47418c9d328393670bb58095baf035ca6c29d33300ccf</Checksum>
+    	<Checksum type="tiger">e5c5f17baa5dfcc6793808321b90ca8a2a396acdf5ea950d</Checksum>
+    	<Checksum type="whirlpool">f1902ad54a53c45a535b5ae456f000980463ddeef51e4b1510f1a5e0b79f6fa4e1460eb2d97253b7d68b83995003f6a6faeae7b5faf097fa9604441428b9c28c</Checksum>
+	</Checksums>
+    <DiscType>CD</DiscType>
+    <DiscSubType>CD-ROM</DiscSubType>
+    <Tracks>3</Tracks>
+    <Sessions>1</Sessions>
+    <Dimensions>
+      <Diameter>120</Diameter>
+      <Thickness>1.2</Thickness>
+    </Dimensions>
+    <Case>
+      <CaseType>jewel</CaseType>
+      <Scans/>
+    </Case>
+    <Track>
+      <Image format="cooked" offset="0">BeOS R4 (Retail).bin</Image>
+      <Size>6967296</Size>
+      <Sequence>
+        <TrackNumber>1</TrackNumber>
+        <Session>1</Session>
+      </Sequence>
+      <StartMSF>00:00:00</StartMSF>
+      <EndMSF>00:45:26</EndMSF>
+      <StartSector>0</StartSector>
+      <EndSector>3401</EndSector>
+      <TrackType>mode1</TrackType>
+      <BytesPerSector>2048</BytesPerSector>
+      <Checksums>
+        <Checksum type="adler32">0xa66c658c</Checksum>
+        <Checksum type="crc16">0x9e60</Checksum>
+        <Checksum type="crc32">0x26d3d260</Checksum>
+        <Checksum type="crc64">0xfaf6cd8f8534541e</Checksum>
+        <Checksum type="md5">9c3facd2d33cc29b4d80850c3387230a</Checksum>
+        <Checksum type="ripemd160">2800a377d2b9c2afe85ea2327f691f91f9b6600f</Checksum>
+        <Checksum type="sha1">9cf4335ca0b8b12fd343f46e69fc1e183d011456</Checksum>
+        <Checksum type="sha256">44e780def14f136f082ab4ddfb8f1c3af0d58089edeaab706040eb2642335000</Checksum>
+        <Checksum type="sha384">7c37209d84239d4c65eca58dcab9f4940731711b4d35725f15e464fd1dfb1729269b298ae16a6e7bd4f4a98cb9368b1c</Checksum>
+        <Checksum type="sha512">a803a4d28aa6604db9c09b5cf7ce2937cce422311607f6d34b3560be07bb1634814a912cb94581305d2ffef3236b47941501a30909f11c236dd0e35ebb2a4d12</Checksum>
+        <Checksum type="spamsum">98304:Qddx6TKP6TK4oRdrcHcUTvwoRdrcHjkF4xGbUd8LtV1yV:Qddxb7I38k2xGYdzV</Checksum>
+      </Checksums>
+      <FileSystemInformation>
+      	<Partition>
+      		<Sequence>1</Sequence>
+      		<StartSector>0</StartSector>
+      		<EndSector>3401</EndSector>
+      		<FileSystems>
+      			<FileSystem>
+      				<Type>HFS</Type>
+      				<CreationDate>1998-11-12T18:11:46</CreationDate>
+      				<ModificationDate>1998-11-12T18:11:46</ModificationDate>
+      				<ClusterSize>2048</ClusterSize>
+      				<Clusters>3251</Clusters>
+      				<Files>53</Files>
+      				<Bootable>false</Bootable>
+      				<VolumeName>BEOS_TOOLS</VolumeName>
+      				<Dirty>false</Dirty>
+      			</FileSystem>
+      			<FileSystem>
+      				<Type>ISO9660</Type>
+      				<CreationDate>1998-11-12T18:11:46</CreationDate>
+      				<ModificationDate>1998-11-12T18:11:46</ModificationDate>
+      				<BackupDate>2001-12-31T12:00:00</BackupDate>
+      				<ClusterSize>2048</ClusterSize>
+      				<Clusters>3402</Clusters>
+      				<Bootable>false</Bootable>
+      				<VolumeName>BEOS_TOOLS</VolumeName>
+      				<Dirty>false</Dirty>
+      				<EffectiveDate>1998-11-12T18:11:46</EffectiveDate>
+      				<SystemIdentifier>LINUX</SystemIdentifier>
+      			</FileSystem>
+      		</FileSystems>
+      	</Partition>
+      </FileSystemInformation>
+    </Track>
+    <Track>
+      <Image format="cooked" offset="6967296">BeOS R4 (Retail).bin</Image>
+      <Size>321093632</Size>
+      <Sequence>
+        <TrackNumber>2</TrackNumber>
+        <Session>1</Session>
+      </Sequence>
+      <StartMSF>00:45:27</StartMSF>
+      <EndMSF>35:35:61</EndMSF>
+      <StartSector>3402</StartSector>
+      <EndSector>160185</EndSector>
+      <TrackType>mode1</TrackType>
+      <BytesPerSector>2048</BytesPerSector>
+      <Checksums>
+        <Checksum type="adler32">0x37a31ed0</Checksum>
+        <Checksum type="crc16">0x5eeb</Checksum>
+        <Checksum type="crc32">0x0c662ba1</Checksum>
+        <Checksum type="crc64">0x4b5b4492dc1cc3f8</Checksum>
+        <Checksum type="md5">f80c9ca884734c09af0f47b2d1d7651c</Checksum>
+        <Checksum type="ripemd160">05e62ddecaee1bcd11698420c4543f7c41cbbe95</Checksum>
+        <Checksum type="sha1">153fe34de33d95b07d7a9be4cd3db9f4be1c31ae</Checksum>
+        <Checksum type="sha256">b58f269bb7fbb7cf2a9bb65c05d64c9ec9179b63217ba9fe940198f6861e5cfb</Checksum>
+        <Checksum type="sha384">897f8a0beb90748599514fa9c2ae397af955c14d1e1234135ce8a1239cdf839fce17056778b3e2c270dacc000ab1dd0b</Checksum>
+        <Checksum type="sha512">683a79dfbd8c0322060e8758fd25e300276583dcfdbc50eddf039fefc2ce9ee9434d70a41a70a4aa9f24c33e8ffddb0b6012a08370822fdf329f8594c60e9499</Checksum>
+        <Checksum type="spamsum">3145728:3r8ksS8IcP98ENRE9n5HaT0aIYgAd4Rd4Td4BDXr6sN/LG6SVULduen89Jk9:QVYgRE9sTEYghv6sN/L9SURF0Jg</Checksum>
+      </Checksums>
+      <FileSystemInformation>
+      	<Partition>
+      		<Sequence>1</Sequence>
+      		<StartSector>3402</StartSector>
+      		<EndSector>160185</EndSector>
+      		<FileSystems>
+      			<FileSystem>
+      				<Type>BeFS</Type>
+      				<ClusterSize>2048</ClusterSize>
+      				<Clusters>156633</Clusters>
+      				<Bootable>true</Bootable>
+      				<VolumeName>BeOS Intel R4</VolumeName>
+      				<FreeClusters>26875</FreeClusters>
+      				<Dirty>false</Dirty>
+      			</FileSystem>
+      		</FileSystems>
+      	</Partition>
+      </FileSystemInformation>
+    </Track>
+    <Track>
+      <Image format="cooked" offset="328060928">BeOS R4 (Retail).bin</Image>
+      <Size>315621376</Size>
+      <Sequence>
+        <TrackNumber>3</TrackNumber>
+        <Session>1</Session>
+      </Sequence>
+      <StartMSF>35:35:61</StartMSF>
+      <EndMSF>69:50:47</EndMSF>
+      <StartSector>160186</StartSector>
+      <EndSector>314297</EndSector>
+      <TrackType>mode1</TrackType>
+      <BytesPerSector>2048</BytesPerSector>
+      <Checksums>
+        <Checksum type="adler32">0x668b9c98</Checksum>
+        <Checksum type="crc16">0x133c</Checksum>
+        <Checksum type="crc32">0xee1fb301</Checksum>
+        <Checksum type="crc64">0x620f86425be5befb</Checksum>
+        <Checksum type="md5">fa7b1d52ce2ed23368a10ffe2b1fc7a2</Checksum>
+        <Checksum type="ripemd160">56cc151dfde1b61f6618bb94b5426b68be44a3a7</Checksum>
+        <Checksum type="sha1">519a04b69ce217715c0956a2920c5236d6c61f0a</Checksum>
+        <Checksum type="sha256">45029b9e510fe693d19289a42b721e8ff3e42e64b788db039e9fe5d1012337f6</Checksum>
+        <Checksum type="sha384">e9e19e326eac5354a3385d0a9feaa678bf52911e94ddb5fa9aaa6959b9d2413334f4d4175f61154ab8f08ae930e2db30</Checksum>
+        <Checksum type="sha512">b6e81acb40dac35df3024caad103f175fb41df379722d9ae72b6a61076392b08c1269708f2a7068a660b054ad81e4d9687b95f7dc9584dd37c838f2555072cc9</Checksum>
+        <Checksum type="spamsum">3145728:fn9GWd4Rd4Td4Mkw8EIfIaT0aImglUrl6sN/LGxRZeL8dVXLdye:fn9Gy2ZTEmgg6sN/L6awXRJ</Checksum>
+      </Checksums>
+      <FileSystemInformation>
+      	<Partition>
+      		<Sequence>1</Sequence>
+      		<StartSector>160186</StartSector>
+      		<EndSector>314297</EndSector>
+      		<FileSystems>
+      			<FileSystem>
+      				<Type>BeFS (big-endian)</Type>
+      				<ClusterSize>2048</ClusterSize>
+      				<Clusters>154112</Clusters>
+      				<Bootable>true</Bootable>
+      				<VolumeName>BeOS PPC R4</VolumeName>
+      				<FreeClusters>33959</FreeClusters>
+      				<Dirty>false</Dirty>
+      			</FileSystem>
+      		</FileSystems>
+      	</Partition>
+      </FileSystemInformation>
+    </Track>
+  </OpticalDisc>
+  <BlockMedia>
+    <Image format="cooked" offset="0">BeOS R4 (Retail).dsk</Image>
+    <Size>1474560</Size>
+    <Checksums>
+        <Checksum type="adler32">0x80e618cd</Checksum>
+        <Checksum type="crc16">0x9dcc</Checksum>
+        <Checksum type="crc32">0x72d3b76c</Checksum>
+        <Checksum type="crc64">0xc179638a190b4a91</Checksum>
+        <Checksum type="md5">49b8f5d1465eca87dcc572143d182f83</Checksum>
+        <Checksum type="ripemd160">95b57c12e48484ca47de69a048c895cce3fe1606</Checksum>
+        <Checksum type="sha1">46ddb1d066270cfff6307b360976846fda0862ad</Checksum>
+        <Checksum type="sha256">899c49eaee12e42b789ecaca0e52297a52fde74072339a0a59e480dd961f265f</Checksum>
+        <Checksum type="sha384">dfefa36cb6b91a25387d2230a6704e115c8fa22f3a58475177f20149ac468607044f9a5f6459b183ac3e3c35f9e1b3bf</Checksum>
+        <Checksum type="sha512">b23716bfbbdf188a927c63d0ee3b000d452796ff7ec13047c61b501629b42e9f9631caf5bb09a6f7a8e3016f25bf1e098c0b8b6373f6fb5850c720e37654fccf</Checksum>
+        <Checksum type="spamsum">6144:RAfUvvrKRWRe3PrBZZpPV4rnJP8W93Fh8Vg3k+0jN1rGs+gaAeCeV1:NvjKpTB38F0gwV+n0jj+zmeV1</Checksum>
+    </Checksums>
+    <Sequence>
+      <MediaSequence>1</MediaSequence>
+      <TotalMedia>1</TotalMedia>
+    </Sequence>
+    <PhysicalBlockSize>512</PhysicalBlockSize>
+    <LogicalBlockSize>512</LogicalBlockSize>
+    <LogicalBlocks>2880</LogicalBlocks>
+    <Scans/>
+    <Heads>2</Heads>
+    <Cylinders>80</Cylinders>
+    <SectorsPerTrack>18</SectorsPerTrack>
+    <Dimensions>
+      <Height>93.7</Height>
+      <Width>90.0</Width>
+      <Thickness>3.3</Thickness>
+    </Dimensions>
+  </BlockMedia>
+</CICMMetadata>

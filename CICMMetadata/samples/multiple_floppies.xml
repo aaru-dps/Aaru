@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CICMMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cicm.xsd">
+  <Developer>id Software</Developer>
+  <Name>DOOM</Name>
+  <Version>1.2</Version>
+  <ReleaseType>Retail</ReleaseType>
+  <ReleaseDate>1994-02-17</ReleaseDate>
+  <Keywords>
+    <Keyword>doom</Keyword>
+  </Keywords>
+  <Categories>
+    <Category>Games</Category>
+  </Categories>
+  <Subcategories>
+    <Subcategory>First-person shooter</Subcategory>
+  </Subcategories>
+  <Languages>
+    <Language>eng</Language>
+  </Languages>
+  <Systems>
+    <System>i386</System>
+  </Systems>
+  <Architectures>
+    <Architecture>ia32</Architecture>
+  </Architectures>
+  <BlockMedia>
+    <Image format="cooked" offset="0">Doom v1.2 (1994)(id Software)(Disk 1 of 4).dsk</Image>
+    <Size>1474560</Size>
+    <Checksums>
+      <Checksum type="crc16">0x367d</Checksum>
+      <Checksum type="crc32">0x749f9b21</Checksum>
+      <Checksum type="md5">2729a2775d700d062f0da7ed2b14fc08</Checksum>
+      <Checksum type="sha1">117637a9e42b59f75ce6b7e17be21370c3ca4ee1</Checksum>
+      <Checksum type="spamsum">24576:vfEFUAvpAvRlGnnyz+7lB1ODidGpZIY53x/9jO6J1sSSLNS87Q8LpeOIU8MeF79G:vfyOvwB1FGnIY5hxNWSHt8LLd8B7MaO</Checksum>
+    </Checksums>
+    <Sequence>
+      <MediaSequence>1</MediaSequence>
+      <TotalMedia>4</TotalMedia>
+    </Sequence>
+    <PhysicalBlockSize>512</PhysicalBlockSize>
+    <LogicalBlockSize>512</LogicalBlockSize>
+    <LogicalBlocks>2880</LogicalBlocks>
+    <Scans/>
+    <Heads>2</Heads>
+    <Cylinders>80</Cylinders>
+    <SectorsPerTrack>18</SectorsPerTrack>
+    <Dimensions>
+      <Height>93.7</Height>
+      <Width>90.0</Width>
+      <Thickness>3.3</Thickness>
+    </Dimensions>
+    <FileSystemInformation>
+      <Partition>
+        <Sequence>1</Sequence>
+        <StartSector>0</StartSector>
+        <EndSector>2879</EndSector>
+        <FileSystems>
+          <FileSystem>
+            <Type>FAT12</Type>
+            <ClusterSize>512</ClusterSize>
+            <Clusters>2880</Clusters>
+            <Bootable>false</Bootable>
+            <Dirty>false</Dirty>
+          </FileSystem>
+        </FileSystems>
+      </Partition>
+    </FileSystemInformation>
+  </BlockMedia>
+  <BlockMedia>
+    <Image format="cooked" offset="0">Doom v1.2 (1994)(id Software)(Disk 2 of 4).dsk</Image>
+    <Size>1474560</Size>
+    <Checksums>
+      <Checksum type="crc16">0x594d</Checksum>
+      <Checksum type="crc32">0x13a68229</Checksum>
+      <Checksum type="md5">ee087c084194ecd7f0acd2fec259f700</Checksum>
+      <Checksum type="sha1">5c5b647d42d1b89d9199c6529486f1d52baacf57</Checksum>
+      <Checksum type="spamsum">24576:OPCNu5fOvENtXe/WmeVGeRTsAmExgydvKmaGhr1GYwGAjdCEQQY0kan:OPIuVHNl84PTDRKmNhUYtAjdCzQdkY</Checksum>
+    </Checksums>
+    <Sequence>
+      <MediaSequence>2</MediaSequence>
+      <TotalMedia>4</TotalMedia>
+    </Sequence>
+    <PhysicalBlockSize>512</PhysicalBlockSize>
+    <LogicalBlockSize>512</LogicalBlockSize>
+    <LogicalBlocks>2880</LogicalBlocks>
+    <Scans/>
+    <Heads>2</Heads>
+    <Cylinders>80</Cylinders>
+    <SectorsPerTrack>18</SectorsPerTrack>
+    <Dimensions>
+      <Height>93.7</Height>
+      <Width>90.0</Width>
+      <Thickness>3.3</Thickness>
+    </Dimensions>
+    <FileSystemInformation>
+      <Partition>
+        <Sequence>1</Sequence>
+        <StartSector>0</StartSector>
+        <EndSector>2879</EndSector>
+        <FileSystems>
+          <FileSystem>
+            <Type>FAT12</Type>
+            <ClusterSize>512</ClusterSize>
+            <Clusters>2880</Clusters>
+            <Bootable>false</Bootable>
+            <Dirty>false</Dirty>
+          </FileSystem>
+        </FileSystems>
+      </Partition>
+    </FileSystemInformation>
+  </BlockMedia>
+  <BlockMedia>
+    <Image format="cooked" offset="0">Doom v1.2 (1994)(id Software)(Disk 3 of 4).dsk</Image>
+    <Size>1474560</Size>
+    <Checksums>
+      <Checksum type="crc16">0x124f</Checksum>
+      <Checksum type="crc32">0x70f8d3a0</Checksum>
+      <Checksum type="md5">4d5e5f40b12b485d180012fea59b2ba7</Checksum>
+      <Checksum type="sha1">3fde0fbd3a33c9a5f8ec7cb9fc570bd1ee5adc36</Checksum>
+      <Checksum type="spamsum">24576:CHH7fNNK2sBYoNPjhkz96eEpE3GRjrgtmbNcc9tYLB590THjl1:CHH7fjK/BY8kzYeEptHg8NccI6/</Checksum>
+    </Checksums>
+    <Sequence>
+      <MediaSequence>3</MediaSequence>
+      <TotalMedia>4</TotalMedia>
+    </Sequence>
+    <PhysicalBlockSize>512</PhysicalBlockSize>
+    <LogicalBlockSize>512</LogicalBlockSize>
+    <LogicalBlocks>2880</LogicalBlocks>
+    <Scans/>
+    <Heads>2</Heads>
+    <Cylinders>80</Cylinders>
+    <SectorsPerTrack>18</SectorsPerTrack>
+    <Dimensions>
+      <Height>93.7</Height>
+      <Width>90.0</Width>
+      <Thickness>3.3</Thickness>
+    </Dimensions>
+    <FileSystemInformation>
+      <Partition>
+        <Sequence>1</Sequence>
+        <StartSector>0</StartSector>
+        <EndSector>2879</EndSector>
+        <FileSystems>
+          <FileSystem>
+            <Type>FAT12</Type>
+            <ClusterSize>512</ClusterSize>
+            <Clusters>2880</Clusters>
+            <Bootable>false</Bootable>
+            <Dirty>false</Dirty>
+          </FileSystem>
+        </FileSystems>
+      </Partition>
+    </FileSystemInformation>
+  </BlockMedia>
+  <BlockMedia>
+    <Image format="cooked" offset="0">Doom v1.2 (1994)(id Software)(Disk 4 of 4).dsk</Image>
+    <Size>1474560</Size>
+    <Checksums>
+      <Checksum type="crc16">0xe123</Checksum>
+      <Checksum type="crc32">0x43f9330e</Checksum>
+      <Checksum type="md5">5757c3329058db08f8ecd6108520be83</Checksum>
+      <Checksum type="sha1">845707cb49faf201e057a19cbb8911b00fe0ea29</Checksum>
+      <Checksum type="spamsum">24576:DlhsgMwAmM1+mK62iQYVJ2K0BxVyaWRnjakQ:3CfaiQYP2VBxVCRnjaH</Checksum>
+    </Checksums>
+    <Sequence>
+      <MediaSequence>4</MediaSequence>
+      <TotalMedia>4</TotalMedia>
+    </Sequence>
+    <PhysicalBlockSize>512</PhysicalBlockSize>
+    <LogicalBlockSize>512</LogicalBlockSize>
+    <LogicalBlocks>2880</LogicalBlocks>
+    <Scans/>
+    <Heads>2</Heads>
+    <Cylinders>80</Cylinders>
+    <SectorsPerTrack>18</SectorsPerTrack>
+    <Dimensions>
+      <Height>93.7</Height>
+      <Width>90.0</Width>
+      <Thickness>3.3</Thickness>
+    </Dimensions>
+    <FileSystemInformation>
+      <Partition>
+        <Sequence>1</Sequence>
+        <StartSector>0</StartSector>
+        <EndSector>2879</EndSector>
+        <FileSystems>
+          <FileSystem>
+            <Type>FAT12</Type>
+            <ClusterSize>512</ClusterSize>
+            <Clusters>2880</Clusters>
+            <Bootable>false</Bootable>
+            <Dirty>false</Dirty>
+          </FileSystem>
+        </FileSystems>
+      </Partition>
+    </FileSystemInformation>
+  </BlockMedia>
+</CICMMetadata>

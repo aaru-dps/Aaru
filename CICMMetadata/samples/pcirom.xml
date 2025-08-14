@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CICMMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cicm.xsd">
+  <Developer>Adaptec</Developer>
+  <Name>AHA-2940U2/U2W</Name>
+  <Architectures>
+    <Architecture>ia32</Architecture>
+  </Architectures>
+  <PCICard>
+    <VendorID>36869</VendorID>
+    <DeviceID>16</DeviceID>
+    <Configuration>
+      <Image>aha2940u2.conf.bin</Image>
+      <Size>256</Size>
+      <Checksums>
+	    <Checksum type='md5'>5f9b59691890feb957c01340e7bef4ad</Checksum>
+	    <Checksum type='sha1'>940ff2632bec7fa4274c256f2128d41069c414b7</Checksum>
+	    <Checksum type='sha256'>458efd04ee7d5b8cd90a269b568c59181b51e770cc8aa255580cdeefb2436462</Checksum>
+	    <Checksum type='tiger'>b3f3520aaef141096eedd1316c8fabae8c9ce8728e8f9514</Checksum>
+	    <Checksum type='whirlpool'>d87fca5176f174e6ce5b4e303b595e41ae561e51ad332b838375394d66777dfe402e403acd4d071279693b24af5e55c25cfd6944b34a9bb229fa854d849ecbb8</Checksum>
+      </Checksums>
+    </Configuration>
+    <ExpansionROM>
+      <Image format="binary" offset="0">aha2940u2.rom</Image>
+      <Size>40960</Size>
+      <ImageChecksums>
+        <Checksum type="adler32">0x49eee01b</Checksum>
+        <Checksum type="crc16">0xb943</Checksum>
+        <Checksum type="crc32">0x041bd908</Checksum>
+        <Checksum type="crc64">0x3ee7cc130a1c280d</Checksum>
+        <Checksum type="md5">e86d20cac3727a0ebaf901eeef1a283a</Checksum>
+        <Checksum type="ripemd160">064b2b8050296caa535aa08de35d051e9e3fb6c7</Checksum>
+        <Checksum type="sha1">9c2f1b6c07a00c16e35c82ee79050a459568f645</Checksum>
+        <Checksum type="sha256">150366229d7bf649646f432bae95b31dc2ef51d23d43c2b5cac990aaa9b389e4</Checksum>
+        <Checksum type="sha384">8e87bc09e451a69cc065cacc9a22d4f52df665f8229810d8cebeb50b505a2b2a6ea55cf282454ba7b53da15b0a2c4d73</Checksum>
+        <Checksum type="sha512">2328d06b688925c5807dec9b958e270ed90d6117a755aee74d2f8d688159e94f39ed4d38e58bd02c7f81a3254fea0b011ff2f9bf7a846597728803d02c9e5e14</Checksum>
+        <Checksum type="spamsum">768:k9kvYRjE4p9FmqPG8A/dBBHMRkxOZkw73R7Ph86W35zD:k9kgOc9N2DHy8W998t</Checksum>
+      </ImageChecksums>
+      <Title>Adaptec AHA-2940U2B SCSI BIOS v2.20.0</Title>
+      <Package>PLCC</Package>
+    </ExpansionROM>
+  </PCICard>
+</CICMMetadata>

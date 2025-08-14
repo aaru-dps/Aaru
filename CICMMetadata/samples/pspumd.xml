@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CICMMetadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cicm.xsd">
+	<Developer>EA LA</Developer>
+	<Publisher>EA Games</Publisher>
+	<Name>Medal of Honor Heroes™ 2</Name>
+	<Version>1.00</Version>
+	<ReleaseType>Retail</ReleaseType>
+	<ReleaseDate>2007-11-30</ReleaseDate>
+	<Barcodes>
+		<Barcode type="EAN13">5030934059299</Barcode>
+	</Barcodes>
+	<PartNumber>DWX05805828D</PartNumber>
+	<SerialNumber>ULES-00956</SerialNumber>
+	<Categories>
+		<Category>Games</Category>
+	</Categories>
+	<Subcategories>
+		<Subcategory>First-person shooter</Subcategory>
+	</Subcategories>
+	<Languages>
+		<Language>deu</Language>
+		<Language>fra</Language>
+		<Language>ita</Language>
+		<Language>spa</Language>
+	</Languages>
+	<Systems>
+		<System>PlayStation Portable System Software</System>
+	</Systems>
+	<Architectures>
+		<Architecture>psp</Architecture>
+	</Architectures>
+	<RequiredOperatingSystems>
+		<RequiredOperatingSystem>
+			<Name>PlayStation Portable System Software</Name>
+			<Version>3.51<Version>
+		</RequiredOperatingSystem>
+	</RequiredOperatingSystems>
+	<UserManual>
+		<Language>spa</Language>
+		<Pages>22</Pages>
+		<PageSize>84x170</PageSize>
+		<Scan>
+			<File format="PDF">manual_es.pdf</File>
+			<Checksums>
+				<Checksum type="crc32">5ac6e3c1</Checksum>
+				<Checksum type="md5">8fb25698d2ce5f8d413bc92282d18720</Checksum>
+				<Checksum type="sha1">70f4c9bfb092c5bb5875a73ebe47d762bee3ac10</Checksum>
+				<Checksum type="sha256">5e022c7dfd12b54d1aa9ce98ea10f7dd81b5b1ec001ac49ad567a5d8d456a66f</Checksum>
+				<Checksum type="ssdeep">393216:muQhmo9jxgpVM0fwLGviZjylkxf0eZw4CSf4rlzpEA6hm:muOjZ6AGWyla0iGNr0Y</Checksum>
+			</Checksums>
+			<Scanner>
+				<Author>Natalia Portillo</Author>
+				<Manufacturer>Epson</Manufacturer>
+				<Model>Perfection 2400</Model>
+				<Serial>xxxxxxxxxxxxxxxxxx</Serial>
+				<Software>Image Capture.app</Software>
+				<SoftwareVersion>6.3 (502.1)</SoftwareVersion>
+			</Scanner>
+			<ScanProcessing>
+				<Author>Natalia Portillo</Author>
+				<Software>ScanTailor</Software>
+				<SoftwareVersion>0.9.11.1</SoftwareVersion>
+			</ScanProcessing>
+			<OCR>
+				<Author>Natalia Portillo</Author>
+				<Software>Adobe Acrobat</Software>
+				<SoftwareVersion>11.0.3</SoftwareVersion>
+				<Language>spa</Language>
+			</OCR>
+		</Scan>
+	</UserManual>
+	<OpticalDisc>
+		<Image format="cooked">Medal of Honor Heroes 2 (Europe) (De,Es,Fr,It).iso</Image>
+		<Size>1226768384</Size>
+		<Layers type="OTP">
+			<Sectors layer="0">-1</Sectors> <!-- -1 means unknown layer break -->
+		</Layers>
+		<Checksums>
+				<Checksum type="adler32">8f47eb95</Checksum>
+				<Checksum type="crc16">1417</Checksum>
+				<Checksum type="crc32">a7c1c1bc</Checksum>
+				<Checksum type="crc64">36ded46fce50efd2</Checksum>
+				<Checksum type="md5">7c472f83140e3af1a2fcdcdbadec850a</Checksum>
+				<Checksum type="ripemd160">d9cf3cb3a2dea71ef8168797dc64e19b665c41d3</Checksum>
+				<Checksum type="sha1">261898a262cdc8652e8d2c0e978e72c1c34a26fa</Checksum>
+				<Checksum type="sha256">e6260e593c986e7c914b1588ab842e683170a7efb2b04cca5b08bcdac5595427</Checksum>
+				<Checksum type="sha384">c6b5acb50e5edd85e8615495b37d1f7abf754c41b6c6f45f3c082cbe6b01bb20eb5881d7cb36f5272ba6c58764aa6e82</Checksum>
+				<Checksum type="sha512">5e9e2e8400d73ed5dd42253a0059a0bfe4dd0b451c9a757cd48818c87adacb1ca6698ae5a3cf93c72a16164fef4b6b35f60116b01d6dda83824a80372857868a</Checksum>
+				<Checksum type="ssdeep">12582912:kL8uYHoKqsJhjI6kejtUDRJWJCJiJ3JmJ+JwJDrjr1JdJnJhJ8rqyrwrqLrhrcPG:GVYIVQ1IWQ</Checksum>
+		</Checksums>
+		<RingCode layer="0">A0100878064-A911	16</RingCode>
+		<MasteringSID layer="0">IFPI L556	Sony DADC</MasteringSID>
+		<Toolstamp layer="0">A2</Toolstamp>
+		<RingCode layer="1">A0100878064-B911	17</RingCode>
+		<MasteringSID layer="1">IFPI L557	Sony DADC</MasteringSID>
+		<Toolstamp layer="1">A1</Toolstamp>
+		<DiscType>UMD</DiscType>
+		<DiscSubType>DL</DiscSubType>
+		<Tracks>1</Tracks>
+		<Sessions>1</Sessions>
+		<CopyProtection>MagicGate</CopyProtection>
+		<Dimensions>
+			<Diameter>60</Diameter>
+			<Height>32</Height>
+			<Width>64</Width>
+		</Dimensions>
+		<Case>
+				<CaseType>PSP</CaseType>
+				<Scans>
+					<CaseScan>
+						<Element>cover</Element>
+						<Scan>
+							<File format="PNG">cover_es.png</File>
+							<Checksums>
+								<Checksum type="crc32">864d127f</Checksum>
+								<Checksum type="md5">5edb007ebc612bde8ed770a119863b22</Checksum>
+								<Checksum type="sha1">a98cb55d1c241a02bbaa6b621524276898821b72</Checksum>
+								<Checksum type="sha256">67079e60209d30f0b6fa47bd8c786a020fda98f9a6b95ddeeaaf7f6aa665baa7</Checksum>
+								<Checksum type="ssdeep">786432:JRB18CIZlzYWQWcj2qnzKFZXSx9VGh1DoWDaL8hII9Z16r6:PB18CIZtYWkjfz1xWmwQ8hIq2r6</Checksum>
+							</Checksums>
+							<Scanner>
+								<Author>Natalia Portillo</Author>
+								<Manufacturer>Epson</Manufacturer>
+								<Model>Perfection 2400</Model>
+								<Serial>xxxxxxxxxxxxxxxxxx</Serial>
+								<Software>Image Capture.app</Software>
+								<SoftwareVersion>6.3 (502.1)</SoftwareVersion>
+							</Scanner>
+							<ScanProcessing>
+								<Author>Natalia Portillo</Author>
+								<Software>Preview.app</Software>
+								<SoftwareVersion>7.0 (826)</SoftwareVersion>
+							</ScanProcessing>
+						</Scan>
+					</CaseScan>
+				</Scans>
+		</Case>
+		<Scans>
+			<DiscScan>
+				<DiscScanElement>label</DiscScanElement>
+				<Scan>
+					<File format="PNG">disc_label.png</File>
+					<Checksums>
+						<Checksum type="crc32">4581778a</Checksum>
+						<Checksum type="md5">0ef2c3333f773fe0578b9f2688813969</Checksum>
+						<Checksum type="sha1">3721908aa68fcc0b417843508e08e4c4bffba47e</Checksum>
+						<Checksum type="sha256">6defc6c15d16b85d4a03287e64f07c42fb99afe028eac45d8a2d56f1da19c329</Checksum>
+						<Checksum type="ssdeep">98304:OuOsmvSE/00ZxNSnbUGZASJw84/jWOrpuu9HOTy79DtaMr/wVeh:OuOsmvPxN6UAJ4rWOg0uToDtfmeh</Checksum>
+					</Checksums>
+					<Scanner>
+						<Author>Natalia Portillo</Author>
+						<Manufacturer>Epson</Manufacturer>
+						<Model>Perfection 2400</Model>
+						<Serial>xxxxxxxxxxxxxxxxxx</Serial>
+						<Software>Image Capture.app</Software>
+						<SoftwareVersion>6.3 (502.1)</SoftwareVersion>
+					</Scanner>
+					<ScanProcessing>
+						<Author>Natalia Portillo</Author>
+						<Software>Preview.app</Software>
+						<SoftwareVersion>7.0 (826)</SoftwareVersion>
+					</ScanProcessing>
+				</Scan>
+			</DiscScan>
+			<DiscScan>
+				<DiscScanElement>data</DiscScanElement>
+				<Scan>
+					<File format="PNG">disc_data.png</File>
+					<Checksums>
+						<Checksum type="crc32">a84cafe4</Checksum>
+						<Checksum type="md5">a24a06ef4f45e0ea7d89508b616fb5fa</Checksum>
+						<Checksum type="sha1">13e988df0bbff40666fd902c3e26454973df6ea9</Checksum>
+						<Checksum type="sha256">805230c3037f342b18c9a9b0eaad35a216582dc71607b599c7a58cb7e83458ac</Checksum>
+						<Checksum type="ssdeep">49152:++RUFqSn6d20+rI9W+wIqUen2IHrwCINYD+CGS4rFM88UlVenKCCMGB4gm6A+Gp2:+g26y4boqCgAT4rFMElsnKhhzA+Yri</Checksum>
+					</Checksums>
+					<Scanner>
+						<Author>Natalia Portillo</Author>
+						<Manufacturer>Epson</Manufacturer>
+						<Model>Perfection 2400</Model>
+						<Serial>xxxxxxxxxxxxxxxxxx</Serial>
+						<Software>Image Capture.app</Software>
+						<SoftwareVersion>6.3 (502.1)</SoftwareVersion>
+					</Scanner>
+					<ScanProcessing>
+						<Author>Natalia Portillo</Author>
+						<Software>Preview.app</Software>
+						<SoftwareVersion>7.0 (826)</SoftwareVersion>
+					</ScanProcessing>
+				</Scan>
+			</DiscScan>
+		</Scans>
+		<Track>
+			<Image format="cooked" offset="0">Medal of Honor Heroes 2 (Europe) (De,Es,Fr,It).iso</Image>
+			<Size>1226768384</Size>
+			<Sequence>
+				<TrackNumber>1</TrackNumber>
+				<Session>1</Session>
+			</Sequence>
+			<StartSector>0</StartSector>
+			<EndSector>599007</EndSector>
+			<TrackType>data</TrackType>
+			<BytesPerSector>2048</BytesPerSector>
+			<Checksums>
+				<Checksum type="adler32">8f47eb95</Checksum>
+				<Checksum type="crc16">1417</Checksum>
+				<Checksum type="crc32">a7c1c1bc</Checksum>
+				<Checksum type="crc64">36ded46fce50efd2</Checksum>
+				<Checksum type="md5">7c472f83140e3af1a2fcdcdbadec850a</Checksum>
+				<Checksum type="ripemd160">d9cf3cb3a2dea71ef8168797dc64e19b665c41d3</Checksum>
+				<Checksum type="sha1">261898a262cdc8652e8d2c0e978e72c1c34a26fa</Checksum>
+				<Checksum type="sha256">e6260e593c986e7c914b1588ab842e683170a7efb2b04cca5b08bcdac5595427</Checksum>
+				<Checksum type="sha384">c6b5acb50e5edd85e8615495b37d1f7abf754c41b6c6f45f3c082cbe6b01bb20eb5881d7cb36f5272ba6c58764aa6e82</Checksum>
+				<Checksum type="sha512">5e9e2e8400d73ed5dd42253a0059a0bfe4dd0b451c9a757cd48818c87adacb1ca6698ae5a3cf93c72a16164fef4b6b35f60116b01d6dda83824a80372857868a</Checksum>
+				<Checksum type="ssdeep">12582912:kL8uYHoKqsJhjI6kejtUDRJWJCJiJ3JmJ+JwJDrjr1JdJnJhJ8rqyrwrqLrhrcPG:GVYIVQ1IWQ</Checksum>
+			</Checksums>
+			<FileSystemInformation>
+				<Partition>
+					<Sequence>1</Sequence>
+					<StartSector>0</StartSector>
+					<EndSector>599007</EndSector>
+					<FileSystems>
+						<FileSystem>
+							<Type>ISO9660</Type>
+							<CreationDate>2007/10/11 20:26:37</CreationDate>
+							<ClusterSize>2048</ClusterSize>
+							<Clusters>599008</Clusters>
+							<Files>550</Files>
+							<Bootable>false</Bootable>
+							<VolumeSerial></VolumeSerial>
+							<VolumeName>MOH</VolumeName>
+							<FreeClusters>0</FreeClusters>
+							<Dirty>False</Dirty>
+							<SystemIdentifier>PSP GAME</SystemIdentifier>
+							<VolumeSetIdentifier>MOH</VolumeSetIdentifier>
+							<PublisherIdentifier>ELECTRONIC ARTS</PublisherIdentifier>
+							<DataPreparerIdentifier>ELECTRONIC ARTS</DataPreparerIdentifier>
+							<ApplicationIdentifier>PSP GAME</ApplicationIdentifier>
+						</FileSystem>
+					</FileSystems>
+				</Partition>
+			</FileSystemInformation>
+		</Track>
+		<DumpHardwareArray>
+			<DumpHardware>
+				<Manufacturer>Sony</Manufacturer>
+				<Model>PSP3004</Model>
+				<Firmware>6.60</Firmware>
+				<Serial>xx-xxxxxxxx-xxxxxxx-PSP3004</Serial>
+				<Extents>
+					<Extent>
+						<Start>0</Start>
+						<End>599007</End>
+					</Extent>
+				</Extents>
+				<Software>
+					<Name>PlayStation Portable System Software</Name>
+					<Version>CFW 6.60</Version>
+					<OperatingSystem>PlayStation Portable System Software</OperatingSystem>
+				</Software>
+			</DumpHardware>
+		</DumpHardwareArray>
+	</OpticalDisc>
+</CICMMetadata>

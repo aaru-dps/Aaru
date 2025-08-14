@@ -1,0 +1,1773 @@
+<CICMMetadata>
+  <!--Zero or more repetitions:-->
+  <Developer>string</Developer>
+  <!--Zero or more repetitions:-->
+  <Publisher>string</Publisher>
+  <!--Zero or more repetitions:-->
+  <Author>string</Author>
+  <!--Zero or more repetitions:-->
+  <Performer>string</Performer>
+  <Name>string</Name>
+  <!--Optional:-->
+  <Version>string</Version>
+  <!--Optional:-->
+  <ReleaseType>Donationware</ReleaseType>
+  <!--Optional:-->
+  <ReleaseDate>2007-10-26</ReleaseDate>
+  <!--Optional:-->
+  <Barcodes>
+    <!--1 or more repetitions:-->
+    <Barcode type="isbn">string</Barcode>
+  </Barcodes>
+  <!--Optional:-->
+  <PartNumber>string</PartNumber>
+  <!--Optional:-->
+  <SerialNumber>string</SerialNumber>
+  <!--Optional:-->
+  <Keywords>
+    <!--1 or more repetitions:-->
+    <Keyword>string</Keyword>
+  </Keywords>
+  <!--Zero or more repetitions:-->
+  <Magazine>
+    <!--Optional:-->
+    <Barcodes>
+      <!--1 or more repetitions:-->
+      <Barcode type="code39">string</Barcode>
+    </Barcodes>
+    <!--Optional:-->
+    <Cover>
+      <File format="string">string</File>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="snefru">string</Checksum>
+      </Checksums>
+      <Thumbnail>dmVycmFudHF1ZQ==</Thumbnail>
+    </Cover>
+    <Name>string</Name>
+    <!--Optional:-->
+    <Editorial>string</Editorial>
+    <!--Optional:-->
+    <PublicationDate>2008-11-15</PublicationDate>
+    <!--Optional:-->
+    <Number>7</Number>
+    <!--Optional:-->
+    <Language>
+      <!--1 or more repetitions:-->
+      <Language>ypk</Language>
+    </Language>
+    <!--Optional:-->
+    <Pages>7</Pages>
+    <!--Optional:-->
+    <PageSize>string</PageSize>
+    <!--Optional:-->
+    <Scan>
+      <File format="string">string</File>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha1">string</Checksum>
+      </Checksums>
+      <!--Zero or more repetitions:-->
+      <Scanner>
+        <Author>string</Author>
+        <Manufacturer>string</Manufacturer>
+        <Model>string</Model>
+        <Serial>string</Serial>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </Scanner>
+      <!--Zero or more repetitions:-->
+      <ScanProcessing>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </ScanProcessing>
+      <!--Zero or more repetitions:-->
+      <OCR>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+        <Language>
+          <!--1 or more repetitions:-->
+          <Language>arw</Language>
+        </Language>
+      </OCR>
+    </Scan>
+  </Magazine>
+  <!--Zero or more repetitions:-->
+  <Book>
+    <Barcodes>
+      <!--1 or more repetitions:-->
+      <Barcode type="ean8">string</Barcode>
+    </Barcodes>
+    <!--Optional:-->
+    <Cover>
+      <File format="string">string</File>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha384">string</Checksum>
+      </Checksums>
+      <Thumbnail>ZmVyYW50</Thumbnail>
+    </Cover>
+    <Name>string</Name>
+    <!--Optional:-->
+    <Editorial>string</Editorial>
+    <Author>string</Author>
+    <!--Optional:-->
+    <PublicationDate>2016-01-01</PublicationDate>
+    <!--Optional:-->
+    <Language>
+      <!--1 or more repetitions:-->
+      <Language>kru</Language>
+    </Language>
+    <!--Optional:-->
+    <Pages>7</Pages>
+    <!--Optional:-->
+    <PageSize>string</PageSize>
+    <Scan>
+      <File format="string">string</File>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha224">string</Checksum>
+      </Checksums>
+      <!--Zero or more repetitions:-->
+      <Scanner>
+        <Author>string</Author>
+        <Manufacturer>string</Manufacturer>
+        <Model>string</Model>
+        <Serial>string</Serial>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </Scanner>
+      <!--Zero or more repetitions:-->
+      <ScanProcessing>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </ScanProcessing>
+      <!--Zero or more repetitions:-->
+      <OCR>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+        <Language>
+          <!--1 or more repetitions:-->
+          <Language>pon</Language>
+        </Language>
+      </OCR>
+    </Scan>
+  </Book>
+  <!--Optional:-->
+  <Categories>
+    <!--1 or more repetitions:-->
+    <Category>string</Category>
+  </Categories>
+  <!--Optional:-->
+  <Subcategories>
+    <!--1 or more repetitions:-->
+    <Subcategory>string</Subcategory>
+  </Subcategories>
+  <!--Optional:-->
+  <Languages>
+    <!--1 or more repetitions:-->
+    <Language>dgr</Language>
+  </Languages>
+  <!--Optional:-->
+  <Systems>
+    <!--Zero or more repetitions:-->
+    <System>string</System>
+  </Systems>
+  <!--Optional:-->
+  <Architectures>
+    <!--1 or more repetitions:-->
+    <Architecture>renesasrx</Architecture>
+  </Architectures>
+  <!--Optional:-->
+  <RequiredOperatingSystems>
+    <!--1 or more repetitions:-->
+    <RequiredOperatingSystem>
+      <Name>string</Name>
+      <!--1 or more repetitions:-->
+      <Version>string</Version>
+    </RequiredOperatingSystem>
+  </RequiredOperatingSystems>
+  <!--Zero or more repetitions:-->
+  <UserManual>
+    <!--Optional:-->
+    <Language>
+      <!--1 or more repetitions:-->
+      <Language>cau</Language>
+    </Language>
+    <Pages>7</Pages>
+    <!--Optional:-->
+    <PageSize>string</PageSize>
+    <!--Optional:-->
+    <Scan>
+      <File format="string">string</File>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha3">string</Checksum>
+      </Checksums>
+      <!--Zero or more repetitions:-->
+      <Scanner>
+        <Author>string</Author>
+        <Manufacturer>string</Manufacturer>
+        <Model>string</Model>
+        <Serial>string</Serial>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </Scanner>
+      <!--Zero or more repetitions:-->
+      <ScanProcessing>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+      </ScanProcessing>
+      <!--Zero or more repetitions:-->
+      <OCR>
+        <Author>string</Author>
+        <Software>string</Software>
+        <SoftwareVersion>string</SoftwareVersion>
+        <Language>
+          <!--1 or more repetitions:-->
+          <Language>mao</Language>
+        </Language>
+      </OCR>
+    </Scan>
+  </UserManual>
+  <!--Zero or more repetitions:-->
+  <OpticalDisc>
+    <Image format="string" offset="11">string</Image>
+    <Size>11</Size>
+    <Sequence>
+      <!--Optional:-->
+      <MediaTitle>string</MediaTitle>
+      <MediaSequence>7</MediaSequence>
+      <TotalMedia>7</TotalMedia>
+      <!--Optional:-->
+      <Side>2</Side>
+      <!--Optional:-->
+      <Layer>1</Layer>
+    </Sequence>
+    <!--Optional:-->
+    <Layers type="PTP">
+      <!--1 or more repetitions:-->
+      <Sectors layer="7">11</Sectors>
+    </Layers>
+    <Checksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="sha3">string</Checksum>
+    </Checksums>
+    <!--Optional:-->
+    <PartNumber>string</PartNumber>
+    <!--Optional:-->
+    <SerialNumber>string</SerialNumber>
+    <!--Zero or more repetitions:-->
+    <RingCode layer="7">string</RingCode>
+    <!--Zero or more repetitions:-->
+    <MasteringSID layer="7">string</MasteringSID>
+    <!--Zero or more repetitions:-->
+    <Toolstamp layer="7">string</Toolstamp>
+    <!--Zero or more repetitions:-->
+    <MouldSID layer="7">string</MouldSID>
+    <!--Zero or more repetitions:-->
+    <MouldText layer="7">string</MouldText>
+    <DiscType>string</DiscType>
+    <DiscSubType>string</DiscSubType>
+    <!--Optional:-->
+    <Offset>3</Offset>
+    <!--1 or more repetitions:-->
+    <Tracks>7</Tracks>
+    <Sessions>7</Sessions>
+    <!--Optional:-->
+    <CopyProtection>string</CopyProtection>
+    <Dimensions>
+      <!--Optional:-->
+      <Diameter>1.051732E7</Diameter>
+      <!--Optional:-->
+      <Height>1.051732E7</Height>
+      <!--Optional:-->
+      <Width>1.051732E7</Width>
+      <Thickness>1.051732E7</Thickness>
+    </Dimensions>
+    <!--Optional:-->
+    <Case>
+      <CaseType>compacplus</CaseType>
+      <Scans>
+        <!--Optional:-->
+        <CaseScan>
+          <CaseScanElement>frontfull</CaseScanElement>
+          <Scan>
+            <File format="string">string</File>
+            <Checksums>
+              <!--1 or more repetitions:-->
+              <Checksum type="sha384">string</Checksum>
+            </Checksums>
+            <!--Zero or more repetitions:-->
+            <Scanner>
+              <Author>string</Author>
+              <Manufacturer>string</Manufacturer>
+              <Model>string</Model>
+              <Serial>string</Serial>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </Scanner>
+            <!--Zero or more repetitions:-->
+            <ScanProcessing>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </ScanProcessing>
+            <!--Zero or more repetitions:-->
+            <OCR>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+              <Language>
+                <!--1 or more repetitions:-->
+                <Language>geo</Language>
+              </Language>
+            </OCR>
+          </Scan>
+        </CaseScan>
+        <!--Optional:-->
+        <Scan>
+          <MediaScanElement>right</MediaScanElement>
+          <Scan>
+            <File format="string">string</File>
+            <Checksums>
+              <!--1 or more repetitions:-->
+              <Checksum type="dm6">string</Checksum>
+            </Checksums>
+            <!--Zero or more repetitions:-->
+            <Scanner>
+              <Author>string</Author>
+              <Manufacturer>string</Manufacturer>
+              <Model>string</Model>
+              <Serial>string</Serial>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </Scanner>
+            <!--Zero or more repetitions:-->
+            <ScanProcessing>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </ScanProcessing>
+            <!--Zero or more repetitions:-->
+            <OCR>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+              <Language>
+                <!--1 or more repetitions:-->
+                <Language>sme</Language>
+              </Language>
+            </OCR>
+          </Scan>
+        </Scan>
+      </Scans>
+    </Case>
+    <!--Optional:-->
+    <Scans>
+      <!--Optional:-->
+      <CaseScan>
+        <CaseScanElement>boxback</CaseScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="crc16">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>afr</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </CaseScan>
+      <!--Optional:-->
+      <Scan>
+        <MediaScanElement>down</MediaScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="ripemd128">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>jpr</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </Scan>
+    </Scans>
+    <!--Optional:-->
+    <PFI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha256">string</Checksum>
+      </Checksums>
+    </PFI>
+    <!--Optional:-->
+    <DMI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="blake256">string</Checksum>
+      </Checksums>
+    </DMI>
+    <!--Optional:-->
+    <CMI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemed320">string</Checksum>
+      </Checksums>
+    </CMI>
+    <!--Optional:-->
+    <BCA>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="blake512">string</Checksum>
+      </Checksums>
+    </BCA>
+    <!--Optional:-->
+    <ATIP>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemed320">string</Checksum>
+      </Checksums>
+    </ATIP>
+    <!--Optional:-->
+    <ADIP>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemed320">string</Checksum>
+      </Checksums>
+    </ADIP>
+    <!--Optional:-->
+    <PMA>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha256">string</Checksum>
+      </Checksums>
+    </PMA>
+    <!--Optional:-->
+    <DDS>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemed320">string</Checksum>
+      </Checksums>
+    </DDS>
+    <!--Optional:-->
+    <SAI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha256">string</Checksum>
+      </Checksums>
+    </SAI>
+    <!--Optional:-->
+    <LastRMD>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="whirlpool">string</Checksum>
+      </Checksums>
+    </LastRMD>
+    <!--Optional:-->
+    <PRI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemd160">string</Checksum>
+      </Checksums>
+    </PRI>
+    <!--Optional:-->
+    <MediaID>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="blake512">string</Checksum>
+      </Checksums>
+    </MediaID>
+    <!--Optional:-->
+    <PFIR>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha512">string</Checksum>
+      </Checksums>
+    </PFIR>
+    <!--Optional:-->
+    <DCB>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemd128">string</Checksum>
+      </Checksums>
+    </DCB>
+    <!--Optional:-->
+    <DI>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="blake256">string</Checksum>
+      </Checksums>
+    </DI>
+    <!--Optional:-->
+    <PAC>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="ripemed320">string</Checksum>
+      </Checksums>
+    </PAC>
+    <!--Optional:-->
+    <TOC>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="crc16ccitt">string</Checksum>
+      </Checksums>
+    </TOC>
+    <!--Optional:-->
+    <LeadInCdText>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="sha224">string</Checksum>
+      </Checksums>
+    </LeadInCdText>
+    <!--Zero or more repetitions:-->
+    <FirstTrackPregrap session="7">
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="spamsum">string</Checksum>
+      </Checksums>
+    </FirstTrackPregrap>
+    <!--Zero or more repetitions:-->
+    <LeadIn session="7">
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="crc64">string</Checksum>
+      </Checksums>
+    </LeadIn>
+    <!--Zero or more repetitions:-->
+    <LeadOut session="7">
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="fletcher32">string</Checksum>
+      </Checksums>
+    </LeadOut>
+    <!--Optional:-->
+    <Xbox>
+      <PFI>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="sha224">string</Checksum>
+        </Checksums>
+      </PFI>
+      <DMI>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="sha384">string</Checksum>
+        </Checksums>
+      </DMI>
+      <!--1 or more repetitions:-->
+      <SecuritySectors>
+        <RequestVersion>7</RequestVersion>
+        <RequestNumber>7</RequestNumber>
+        <SecuritySectors>
+          <Image>string</Image>
+          <Size>11</Size>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="fletcher16">string</Checksum>
+          </Checksums>
+        </SecuritySectors>
+      </SecuritySectors>
+    </Xbox>
+    <!--Optional:-->
+    <PS3Encryption>
+      <Key>string</Key>
+      <Serial>string</Serial>
+    </PS3Encryption>
+    <!--Optional:-->
+    <MediaCatalogueNumber>string</MediaCatalogueNumber>
+    <!--1 or more repetitions:-->
+    <Track>
+      <Image format="string" offset="11">string</Image>
+      <Size>11</Size>
+      <Sequence>
+        <TrackNumber>7</TrackNumber>
+        <Session>7</Session>
+      </Sequence>
+      <!--Optional:-->
+      <StartMSF>string</StartMSF>
+      <!--Optional:-->
+      <EndMSF>string</EndMSF>
+      <StartSector>11</StartSector>
+      <EndSector>11</EndSector>
+      <!--Optional:-->
+      <Indexes>
+        <!--1 or more repetitions:-->
+        <Index index="5">3</Index>
+      </Indexes>
+      <!--Optional:-->
+      <Flags>
+        <Quadraphonic>true</Quadraphonic>
+        <Data>true</Data>
+        <CopyPermitted>true</CopyPermitted>
+        <PreEmphasis>false</PreEmphasis>
+      </Flags>
+      <!--Optional:-->
+      <ISRC>string</ISRC>
+      <TrackType>dvd</TrackType>
+      <BytesPerSector>7</BytesPerSector>
+      <!--Optional:-->
+      <AccoustID>string</AccoustID>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="dm6">string</Checksum>
+      </Checksums>
+      <!--Optional:-->
+      <SubChannel>
+        <Image format="string" offset="11">string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="adler32">string</Checksum>
+        </Checksums>
+      </SubChannel>
+      <!--Optional:-->
+      <FileSystemInformation>
+        <!--1 or more repetitions:-->
+        <Partition>
+          <Sequence>7</Sequence>
+          <!--Optional:-->
+          <Name>string</Name>
+          <!--Optional:-->
+          <Type>string</Type>
+          <StartSector>11</StartSector>
+          <EndSector>11</EndSector>
+          <!--Optional:-->
+          <Description>string</Description>
+          <FileSystems>
+            <!--1 or more repetitions:-->
+            <FileSystem>
+              <Type>string</Type>
+              <!--Optional:-->
+              <CreationDate>2007-09-09T03:38:42</CreationDate>
+              <!--Optional:-->
+              <ModificationDate>2001-07-25T22:15:31</ModificationDate>
+              <!--Optional:-->
+              <BackupDate>2002-05-25T15:08:08</BackupDate>
+              <ClusterSize>7</ClusterSize>
+              <Clusters>11</Clusters>
+              <!--Optional:-->
+              <Files>11</Files>
+              <Bootable>false</Bootable>
+              <!--Optional:-->
+              <VolumeSerial>string</VolumeSerial>
+              <!--Optional:-->
+              <VolumeName>string</VolumeName>
+              <!--Optional:-->
+              <FreeClusters>11</FreeClusters>
+              <Dirty>false</Dirty>
+              <!--Optional:-->
+              <ExpirationDate>2019-05-04T04:54:29</ExpirationDate>
+              <!--Optional:-->
+              <EffectiveDate>2010-04-24T16:59:19+01:00</EffectiveDate>
+              <!--Optional:-->
+              <SystemIdentifier>string</SystemIdentifier>
+              <!--Optional:-->
+              <VolumeSetIdentifier>string</VolumeSetIdentifier>
+              <!--Optional:-->
+              <PublisherIdentifier>string</PublisherIdentifier>
+              <!--Optional:-->
+              <DataPreparerIdentifier>string</DataPreparerIdentifier>
+              <!--Optional:-->
+              <ApplicationIdentifier>string</ApplicationIdentifier>
+              <!--Optional:-->
+              <Contents namespace="string">
+                <!--Zero or more repetitions:-->
+                <File name="string" creationTime="2014-07-20T22:42:06+01:00" accessTime="2005-05-29T10:30:53+01:00"
+                      statusChangeTime="2016-06-29T00:30:01" backupTime="2012-06-26T00:07:54"
+                      lastWriteTime="2014-10-15T12:12:55" attributes="11" posixMode="7" deviceNumber="11"
+                      posixGroupId="11" inode="11" links="11" posixUserId="11" length="11">
+                  <Checksums>
+                    <!--1 or more repetitions:-->
+                    <Checksum type="sha3">string</Checksum>
+                  </Checksums>
+                  <ExtendedAttributes>
+                    <!--1 or more repetitions:-->
+                    <ExtendedAttribute name="string" length="11">
+                      <Checksums>
+                        <!--1 or more repetitions:-->
+                        <Checksum type="sha1">string</Checksum>
+                      </Checksums>
+                    </ExtendedAttribute>
+                  </ExtendedAttributes>
+                </File>
+                <!--Zero or more repetitions:-->
+                <Directory name="string" creationTime="2007-04-22T09:35:03+01:00" accessTime="2011-05-05T12:49:40"
+                           statusChangeTime="2006-11-30T20:00:57+00:00" backupTime="2010-01-27T05:39:05"
+                           lastWriteTime="2003-03-06T11:43:28" attributes="11" posixMode="7" deviceNumber="11"
+                           posixGroupId="11" inode="11" links="11" posixUserId="11">
+                  <!--Zero or more repetitions:-->
+                  <File name="string" creationTime="2016-02-27T03:01:16" accessTime="2019-07-03T23:40:21"
+                        statusChangeTime="2008-06-02T21:36:59" backupTime="2005-05-11T07:55:50+01:00"
+                        lastWriteTime="2004-06-16T03:44:16+01:00" attributes="11" posixMode="7" deviceNumber="11"
+                        posixGroupId="11" inode="11" links="11" posixUserId="11" length="11">
+                    <Checksums>
+                      <!--1 or more repetitions:-->
+                      <Checksum type="fletcher16">string</Checksum>
+                    </Checksums>
+                    <ExtendedAttributes>
+                      <!--1 or more repetitions:-->
+                      <ExtendedAttribute name="string" length="11">
+                        <Checksums>
+                          <!--1 or more repetitions:-->
+                          <Checksum type="adler32">string</Checksum>
+                        </Checksums>
+                      </ExtendedAttribute>
+                    </ExtendedAttributes>
+                  </File>
+                  <!--Zero or more repetitions:-->
+                  <Directory/>
+                </Directory>
+              </Contents>
+            </FileSystem>
+          </FileSystems>
+        </Partition>
+      </FileSystemInformation>
+    </Track>
+    <!--Optional:-->
+    <DumpHardwareArray>
+      <!--1 or more repetitions:-->
+      <DumpHardware>
+        <Manufacturer>string</Manufacturer>
+        <Model>string</Model>
+        <Revision>string</Revision>
+        <Firmware>string</Firmware>
+        <Serial>string</Serial>
+        <Extents>
+          <!--1 or more repetitions:-->
+          <Extent>
+            <Start>11</Start>
+            <End>11</End>
+          </Extent>
+        </Extents>
+        <Software>
+          <Name>string</Name>
+          <Version>string</Version>
+          <OperatingSystem>string</OperatingSystem>
+        </Software>
+      </DumpHardware>
+    </DumpHardwareArray>
+  </OpticalDisc>
+  <!--Zero or more repetitions:-->
+  <Advertisement>
+    <Manufacturer>string</Manufacturer>
+    <Product>string</Product>
+    <File format="string">string</File>
+    <FileSize>11</FileSize>
+    <!--Optional:-->
+    <Frames>11</Frames>
+    <Duration>1.051732E7</Duration>
+    <!--Optional:-->
+    <MeanFrameRate>1.5E2</MeanFrameRate>
+    <Checksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="snefru">string</Checksum>
+    </Checksums>
+    <!--Zero or more repetitions:-->
+    <AudioTrack TrackNumber="7" AccoustID="string" Codec="string" Channels="7" SampleRate="1.051732E7" MeanBitrate="10">
+      <!--Optional:-->
+      <Languages>
+        <!--1 or more repetitions:-->
+        <Language>eng</Language>
+      </Languages>
+    </AudioTrack>
+    <!--Zero or more repetitions:-->
+    <VideoTrack TrackNumber="7" Codec="string" Horizontal="7" Vertical="7" MeanBitrate="10" ThreeD="true">
+      <!--Optional:-->
+      <Languages>
+        <!--1 or more repetitions:-->
+        <Language>sit</Language>
+      </Languages>
+    </VideoTrack>
+    <!--Zero or more repetitions:-->
+    <SubtitleTrack TrackNumber="7" Codec="string">
+      <!--Optional:-->
+      <Languages>
+        <!--1 or more repetitions:-->
+        <Language>yid</Language>
+      </Languages>
+    </SubtitleTrack>
+    <!--Optional:-->
+    <Recording>
+      <!--Optional:-->
+      <Broadcaster>string</Broadcaster>
+      <!--Optional:-->
+      <BroadcastPlatform>string</BroadcastPlatform>
+      <SourceFormat>PAL-K</SourceFormat>
+      <Timestamp>2015-12-11T05:11:19</Timestamp>
+      <!--Zero or more repetitions:-->
+      <Software>
+        <Name>string</Name>
+        <Version>string</Version>
+        <OperatingSystem>string</OperatingSystem>
+      </Software>
+      <!--Optional:-->
+      <Coordinates>
+        <Latitude>1.051732E7</Latitude>
+        <Longitude>1.051732E7</Longitude>
+      </Coordinates>
+    </Recording>
+  </Advertisement>
+  <!--Zero or more repetitions:-->
+  <LinearMedia>
+    <Image format="string" offset="11">string</Image>
+    <Size>11</Size>
+    <ImageChecksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="crc32">string</Checksum>
+    </ImageChecksums>
+    <!--Optional:-->
+    <Checksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="blake512">string</Checksum>
+    </Checksums>
+    <!--Optional:-->
+    <PartNumber>string</PartNumber>
+    <!--Optional:-->
+    <SerialNumber>string</SerialNumber>
+    <Title>string</Title>
+    <!--Optional:-->
+    <Sequence>7</Sequence>
+    <!--Optional:-->
+    <ImageInterleave>7</ImageInterleave>
+    <!--Optional:-->
+    <Interleave>7</Interleave>
+    <!--Optional:-->
+    <Manufacturer>string</Manufacturer>
+    <!--Optional:-->
+    <Model>string</Model>
+    <Package>string</Package>
+    <!--Optional:-->
+    <Interface>string</Interface>
+    <!--Optional:-->
+    <Dimensions>
+      <!--Optional:-->
+      <Diameter>1.051732E7</Diameter>
+      <!--Optional:-->
+      <Height>1.051732E7</Height>
+      <!--Optional:-->
+      <Width>1.051732E7</Width>
+      <Thickness>1.051732E7</Thickness>
+    </Dimensions>
+    <!--Optional:-->
+    <Scans>
+      <!--Optional:-->
+      <CaseScan>
+        <CaseScanElement>boxspine</CaseScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="tiger">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>nso</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </CaseScan>
+      <!--Optional:-->
+      <Scan>
+        <MediaScanElement>back</MediaScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="tiger">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>ale</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </Scan>
+    </Scans>
+    <!--Optional:-->
+    <DumpHardwareArray>
+      <!--1 or more repetitions:-->
+      <DumpHardware>
+        <Manufacturer>string</Manufacturer>
+        <Model>string</Model>
+        <Revision>string</Revision>
+        <Firmware>string</Firmware>
+        <Serial>string</Serial>
+        <Extents>
+          <!--1 or more repetitions:-->
+          <Extent>
+            <Start>11</Start>
+            <End>11</End>
+          </Extent>
+        </Extents>
+        <Software>
+          <Name>string</Name>
+          <Version>string</Version>
+          <OperatingSystem>string</OperatingSystem>
+        </Software>
+      </DumpHardware>
+    </DumpHardwareArray>
+    <!--Optional:-->
+    <PCMCIA>
+      <CIS>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md5">string</Checksum>
+        </Checksums>
+      </CIS>
+      <!--Optional:-->
+      <Compliance>string</Compliance>
+      <!--Optional:-->
+      <ManufacturerCode>5</ManufacturerCode>
+      <!--Optional:-->
+      <CardCode>5</CardCode>
+      <!--Optional:-->
+      <Manufacturer>string</Manufacturer>
+      <!--Optional:-->
+      <ProductName>string</ProductName>
+      <!--Zero or more repetitions:-->
+      <AdditionalInformation>string</AdditionalInformation>
+    </PCMCIA>
+    <!--Optional:-->
+    <CopyProtection>string</CopyProtection>
+  </LinearMedia>
+  <!--Zero or more repetitions:-->
+  <PCICard>
+    <VendorID>5</VendorID>
+    <DeviceID>5</DeviceID>
+    <!--Optional:-->
+    <Configuration>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="tiger">string</Checksum>
+      </Checksums>
+    </Configuration>
+    <!--Optional:-->
+    <ExpansionROM>
+      <Image format="string" offset="11">string</Image>
+      <Size>11</Size>
+      <ImageChecksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="tiger">string</Checksum>
+      </ImageChecksums>
+      <!--Optional:-->
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="crc16">string</Checksum>
+      </Checksums>
+      <!--Optional:-->
+      <PartNumber>string</PartNumber>
+      <!--Optional:-->
+      <SerialNumber>string</SerialNumber>
+      <Title>string</Title>
+      <!--Optional:-->
+      <Sequence>7</Sequence>
+      <!--Optional:-->
+      <ImageInterleave>7</ImageInterleave>
+      <!--Optional:-->
+      <Interleave>7</Interleave>
+      <!--Optional:-->
+      <Manufacturer>string</Manufacturer>
+      <!--Optional:-->
+      <Model>string</Model>
+      <Package>string</Package>
+      <!--Optional:-->
+      <Interface>string</Interface>
+      <!--Optional:-->
+      <Dimensions>
+        <!--Optional:-->
+        <Diameter>1.051732E7</Diameter>
+        <!--Optional:-->
+        <Height>1.051732E7</Height>
+        <!--Optional:-->
+        <Width>1.051732E7</Width>
+        <Thickness>1.051732E7</Thickness>
+      </Dimensions>
+      <!--Optional:-->
+      <Scans>
+        <!--Optional:-->
+        <CaseScan>
+          <CaseScanElement>frontfull</CaseScanElement>
+          <Scan>
+            <File format="string">string</File>
+            <Checksums>
+              <!--1 or more repetitions:-->
+              <Checksum type="tiger">string</Checksum>
+            </Checksums>
+            <!--Zero or more repetitions:-->
+            <Scanner>
+              <Author>string</Author>
+              <Manufacturer>string</Manufacturer>
+              <Model>string</Model>
+              <Serial>string</Serial>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </Scanner>
+            <!--Zero or more repetitions:-->
+            <ScanProcessing>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </ScanProcessing>
+            <!--Zero or more repetitions:-->
+            <OCR>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+              <Language>
+                <!--1 or more repetitions:-->
+                <Language>srp</Language>
+              </Language>
+            </OCR>
+          </Scan>
+        </CaseScan>
+        <!--Optional:-->
+        <Scan>
+          <MediaScanElement>right</MediaScanElement>
+          <Scan>
+            <File format="string">string</File>
+            <Checksums>
+              <!--1 or more repetitions:-->
+              <Checksum type="adler32">string</Checksum>
+            </Checksums>
+            <!--Zero or more repetitions:-->
+            <Scanner>
+              <Author>string</Author>
+              <Manufacturer>string</Manufacturer>
+              <Model>string</Model>
+              <Serial>string</Serial>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </Scanner>
+            <!--Zero or more repetitions:-->
+            <ScanProcessing>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+            </ScanProcessing>
+            <!--Zero or more repetitions:-->
+            <OCR>
+              <Author>string</Author>
+              <Software>string</Software>
+              <SoftwareVersion>string</SoftwareVersion>
+              <Language>
+                <!--1 or more repetitions:-->
+                <Language>lub</Language>
+              </Language>
+            </OCR>
+          </Scan>
+        </Scan>
+      </Scans>
+      <!--Optional:-->
+      <DumpHardwareArray>
+        <!--1 or more repetitions:-->
+        <DumpHardware>
+          <Manufacturer>string</Manufacturer>
+          <Model>string</Model>
+          <Revision>string</Revision>
+          <Firmware>string</Firmware>
+          <Serial>string</Serial>
+          <Extents>
+            <!--1 or more repetitions:-->
+            <Extent>
+              <Start>11</Start>
+              <End>11</End>
+            </Extent>
+          </Extents>
+          <Software>
+            <Name>string</Name>
+            <Version>string</Version>
+            <OperatingSystem>string</OperatingSystem>
+          </Software>
+        </DumpHardware>
+      </DumpHardwareArray>
+      <!--Optional:-->
+      <PCMCIA>
+        <CIS>
+          <Image>string</Image>
+          <Size>11</Size>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="sha3">string</Checksum>
+          </Checksums>
+        </CIS>
+        <!--Optional:-->
+        <Compliance>string</Compliance>
+        <!--Optional:-->
+        <ManufacturerCode>5</ManufacturerCode>
+        <!--Optional:-->
+        <CardCode>5</CardCode>
+        <!--Optional:-->
+        <Manufacturer>string</Manufacturer>
+        <!--Optional:-->
+        <ProductName>string</ProductName>
+        <!--Zero or more repetitions:-->
+        <AdditionalInformation>string</AdditionalInformation>
+      </PCMCIA>
+      <!--Optional:-->
+      <CopyProtection>string</CopyProtection>
+    </ExpansionROM>
+  </PCICard>
+  <!--Zero or more repetitions:-->
+  <BlockMedia>
+    <Image format="string" offset="11">string</Image>
+    <Size>11</Size>
+    <Checksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="fletcher16">string</Checksum>
+    </Checksums>
+    <ContentChecksums>
+      <!--1 or more repetitions:-->
+      <Checksum type="ripemd160">string</Checksum>
+    </ContentChecksums>
+    <Sequence>
+      <!--Optional:-->
+      <MediaTitle>string</MediaTitle>
+      <MediaSequence>7</MediaSequence>
+      <TotalMedia>7</TotalMedia>
+      <!--Optional:-->
+      <Side>2</Side>
+      <!--Optional:-->
+      <Layer>1</Layer>
+    </Sequence>
+    <!--Optional:-->
+    <Manufacturer>string</Manufacturer>
+    <!--Optional:-->
+    <Model>string</Model>
+    <!--Optional:-->
+    <Serial>string</Serial>
+    <!--Optional:-->
+    <Firmware>string</Firmware>
+    <!--Optional:-->
+    <Interface>string</Interface>
+    <!--Optional:-->
+    <PartNumber>string</PartNumber>
+    <!--Optional:-->
+    <SerialNumber>string</SerialNumber>
+    <PhysicalBlockSize>7</PhysicalBlockSize>
+    <LogicalBlockSize>7</LogicalBlockSize>
+    <LogicalBlocks>11</LogicalBlocks>
+    <!--Optional:-->
+    <VariableBlockSize>
+      <!--1 or more repetitions:-->
+      <BlockSize startingBlock="7">7</BlockSize>
+    </VariableBlockSize>
+    <!--Optional:-->
+    <TapeInformation>
+      <!--1 or more repetitions:-->
+      <Partition>
+        <Image format="string" offset="11">string</Image>
+        <Size>11</Size>
+        <Sequence>11</Sequence>
+        <StartBlock>11</StartBlock>
+        <EndBlock>11</EndBlock>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="sha512">string</Checksum>
+        </Checksums>
+        <!--1 or more repetitions:-->
+        <File>
+          <Image format="string" offset="11">string</Image>
+          <Size>11</Size>
+          <Sequence>11</Sequence>
+          <BlockSize>11</BlockSize>
+          <StartBlock>11</StartBlock>
+          <EndBlock>11</EndBlock>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="ripemed320">string</Checksum>
+          </Checksums>
+        </File>
+      </Partition>
+    </TapeInformation>
+    <!--Optional:-->
+    <Scans>
+      <!--Optional:-->
+      <CaseScan>
+        <CaseScanElement>inner</CaseScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="fletcher32">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>wol</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </CaseScan>
+      <!--Optional:-->
+      <Scan>
+        <MediaScanElement>front</MediaScanElement>
+        <Scan>
+          <File format="string">string</File>
+          <Checksums>
+            <!--1 or more repetitions:-->
+            <Checksum type="sha3">string</Checksum>
+          </Checksums>
+          <!--Zero or more repetitions:-->
+          <Scanner>
+            <Author>string</Author>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Serial>string</Serial>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </Scanner>
+          <!--Zero or more repetitions:-->
+          <ScanProcessing>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+          </ScanProcessing>
+          <!--Zero or more repetitions:-->
+          <OCR>
+            <Author>string</Author>
+            <Software>string</Software>
+            <SoftwareVersion>string</SoftwareVersion>
+            <Language>
+              <!--1 or more repetitions:-->
+              <Language>chy</Language>
+            </Language>
+          </OCR>
+        </Scan>
+      </Scan>
+    </Scans>
+    <!--Optional:-->
+    <ATA>
+      <Identify>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="spamsum">string</Checksum>
+        </Checksums>
+      </Identify>
+    </ATA>
+    <!--Optional:-->
+    <PCI>
+      <VendorID>5</VendorID>
+      <DeviceID>5</DeviceID>
+      <!--Optional:-->
+      <Configuration>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md5">string</Checksum>
+        </Checksums>
+      </Configuration>
+      <!--Optional:-->
+      <ExpansionROM>
+        <Image format="string" offset="11">string</Image>
+        <Size>11</Size>
+        <ImageChecksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md5">string</Checksum>
+        </ImageChecksums>
+        <!--Optional:-->
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="fletcher16">string</Checksum>
+        </Checksums>
+        <!--Optional:-->
+        <PartNumber>string</PartNumber>
+        <!--Optional:-->
+        <SerialNumber>string</SerialNumber>
+        <Title>string</Title>
+        <!--Optional:-->
+        <Sequence>7</Sequence>
+        <!--Optional:-->
+        <ImageInterleave>7</ImageInterleave>
+        <!--Optional:-->
+        <Interleave>7</Interleave>
+        <!--Optional:-->
+        <Manufacturer>string</Manufacturer>
+        <!--Optional:-->
+        <Model>string</Model>
+        <Package>string</Package>
+        <!--Optional:-->
+        <Interface>string</Interface>
+        <!--Optional:-->
+        <Dimensions>
+          <!--Optional:-->
+          <Diameter>1.051732E7</Diameter>
+          <!--Optional:-->
+          <Height>1.051732E7</Height>
+          <!--Optional:-->
+          <Width>1.051732E7</Width>
+          <Thickness>1.051732E7</Thickness>
+        </Dimensions>
+        <!--Optional:-->
+        <Scans>
+          <!--Optional:-->
+          <CaseScan>
+            <CaseScanElement>external</CaseScanElement>
+            <Scan>
+              <File format="string">string</File>
+              <Checksums>
+                <!--1 or more repetitions:-->
+                <Checksum type="ripemd128">string</Checksum>
+              </Checksums>
+              <!--Zero or more repetitions:-->
+              <Scanner>
+                <Author>string</Author>
+                <Manufacturer>string</Manufacturer>
+                <Model>string</Model>
+                <Serial>string</Serial>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+              </Scanner>
+              <!--Zero or more repetitions:-->
+              <ScanProcessing>
+                <Author>string</Author>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+              </ScanProcessing>
+              <!--Zero or more repetitions:-->
+              <OCR>
+                <Author>string</Author>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+                <Language>
+                  <!--1 or more repetitions:-->
+                  <Language>fre</Language>
+                </Language>
+              </OCR>
+            </Scan>
+          </CaseScan>
+          <!--Optional:-->
+          <Scan>
+            <MediaScanElement>right</MediaScanElement>
+            <Scan>
+              <File format="string">string</File>
+              <Checksums>
+                <!--1 or more repetitions:-->
+                <Checksum type="crc16ccitt">string</Checksum>
+              </Checksums>
+              <!--Zero or more repetitions:-->
+              <Scanner>
+                <Author>string</Author>
+                <Manufacturer>string</Manufacturer>
+                <Model>string</Model>
+                <Serial>string</Serial>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+              </Scanner>
+              <!--Zero or more repetitions:-->
+              <ScanProcessing>
+                <Author>string</Author>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+              </ScanProcessing>
+              <!--Zero or more repetitions:-->
+              <OCR>
+                <Author>string</Author>
+                <Software>string</Software>
+                <SoftwareVersion>string</SoftwareVersion>
+                <Language>
+                  <!--1 or more repetitions:-->
+                  <Language>swa</Language>
+                </Language>
+              </OCR>
+            </Scan>
+          </Scan>
+        </Scans>
+        <!--Optional:-->
+        <DumpHardwareArray>
+          <!--1 or more repetitions:-->
+          <DumpHardware>
+            <Manufacturer>string</Manufacturer>
+            <Model>string</Model>
+            <Revision>string</Revision>
+            <Firmware>string</Firmware>
+            <Serial>string</Serial>
+            <Extents>
+              <!--1 or more repetitions:-->
+              <Extent>
+                <Start>11</Start>
+                <End>11</End>
+              </Extent>
+            </Extents>
+            <Software>
+              <Name>string</Name>
+              <Version>string</Version>
+              <OperatingSystem>string</OperatingSystem>
+            </Software>
+          </DumpHardware>
+        </DumpHardwareArray>
+        <!--Optional:-->
+        <PCMCIA>
+          <CIS>
+            <Image>string</Image>
+            <Size>11</Size>
+            <Checksums>
+              <!--1 or more repetitions:-->
+              <Checksum type="fletcher16">string</Checksum>
+            </Checksums>
+          </CIS>
+          <!--Optional:-->
+          <Compliance>string</Compliance>
+          <!--Optional:-->
+          <ManufacturerCode>5</ManufacturerCode>
+          <!--Optional:-->
+          <CardCode>5</CardCode>
+          <!--Optional:-->
+          <Manufacturer>string</Manufacturer>
+          <!--Optional:-->
+          <ProductName>string</ProductName>
+          <!--Zero or more repetitions:-->
+          <AdditionalInformation>string</AdditionalInformation>
+        </PCMCIA>
+        <!--Optional:-->
+        <CopyProtection>string</CopyProtection>
+      </ExpansionROM>
+    </PCI>
+    <!--Optional:-->
+    <PCMCIA>
+      <CIS>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="fletcher32">string</Checksum>
+        </Checksums>
+      </CIS>
+      <!--Optional:-->
+      <Compliance>string</Compliance>
+      <!--Optional:-->
+      <ManufacturerCode>5</ManufacturerCode>
+      <!--Optional:-->
+      <CardCode>5</CardCode>
+      <!--Optional:-->
+      <Manufacturer>string</Manufacturer>
+      <!--Optional:-->
+      <ProductName>string</ProductName>
+      <!--Zero or more repetitions:-->
+      <AdditionalInformation>string</AdditionalInformation>
+    </PCMCIA>
+    <!--Optional:-->
+    <SecureDigital>
+      <CID>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="crc16">string</Checksum>
+        </Checksums>
+      </CID>
+      <!--Optional:-->
+      <CSD>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md5">string</Checksum>
+        </Checksums>
+      </CSD>
+      <!--Optional:-->
+      <SCR>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="blake512">string</Checksum>
+        </Checksums>
+      </SCR>
+      <!--Optional:-->
+      <OCR>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="tiger">string</Checksum>
+        </Checksums>
+      </OCR>
+    </SecureDigital>
+    <!--Optional:-->
+    <MultiMediaCard>
+      <CID>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md4">string</Checksum>
+        </Checksums>
+      </CID>
+      <!--Optional:-->
+      <CSD>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="sha384">string</Checksum>
+        </Checksums>
+      </CSD>
+      <!--Optional:-->
+      <ExtendedCSD>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="dm6">string</Checksum>
+        </Checksums>
+      </ExtendedCSD>
+      <!--Optional:-->
+      <OCR>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="fletcher32">string</Checksum>
+        </Checksums>
+      </OCR>
+    </MultiMediaCard>
+    <!--Optional:-->
+    <SCSI>
+      <Inquiry>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="md4">string</Checksum>
+        </Checksums>
+      </Inquiry>
+      <!--Zero or more repetitions:-->
+      <EVPD page="6">
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="crc64">string</Checksum>
+        </Checksums>
+      </EVPD>
+      <!--Optional:-->
+      <ModeSense>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="whirlpool">string</Checksum>
+        </Checksums>
+      </ModeSense>
+      <!--Optional:-->
+      <ModeSense10>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="spamsum">string</Checksum>
+        </Checksums>
+      </ModeSense10>
+      <!--Optional:-->
+      <LogSense>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="crc16">string</Checksum>
+        </Checksums>
+      </LogSense>
+    </SCSI>
+    <!--Optional:-->
+    <USB>
+      <VendorID>5</VendorID>
+      <ProductID>5</ProductID>
+      <!--Optional:-->
+      <Descriptors>
+        <Image>string</Image>
+        <Size>11</Size>
+        <Checksums>
+          <!--1 or more repetitions:-->
+          <Checksum type="adler32">string</Checksum>
+        </Checksums>
+      </Descriptors>
+    </USB>
+    <!--Optional:-->
+    <MAM>
+      <Image>string</Image>
+      <Size>11</Size>
+      <Checksums>
+        <!--1 or more repetitions:-->
+        <Checksum type="adler32">string</Checksum>
+      </Checksums>
+    </MAM>
+    <!--Optional:-->
+    <!--Optional:-->
+    <!--Optional:-->
+    <!--Zero or more repetitions:-->
+    <!--Optional:-->
+    <Dimensions>
+      <!--Optional:-->
+      <!--Optional:-->
+      <!--Optional:-->
+      <Thickness>1.051732E7</Thickness>
+    </Dimensions>
+    <!--Optional:-->
+    <!--Optional:-->
+    <DiskType>string</DiskType>
+    <DiskSubType>string</DiskSubType>
+  </BlockMedia>
+  <!--Zero or more repetitions:-->
+</CICMMetadata>
