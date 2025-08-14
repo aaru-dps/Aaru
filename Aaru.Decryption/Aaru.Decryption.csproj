@@ -7,7 +7,7 @@
     <AssemblyName>Aaru.Decryption</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.4</Version>
+    <Version>5.4.1</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2025 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>

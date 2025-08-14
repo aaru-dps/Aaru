@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net8.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <Version>5.4</Version>
+    <Version>5.4.1</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2025 Natalia Portillo</Copyright>
     <Product>Aaru Data Preservation Suite</Product>
@@ -196,7 +196,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageVersion>5.4</PackageVersion>
+    <PackageVersion>5.4.1</PackageVersion>
     <PackagePrefix>aaru</PackagePrefix>
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
     <Section>net</Section>

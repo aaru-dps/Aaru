@@ -1,3 +1,7 @@
+# [5.4.1] - 2025-08-14
+
+- Updated EntityFrameworkCore due to compatibility issues.
+
 # [5.4] - 2025-08-14
 
 - Updated to run on more modern systems. No changes applied.
@@ -2302,6 +2306,8 @@
 - Apple Partition Map (aka APM).
 - Master Boot Record (aka MBR).
 - NeXT disklabels.
+
+[5.4.1]: https://github.com/aaru-dps/Aaru/releases/tag/v5.4.1
 
 [5.4]: https://github.com/aaru-dps/Aaru/releases/tag/v5.4
 
