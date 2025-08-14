@@ -28,7 +28,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2017-2023 Michael Drüing
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2011-2025 Natalia Portillo
 // ****************************************************************************/
 
 /* Some information on the file format from Michal Necasek (www.os2museum.com):

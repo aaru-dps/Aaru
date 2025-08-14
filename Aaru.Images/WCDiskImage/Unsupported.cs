@@ -27,7 +27,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2018-2023 Michael Drüing
-// Copyright © 2011-2023 Natalia Portillo
+// Copyright © 2011-2025 Natalia Portillo
 // ****************************************************************************/
 
 using Aaru.CommonTypes.Enums;
