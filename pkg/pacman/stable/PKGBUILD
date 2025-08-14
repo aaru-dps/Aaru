@@ -1,6 +1,6 @@
 # Maintainer: Natalia Portillo <claunia@claunia.com>
 packager='Natalia Portillo <claunia@claunia.com>'
-_netcoretarget='netcoreapp3.1'
+_netcoretarget='net8.0'
 _aarubase='Aaru'
 pkgname='aaru'
 pkgver=5.3.2
@@ -11,12 +11,12 @@ url='http://www.aaru.app'
 license=('GPL')
 source=('aaru-src-5.3.2.tar.xz::local://aaru-src-5.3.2.tar.xz'
         'aaru-src-5.3.2.tar.xz.asc::local://aaru-src-5.3.2.tar.xz.asc')
-makedepends=('dotnet-sdk-3.1-bin>=3.1.0')
+makedepends=('dotnet-sdk-8.0>=8.0')
 options=('staticlibs')
 validpgpkeys=('236F1E21B540FC0D40F7AD1751D20488C724CA9F')
 provides=('aaru')
 conflicts=('aaru')
-depends=('icu70' 'krb5' 'libcurl.so' 'libunwind' 'openssl-1.1>=1.1.1' 'zlib')
+depends=('icu' 'krb5' 'libunwind' 'openssl' 'zlib')
 
 if [ $arch == 'aarch64' ]; then
     dotnet_rid=linux-arm64
