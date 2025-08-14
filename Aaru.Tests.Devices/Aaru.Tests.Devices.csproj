@@ -9,7 +9,7 @@
     <AssemblyName>Aaru.Tests.Devices</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>5.3.2</Version>
     <Company>Claunia.com</Company>
