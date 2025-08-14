@@ -34,7 +34,7 @@ cd ..
 if [[ ${OS_NAME} == Linux ]]; then
  OS_RELEASE=`pcregrep -o1 -e "^ID=(?<distro_id>\w+)" /etc/os-release`
 
- if [[ ${OS_RELEASE} != arch ]]; then
+ if [[ ${OS_RELEASE} != arch && ${OS_RELEASE} != cachyos ]]; then
   exit 0
  fi
 
