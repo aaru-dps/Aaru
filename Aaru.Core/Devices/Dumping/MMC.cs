@@ -530,7 +530,7 @@ partial class Dump
                             {
                                 UpdateStatus?.Invoke(Localization.Core.Drive_reports_disc_uses_CSS_copy_protection);
 
-                                dvdDecrypt = new DVDDecryption(_dev);
+                                dvdDecrypt = new DVDDecryption();
 
                                 sense = dvdDecrypt.ReadBusKey(out cmdBuf,
                                                               out _,

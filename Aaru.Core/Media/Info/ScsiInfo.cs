@@ -679,7 +679,7 @@ public sealed class ScsiInfo
 #endregion DVD-R and HD DVD-R
             }
 
-            var dvdDecrypt = new DVDDecryption(dev);
+            var dvdDecrypt = new DVDDecryption();
             sense = dvdDecrypt.ReadBusKey(out cmdBuf, out senseBuf, CopyrightType.CSS, dev.Timeout, out _);
 
             if(!sense)

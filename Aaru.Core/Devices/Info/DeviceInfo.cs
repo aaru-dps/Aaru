@@ -265,7 +265,7 @@ public partial class DeviceInfo
 
                         if(!sense) MmcConfiguration = confBuf;
 
-                        var dvdDecrypt = new DVDDecryption(dev);
+                        var dvdDecrypt = new DVDDecryption();
 
                         sense = dvdDecrypt.ReadRpc(out byte[] cmdBuf,
                                                    out _,

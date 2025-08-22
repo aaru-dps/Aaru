@@ -42,7 +42,7 @@ using Aaru.Logging;
 
 namespace Aaru.Decryption.DVD;
 
-public sealed class Dump(Device dev)
+public sealed class Dump : Device
 {
     const byte   KEY_SIZE       = 5;
     const byte   CHALLENGE_SIZE = 2 * KEY_SIZE;
@@ -62,7 +62,7 @@ public sealed class Dump(Device dev)
                         out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[8];
 
@@ -72,14 +72,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.Asf ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -95,7 +95,7 @@ public sealed class Dump(Device dev)
                         out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[8];
 
@@ -105,14 +105,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.RpcState ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.REPORT_ASF_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -128,7 +128,7 @@ public sealed class Dump(Device dev)
                                out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = [];
 
@@ -138,14 +138,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.InvalidateAgid ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.INVALIDATE_AGID_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -161,7 +161,7 @@ public sealed class Dump(Device dev)
                                   out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[8];
 
@@ -171,14 +171,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.AgidForCssCppm ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.REPORT_AGID_CSS_CPPM_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -194,7 +194,7 @@ public sealed class Dump(Device dev)
                            out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[12];
 
@@ -204,14 +204,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.Key1 ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.REPORT_KEY1_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -227,7 +227,7 @@ public sealed class Dump(Device dev)
                                 out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[16];
 
@@ -237,14 +237,14 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.ChallengeKey ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.REPORT_CHALLENGE_AGID_1_Sense_2_Last_Error_3_took_0_ms,
                           duration,
                           Agid,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -261,7 +261,7 @@ public sealed class Dump(Device dev)
                               uint       timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[16];
 
@@ -283,7 +283,7 @@ public sealed class Dump(Device dev)
         buffer[12] = challengeKey[1];
         buffer[13] = challengeKey[0];
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.SEND_CHALLENGE_AGID_1_Challenge_2_Sense_3_Last_Error_4_took_0_ms,
@@ -291,7 +291,7 @@ public sealed class Dump(Device dev)
                           Agid,
                           challengeKey,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -308,7 +308,7 @@ public sealed class Dump(Device dev)
                          out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[12];
 
@@ -325,7 +325,7 @@ public sealed class Dump(Device dev)
         buffer[7] = key2[1];
         buffer[8] = key2[0];
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.Out, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.SEND_CHALLENGE_AGID_1_KEY2_2_Sense_3_Last_Error_4_took_0_ms,
@@ -333,7 +333,7 @@ public sealed class Dump(Device dev)
                           Agid,
                           key2,
                           sense,
-                          dev.LastError);
+                          LastError);
 
         return sense;
     }
@@ -347,7 +347,7 @@ public sealed class Dump(Device dev)
     public bool ReadDiscKey(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
     {
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[2052];
 
@@ -359,7 +359,7 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         return sense;
     }
@@ -487,7 +487,7 @@ public sealed class Dump(Device dev)
         BusKey = buffer;
 
         senseBuffer = new byte[64];
-        Span<byte> cdb = dev.CdbBuffer[..12];
+        Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
         buffer = new byte[12];
 
@@ -501,7 +501,7 @@ public sealed class Dump(Device dev)
         cdb[9]  = (byte)(buffer.Length & 0xFF);
         cdb[10] = (byte)((byte)CssReportKeyFormat.TitleKey ^ (Agid & 0x03) << 6);
 
-        dev.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
+        SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.GET_TITLE_KEY_AGID_1_LBA_2_Sense_3_took_0_ms,
