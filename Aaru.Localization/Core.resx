@@ -465,7 +465,7 @@
     <value>[bold][slateblue1]Application identifier:[/][/] [blue]{0}[/]</value>
   </data>
     <data name="System_identifier_0" xml:space="preserve">
-    <value>System identifier: {0}</value>
+    <value>[bold][slateblue1]System identifier:[/][/] [blue]{0}[/]</value>
   </data>
     <data name="Volume_set_identifier_0" xml:space="preserve">
     <value>[bold][slateblue1]Volume set identifier:[/][/] [blue]{0}[/]</value>
