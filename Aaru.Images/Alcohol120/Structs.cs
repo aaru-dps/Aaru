@@ -36,6 +36,18 @@ namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {
+#region Nested type: DPM
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DPM
+    {
+        public          uint dpmStartSector;
+        public          uint dpmResolution;
+        public          uint numberOfDpmEntries;
+    }
+
+#endregion
+
 #region Nested type: Footer
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

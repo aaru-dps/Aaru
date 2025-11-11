@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -42,6 +43,7 @@ using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using Aaru.Logging;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Marshal = Aaru.Helpers.Marshal;
 using Sector = Aaru.Decoders.CD.Sector;
 
 namespace Aaru.Images;
@@ -92,6 +94,45 @@ public sealed partial class Alcohol120
         AaruLogging.Debug(MODULE_NAME, "header.dpmOffset = {0}",     _header.dpmOffset);
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
+
+        // DPM Reading Start
+        if(_header.dpmOffset != 0)
+        {
+            stream.Seek(_header.dpmOffset, SeekOrigin.Begin);
+            var blocks = new byte[4];
+            stream.EnsureRead(blocks, 0, 4);
+
+            // Currently unaware of samples with more than one block, or what that would look like.
+            _alcBlockCount = Marshal.SpanToStructureLittleEndian<uint>(blocks);
+            var startA = new byte[4];
+            stream.EnsureRead(startA, 0, 4);
+            _alcBlockStartAddress = Marshal.SpanToStructureLittleEndian<uint>(startA);
+            stream.Seek(_alcBlockStartAddress, SeekOrigin.Begin);
+            var dpmPresentBytes = new byte[4];
+            stream.EnsureRead(dpmPresentBytes, 0, 4);
+            uint dpmPresentUint = Marshal.SpanToStructureLittleEndian<uint>(dpmPresentBytes);
+
+            // This value indicates what kind of block it is. DPM is 01. Other, non-dpm block types have
+            // been observed, but their purpose is currently unknown.
+            if(dpmPresentUint == 1)
+            {
+                _dpmPresent = true;
+                var dpmBlockHdr = new byte[12];
+                stream.EnsureRead(dpmBlockHdr, 0, 12);
+                DPM dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
+                var dpmBytes       = new byte[dpmBlockHeader.numberOfDpmEntries * 4];
+                stream.EnsureRead(dpmBytes, 0, dpmBytes.Length);
+                ReadOnlySpan<byte> span = dpmBytes;
+                _dpmEntries = new uint[dpmBlockHeader.numberOfDpmEntries];
+                _dpmEntries = MemoryMarshal.Cast<byte, uint>(span)[..(int)dpmBlockHeader.numberOfDpmEntries].ToArray();
+            }
+            else
+            {
+                _dpmPresent = false;
+            }
+        }
+
+        // DPM Reading End
 
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
