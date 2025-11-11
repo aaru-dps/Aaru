@@ -113,7 +113,7 @@ public sealed partial class Alcohol120
             uint dpmPresentUint = Marshal.SpanToStructureLittleEndian<uint>(dpmPresentBytes);
 
             // This value indicates what kind of block it is. DPM is 01. Other, non-dpm block types have
-            // been observed, but their purpose is currently unknown.
+            // been observed, but their purpose is currently unknown
             if(dpmPresentUint == 1)
             {
                 _dpmPresent = true;
