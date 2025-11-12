@@ -58,6 +58,19 @@ public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVe
     /// <value>The sessions.</value>
     List<Session> Sessions { get; }
 
+    /// <summary>Reads a disc's DPM data.</summary>
+    /// <returns>The disc's DPM data.</returns>
+    /// <param name="dpmStartSector">Starting sector lba.</param>
+    /// <param name="dpmResolution">DPM Resolution.</param>
+    /// <param name="numberOfDpmEntries">The number of DPM entries.</param>
+    /// <param name="dpm">The array of DPM data.</param>
+    ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm);
+
+    /// <summary>Reads a sector's DPM data.</summary>
+    /// <returns>The sector's DPM data, null if it is not stored for that sector.</returns>
+    /// <param name="dpm">The sector's dpm.</param>
+    ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm);
+
     /// <summary>Reads a sector's user data, relative to track.</summary>
     /// <returns>The sector's user data.</returns>
     /// <param name="sectorAddress">Sector address (relative LBA).</param>
