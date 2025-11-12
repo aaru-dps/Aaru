@@ -119,17 +119,21 @@ public sealed partial class Alcohol120
                 _dpmPresent = true;
                 var dpmBlockHdr = new byte[12];
                 stream.EnsureRead(dpmBlockHdr, 0, 12);
-                DPM dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
-                var dpmBytes       = new byte[dpmBlockHeader.numberOfDpmEntries * 4];
+                _dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
+                var dpmBytes        = new byte[_dpmBlockHeader.numberOfDpmEntries * 4];
                 stream.EnsureRead(dpmBytes, 0, dpmBytes.Length);
                 ReadOnlySpan<byte> span = dpmBytes;
-                _dpmEntries = new uint[dpmBlockHeader.numberOfDpmEntries];
-                _dpmEntries = MemoryMarshal.Cast<byte, uint>(span)[..(int)dpmBlockHeader.numberOfDpmEntries].ToArray();
+                _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
+                _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
             }
             else
             {
                 _dpmPresent = false;
             }
+        }
+        else
+        {
+            _dpmPresent = false;
         }
 
         // DPM Reading End
@@ -763,6 +767,64 @@ public sealed partial class Alcohol120
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    {
+        if(_dpmPresent)
+        {
+            dpmStartSector     = _dpmBlockHeader.dpmStartSector;
+            dpmResolution      = _dpmBlockHeader.dpmResolution;
+            numberOfDpmEntries = _dpmBlockHeader.numberOfDpmEntries;
+            dpm = new ulong[numberOfDpmEntries];
+
+            // Arbitrary multiplication. If you want to go lower than a120's minimum dpm resolution of 50, you start
+            // losing precision since cumulative hex angles are only stored as uint32. Outside of this, the format a120
+            // /mds uses is otherwise as perfect as DPM storage realistically can be, so aaru can just give a bit of
+            // extra room for more possible values.
+
+            for(uint i = 0; i < numberOfDpmEntries; i++)
+            {
+                dpm[i] = _dpm[i] * 10000;
+            }
+
+            return ErrorNumber.NoError;
+        }
+        else
+        {
+            dpmStartSector = 0;
+            dpmResolution = 0;
+            numberOfDpmEntries = 0;
+            dpm = null;
+
+            return ErrorNumber.NoData;
+        }
+    }
+
+    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
+    {
+        if(_dpmPresent)
+        {
+            if(sectorAddress % _dpmBlockHeader.dpmResolution != 0)
+            {
+                dpm                = null;
+
+                return ErrorNumber.NoData;
+            }
+            else
+            {
+                dpm = _dpm[sectorAddress / _dpmBlockHeader.dpmResolution] * 10000;
+
+                return ErrorNumber.NoError;
+            }
+        }
+        else
+        {
+            dpm                = null;
+
+            return ErrorNumber.NoData;
+        }
     }
 
     /// <inheritdoc />
