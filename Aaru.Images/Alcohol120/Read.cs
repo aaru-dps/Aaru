@@ -737,17 +737,17 @@ public sealed partial class Alcohol120
                 return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
             case MediaTagType.DVD_PFI:
-                buffer = _bca?.Clone() as byte[];
+                buffer = _pfi?.Clone() as byte[];
 
                 return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
             case MediaTagType.DVD_DMI:
-                buffer = _bca?.Clone() as byte[];
+                buffer = _dmi?.Clone() as byte[];
 
                 return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
             case MediaTagType.CD_FullTOC:
-                buffer = _bca?.Clone() as byte[];
+                buffer = _fullToc?.Clone() as byte[];
 
                 return buffer != null ? ErrorNumber.NoError : ErrorNumber.NoData;
 
