@@ -909,6 +909,23 @@ public sealed partial class CloneCd
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
+    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    {
+        dpmStartSector = 0;
+        dpmResolution = 0;
+        numberOfDpmEntries = 0;
+        dpm = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
+    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
+    {
+        dpm = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
     /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
     {
