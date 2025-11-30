@@ -699,6 +699,14 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                                                     false);
                                 }
 
+                                if(!tryLiteOn)
+                                {
+                                    tryLiteOn |=
+                                        AnsiConsole
+                                           .Confirm($"[italic]{UI.Do_you_want_to_try_LiteOn_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                    false);
+                                }
+
                                 tryMediaTekF106 =
                                     AnsiConsole
                                        .Confirm($"[italic]{UI.Do_you_want_to_try_MediaTek_commands} [red]{UI.This_is_dangerous}[/][/]",
