@@ -275,22 +275,22 @@ In you are unsure, please press N to not continue.</value>
     <value>Do you have a GD-ROM disc (if unsure press N)?</value>
   </data>
     <data name="Do_you_want_to_try_Plextor_commands" xml:space="preserve">
-    <value>Do you have want to try Plextor vendor commands?</value>
+    <value>Do you want to try Plextor vendor commands?</value>
   </data>
     <data name="Do_you_want_to_try_NEC_commands" xml:space="preserve">
-    <value>Do you have want to try NEC vendor commands?</value>
+    <value>Do you want to try NEC vendor commands?</value>
   </data>
     <data name="Do_you_want_to_try_Pioneer_commands" xml:space="preserve">
-    <value>Do you have want to try Pioneer vendor commands?</value>
+    <value>Do you want to try Pioneer vendor commands?</value>
   </data>
     <data name="Do_you_want_to_try_HLDTST_commands" xml:space="preserve">
-    <value>Do you have want to try HL-DT-ST (aka LG) vendor commands?</value>
+    <value>Do you want to try HL-DT-ST (aka LG) vendor commands?</value>
   </data>
     <data name="Do_you_want_to_try_MediaTek_commands" xml:space="preserve">
-    <value>Do you have want to try MediaTek vendor command F1h subcommand 06h?</value>
+    <value>Do you want to try MediaTek vendor command F1h subcommand 06h?</value>
   </data>
     <data name="Do_you_want_to_try_LiteOn_commands" xml:space="preserve">
-    <value>Do you have want to try Lite-On vendor commands?</value>
+    <value>Do you want to try Lite-On vendor commands?</value>
   </data>
     <data name="This_is_dangerous" xml:space="preserve">
     <value>THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N')</value>
