@@ -802,6 +802,9 @@
     <data name="Do_you_want_to_try_Plextor_commands" xml:space="preserve">
     <value>¿Desea intentar los comandos específicos de Plextor?</value>
   </data>
+    <data name="Do_you_want_to_try_LiteOn_commands" xml:space="preserve">
+    <value>¿Desea intentar los comandos específicos de Lite-On?</value>
+  </data>
     <data name="Drive_firmware_info_0" xml:space="preserve">
     <value>Información del firmware de la unidad: {0}</value>
   </data>
