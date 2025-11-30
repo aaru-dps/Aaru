@@ -573,6 +573,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Do_you_want_to_try_LiteOn_commands {
+            get {
+                return ResourceManager.GetString("Do_you_want_to_try_LiteOn_commands", resourceCulture);
+            }
+        }
+        
         public static string This_is_dangerous {
             get {
                 return ResourceManager.GetString("This_is_dangerous", resourceCulture);
