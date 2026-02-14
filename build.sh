@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-AARU_VERSION=5.4.1
+AARU_VERSION=5.4.2
 OS_NAME=`uname`
 
 mkdir -p build
@@ -10,7 +10,7 @@ for conf in Debug Release;
 do
  for distro in linux-arm64 linux-arm linux-x64 osx-x64 osx-arm64 win-arm64 win-x64 win-x86;
  do
-  dotnet publish -f net8.0 -r ${distro} -c ${conf}
+  dotnet publish -f net8.0 -r ${distro} -c ${conf} -p:PublishReadyToRun=true
 
 # Package the Linux packages (stopped working)
   if [[ ${distro} == alpine* ]] || [[ ${distro} == linux* ]]; then
