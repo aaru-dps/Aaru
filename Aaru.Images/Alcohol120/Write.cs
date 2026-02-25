@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -149,6 +150,57 @@ public sealed partial class Alcohol120
 
         IsWriting    = true;
         ErrorMessage = null;
+
+        return true;
+    }
+
+    public bool WriteDPM()
+    {
+        if(!IsWriting)
+        {
+            ErrorMessage = Localization.Tried_to_write_on_a_non_writable_image;
+
+            return false;
+        }
+
+        // Ideally this would more intelligently read where to seek to, but since filename isn't stored in a variable
+        // readable from here, the length must be assumed.
+        int seekOffset = (int)_alcFooter.filenameOffset + Encoding.Unicode.GetBytes("*.mdf").Length + 2;
+        _descriptorStream.Seek(seekOffset, SeekOrigin.Begin);
+
+        // Ideally writing the initial disc metadata block info would be separate from writing the DPM, but the DPM will
+        // be the first (and likely only, at least for a long time) disc metadata block written.
+        byte[] oneUint32 = [0x01, 0x00, 0x00, 0x00];
+        _descriptorStream.Write(oneUint32, 0, oneUint32.Length);
+        uint   dpmMetadataOffset      = (uint)(_descriptorStream.Position + 4);
+        byte[] dpmMetadataOffsetBytes = new byte[4];
+        BinaryPrimitives.WriteUInt32LittleEndian(dpmMetadataOffsetBytes, dpmMetadataOffset);
+        _descriptorStream.Write(dpmMetadataOffsetBytes, 0, dpmMetadataOffsetBytes.Length);
+
+        // Write dpm block header
+        _descriptorStream.Write(oneUint32, 0, oneUint32.Length);
+
+        var dpmBlockHdr = new DPM
+        {
+            dpmStartSector     = HeldDpmStartSector,
+            dpmResolution      = HeldDpmResolution,
+            numberOfDpmEntries = HeldNumberOfDpmEntries,
+        };
+
+        var  block    = new byte[Marshal.SizeOf<DPM>()];
+        nint blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DPM>());
+        System.Runtime.InteropServices.Marshal.StructureToPtr(dpmBlockHdr, blockPtr, true);
+        System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+        System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
+        _descriptorStream.Write(block, 0, block.Length);
+
+        foreach(ulong dpmValue in HeldDpm)
+        {
+            uint   writeDpmValue          = (uint)(dpmValue / 10000);
+            byte[] dpmValueBytes = new byte[4];
+            BinaryPrimitives.WriteUInt32LittleEndian(dpmValueBytes, writeDpmValue);
+            _descriptorStream.Write(dpmValueBytes, 0, dpmValueBytes.Length);
+        }
 
         return true;
     }
@@ -473,6 +525,11 @@ public sealed partial class Alcohol120
         return true;
     }
 
+    public uint    HeldDpmStartSector     { get; set; }
+    public uint    HeldDpmResolution      { get; set; }
+    public uint    HeldNumberOfDpmEntries { get; set; }
+    public ulong[] HeldDpm                { get; set; }
+
     /// <inheritdoc />
     public bool SetTracks(List<CommonTypes.Structs.Track> tracks)
     {
@@ -561,6 +618,7 @@ public sealed partial class Alcohol120
             sessions         = sessions,
             structuresOffset = (uint)(_pfi == null ? 0 : 96),
             sessionOffset    = (uint)(_pfi == null ? 96 : 4196),
+            discMetadataOffset = 0, // The disc metadata offset, should there be one, is directly after the end of the footer, the address of which isn't determined until later.
             unknown1         = new ushort[2],
             unknown2         = new uint[2],
             unknown3         = new uint[6],
@@ -956,6 +1014,12 @@ public sealed partial class Alcohol120
 
         byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
 
+        if(HeldDpm.Length > 0)
+        {
+            _dpmPresent = true;
+            header.discMetadataOffset = _alcFooter.filenameOffset + (uint)filename.Length + 2; // 2 added because of the eventually written null termination.
+        }
+
         // Write header
         _descriptorStream.Seek(0, SeekOrigin.Begin);
         var  block    = new byte[Marshal.SizeOf<Header>()];
@@ -1071,6 +1135,10 @@ public sealed partial class Alcohol120
 
         // Write filename null termination
         _descriptorStream.Write([0, 0], 0, 2);
+
+        // Write DPM
+        if(_dpmPresent)
+            WriteDPM();
 
         _descriptorStream.Flush();
         _descriptorStream.Close();

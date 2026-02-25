@@ -83,8 +83,8 @@ public sealed partial class Alcohol120
         public uint structuresOffset;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public uint[] unknown4;
-        public          uint sessionOffset;
-        public readonly uint dpmOffset;
+        public uint sessionOffset;
+        public uint discMetadataOffset;
     }
 
 #endregion

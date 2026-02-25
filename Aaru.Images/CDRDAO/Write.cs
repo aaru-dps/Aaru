@@ -157,6 +157,14 @@ public sealed partial class Cdrdao
     }
 
     /// <inheritdoc />
+    public bool WriteDPM()
+    {
+        ErrorMessage = Localization.Unsupported_feature;
+
+        return false;
+    }
+
+    /// <inheritdoc />
     public bool WriteSector(byte[] data, ulong sectorAddress, bool negative, SectorStatus sectorStatus)
     {
         if(!IsWriting)

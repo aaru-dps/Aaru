@@ -66,6 +66,14 @@ public sealed partial class AaruFormat
 #region IWritableOpticalImage Members
 
     /// <inheritdoc />
+    public bool WriteDPM()
+    {
+        ErrorMessage = Localization.Unsupported_feature;
+
+        return false;
+    }
+
+    /// <inheritdoc />
     public bool WriteSector(byte[] data, ulong sectorAddress, bool negative, SectorStatus sectorStatus)
     {
         Status res = aaruf_write_sector(_context, sectorAddress, negative, data, sectorStatus, (uint)data.Length);
