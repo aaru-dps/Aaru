@@ -91,30 +91,36 @@ public sealed partial class Alcohol120
             AaruLogging.Debug(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
 
         AaruLogging.Debug(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
-        AaruLogging.Debug(MODULE_NAME, "header.dpmOffset = {0}",     _header.dpmOffset);
+        AaruLogging.Debug(MODULE_NAME, "header.discMetadataOffset = {0}",     _header.discMetadataOffset);
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
 
         // DPM Reading Start
-        if(_header.dpmOffset != 0)
+        if(_header.discMetadataOffset != 0)
         {
-            stream.Seek(_header.dpmOffset, SeekOrigin.Begin);
+            stream.Seek(_header.discMetadataOffset, SeekOrigin.Begin);
             var blocks = new byte[4];
             stream.EnsureRead(blocks, 0, 4);
 
-            // Currently unaware of samples with more than one block, or what that would look like.
-            _alcBlockCount = Marshal.SpanToStructureLittleEndian<uint>(blocks);
-            var startA = new byte[4];
-            stream.EnsureRead(startA, 0, 4);
-            _alcBlockStartAddress = Marshal.SpanToStructureLittleEndian<uint>(startA);
-            stream.Seek(_alcBlockStartAddress, SeekOrigin.Begin);
-            var dpmPresentBytes = new byte[4];
-            stream.EnsureRead(dpmPresentBytes, 0, 4);
-            uint dpmPresentUint = Marshal.SpanToStructureLittleEndian<uint>(dpmPresentBytes);
+            // Only the DPM metadata block is currently read, as it's currently unknown what any of the other blocks represent.
+            _alcBlockCount        = Marshal.SpanToStructureLittleEndian<uint>(blocks);
+            _alcBlockStartAddress = new uint[_alcBlockCount];
+
+            for(int i = 0; i < _alcBlockCount; i++)
+            {
+                var startA = new byte[4];
+                stream.EnsureRead(startA, 0, 4);
+                _alcBlockStartAddress[i] = Marshal.SpanToStructureLittleEndian<uint>(startA);
+            }
+
+            stream.Seek(_alcBlockStartAddress[0], SeekOrigin.Begin);
+            var firstBlockTypeBytes = new byte[4];
+            stream.EnsureRead(firstBlockTypeBytes, 0, 4);
+            uint firstBlockType = Marshal.SpanToStructureLittleEndian<uint>(firstBlockTypeBytes);
 
             // This value indicates what kind of block it is. DPM is 01. Other, non-dpm block types have
             // been observed, but their purpose is currently unknown
-            if(dpmPresentUint == 1)
+            if(firstBlockType == 1)
             {
                 _dpmPresent = true;
                 var dpmBlockHdr = new byte[12];
@@ -125,6 +131,7 @@ public sealed partial class Alcohol120
                 ReadOnlySpan<byte> span = dpmBytes;
                 _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
                 _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
+                //_imageInfo.ReadableMediaTags.Add(MediaTagType.DPM);
             }
             else
             {
@@ -386,9 +393,9 @@ public sealed partial class Alcohol120
         {
             stream.Seek(_alcFooter.filenameOffset, SeekOrigin.Begin);
 
-            byte[] filename = _header.dpmOffset == 0
+            byte[] filename = _header.discMetadataOffset == 0
                                   ? new byte[stream.Length     - stream.Position]
-                                  : new byte[_header.dpmOffset - stream.Position];
+                                  : new byte[_header.discMetadataOffset - stream.Position];
 
             stream.EnsureRead(filename, 0, filename.Length);
 
