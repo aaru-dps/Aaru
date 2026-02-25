@@ -1616,4 +1616,9 @@ public sealed partial class Cdrdao
     public List<Track> GetSessionTracks(ushort session) => session == 1 ? Tracks : null;
 
 #endregion
+
+    public uint    HeldDpmStartSector     { get; set; }
+    public uint    HeldDpmResolution      { get; set; }
+    public uint    HeldNumberOfDpmEntries { get; set; }
+    public ulong[] HeldDpm                { get; set; }
 }

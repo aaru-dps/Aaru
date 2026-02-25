@@ -390,7 +390,10 @@ public enum MediaTagType
     DVD_PFI_2ndLayer = 74,
     /// <summary>Floppy write protection status</summary>
     [Description("Write protection status")]
-    Floppy_WriteProtection = 75
+    Floppy_WriteProtection = 75,
+    /// <summary>DPM</summary>
+    [Description("DPM")]
+    DPM = 76
 }
 
 /// <summary>Enumeration of media types defined in metadata</summary>
