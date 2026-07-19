@@ -141,6 +141,7 @@ public partial class Convert
                 case SectorTagType.DvdSectorIed:
                 case SectorTagType.DvdSectorInformation:
                 case SectorTagType.DvdSectorNumber:
+                case SectorTagType.BluRaySectorEdc:
                     // These tags are inline in long sector
                     continue;
                 case SectorTagType.CdTrackFlags:
@@ -341,6 +342,7 @@ public partial class Convert
                 case SectorTagType.DvdSectorIed:
                 case SectorTagType.DvdSectorInformation:
                 case SectorTagType.DvdSectorNumber:
+                case SectorTagType.BluRaySectorEdc:
                     // These tags are inline in long sector
                     continue;
                 case SectorTagType.CdTrackFlags:
