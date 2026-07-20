@@ -89,6 +89,17 @@ sealed class ConfigureCommand : Command<ConfigureCommand.Settings>
 
 #endregion Device reports
 
+#region Crash reports
+
+        AaruLogging.WriteLine();
+
+        AaruLogging.WriteLine(UI.Configure_crash_report_disclaimer);
+
+        Aaru.Settings.Settings.Current.ShareCrashReports =
+            AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_crash_reports_with_us_Q}[/]");
+
+#endregion Crash reports
+
 #region Statistics
 
         AaruLogging.WriteLine();

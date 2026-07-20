@@ -64,6 +64,8 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     bool _saveStatsChecked;
     [ObservableProperty]
+    bool _shareCrashReportsChecked;
+    [ObservableProperty]
     bool _shareReportsChecked;
     [ObservableProperty]
     bool _shareStatsChecked;
@@ -78,6 +80,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
         GdprVisible                = gdprChange;
         SaveReportsGloballyChecked = Settings.Settings.Current.SaveReportsGlobally;
         ShareReportsChecked        = Settings.Settings.Current.ShareReports;
+        ShareCrashReportsChecked   = Settings.Settings.Current.ShareCrashReports;
 
         if(Settings.Settings.Current.Stats != null)
         {
@@ -110,6 +113,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     {
         Settings.Settings.Current.SaveReportsGlobally = SaveReportsGloballyChecked;
         Settings.Settings.Current.ShareReports        = ShareReportsChecked;
+        Settings.Settings.Current.ShareCrashReports   = ShareCrashReportsChecked;
 
         if(SaveStatsChecked)
         {

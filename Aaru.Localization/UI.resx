@@ -1702,12 +1702,21 @@ where Aaru is being run from.</value>
     <data name="Configure_Do_you_want_to_save_device_reports_in_shared_folder_of_your_computer_Q" xml:space="preserve">
     <value>Do you want to save device reports in shared folder of your computer?</value>
   </data>
+    <data name="Configure_crash_report_disclaimer" xml:space="preserve">
+    <value>Crash reports are sent to our own server so we can find and fix the errors you run into. A report
+contains the error and its stack trace, your operating system, the Aaru version, the command line you ran,
+and an installation identifier that stays the same between runs. On a disc imaging tool a command line
+routinely names device and output paths.</value>
+  </data>
     <data name="Configure_share_report_disclaimer" xml:space="preserve">
     <value>Sharing a report with us will send it to our server, that's in the european union territory, where it
 will be manually analyzed by an european union citizen to remove any trace of personal identification
 from it. Once that is done, it will be shared in our stats website, https://www.aaru.app
 These report will be used to improve Aaru support, and in some cases, to provide emulation of the
 devices to other open-source projects. In any case, no information linking the report to you will be stored.</value>
+  </data>
+    <data name="Do_you_want_to_share_crash_reports_with_us_Q" xml:space="preserve">
+    <value>Do you want to share crash reports with us?</value>
   </data>
     <data name="Do_you_want_to_share_your_device_reports_with_us_Q" xml:space="preserve">
     <value>Do you want to share your device reports with us?</value>
@@ -1930,6 +1939,9 @@ Testers:
   </data>
     <data name="Save_device_reports_in_shared_folder_of_your_computer_Q" xml:space="preserve">
     <value>Save device reports in shared folder of your computer?</value>
+  </data>
+    <data name="Share_crash_reports_with_us_Q" xml:space="preserve">
+    <value>Share crash reports with us</value>
   </data>
     <data name="Share_your_device_reports_with_us_Q" xml:space="preserve">
     <value>Share your device reports with us?</value>

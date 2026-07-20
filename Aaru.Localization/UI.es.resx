@@ -475,6 +475,9 @@
     <data name="Configure_enable_decryption_disclaimer" xml:space="preserve">
     <value>¿Desea activar la desencriptación de los medios protegidos contra copia (o DRM)? Por ejemplo la encriptación CSS de un DVD de video. Consulte sus leyes locales antes de activarla, ya que es ilegan en algunos países, o legal sólo en determinadas circunstancias.</value>
   </data>
+    <data name="Configure_crash_report_disclaimer" xml:space="preserve">
+    <value>Los informes de fallos se envían a nuestro propio servidor para que podamos encontrar y corregir los errores con los que se encuentre. Un informe contiene el error y su traza de pila, su sistema operativo, la versión de Aaru, la línea de órdenes que ejecutó y un identificador de instalación que permanece igual entre ejecuciones. En una herramienta de volcado de discos, una línea de órdenes nombra habitualmente rutas de dispositivos y de salida.</value>
+  </data>
     <data name="Configure_share_report_disclaimer" xml:space="preserve">
     <value>Compartir un reporte lo enviará a nuestro servidor, localizado en la Unión Europa, dónde será analizado manualmente por un ciudadano europeo para eliminar cualquier rastro de identificación personal del mismo. Una vez hecho, se compartirá en nuestra web de estadísticas: https://www.aaru.app Este reporte se usará para mejorar el soporte de Aaru, y en algunos casos, para proveer emulación de los dispositivos a otros projectos de código abierto. En cualquier caso, no se almacenará ninguna información que le vincule con el reporte.</value>
   </data>
@@ -885,6 +888,9 @@
   </data>
     <data name="Do_you_want_to_save_stats_about_your_Aaru_usage_Q" xml:space="preserve">
     <value>¿Desea guardar estadísticas acerca de su uso de Aaru?</value>
+  </data>
+    <data name="Do_you_want_to_share_crash_reports_with_us_Q" xml:space="preserve">
+    <value>¿Desea compartir los informes de fallos con nosotres?</value>
   </data>
     <data name="Do_you_want_to_share_your_device_reports_with_us_Q" xml:space="preserve">
     <value>¿Desea compartir sus reportes de dispositivo con nosotres?</value>
@@ -2065,6 +2071,9 @@
   </data>
     <data name="Setting_tracks_list" xml:space="preserve">
     <value>Estableciendo lista de pistas</value>
+  </data>
+    <data name="Share_crash_reports_with_us_Q" xml:space="preserve">
+    <value>Compartir los informes de fallos con nosotres</value>
   </data>
     <data name="Share_your_device_reports_with_us_Q" xml:space="preserve">
     <value>¿Compartir sus reportes de dispositivo con nosotres?</value>
