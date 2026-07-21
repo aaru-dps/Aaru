@@ -67,7 +67,6 @@ public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
     bool SetTracks(List<Track> tracks);
 
     /// <summary>Writes DPM data to the image</summary>
-    /// <param name="dpm">The array of dpm entry values.</param>
     /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
     bool WriteDPM();
 }
