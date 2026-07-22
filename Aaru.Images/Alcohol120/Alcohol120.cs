@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2026 Natalia Portillo
+// Copyright © 2011-2025 Natalia Portillo
 // ****************************************************************************/
 
 using System.Collections.Generic;
@@ -51,6 +51,11 @@ public sealed partial class Alcohol120 : IWritableOpticalImage
     byte[]                                  _bca;
     FileStream                              _descriptorStream;
     byte[]                                  _dmi;
+    uint                                    _alcBlockCount;
+    uint[]                                  _alcBlockStartAddress;
+    uint[]                                  _dpm;
+    DPM                                     _dpmBlockHeader;
+    bool                                    _dpmPresent;
     byte[]                                  _fullToc;
     Header                                  _header;
     ImageInfo                               _imageInfo;

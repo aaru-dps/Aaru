@@ -153,10 +153,7 @@ public enum SectorTagType
     AppleProfileTag = 20,
     /// <summary>Priam Data Tower sector tag, 24 bytes</summary>
     [Description("Priam Data Tower sector tag")]
-    PriamDataTowerTag = 21,
-    /// <summary>Blu-ray sector EDC, 4 bytes</summary>
-    [Description("Blu-ray sector EDC")]
-    BluRaySectorEdc = 22
+    PriamDataTowerTag = 21
 }
 
 /// <summary>Metadata present for each media.</summary>
@@ -394,39 +391,9 @@ public enum MediaTagType
     /// <summary>Floppy write protection status</summary>
     [Description("Write protection status")]
     Floppy_WriteProtection = 75,
-    /// <summary>Nintendo Wii U Disc Key</summary>
-    [Description("Nintendo Wii U Disc Key")]
-    WiiUDiscKey = 76,
-    /// <summary>PS3 derived disc key (16 bytes)</summary>
-    [Description("PS3 derived disc key")]
-    PS3_DiscKey = 77,
-    /// <summary>PS3 data 1 key (16 bytes, from disc)</summary>
-    [Description("PS3 data1 key")]
-    PS3_Data1 = 78,
-    /// <summary>PS3 data 2 key (16 bytes, from disc)</summary>
-    [Description("PS3 data2 key")]
-    PS3_Data2 = 79,
-    /// <summary>PS3 PIC data (115 bytes, from disc lead-in)</summary>
-    [Description("PS3 PIC data")]
-    PS3_PIC = 80,
-    /// <summary>PS3 encryption region map (serialized from sector 0)</summary>
-    [Description("PS3 encryption region map")]
-    PS3_EncryptionMap = 81,
-    ///<summary>Nintendo Wii U partition-to-key mapping with regions</summary>
-    [Description("Nintendo Wii U partition-to-key mapping with regions")]
-    WiiUPartitionKeyMap = 82,
-    ///<summary>Nintendo Wii partition-to-key mapping with regions</summary>
-    [Description("Nintendo Wii partition-to-key mapping with regions")]
-    WiiPartitionKeyMap = 83,
-    ///<summary>Nintendo GameCube/Wii junk region map with LFG seeds</summary>
-    [Description("Nintendo GameCube/Wii junk region map with LFG seeds")]
-    NgcwJunkMap = 84,
-    /// <summary>AACS Media Key</summary>
-    [Description("AACS Media Key")]
-    AacsMediaKey = 85,
-    /// <summary>AACS Volume Unique Key</summary>
-    [Description("AACS Volume Unique Key")]
-    AacsVolumeUniqueKey = 86
+    /// <summary>DPM</summary>
+    [Description("DPM")]
+    DPM = 76
 }
 
 /// <summary>Enumeration of media types defined in metadata</summary>

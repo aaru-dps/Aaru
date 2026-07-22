@@ -36,6 +36,18 @@ namespace Aaru.Images;
 
 public sealed partial class Alcohol120
 {
+#region Nested type: DPM
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    struct DPM
+    {
+        public          uint dpmStartSector;
+        public          uint dpmResolution;
+        public          uint numberOfDpmEntries;
+    }
+
+#endregion
+
 #region Nested type: Footer
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -71,8 +83,8 @@ public sealed partial class Alcohol120
         public uint structuresOffset;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public uint[] unknown4;
-        public          uint sessionOffset;
-        public readonly uint dpmOffset;
+        public uint sessionOffset;
+        public uint discMetadataOffset;
     }
 
 #endregion
