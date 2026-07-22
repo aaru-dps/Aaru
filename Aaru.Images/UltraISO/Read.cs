@@ -193,6 +193,25 @@ public sealed partial class UltraISO
 #region IOpticalMediaImage Members
 
     /// <inheritdoc />
+    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    {
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
+        numberOfDpmEntries = 0;
+        dpm                = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
+    {
+        dpm = null;
+
+        return ErrorNumber.NotSupported;
+    }
+
+    /// <inheritdoc />
     public ErrorNumber ReadSector(ulong sectorAddress, uint track, out byte[] buffer, out SectorStatus sectorStatus)
     {
         buffer       = null;
