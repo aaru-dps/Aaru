@@ -1143,10 +1143,6 @@ public sealed partial class Alcohol120
         if(_dpmPresent)
             WriteDPM();
 
-        // Write DPM
-        if(_dpmPresent)
-            WriteDPM();
-
         _descriptorStream.Flush();
         _descriptorStream.Close();
         _imageStream.Flush();

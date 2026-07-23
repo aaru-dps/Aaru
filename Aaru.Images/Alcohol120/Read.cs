@@ -793,7 +793,7 @@ public sealed partial class Alcohol120
 
             for(uint i = 0; i < numberOfDpmEntries; i++)
             {
-                dpm[i] = _dpm[i] * 10000;
+                dpm[i] = (ulong)_dpm[i] * (ulong)10000;
             }
 
             return ErrorNumber.NoError;
