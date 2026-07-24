@@ -39,7 +39,6 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Decoders.CD;
 using Aaru.Devices;
 using Aaru.Logging;
-using Track = Aaru.CommonTypes.Structs.Track;
 
 namespace Aaru.Core.Devices.Dumping;
 
@@ -109,7 +108,7 @@ partial class Dump
         }
 
         // Use a test sector well inside the first track, like the BCD subchannel probe does.
-        var testLba = (firstLba / 75 + 1) * 75 + 35;
+        uint testLba = (firstLba / 75 + 1) * 75 + 35;
 
         bool sense = _dev.ReadCd(out byte[] cmdBuf,
                                  out _,
@@ -142,13 +141,13 @@ partial class Dump
         const int specC2Offset  = (int)C2_DATA_SIZE;                 // 2352
         const int specSubOffset = (int)(C2_DATA_SIZE + C2_POINTERS); // 2646
         const int altSubOffset  = (int)C2_DATA_SIZE;                 // 2352
-        const int altC2Offset   = (int)(C2_DATA_SIZE + C2_POINTERS); // 2646
+        const int altC2Offset   = (int)(C2_DATA_SIZE + C2_SUB_SIZE); // 2448
 
         bool specValid = ValidateSubchannelQ(cmdBuf, specSubOffset);
         bool altValid  = ValidateSubchannelQ(cmdBuf, altSubOffset);
 
-        int c2Offset;
-        int subOffset;
+        int    c2Offset;
+        int    subOffset;
         string layout;
 
         switch(specValid)
@@ -184,8 +183,9 @@ partial class Dump
         var dirtyC2Bytes = 0;
 
         for(var b = 0; b < C2_POINTERS; b++)
-            if(cmdBuf[c2Offset + b] != 0)
-                dirtyC2Bytes++;
+        {
+            if(cmdBuf[c2Offset + b] != 0) dirtyC2Bytes++;
+        }
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.C2_secure_audio_enabled_layout_0, layout));
 
@@ -215,7 +215,7 @@ partial class Dump
     ///     Audio extents; only sectors inside them are flagged, since C2 is meaningless for data sectors. Pass
     ///     <c>null</c> when the whole buffer is known to be audio.
     /// </param>
-    void RepackAudioC2(ref byte[] cmdBuf, uint blocksToRead, uint blockSize, uint subSize, uint firstSectorToRead,
+    void RepackAudioC2(ref byte[]   cmdBuf, uint blocksToRead, uint blockSize, uint subSize, uint firstSectorToRead,
                        ExtentsULong audioExtents = null)
     {
         if(!_c2Supported || cmdBuf is null || cmdBuf.Length < blocksToRead * _c2BlockSize) return;
@@ -223,7 +223,7 @@ partial class Dump
         _c2SuspectAudio         ??= [];
         _resume.ConcealedBlocks ??= [];
 
-        int copySub = (int)Math.Min(subSize, C2_SUB_SIZE);
+        var copySub = (int)Math.Min(subSize, C2_SUB_SIZE);
 
         // Sectors read to fix a negative offset wrap around near uint.MaxValue; their LBAs are not meaningful, so the
         // data is still repacked but C2 flags are not attributed to a (wrong) sector number.
@@ -286,10 +286,10 @@ partial class Dump
         {
             if(_aborted) break;
 
-            byte[] merged         = null;                     // full sector, improved as clean bytes arrive
-            var    cleanValue     = new byte[C2_DATA_SIZE];   // last C2-clean value seen for each byte
-            var    haveClean      = new bool[C2_DATA_SIZE];   // a clean value has been observed for this byte
-            var    confirmed      = new bool[C2_DATA_SIZE];   // two agreeing clean reads seen for this byte
+            byte[] merged         = null;                   // full sector, improved as clean bytes arrive
+            var    cleanValue     = new byte[C2_DATA_SIZE]; // last C2-clean value seen for each byte
+            var    haveClean      = new bool[C2_DATA_SIZE]; // a clean value has been observed for this byte
+            var    confirmed      = new bool[C2_DATA_SIZE]; // two agreeing clean reads seen for this byte
             var    confirmedCount = 0;
             var    attemptsRun    = 0;
 
@@ -401,8 +401,8 @@ partial class Dump
     ///     aligned bytes the drive reported as C2-clean. The C2 mask is shifted through the same offset as the data.
     /// </summary>
     /// <returns><c>true</c> if the read succeeded and produced aligned data.</returns>
-    bool TryReadAudioC2Aligned(ulong badSector, int offsetBytes, int sectorsForOffset, MmcSubchannel supportedSubchannel,
-                               out byte[] aligned, out bool[] cleanMask)
+    bool TryReadAudioC2Aligned(ulong         badSector,           int        offsetBytes, int        sectorsForOffset,
+                               MmcSubchannel supportedSubchannel, out byte[] aligned,     out bool[] cleanMask)
     {
         aligned   = null;
         cleanMask = null;
@@ -428,7 +428,11 @@ partial class Dump
             offsetFix = offsetBytes < 0 ? (int)C2_DATA_SIZE * sectorsForOffset + offsetBytes : offsetBytes;
         }
 
-        if(!TryReadWindow(badSectorToReRead, sectorsToReRead, supportedSubchannel, out byte[] buf, out int stride,
+        if(!TryReadWindow(badSectorToReRead,
+                          sectorsToReRead,
+                          supportedSubchannel,
+                          out byte[] buf,
+                          out int stride,
                           out bool haveC2))
             return false;
 
@@ -442,7 +446,7 @@ partial class Dump
 
         for(var j = 0; j < (int)C2_DATA_SIZE; j++)
         {
-            int windowByte = offsetFix + j;                 // byte index within the concatenated window audio
+            int windowByte = offsetFix + j;                  // byte index within the concatenated window audio
             int s          = windowByte / (int)C2_DATA_SIZE; // which read sector it falls in
             int k          = windowByte % (int)C2_DATA_SIZE; // byte within that sector
 
@@ -456,7 +460,7 @@ partial class Dump
             // Wrong-order guesses are caught by the two-agreeing-reads rule: a mislabelled concealed byte won't agree.
             byte c2Byte = buf[s * stride + (int)C2_DATA_SIZE + (k >> 3)];
 
-            cleanMask[j] = (c2Byte & (0x80 >> (k & 7))) == 0;
+            cleanMask[j] = (c2Byte & 0x80 >> (k & 7)) == 0;
         }
 
         return true;
@@ -467,7 +471,7 @@ partial class Dump
     ///     always yields data. Order: cache-busting C2 read, plain C2 read, then a plain audio read (no C2) to at least
     ///     recover the samples. Reports the per-sector stride and whether C2 information is present.
     /// </summary>
-    bool TryReadWindow(uint lba, byte count, MmcSubchannel supportedSubchannel, out byte[] buf, out int stride,
+    bool TryReadWindow(uint     lba, byte count, MmcSubchannel supportedSubchannel, out byte[] buf, out int stride,
                        out bool haveC2)
     {
         buf    = null;
@@ -477,7 +481,10 @@ partial class Dump
         if(_omnidrive)
         {
             // Prefer a cache-busting (FUA) C2 read, then without FUA, so a drive that rejects FUA still gives C2.
-            foreach(bool fua in new[] { true, false })
+            foreach(bool fua in new[]
+                    {
+                        true, false
+                    })
             {
                 bool s = _dev.OmniDriveReadCdWithC2(out byte[] b, out _, lba, count, _dev.Timeout, out _, fua);
 
@@ -584,8 +591,9 @@ partial class Dump
         if(block.Length < baseOffset + (int)C2_POINTERS) return false;
 
         for(var b = 0; b < C2_POINTERS; b++)
-            if(block[baseOffset + b] != 0)
-                return true;
+        {
+            if(block[baseOffset + b] != 0) return true;
+        }
 
         return false;
     }
