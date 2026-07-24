@@ -3500,6 +3500,15 @@ Do you want to continue?</value>
     <data name="Ignore_overflow_sectors" xml:space="preserve">
         <value>Ignore overflow sectors.</value>
     </data>
+    <data name="Ignore_sector_not_found" xml:space="preserve">
+        <value>Ignore sector not found errors, skipping the sector instead of stopping.</value>
+    </data>
+    <data name="Skipping_sector_0_not_found" xml:space="preserve">
+        <value>Sector {0} not found, skipping...</value>
+    </data>
+    <data name="Skipping_tag_0_for_sector_1_not_found" xml:space="preserve">
+        <value>Tag {0} for sector {1} not found, skipping...</value>
+    </data>
     <data name="Create_sidecar_block_size_help" xml:space="preserve">
         <value>Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.</value>
     </data>

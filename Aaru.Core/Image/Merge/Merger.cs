@@ -51,13 +51,16 @@ public sealed partial class Merger
     bool                       decrypt,
     bool                       ignoreNegativeSectors,
     bool                       ignoreOverflowSectors,
+    bool                       ignoreSectorNotFound,
     int                        errorRecovery
 )
 {
     const string            MODULE_NAME = "Image merger";
     bool                    _aborted;
     readonly PluginRegister _plugins = PluginRegister.Singleton;
-    byte[][]? _aacsDecryptedCpsUnitKeys;
+    byte[][]?               _aacsDecryptedCpsUnitKeys;
+
+    static bool IsSkippableNotFound(ErrorNumber errno) => errno is ErrorNumber.SectorNotFound or ErrorNumber.NoData;
 
     public ErrorNumber Start()
     {

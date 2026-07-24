@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -180,14 +179,15 @@ public sealed partial class Merger
         {
             if(IsHdDvdAacsMedia(inputOptical.Info.MediaType))
             {
-                _aacsDecryptedCpsUnitKeys = AacsKeyResolver.TryGetDecryptedCpsUnitKeysHddvd(inputOptical,
-                    _plugins,
-                    Encoding.UTF8,
-                    out string hddvdErr);
+                _aacsDecryptedCpsUnitKeys =
+                    AacsKeyResolver.TryGetDecryptedCpsUnitKeysHddvd(inputOptical,
+                                                                    _plugins,
+                                                                    Encoding.UTF8,
+                                                                    out string hddvdErr);
 
                 if(_aacsDecryptedCpsUnitKeys == null)
                 {
-                    StoppingErrorMessage?.Invoke(hddvdErr ?? Aaru.Localization.Core.Aacs_hddvd_missing_unit_keys);
+                    StoppingErrorMessage?.Invoke(hddvdErr ?? Localization.Core.Aacs_hddvd_missing_unit_keys);
 
                     return ErrorNumber.NoData;
                 }
@@ -204,7 +204,7 @@ public sealed partial class Merger
 
                 if(_aacsDecryptedCpsUnitKeys == null)
                 {
-                    StoppingErrorMessage?.Invoke(aacsErr ?? Aaru.Localization.Core.Aacs_missing_unit_keys);
+                    StoppingErrorMessage?.Invoke(aacsErr ?? Localization.Core.Aacs_missing_unit_keys);
 
                     return ErrorNumber.NoData;
                 }
@@ -280,6 +280,15 @@ public sealed partial class Merger
                                                                       sectorsToDo,
                                                                       sectorStatusArray);
                     }
+                    else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                    {
+                        ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found,
+                                                           doneSectors + track.StartSector));
+
+                        doneSectors += sectorsToDo;
+
+                        continue;
+                    }
                     else
                     {
                         StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -322,6 +331,15 @@ public sealed partial class Merger
                                                                   sectorsToDo,
                                                                   sectorStatusArray);
                     }
+                    else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                    {
+                        ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found,
+                                                           doneSectors + track.StartSector));
+
+                        doneSectors += sectorsToDo;
+
+                        continue;
+                    }
                     else
                     {
                         StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -363,7 +381,7 @@ public sealed partial class Merger
 
         InitProgress?.Invoke();
         int howManySectorsToCopy = sectorsToCopy.Count(t => t < inputOptical.Info.Sectors);
-        var    howManySectorsCopied = 0;
+        var howManySectorsCopied = 0;
 
         foreach(ulong sectorAddress in sectorsToCopy.Where(t => t < inputOptical.Info.Sectors)
                                                     .TakeWhile(_ => !_aborted))
@@ -385,6 +403,13 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputOptical.WriteSectorLong(sector, sectorAddress, false, sectorStatus);
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    howManySectorsCopied++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -408,6 +433,13 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputOptical.WriteSector(sector, sectorAddress, false, sectorStatus);
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    howManySectorsCopied++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -580,6 +612,16 @@ public sealed partial class Merger
                                                                       tag);
                             }
                         }
+                        else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                        {
+                            ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                               tag,
+                                                               doneSectors + track.StartSector));
+
+                            doneSectors += sectorsToDo;
+
+                            continue;
+                        }
                         else
                         {
                             StoppingErrorMessage
@@ -634,6 +676,16 @@ public sealed partial class Merger
                                                                        sectorsToDo,
                                                                        tag);
                             }
+                        }
+                        else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                        {
+                            ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                               tag,
+                                                               doneSectors + track.StartSector));
+
+                            doneSectors += sectorsToDo;
+
+                            continue;
                         }
                         else
                         {
@@ -753,6 +805,13 @@ public sealed partial class Merger
                     else
                         result = outputOptical.WriteSectorTag(sector, sectorAddress, false, tag);
                 }
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, sectorAddress));
+                    currentSectorIndex++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_tag_for_sector_1_not_continuing,
@@ -780,21 +839,19 @@ public sealed partial class Merger
         return ErrorNumber.NoError;
     }
 
-    static bool IsBluRayAacsMedia(MediaType mediaType) =>
-        mediaType is MediaType.BDROM
-                  or MediaType.BDR
-                  or MediaType.BDRE
-                  or MediaType.BDRXL
-                  or MediaType.BDREXL
-                  or MediaType.UHDBD;
+    static bool IsBluRayAacsMedia(MediaType mediaType) => mediaType is MediaType.BDROM
+                                                                    or MediaType.BDR
+                                                                    or MediaType.BDRE
+                                                                    or MediaType.BDRXL
+                                                                    or MediaType.BDREXL
+                                                                    or MediaType.UHDBD;
 
-    static bool IsHdDvdAacsMedia(MediaType mediaType) =>
-        mediaType is MediaType.HDDVDROM
-                  or MediaType.HDDVDRAM
-                  or MediaType.HDDVDR
-                  or MediaType.HDDVDRW
-                  or MediaType.HDDVDRDL
-                  or MediaType.HDDVDRWDL;
+    static bool IsHdDvdAacsMedia(MediaType mediaType) => mediaType is MediaType.HDDVDROM
+                                                                   or MediaType.HDDVDRAM
+                                                                   or MediaType.HDDVDR
+                                                                   or MediaType.HDDVDRW
+                                                                   or MediaType.HDDVDRDL
+                                                                   or MediaType.HDDVDRWDL;
 
     private static bool IsCompactDiscMedia(MediaType mediaType) =>
 

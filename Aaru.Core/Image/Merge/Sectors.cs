@@ -58,6 +58,13 @@ public sealed partial class Merger
                                                                 sectorsToDo,
                                                                 sectorStatusArray);
                 }
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, doneSectors));
+                    doneSectors += sectorsToDo;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -82,6 +89,13 @@ public sealed partial class Merger
                     result = sectorsToDo == 1
                                  ? outputImage.WriteSector(sector, doneSectors, false, sectorStatus)
                                  : outputImage.WriteSectors(sector, doneSectors, false, sectorsToDo, sectorStatusArray);
+                }
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, doneSectors));
+                    doneSectors += sectorsToDo;
+
+                    continue;
                 }
                 else
                 {
@@ -163,6 +177,13 @@ public sealed partial class Merger
                                  ? outputImage.WriteSectorTag(sector, doneSectors, false, tag)
                                  : outputImage.WriteSectorsTag(sector, doneSectors, false, sectorsToDo, tag);
                 }
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, doneSectors));
+                    doneSectors += sectorsToDo;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -215,6 +236,13 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputImage.WriteSectorLong(sector, sectorAddress, false, sectorStatus);
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    doneSectors++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -230,6 +258,13 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputImage.WriteSector(sector, sectorAddress, false, sectorStatus);
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_sector_0_not_found, sectorAddress));
+                    doneSectors++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,
@@ -296,6 +331,13 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputImage.WriteSectorTag(sector, sectorAddress, false, tag);
+                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                {
+                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, sectorAddress));
+                    doneSectors++;
+
+                    continue;
+                }
                 else
                 {
                     StoppingErrorMessage?.Invoke(string.Format(UI.Error_0_reading_sector_1_not_continuing,

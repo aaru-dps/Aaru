@@ -6849,7 +6849,25 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Ignore_overflow_sectors", resourceCulture);
             }
         }
-        
+
+        public static string Ignore_sector_not_found {
+            get {
+                return ResourceManager.GetString("Ignore_sector_not_found", resourceCulture);
+            }
+        }
+
+        public static string Skipping_sector_0_not_found {
+            get {
+                return ResourceManager.GetString("Skipping_sector_0_not_found", resourceCulture);
+            }
+        }
+
+        public static string Skipping_tag_0_for_sector_1_not_found {
+            get {
+                return ResourceManager.GetString("Skipping_tag_0_for_sector_1_not_found", resourceCulture);
+            }
+        }
+
         public static string Create_sidecar_block_size_help {
             get {
                 return ResourceManager.GetString("Create_sidecar_block_size_help", resourceCulture);

@@ -3422,6 +3422,15 @@ Probadores:
     <data name="Ignore_overflow_sectors" xml:space="preserve">
         <value>Ignorar sectores de sobrecarga.</value>
     </data>
+    <data name="Ignore_sector_not_found" xml:space="preserve">
+        <value>Ignorar errores de sector no encontrado, omitiendo el sector en lugar de detenerse.</value>
+    </data>
+    <data name="Skipping_sector_0_not_found" xml:space="preserve">
+        <value>Sector {0} no encontrado, omitiendo...</value>
+    </data>
+    <data name="Skipping_tag_0_for_sector_1_not_found" xml:space="preserve">
+        <value>Etiqueta {0} del sector {1} no encontrada, omitiendo...</value>
+    </data>
     <data name="Create_sidecar_block_size_help" xml:space="preserve">
         <value>Sólo usado en cintas, indica el tamaño del bloque. Los archivos en la carpeta cuyo tamaño no sea un múltiplo de este valor simplemente serán ignorados.</value>
     </data>

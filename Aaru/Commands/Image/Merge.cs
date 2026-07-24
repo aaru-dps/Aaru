@@ -73,6 +73,7 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
                                 settings.Decrypt,
                                 settings.IgnoreNegativeSectors,
                                 settings.IgnoreOverflowSectors,
+                                settings.IgnoreSectorNotFound,
                                 settings.ErrorRecovery);
 
         ErrorNumber errno = ErrorNumber.NoError;
@@ -189,6 +190,7 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--sectors-file={0}", Markup.Escape(settings.SectorsFile ?? ""));
         AaruLogging.Debug(MODULE_NAME, "--ignore-negative-sectors={0}", settings.IgnoreNegativeSectors);
         AaruLogging.Debug(MODULE_NAME, "--ignore-overflow-sectors={0}", settings.IgnoreOverflowSectors);
+        AaruLogging.Debug(MODULE_NAME, "--ignore-sector-not-found={0}", settings.IgnoreSectorNotFound);
         AaruLogging.Debug(MODULE_NAME, "--error-recovery={0}", settings.ErrorRecovery);
 
         AaruLogging.Debug(MODULE_NAME, UI.Parsed_options);
@@ -328,6 +330,10 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
         [DefaultValue(false)]
         [CommandOption("--ignore-overflow-sectors")]
         public bool IgnoreOverflowSectors { get; init; }
+        [LocalizedDescription(nameof(UI.Ignore_sector_not_found))]
+        [DefaultValue(false)]
+        [CommandOption("--ignore-sector-not-found")]
+        public bool IgnoreSectorNotFound { get; init; }
         [LocalizedDescription(nameof(UI.Add_error_recovery))]
         [DefaultValue(0)]
         [CommandOption("--error-recovery")]
