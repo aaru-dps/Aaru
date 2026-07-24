@@ -614,11 +614,11 @@ sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
         string directoryName            = Path.GetDirectoryName(imagePath);
         string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imagePath);
 
-        if(!string.IsNullOrWhiteSpace(directoryName) && !string.IsNullOrWhiteSpace(fileNameWithoutExtension))
-        {
-            candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.json"));
-            candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.xml"));
-        }
+        if(string.IsNullOrWhiteSpace(fileNameWithoutExtension))
+            return candidates.Distinct().FirstOrDefault(File.Exists);
+
+        candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.json"));
+        candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.xml"));
 
         return candidates.Distinct().FirstOrDefault(File.Exists);
     }
