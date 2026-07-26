@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
 using System.Xml.Serialization;
 using Aaru.CommonTypes;
@@ -1217,6 +1218,8 @@ public sealed partial class ZZZRawImage
                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdTrackFlags))
                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
 
+                _compactDisc = true;
+
                 goto case MediaType.BDRE;
             case MediaType.BDRE:
             case MediaType.BDROM:
@@ -1319,8 +1322,6 @@ public sealed partial class ZZZRawImage
             if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.DvdSectorEdc))
                 _imageInfo.ReadableSectorTags.Add(SectorTagType.DvdSectorEdc);
         }
-
-        if(!_rawCompactDisc && !_toastXa) return ErrorNumber.NoError;
 
         if(_hasSubchannel)
         {
@@ -1810,7 +1811,7 @@ public sealed partial class ZZZRawImage
 
         if(negative) return ErrorNumber.NotSupported;
 
-        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc && !_toastXa && !_rawDvd)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc && !_toastXa && !_rawDvd && !_compactDisc)
             return ErrorNumber.NotSupported;
 
         if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
@@ -1836,7 +1837,23 @@ public sealed partial class ZZZRawImage
 
         br.BaseStream.Seek((long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
-        if(_toastXa)
+        if(_compactDisc)
+        {
+            if(_imageInfo.SectorSize != 2048) return ErrorNumber.NotSupported;
+
+            buffer = new byte[2352 * length];
+
+            for(var i = 0; i < length; i++)
+            {
+                var fullSector = new byte[2352];
+                stream.EnsureRead(fullSector, 16, 2048);
+                SectorBuilder sb = new();
+                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + length));
+                sb.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                Array.Copy(fullSector, 0, buffer, i * 2352, 2352);
+            }
+        }
+        else if(_toastXa)
         {
             buffer = new byte[2352 * length];
 

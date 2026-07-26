@@ -59,6 +59,7 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     IFilter                          _rawImageFilter;
     bool                             _toastXa;
     FileStream                       _writingStream;
+    bool                             _compactDisc;
 
     /// <summary>Implements reading and writing raw (sector by sector) images</summary>
     public ZZZRawImage() => _imageInfo = new ImageInfo
