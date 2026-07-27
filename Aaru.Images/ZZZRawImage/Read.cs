@@ -1843,28 +1843,28 @@ public sealed partial class ZZZRawImage
 
             buffer = new byte[2352 * length];
 
-            for(var i = 0; i < length; i++)
+            for(ulong i = 0; i < length; i++)
             {
                 var fullSector = new byte[2352];
                 stream.EnsureRead(fullSector, 16, 2048);
                 SectorBuilder sb = new();
-                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + length));
+                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
                 sb.ReconstructEcc(ref fullSector, TrackType.CdMode1);
-                Array.Copy(fullSector, 0, buffer, i * 2352, 2352);
+                Array.Copy(fullSector, 0, buffer, (int)i * 2352, 2352);
             }
         }
         else if(_toastXa)
         {
             buffer = new byte[2352 * length];
 
-            for(var i = 0; i < length; i++)
+            for(ulong i = 0; i < length; i++)
             {
                 var fullSector = new byte[2352];
                 stream.EnsureRead(fullSector, 16, (int)sectorSize);
                 SectorBuilder sb = new();
-                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + length));
+                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + i));
                 sb.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
-                Array.Copy(fullSector, 0, buffer, i * 2352, 2352);
+                Array.Copy(fullSector, 0, buffer, (int)i * 2352, 2352);
             }
         }
         else if(_rawDvd)
