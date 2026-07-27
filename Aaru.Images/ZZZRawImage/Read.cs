@@ -1826,6 +1826,8 @@ public sealed partial class ZZZRawImage
 
         if(_rawDvd) sectorSize = 2064u;
 
+        if(_compactDisc) sectorSize = 2048u;
+
         uint sectorSkip = 0;
 
         if(_hasSubchannel) sectorSkip += 96;
