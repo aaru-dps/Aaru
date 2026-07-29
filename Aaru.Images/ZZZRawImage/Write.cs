@@ -82,7 +82,7 @@ public sealed partial class ZZZRawImage
             case ".16kn" when sectorSize != 16384:
             case ".32kn" when sectorSize != 32768:
             case ".64kn" when sectorSize != 65536:
-            case ".512" when sectorSize  != 515:
+            case ".512" when sectorSize  != 512:
             case ".512e" when sectorSize != 512:
             case ".128" when sectorSize  != 128:
             case ".256" when sectorSize  != 256:
