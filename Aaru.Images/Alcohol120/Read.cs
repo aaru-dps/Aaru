@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -42,6 +43,7 @@ using Aaru.Decoders.DVD;
 using Aaru.Helpers;
 using Aaru.Logging;
 using DMI = Aaru.Decoders.Xbox.DMI;
+using Marshal = Aaru.Helpers.Marshal;
 using Sector = Aaru.Decoders.CD.Sector;
 
 namespace Aaru.Images;
@@ -89,9 +91,59 @@ public sealed partial class Alcohol120
             AaruLogging.Debug(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
 
         AaruLogging.Debug(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
-        AaruLogging.Debug(MODULE_NAME, "header.dpmOffset = {0}",     _header.dpmOffset);
+        AaruLogging.Debug(MODULE_NAME, "header.discMetadataOffset = {0}",     _header.discMetadataOffset);
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
+
+        // DPM Reading Start
+        if(_header.discMetadataOffset != 0)
+        {
+            stream.Seek(_header.discMetadataOffset, SeekOrigin.Begin);
+            var blocks = new byte[4];
+            stream.EnsureRead(blocks, 0, 4);
+
+            // Only the DPM metadata block is currently read, as it's currently unknown what any of the other blocks represent.
+            _alcBlockCount        = Marshal.SpanToStructureLittleEndian<uint>(blocks);
+            _alcBlockStartAddress = new uint[_alcBlockCount];
+
+            for(int i = 0; i < _alcBlockCount; i++)
+            {
+                var startA = new byte[4];
+                stream.EnsureRead(startA, 0, 4);
+                _alcBlockStartAddress[i] = Marshal.SpanToStructureLittleEndian<uint>(startA);
+            }
+
+            stream.Seek(_alcBlockStartAddress[0], SeekOrigin.Begin);
+            var firstBlockTypeBytes = new byte[4];
+            stream.EnsureRead(firstBlockTypeBytes, 0, 4);
+            uint firstBlockType = Marshal.SpanToStructureLittleEndian<uint>(firstBlockTypeBytes);
+
+            // This value indicates what kind of block it is. DPM is 01. Other, non-dpm block types have
+            // been observed, but their purpose is currently unknown
+            if(firstBlockType == 1)
+            {
+                _dpmPresent = true;
+                var dpmBlockHdr = new byte[12];
+                stream.EnsureRead(dpmBlockHdr, 0, 12);
+                _dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
+                var dpmBytes        = new byte[_dpmBlockHeader.numberOfDpmEntries * 4];
+                stream.EnsureRead(dpmBytes, 0, dpmBytes.Length);
+                ReadOnlySpan<byte> span = dpmBytes;
+                _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
+                _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
+                //_imageInfo.ReadableMediaTags.Add(MediaTagType.DPM);
+            }
+            else
+            {
+                _dpmPresent = false;
+            }
+        }
+        else
+        {
+            _dpmPresent = false;
+        }
+
+        // DPM Reading End
 
         stream.Seek(_header.sessionOffset, SeekOrigin.Begin);
         _alcSessions = new Dictionary<int, Session>();
@@ -341,9 +393,9 @@ public sealed partial class Alcohol120
         {
             stream.Seek(_alcFooter.filenameOffset, SeekOrigin.Begin);
 
-            byte[] filename = _header.dpmOffset == 0
+            byte[] filename = _header.discMetadataOffset == 0
                                   ? new byte[stream.Length     - stream.Position]
-                                  : new byte[_header.dpmOffset - stream.Position];
+                                  : new byte[_header.discMetadataOffset - stream.Position];
 
             stream.EnsureRead(filename, 0, filename.Length);
 
@@ -361,9 +413,9 @@ public sealed partial class Alcohol120
             else if(Path.GetExtension(imageFilter.BasePath).Equals(".xmd", StringComparison.InvariantCultureIgnoreCase))
                 alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
         }
-        else if(string.Equals(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase))
+        else if(string.Compare(alcFile, "*.mdf", StringComparison.InvariantCultureIgnoreCase) == 0)
             alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".mdf";
-        else if(string.Equals(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase))
+        else if(string.Compare(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase) == 0)
             alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
 
         if(_header is { bcaLength: > 0, bcaOffset: > 0 } && _isDvd)
@@ -722,6 +774,64 @@ public sealed partial class Alcohol120
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <inheritdoc />
+    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    {
+        if(_dpmPresent)
+        {
+            dpmStartSector     = _dpmBlockHeader.dpmStartSector;
+            dpmResolution      = _dpmBlockHeader.dpmResolution;
+            numberOfDpmEntries = _dpmBlockHeader.numberOfDpmEntries;
+            dpm = new ulong[numberOfDpmEntries];
+
+            // Arbitrary multiplication. If you want to go lower than a120's minimum dpm resolution of 50, you start
+            // losing precision since cumulative hex angles are only stored as uint32. Outside of this, the format a120
+            // /mds uses is otherwise as perfect as DPM storage realistically can be, so aaru can just give a bit of
+            // extra room for more possible values.
+
+            for(uint i = 0; i < numberOfDpmEntries; i++)
+            {
+                dpm[i] = (ulong)_dpm[i] * (ulong)10000;
+            }
+
+            return ErrorNumber.NoError;
+        }
+        else
+        {
+            dpmStartSector = 0;
+            dpmResolution = 0;
+            numberOfDpmEntries = 0;
+            dpm = null;
+
+            return ErrorNumber.NoData;
+        }
+    }
+
+    public ErrorNumber ReadSectorDPM(ulong sectorAddress, out ulong? dpm)
+    {
+        if(_dpmPresent)
+        {
+            if(sectorAddress % _dpmBlockHeader.dpmResolution != 0)
+            {
+                dpm                = null;
+
+                return ErrorNumber.NoData;
+            }
+            else
+            {
+                dpm = _dpm[sectorAddress / _dpmBlockHeader.dpmResolution] * 10000;
+
+                return ErrorNumber.NoError;
+            }
+        }
+        else
+        {
+            dpm                = null;
+
+            return ErrorNumber.NoData;
+        }
     }
 
     /// <inheritdoc />

@@ -426,7 +426,10 @@ public enum MediaTagType
     AacsMediaKey = 85,
     /// <summary>AACS Volume Unique Key</summary>
     [Description("AACS Volume Unique Key")]
-    AacsVolumeUniqueKey = 86
+    AacsVolumeUniqueKey = 86,
+    /// <summary>DPM</summary>
+    [Description("DPM")]
+    DPM = 87,
 }
 
 /// <summary>Enumeration of media types defined in metadata</summary>
