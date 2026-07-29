@@ -30,6 +30,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,7 +87,7 @@ public sealed partial class ZZZRawImage
             case ".512e" when sectorSize != 512:
             case ".128" when sectorSize  != 128:
             case ".256" when sectorSize  != 256:
-            case ".iso" when sectorSize  != 2048:
+            case ".iso" when sectorSize != 2048 && sectorSize != 2352:
                 ErrorMessage = Localization
                    .The_specified_sector_size_does_not_correspond_with_the_requested_image_extension;
 
@@ -99,6 +100,10 @@ public sealed partial class ZZZRawImage
 
             return false;
         }
+
+        // ISO images always store cooked 2048-byte sectors, even when the source provides raw 2352-byte
+        // sectors — those get reduced to their user data by WriteSectorLong/WriteSectorsLong.
+        if(_extension == ".iso") sectorSize = 2048;
 
         _imageInfo = new ImageInfo
         {
@@ -251,18 +256,66 @@ public sealed partial class ZZZRawImage
     /// <inheritdoc />
     public bool WriteSectorLong(byte[] data, ulong sectorAddress, bool negative, SectorStatus sectorStatus)
     {
-        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
+        if(_extension != ".iso")
+        {
+            ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
-        return false;
+            return false;
+        }
+
+        if(data.Length != 2352)
+        {
+            ErrorMessage = Localization.Incorrect_data_size;
+
+            return false;
+        }
+
+        if(data[15] != 1)
+        {
+            ErrorMessage = Localization.Cannot_write_a_Mode_2_sector_to_an_ISO_image;
+
+            return false;
+        }
+
+        var cooked = new byte[2048];
+        Array.Copy(data, 16, cooked, 0, 2048);
+
+        return WriteSector(cooked, sectorAddress, negative, sectorStatus);
     }
 
     /// <inheritdoc />
     public bool WriteSectorsLong(byte[]         data, ulong sectorAddress, bool negative, uint length,
                                  SectorStatus[] sectorStatus)
     {
-        ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
+        if(_extension != ".iso")
+        {
+            ErrorMessage = Localization.Writing_sectors_with_tags_is_not_supported;
 
-        return false;
+            return false;
+        }
+
+        if(data.Length != 2352 * length)
+        {
+            ErrorMessage = Localization.Incorrect_data_size;
+
+            return false;
+        }
+
+        var cooked = new byte[2048 * length];
+
+        for(var i = 0; i < length; i++)
+        {
+            if(data[i * 2352 + 15] != 1)
+            {
+                ErrorMessage = Localization.Cannot_write_a_Mode_2_sector_to_an_ISO_image;
+
+                return false;
+            }
+
+            Array.Copy(data, i * 2352 + 16, cooked, i * 2048, 2048);
+        }
+
+        return WriteSectors(cooked, sectorAddress, negative, length, sectorStatus);
     }
 
     /// <inheritdoc />

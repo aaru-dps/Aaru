@@ -3061,6 +3061,9 @@
     <data name="The_specified_sector_size_does_not_correspond_with_the_requested_image_extension" xml:space="preserve">
     <value>The specified sector size does not correspond with the requested image extension.</value>
   </data>
+    <data name="Cannot_write_a_Mode_2_sector_to_an_ISO_image" xml:space="preserve">
+    <value>Cannot write a Mode 2 sector to an ISO image.</value>
+  </data>
     <data name="Found_Aaru_Metadata_block_at_position_0" xml:space="preserve">
     <value>Found Aaru Metadata block at position {0}</value>
   </data>

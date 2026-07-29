@@ -6100,6 +6100,12 @@ namespace Aaru.Images {
             }
         }
 
+        internal static string Cannot_write_a_Mode_2_sector_to_an_ISO_image {
+            get {
+                return ResourceManager.GetString("Cannot_write_a_Mode_2_sector_to_an_ISO_image", resourceCulture);
+            }
+        }
+
         internal static string Found_Aaru_Metadata_block_at_position_0 {
             get {
                 return ResourceManager.GetString("Found_Aaru_Metadata_block_at_position_0", resourceCulture);
