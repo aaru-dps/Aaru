@@ -82,32 +82,6 @@ class MainClass
         if(args.Length == 1 && args[0].Equals("gui", StringComparison.InvariantCultureIgnoreCase))
             return Gui.Main.Start(args);
 
-        SentrySdk.Init(static options =>
-        {
-            // A Sentry Data Source Name (DSN) is required.
-            // See https://docs.sentry.io/product/sentry-basics/dsn-explainer/
-            // You can set it in the SENTRY_DSN environment variable, or you can set it in code here.
-            options.Dsn = "https://153a04fb97b78bb57a8013b8b30db04f@sentry.claunia.com/8";
-
-            // When debug is enabled, the Sentry client will emit detailed debugging information to the console.
-            // This might be helpful, or might interfere with the normal operation of your application.
-            // We enable it here for demonstration purposes when first trying Sentry.
-            // You shouldn't do this in your applications unless you're troubleshooting issues with Sentry.
-            //options.Debug = true;
-
-            // This option is recommended. It enables Sentry's "Release Health" feature.
-            options.AutoSessionTracking = true;
-
-            // Set TracesSampleRate to 1.0 to capture 100%
-            // of transactions for tracing.
-            // We recommend adjusting this value in production.
-            options.TracesSampleRate = 1.0;
-
-            options.IsGlobalModeEnabled = true;
-        });
-
-        SentrySdk.ConfigureScope(static scope => scope.SetExtra("Args", Environment.GetCommandLineArgs()));
-
         try
         {
             AaruLogging.WriteLineEvent += static (format, objects) =>
@@ -172,6 +146,50 @@ class MainClass
             AaruLogging.InformationEvent += Log.Information;
 
             Settings.Settings.LoadSettings();
+
+            // Ask an existing user for crash-report consent once, so an upgrade is not silently opted out. A new
+            // user (GDPR level below the current one) is asked by the configuration wizard further down, and an
+            // explicit `configure` run asks on its own, so skip both to avoid asking twice. Only prompt when stdin
+            // is a terminal: Spectre's Confirm throws "Failed to read input in non-interactive mode" otherwise,
+            // which would abort every scripted, piped or service run, and any tool driving Aaru. When we cannot
+            // ask, leave the flag unset so a later interactive run asks, and keep reporting off until then.
+            bool consentAskedElsewhere =
+                Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL ||
+                args.Length >= 1 && args[0].Equals("configure", StringComparison.InvariantCultureIgnoreCase);
+
+            if(!Settings.Settings.Current.HasConsentBeenAsked &&
+               !consentAskedElsewhere                        &&
+               !Console.IsInputRedirected)
+            {
+                new ConfigureCommand().AskCrashReportConsent();
+                Settings.Settings.SaveSettings();
+            }
+
+            // Crash reporting is opt-in, so it cannot start before the stored settings have been read. Anything
+            // that fails earlier than this goes unreported, because at that point we do not yet know if we may.
+            if(Settings.Settings.Current.ShareCrashReports)
+            {
+                SentrySdk.Init(static options =>
+                {
+                    // A Sentry Data Source Name (DSN) is required.
+                    // See https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+                    // You can set it in the SENTRY_DSN environment variable, or you can set it in code here.
+                    if(string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("SENTRY_DSN")))
+                        options.Dsn = "https://153a04fb97b78bb57a8013b8b30db04f@sentry.claunia.com/8";
+
+                    // This option is recommended. It enables Sentry's "Release Health" feature.
+                    options.AutoSessionTracking = true;
+
+                    // Set TracesSampleRate to 1.0 to capture 100%
+                    // of transactions for tracing.
+                    // We recommend adjusting this value in production.
+                    options.TracesSampleRate = 1.0;
+
+                    options.IsGlobalModeEnabled = true;
+                });
+
+                SentrySdk.ConfigureScope(static scope => scope.SetExtra("Args", Environment.GetCommandLineArgs()));
+            }
 
             AaruContext ctx = null;
 

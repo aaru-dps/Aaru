@@ -97,6 +97,13 @@
                                 <TextBlock Text="{x:Static localization:UI.Share_your_device_reports_with_us_Q}" />
                             </CheckBox>
                         </StackPanel>
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{x:Static localization:UI.Configure_crash_report_disclaimer}"
+                                       TextWrapping="Wrap" />
+                            <CheckBox IsChecked="{Binding ShareCrashReportsChecked, Mode=TwoWay}">
+                                <TextBlock Text="{x:Static localization:UI.Share_crash_reports_with_us_Q}" />
+                            </CheckBox>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

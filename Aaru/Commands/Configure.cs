@@ -89,6 +89,12 @@ sealed class ConfigureCommand : Command<ConfigureCommand.Settings>
 
 #endregion Device reports
 
+#region Crash reports
+
+        AskCrashReportConsent();
+
+#endregion Crash reports
+
 #region Statistics
 
         AaruLogging.WriteLine();
@@ -131,6 +137,23 @@ sealed class ConfigureCommand : Command<ConfigureCommand.Settings>
         Aaru.Settings.Settings.SaveSettings();
 
         return (int)ErrorNumber.NoError;
+    }
+
+    /// <summary>Asks the user whether to share crash reports and records that the question has now been asked.</summary>
+    /// <remarks>
+    ///     Shared by the full <see cref="DoConfigure" /> wizard and by the one-off consent prompt at startup, so the
+    ///     wording and the flag live in a single place. The caller is responsible for persisting the settings.
+    /// </remarks>
+    internal void AskCrashReportConsent()
+    {
+        AaruLogging.WriteLine();
+
+        AaruLogging.WriteLine(UI.Configure_crash_report_disclaimer);
+
+        Aaru.Settings.Settings.Current.ShareCrashReports =
+            AnsiConsole.Confirm($"[italic]{UI.Do_you_want_to_share_crash_reports_with_us_Q}[/]");
+
+        Aaru.Settings.Settings.Current.HasConsentBeenAsked = true;
     }
 
 #region Nested type: Settings

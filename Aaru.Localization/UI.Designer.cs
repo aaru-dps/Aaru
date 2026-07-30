@@ -3340,12 +3340,24 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Configure_crash_report_disclaimer {
+            get {
+                return ResourceManager.GetString("Configure_crash_report_disclaimer", resourceCulture);
+            }
+        }
+
         public static string Configure_share_report_disclaimer {
             get {
                 return ResourceManager.GetString("Configure_share_report_disclaimer", resourceCulture);
             }
         }
         
+        public static string Do_you_want_to_share_crash_reports_with_us_Q {
+            get {
+                return ResourceManager.GetString("Do_you_want_to_share_crash_reports_with_us_Q", resourceCulture);
+            }
+        }
+
         public static string Do_you_want_to_share_your_device_reports_with_us_Q {
             get {
                 return ResourceManager.GetString("Do_you_want_to_share_your_device_reports_with_us_Q", resourceCulture);
@@ -3754,6 +3766,12 @@ namespace Aaru.Localization {
             }
         }
         
+        public static string Share_crash_reports_with_us_Q {
+            get {
+                return ResourceManager.GetString("Share_crash_reports_with_us_Q", resourceCulture);
+            }
+        }
+
         public static string Share_your_device_reports_with_us_Q {
             get {
                 return ResourceManager.GetString("Share_your_device_reports_with_us_Q", resourceCulture);
