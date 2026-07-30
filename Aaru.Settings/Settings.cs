@@ -70,6 +70,8 @@ public class DicSettings
     public bool SaveReportsGlobally;
     /// <summary>If set to <c>true</c>, crash reports will be sent to the Aaru crash reporting server</summary>
     public bool ShareCrashReports;
+    /// <summary>If set to <c>true</c>, the user has already been asked whether to share crash reports</summary>
+    public bool HasConsentBeenAsked;
     /// <summary>If set to <c>true</c>, reports will be sent to Aaru.Server</summary>
     public bool ShareReports;
     /// <summary>Statistics</summary>
@@ -298,6 +300,9 @@ public static class Settings
                         Current.ShareCrashReports =
                             parsedPreferences.TryGetValue("ShareCrashReports", out obj) && ((NSNumber)obj).ToBool();
 
+                        Current.HasConsentBeenAsked =
+                            parsedPreferences.TryGetValue("HasConsentBeenAsked", out obj) && ((NSNumber)obj).ToBool();
+
                         Current.EnableDecryption = parsedPreferences.TryGetValue("EnableDecryption", out obj) &&
                                                    ((NSNumber)obj).ToBool();
 
@@ -378,6 +383,7 @@ public static class Settings
                         Current.SaveReportsGlobally = Convert.ToBoolean(dicKey.GetValue("SaveReportsGlobally"));
                         Current.ShareReports        = Convert.ToBoolean(dicKey.GetValue("ShareReports"));
                         Current.ShareCrashReports   = Convert.ToBoolean(dicKey.GetValue("ShareCrashReports"));
+                        Current.HasConsentBeenAsked = Convert.ToBoolean(dicKey.GetValue("HasConsentBeenAsked"));
                         Current.GdprCompliance      = Convert.ToUInt64(dicKey.GetValue("GdprCompliance"));
                         Current.EnableDecryption    = Convert.ToBoolean(dicKey.GetValue("EnableDecryption"));
 
@@ -418,6 +424,7 @@ public static class Settings
                     Current.SaveReportsGlobally = Convert.ToBoolean(key.GetValue("SaveReportsGlobally"));
                     Current.ShareReports        = Convert.ToBoolean(key.GetValue("ShareReports"));
                     Current.ShareCrashReports   = Convert.ToBoolean(key.GetValue("ShareCrashReports"));
+                    Current.HasConsentBeenAsked = Convert.ToBoolean(key.GetValue("HasConsentBeenAsked"));
                     Current.GdprCompliance      = Convert.ToUInt64(key.GetValue("GdprCompliance"));
                     Current.EnableDecryption    = Convert.ToBoolean(key.GetValue("EnableDecryption"));
 
@@ -543,6 +550,9 @@ public static class Settings
                             "ShareCrashReports", Current.ShareCrashReports
                         },
                         {
+                            "HasConsentBeenAsked", Current.HasConsentBeenAsked
+                        },
+                        {
                             "GdprCompliance", Current.GdprCompliance
                         },
                         {
@@ -621,6 +631,7 @@ public static class Settings
                         key.SetValue("SaveReportsGlobally", Current.SaveReportsGlobally);
                         key.SetValue("ShareReports",        Current.ShareReports);
                         key.SetValue("ShareCrashReports",   Current.ShareCrashReports);
+                        key.SetValue("HasConsentBeenAsked", Current.HasConsentBeenAsked);
                         key.SetValue("GdprCompliance",      Current.GdprCompliance);
                         key.SetValue("EnableDecryption",    Current.EnableDecryption);
 
@@ -692,6 +703,8 @@ public static class Settings
         // Unlike the other switches, this one is not gated by the configure wizard: crash reporting starts before
         // the wizard can run, so an opt-in default would send data from a user who was never asked.
         ShareCrashReports   = false,
+        // No consent decision has been recorded yet; the first interactive run asks and sets this.
+        HasConsentBeenAsked = false,
         GdprCompliance      = 0,
         EnableDecryption    = true,
         Stats = new StatsSettings

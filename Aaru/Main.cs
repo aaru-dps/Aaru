@@ -147,6 +147,24 @@ class MainClass
 
             Settings.Settings.LoadSettings();
 
+            // Ask an existing user for crash-report consent once, so an upgrade is not silently opted out. A new
+            // user (GDPR level below the current one) is asked by the configuration wizard further down, and an
+            // explicit `configure` run asks on its own, so skip both to avoid asking twice. Only prompt when stdin
+            // is a terminal: Spectre's Confirm throws "Failed to read input in non-interactive mode" otherwise,
+            // which would abort every scripted, piped or service run, and any tool driving Aaru. When we cannot
+            // ask, leave the flag unset so a later interactive run asks, and keep reporting off until then.
+            bool consentAskedElsewhere =
+                Settings.Settings.Current.GdprCompliance < DicSettings.GDPR_LEVEL ||
+                args.Length >= 1 && args[0].Equals("configure", StringComparison.InvariantCultureIgnoreCase);
+
+            if(!Settings.Settings.Current.HasConsentBeenAsked &&
+               !consentAskedElsewhere                        &&
+               !Console.IsInputRedirected)
+            {
+                new ConfigureCommand().AskCrashReportConsent();
+                Settings.Settings.SaveSettings();
+            }
+
             // Crash reporting is opt-in, so it cannot start before the stored settings have been read. Anything
             // that fails earlier than this goes unreported, because at that point we do not yet know if we may.
             if(Settings.Settings.Current.ShareCrashReports)
