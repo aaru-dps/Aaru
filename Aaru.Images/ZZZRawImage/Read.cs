@@ -622,11 +622,13 @@ public sealed partial class ZZZRawImage
 
         // Check for HD DVD video discs: .iso extension, size divisible by 2048, contains HVDVD_TS folder
         // Needed for identifying the correct AACS path, so we don't misidentify it as a BD video disc
-        if(_extension == ".iso" &&
-           _imageInfo.SectorSize == 2048 &&
-           _imageInfo.ImageSize % 2048 == 0 &&
-           _imageInfo.Sectors > 0 &&
-           (_imageInfo.MediaType == MediaType.BDR || _imageInfo.MediaType == MediaType.BDRXL || _imageInfo.MediaType == MediaType.DVDPR) &&
+        if(_extension                  == ".iso" &&
+           _imageInfo.SectorSize       == 2048   &&
+           _imageInfo.ImageSize % 2048 == 0      &&
+           _imageInfo.Sectors          > 0       &&
+           (_imageInfo.MediaType == MediaType.BDR   ||
+            _imageInfo.MediaType == MediaType.BDRXL ||
+            _imageInfo.MediaType == MediaType.DVDPR) &&
            TryDetectHdDvdVideoIso())
             _imageInfo.MediaType = MediaType.HDDVDROM;
 
@@ -1300,7 +1302,7 @@ public sealed partial class ZZZRawImage
             SentrySdk.CaptureException(ex);
         }
 
-        _imageInfo.ReadableMediaTags = [.._mediaTags.Keys];
+        _imageInfo.ReadableMediaTags = [.. _mediaTags.Keys];
 
         if(_rawDvd)
         {
@@ -1393,7 +1395,8 @@ public sealed partial class ZZZRawImage
 
         if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        sectorStatus = Enumerable.Repeat(SectorStatus.Dumped, (int)length).ToArray();
+        sectorStatus = new SectorStatus[length];
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         Stream stream = _rawImageFilter.GetDataForkStream();
 
@@ -1427,47 +1430,49 @@ public sealed partial class ZZZRawImage
 
         buffer = new byte[sectorSize * length];
 
-        var br = new BinaryReader(stream);
-        br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
+        stream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(_mode2)
         {
             var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-            buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
+            var raw = new byte[(sectorSize + sectorSkip) * length];
+            stream.EnsureRead(raw, 0, raw.Length);
+
+            var sector = new byte[sectorSize];
 
             for(var i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
-                Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
-                sector = Sector.GetUserDataFromMode2(sector);
-                mode2Ms.Write(sector, 0, sector.Length);
+                Array.Copy(raw, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
+                byte[] userData = Sector.GetUserDataFromMode2(sector);
+                mode2Ms.Write(userData, 0, userData.Length);
             }
 
             buffer = mode2Ms.ToArray();
         }
         else if(sectorOffset == 0 && sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            stream.EnsureRead(buffer, 0, (int)(sectorSize * length));
+        else if(_rawDvd)
+        {
+            var sector = new byte[sectorSize + sectorSkip + sectorOffset];
+
+            for(var i = 0; i < length; i++)
+            {
+                stream.EnsureRead(sector, 0, sector.Length);
+                ErrorNumber error = _decoding.Scramble(sector, out byte[] scrambled);
+
+                if(error != ErrorNumber.NoError) return error;
+
+                Array.Copy(scrambled, sectorOffset, buffer, i * sectorSize, sectorSize);
+            }
+        }
         else
         {
             for(var i = 0; i < length; i++)
             {
-                if(_rawDvd)
-                {
-                    byte[]      sector = br.ReadBytes((int)(sectorSize + sectorSkip + sectorOffset));
-                    ErrorNumber error  = _decoding.Scramble(sector, out byte[] scrambled);
-
-                    if(error != ErrorNumber.NoError) return error;
-
-                    Array.Copy(scrambled, sectorOffset, buffer, i * sectorSize, sectorSize);
-                }
-                else
-                {
-                    br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                    byte[] sector = br.ReadBytes((int)sectorSize);
-                    br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                    Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
-                }
+                stream.Seek(sectorOffset, SeekOrigin.Current);
+                stream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                stream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 
@@ -1530,12 +1535,13 @@ public sealed partial class ZZZRawImage
         return lst;
     }
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -1791,19 +1797,17 @@ public sealed partial class ZZZRawImage
         buffer = new byte[sectorSize * length];
 
         Stream stream = _rawImageFilter.GetDataForkStream();
-        var    br     = new BinaryReader(stream);
-        br.BaseStream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
+        stream.Seek((long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(sectorOffset == 0 && sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            stream.EnsureRead(buffer, 0, (int)(sectorSize * length));
         else
         {
             for(var i = 0; i < length; i++)
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                stream.Seek(sectorOffset, SeekOrigin.Current);
+                stream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                stream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 
@@ -1828,14 +1832,16 @@ public sealed partial class ZZZRawImage
 
         if(negative) return ErrorNumber.NotSupported;
 
-        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc || !_rawCompactDisc && !_toastXa && !_rawDvd && !_compactDisc)
+        if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc ||
+           !_rawCompactDisc && !_toastXa && !_rawDvd && !_compactDisc)
             return ErrorNumber.NotSupported;
 
         if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
         if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        sectorStatus = Enumerable.Repeat(SectorStatus.Dumped, (int)length).ToArray();
+        sectorStatus = new SectorStatus[length];
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         var sectorSize = 2352u;
 
@@ -1852,9 +1858,8 @@ public sealed partial class ZZZRawImage
         buffer = new byte[sectorSize * length];
 
         Stream stream = _rawImageFilter.GetDataForkStream();
-        var    br     = new BinaryReader(stream);
 
-        br.BaseStream.Seek((long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
+        stream.Seek((long)(sectorAddress * (sectorSize + sectorSkip)), SeekOrigin.Begin);
 
         if(_compactDisc)
         {
@@ -1862,13 +1867,16 @@ public sealed partial class ZZZRawImage
 
             buffer = new byte[2352 * length];
 
+            _sectorBuilder ??= new SectorBuilder();
+
+            var fullSector = new byte[2352];
+
             for(ulong i = 0; i < length; i++)
             {
-                var fullSector = new byte[2352];
+                Array.Clear(fullSector, 0, fullSector.Length);
                 stream.EnsureRead(fullSector, 16, 2048);
-                SectorBuilder sb = new();
-                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
-                sb.ReconstructEcc(ref fullSector, TrackType.CdMode1);
+                _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode1, (long)(sectorAddress + i));
+                _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode1);
                 Array.Copy(fullSector, 0, buffer, (int)i * 2352, 2352);
             }
         }
@@ -1876,22 +1884,27 @@ public sealed partial class ZZZRawImage
         {
             buffer = new byte[2352 * length];
 
+            _sectorBuilder ??= new SectorBuilder();
+
+            var fullSector = new byte[2352];
+
             for(ulong i = 0; i < length; i++)
             {
-                var fullSector = new byte[2352];
+                Array.Clear(fullSector, 0, fullSector.Length);
                 stream.EnsureRead(fullSector, 16, (int)sectorSize);
-                SectorBuilder sb = new();
-                sb.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + i));
-                sb.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
+                _sectorBuilder.ReconstructPrefix(ref fullSector, TrackType.CdMode2Form1, (long)(sectorAddress + i));
+                _sectorBuilder.ReconstructEcc(ref fullSector, TrackType.CdMode2Form1);
                 Array.Copy(fullSector, 0, buffer, (int)i * 2352, 2352);
             }
         }
         else if(_rawDvd)
         {
+            var sector = new byte[sectorSize];
+
             for(var i = 0; i < length; i++)
             {
-                byte[]      sector = br.ReadBytes((int)sectorSize);
-                ErrorNumber error  = _decoding.Scramble(sector, out byte[] scrambled);
+                stream.EnsureRead(sector, 0, sector.Length);
+                ErrorNumber error = _decoding.Scramble(sector, out byte[] scrambled);
 
                 if(error != ErrorNumber.NoError) return error;
 
@@ -1899,15 +1912,13 @@ public sealed partial class ZZZRawImage
             }
         }
         else if(sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            stream.EnsureRead(buffer, 0, (int)(sectorSize * length));
         else
         {
             for(var i = 0; i < length; i++)
             {
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                stream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                stream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 

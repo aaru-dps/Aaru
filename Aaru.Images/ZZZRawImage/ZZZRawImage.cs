@@ -37,12 +37,13 @@ using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
 using Aaru.Decoders.DVD;
+using SectorBuilder = Aaru.Decoders.CD.SectorBuilder;
 
 namespace Aaru.Images;
 
 /// <inheritdoc />
 /// <summary>Implements reading and writing raw (sector by sector) images</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Plugin name uses ZZZ prefix intentionally.")]
 public sealed partial class ZZZRawImage : IWritableOpticalImage
 {
     const    string                  MODULE_NAME = "ZZZRawImage Plugin";
@@ -57,6 +58,7 @@ public sealed partial class ZZZRawImage : IWritableOpticalImage
     bool                             _rawCompactDisc;
     bool                             _rawDvd;
     IFilter                          _rawImageFilter;
+    SectorBuilder                    _sectorBuilder;
     bool                             _toastXa;
     FileStream                       _writingStream;
     bool                             _compactDisc;
