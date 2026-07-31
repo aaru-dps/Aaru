@@ -101,8 +101,8 @@ public sealed partial class Sidecar
         // For fast debugging, skip checksum
         //goto skipImageChecksum;
 
-        byte[] data;
-        long   position = 0;
+        var  data     = new byte[1048576];
+        long position = 0;
         UpdateStatus(Localization.Core.Hashing_image_file);
         InitProgress();
 
@@ -110,7 +110,6 @@ public sealed partial class Sidecar
         {
             if(_aborted) return _sidecar;
 
-            data = new byte[1048576];
             _fs.EnsureRead(data, 0, 1048576);
 
             UpdateProgress(Localization.Core.Hashing_image_file_byte_0_of_1, position, _fi.Length);

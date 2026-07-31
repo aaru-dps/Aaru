@@ -118,6 +118,7 @@ public sealed partial class Sidecar
             const uint sectorsToRead = 512;
             ulong      sectors       = (ulong)_fs.Length / blockSize;
             ulong      doneSectors   = 0;
+            var        buffer        = new byte[sectorsToRead * blockSize];
 
             InitProgress2();
 
@@ -134,7 +135,7 @@ public sealed partial class Sidecar
 
                 if(sectors - doneSectors >= sectorsToRead)
                 {
-                    sector = new byte[sectorsToRead * blockSize];
+                    sector = buffer;
                     _fs.EnsureRead(sector, 0, sector.Length);
 
                     UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
@@ -246,7 +247,8 @@ public sealed partial class Sidecar
         }
         else
         {
-            _sidecar.BlockMedias[0].MediaType    = "Unknown tape";
+            _sidecar.BlockMedias[0].MediaType = "Unknown tape";
+
             _sidecar.BlockMedias[0].MediaSubType = "Unknown tape";
         }
 
