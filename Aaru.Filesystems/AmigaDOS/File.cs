@@ -216,24 +216,30 @@ public sealed partial class AmigaDOSPlugin
 
             if(error != ErrorNumber.NoError) return error;
 
-            // Calculate how much data is in this block and where it starts
+            // Calculate how much data is in this block and where it starts.
+            // Some formatters (e.g. AROS) write FFS-style data blocks, containing only raw data, on
+            // OFS-flagged volumes, so trust the OFS data header only if it really is one.
             int dataOffset;
             int dataInBlock;
+            var blockDataSize = (int)_blockSize;
 
-            if(_isFfs)
-            {
-                // FFS: data starts at beginning of block
-                dataOffset  = myNode.CurrentByteInBlock;
-                dataInBlock = (int)_blockSize - myNode.CurrentByteInBlock;
-            }
-            else
+            if(!_isFfs && HasOfsDataHeader(dataBlock, myNode.HeaderBlock))
             {
                 // OFS: data has a header, actual data size is in the header
                 var ofsDataSize = BigEndianBitConverter.ToUInt32(dataBlock, 12); // BLK_DATA_SIZE = 3
 
-                dataOffset  = OFS_DATA_HEADER_SIZE + myNode.CurrentByteInBlock;
-                dataInBlock = (int)ofsDataSize     - myNode.CurrentByteInBlock;
+                blockDataSize = (int)ofsDataSize;
+                dataOffset    = OFS_DATA_HEADER_SIZE + myNode.CurrentByteInBlock;
+                dataInBlock   = blockDataSize        - myNode.CurrentByteInBlock;
             }
+            else
+            {
+                // FFS: data starts at beginning of block
+                dataOffset  = myNode.CurrentByteInBlock;
+                dataInBlock = blockDataSize - myNode.CurrentByteInBlock;
+            }
+
+            if(dataInBlock <= 0) break;
 
             // Limit to what we actually need
             if(dataInBlock > bytesRemaining) dataInBlock = (int)bytesRemaining;
@@ -246,34 +252,38 @@ public sealed partial class AmigaDOSPlugin
             myNode.Offset  += dataInBlock;
 
             // Update position within block
-            if(_isFfs)
+            if(myNode.CurrentByteInBlock + dataInBlock >= blockDataSize)
             {
-                if(myNode.CurrentByteInBlock + dataInBlock >= _blockSize)
-                {
-                    myNode.CurrentByteInBlock = 0;
-                    myNode.CurrentFileKey--;
-                }
-                else
-                    myNode.CurrentByteInBlock += dataInBlock;
+                myNode.CurrentByteInBlock = 0;
+                myNode.CurrentFileKey--;
             }
             else
-            {
-                // For OFS, check against the actual data size in this block
-                var ofsDataSize = BigEndianBitConverter.ToUInt32(dataBlock, 12);
-
-                if(myNode.CurrentByteInBlock + dataInBlock >= ofsDataSize)
-                {
-                    myNode.CurrentByteInBlock = 0;
-                    myNode.CurrentFileKey--;
-                }
-                else
-                    myNode.CurrentByteInBlock += dataInBlock;
-            }
+                myNode.CurrentByteInBlock += dataInBlock;
         }
 
         read = bufferOffset;
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>
+    ///     Checks whether a data block carries a valid OFS data header. AROS writes raw FFS-style data blocks
+    ///     even on OFS-flagged volumes, in which case these fields hold file contents instead.
+    /// </summary>
+    /// <param name="dataBlock">Data block contents.</param>
+    /// <param name="headerBlock">Block number of the file's header block.</param>
+    bool HasOfsDataHeader(byte[] dataBlock, uint headerBlock)
+    {
+        if(dataBlock.Length < OFS_DATA_HEADER_SIZE) return false;
+
+        var type      = BigEndianBitConverter.ToUInt32(dataBlock, 0);  // BLK_PRIMARY_TYPE
+        var headerKey = BigEndianBitConverter.ToUInt32(dataBlock, 4);  // BLK_HEADER_KEY
+        var dataSize  = BigEndianBitConverter.ToUInt32(dataBlock, 12); // BLK_DATA_SIZE
+
+        return type      == TYPE_DATA   &&
+               headerKey == headerBlock &&
+               dataSize  > 0            &&
+               dataSize  <= _blockSize - OFS_DATA_HEADER_SIZE;
     }
 
     /// <inheritdoc />
