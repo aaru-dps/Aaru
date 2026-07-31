@@ -51,6 +51,9 @@ public sealed partial class ext2FS : IReadOnlyFilesystem
     /// <summary>Cached root directory entries (filename to inode number)</summary>
     readonly Dictionary<string, uint> _rootDirectoryCache = [];
 
+    /// <summary>Cached directory entries per directory inode number, with "." and ".." filtered out</summary>
+    readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = [];
+
     /// <summary>Block group descriptors</summary>
     BlockGroupDescriptor[] _blockGroupDescriptors;
 
@@ -113,9 +116,9 @@ public sealed partial class ext2FS : IReadOnlyFilesystem
 #endregion
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 }

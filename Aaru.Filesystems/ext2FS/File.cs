@@ -471,13 +471,9 @@ public sealed partial class ext2FS
 
             if((inode.mode & S_IFMT) != S_IFDIR) return ErrorNumber.NotDirectory;
 
-            ulong dirSize = (ulong)inode.size_high << 32 | inode.size_lo;
-
-            errno = ReadDirectoryEntries(inode, childInode, dirSize, out Dictionary<string, uint> subEntries);
+            errno = GetCachedDirectoryEntries(inode, childInode, out currentEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
-
-            currentEntries = subEntries.Where(e => e.Key is not ("." or "..")).ToDictionary(e => e.Key, e => e.Value);
         }
 
         return ErrorNumber.NoSuchFile;

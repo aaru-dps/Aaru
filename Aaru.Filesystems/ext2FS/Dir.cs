@@ -91,15 +91,10 @@ public sealed partial class ext2FS
 
             if((inode.mode & S_IFMT) != S_IFDIR) return ErrorNumber.NotDirectory;
 
-            // Read subdirectory entries from disk
-            ulong dirSize = (ulong)inode.size_high << 32 | inode.size_lo;
-
-            errno = ReadDirectoryEntries(inode, inodeNumber, dirSize, out Dictionary<string, uint> subEntries);
+            // Read subdirectory entries from the per-mount cache (or from disk on first access)
+            errno = GetCachedDirectoryEntries(inode, inodeNumber, out Dictionary<string, uint> filtered);
 
             if(errno != ErrorNumber.NoError) return errno;
-
-            // Filter . and ..
-            var filtered = subEntries.Where(e => e.Key is not ("." or "..")).ToDictionary(e => e.Key, e => e.Value);
 
             // Last component — create the node
             if(i == components.Length - 1)
@@ -148,6 +143,37 @@ public sealed partial class ext2FS
         return ErrorNumber.NoError;
     }
 
+
+    /// <summary>
+    ///     Returns the directory entries for an inode, filtered of "." and "..", using a per-mount cache to avoid
+    ///     re-reading and re-parsing directory blocks
+    /// </summary>
+    /// <param name="inode">The directory inode</param>
+    /// <param name="inodeNumber">The inode number</param>
+    /// <param name="entries">Dictionary of filename to inode number, without "." and ".."</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetCachedDirectoryEntries(Inode inode, uint inodeNumber, out Dictionary<string, uint> entries)
+    {
+        if(_directoryCache.TryGetValue(inodeNumber, out entries)) return ErrorNumber.NoError;
+
+        ulong dirSize = (ulong)inode.size_high << 32 | inode.size_lo;
+
+        ErrorNumber errno = ReadDirectoryEntries(inode, inodeNumber, dirSize, out Dictionary<string, uint> subEntries);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Filter . and ..
+        entries = new Dictionary<string, uint>(subEntries.Count, StringComparer.Ordinal);
+
+        foreach(KeyValuePair<string, uint> e in subEntries)
+        {
+            if(e.Key is not ("." or "..")) entries[e.Key] = e.Value;
+        }
+
+        _directoryCache[inodeNumber] = entries;
+
+        return ErrorNumber.NoError;
+    }
 
     /// <summary>Reads directory entries from an inode's data blocks</summary>
     /// <param name="inode">The directory inode</param>

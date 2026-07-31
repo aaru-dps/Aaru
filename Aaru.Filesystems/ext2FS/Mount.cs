@@ -166,6 +166,7 @@ public sealed partial class ext2FS
         AaruLogging.Debug(MODULE_NAME, "Unmounting volume");
 
         _rootDirectoryCache.Clear();
+        _directoryCache.Clear();
         _blockGroupDescriptors = null;
         _mounted               = false;
         _imagePlugin           = null;
@@ -390,6 +391,7 @@ public sealed partial class ext2FS
         AaruLogging.Debug(MODULE_NAME, "Loading root directory...");
 
         _rootDirectoryCache.Clear();
+        _directoryCache.Clear();
 
         // Read root inode (inode 2)
         ErrorNumber errno = ReadInode(EXT2_ROOT_INO, out Inode rootInode);
