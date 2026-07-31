@@ -32,7 +32,9 @@
 // ****************************************************************************/
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.Helpers;
 using Aaru.Logging;
 
@@ -99,15 +101,12 @@ public static class CdChecksums
         {
             case 2448:
             {
-                var subchannel = new byte[96];
-                var channel    = new byte[2352];
+                bool? channelStatus = CheckCdSectorChannel(buffer.AsSpan(0, 2352),
+                                                           out correctEccP,
+                                                           out correctEccQ,
+                                                           out correctEdc);
 
-                Array.Copy(buffer, 0,    channel,    0, 2352);
-                Array.Copy(buffer, 2352, subchannel, 0, 96);
-
-                bool? channelStatus = CheckCdSectorChannel(channel, out correctEccP, out correctEccQ, out correctEdc);
-
-                bool? subchannelStatus = CheckCdSectorSubChannel(subchannel);
+                bool? subchannelStatus = CheckCdSectorSubChannel(buffer.AsSpan(2352, 96));
                 bool? status           = null;
 
                 if(channelStatus == false || subchannelStatus == false) status = false;
@@ -172,25 +171,8 @@ public static class CdChecksums
         for(var pos = 0; pos < 45; pos++) _eccQWeights[pos] = _gfExp[(255 + 44 - pos) % 255];
     }
 
-    static void ComputeEcc(IReadOnlyList<byte> data, out byte eccA, out byte eccB)
-    {
-        eccA = 0;
-        eccB = 0;
-
-        for(var i = 0; i < data.Count; i++)
-        {
-            byte temp = data[i];
-            eccA ^= temp;
-            eccB ^= temp;
-            eccA =  _eccFTable[eccA];
-        }
-
-        eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
-        eccB = (byte)(eccA ^ eccB);
-    }
-
-    static bool CheckEcc(byte[] address, byte[] data, uint majorCount, uint minorCount, uint majorMult, uint minorInc,
-                         byte[] ecc)
+    static bool CheckEcc(ReadOnlySpan<byte> address,   ReadOnlySpan<byte> data,     uint majorCount, uint minorCount,
+                         uint               majorMult, uint               minorInc, ReadOnlySpan<byte> ecc)
     {
         uint size = majorCount * minorCount;
         uint major;
@@ -204,7 +186,7 @@ public static class CdChecksums
 
             for(minor = 0; minor < minorCount; minor++)
             {
-                byte temp = index < 4 ? address[index] : data[index - 4];
+                byte temp = index < 4 ? address[(int)index] : data[(int)(index - 4)];
                 index += minorInc;
 
                 if(index >= size) index -= size;
@@ -216,14 +198,14 @@ public static class CdChecksums
 
             eccA = _eccBTable[_eccFTable[eccA] ^ eccB];
 
-            if(ecc[major] != eccA || ecc[major + majorCount] != (eccA ^ eccB)) return false;
+            if(ecc[(int)major] != eccA || ecc[(int)(major + majorCount)] != (eccA ^ eccB)) return false;
         }
 
         return true;
     }
 
-    static bool? CheckCdSectorChannel(byte[]    channel, out bool? correctEccP, out bool? correctEccQ,
-                                      out bool? correctEdc)
+    static bool? CheckCdSectorChannel(ReadOnlySpan<byte> channel, out bool? correctEccP, out bool? correctEccQ,
+                                      out bool?          correctEdc)
     {
         EccInit();
 
@@ -291,17 +273,11 @@ public static class CdChecksums
                 return false;
             case 0x01:
             {
-                var address = new byte[4];
-                var data    = new byte[2060];
-                var data2   = new byte[2232];
-                var eccP    = new byte[172];
-                var eccQ    = new byte[104];
-
-                Array.Copy(channel, 0x0C,  address, 0, 4);
-                Array.Copy(channel, 0x10,  data,    0, 2060);
-                Array.Copy(channel, 0x10,  data2,   0, 2232);
-                Array.Copy(channel, 0x81C, eccP,    0, 172);
-                Array.Copy(channel, 0x8C8, eccQ,    0, 104);
+                ReadOnlySpan<byte> address = channel.Slice(0x0C,  4);
+                ReadOnlySpan<byte> data    = channel.Slice(0x10,  2060);
+                ReadOnlySpan<byte> data2   = channel.Slice(0x10,  2232);
+                ReadOnlySpan<byte> eccP    = channel.Slice(0x81C, 172);
+                ReadOnlySpan<byte> eccQ    = channel.Slice(0x8C8, 104);
 
                 bool failedEccP = !CheckEcc(address, data,  86, 24, 2,  86, eccP);
                 bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
@@ -327,7 +303,7 @@ public static class CdChecksums
                                       channel[0x00E]);
                 }
 
-                var  storedEdc     = BitConverter.ToUInt32(channel, 0x810);
+                var  storedEdc     = BinaryPrimitives.ReadUInt32LittleEndian(channel.Slice(0x810, 4));
                 uint calculatedEdc = ComputeEdc(0, channel, 0x810);
 
                 correctEdc = calculatedEdc == storedEdc;
@@ -350,8 +326,7 @@ public static class CdChecksums
             {
                 //AaruLogging.DebugWriteLine(MODULE_NAME, "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
-                var mode2Sector = new byte[channel.Length - 0x10];
-                Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
+                ReadOnlySpan<byte> mode2Sector = channel[0x10..];
 
                 if((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
                 {
@@ -367,7 +342,7 @@ public static class CdChecksums
                                           channel[0x00E]);
                     }
 
-                    var storedEdc = BitConverter.ToUInt32(mode2Sector, 0x91C);
+                    var storedEdc = BinaryPrimitives.ReadUInt32LittleEndian(mode2Sector.Slice(0x91C, 4));
 
                     // No CRC stored!
                     if(storedEdc == 0x00000000) return true;
@@ -402,12 +377,9 @@ public static class CdChecksums
                                           channel[0x00E]);
                     }
 
-                    var address = new byte[4];
-                    var eccP    = new byte[172];
-                    var eccQ    = new byte[104];
-
-                    Array.Copy(mode2Sector, 0x80C, eccP, 0, 172);
-                    Array.Copy(mode2Sector, 0x8B8, eccQ, 0, 104);
+                    ReadOnlySpan<byte> address = stackalloc byte[4];
+                    ReadOnlySpan<byte> eccP    = mode2Sector.Slice(0x80C, 172);
+                    ReadOnlySpan<byte> eccQ    = mode2Sector.Slice(0x8B8, 104);
 
                     bool failedEccP = !CheckEcc(address, mode2Sector, 86, 24, 2,  86, eccP);
                     bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
@@ -433,7 +405,7 @@ public static class CdChecksums
                                           channel[0x00E]);
                     }
 
-                    var  storedEdc     = BitConverter.ToUInt32(mode2Sector, 0x808);
+                    var  storedEdc     = BinaryPrimitives.ReadUInt32LittleEndian(mode2Sector.Slice(0x808, 4));
                     uint calculatedEdc = ComputeEdc(0, mode2Sector, 0x808);
 
                     correctEdc = calculatedEdc == storedEdc;
@@ -516,14 +488,8 @@ public static class CdChecksums
         return SectorFixResult.CouldNotFix;
     }
 
-    static bool SectorChanged(byte[] original, byte[] current)
-    {
-        for(var i = 0; i < original.Length; i++)
-            if(original[i] != current[i])
-                return true;
-
-        return false;
-    }
+    static bool SectorChanged(ReadOnlySpan<byte> original, ReadOnlySpan<byte> current) =>
+        !MemoryExtensions.SequenceEqual(original, current);
 
     static SectorFixResult FixSector(byte[] buffer, bool[] erasureMap)
     {
@@ -544,9 +510,6 @@ public static class CdChecksums
            buffer[0x00A] != 0xFF ||
            buffer[0x00B] != 0x00)
             return SectorFixResult.NotApplicable;
-
-        var original = new byte[buffer.Length];
-        Array.Copy(buffer, original, buffer.Length);
 
         SectorFixResult result = (buffer[0x00F] & 0x03) switch
                                  {
@@ -629,9 +592,7 @@ public static class CdChecksums
         // Reverse maps: sector byte offset → (row index, position in row) for each code.
         // Used by TryFixEccValidated to require cross-code locator agreement before applying a correction.
         var pByteToRow = new int[0x930];
-        var pByteToPos = new int[0x930];
         var qByteToRow = new int[0x930];
-        var qByteToPos = new int[0x930];
 
         for(var i = 0; i < 0x930; i++)
         {
@@ -643,20 +604,14 @@ public static class CdChecksums
         {
             for(var min = 0; min < 24; min++)
                 if(pRows[maj][min] >= 0)
-                {
                     pByteToRow[pRows[maj][min]] = maj;
-                    pByteToPos[pRows[maj][min]] = min;
-                }
         }
 
         for(var maj = 0; maj < 52; maj++)
         {
             for(var min = 0; min < 43; min++)
                 if(qRows[maj][min] >= 0)
-                {
                     qByteToRow[qRows[maj][min]] = maj;
-                    qByteToPos[qRows[maj][min]] = min;
-                }
         }
 
         // Also map parity byte offsets into the reverse maps.
@@ -664,39 +619,22 @@ public static class CdChecksums
         {
             int pb1 = eccPOffset + maj, pb2 = eccPOffset + 86 + maj;
 
-            if(pb1 < 0x930)
-            {
-                pByteToRow[pb1] = maj;
-                pByteToPos[pb1] = 24;
-            }
+            if(pb1 < 0x930) pByteToRow[pb1] = maj;
 
-            if(pb2 < 0x930)
-            {
-                pByteToRow[pb2] = maj;
-                pByteToPos[pb2] = 25;
-            }
+            if(pb2 >= 0x930) continue;
 
-            if(qByteToRow[pb1] < 0)
-            {
-                /* P-parity byte not in Q-row data range — no entry */
-            }
+            pByteToRow[pb2] = maj;
         }
 
         for(var maj = 0; maj < 52; maj++)
         {
             int qb1 = eccQOffset + maj, qb2 = eccQOffset + 52 + maj;
 
-            if(qb1 < 0x930)
-            {
-                qByteToRow[qb1] = maj;
-                qByteToPos[qb1] = 43;
-            }
+            if(qb1 < 0x930) qByteToRow[qb1] = maj;
 
-            if(qb2 < 0x930)
-            {
-                qByteToRow[qb2] = maj;
-                qByteToPos[qb2] = 44;
-            }
+            if(qb2 >= 0x930) continue;
+
+            qByteToRow[qb2] = maj;
         }
 
         if(erasureMap != null)
@@ -707,12 +645,13 @@ public static class CdChecksums
             if(erasureResult != SectorFixResult.CouldNotFix) return erasureResult;
         }
 
+        var previous = new byte[sector.Length];
+
         for(var pass = 0; pass < 64; pass++)
         {
             uint[] pSyndromes = ComputeRowSyndromes(sector, pRows, eccPOffset, 86, 24, _eccPWeights);
             uint[] qSyndromes = ComputeRowSyndromes(sector, qRows, eccQOffset, 52, 43, _eccQWeights);
             int    failedRows = CountFailedRows(pSyndromes) + CountFailedRows(qSyndromes);
-            var    previous   = new byte[sector.Length];
             Array.Copy(sector, previous, sector.Length);
 
             // Fix P-rows (skip if Q's 1-error locator points elsewhere), then undo newly-broken Q-rows.
@@ -727,8 +666,7 @@ public static class CdChecksums
                                                 52,
                                                 43,
                                                 _eccQWeights,
-                                                qByteToRow,
-                                                qByteToPos);
+                                                qByteToRow);
 
             RevertNewlyFailingRows(sector, qRows, eccQOffset, 52, 43, _eccQWeights, qSyndromes);
 
@@ -747,8 +685,7 @@ public static class CdChecksums
                                            86,
                                            24,
                                            _eccPWeights,
-                                           pByteToRow,
-                                           pByteToPos) ||
+                                           pByteToRow) ||
                         corrected;
 
             RevertNewlyFailingRows(sector, pRows, eccPOffset, 86, 24, _eccPWeights, pSyndromesAfterP);
@@ -782,6 +719,8 @@ public static class CdChecksums
         }
 
         // Single-error correction stalled — try 2-error correction with cross-code validation.
+        var previous2 = new byte[sector.Length];
+
         for(var brutePass = 0; brutePass < 64; brutePass++)
         {
             bool bruteFixed = TryFix2ErrorRows(sector,
@@ -818,7 +757,6 @@ public static class CdChecksums
                 uint[] pSyn2Before   = ComputeRowSyndromes(sector, pRows, eccPOffset, 86, 24, _eccPWeights);
                 uint[] qSyn2Before   = ComputeRowSyndromes(sector, qRows, eccQOffset, 52, 43, _eccQWeights);
                 int    failed2Before = CountFailedRows(pSyn2Before) + CountFailedRows(qSyn2Before);
-                var    previous2     = new byte[sector.Length];
                 Array.Copy(sector, previous2, sector.Length);
 
                 bool corrected2 = TryFixEcc(sector, pRows, eccPOffset, 86, 24, _eccPWeights);
@@ -933,40 +871,24 @@ public static class CdChecksums
                     ApplyEccRowError(sector, fixRows[major], fixEccOffset, major, fixMajorCount, fixMinorCount, p1, e1);
                     ApplyEccRowError(sector, fixRows[major], fixEccOffset, major, fixMajorCount, fixMinorCount, p2, e2);
 
-                    if(checkFailedAfter < bestCheckFailed)
-                    {
-                        bestCheckFailed = checkFailedAfter;
-                        bestP1          = p1;
-                        bestP2          = p2;
-                        bestE1          = e1;
-                        bestE2          = e2;
-                    }
+                    if(checkFailedAfter >= bestCheckFailed) continue;
+
+                    bestCheckFailed = checkFailedAfter;
+                    bestP1          = p1;
+                    bestP2          = p2;
+                    bestE1          = e1;
+                    bestE2          = e2;
                 }
             }
 
             // Accept only if the best candidate strictly decreases cross-code failures.
-            if(bestP1 >= 0 && bestCheckFailed < checkFailedBefore)
-            {
-                ApplyEccRowError(sector,
-                                 fixRows[major],
-                                 fixEccOffset,
-                                 major,
-                                 fixMajorCount,
-                                 fixMinorCount,
-                                 bestP1,
-                                 bestE1);
+            if(bestP1 < 0 || bestCheckFailed >= checkFailedBefore) continue;
 
-                ApplyEccRowError(sector,
-                                 fixRows[major],
-                                 fixEccOffset,
-                                 major,
-                                 fixMajorCount,
-                                 fixMinorCount,
-                                 bestP2,
-                                 bestE2);
+            ApplyEccRowError(sector, fixRows[major], fixEccOffset, major, fixMajorCount, fixMinorCount, bestP1, bestE1);
 
-                anyFixed = true;
-            }
+            ApplyEccRowError(sector, fixRows[major], fixEccOffset, major, fixMajorCount, fixMinorCount, bestP2, bestE2);
+
+            anyFixed = true;
         }
 
         return anyFixed;
@@ -1007,11 +929,7 @@ public static class CdChecksums
                 CheckCdSectorChannel(sector, out bool? correctEccP, out bool? correctEccQ, out bool? correctEdc);
 
             if(correctEccP == true && correctEccQ == true)
-            {
-                if(correctEdc == true) return SectorFixResult.Fixed;
-
-                return SectorFixResult.CouldNotFix;
-            }
+                return correctEdc == true ? SectorFixResult.Fixed : SectorFixResult.CouldNotFix;
 
             if(!corrected || status == null) break;
         }
@@ -1033,7 +951,7 @@ public static class CdChecksums
                                                            minorCount,
                                                            erasureMap);
 
-            if(positions.Count == 0 || positions.Count > 2) continue;
+            if(positions.Count is 0 or > 2) continue;
 
             (byte s0, byte s1) =
                 ComputeEcmaRowSyndrome(sector, rows[major], eccOffset, major, majorCount, minorCount, weights);
@@ -1112,6 +1030,7 @@ public static class CdChecksums
             int offset = row[pos];
 
             if(offset < 0) continue;
+
             byte v = sector[offset];
             s0 ^= v;
             s1 ^= GfMul(weights[pos], v);
@@ -1154,8 +1073,8 @@ public static class CdChecksums
     static void ClearKnownErasurePositions(int[]     row, int eccOffset, int major, int majorCount, int minorCount,
                                            List<int> positions, bool[] erasureMap)
     {
-        for(var i = 0; i < positions.Count; i++)
-            ClearKnownErasurePosition(row, eccOffset, major, majorCount, minorCount, positions[i], erasureMap);
+        foreach(int position in positions)
+            ClearKnownErasurePosition(row, eccOffset, major, majorCount, minorCount, position, erasureMap);
     }
 
     static void ClearKnownErasurePosition(int[] row,      int    eccOffset, int major, int majorCount, int minorCount,
@@ -1178,17 +1097,7 @@ public static class CdChecksums
         return syndromes;
     }
 
-    static int CountFailedRows(uint[] syndromes)
-    {
-        var count = 0;
-
-        for(var i = 0; i < syndromes.Length; i++)
-        {
-            if(syndromes[i] != 0) count++;
-        }
-
-        return count;
-    }
+    static int CountFailedRows(IEnumerable<uint> syndromes) => syndromes.Count(static syndrome => syndrome != 0);
 
     static int GetEccRowPositionOffset(int[] rowOffsets, int eccOffset, int major, int majorCount, int minorCount,
                                        int   position)
@@ -1277,6 +1186,7 @@ public static class CdChecksums
             byte locator = GfDiv(s1, s0);
 
             if(locator == 0) continue;
+
             int pos = n - 1 - _gfLog[locator];
 
             if(pos < 0 || pos >= n) continue;
@@ -1295,9 +1205,9 @@ public static class CdChecksums
     ///     When the check-code row has 2+ errors the locator does not point to <c>b</c>, so the correction
     ///     is skipped; subsequent passes (after the check-code errors decrease) will accept it.
     /// </summary>
-    static bool TryFixEccValidated(byte[] sector, int[][] rows, int eccOffset, int majorCount, int minorCount,
-                                   byte[] weights, int[][] checkRows, int checkEccOffset, int checkMajorCount,
-                                   int checkMinorCount, byte[] checkWeights, int[] byteToCheckRow, int[] byteToCheckPos)
+    static bool TryFixEccValidated(byte[] sector,          int[][] rows, int eccOffset, int majorCount, int minorCount,
+                                   byte[] weights,         int[][] checkRows, int checkEccOffset, int checkMajorCount,
+                                   int    checkMinorCount, byte[]  checkWeights, int[] byteToCheckRow)
     {
         var corrected = false;
         int n         = minorCount      + 2;
@@ -1327,8 +1237,6 @@ public static class CdChecksums
             int checkRowIdx = byteToCheckRow[byteOffset];
 
             if(checkRowIdx < 0) goto apply; // byte not covered by check code: apply directly
-
-            int checkPos = byteToCheckPos[byteOffset];
 
             // Require the check-code row's 1-error locator to point to the same byte.
             (byte cs0, byte cs1) = ComputeEcmaRowSyndrome(sector,
@@ -1420,14 +1328,12 @@ public static class CdChecksums
 
     static void UpdateEdc(byte[] sector, int sourceOffset, int size, int destinationOffset)
     {
-        var data = new byte[size];
-        Array.Copy(sector, sourceOffset, data, 0, size);
-        uint   edc       = ComputeEdc(0, data, size);
+        uint   edc       = ComputeEdc(0, sector.AsSpan(sourceOffset, size), size);
         byte[] storedEdc = BitConverter.GetBytes(edc);
         Array.Copy(storedEdc, 0, sector, destinationOffset, storedEdc.Length);
     }
 
-    static uint ComputeEdc(uint edc, IReadOnlyList<byte> src, int size)
+    static uint ComputeEdc(uint edc, ReadOnlySpan<byte> src, int size)
     {
         var pos = 0;
 
@@ -1436,7 +1342,7 @@ public static class CdChecksums
         return edc;
     }
 
-    static bool? CheckCdSectorSubChannel(IReadOnlyList<byte> subchannel)
+    static bool? CheckCdSectorSubChannel(ReadOnlySpan<byte> subchannel)
     {
         bool? status       = true;
         var   qSubChannel  = new byte[12];
@@ -1445,9 +1351,6 @@ public static class CdChecksums
         var   cdTextPack3  = new byte[18];
         var   cdTextPack4  = new byte[18];
         var   cdSubRwPack1 = new byte[24];
-        var   cdSubRwPack2 = new byte[24];
-        var   cdSubRwPack3 = new byte[24];
-        var   cdSubRwPack4 = new byte[24];
 
         var i = 0;
 
@@ -1461,13 +1364,7 @@ public static class CdChecksums
             cdTextPack4[j] = 0;
         }
 
-        for(var j = 0; j < 24; j++)
-        {
-            cdSubRwPack1[j] = 0;
-            cdSubRwPack2[j] = 0;
-            cdSubRwPack3[j] = 0;
-            cdSubRwPack4[j] = 0;
-        }
+        for(var j = 0; j < 24; j++) cdSubRwPack1[j] = 0;
 
         for(var j = 0; j < 12; j++)
         {
@@ -1546,12 +1443,6 @@ public static class CdChecksums
         i = 0;
 
         for(var j = 0; j < 24; j++) cdSubRwPack1[j] = (byte)(subchannel[i++] & 0x3F);
-
-        for(var j = 0; j < 24; j++) cdSubRwPack2[j] = (byte)(subchannel[i++] & 0x3F);
-
-        for(var j = 0; j < 24; j++) cdSubRwPack3[j] = (byte)(subchannel[i++] & 0x3F);
-
-        for(var j = 0; j < 24; j++) cdSubRwPack4[j] = (byte)(subchannel[i++] & 0x3F);
 
         switch(cdSubRwPack1[0])
         {
