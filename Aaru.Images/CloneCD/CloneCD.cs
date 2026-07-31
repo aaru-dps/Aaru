@@ -42,22 +42,24 @@ namespace Aaru.Images;
 /// <summary>Implements reading and writing CloneCD disc images</summary>
 public sealed partial class CloneCd : IWritableOpticalImage
 {
-    const string            MODULE_NAME = "CloneCD plugin";
-    string                  _catalog; // TODO: Use it
-    IFilter                 _ccdFilter;
-    byte[]                  _cdtext;
-    StreamReader            _cueStream;
-    IFilter                 _dataFilter;
-    Stream                  _dataStream;
-    StreamWriter            _descriptorStream;
-    byte[]                  _fullToc;
-    ImageInfo               _imageInfo;
-    Dictionary<uint, ulong> _offsetMap;
-    bool                    _scrambled;
-    IFilter                 _subFilter;
-    Stream                  _subStream;
-    Dictionary<byte, byte>  _trackFlags;
-    string                  _writingBaseName;
+    const string                              MODULE_NAME = "CloneCD plugin";
+    string                                    _catalog; // TODO: Use it
+    IFilter                                   _ccdFilter;
+    byte[]                                    _cdtext;
+    StreamReader                              _cueStream;
+    IFilter                                   _dataFilter;
+    Stream                                    _dataStream;
+    StreamWriter                              _descriptorStream;
+    byte[]                                    _fullToc;
+    ImageInfo                                 _imageInfo;
+    Dictionary<uint, ulong>                   _offsetMap;
+    Dictionary<uint, Track>                   _trackSequenceCache;
+    (ulong Start, ulong End, uint Sequence)[] _trackRangeCache;
+    bool                                      _scrambled;
+    IFilter                                   _subFilter;
+    Stream                                    _subStream;
+    Dictionary<byte, byte>                    _trackFlags;
+    string                                    _writingBaseName;
 
     public CloneCd() => _imageInfo = new ImageInfo
     {

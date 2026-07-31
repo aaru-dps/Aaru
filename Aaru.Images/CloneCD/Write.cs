@@ -297,7 +297,9 @@ public sealed partial class CloneCd
         ulong currentDataOffset       = 0;
         ulong currentSubchannelOffset = 0;
 
-        Tracks = [];
+        Tracks              = [];
+        _trackSequenceCache = null;
+        _trackRangeCache    = null;
 
         foreach(Track track in tracks.OrderBy(static t => t.Sequence))
         {

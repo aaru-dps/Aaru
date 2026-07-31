@@ -369,8 +369,8 @@ public sealed partial class CloneCd
 
             FullTOC.CDFullTOC toc;
             toc.TrackDescriptors     = entries.ToArray();
-            toc.LastCompleteSession  = (byte)maxSession;
-            toc.FirstCompleteSession = (byte)minSession;
+            toc.LastCompleteSession  = (byte)(maxSession & 0xFF);
+            toc.FirstCompleteSession = (byte)(minSession & 0xFF);
             toc.DataLength           = (ushort)(entries.Count * 11 + 2);
             var tocMs = new MemoryStream();
             tocMs.WriteByte(toc.FirstCompleteSession);
@@ -909,12 +909,13 @@ public sealed partial class CloneCd
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -967,20 +968,35 @@ public sealed partial class CloneCd
 
         if(negative) return ErrorNumber.NotSupported;
 
-        foreach(KeyValuePair<uint, ulong> kvp in _offsetMap.Where(kvp => sectorAddress >= kvp.Value)
-                                                           .SelectMany(_ => Tracks,
-                                                                       static (kvp, track) => new
-                                                                       {
-                                                                           kvp,
-                                                                           track
-                                                                       })
-                                                           .Where(static t => t.track.Sequence == t.kvp.Key)
-                                                           .Where(t => sectorAddress - t.kvp.Value <
-                                                                       t.track.EndSector - t.track.StartSector + 1)
-                                                           .Select(static t => t.kvp))
-            return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
+        EnsureTrackCaches();
+
+        foreach((ulong start, ulong end, uint sequence) in _trackRangeCache)
+        {
+            if(sectorAddress >= start && sectorAddress < end)
+                return ReadSectorsTag(sectorAddress - start, length, sequence, tag, out buffer);
+        }
 
         return ErrorNumber.SectorNotFound;
+    }
+
+    void EnsureTrackCaches()
+    {
+        if(_trackSequenceCache != null && _trackRangeCache != null) return;
+
+        var sequenceCache = new Dictionary<uint, Track>();
+
+        foreach(Track track in Tracks) sequenceCache.TryAdd(track.Sequence, track);
+
+        var ranges = new List<(ulong Start, ulong End, uint Sequence)>();
+
+        foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
+        {
+            if(sequenceCache.TryGetValue(kvp.Key, out Track track))
+                ranges.Add((kvp.Value, kvp.Value + (track.EndSector - track.StartSector + 1), kvp.Key));
+        }
+
+        _trackSequenceCache = sequenceCache;
+        _trackRangeCache    = ranges.ToArray();
     }
 
     /// <inheritdoc />
@@ -989,14 +1005,15 @@ public sealed partial class CloneCd
     {
         buffer       = null;
         sectorStatus = null;
-        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        EnsureTrackCaches();
+
+        if(!_trackSequenceCache.TryGetValue(track, out Track aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length + sectorAddress - 1 > aaruTrack.EndSector) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         uint sectorOffset;
         uint sectorSize;
@@ -1046,12 +1063,13 @@ public sealed partial class CloneCd
 
             _dataStream.EnsureRead(buffer, 0, buffer.Length);
 
+            var sector = new byte[sectorSize];
+
             for(var i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
                 Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
-                sector = Sector.GetUserDataFromMode2(sector);
-                mode2Ms.Write(sector, 0, sector.Length);
+                byte[] userData = Sector.GetUserDataFromMode2(sector);
+                mode2Ms.Write(userData, 0, userData.Length);
             }
 
             buffer = mode2Ms.ToArray();
@@ -1062,11 +1080,9 @@ public sealed partial class CloneCd
         {
             for(var i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                _dataStream.EnsureRead(sector, 0, sector.Length);
+                _dataStream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
         }
 
@@ -1081,9 +1097,9 @@ public sealed partial class CloneCd
 
         if(tag == SectorTagType.CdTrackFlags) track = (uint)sectorAddress;
 
-        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
+        EnsureTrackCaches();
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        if(!_trackSequenceCache.TryGetValue(track, out Track aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length + sectorAddress - 1 > aaruTrack.EndSector) return ErrorNumber.OutOfRange;
 
@@ -1329,11 +1345,9 @@ public sealed partial class CloneCd
         {
             for(var i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
                 _dataStream.Seek(sectorOffset, SeekOrigin.Current);
-                _dataStream.EnsureRead(sector, 0, sector.Length);
+                _dataStream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
                 _dataStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
             }
         }
 
@@ -1366,14 +1380,13 @@ public sealed partial class CloneCd
 
         if(negative) return ErrorNumber.NotSupported;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
-                                                 where sectorAddress >= kvp.Value
-                                                 from track in Tracks
-                                                 where track.Sequence == kvp.Key
-                                                 where sectorAddress                       - kvp.Value <
-                                                       track.EndSector - track.StartSector + 1
-                                                 select kvp)
-            return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer, out sectorStatus);
+        EnsureTrackCaches();
+
+        foreach((ulong start, ulong end, uint sequence) in _trackRangeCache)
+        {
+            if(sectorAddress >= start && sectorAddress < end)
+                return ReadSectorsLong(sectorAddress - start, length, sequence, out buffer, out sectorStatus);
+        }
 
         return ErrorNumber.SectorNotFound;
     }
@@ -1384,15 +1397,16 @@ public sealed partial class CloneCd
     {
         buffer       = null;
         sectorStatus = null;
-        Track aaruTrack = Tracks.FirstOrDefault(linqTrack => linqTrack.Sequence == track);
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        EnsureTrackCaches();
+
+        if(!_trackSequenceCache.TryGetValue(track, out Track aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length + sectorAddress - 1 > aaruTrack.EndSector) return ErrorNumber.OutOfMemory;
 
         buffer       = new byte[2352 * length];
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         _dataStream.Seek((long)(aaruTrack.FileOffset + sectorAddress * 2352), SeekOrigin.Begin);
         _dataStream.EnsureRead(buffer, 0, buffer.Length);
@@ -1402,6 +1416,8 @@ public sealed partial class CloneCd
 
     /// <inheritdoc />
     public List<Track> GetSessionTracks(Session session) =>
+
+        // ReSharper disable once UsageOfDefaultStructEquality
         Sessions.Contains(session) ? GetSessionTracks(session.Sequence) : null;
 
     /// <inheritdoc />
