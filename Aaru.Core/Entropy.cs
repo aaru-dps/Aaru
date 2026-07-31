@@ -228,8 +228,11 @@ public sealed class Entropy
 
         EndProgressEvent?.Invoke();
 
-        entropy.Entropy += entTable.Select(l => l / (double)diskSize)
-                                   .Sum(static frequency => -(frequency * Math.Log(frequency, 2)));
+        for(var j = 0; j < 256; j++)
+        {
+            double frequency = entTable[j] / (double)diskSize;
+            entropy.Entropy += -(frequency * Math.Log(frequency, 2));
+        }
 
         if(duplicatedSectors) entropy.UniqueSectors = uniqueSectors.Count;
 
@@ -263,19 +266,15 @@ public sealed class Entropy
             return entropy;
         }
 
-        if(bytesRead != data.Length)
-        {
-            var tmp = new byte[bytesRead];
-            Array.Copy(data, 0, tmp, 0, bytesRead);
-            data = tmp;
-        }
-
-        foreach(byte b in data) entTable[b]++;
+        foreach(byte b in data.AsSpan(0, bytesRead)) entTable[b]++;
 
         EndProgressEvent?.Invoke();
 
-        entropy.Entropy += entTable.Select(l => l / (double)data.Length)
-                                   .Sum(static frequency => -(frequency * Math.Log(frequency, 2)));
+        for(var j = 0; j < 256; j++)
+        {
+            double frequency = entTable[j] / (double)bytesRead;
+            entropy.Entropy += -(frequency * Math.Log(frequency, 2));
+        }
 
         return entropy;
     }
@@ -285,11 +284,11 @@ public sealed class Entropy
 public struct EntropyResults
 {
     /// <summary>Track number, if applicable</summary>
-    public uint Track;
+    public uint   Track;
     /// <summary>Entropy</summary>
     public double Entropy;
     /// <summary>Number of unique sectors</summary>
-    public int? UniqueSectors;
+    public int?   UniqueSectors;
     /// <summary>Number of total sectors</summary>
-    public ulong Sectors;
+    public ulong  Sectors;
 }
