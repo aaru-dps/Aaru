@@ -551,99 +551,14 @@ public sealed partial class CdrWin
                         if(datafile[0] == '"' && datafile[^1] == '"')
                             datafile = datafile.Substring(1, datafile.Length - 2); // Unquote it
 
-                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(datafile);
+                        currentFile.DataFilter = ResolveDataFile(datafile, imageFilter.ParentFolder);
 
                         // Check if file exists
                         if(currentFile.DataFilter == null)
                         {
-                            if(datafile[0] == '/' || datafile[0] == '/' && datafile[1] == '.') // UNIX absolute path
-                            {
-                                var   unixPath      = new Regex("^(.+)/([^/]+)$");
-                                Match unixPathMatch = unixPath.Match(datafile);
+                            AaruLogging.Error(string.Format(Localization.File_0_not_found, matchFile.Groups[1].Value));
 
-                                if(unixPathMatch.Success)
-                                {
-                                    currentFile.DataFilter =
-                                        PluginRegister.Singleton.GetFilter(unixPathMatch.Groups[1].Value);
-
-                                    if(currentFile.DataFilter == null)
-                                    {
-                                        string path = imageFilter.ParentFolder    +
-                                                      Path.DirectorySeparatorChar +
-                                                      unixPathMatch.Groups[1].Value;
-
-                                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
-
-                                        if(currentFile.DataFilter == null)
-                                        {
-                                            AaruLogging.Error(string.Format(Localization.File_0_not_found,
-                                                                            matchFile.Groups[1].Value));
-
-                                            return ErrorNumber.NoSuchFile;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    AaruLogging.Error(string.Format(Localization.File_0_not_found,
-                                                                    matchFile.Groups[1].Value));
-
-                                    return ErrorNumber.NoSuchFile;
-                                }
-                            }
-                            else if(datafile[1] == ':'  && datafile[2] == '\\' ||
-                                    datafile[0] == '\\' && datafile[1] == '\\' ||
-                                    datafile[0] == '.'  && datafile[1] == '\\') // Windows absolute path
-                            {
-                                var winPath =
-                                    new
-                                        Regex("^(?:[a-zA-Z]\\:(\\\\|\\/)|file\\:\\/\\/|\\\\\\\\|\\.(\\/|\\\\))([^\\\\\\/\\:\\*\\?\\<\\>\\\"\\|]+(\\\\|\\/){0,1})+$");
-
-                                Match winPathMatch = winPath.Match(datafile);
-
-                                if(winPathMatch.Success)
-                                {
-                                    currentFile.DataFilter =
-                                        PluginRegister.Singleton.GetFilter(winPathMatch.Groups[1].Value);
-
-                                    if(currentFile.DataFilter == null)
-                                    {
-                                        string path = imageFilter.ParentFolder    +
-                                                      Path.DirectorySeparatorChar +
-                                                      winPathMatch.Groups[1].Value;
-
-                                        currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
-
-                                        if(currentFile.DataFilter == null)
-                                        {
-                                            AaruLogging.Error(string.Format(Localization.File_0_not_found,
-                                                                            matchFile.Groups[1].Value));
-
-                                            return ErrorNumber.NoSuchFile;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    AaruLogging.Error(string.Format(Localization.File_0_not_found,
-                                                                    matchFile.Groups[1].Value));
-
-                                    return ErrorNumber.NoSuchFile;
-                                }
-                            }
-                            else
-                            {
-                                string path = imageFilter.ParentFolder + Path.DirectorySeparatorChar + datafile;
-                                currentFile.DataFilter = PluginRegister.Singleton.GetFilter(path);
-
-                                if(currentFile.DataFilter == null)
-                                {
-                                    AaruLogging.Error(string.Format(Localization.File_0_not_found,
-                                                                    matchFile.Groups[1].Value));
-
-                                    return ErrorNumber.NoSuchFile;
-                                }
-                            }
+                            return ErrorNumber.NoSuchFile;
                         }
 
                         // File does exist, process it
@@ -2483,6 +2398,38 @@ public sealed partial class CdrWin
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Resolves the path of a file referenced by a cue sheet</summary>
+    /// <remarks>
+    ///     Cue sheets are commonly moved away from the machine that created them, so the path they contain is often
+    ///     meaningless, or written for another operating system. Files sitting next to the cue sheet therefore take
+    ///     precedence over anything the path itself points to, including the current working directory.
+    /// </remarks>
+    /// <param name="datafile">Path, as written in the cue sheet</param>
+    /// <param name="parentFolder">Folder containing the cue sheet</param>
+    /// <returns>Filter for the referenced file, <c>null</c> if it cannot be found</returns>
+    static IFilter ResolveDataFile(string datafile, string parentFolder)
+    {
+        IFilter filter = null;
+
+        // Path as written in the cue sheet, relative to the cue sheet itself, with the separators of this operating
+        // system, so paths written in another one still resolve
+        if(!Path.IsPathRooted(datafile))
+        {
+            string relative = datafile.Replace('\\', '/').Replace('/', Path.DirectorySeparatorChar);
+
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, relative));
+        }
+
+        // Filename alone, next to the cue sheet, which is where it is found when the cue sheet has been moved
+        string filename = datafile[(datafile.LastIndexOfAny(['/', '\\']) + 1)..];
+
+        if(filter is null && filename.Length > 0)
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, filename));
+
+        // Path as written in the cue sheet, verbatim, be it absolute or relative to the working directory
+        return filter ?? PluginRegister.Singleton.GetFilter(datafile);
     }
 
     /// <inheritdoc />
