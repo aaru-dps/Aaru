@@ -36,7 +36,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Intrinsics.X86;
-using System.Text;
 using Aaru.Checksums.CRC32;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
@@ -410,18 +409,13 @@ public sealed partial class Crc32Context : IChecksum
     {
         uint crc = _hashInt ^ _finalSeed;
 
-        var crc32Output = new StringBuilder();
-
         if(_useNative && _useIso)
         {
             crc32_final(_nativeContext, ref crc);
             crc32_free(_nativeContext);
         }
 
-        for(var i = 0; i < BigEndianBitConverter.GetBytes(crc).Length; i++)
-            crc32Output.Append(BigEndianBitConverter.GetBytes(crc)[i].ToString("x2"));
-
-        return crc32Output.ToString();
+        return Convert.ToHexString(BigEndianBitConverter.GetBytes(crc)).ToLowerInvariant();
     }
 
 #endregion
@@ -609,13 +603,9 @@ public sealed partial class Crc32Context : IChecksum
 
         hash = BigEndianBitConverter.GetBytes(localHashInt);
 
-        var crc32Output = new StringBuilder();
-
-        foreach(byte h in hash) crc32Output.Append(h.ToString("x2"));
-
         fileStream.Close();
 
-        return crc32Output.ToString();
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
@@ -659,11 +649,7 @@ public sealed partial class Crc32Context : IChecksum
 
         hash = BigEndianBitConverter.GetBytes(localHashInt);
 
-        var crc32Output = new StringBuilder();
-
-        foreach(byte h in hash) crc32Output.Append(h.ToString("x2"));
-
-        return crc32Output.ToString();
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     /// <summary>Gets the hash of the specified data buffer.</summary>

@@ -33,7 +33,6 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums;
@@ -67,13 +66,9 @@ public sealed class Md5Context : IChecksum
         var localMd5Provider = MD5.Create();
         var fileStream       = new FileStream(filename, FileMode.Open);
         hash = localMd5Provider.ComputeHash(fileStream);
-        var md5Output = new StringBuilder();
-
-        foreach(byte h in hash) md5Output.Append(h.ToString("x2"));
-
         fileStream.Close();
 
-        return md5Output.ToString();
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
@@ -84,11 +79,8 @@ public sealed class Md5Context : IChecksum
     {
         var localMd5Provider = MD5.Create();
         hash = localMd5Provider.ComputeHash(data, 0, (int)len);
-        var md5Output = new StringBuilder();
 
-        foreach(byte h in hash) md5Output.Append(h.ToString("x2"));
-
-        return md5Output.ToString();
+        return Convert.ToHexString(hash).ToLowerInvariant();
     }
 
     /// <summary>Gets the hash of the specified data buffer.</summary>
@@ -132,13 +124,10 @@ public sealed class Md5Context : IChecksum
     public string End()
     {
         _provider.TransformFinalBlock([], 0, 0);
-        var md5Output = new StringBuilder();
 
         if(_provider.Hash is null) return null;
 
-        foreach(byte h in _provider.Hash) md5Output.Append(h.ToString("x2"));
-
-        return md5Output.ToString();
+        return Convert.ToHexString(_provider.Hash).ToLowerInvariant();
     }
 
 #endregion
