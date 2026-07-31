@@ -49,11 +49,11 @@ namespace Aaru.Checksums;
 
 /// <inheritdoc />
 /// <summary>Implements the SpamSum fuzzy hashing algorithm.</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
-[SuppressMessage("ReSharper", "UnusedParameter.Global")]
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-[SuppressMessage("ReSharper", "MemberCanBeInternal")]
-[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global",                       Justification = "Public API")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global",                    Justification = "Public API")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global",                 Justification = "Public API")]
+[SuppressMessage("ReSharper", "MemberCanBeInternal",                       Justification = "Public API")]
+[SuppressMessage("ReSharper", "OutParameterValueIsAlwaysDiscarded.Global", Justification = "Public API")]
 public sealed class SpamSumContext : IChecksum
 {
     const uint ROLLING_WINDOW   = 7;
@@ -149,22 +149,22 @@ public sealed class SpamSumContext : IChecksum
      * we can cope with large blocksize values
      */
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void roll_hash(byte c)
+    static void roll_hash(ref RollState roll, byte c)
     {
-        _self.Roll.H2 -= _self.Roll.H1;
-        _self.Roll.H2 += ROLLING_WINDOW * c;
+        roll.H2 -= roll.H1;
+        roll.H2 += ROLLING_WINDOW * c;
 
-        _self.Roll.H1 += c;
-        _self.Roll.H1 -= _self.Roll.Window[_self.Roll.N % ROLLING_WINDOW];
+        roll.H1 += c;
+        roll.H1 -= roll.Window[roll.N % ROLLING_WINDOW];
 
-        _self.Roll.Window[_self.Roll.N % ROLLING_WINDOW] = c;
-        _self.Roll.N++;
+        roll.Window[roll.N % ROLLING_WINDOW] = c;
+        roll.N++;
 
         /* The original spamsum AND'ed this value with 0xFFFFFFFF which
          * in theory should have no effect. This AND has been removed
          * for performance (jk) */
-        _self.Roll.H3 <<= 5;
-        _self.Roll.H3 ^=  c;
+        roll.H3 <<= 5;
+        roll.H3 ^=  c;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -230,13 +230,16 @@ public sealed class SpamSumContext : IChecksum
         /* At each character we update the rolling hash and the normal hashes.
          * When the rolling hash hits a reset value then we emit a normal hash
          * as a element of the signature and reset the normal hash. */
-        roll_hash(c);
+        roll_hash(ref _self.Roll, c);
         ulong h = roll_sum();
+
+        BlockhashContext[] bh = _self.Bh;
 
         for(i = _self.Bhstart; i < _self.Bhend; ++i)
         {
-            _self.Bh[i].H     = sum_hash(c, _self.Bh[i].H);
-            _self.Bh[i].Halfh = sum_hash(c, _self.Bh[i].Halfh);
+            ref BlockhashContext bhi = ref bh[i];
+            bhi.H     = sum_hash(c, bhi.H);
+            bhi.Halfh = sum_hash(c, bhi.Halfh);
         }
 
         for(i = _self.Bhstart; i < _self.Bhend; ++i)
@@ -251,12 +254,14 @@ public sealed class SpamSumContext : IChecksum
             /* We have hit a reset point. We now emit hashes which are
              * based on all characters in the piece of the message between
              * the last reset point and this one */
-            if(0 == _self.Bh[i].Dlen) fuzzy_try_fork_blockhash();
+            if(0 == bh[i].Dlen) fuzzy_try_fork_blockhash();
 
-            _self.Bh[i].Digest[_self.Bh[i].Dlen] = _b64[_self.Bh[i].H     % 64];
-            _self.Bh[i].Halfdigest               = _b64[_self.Bh[i].Halfh % 64];
+            ref BlockhashContext bhi = ref bh[i];
 
-            if(_self.Bh[i].Dlen < SPAMSUM_LENGTH - 1)
+            bhi.Digest[bhi.Dlen] = _b64[bhi.H     % 64];
+            bhi.Halfdigest       = _b64[bhi.Halfh % 64];
+
+            if(bhi.Dlen < SPAMSUM_LENGTH - 1)
             {
                 /* We can have a problem with the tail overflowing. The
                  * easiest way to cope with this is to only reset the
@@ -264,13 +269,13 @@ public sealed class SpamSumContext : IChecksum
                  * our signature. This has the effect of combining the
                  * last few pieces of the message into a single piece
                  * */
-                _self.Bh[i].Digest[++_self.Bh[i].Dlen] = 0;
-                _self.Bh[i].H                          = HASH_INIT;
+                bhi.Digest[++bhi.Dlen] = 0;
+                bhi.H                  = HASH_INIT;
 
-                if(_self.Bh[i].Dlen >= SPAMSUM_LENGTH / 2) continue;
+                if(bhi.Dlen >= SPAMSUM_LENGTH / 2) continue;
 
-                _self.Bh[i].Halfh      = HASH_INIT;
-                _self.Bh[i].Halfdigest = 0;
+                bhi.Halfh      = HASH_INIT;
+                bhi.Halfdigest = 0;
             }
             else
                 fuzzy_try_reduce_blockhash();
@@ -281,7 +286,6 @@ public sealed class SpamSumContext : IChecksum
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void FuzzyDigest(out byte[] result)
     {
-        var  sb     = new StringBuilder();
         uint bi     = _self.Bhstart;
         uint h      = roll_sum();
         var  remain = (int)(FUZZY_MAX_RESULT - 1); /* Exclude terminating '\0'. */
@@ -306,8 +310,8 @@ public sealed class SpamSumContext : IChecksum
 
         if(bi > 0 && _self.Bh[bi].Dlen < SPAMSUM_LENGTH / 2) throw new Exception(Localization.Assertion_failed);
 
-        sb.Append($"{SSDEEP_BS(bi)}:");
-        int i = Encoding.ASCII.GetBytes(sb.ToString()).Length;
+        byte[] prefix = Encoding.ASCII.GetBytes($"{SSDEEP_BS(bi)}:");
+        int    i      = prefix.Length;
 
         if(i <= 0)
             /* Maybe snprintf has set errno here? */
@@ -317,7 +321,7 @@ public sealed class SpamSumContext : IChecksum
 
         remain -= i;
 
-        Array.Copy(Encoding.ASCII.GetBytes(sb.ToString()), 0, result, 0, i);
+        Array.Copy(prefix, 0, result, 0, i);
 
         int resultOff = i;
 
