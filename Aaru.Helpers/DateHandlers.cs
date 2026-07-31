@@ -46,8 +46,8 @@ public static class DateHandlers
     static readonly DateTime _macEpoch           = new(1904, 1, 1, 0, 0, 0);
     static readonly DateTime _unixEpoch          = new(1970, 1, 1, 0, 0, 0);
     /// <summary>Day 0 of Julian Date system</summary>
-    static readonly DateTime _julianEpoch = new(1858, 11, 17, 0, 0, 0);
-    static readonly DateTime _amigaEpoch = new(1978, 1, 1, 0, 0, 0);
+    static readonly DateTime _julianEpoch        = new(1858, 11, 17, 0, 0, 0);
+    static readonly DateTime _amigaEpoch         = new(1978, 1, 1, 0, 0, 0);
 
     /// <summary>Converts a Macintosh timestamp to a .NET DateTime</summary>
     /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
@@ -221,6 +221,11 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime AmigaToDateTime(uint days, uint minutes, uint ticks)
     {
+        // Corrupt on-disk values can overflow DateTime, return epoch
+        double milliseconds = days * 86400000d + minutes * 60000d + ticks * 20d;
+
+        if(milliseconds > (DateTime.MaxValue - _amigaEpoch).TotalMilliseconds) return DateTime.MinValue;
+
         DateTime temp = _amigaEpoch.AddDays(days);
         temp = temp.AddMinutes(minutes);
 
