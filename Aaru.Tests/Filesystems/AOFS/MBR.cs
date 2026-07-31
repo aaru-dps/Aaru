@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AOFS;
 
 [TestFixture]
-public class MBR() : FilesystemTest("aofs")
+public class MBR() : ReadOnlyFilesystemTest("aofs")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System (MBR)");

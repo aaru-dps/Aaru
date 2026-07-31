@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AOFS;
 
 [TestFixture]
-public class Whole() : FilesystemTest("aofs")
+public class Whole() : ReadOnlyFilesystemTest("aofs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Amiga Old File System");
 
