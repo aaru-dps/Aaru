@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.BeFS;
 
 [TestFixture]
-public class MBR() : FilesystemTest("befs")
+public class MBR() : ReadOnlyFilesystemTest("befs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Be File System (MBR)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.BeFS();
