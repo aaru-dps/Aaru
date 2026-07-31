@@ -32,12 +32,12 @@ using Aaru.CommonTypes.Interfaces;
 using Aaru.Filesystems;
 using NUnit.Framework;
 
-namespace Aaru.Tests.Filesystems.EAFS;
+namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class MBR() : FilesystemTest("Extended Acer Fast Filesystem")
+public class EAFS() : ReadOnlyFilesystemTest("eafs")
 {
-    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "EAFS (MBR)");
+    public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Extended Acer File System (MBR)");
     public override IFilesystem Plugin     => new SysVfs();
     public override bool        Partitions => true;
 
@@ -45,13 +45,13 @@ public class MBR() : FilesystemTest("Extended Acer Fast Filesystem")
     [
         new()
         {
-            TestFile    = "scoopenserver_5.0.7hw.aif",
+            TestFile    = "scounix-3.2.4l-fssetter.aif",
             MediaType   = MediaType.GENERIC_HDD,
-            Sectors     = 1024000,
+            Sectors     = 106496,
             SectorSize  = 512,
-            Clusters    = 510048,
+            Clusters    = 27000,
             ClusterSize = 1024,
-            VolumeName  = "Volume label"
+            VolumeName  = ""
         }
     ];
 }

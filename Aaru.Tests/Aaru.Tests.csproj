@@ -53,6 +53,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Localization.resx</DependentUpon>
     </Compile>
+    <Compile Remove="Filesystems\EAFS\Whole.cs" />
   </ItemGroup>
 
 </Project>
