@@ -90,8 +90,11 @@ public sealed partial class FAT
 
         string[] pieces = cutPath.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
 
+        CompareInfo compareInfo = _cultureInfo.CompareInfo;
+
         KeyValuePair<string, CompleteDirectoryEntry> entry =
-            _rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
+            _rootDirectoryCache.FirstOrDefault(t => compareInfo.Compare(t.Key, pieces[0], CompareOptions.IgnoreCase) ==
+                                                    0);
 
         if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
@@ -103,7 +106,10 @@ public sealed partial class FAT
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
+            entry = currentDirectory.FirstOrDefault(t => compareInfo.Compare(t.Key,
+                                                                             pieces[p],
+                                                                             CompareOptions.IgnoreCase) ==
+                                                         0);
 
             if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
@@ -340,8 +346,10 @@ public sealed partial class FAT
             // Check FAT32.IFS EAs
             if(_fat32 || _debug)
             {
-                var fat32EaSidecars = currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo))
-                                                      .ToList();
+                var fat32EaSidecars = currentDirectory
+                                     .Where(static t => t.Key.EndsWith(FAT32_EA_TAIL,
+                                                                       StringComparison.OrdinalIgnoreCase))
+                                     .ToList();
 
                 foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
                 {

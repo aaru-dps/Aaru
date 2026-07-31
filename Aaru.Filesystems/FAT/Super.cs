@@ -612,11 +612,8 @@ public sealed partial class FAT
             // Not a correct entry
             if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
 
-            // Self
-            if(_encoding.GetString(entry.filename).TrimEnd() == ".") continue;
-
-            // Parent
-            if(_encoding.GetString(entry.filename).TrimEnd() == "..") continue;
+            // Self or parent ("." or ".." padded with spaces), no need to decode
+            if(IsDotEntryName(entry.filename)) continue;
 
             // Deleted
             if(entry.filename[0] == DIRENT_DELETED) continue;
@@ -920,8 +917,9 @@ public sealed partial class FAT
         // Check FAT32.IFS EAs
         if(_fat32 || _debug)
         {
-            var fat32EaSidecars = _rootDirectoryCache.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, _cultureInfo))
-                                                     .ToList();
+            var fat32EaSidecars = _rootDirectoryCache
+                                 .Where(static t => t.Key.EndsWith(FAT32_EA_TAIL, StringComparison.OrdinalIgnoreCase))
+                                 .ToList();
 
             foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
             {

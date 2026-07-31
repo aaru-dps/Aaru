@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
@@ -132,14 +133,32 @@ public sealed partial class FAT
             parent = _rootDirectoryCache;
         else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
+        CompareInfo compareInfo = _cultureInfo.CompareInfo;
+
         KeyValuePair<string, CompleteDirectoryEntry> dirent =
-            parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
+            parent.FirstOrDefault(t => compareInfo.Compare(t.Key, pieces[^1], CompareOptions.IgnoreCase) == 0);
 
         if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
 
         entry = dirent.Value;
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Checks if a raw 8.3 base name is the "." or ".." entry (0x2E padded with 0x20), without decoding.</summary>
+    static bool IsDotEntryName(byte[] filename)
+    {
+        if(filename[0] != 0x2E) return false;
+
+        var start = 1;
+
+        if(filename.Length > 1 && filename[1] == 0x2E) start = 2;
+
+        for(int i = start; i < filename.Length; i++)
+            if(filename[i] != 0x20)
+                return false;
+
+        return true;
     }
 
     static byte LfnChecksum(byte[] name, byte[] extension)
