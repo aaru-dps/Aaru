@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.COHERENT;
 
 [TestFixture]
-public class MBR() : FilesystemTest("coherent")
+public class MBR() : ReadOnlyFilesystemTest("coherent")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "COHERENT filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();
@@ -49,9 +49,9 @@ public class MBR() : FilesystemTest("coherent")
             MediaType   = MediaType.GENERIC_HDD,
             Sectors     = 1024000,
             SectorSize  = 512,
-            Clusters    = 510048,
-            ClusterSize = 1024,
-            VolumeName  = "Volume label"
+            Clusters    = 1022049,
+            ClusterSize = 512,
+            VolumeName  = "VolLab"
         }
     ];
 }
