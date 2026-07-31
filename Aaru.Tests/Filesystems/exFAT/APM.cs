@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.exFAT;
 
 [TestFixture]
-public class APM() : FilesystemTest("exfat")
+public class APM() : ReadOnlyFilesystemTest("exfat")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (APM)");
     public override IFilesystem Plugin     => new Aaru.Filesystems.exFAT();

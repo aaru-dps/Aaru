@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.exFAT;
 
 [TestFixture]
-public class MBR() : FilesystemTest("exfat")
+public class MBR() : ReadOnlyFilesystemTest("exfat")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "exFAT (MBR)");
 
