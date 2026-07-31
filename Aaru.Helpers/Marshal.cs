@@ -38,8 +38,8 @@ using System.Runtime.InteropServices;
 namespace Aaru.Helpers;
 
 /// <summary>Provides methods to marshal binary data into C# structs</summary>
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global", Justification = "Public API")]
+[SuppressMessage("ReSharper", "UnusedMember.Global",       Justification = "Public API")]
 public static class Marshal
 {
     /// <summary>Returns the size of an unmanaged type in bytes.</summary>
@@ -53,16 +53,21 @@ public static class Marshal
     /// <typeparam name="T">Type of the structure to marshal</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes) where T : struct
+    public static T ByteArrayToStructureLittleEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes) where T : struct
     {
         var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-        var str = (T)(System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T)) ??
-                      default(T));
-
-        ptr.Free();
-
-        return str;
+        try
+        {
+            return System.Runtime.InteropServices.Marshal.PtrToStructure<T>(ptr.AddrOfPinnedObject());
+        }
+        finally
+        {
+            ptr.Free();
+        }
     }
 
     /// <summary>Marshal little-endian binary data to a structure</summary>
@@ -72,11 +77,23 @@ public static class Marshal
     /// <typeparam name="T">Type of the structure to marshal</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes, int start, int length) where T : struct
+    public static T ByteArrayToStructureLittleEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes, int start, int length) where T : struct
     {
-        Span<byte> span = bytes;
+        ArgumentOutOfRangeException.ThrowIfGreaterThan((uint)start + (uint)length, (uint)bytes.Length);
 
-        return ByteArrayToStructureLittleEndian<T>(span.Slice(start, length).ToArray());
+        var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+
+        try
+        {
+            return System.Runtime.InteropServices.Marshal.PtrToStructure<T>(ptr.AddrOfPinnedObject() + start);
+        }
+        finally
+        {
+            ptr.Free();
+        }
     }
 
     /// <summary>
@@ -86,7 +103,10 @@ public static class Marshal
     /// <typeparam name="T">Type of the structure to marshal (must be marked with [SwapEndian] attribute)</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructureBigEndian<T>(byte[] bytes) where T : struct, ISwapEndian<T>
+    public static T ByteArrayToStructureBigEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes) where T : struct, ISwapEndian<T>
     {
         T str = ByteArrayToStructureLittleEndian<T>(bytes);
 
@@ -102,20 +122,21 @@ public static class Marshal
     /// <typeparam name="T">Type of the structure to marshal (must be marked with [SwapEndian] attribute)</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructureBigEndian<T>(byte[] bytes, int start, int length)
-        where T : struct, ISwapEndian<T>
-    {
-        Span<byte> span = bytes;
-
-        return ByteArrayToStructureBigEndian<T>(span.Slice(start, length).ToArray());
-    }
+    public static T ByteArrayToStructureBigEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes, int start, int length) where T : struct, ISwapEndian<T> =>
+        ByteArrayToStructureLittleEndian<T>(bytes, start, length).SwapEndian();
 
     /// <summary>Marshal PDP-11 binary data to a structure</summary>
     /// <param name="bytes">Byte array containing the binary data</param>
     /// <typeparam name="T">Type of the structure to marshal</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes) where T : struct, ISwapPdpEndian<T>
+    public static T ByteArrayToStructurePdpEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes) where T : struct, ISwapPdpEndian<T>
     {
         T str = ByteArrayToStructureLittleEndian<T>(bytes);
 
@@ -130,13 +151,11 @@ public static class Marshal
     /// <typeparam name="T">Type of the structure to marshal</typeparam>
     /// <returns>The binary data marshalled in a structure with the specified type</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes, int start, int length)
-        where T : struct, ISwapPdpEndian<T>
-    {
-        Span<byte> span = bytes;
-
-        return ByteArrayToStructurePdpEndian<T>(span.Slice(start, length).ToArray());
-    }
+    public static T ByteArrayToStructurePdpEndian<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors |
+                                    DynamicallyAccessedMemberTypes.NonPublicConstructors)]
+        T>(byte[] bytes, int start, int length) where T : struct, ISwapPdpEndian<T> =>
+        ByteArrayToStructureLittleEndian<T>(bytes, start, length).SwapPdpEndian();
 
     /// <summary>
     ///     Marshal little-endian binary data to a structure. If the structure type contains any non value type, this
