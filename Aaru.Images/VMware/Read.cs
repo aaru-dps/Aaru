@@ -129,8 +129,10 @@ public sealed partial class VMware
 
         if(cowD)
         {
-            var    cowCount = 1;
-            string basePath = Path.GetFileNameWithoutExtension(imageFilter.BasePath);
+            var cowCount = 1;
+
+            string basePath = Path.Combine(imageFilter.ParentFolder,
+                                           Path.GetFileNameWithoutExtension(imageFilter.BasePath));
 
             while(true)
             {
