@@ -30,6 +30,8 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+
 namespace Aaru.Helpers;
 
 public static partial class ArrayHelpers
@@ -59,13 +61,7 @@ public static partial class ArrayHelpers
         else
             leastBytes = compareArray1.LongLength;
 
-        for(long i = 0; i < leastBytes; i++)
-        {
-            if(compareArray1[i] == compareArray2[i]) continue;
-
-            different = true;
-
-            return;
-        }
+        different = !MemoryExtensions.SequenceEqual(compareArray1.AsSpan(0, (int)leastBytes),
+                                                    compareArray2.AsSpan(0, (int)leastBytes));
     }
 }
