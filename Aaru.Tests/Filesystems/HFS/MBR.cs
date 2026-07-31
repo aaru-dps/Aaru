@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFS;
 
 [TestFixture]
-public class MBR() : FilesystemTest("hfs")
+public class MBR() : ReadOnlyFilesystemTest("hfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (MBR)");
     public override IFilesystem Plugin     => new AppleHFS();

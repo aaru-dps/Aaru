@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFS;
 
 [TestFixture]
-public class RDB() : FilesystemTest("hfs")
+public class RDB() : ReadOnlyFilesystemTest("hfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (RDB)");
     public override IFilesystem Plugin     => new AppleHFS();

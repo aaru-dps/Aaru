@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFS;
 
 [TestFixture]
-public class Optical() : FilesystemTest("hfs")
+public class Optical() : ReadOnlyFilesystemTest("hfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (CD-ROM)");
     public override IFilesystem Plugin     => new AppleHFS();

@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.HFS;
 
 [TestFixture]
-public class APM() : FilesystemTest("hfs")
+public class APM() : ReadOnlyFilesystemTest("hfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Apple HFS (APM)");
     public override IFilesystem Plugin     => new AppleHFS();
