@@ -43,25 +43,28 @@ namespace Aaru.Images;
 /// <summary>Implements reading and writing CDRWin cuesheet disc images</summary>
 public sealed partial class CdrWin : IWritableOpticalImage, IVerifiableImage
 {
-    const string MODULE_NAME = "CDRWin plugin";
-    IFilter      _cdrwinFilter;
-    StreamReader _cueStream;
-    StreamWriter _descriptorStream;
-    CdrWinDisc   _discImage;
-    ImageInfo    _imageInfo;
-    Stream       _imageStream;
-    bool         _isCd;
-    uint         _lostPregap;
-    bool         _negativeEnd;
+    const string                              MODULE_NAME = "CDRWin plugin";
+    IFilter                                   _cdrwinFilter;
+    StreamReader                              _cueStream;
+    StreamWriter                              _descriptorStream;
+    CdrWinDisc                                _discImage;
+    ImageInfo                                 _imageInfo;
+    Stream                                    _imageStream;
+    bool                                      _isCd;
+    uint                                      _lostPregap;
+    bool                                      _negativeEnd;
     /// <summary>Dictionary, index is track #, value is File</summary>
-    Dictionary<uint, ulong> _offsetMap;
-    SectorBuilder                _sectorBuilder;
-    bool                         _separateTracksWriting;
-    Dictionary<byte, byte>       _trackFlags;
-    Dictionary<byte, string>     _trackIsrcs;
-    string                       _writingBaseName;
-    Dictionary<uint, FileStream> _writingStreams;
-    List<Track>                  _writingTracks;
+    Dictionary<uint, ulong>                   _offsetMap;
+    bool?                                     _cdgSubchannelReadable;
+    Dictionary<uint, CdrWinTrack>             _trackSequenceCache;
+    (ulong Start, ulong End, uint Sequence)[] _trackRangeCache;
+    SectorBuilder                             _sectorBuilder;
+    bool                                      _separateTracksWriting;
+    Dictionary<byte, byte>                    _trackFlags;
+    Dictionary<byte, string>                  _trackIsrcs;
+    string                                    _writingBaseName;
+    Dictionary<uint, FileStream>              _writingStreams;
+    List<Track>                               _writingTracks;
 
     public CdrWin() => _imageInfo = new ImageInfo
     {

@@ -1695,12 +1695,13 @@ public sealed partial class CdrWin
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -1724,6 +1725,37 @@ public sealed partial class CdrWin
     public ErrorNumber ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, 1, track, tag, out buffer);
 
+    bool CdgSubchannelReadable
+    {
+        get
+        {
+            _cdgSubchannelReadable ??= _imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+                                       _discImage.Tracks.Any(static t => t.TrackType == CDRWIN_TRACK_TYPE_CDG);
+
+            return _cdgSubchannelReadable.Value;
+        }
+    }
+
+    void EnsureTrackCaches()
+    {
+        if(_trackSequenceCache != null && _trackRangeCache != null) return;
+
+        var sequenceCache = new Dictionary<uint, CdrWinTrack>();
+
+        foreach(CdrWinTrack track in _discImage.Tracks) sequenceCache.TryAdd(track.Sequence, track);
+
+        var ranges = new List<(ulong Start, ulong End, uint Sequence)>();
+
+        foreach(KeyValuePair<uint, ulong> kvp in _offsetMap)
+        {
+            if(sequenceCache.TryGetValue(kvp.Key, out CdrWinTrack track))
+                ranges.Add((kvp.Value, kvp.Value + track.Sectors, kvp.Key));
+        }
+
+        _trackSequenceCache = sequenceCache;
+        _trackRangeCache    = ranges.ToArray();
+    }
+
     /// <inheritdoc />
     public ErrorNumber ReadSectors(ulong              sectorAddress, bool negative, uint length, out byte[] buffer,
                                    out SectorStatus[] sectorStatus)
@@ -1733,13 +1765,13 @@ public sealed partial class CdrWin
 
         if(negative) return ErrorNumber.NotSupported;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
-                                                 where sectorAddress >= kvp.Value
-                                                 from cdrwinTrack in _discImage.Tracks
-                                                 where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
-                                                 select kvp)
-            return ReadSectors(sectorAddress - kvp.Value, length, kvp.Key, out buffer, out _);
+        EnsureTrackCaches();
+
+        foreach((ulong start, ulong end, uint sequence) in _trackRangeCache)
+        {
+            if(sectorAddress >= start && sectorAddress < end)
+                return ReadSectors(sectorAddress - start, length, sequence, out buffer, out _);
+        }
 
         return ErrorNumber.SectorNotFound;
     }
@@ -1755,13 +1787,13 @@ public sealed partial class CdrWin
         if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc)
             return ReadSectorsTag(sectorAddress, length, 0, tag, out buffer);
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
-                                                 where sectorAddress >= kvp.Value
-                                                 from cdrwinTrack in _discImage.Tracks
-                                                 where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
-                                                 select kvp)
-            return ReadSectorsTag(sectorAddress - kvp.Value, length, kvp.Key, tag, out buffer);
+        EnsureTrackCaches();
+
+        foreach((ulong start, ulong end, uint sequence) in _trackRangeCache)
+        {
+            if(sectorAddress >= start && sectorAddress < end)
+                return ReadSectorsTag(sectorAddress - start, length, sequence, tag, out buffer);
+        }
 
         return ErrorNumber.SectorNotFound;
     }
@@ -1773,14 +1805,14 @@ public sealed partial class CdrWin
         buffer       = null;
         sectorStatus = null;
 
-        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        EnsureTrackCaches();
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        if(!_trackSequenceCache.TryGetValue(track, out CdrWinTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         uint sectorOffset;
         uint sectorSize;
@@ -1911,38 +1943,37 @@ public sealed partial class CdrWin
         }
 
         _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
-        var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek((long)aaruTrack.TrackFile.Offset +
-                           (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                           SeekOrigin.Begin);
+        _imageStream.Seek((long)aaruTrack.TrackFile.Offset +
+                          (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                          SeekOrigin.Begin);
 
         if(mode2)
         {
             var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
+
+            var sector = new byte[sectorSize];
 
             for(var i = 0; i < length; i++)
             {
-                var sector = new byte[sectorSize];
                 Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
-                sector = Sector.GetUserDataFromMode2(sector);
-                mode2Ms.Write(sector, 0, sector.Length);
+                byte[] userData = Sector.GetUserDataFromMode2(sector);
+                mode2Ms.Write(userData, 0, userData.Length);
             }
 
             buffer = mode2Ms.ToArray();
         }
         else if(sectorOffset == 0 && sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
         {
             for(var i = 0; i < length; i++)
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                _imageStream.Seek(sectorOffset, SeekOrigin.Current);
+                _imageStream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                _imageStream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 
@@ -1957,9 +1988,9 @@ public sealed partial class CdrWin
 
         if(tag is SectorTagType.CdTrackFlags or SectorTagType.CdTrackIsrc) track = (uint)sectorAddress;
 
-        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        EnsureTrackCaches();
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        if(!_trackSequenceCache.TryGetValue(track, out CdrWinTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
@@ -2012,10 +2043,7 @@ public sealed partial class CdrWin
             case CDRWIN_TRACK_TYPE_MODE1:
             case CDRWIN_TRACK_TYPE_MODE2_FORM1:
             case CDRWIN_TRACK_TYPE_MODE2_FORM2:
-                if(tag != SectorTagType.CdSectorSubchannel                                   ||
-                   !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
-                   _discImage.Tracks.All(static t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
-                    return ErrorNumber.NoData;
+                if(tag != SectorTagType.CdSectorSubchannel || !CdgSubchannelReadable) return ErrorNumber.NoData;
 
                 buffer = new byte[length * 96];
 
@@ -2032,9 +2060,7 @@ public sealed partial class CdrWin
                     case SectorTagType.CdSectorEcc:
                     case SectorTagType.CdSectorEccP:
                     case SectorTagType.CdSectorEccQ:
-                        if(tag != SectorTagType.CdSectorSubchannel                                   ||
-                           !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
-                           _discImage.Tracks.All(static t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
+                        if(tag != SectorTagType.CdSectorSubchannel || !CdgSubchannelReadable)
                             return ErrorNumber.NotSupported;
 
                         buffer = new byte[length * 96];
@@ -2085,9 +2111,7 @@ public sealed partial class CdrWin
                     }
                     case SectorTagType.CdSectorSubchannel:
                     case SectorTagType.CdSectorSubHeader:
-                        if(tag != SectorTagType.CdSectorSubchannel                                   ||
-                           !_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel) ||
-                           _discImage.Tracks.All(static t => t.TrackType != CDRWIN_TRACK_TYPE_CDG))
+                        if(tag != SectorTagType.CdSectorSubchannel || !CdgSubchannelReadable)
                             return ErrorNumber.NotSupported;
 
                         buffer = new byte[length * 96];
@@ -2176,22 +2200,20 @@ public sealed partial class CdrWin
         }
 
         _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
-        var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek((long)aaruTrack.TrackFile.Offset +
-                           (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
-                           SeekOrigin.Begin);
+        _imageStream.Seek((long)aaruTrack.TrackFile.Offset +
+                          (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+                          SeekOrigin.Begin);
 
         if(sectorOffset == 0 && sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
         {
             for(var i = 0; i < length; i++)
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                _imageStream.Seek(sectorOffset, SeekOrigin.Current);
+                _imageStream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                _imageStream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 
@@ -2224,13 +2246,13 @@ public sealed partial class CdrWin
 
         if(negative) return ErrorNumber.NotSupported;
 
-        foreach(KeyValuePair<uint, ulong> kvp in from kvp in _offsetMap
-                                                 where sectorAddress >= kvp.Value
-                                                 from cdrwinTrack in _discImage.Tracks
-                                                 where cdrwinTrack.Sequence      == kvp.Key
-                                                 where sectorAddress - kvp.Value < cdrwinTrack.Sectors
-                                                 select kvp)
-            return ReadSectorsLong(sectorAddress - kvp.Value, length, kvp.Key, out buffer, out sectorStatus);
+        EnsureTrackCaches();
+
+        foreach((ulong start, ulong end, uint sequence) in _trackRangeCache)
+        {
+            if(sectorAddress >= start && sectorAddress < end)
+                return ReadSectorsLong(sectorAddress - start, length, sequence, out buffer, out sectorStatus);
+        }
 
         return ErrorNumber.SectorNotFound;
     }
@@ -2244,14 +2266,14 @@ public sealed partial class CdrWin
 
         if(!_isCd) return ReadSectors(sectorAddress, length, track, out buffer, out sectorStatus);
 
-        CdrWinTrack aaruTrack = _discImage.Tracks.FirstOrDefault(cdrwinTrack => cdrwinTrack.Sequence == track);
+        EnsureTrackCaches();
 
-        if(aaruTrack is null) return ErrorNumber.SectorNotFound;
+        if(!_trackSequenceCache.TryGetValue(track, out CdrWinTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
         if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
-        for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
+        Array.Fill(sectorStatus, SectorStatus.Dumped);
 
         uint sectorOffset;
         uint sectorSize;
@@ -2365,22 +2387,19 @@ public sealed partial class CdrWin
         }
 
         _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
-        var br = new BinaryReader(_imageStream);
 
-        br.BaseStream.Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorSize + sectorSkip)),
-                           SeekOrigin.Begin);
+        _imageStream.Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorSize + sectorSkip)),
+                          SeekOrigin.Begin);
 
         if(sectorSkip == 0)
-            buffer = br.ReadBytes((int)(sectorSize * length));
+            _imageStream.EnsureRead(buffer, 0, buffer.Length);
         else
         {
             for(var i = 0; i < length; i++)
             {
-                br.BaseStream.Seek(sectorOffset, SeekOrigin.Current);
-                byte[] sector = br.ReadBytes((int)sectorSize);
-                br.BaseStream.Seek(sectorSkip, SeekOrigin.Current);
-
-                Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
+                _imageStream.Seek(sectorOffset, SeekOrigin.Current);
+                _imageStream.EnsureRead(buffer, (int)(i * sectorSize), (int)sectorSize);
+                _imageStream.Seek(sectorSkip, SeekOrigin.Current);
             }
         }
 

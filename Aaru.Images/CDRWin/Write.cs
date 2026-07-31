@@ -452,7 +452,10 @@ public sealed partial class CdrWin
             foreach(FileStream oldTrack in _writingStreams.Select(static t => t.Value).Distinct())
                 oldTrack.Close();
 
-        _writingTracks = [];
+        _writingTracks         = [];
+        _trackSequenceCache    = null;
+        _trackRangeCache       = null;
+        _cdgSubchannelReadable = null;
 
         foreach(Track track in tracks.OrderBy(static t => t.Sequence))
         {
