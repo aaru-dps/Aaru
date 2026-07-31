@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -110,12 +111,13 @@ public sealed partial class AaruFormat
         return StatusToErrorNumber(res);
     }
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -268,7 +270,8 @@ public sealed partial class AaruFormat
     public ErrorNumber ReadSectors(ulong              sectorAddress, bool negative, uint length, out byte[] buffer,
                                    out SectorStatus[] sectorStatus)
     {
-        MemoryStream ms = new();
+        List<byte[]> sectors = new((int)length);
+        var          total   = 0;
         sectorStatus = new SectorStatus[length];
 
         for(uint i = 0; i < length; i++)
@@ -282,15 +285,16 @@ public sealed partial class AaruFormat
 
             if(res != ErrorNumber.NoError)
             {
-                buffer = ms.ToArray();
+                buffer = ConcatenateSectors(sectors, total);
 
                 return res;
             }
 
-            ms.Write(sectorBuffer, 0, sectorBuffer.Length);
+            sectors.Add(sectorBuffer);
+            total += sectorBuffer.Length;
         }
 
-        buffer = ms.ToArray();
+        buffer = ConcatenateSectors(sectors, total);
 
         return ErrorNumber.NoError;
     }
@@ -299,7 +303,8 @@ public sealed partial class AaruFormat
     public ErrorNumber ReadSectorsLong(ulong              sectorAddress, bool negative, uint length, out byte[] buffer,
                                        out SectorStatus[] sectorStatus)
     {
-        MemoryStream ms = new();
+        List<byte[]> sectors = new((int)length);
+        var          total   = 0;
         sectorStatus = new SectorStatus[length];
 
         for(uint i = 0; i < length; i++)
@@ -313,15 +318,16 @@ public sealed partial class AaruFormat
 
             if(res != ErrorNumber.NoError)
             {
-                buffer = ms.ToArray();
+                buffer = ConcatenateSectors(sectors, total);
 
                 return res;
             }
 
-            ms.Write(sectorBuffer, 0, sectorBuffer.Length);
+            sectors.Add(sectorBuffer);
+            total += sectorBuffer.Length;
         }
 
-        buffer = ms.ToArray();
+        buffer = ConcatenateSectors(sectors, total);
 
         return ErrorNumber.NoError;
     }
@@ -330,7 +336,8 @@ public sealed partial class AaruFormat
     public ErrorNumber ReadSectorsTag(ulong      sectorAddress, bool negative, uint length, SectorTagType tag,
                                       out byte[] buffer)
     {
-        MemoryStream ms = new();
+        List<byte[]> sectors = new((int)length);
+        var          total   = 0;
 
         for(uint i = 0; i < length; i++)
         {
@@ -338,17 +345,32 @@ public sealed partial class AaruFormat
 
             if(res != ErrorNumber.NoError)
             {
-                buffer = ms.ToArray();
+                buffer = ConcatenateSectors(sectors, total);
 
                 return res;
             }
 
-            ms.Write(sectorBuffer, 0, sectorBuffer.Length);
+            sectors.Add(sectorBuffer);
+            total += sectorBuffer.Length;
         }
 
-        buffer = ms.ToArray();
+        buffer = ConcatenateSectors(sectors, total);
 
         return ErrorNumber.NoError;
+    }
+
+    static byte[] ConcatenateSectors(List<byte[]> sectors, int total)
+    {
+        var result = new byte[total];
+        var offset = 0;
+
+        foreach(byte[] sector in sectors)
+        {
+            Array.Copy(sector, 0, result, offset, sector.Length);
+            offset += sector.Length;
+        }
+
+        return result;
     }
 
     /// <inheritdoc />
