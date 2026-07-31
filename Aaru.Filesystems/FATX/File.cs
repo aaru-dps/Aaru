@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
@@ -98,8 +99,10 @@ public sealed partial class XboxFatPlugin
             parent = _rootDirectory;
         else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
+        CompareInfo compareInfo = _cultureInfo.CompareInfo;
+
         KeyValuePair<string, DirectoryEntry> dirent =
-            parent.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[^1]);
+            parent.FirstOrDefault(t => compareInfo.Compare(t.Key, pieces[^1], CompareOptions.IgnoreCase) == 0);
 
         if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
 

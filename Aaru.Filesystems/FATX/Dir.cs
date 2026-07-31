@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -74,8 +75,10 @@ public sealed partial class XboxFatPlugin
 
         string[] pieces = cutPath.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
 
+        CompareInfo compareInfo = _cultureInfo.CompareInfo;
+
         KeyValuePair<string, DirectoryEntry> entry =
-            _rootDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[0]);
+            _rootDirectory.FirstOrDefault(t => compareInfo.Compare(t.Key, pieces[0], CompareOptions.IgnoreCase) == 0);
 
         if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
@@ -87,7 +90,10 @@ public sealed partial class XboxFatPlugin
 
         for(var p = 0; p < pieces.Length; p++)
         {
-            entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(_cultureInfo) == pieces[p]);
+            entry = currentDirectory.FirstOrDefault(t => compareInfo.Compare(t.Key,
+                                                                             pieces[p],
+                                                                             CompareOptions.IgnoreCase) ==
+                                                         0);
 
             if(string.IsNullOrEmpty(entry.Key)) return ErrorNumber.NoSuchFile;
 
