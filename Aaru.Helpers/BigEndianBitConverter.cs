@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -40,8 +41,8 @@ namespace Aaru.Helpers;
 ///     Converts base data types to an array of bytes, and an array of bytes to base data types. All info taken from
 ///     the meta data of System.BitConverter. This implementation allows for Endianness consideration.
 /// </summary>
-[SuppressMessage("ReSharper", "UnusedParameter.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = "Public API")]
+[SuppressMessage("ReSharper", "UnusedMember.Global",    Justification = "Public API")]
 public static class BigEndianBitConverter
 {
     /// <summary>Converts the specified double-precision floating point number to a 64-bit signed integer.</summary>
@@ -58,47 +59,101 @@ public static class BigEndianBitConverter
     /// <summary>Returns the specified Unicode character value as an array of bytes.</summary>
     /// <param name="value">A character to convert.</param>
     /// <returns>An array of bytes with length 2.</returns>
-    public static byte[] GetBytes(char value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(char value)
+    {
+        var buffer = new byte[2];
+        BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified double-precision floating point value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 8.</returns>
-    public static byte[] GetBytes(double value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(double value)
+    {
+        var buffer = new byte[8];
+        BinaryPrimitives.WriteDoubleBigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified single-precision floating point value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 4.</returns>
-    public static byte[] GetBytes(float value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(float value)
+    {
+        var buffer = new byte[4];
+        BinaryPrimitives.WriteSingleBigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 32-bit signed integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 4.</returns>
-    public static byte[] GetBytes(int value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(int value)
+    {
+        var buffer = new byte[4];
+        BinaryPrimitives.WriteInt32BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 64-bit signed integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 8.</returns>
-    public static byte[] GetBytes(long value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(long value)
+    {
+        var buffer = new byte[8];
+        BinaryPrimitives.WriteInt64BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 16-bit signed integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 2.</returns>
-    public static byte[] GetBytes(short value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(short value)
+    {
+        var buffer = new byte[2];
+        BinaryPrimitives.WriteInt16BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 32-bit unsigned integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 4.</returns>
-    public static byte[] GetBytes(uint value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(uint value)
+    {
+        var buffer = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 64-bit unsigned integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 8.</returns>
-    public static byte[] GetBytes(ulong value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(ulong value)
+    {
+        var buffer = new byte[8];
+        BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Returns the specified 16-bit unsigned integer value as an array of bytes.</summary>
     /// <param name="value">The number to convert.</param>
     /// <returns>An array of bytes with length 2.</returns>
-    public static byte[] GetBytes(ushort value) => BitConverter.GetBytes(value).Reverse().ToArray();
+    public static byte[] GetBytes(ushort value)
+    {
+        var buffer = new byte[2];
+        BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
+
+        return buffer;
+    }
 
     /// <summary>Converts the specified 64-bit signed integer to a double-precision floating point number.</summary>
     /// <param name="value">The number to convert.</param>
@@ -157,7 +212,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static short ToInt16(byte[] value, int startIndex) =>
-        BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(short) - startIndex);
+        BinaryPrimitives.ReadInt16BigEndian(value.AsSpan(startIndex));
 
     /// <summary>Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.</summary>
     /// <param name="value">An array of bytes.</param>
@@ -173,7 +228,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static int ToInt32(byte[] value, int startIndex) =>
-        BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(int) - startIndex);
+        BinaryPrimitives.ReadInt32BigEndian(value.AsSpan(startIndex));
 
     /// <summary>Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.</summary>
     /// <param name="value">An array of bytes.</param>
@@ -189,7 +244,7 @@ public static class BigEndianBitConverter
     ///     length of value minus 1.
     /// </exception>
     public static long ToInt64(byte[] value, int startIndex) =>
-        BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(long) - startIndex);
+        BinaryPrimitives.ReadInt64BigEndian(value.AsSpan(startIndex));
 
     /// <summary>
     ///     Returns a single-precision floating point number converted from four bytes  at a specified position in a byte
@@ -208,7 +263,7 @@ public static class BigEndianBitConverter
     ///     length of value minus 1.
     /// </exception>
     public static float ToSingle(byte[] value, int startIndex) =>
-        BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(float) - startIndex);
+        BinaryPrimitives.ReadSingleBigEndian(value.AsSpan(startIndex));
 
     /// <summary>
     ///     Converts the numeric value of each element of a specified array of bytes to its equivalent hexadecimal string
@@ -274,7 +329,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static ushort ToUInt16(byte[] value, int startIndex) =>
-        BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(ushort) - startIndex);
+        BinaryPrimitives.ReadUInt16BigEndian(value.AsSpan(startIndex));
 
     /// <summary>Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.</summary>
     /// <param name="value">An array of bytes.</param>
@@ -290,7 +345,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static uint ToUInt32(byte[] value, int startIndex) =>
-        BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(uint) - startIndex);
+        BinaryPrimitives.ReadUInt32BigEndian(value.AsSpan(startIndex));
 
     /// <summary>Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.</summary>
     /// <param name="value">An array of bytes.</param>
@@ -306,7 +361,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static ulong ToUInt64(byte[] value, int startIndex) =>
-        BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
+        BinaryPrimitives.ReadUInt64BigEndian(value.AsSpan(startIndex));
 
     /// <summary>Converts a big endian byte array representation of a GUID into the .NET Guid structure</summary>
     /// <param name="value">Byte array containing a GUID in big endian</param>
