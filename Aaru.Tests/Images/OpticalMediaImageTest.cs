@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes;
@@ -45,16 +45,17 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 bool exists = File.Exists(testFile);
                 exists.Should().BeTrue(Localization._0_not_found, testFile);
 
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                // It arrives here...
                 if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
+                object instance = Activator.CreateInstance(Plugin.GetType());
 
-                image.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+                (instance is IOpticalMediaImage).Should()
+                                                .BeTrue(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+
+                if(instance is not IOpticalMediaImage image) continue;
 
                 ErrorNumber opened = image.Open(filter);
                 opened.Should().Be(ErrorNumber.NoError, string.Format(Localization.Open_0, testFile));
@@ -151,16 +152,17 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                 bool exists = File.Exists(testFile);
                 exists.Should().BeTrue(Localization._0_not_found, testFile);
 
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                // It arrives here...
                 if(!exists) continue;
 
                 IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                 filter.Open(testFile);
 
-                var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
+                object instance = Activator.CreateInstance(Plugin.GetType());
 
-                image.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+                (instance is IOpticalMediaImage).Should()
+                                                .BeTrue(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+
+                if(instance is not IOpticalMediaImage image) continue;
 
                 ErrorNumber opened = image.Open(filter);
                 opened.Should().Be(ErrorNumber.NoError, string.Format(Localization.Open_0, testFile));
@@ -197,8 +199,6 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                             PluginRegister plugins = PluginRegister.Singleton;
                             bool           found   = plugins.Filesystems.TryGetValue(idPlugins[i], out IFilesystem fs);
 
-                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                            // It is not the case, it changes
                             if(!found) continue;
 
                             fs.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
@@ -245,9 +245,11 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             if(fs is not IReadOnlyFilesystem rofs)
                             {
-                                (track.FileSystems[i].Contents     == null &&
-                                 track.FileSystems[i].ContentsJson == null &&
-                                 !File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json")).Should()
+                                (track.FileSystems[i].Contents     == null                                   &&
+                                 track.FileSystems[i].ContentsJson == null                                   &&
+                                 !File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json") &&
+                                 !File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json.gz"))
+                                   .Should()
                                    .BeTrue(Localization.Could_not_instantiate_filesystem_for_0_track_1_filesystem_2,
                                            testFile,
                                            track.Number,
@@ -267,33 +269,67 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
 
                             ret.Should().Be(ErrorNumber.NoError, string.Format(Localization.Unmountable_0, testFile));
 
-                            var serializerOptions = new JsonSerializerOptions
+                            if(ret != ErrorNumber.NoError) continue;
+
+                            string sidecarBase = $"{testFile}.track{track.Number}.filesystem{i}";
+
+                            if(Environment.GetEnvironmentVariable("AARU_TESTS_BUILD") == "1")
                             {
-                                Converters =
+                                Dictionary<string, FileData> built =
+                                    ReadOnlyFilesystemTest.BuildDirectory(rofs, "/", 0);
+
+                                using(var sw = new GZipStream(new FileStream($"{sidecarBase}.contents.json.gz",
+                                                                             FileMode.Create),
+                                                              CompressionLevel.SmallestSize))
                                 {
-                                    new JsonStringEnumConverter()
-                                },
-                                MaxDepth                    = 1536, // More than this an we get a StackOverflowException
-                                WriteIndented               = true,
-                                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                                PropertyNameCaseInsensitive = true
-                            };
+                                    JsonSerializer.Serialize(sw,
+                                                             built,
+                                                             ReadOnlyFilesystemTest.ContentsSerializerOptions);
+                                }
 
-                            if(track.FileSystems[i].ContentsJson != null)
-                            {
-                                track.FileSystems[i].Contents =
-                                    JsonSerializer.Deserialize<Dictionary<string, FileData>>(track.FileSystems[i]
-                                           .ContentsJson,
-                                        serializerOptions);
-                            }
-                            else if(File.Exists($"{testFile}.track{track.Number}.filesystem{i}.contents.json"))
-                            {
-                                var sr = new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json",
-                                                        FileMode.Open);
+                                File.WriteAllText($"{sidecarBase}.contents.digest.json",
+                                                  JsonSerializer.Serialize(ContentsDigest.Compute(built).ToFile(),
+                                                                           FilesystemTest.InfoSerializerOptions));
 
-                                track.FileSystems[i].Contents =
-                                    JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, serializerOptions);
+                                continue;
                             }
+
+                            // Fast path: compare one aggregate digest instead of walking the JSON expectations
+                            var    verifyFileContents = true;
+                            string digestPath         = $"{sidecarBase}.contents.digest.json";
+
+                            if(Environment.GetEnvironmentVariable("AARU_TESTS_DEEP") != "1" && File.Exists(digestPath))
+                            {
+                                var expectedDigest =
+                                    JsonSerializer.Deserialize<ContentsDigestFile>(File.ReadAllText(digestPath),
+                                        FilesystemTest.InfoSerializerOptions);
+
+                                if(expectedDigest?.Version == ContentsDigest.Version)
+                                {
+                                    ContentsDigestResult actual =
+                                        ContentsDigest.Compute(ReadOnlyFilesystemTest.BuildDirectory(rofs, "/", 0));
+
+                                    if(actual.Digest          == expectedDigest.Digest &&
+                                       actual.TimestampDigest == expectedDigest.TimestampDigest)
+                                        continue;
+
+                                    verifyFileContents = actual.Digest != expectedDigest.Digest;
+
+                                    // A stale primary digest must not pass silently even when the
+                                    // per-entry walk below finds nothing
+                                    if(verifyFileContents)
+                                    {
+                                        actual.Digest.Should()
+                                              .Be(expectedDigest.Digest,
+                                                  "contents digest for {0} mismatched; if the per-entry differences below are intended, regenerate the sidecar files with AARU_TESTS_BUILD=1",
+                                                  testFile);
+                                    }
+                                }
+                            }
+
+                            track.FileSystems[i].Contents ??=
+                                ReadOnlyFilesystemTest.LoadContentsFile(track.FileSystems[i].ContentsJson,
+                                                                        $"{sidecarBase}.contents.json");
 
                             if(track.FileSystems[i].Contents is null) continue;
 
@@ -306,7 +342,8 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                                  true,
                                                                  out List<ReadOnlyFilesystemTest.NextLevel>
                                                                          currentLevel,
-                                                                 currentDepth);
+                                                                 currentDepth,
+                                                                 verifyFileContents);
 
                             while(currentLevel.Count > 0)
                             {
@@ -322,20 +359,14 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                                                                          true,
                                                                          out List<ReadOnlyFilesystemTest.NextLevel>
                                                                                  nextLevel,
-                                                                         currentDepth);
+                                                                         currentDepth,
+                                                                         verifyFileContents);
 
                                     nextLevels.AddRange(nextLevel);
                                 }
 
                                 currentLevel = nextLevels;
                             }
-
-                            // Uncomment to generate JSON file
-                            /*  var contents = ReadOnlyFilesystemTest.BuildDirectory(rofs, "/", 0);
-
-                                var sw = new FileStream($"{testFile}.track{track.Number}.filesystem{i}.contents.json", FileMode.Create);
-                                JsonSerializer.Serialize(sw, contents, serializerOptions);
-                                sw.Close();*/
                         }
                     }
                 }
@@ -360,16 +391,19 @@ public abstract class OpticalMediaImageTest : BaseMediaImageTest
                              bool exists = File.Exists(testFile);
                              exists.Should().BeTrue(Localization._0_not_found, testFile);
 
-                             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                             // It arrives here...
                              if(!exists) return;
 
                              IFilter filter = PluginRegister.Singleton.GetFilter(testFile);
                              filter.Open(testFile);
 
-                             var image = Activator.CreateInstance(Plugin.GetType()) as IOpticalMediaImage;
+                             object instance = Activator.CreateInstance(Plugin.GetType());
 
-                             image.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+                             (instance is IOpticalMediaImage).Should()
+                                                             .BeTrue(Localization
+                                                                        .Could_not_instantiate_filesystem_for_0,
+                                                                     testFile);
+
+                             if(instance is not IOpticalMediaImage image) return;
 
                              ErrorNumber opened = image.Open(filter);
 

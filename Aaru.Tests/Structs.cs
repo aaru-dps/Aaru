@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Structs;
 
@@ -25,25 +26,48 @@ public class MediaInfoTest
 public class FileSystemTest : MediaInfoTest
 {
     /// <summary>Application ID</summary>
-    public string                       ApplicationId;
+    public string ApplicationId;
     /// <summary>Can the volume boot?</summary>
-    public bool                         Bootable;
+    public bool   Bootable;
     /// <summary>Bytes per cluster</summary>
-    public uint                         ClusterSize;
+    public uint   ClusterSize;
     /// <summary>Clusters in volume</summary>
-    public long                         Clusters;
+    public long   Clusters;
+    [JsonIgnore]
     public Dictionary<string, FileData> Contents;
-    public string                       ContentsJson;
-    public Encoding                     Encoding;
-    public string                       Namespace;
+    [JsonIgnore]
+    public string ContentsJson;
+    [JsonIgnore]
+    public Encoding Encoding;
+    /// <summary>Name of the encoding to use when mounting, resolvable by Claunia.Encoding or System.Text</summary>
+    public string EncodingName;
+    /// <summary>True when this test was loaded from a sidecar .info.json instead of declared in code</summary>
+    [JsonIgnore]
+    public bool FromInfoJson;
+    public string Namespace;
     /// <summary>System or OEM ID</summary>
-    public string                       SystemId;
+    public string SystemId;
     /// <summary>Filesystem type. null if always the same, as defined in test class</summary>
-    public string                       Type;
+    public string Type;
     /// <summary>Volume name</summary>
-    public string                       VolumeName;
+    public string VolumeName;
     /// <summary>Volume serial number or set identifier</summary>
-    public string                       VolumeSerial;
+    public string VolumeSerial;
+}
+
+/// <summary>Aggregate digest of a filesystem's full contents, stored as {testFile}.contents.digest.json</summary>
+public class ContentsDigestFile
+{
+    /// <summary>Total bytes of file contents hashed</summary>
+    public long   Bytes;
+    /// <summary>SHA-256 over the canonical traversal records (paths, metadata, per-file MD5s, xattrs); no timestamps</summary>
+    public string Digest;
+    /// <summary>Number of entries visited</summary>
+    public long   Entries;
+    /// <summary>SHA-256 over paths and UTC timestamps only</summary>
+    public string TimestampDigest;
+    /// <summary>Canonical record format version</summary>
+    public int    Version;
 }
 
 public class BlockImageTestExpected : MediaInfoTest

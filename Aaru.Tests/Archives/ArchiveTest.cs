@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using Aaru.CommonTypes;
@@ -47,8 +48,11 @@ public abstract class ArchiveTest
 
                 if(openedFilter != ErrorNumber.NoError) continue;
 
-                var archive = Activator.CreateInstance(Plugin.GetType()) as IArchive;
-                archive.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+                object instance = Activator.CreateInstance(Plugin.GetType());
+
+                (instance is IArchive).Should().BeTrue(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+
+                if(instance is not IArchive archive) continue;
 
                 archive.Identify(filter).Should().BeTrue(Localization.Not_identified_for_0, testFile);
 
@@ -81,8 +85,11 @@ public abstract class ArchiveTest
 
                 if(openedFilter != ErrorNumber.NoError) continue;
 
-                var archive = Activator.CreateInstance(Plugin.GetType()) as IArchive;
-                archive.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+                object instance = Activator.CreateInstance(Plugin.GetType());
+
+                (instance is IArchive).Should().BeTrue(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+
+                if(instance is not IArchive archive) continue;
 
                 ErrorNumber openedArchive = archive.Open(filter, Encoding.ASCII);
                 openedArchive.Should().Be(ErrorNumber.NoError, string.Format(Localization.Open_0, testFile));
@@ -103,15 +110,25 @@ public abstract class ArchiveTest
 
                 ArchiveEntryData[] expectedEntries = test.Contents;
 
-                if(expectedEntries is null && File.Exists($"{testFile}.contents.json"))
+                if(expectedEntries is null)
                 {
                     JsonSerializerOptions serializerOptions = new()
                     {
                         PropertyNameCaseInsensitive = true
                     };
 
-                    using FileStream stream = new($"{testFile}.contents.json", FileMode.Open, FileAccess.Read);
-                    expectedEntries = JsonSerializer.Deserialize<ArchiveEntryData[]>(stream, serializerOptions);
+                    if(File.Exists($"{testFile}.contents.json.gz"))
+                    {
+                        using var stream = new GZipStream(File.OpenRead($"{testFile}.contents.json.gz"),
+                                                          CompressionMode.Decompress);
+
+                        expectedEntries = JsonSerializer.Deserialize<ArchiveEntryData[]>(stream, serializerOptions);
+                    }
+                    else if(File.Exists($"{testFile}.contents.json"))
+                    {
+                        using FileStream stream = new($"{testFile}.contents.json", FileMode.Open, FileAccess.Read);
+                        expectedEntries = JsonSerializer.Deserialize<ArchiveEntryData[]>(stream, serializerOptions);
+                    }
                 }
 
                 expectedEntries.Should().NotBeNull();
@@ -172,8 +189,6 @@ public abstract class ArchiveTest
 
         if(attributes.HasFlag(FileAttributes.BlockDevice)) return "blockdevice";
 
-        if(attributes.HasFlag(FileAttributes.FIFO)) return "fifo";
-
-        return "file";
+        return attributes.HasFlag(FileAttributes.FIFO) ? "fifo" : "file";
     }
 }

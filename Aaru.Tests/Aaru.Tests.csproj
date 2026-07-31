@@ -5,10 +5,13 @@
     <IsPackable>false</IsPackable>
 
     <Authors>Natalia Portillo &lt;claunia@claunia.com&gt;</Authors>
+
+    <!-- Test assembly is never trimmed; silence reflection/serialization trim analysis -->
+    <NoWarn>$(NoWarn);IL2026;IL2072</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <NoWarn>CS1591;CS1574</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS1574</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

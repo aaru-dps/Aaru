@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.IO.Compression;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Aaru.Checksums;
@@ -13,12 +14,31 @@ using Aaru.Core;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using NUnit.Framework;
+using Directory = System.IO.Directory;
+using File = System.IO.File;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using FileSystem = Aaru.CommonTypes.AaruMetadata.FileSystem;
+using Partition = Aaru.CommonTypes.Partition;
 
 namespace Aaru.Tests.Filesystems;
 
 public abstract class ReadOnlyFilesystemTest : FilesystemTest
 {
+    const string DEEP_ENV  = "AARU_TESTS_DEEP";
+    const string BUILD_ENV = "AARU_TESTS_BUILD";
+
+    internal static readonly JsonSerializerOptions ContentsSerializerOptions = new()
+    {
+        Converters =
+        {
+            new JsonStringEnumConverter()
+        },
+        MaxDepth                    = 1536, // More than this an we get a StackOverflowException
+        WriteIndented               = false,
+        DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true
+    };
+
     protected ReadOnlyFilesystemTest() {}
 
     protected ReadOnlyFilesystemTest(string fileSystemType) : base(fileSystemType) {}
@@ -26,232 +46,346 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
     [Test]
     public void Contents()
     {
-        Environment.CurrentDirectory = DataFolder;
+        bool deep = Environment.GetEnvironmentVariable(DEEP_ENV) == "1";
 
         using(new AssertionScope())
         {
-            foreach(FileSystemTest test in Tests)
+            foreach(FileSystemTest test in AllTests)
             {
-                string testFile  = test.TestFile;
-                var    found     = false;
-                var    partition = new Partition();
+                string testFile = Path.Combine(DataFolder, test.TestFile);
 
                 bool exists = File.Exists(testFile);
                 exists.Should().BeTrue(Localization._0_not_found, testFile);
 
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                // It arrives here...
                 if(!exists) continue;
 
-                IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
+                IReadOnlyFilesystem fs = OpenFilesystem(test, testFile, true, out IMediaImage image, out _);
 
-                inputFilter.Should().NotBeNull(Localization.Filter_0, testFile);
-
-                var image = ImageFormat.Detect(inputFilter) as IMediaImage;
-
-                image.Should().NotBeNull(Localization.Image_format_0, testFile);
-
-                image.Open(inputFilter)
-                     .Should()
-                     .Be(ErrorNumber.NoError, string.Format(Localization.Cannot_open_image_for_0, testFile));
-
-                List<string> idPlugins;
-
-                if(Partitions)
+                if(fs is null)
                 {
-                    List<Partition> partitionsList = Core.Partitions.GetAll(image);
+                    DisposeImage(image);
 
-                    partitionsList.Should().NotBeEmpty(Localization.No_partitions_found_for_0, testFile);
-
-                    // In reverse to skip boot partitions we're not interested in
-                    for(int index = partitionsList.Count - 1; index >= 0; index--)
-                    {
-                        Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
-
-                        if(idPlugins.Count == 0) continue;
-
-                        if(!idPlugins.Contains(Plugin.Id.ToString())) continue;
-
-                        found     = true;
-                        partition = partitionsList[index];
-
-                        break;
-                    }
-                }
-                else
-                {
-                    partition = new Partition
-                    {
-                        Name   = "Whole device",
-                        Length = image.Info.Sectors,
-                        Size   = image.Info.Sectors * image.Info.SectorSize
-                    };
-
-                    Core.Filesystems.Identify(image, out idPlugins, partition, true);
-
-                    idPlugins.Should().NotBeEmpty(Localization.No_filesystems_found_for_0, testFile);
-
-                    found = idPlugins.Contains(Plugin.Id.ToString());
+                    continue;
                 }
 
-                found.Should().BeTrue(Localization.Filesystem_not_identified_for_0, testFile);
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                // It is not the case, it changes
-                if(!found) continue;
-
-                var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
-
-                fs.Should().NotBeNull(Localization.Could_not_instantiate_filesystem_for_0, testFile);
-
-                test.Encoding ??= Encoding.ASCII;
-
-                ErrorNumber ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
-
-                ret.Should().Be(ErrorNumber.NoError, string.Format(Localization.Unmountable_0, testFile));
-
-                var serializerOptions = new JsonSerializerOptions
+                try
                 {
-                    Converters =
-                    {
-                        new JsonStringEnumConverter()
-                    },
-                    MaxDepth                    = 1536, // More than this an we get a StackOverflowException
-                    WriteIndented               = true,
-                    DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                    PropertyNameCaseInsensitive = true
-                };
-
-                if(test.ContentsJson != null)
-                {
-                    test.Contents =
-                        JsonSerializer.Deserialize<Dictionary<string, FileData>>(test.ContentsJson, serializerOptions);
+                    TestContents(test, testFile, fs, deep);
                 }
-                else if(File.Exists($"{testFile}.contents.json"))
+                finally
                 {
-                    var sr = new FileStream($"{testFile}.contents.json", FileMode.Open);
-                    test.Contents = JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, serializerOptions);
-                }
-
-                if(test.Contents is null) continue;
-
-                var currentDepth = 0;
-
-                TestDirectory(fs, "/", test.Contents, testFile, true, out List<NextLevel> currentLevel, currentDepth);
-
-                while(currentLevel.Count > 0)
-                {
-                    currentDepth++;
-                    List<NextLevel> nextLevels = [];
-
-                    foreach(NextLevel subLevel in currentLevel)
-                    {
-                        TestDirectory(fs,
-                                      subLevel.Path,
-                                      subLevel.Children,
-                                      testFile,
-                                      true,
-                                      out List<NextLevel> nextLevel,
-                                      currentDepth);
-
-                        nextLevels.AddRange(nextLevel);
-                    }
-
-                    currentLevel = nextLevels;
+                    // Dispose deterministically so image finalizers never run native close code
+                    // concurrently with other tests' native reads
+                    fs.Unmount();
+                    DisposeImage(image);
                 }
             }
         }
     }
 
-    [Test]
-    [Ignore("Not a test, do not run")]
-    public void Build()
+    static void TestContents(FileSystemTest test, string testFile, IReadOnlyFilesystem fs, bool deep)
     {
-        Environment.CurrentDirectory = DataFolder;
+        // Fast path: one traversal, one digest comparison, instead of walking multi-megabyte
+        // JSON expectations. Falls back to the per-entry compare when the digest mismatches so
+        // the failure message pinpoints the offending entry.
+        var  verifyFileContents = true;
+        bool digestChecked      = false;
 
-        foreach(FileSystemTest test in Tests)
+        string digestPath = $"{testFile}.contents.digest.json";
+
+        if(!deep && File.Exists(digestPath))
         {
-            string testFile  = test.TestFile;
-            var    found     = false;
-            var    partition = new Partition();
+            var expected =
+                JsonSerializer.Deserialize<ContentsDigestFile>(File.ReadAllText(digestPath), InfoSerializerOptions);
 
-            bool exists = File.Exists(testFile);
-
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            // It arrives here...
-            if(!exists) continue;
-
-            IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
-
-            if(ImageFormat.Detect(inputFilter) is not IMediaImage image) continue;
-
-            ErrorNumber opened = image.Open(inputFilter);
-
-            if(opened != ErrorNumber.NoError) continue;
-
-            List<string> idPlugins;
-
-            if(Partitions)
+            if(expected?.Version == ContentsDigest.Version)
             {
-                List<Partition> partitionsList = Core.Partitions.GetAll(image);
+                ContentsDigestResult actual = ContentsDigest.Compute(BuildDirectory(fs, "/", 0));
 
-                // In reverse to skip boot partitions we're not interested in
-                for(int index = partitionsList.Count - 1; index >= 0; index--)
+                if(actual.Digest == expected.Digest && actual.TimestampDigest == expected.TimestampDigest) return;
+
+                digestChecked = true;
+
+                // Contents proven identical; only timestamps differ (e.g. a timezone shift the
+                // per-entry compare fudges by ±1 hour), so skip re-reading file data below.
+                verifyFileContents = actual.Digest != expected.Digest;
+
+                // Even if the per-entry walk below finds nothing, a stale primary digest must not
+                // pass silently — regenerate it with the Build target
+                if(verifyFileContents)
                 {
-                    Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
-
-                    if(idPlugins.Count == 0) continue;
-
-                    if(!idPlugins.Contains(Plugin.Id.ToString())) continue;
-
-                    found     = true;
-                    partition = partitionsList[index];
-
-                    break;
+                    actual.Digest.Should()
+                          .Be(expected.Digest,
+                              "contents digest for {0} mismatched; if the per-entry differences below are intended, regenerate the sidecar files with {1}=1",
+                              testFile,
+                              BUILD_ENV);
                 }
             }
-            else
+        }
+
+        test.Contents ??= LoadExpectedContents(test, testFile);
+
+        if(test.Contents is null)
+        {
+            digestChecked.Should()
+                         .BeFalse("contents digest mismatched for {0} and no contents JSON exists to diagnose it",
+                                  testFile);
+
+            return;
+        }
+
+        var currentDepth = 0;
+
+        TestDirectory(fs,
+                      "/",
+                      test.Contents,
+                      testFile,
+                      true,
+                      out List<NextLevel> currentLevel,
+                      currentDepth,
+                      verifyFileContents);
+
+        while(currentLevel.Count > 0)
+        {
+            currentDepth++;
+            List<NextLevel> nextLevels = [];
+
+            foreach(NextLevel subLevel in currentLevel)
             {
-                partition = new Partition
-                {
-                    Name   = "Whole device",
-                    Length = image.Info.Sectors,
-                    Size   = image.Info.Sectors * image.Info.SectorSize
-                };
+                TestDirectory(fs,
+                              subLevel.Path,
+                              subLevel.Children,
+                              testFile,
+                              true,
+                              out List<NextLevel> nextLevel,
+                              currentDepth,
+                              verifyFileContents);
 
-                Core.Filesystems.Identify(image, out idPlugins, partition, true);
-
-                found = idPlugins.Contains(Plugin.Id.ToString());
+                nextLevels.AddRange(nextLevel);
             }
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            // It is not the case, it changes
-            if(!found) continue;
+            currentLevel = nextLevels;
+        }
+    }
 
-            var fs = Activator.CreateInstance(Plugin.GetType()) as IReadOnlyFilesystem;
+    /// <summary>
+    ///     Regenerates the expectation artifacts beside each image: {image}.contents.json.gz (per-file tree),
+    ///     {image}.contents.digest.json (fast-path aggregate digest) and, for images without an in-code test
+    ///     declaration, {image}.info.json (volume metadata). Not a test: run it manually per fixture with
+    ///     AARU_TESTS_BUILD=1, e.g. AARU_TESTS_BUILD=1 dotnet test --filter FullyQualifiedName~Filesystems.FAT12
+    /// </summary>
+    [Test]
+    public void Build()
+    {
+        if(Environment.GetEnvironmentVariable(BUILD_ENV) != "1")
+            Assert.Ignore($"Not a test. Set {BUILD_ENV}=1 to regenerate expectation files.");
 
-            test.Encoding ??= Encoding.ASCII;
+        foreach(FileSystemTest test in EnumerateBuildTargets())
+        {
+            string testFile = Path.Combine(DataFolder, test.TestFile);
 
-            fs?.Mount(image, partition, test.Encoding, null, test.Namespace);
+            if(!File.Exists(testFile)) continue;
 
-            Dictionary<string, FileData> contents = BuildDirectory(fs, "/", 0);
+            IReadOnlyFilesystem fs =
+                OpenFilesystem(test, testFile, false, out IMediaImage image, out Partition partition);
 
-            var serializerOptions = new JsonSerializerOptions
+            if(fs is null)
             {
-                Converters =
-                {
-                    new JsonStringEnumConverter()
-                },
-                MaxDepth                    = 1536,
-                WriteIndented               = true,
-                DefaultIgnoreCondition      = JsonIgnoreCondition.WhenWritingNull,
-                PropertyNameCaseInsensitive = true
+                (image as IDisposable)?.Dispose();
+
+                continue;
+            }
+
+            try
+            {
+                Dictionary<string, FileData> contents = BuildDirectory(fs, "/", 0);
+
+                using(var sw = new GZipStream(new FileStream($"{testFile}.contents.json.gz", FileMode.Create),
+                                              CompressionLevel.SmallestSize))
+                    JsonSerializer.Serialize(sw, contents, ContentsSerializerOptions);
+
+                File.WriteAllText($"{testFile}.contents.digest.json",
+                                  JsonSerializer.Serialize(ContentsDigest.Compute(contents).ToFile(),
+                                                           InfoSerializerOptions));
+
+                // Only images declared via sidecar (or brand new ones) get their metadata refreshed on disk;
+                // in-code declarations stay authoritative in the fixture source
+                if(test.FromInfoJson) WriteInfoFile(test, testFile, image, partition);
+            }
+            finally
+            {
+                // Dispose deterministically so image finalizers never run native close code
+                // concurrently with other tests' native reads
+                fs.Unmount();
+                (image as IDisposable)?.Dispose();
+            }
+        }
+    }
+
+    /// <summary>
+    ///     All declared tests plus any image file in the data folder that has neither an in-code declaration nor
+    ///     an .info.json sidecar yet — dropping a new image in the folder and running Build is enough to test it.
+    /// </summary>
+    IEnumerable<FileSystemTest> EnumerateBuildTargets()
+    {
+        var covered = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(FileSystemTest test in AllTests)
+        {
+            covered.Add(test.TestFile);
+
+            yield return test;
+        }
+
+        if(!Directory.Exists(DataFolder)) yield break;
+
+        foreach(string name in Directory.GetFiles(DataFolder)
+                                        .Select(Path.GetFileName)
+                                        .Where(n => !n.EndsWith(".json",    StringComparison.Ordinal) &&
+                                                    !n.EndsWith(".json.gz", StringComparison.Ordinal) &&
+                                                    !covered.Contains(n)))
+        {
+            yield return new FileSystemTest
+            {
+                TestFile     = name,
+                FromInfoJson = true
+            };
+        }
+    }
+
+    void WriteInfoFile(FileSystemTest test, string testFile, IMediaImage image, Partition partition)
+    {
+        if(Activator.CreateInstance(Plugin.GetType()) is not IFilesystem infoFs) return;
+
+        infoFs.GetInformation(image, partition, test.Encoding, out _, out FileSystem metadata);
+
+        test.MediaType     = image.Info.MediaType;
+        test.Sectors       = image.Info.Sectors;
+        test.SectorSize    = image.Info.SectorSize;
+        test.ApplicationId = metadata.ApplicationIdentifier;
+        test.Bootable      = metadata.Bootable;
+        test.Clusters      = (long)metadata.Clusters;
+        test.ClusterSize   = metadata.ClusterSize;
+        test.SystemId      = metadata.SystemIdentifier;
+        test.Type          = metadata.Type;
+        test.VolumeName    = metadata.VolumeName;
+        test.VolumeSerial  = metadata.VolumeSerial;
+
+        File.WriteAllText($"{testFile}.info.json", JsonSerializer.Serialize(test, InfoSerializerOptions));
+    }
+
+    /// <summary>Detects, opens and mounts the filesystem under test; returns null (asserting if requested) on failure</summary>
+    IReadOnlyFilesystem OpenFilesystem(FileSystemTest test, string testFile, bool asserting, out IMediaImage image,
+                                       out Partition  partition)
+    {
+        var found = false;
+        image     = null;
+        partition = new Partition();
+
+        IFilter inputFilter = PluginRegister.Singleton.GetFilter(testFile);
+
+        if(asserting) inputFilter.Should().NotBeNull(Localization.Filter_0, testFile);
+
+        if(inputFilter is null) return null;
+
+        IBaseImage detected = ImageFormat.Detect(inputFilter);
+
+        if(asserting) (detected is IMediaImage).Should().BeTrue(Localization.Image_format_0, testFile);
+
+        if(detected is not IMediaImage mediaImage) return null;
+
+        image = mediaImage;
+
+        ErrorNumber opened = image.Open(inputFilter);
+
+        if(asserting)
+            opened.Should().Be(ErrorNumber.NoError, string.Format(Localization.Cannot_open_image_for_0, testFile));
+
+        if(opened != ErrorNumber.NoError) return null;
+
+        List<string> idPlugins;
+
+        if(Partitions)
+        {
+            List<Partition> partitionsList = Core.Partitions.GetAll(image);
+
+            if(asserting) partitionsList.Should().NotBeEmpty(Localization.No_partitions_found_for_0, testFile);
+
+            // In reverse to skip boot partitions we're not interested in
+            for(int index = partitionsList.Count - 1; index >= 0; index--)
+            {
+                Core.Filesystems.Identify(image, out idPlugins, partitionsList[index], true);
+
+                if(idPlugins.Count == 0) continue;
+
+                if(!idPlugins.Contains(Plugin.Id.ToString())) continue;
+
+                found     = true;
+                partition = partitionsList[index];
+
+                break;
+            }
+        }
+        else
+        {
+            partition = new Partition
+            {
+                Name   = "Whole device",
+                Length = image.Info.Sectors,
+                Size   = image.Info.Sectors * image.Info.SectorSize
             };
 
-            var sw = new FileStream($"{testFile}.contents.json", FileMode.Create);
-            JsonSerializer.Serialize(sw, contents, serializerOptions);
-            sw.Close();
+            Core.Filesystems.Identify(image, out idPlugins, partition, true);
+
+            if(asserting) idPlugins.Should().NotBeEmpty(Localization.No_filesystems_found_for_0, testFile);
+
+            found = idPlugins.Contains(Plugin.Id.ToString());
         }
+
+        if(asserting) found.Should().BeTrue(Localization.Filesystem_not_identified_for_0, testFile);
+
+        if(!found) return null;
+
+        object instance = Activator.CreateInstance(Plugin.GetType());
+
+        if(asserting)
+        {
+            (instance is IReadOnlyFilesystem).Should()
+                                             .BeTrue(Localization.Could_not_instantiate_filesystem_for_0, testFile);
+        }
+
+        if(instance is not IReadOnlyFilesystem fs) return null;
+
+        test.Encoding ??= ResolveEncoding(test.EncodingName) ?? System.Text.Encoding.ASCII;
+
+        ErrorNumber ret = fs.Mount(image, partition, test.Encoding, null, test.Namespace);
+
+        if(asserting) ret.Should().Be(ErrorNumber.NoError, string.Format(Localization.Unmountable_0, testFile));
+
+        return ret == ErrorNumber.NoError ? fs : null;
+    }
+
+    /// <summary>Loads the per-file expectations, preferring the compressed sidecar over the legacy plain JSON</summary>
+    internal static Dictionary<string, FileData> LoadExpectedContents(FileSystemTest test, string testFile) =>
+        LoadContentsFile(test.ContentsJson, $"{testFile}.contents.json");
+
+    internal static Dictionary<string, FileData> LoadContentsFile(string inlineJson, string jsonPath)
+    {
+        if(inlineJson != null)
+            return JsonSerializer.Deserialize<Dictionary<string, FileData>>(inlineJson, ContentsSerializerOptions);
+
+        if(File.Exists($"{jsonPath}.gz"))
+        {
+            using var sr = new GZipStream(File.OpenRead($"{jsonPath}.gz"), CompressionMode.Decompress);
+
+            return JsonSerializer.Deserialize<Dictionary<string, FileData>>(sr, ContentsSerializerOptions);
+        }
+
+        if(!File.Exists(jsonPath)) return null;
+
+        using FileStream stream = File.OpenRead(jsonPath);
+
+        return JsonSerializer.Deserialize<Dictionary<string, FileData>>(stream, ContentsSerializerOptions);
     }
 
     internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth)
@@ -298,18 +432,45 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         return children;
     }
 
+    const int READ_CHUNK = 1 << 20;
+
     static string BuildFile(IReadOnlyFilesystem fs, string path, long length)
     {
-        var buffer = new byte[length];
+        // Streamed in chunks: files can be huge and a whole-file byte[] doubles as memory pressure.
+        // Any unreadable remainder is hashed as zeroes, matching the old whole-buffer behavior.
+        var  md5       = new Md5Context();
+        var  buffer    = new byte[Math.Min(length, READ_CHUNK)];
+        long remaining = length;
 
         ErrorNumber error = fs.OpenFile(path, out IFileNode fileNode);
 
-        if(error != ErrorNumber.NoError) return Md5Context.Data(buffer, out _);
+        if(error == ErrorNumber.NoError)
+        {
+            while(remaining > 0)
+            {
+                long want = Math.Min(remaining, buffer.Length);
 
-        fs.ReadFile(fileNode, length, buffer, out _);
-        fs.CloseFile(fileNode);
+                if(fs.ReadFile(fileNode, want, buffer, out long read) != ErrorNumber.NoError || read <= 0) break;
 
-        return Md5Context.Data(buffer, out _);
+                md5.Update(buffer, (uint)read);
+                remaining -= read;
+            }
+
+            fs.CloseFile(fileNode);
+        }
+
+        if(remaining <= 0) return md5.End();
+
+        Array.Clear(buffer);
+
+        while(remaining > 0)
+        {
+            long want = Math.Min(remaining, buffer.Length);
+            md5.Update(buffer, (uint)want);
+            remaining -= want;
+        }
+
+        return md5.End();
     }
 
     static Dictionary<string, string> BuildFileXattrs(IReadOnlyFilesystem fs, string path)
@@ -335,9 +496,39 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         return xattrs;
     }
 
-    internal static void TestDirectory(IReadOnlyFilesystem fs,       string path, Dictionary<string, FileData> children,
-                                       string              testFile, bool   testXattr, out List<NextLevel> nextLevels,
-                                       int                 currentDepth)
+    /// <summary>Timestamps coming from the driver may be shifted by exactly one hour (timezone quirks); tolerate it</summary>
+    static void FudgeTimestamps(FileEntryInfo stat, FileEntryInfo expected)
+    {
+        if(expected is null) return;
+
+        if((stat.AccessTime - expected.AccessTime)?.Hours is 1 or -1) stat.AccessTime = expected.AccessTime;
+
+        if((stat.AccessTimeUtc - expected.AccessTimeUtc)?.Hours is 1 or -1) stat.AccessTimeUtc = expected.AccessTimeUtc;
+
+        if((stat.BackupTime - expected.BackupTime)?.Hours is 1 or -1) stat.BackupTime = expected.BackupTime;
+
+        if((stat.BackupTimeUtc - expected.BackupTimeUtc)?.Hours is 1 or -1) stat.BackupTimeUtc = expected.BackupTimeUtc;
+
+        if((stat.CreationTime - expected.CreationTime)?.Hours is 1 or -1) stat.CreationTime = expected.CreationTime;
+
+        if((stat.CreationTimeUtc - expected.CreationTimeUtc)?.Hours is 1 or -1)
+            stat.CreationTimeUtc = expected.CreationTimeUtc;
+
+        if((stat.LastWriteTime - expected.LastWriteTime)?.Hours is 1 or -1) stat.LastWriteTime = expected.LastWriteTime;
+
+        if((stat.LastWriteTimeUtc - expected.LastWriteTimeUtc)?.Hours is 1 or -1)
+            stat.LastWriteTimeUtc = expected.LastWriteTimeUtc;
+
+        if((stat.StatusChangeTime - expected.StatusChangeTime)?.Hours is 1 or -1)
+            stat.StatusChangeTime = expected.StatusChangeTime;
+
+        if((stat.StatusChangeTimeUtc - expected.StatusChangeTimeUtc)?.Hours is 1 or -1)
+            stat.StatusChangeTimeUtc = expected.StatusChangeTimeUtc;
+    }
+
+    internal static void TestDirectory(IReadOnlyFilesystem fs, string path, Dictionary<string, FileData> children,
+                                       string              testFile, bool testXattr, out List<NextLevel> nextLevels,
+                                       int                 currentDepth, bool verifyFileContents = true)
     {
         currentDepth++;
         nextLevels = [];
@@ -370,9 +561,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
             var childPath = $"{path}/{child.Key}";
             ret = fs.Stat(childPath, out FileEntryInfo stat);
 
-            if(ret == ErrorNumber.NoSuchFile ||
-               contents is null              ||
-               ret == ErrorNumber.NoError && !contents.Contains(child.Key))
+            if(ret == ErrorNumber.NoSuchFile || ret == ErrorNumber.NoError && !contents.Contains(child.Key))
             {
                 expectedNotFound.Add(child.Key);
 
@@ -388,44 +577,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                  childPath,
                                  testFile));
 
-            if(child.Value.Info is not null)
-            {
-                if((stat.AccessTime - child.Value.Info.AccessTime)?.Hours is 1 or -1)
-                    stat.AccessTime = child.Value.Info.AccessTime;
-
-                if((stat.AccessTimeUtc - child.Value.Info.AccessTimeUtc)?.Hours is 1 or -1)
-                    stat.AccessTimeUtc = child.Value.Info.AccessTimeUtc;
-
-                if((stat.BackupTime - child.Value.Info.BackupTime)?.Hours is 1 or -1)
-                    stat.BackupTime = child.Value.Info.BackupTime;
-
-                if((stat.BackupTimeUtc - child.Value.Info.BackupTimeUtc)?.Hours is 1 or -1)
-                    stat.BackupTimeUtc = child.Value.Info.BackupTimeUtc;
-
-                if((stat.CreationTime - child.Value.Info.CreationTime)?.Hours is 1 or -1)
-                    stat.CreationTime = child.Value.Info.CreationTime;
-
-                if((stat.CreationTimeUtc - child.Value.Info.CreationTimeUtc)?.Hours is 1 or -1)
-                    stat.CreationTimeUtc = child.Value.Info.CreationTimeUtc;
-
-                if((stat.LastWriteTime - child.Value.Info.LastWriteTime)?.Hours is 1 or -1)
-                    stat.LastWriteTime = child.Value.Info.LastWriteTime;
-
-                if((stat.LastWriteTimeUtc - child.Value.Info.LastWriteTimeUtc)?.Hours is 1 or -1)
-                    stat.LastWriteTimeUtc = child.Value.Info.LastWriteTimeUtc;
-
-                if((stat.StatusChangeTime - child.Value.Info.StatusChangeTime)?.Hours is 1 or -1)
-                    stat.StatusChangeTime = child.Value.Info.StatusChangeTime;
-
-                if((stat.StatusChangeTimeUtc - child.Value.Info.StatusChangeTimeUtc)?.Hours is 1 or -1)
-                    stat.StatusChangeTimeUtc = child.Value.Info.StatusChangeTimeUtc;
-            }
+            FudgeTimestamps(stat, child.Value.Info);
 
             stat.Should()
                 .BeEquivalentTo(child.Value.Info,
                                 string.Format(Localization.Wrong_info_for_0_in_1, childPath, testFile));
-
-            byte[] buffer = [];
 
             if(child.Value.Info.Attributes.HasFlag(FileAttributes.Directory))
             {
@@ -443,12 +599,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                     childPath,
                                     testFile);
 
-                    if(child.Value.Children != null)
-                    {
-                        nextLevels.Add(new NextLevel(childPath, child.Value.Children));
-
-                        //   TestDirectory(fs, childPath, child.Value.Children, testFile, testXattr);
-                    }
+                    if(child.Value.Children != null) nextLevels.Add(new NextLevel(childPath, child.Value.Children));
                 }
             }
             else if(child.Value.Info.Attributes.HasFlag(FileAttributes.Symlink))
@@ -463,10 +614,7 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                     .Be(child.Value.LinkTarget,
                         string.Format(Localization.Invalid_target_for_symbolic_link_0_in_1, childPath, testFile));
             }
-            else
-
-                // This ensure the buffer does not hang for collection
-                TestFile(fs, childPath, child.Value.Md5, child.Value.Info.Length, testFile);
+            else if(verifyFileContents) TestFile(fs, childPath, child.Value.Md5, child.Value.Info.Length, testFile);
 
             if(!testXattr) continue;
 
@@ -507,42 +655,54 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                                  testFile,
                                  string.Join(" ", expectedNotFound));
 
-        if(contents != null)
-        {
-            contents.Should()
-                    .BeEmpty(Localization.Found_the_following_unexpected_children_of_0_in_1_2,
-                             path,
-                             testFile,
-                             string.Join(" ", contents));
-        }
+        contents.Should()
+                .BeEmpty(Localization.Found_the_following_unexpected_children_of_0_in_1_2,
+                         path,
+                         testFile,
+                         string.Join(" ", contents));
     }
 
     static void TestFile(IReadOnlyFilesystem fs, string path, string md5, long length, string testFile)
     {
-        var         buffer = new byte[length];
+        var         md5Ctx = new Md5Context();
+        var         buffer = new byte[Math.Min(length, READ_CHUNK)];
         ErrorNumber ret    = fs.OpenFile(path, out IFileNode fileNode);
 
         ret.Should()
            .Be(ErrorNumber.NoError,
                string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
 
-        ret = fs.ReadFile(fileNode, length, buffer, out long readBytes);
+        if(ret != ErrorNumber.NoError) return;
 
-        ret.Should()
-           .Be(ErrorNumber.NoError,
-               string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
+        long totalRead = 0;
 
-        readBytes.Should()
+        while(totalRead < length)
+        {
+            long want = Math.Min(length - totalRead, buffer.Length);
+
+            ret = fs.ReadFile(fileNode, want, buffer, out long read);
+
+            ret.Should()
+               .Be(ErrorNumber.NoError,
+                   string.Format(Localization.Unexpected_error_0_when_reading_1_in_2, ret, path, testFile));
+
+            if(ret != ErrorNumber.NoError || read <= 0) break;
+
+            md5Ctx.Update(buffer, (uint)read);
+            totalRead += read;
+        }
+
+        totalRead.Should()
                  .Be(length,
                      string.Format(Localization.Got_less_bytes_0_than_expected_1_when_reading_2_in_3,
-                                   readBytes,
+                                   totalRead,
                                    length,
                                    path,
                                    testFile));
 
         fs.CloseFile(fileNode);
 
-        string data = Md5Context.Data(buffer, out _);
+        string data = md5Ctx.End();
 
         data.Should()
             .Be(md5, string.Format(Localization.Got_MD5_0_for_1_in_2_but_expected_3, data, path, testFile, md5));
