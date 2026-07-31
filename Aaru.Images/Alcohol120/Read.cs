@@ -90,8 +90,8 @@ public sealed partial class Alcohol120
         for(var i = 0; i < _header.unknown4.Length; i++)
             AaruLogging.Debug(MODULE_NAME, "header.unknown4[{1}] = 0x{0:X8}", _header.unknown4[i], i);
 
-        AaruLogging.Debug(MODULE_NAME, "header.sessionOffset = {0}", _header.sessionOffset);
-        AaruLogging.Debug(MODULE_NAME, "header.discMetadataOffset = {0}",     _header.discMetadataOffset);
+        AaruLogging.Debug(MODULE_NAME, "header.sessionOffset = {0}",      _header.sessionOffset);
+        AaruLogging.Debug(MODULE_NAME, "header.discMetadataOffset = {0}", _header.discMetadataOffset);
 
         if(_header.version[0] > MAXIMUM_SUPPORTED_VERSION) return ErrorNumber.NotSupported;
 
@@ -126,11 +126,12 @@ public sealed partial class Alcohol120
                 var dpmBlockHdr = new byte[12];
                 stream.EnsureRead(dpmBlockHdr, 0, 12);
                 _dpmBlockHeader = Marshal.SpanToStructureLittleEndian<DPM>(dpmBlockHdr);
-                var dpmBytes        = new byte[_dpmBlockHeader.numberOfDpmEntries * 4];
+                var dpmBytes = new byte[_dpmBlockHeader.numberOfDpmEntries * 4];
                 stream.EnsureRead(dpmBytes, 0, dpmBytes.Length);
                 ReadOnlySpan<byte> span = dpmBytes;
                 _dpm = new uint[_dpmBlockHeader.numberOfDpmEntries];
                 _dpm = MemoryMarshal.Cast<byte, uint>(span)[..(int)_dpmBlockHeader.numberOfDpmEntries].ToArray();
+
                 //_imageInfo.ReadableMediaTags.Add(MediaTagType.DPM);
             }
             else
@@ -394,7 +395,7 @@ public sealed partial class Alcohol120
             stream.Seek(_alcFooter.filenameOffset, SeekOrigin.Begin);
 
             byte[] filename = _header.discMetadataOffset == 0
-                                  ? new byte[stream.Length     - stream.Position]
+                                  ? new byte[stream.Length              - stream.Position]
                                   : new byte[_header.discMetadataOffset - stream.Position];
 
             stream.EnsureRead(filename, 0, filename.Length);
@@ -405,6 +406,8 @@ public sealed partial class Alcohol120
 
             AaruLogging.Debug(MODULE_NAME, "footer.filename = {0}", alcFile);
         }
+
+        string alcDir = Path.GetDirectoryName(imageFilter.BasePath) ?? "";
 
         if(_alcFooter.filenameOffset == 0)
         {
@@ -417,6 +420,10 @@ public sealed partial class Alcohol120
             alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".mdf";
         else if(string.Compare(alcFile, "*.xmf", StringComparison.InvariantCultureIgnoreCase) == 0)
             alcFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".xmf";
+
+        // The name comes from the image footer or is derived from the image name, in both cases without a
+        // directory, so resolve it against the folder containing the image.
+        alcFile = Path.Combine(alcDir, alcFile);
 
         if(_header is { bcaLength: > 0, bcaOffset: > 0 } && _isDvd)
         {
@@ -777,14 +784,15 @@ public sealed partial class Alcohol120
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
         if(_dpmPresent)
         {
             dpmStartSector     = _dpmBlockHeader.dpmStartSector;
             dpmResolution      = _dpmBlockHeader.dpmResolution;
             numberOfDpmEntries = _dpmBlockHeader.numberOfDpmEntries;
-            dpm = new ulong[numberOfDpmEntries];
+            dpm                = new ulong[numberOfDpmEntries];
 
             // Arbitrary multiplication. If you want to go lower than a120's minimum dpm resolution of 50, you start
             // losing precision since cumulative hex angles are only stored as uint32. Outside of this, the format a120
@@ -800,10 +808,10 @@ public sealed partial class Alcohol120
         }
         else
         {
-            dpmStartSector = 0;
-            dpmResolution = 0;
+            dpmStartSector     = 0;
+            dpmResolution      = 0;
             numberOfDpmEntries = 0;
-            dpm = null;
+            dpm                = null;
 
             return ErrorNumber.NoData;
         }
@@ -815,7 +823,7 @@ public sealed partial class Alcohol120
         {
             if(sectorAddress % _dpmBlockHeader.dpmResolution != 0)
             {
-                dpm                = null;
+                dpm = null;
 
                 return ErrorNumber.NoData;
             }
@@ -828,7 +836,7 @@ public sealed partial class Alcohol120
         }
         else
         {
-            dpm                = null;
+            dpm = null;
 
             return ErrorNumber.NoData;
         }
