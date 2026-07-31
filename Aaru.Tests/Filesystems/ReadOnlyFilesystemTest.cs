@@ -180,6 +180,8 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         if(Environment.GetEnvironmentVariable(BUILD_ENV) != "1")
             Assert.Ignore($"Not a test. Set {BUILD_ENV}=1 to regenerate expectation files.");
 
+        List<string> failures = [];
+
         foreach(FileSystemTest test in EnumerateBuildTargets())
         {
             string testFile = Path.Combine(DataFolder, test.TestFile);
@@ -212,6 +214,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 // in-code declarations stay authoritative in the fixture source
                 if(test.FromInfoJson) WriteInfoFile(test, testFile, image, partition);
             }
+            catch(Exception ex)
+            {
+                // Keep building the remaining images and report every failing image at the end
+                failures.Add($"{testFile}:{Environment.NewLine}{ex}");
+            }
             finally
             {
                 // Dispose deterministically so image finalizers never run native close code
@@ -219,6 +226,12 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
                 fs.Unmount();
                 (image as IDisposable)?.Dispose();
             }
+        }
+
+        if(failures.Count > 0)
+        {
+            Assert.Fail($"Building expectations failed for {failures.Count} image(s):{Environment.NewLine}{
+                string.Join(Environment.NewLine + Environment.NewLine, failures)}");
         }
     }
 
@@ -446,14 +459,22 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(error == ErrorNumber.NoError)
         {
-            while(remaining > 0)
+            try
             {
-                long want = Math.Min(remaining, buffer.Length);
+                while(remaining > 0)
+                {
+                    long want = Math.Min(remaining, buffer.Length);
 
-                if(fs.ReadFile(fileNode, want, buffer, out long read) != ErrorNumber.NoError || read <= 0) break;
+                    if(fs.ReadFile(fileNode, want, buffer, out long read) != ErrorNumber.NoError || read <= 0) break;
 
-                md5.Update(buffer, (uint)read);
-                remaining -= read;
+                    md5.Update(buffer, (uint)read);
+                    remaining -= read;
+                }
+            }
+            catch(Exception ex)
+            {
+                // Filesystem plugin bug: name the offending file so it can be diagnosed
+                throw new InvalidOperationException($"Reading \"{path}\" ({length} bytes) threw", ex);
             }
 
             fs.CloseFile(fileNode);
