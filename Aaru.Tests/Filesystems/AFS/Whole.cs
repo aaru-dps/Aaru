@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFS;
 
 [TestFixture]
-public class Whole() : FilesystemTest("sysv_r4")
+public class Whole() : ReadOnlyFilesystemTest("sco_afs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System");
 

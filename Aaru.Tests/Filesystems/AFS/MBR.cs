@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.AFS;
 
 [TestFixture]
-public class MBR() : FilesystemTest("sysv_r4")
+public class MBR() : ReadOnlyFilesystemTest("sco_afs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acer File System (MBR)");
     public override IFilesystem Plugin => new SysVfs();
@@ -51,7 +51,7 @@ public class MBR() : FilesystemTest("sysv_r4")
             SectorSize  = 512,
             Clusters    = 510048,
             ClusterSize = 1024,
-            VolumeName  = "d1150"
+            VolumeName  = "150"
         }
     ];
 }
