@@ -32,7 +32,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Threading.Tasks;
 using Aaru.Checksums;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Interfaces;
@@ -88,29 +88,17 @@ public sealed class Checksum
     readonly IChecksum      _sha512Ctx;
     readonly IChecksum      _ssCtx;
     HashPacket              _adlerPkt;
-    Thread                  _adlerThread;
     HashPacket              _crc16Pkt;
-    Thread                  _crc16Thread;
     HashPacket              _crc32Pkt;
-    Thread                  _crc32Thread;
     HashPacket              _crc64Pkt;
-    Thread                  _crc64Thread;
     HashPacket              _f16Pkt;
-    Thread                  _f16Thread;
     HashPacket              _f32Pkt;
-    Thread                  _f32Thread;
     HashPacket              _md5Pkt;
-    Thread                  _md5Thread;
     HashPacket              _sha1Pkt;
-    Thread                  _sha1Thread;
     HashPacket              _sha256Pkt;
-    Thread                  _sha256Thread;
     HashPacket              _sha384Pkt;
-    Thread                  _sha384Thread;
     HashPacket              _sha512Pkt;
-    Thread                  _sha512Thread;
     HashPacket              _spamsumPkt;
-    Thread                  _spamsumThread;
 
     /// <summary>Initializes an instance of the checksum operations</summary>
     /// <param name="enabled">Enabled checksums</param>
@@ -228,142 +216,107 @@ public sealed class Checksum
             };
         }
 
-        if(enabled.HasFlag(EnableChecksum.Fletcher32))
+        if(!enabled.HasFlag(EnableChecksum.Fletcher32)) return;
+
+        _f32Ctx = new Fletcher32Context();
+
+        _f32Pkt = new HashPacket
         {
-            _f32Ctx = new Fletcher32Context();
-
-            _f32Pkt = new HashPacket
-            {
-                Context = _f32Ctx
-            };
-        }
-
-        _adlerThread   = new Thread(UpdateHash);
-        _crc16Thread   = new Thread(UpdateHash);
-        _crc32Thread   = new Thread(UpdateHash);
-        _crc64Thread   = new Thread(UpdateHash);
-        _md5Thread     = new Thread(UpdateHash);
-        _sha1Thread    = new Thread(UpdateHash);
-        _sha256Thread  = new Thread(UpdateHash);
-        _sha384Thread  = new Thread(UpdateHash);
-        _sha512Thread  = new Thread(UpdateHash);
-        _spamsumThread = new Thread(UpdateHash);
-        _f16Thread     = new Thread(UpdateHash);
-        _f32Thread     = new Thread(UpdateHash);
+            Context = _f32Ctx
+        };
     }
 
     /// <summary>Updates the checksum with new data</summary>
     /// <param name="data">New data</param>
     public void Update(byte[] data)
     {
+        List<Task> tasks = new(12);
+
         if(_enabled.HasFlag(EnableChecksum.Adler32))
         {
             _adlerPkt.Data = data;
-            _adlerThread.Start(_adlerPkt);
+            HashPacket pkt = _adlerPkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc16))
         {
             _crc16Pkt.Data = data;
-            _crc16Thread.Start(_crc16Pkt);
+            HashPacket pkt = _crc16Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc32))
         {
             _crc32Pkt.Data = data;
-            _crc32Thread.Start(_crc32Pkt);
+            HashPacket pkt = _crc32Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Crc64))
         {
             _crc64Pkt.Data = data;
-            _crc64Thread.Start(_crc64Pkt);
+            HashPacket pkt = _crc64Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Md5))
         {
             _md5Pkt.Data = data;
-            _md5Thread.Start(_md5Pkt);
+            HashPacket pkt = _md5Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha1))
         {
             _sha1Pkt.Data = data;
-            _sha1Thread.Start(_sha1Pkt);
+            HashPacket pkt = _sha1Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha256))
         {
             _sha256Pkt.Data = data;
-            _sha256Thread.Start(_sha256Pkt);
+            HashPacket pkt = _sha256Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha384))
         {
             _sha384Pkt.Data = data;
-            _sha384Thread.Start(_sha384Pkt);
+            HashPacket pkt = _sha384Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Sha512))
         {
             _sha512Pkt.Data = data;
-            _sha512Thread.Start(_sha512Pkt);
+            HashPacket pkt = _sha512Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.SpamSum))
         {
             _spamsumPkt.Data = data;
-            _spamsumThread.Start(_spamsumPkt);
+            HashPacket pkt = _spamsumPkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Fletcher16))
         {
             _f16Pkt.Data = data;
-            _f16Thread.Start(_f16Pkt);
+            HashPacket pkt = _f16Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
         if(_enabled.HasFlag(EnableChecksum.Fletcher32))
         {
             _f32Pkt.Data = data;
-            _f32Thread.Start(_f32Pkt);
+            HashPacket pkt = _f32Pkt;
+            tasks.Add(Task.Run(() => UpdateHash(pkt)));
         }
 
-        while(_adlerThread.IsAlive   ||
-              _crc16Thread.IsAlive   ||
-              _crc32Thread.IsAlive   ||
-              _crc64Thread.IsAlive   ||
-              _md5Thread.IsAlive     ||
-              _sha1Thread.IsAlive    ||
-              _sha256Thread.IsAlive  ||
-              _sha384Thread.IsAlive  ||
-              _sha512Thread.IsAlive  ||
-              _spamsumThread.IsAlive ||
-              _f16Thread.IsAlive     ||
-              _f32Thread.IsAlive) {}
-
-        if(_enabled.HasFlag(EnableChecksum.Adler32)) _adlerThread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc16Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Crc32)) _crc32Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Crc16)) _crc64Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Md5)) _md5Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Sha1)) _sha1Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Sha256)) _sha256Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Sha384)) _sha384Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Sha512)) _sha512Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.SpamSum)) _spamsumThread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Fletcher16)) _f16Thread = new Thread(UpdateHash);
-
-        if(_enabled.HasFlag(EnableChecksum.Fletcher32)) _f32Thread = new Thread(UpdateHash);
+        Task.WaitAll(tasks.ToArray());
     }
 
     /// <summary>Finishes the checksums</summary>
@@ -482,8 +435,8 @@ public sealed class Checksum
         return chks;
     }
 
-    internal static List<CommonTypes.AaruMetadata.Checksum> GetChecksums(
-        byte[] data, EnableChecksum enabled = EnableChecksum.All)
+    internal static List<CommonTypes.AaruMetadata.Checksum> GetChecksums(byte[]         data,
+                                                                         EnableChecksum enabled = EnableChecksum.All)
     {
         IChecksum adler32CtxData = null;
         IChecksum crc16CtxData   = null;
@@ -498,18 +451,7 @@ public sealed class Checksum
         IChecksum f16CtxData     = null;
         IChecksum f32CtxData     = null;
 
-        var adlerThreadData   = new Thread(UpdateHash);
-        var crc16ThreadData   = new Thread(UpdateHash);
-        var crc32ThreadData   = new Thread(UpdateHash);
-        var crc64ThreadData   = new Thread(UpdateHash);
-        var md5ThreadData     = new Thread(UpdateHash);
-        var sha1ThreadData    = new Thread(UpdateHash);
-        var sha256ThreadData  = new Thread(UpdateHash);
-        var sha384ThreadData  = new Thread(UpdateHash);
-        var sha512ThreadData  = new Thread(UpdateHash);
-        var spamsumThreadData = new Thread(UpdateHash);
-        var f16ThreadData     = new Thread(UpdateHash);
-        var f32ThreadData     = new Thread(UpdateHash);
+        List<Task> tasks = new(12);
 
         if(enabled.HasFlag(EnableChecksum.Adler32))
         {
@@ -521,7 +463,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            adlerThreadData.Start(adlerPktData);
+            tasks.Add(Task.Run(() => UpdateHash(adlerPktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc16))
@@ -534,7 +476,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            crc16ThreadData.Start(crc16PktData);
+            tasks.Add(Task.Run(() => UpdateHash(crc16PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc32))
@@ -547,7 +489,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            crc32ThreadData.Start(crc32PktData);
+            tasks.Add(Task.Run(() => UpdateHash(crc32PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Crc64))
@@ -560,7 +502,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            crc64ThreadData.Start(crc64PktData);
+            tasks.Add(Task.Run(() => UpdateHash(crc64PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Md5))
@@ -573,7 +515,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            md5ThreadData.Start(md5PktData);
+            tasks.Add(Task.Run(() => UpdateHash(md5PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha1))
@@ -586,7 +528,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            sha1ThreadData.Start(sha1PktData);
+            tasks.Add(Task.Run(() => UpdateHash(sha1PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha256))
@@ -599,7 +541,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            sha256ThreadData.Start(sha256PktData);
+            tasks.Add(Task.Run(() => UpdateHash(sha256PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha384))
@@ -612,7 +554,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            sha384ThreadData.Start(sha384PktData);
+            tasks.Add(Task.Run(() => UpdateHash(sha384PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Sha512))
@@ -625,7 +567,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            sha512ThreadData.Start(sha512PktData);
+            tasks.Add(Task.Run(() => UpdateHash(sha512PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.SpamSum))
@@ -638,7 +580,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            spamsumThreadData.Start(spamsumPktData);
+            tasks.Add(Task.Run(() => UpdateHash(spamsumPktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Fletcher16))
@@ -651,7 +593,7 @@ public sealed class Checksum
                 Data    = data
             };
 
-            f16ThreadData.Start(f16PktData);
+            tasks.Add(Task.Run(() => UpdateHash(f16PktData)));
         }
 
         if(enabled.HasFlag(EnableChecksum.Fletcher32))
@@ -664,21 +606,10 @@ public sealed class Checksum
                 Data    = data
             };
 
-            f32ThreadData.Start(f32PktData);
+            tasks.Add(Task.Run(() => UpdateHash(f32PktData)));
         }
 
-        while(adlerThreadData.IsAlive   ||
-              crc16ThreadData.IsAlive   ||
-              crc32ThreadData.IsAlive   ||
-              crc64ThreadData.IsAlive   ||
-              md5ThreadData.IsAlive     ||
-              sha1ThreadData.IsAlive    ||
-              sha256ThreadData.IsAlive  ||
-              sha384ThreadData.IsAlive  ||
-              sha512ThreadData.IsAlive  ||
-              spamsumThreadData.IsAlive ||
-              f16ThreadData.IsAlive     ||
-              f32ThreadData.IsAlive) {}
+        Task.WaitAll(tasks.ToArray());
 
         List<CommonTypes.AaruMetadata.Checksum> dataChecksums = [];
 
@@ -800,7 +731,7 @@ public sealed class Checksum
         public byte[]    Data;
     }
 
-    static void UpdateHash(object packet) => ((HashPacket)packet).Context.Update(((HashPacket)packet).Data);
+    static void UpdateHash(HashPacket packet) => packet.Context.Update(packet.Data);
 
 #endregion Threading helpers
 }
