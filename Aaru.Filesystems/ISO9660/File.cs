@@ -116,7 +116,9 @@ public sealed partial class ISO9660
     ErrorNumber ReadWithExtents(long offset,     long size, List<(uint extent, uint size)> extents, bool interleaved,
                                 byte fileNumber, out byte[] buffer)
     {
-        var  ms          = new MemoryStream();
+        // Allocate the result once and copy each sector directly into its slice
+        var  result      = new byte[size];
+        long written     = 0;
         long extentStart = 0;
 
         for(var i = 0; i < extents.Count; i++)
@@ -141,7 +143,7 @@ public sealed partial class ISO9660
 
                 if(errno != ErrorNumber.NoError)
                 {
-                    buffer = ms.ToArray();
+                    buffer = written == size ? result : result[..(int)written];
 
                     return errno;
                 }
@@ -164,28 +166,27 @@ public sealed partial class ISO9660
                     continue;
                 }
 
-                if(offsetInExtent > sectorStart)
+                int skip   = offsetInExtent > sectorStart ? (int)(offsetInExtent - sectorStart) : 0;
+                var toCopy = (int)Math.Min(sector.Length - skip, size - written);
+
+                if(toCopy > 0)
                 {
-                    var skip = (int)(offsetInExtent - sectorStart);
-                    ms.Write(sector, skip, sector.Length - skip);
+                    Array.Copy(sector, skip, result, written, toCopy);
+                    written += toCopy;
                 }
-                else
-                    ms.Write(sector, 0, sector.Length);
 
                 currentExtentSector++;
                 leftExtentSize -= sector.Length;
 
-                if(ms.Length >= size) break;
+                if(written >= size) break;
             }
 
             extentStart += extents[i].size;
 
-            if(ms.Length >= size) break;
+            if(written >= size) break;
         }
 
-        if(ms.Length >= size) ms.SetLength(size);
-
-        buffer = ms.ToArray();
+        buffer = written == size ? result : result[..(int)written];
 
         return ErrorNumber.NoError;
     }

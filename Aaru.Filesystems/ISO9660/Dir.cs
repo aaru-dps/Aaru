@@ -972,12 +972,29 @@ public sealed partial class ISO9660
     IEnumerable<PathTableEntryInternal> GetPathTableEntries(string path)
     {
         IEnumerable<PathTableEntryInternal> tableEntries;
-        List<PathTableEntryInternal>        pathTableList = [.._pathTable];
 
         if(path is "" or "/")
             tableEntries = _pathTable.Where(p => p.Parent == 1 && p != _pathTable[0]);
         else
         {
+            // Precompute a (parent, name) lookup returning the 1-based path table index, preserving
+            // the CurrentCultureIgnoreCase comparison and first-match semantics of the previous linear scan
+            if(_pathTableLookup is null)
+            {
+                _pathTableLookup = [];
+
+                for(var i = 0; i < _pathTable.Length; i++)
+                {
+                    if(!_pathTableLookup.TryGetValue(_pathTable[i].Parent, out Dictionary<string, int> children))
+                    {
+                        children = new Dictionary<string, int>(StringComparer.CurrentCultureIgnoreCase);
+                        _pathTableLookup[_pathTable[i].Parent] = children;
+                    }
+
+                    children.TryAdd(_pathTable[i].Name, i + 1);
+                }
+            }
+
             string cutPath = path.StartsWith("/", StringComparison.Ordinal)
                                  ? path[1..].ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
@@ -989,16 +1006,12 @@ public sealed partial class ISO9660
 
             while(currentPiece < pieces.Length)
             {
-                PathTableEntryInternal currentEntry = _pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                                                                                    p.Name.Equals(pieces
-                                                                                            [currentPiece],
-                                                                                        StringComparison
-                                                                                           .CurrentCultureIgnoreCase));
-
-                if(currentEntry is null) break;
+                if(!_pathTableLookup.TryGetValue(currentParent, out Dictionary<string, int> children) ||
+                   !children.TryGetValue(pieces[currentPiece], out int entryIndex))
+                    break;
 
                 currentPiece++;
-                currentParent = pathTableList.IndexOf(currentEntry) + 1;
+                currentParent = entryIndex;
             }
 
             tableEntries = _pathTable.Where(p => p.Parent == currentParent);

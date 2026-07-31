@@ -329,6 +329,9 @@ public sealed partial class ISO9660
             _pathTable = _highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
         }
 
+        // Lookup is lazily rebuilt from the new path table on first use
+        _pathTableLookup = null;
+
         // High Sierra and CD-i do not support Joliet or RRIP
         if((_highSierra || _cdi) && _namespace != Namespace.Normal && _namespace != Namespace.Vms)
             _namespace = Namespace.Normal;
@@ -756,6 +759,7 @@ public sealed partial class ISO9660
 
         _rootDirectoryCache = null;
         _directoryCache     = null;
+        _pathTableLookup    = null;
         _mounted            = false;
 
         return ErrorNumber.NoError;
