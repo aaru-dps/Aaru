@@ -37,7 +37,7 @@ using System.Text;
 namespace Aaru.Helpers;
 
 /// <summary>Helper operations to work with strings</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Public API")]
 public static class StringHandlers
 {
     /// <summary>Converts a null-terminated (aka C string) ASCII byte array to a C# string</summary>
@@ -152,9 +152,11 @@ public static class StringHandlers
     public static string DecompressUnicode(byte[] dstring)
     {
         byte compId = dstring[0];
-        var  temp   = "";
 
         if(compId != 8 && compId != 16) return null;
+
+        var chars     = new char[dstring.Length];
+        var charCount = 0;
 
         for(var byteIndex = 1; byteIndex < dstring.Length;)
         {
@@ -169,9 +171,9 @@ public static class StringHandlers
 
             if(unicode == 0) break;
 
-            temp += Encoding.Unicode.GetString(BitConverter.GetBytes(unicode));
+            chars[charCount++] = (char)unicode;
         }
 
-        return temp;
+        return new string(chars, 0, charCount);
     }
 }
