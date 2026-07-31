@@ -30,7 +30,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
-using System.Linq;
+using System;
 
 namespace Aaru.Helpers;
 
@@ -40,10 +40,20 @@ public static partial class ArrayHelpers
     /// <summary>Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)</summary>
     /// <param name="array">Array</param>
     /// <returns>True if null or whitespace</returns>
-    public static bool ArrayIsNullOrWhiteSpace(byte[] array) => array?.All(static b => b is 0x00 or 0x20) != false;
+    public static bool ArrayIsNullOrWhiteSpace(byte[] array)
+    {
+        if(array is null) return true;
+
+        return MemoryExtensions.IndexOfAnyExcept<byte>(array, 0x00, 0x20) < 0;
+    }
 
     /// <summary>Checks if an array is null or filled with the NULL byte (0x00)</summary>
     /// <param name="array">Array</param>
     /// <returns>True if null</returns>
-    public static bool ArrayIsNullOrEmpty(byte[] array) => array?.All(static b => b == 0x00) != false;
+    public static bool ArrayIsNullOrEmpty(byte[] array)
+    {
+        if(array is null) return true;
+
+        return MemoryExtensions.IndexOfAnyExcept<byte>(array, 0x00) < 0;
+    }
 }
