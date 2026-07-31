@@ -394,8 +394,10 @@ public sealed partial class CloneCd
             _fullToc = tocMs.ToArray();
             _imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-            string dataFile = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".img";
-            string subFile  = Path.GetFileNameWithoutExtension(imageFilter.BasePath) + ".sub";
+            string baseName = Path.GetFileNameWithoutExtension(imageFilter.BasePath);
+            string baseDir  = Path.GetDirectoryName(imageFilter.BasePath) ?? "";
+            string dataFile = Path.Combine(baseDir, baseName + ".img");
+            string subFile  = Path.Combine(baseDir, baseName + ".sub");
 
             _dataFilter = PluginRegister.Singleton.GetFilter(dataFile);
 
