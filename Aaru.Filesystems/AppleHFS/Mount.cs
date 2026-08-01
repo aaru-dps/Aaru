@@ -184,7 +184,18 @@ public sealed partial class AppleHFS
         _imagePlugin    = imagePlugin;
         _partitionStart = partition.Start;
         _encoding       = encoding;
-        _sectorSize     = imagePlugin.Info.SectorSize;
+
+        // Determine the effective bytes-per-sector from an actual read instead of Info.SectorSize.
+        // On CDs with mixed track types Info.SectorSize reports the raw size (2352/2448) while
+        // ReadSectors returns cooked user data (2048 for Mode1 tracks); all offset math must be
+        // done in the same space as the data ReadSectors actually returns.
+        ErrorNumber probeErrno = imagePlugin.ReadSectors(partition.Start, false, 1, out byte[] probeSector, out _);
+
+        if(probeErrno != ErrorNumber.NoError) return probeErrno;
+
+        if(probeSector is null || probeSector.Length == 0) return ErrorNumber.InvalidArgument;
+
+        _sectorSize = (uint)probeSector.Length;
 
         // Initialize metadata object
         Metadata = new FileSystem();
@@ -329,15 +340,23 @@ public sealed partial class AppleHFS
     /// </remarks>
     void HfsOffsetToDeviceSector(ulong hfsSectorOffset512, out ulong deviceSector, out uint byteOffset)
     {
-        // Convert HFS 512-byte sector offset to byte offset from volume start
-        ulong byteOffsetFromVolume = hfsSectorOffset512 * 512;
+        // Byte offset from the partition start, in the same space as the data ReadSectors returns.
+        // _volumeOffset can be negative in theory (MDB found before byte 0x400 of the partition);
+        // hfsSectorOffset512 * 512 always dominates for any real volume, but guard the underflow.
+        long volumeByte = _volumeOffset + (long)(hfsSectorOffset512 * 512);
 
-        // Calculate absolute byte offset: partition start + volume offset + HFS offset
-        ulong absoluteByteOffset = _partitionStart * _sectorSize + (ulong)_volumeOffset + byteOffsetFromVolume;
+        if(volumeByte < 0)
+        {
+            deviceSector = _partitionStart;
+            byteOffset   = 0;
 
-        // Convert to device sector address and byte offset within that sector
-        deviceSector = absoluteByteOffset / _sectorSize;
-        byteOffset   = (uint)(absoluteByteOffset % _sectorSize);
+            return;
+        }
+
+        // Stay partition-relative: partition.Start is an LBA in the device address space, so it
+        // must never be multiplied by a byte size.
+        deviceSector = _partitionStart + (ulong)volumeByte / _sectorSize;
+        byteOffset   = (uint)((ulong)volumeByte % _sectorSize);
     }
 
     /// <summary>Reads and parses the Master Directory Block from the appropriate sector</summary>
@@ -356,7 +375,7 @@ public sealed partial class AppleHFS
         // - The HFS MDB is always at sector 2 (0x400 bytes) from partition start
         // - However, we need to read enough data to account for potential misalignment
 
-        if(_imagePlugin.Info.SectorSize is 2352 or 2448 or 2048)
+        if(_sectorSize != 512)
         {
             // For CD sectors, read enough sectors to cover any alignment
             errno = _imagePlugin.ReadSectors(_partitionStart, false, 4, out byte[] tmpSector, out _);
