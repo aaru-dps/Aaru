@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UNIXBFS;
 
 [TestFixture]
-public class RDB() : FilesystemTest("ufs")
+public class RDB() : ReadOnlyFilesystemTest("bfs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System (RDB)");
     public override IFilesystem Plugin => new BFS();
@@ -49,9 +49,9 @@ public class RDB() : FilesystemTest("ufs")
             MediaType    = MediaType.GENERIC_HDD,
             Sectors      = 1024128,
             SectorSize   = 512,
-            Clusters     = 65024,
-            ClusterSize  = 2048,
-            VolumeSerial = "UNKNOWN"
+            Clusters     = 1022976,
+            ClusterSize  = 512,
+            VolumeName = ""
         }
     ];
 }

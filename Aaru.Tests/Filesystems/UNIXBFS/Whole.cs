@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UNIXBFS;
 
 [TestFixture]
-public class Whole() : FilesystemTest("bfs")
+public class Whole() : ReadOnlyFilesystemTest("bfs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Boot File System");
 
@@ -52,7 +52,7 @@ public class Whole() : FilesystemTest("bfs")
             SectorSize  = 512,
             Clusters    = 1760,
             ClusterSize = 512,
-            VolumeName  = "Label"
+            VolumeName  = ""
         },
         new()
         {
@@ -61,7 +61,8 @@ public class Whole() : FilesystemTest("bfs")
             Sectors     = 720,
             SectorSize  = 512,
             Clusters    = 720,
-            ClusterSize = 512
+            ClusterSize = 512,
+            VolumeName = ""
         },
         new()
         {
@@ -70,7 +71,8 @@ public class Whole() : FilesystemTest("bfs")
             Sectors     = 2400,
             SectorSize  = 512,
             Clusters    = 2400,
-            ClusterSize = 512
+            ClusterSize = 512,
+            VolumeName = ""
         },
         new()
         {
@@ -79,7 +81,8 @@ public class Whole() : FilesystemTest("bfs")
             Sectors     = 1440,
             SectorSize  = 512,
             Clusters    = 1440,
-            ClusterSize = 512
+            ClusterSize = 512,
+            VolumeName = ""
         },
         new()
         {
@@ -88,7 +91,8 @@ public class Whole() : FilesystemTest("bfs")
             Sectors     = 2880,
             SectorSize  = 512,
             Clusters    = 2880,
-            ClusterSize = 512
+            ClusterSize = 512,
+            VolumeName = ""
         }
     ];
 }
