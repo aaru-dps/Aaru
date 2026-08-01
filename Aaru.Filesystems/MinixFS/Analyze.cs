@@ -158,7 +158,7 @@ public sealed partial class MinixFS
             return ErrorNumber.NoError;
         }
 
-        return ReadDirectoryContents(directoryInodeNumber, out directoryEntries);
+        return GetDirectoryContents(directoryInodeNumber, out directoryEntries);
     }
 
     static void GetInodeInformation(object  inodeObj, out ushort mode, out uint size, out uint[] zones,

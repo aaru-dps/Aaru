@@ -222,7 +222,7 @@ public sealed partial class MinixFS
             }
 
             // Read directory contents for next iteration
-            errno = ReadDirectoryContents(inodeNumber, out Dictionary<string, uint> dirEntries);
+            errno = GetDirectoryContents(inodeNumber, out Dictionary<string, uint> dirEntries);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -658,7 +658,7 @@ public sealed partial class MinixFS
 
             if((mode & (ushort)InodeMode.TypeMask) != (ushort)InodeMode.Directory) return ErrorNumber.NotDirectory;
 
-            errno = ReadDirectoryContents(foundInodeNumber, out Dictionary<string, uint> dirEntries);
+            errno = GetDirectoryContents(foundInodeNumber, out Dictionary<string, uint> dirEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 

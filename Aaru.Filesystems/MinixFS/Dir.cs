@@ -123,7 +123,7 @@ public sealed partial class MinixFS
             }
 
             // Read directory contents
-            errno = ReadDirectoryContents(inodeNumber, out Dictionary<string, uint> dirEntries);
+            errno = GetDirectoryContents(inodeNumber, out Dictionary<string, uint> dirEntries);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -193,6 +193,21 @@ public sealed partial class MinixFS
         filename = minixNode.Entries[minixNode.Position++];
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Reads the contents of a directory, caching them as the filesystem is read-only</summary>
+    /// <param name="inodeNumber">Inode number of the directory</param>
+    /// <param name="entries">Dictionary of filename -> inode number</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetDirectoryContents(uint inodeNumber, out Dictionary<string, uint> entries)
+    {
+        if(_directoryCache.TryGetValue(inodeNumber, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadDirectoryContents(inodeNumber, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[inodeNumber] = entries;
+
+        return errno;
     }
 
     /// <summary>Reads the contents of a directory</summary>

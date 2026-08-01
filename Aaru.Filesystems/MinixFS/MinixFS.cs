@@ -41,12 +41,19 @@ namespace Aaru.Filesystems;
 public sealed partial class MinixFS : IReadOnlyFilesystem
 {
     /// <summary>Cached V2/V3 inodes (inode number -> inode)</summary>
-    readonly Dictionary<uint, V2DiskInode> _inodeCache = new();
+    readonly Dictionary<uint, V2DiskInode> _inodeCache   = new();
     /// <summary>Cached V1 inodes (inode number -> inode)</summary>
     readonly Dictionary<uint, V1DiskInode> _inodeCacheV1 = new();
 
     /// <summary>Cached root directory entries (filename -> inode number)</summary>
     readonly Dictionary<string, uint> _rootDirectoryCache = new();
+
+    /// <summary>
+    ///     Cached directory contents (directory inode number -> entries). Read-only filesystem, so entries never
+    ///     go stale; without this every Stat/OpenFile re-reads whole directories per path component, which is
+    ///     quadratic on huge (million-entry) or deeply nested directories.
+    /// </summary>
+    readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = new();
 
 
     /// <summary>Block size in bytes</summary>
