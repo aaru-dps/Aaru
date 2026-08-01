@@ -564,7 +564,9 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         if(ret != ErrorNumber.NoError) return;
 
-        List<string> contents = [];
+        // HashSet: Contains/Remove are called once per child, which is quadratic on a List for
+        // directories with millions of entries
+        HashSet<string> contents = [];
 
         while(fs.ReadDir(node, out string filename) == ErrorNumber.NoError && filename is not null)
             contents.Add(filename);
