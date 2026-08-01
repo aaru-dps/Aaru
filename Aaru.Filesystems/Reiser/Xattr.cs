@@ -154,6 +154,6 @@ public sealed partial class Reiser
                    :
 
                    // Read the per-object xattr directory
-                   ReadDirectoryEntries(xaDir.dirId, xaDir.objectId, out xattrEntries);
+                   GetDirectoryEntries(xaDir.dirId, xaDir.objectId, out xattrEntries);
     }
 }

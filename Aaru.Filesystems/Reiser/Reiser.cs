@@ -58,9 +58,12 @@ public sealed partial class Reiser : IReadOnlyFilesystem
     bool _mounted;
 
     /// <summary>Partition being mounted</summary>
-    Partition _partition;
+    Partition                                       _partition;
     /// <summary>Cached root directory entries (filename → (dirId, objectId))</summary>
     Dictionary<string, (uint dirId, uint objectId)> _rootDirectoryCache;
+
+    /// <summary>Cached directory contents keyed by (dirId, objectId), so path resolution does not re-walk the S+Tree</summary>
+    Dictionary<(uint dirId, uint objectId), Dictionary<string, (uint dirId, uint objectId)>> _directoryCache;
 
     /// <summary>Cached superblock</summary>
     Superblock _superblock;

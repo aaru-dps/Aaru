@@ -96,7 +96,7 @@ public sealed partial class Reiser
                 return ErrorNumber.NotDirectory;
             }
 
-            errno = ReadDirectoryEntries(target.dirId,
+            errno = GetDirectoryEntries(target.dirId,
                                          target.objectId,
                                          out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 
@@ -484,7 +484,7 @@ public sealed partial class Reiser
 
             if((mode & S_IFMT) != S_IFDIR) return ErrorNumber.NotDirectory;
 
-            errno = ReadDirectoryEntries(target.dirId,
+            errno = GetDirectoryEntries(target.dirId,
                                          target.objectId,
                                          out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 

@@ -108,7 +108,7 @@ public sealed partial class Reiser
             }
 
             // Read this subdirectory's entries
-            errno = ReadDirectoryEntries(target.dirId,
+            errno = GetDirectoryEntries(target.dirId,
                                          target.objectId,
                                          out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 
@@ -199,6 +199,25 @@ public sealed partial class Reiser
         mode = BitConverter.ToUInt16(leafBlock, ih.ih_item_location);
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Gets directory entries for the given directory object, caching them as the filesystem is read-only.</summary>
+    /// <param name="dirId">Directory (packing locality) id of the directory</param>
+    /// <param name="objectId">Object id of the directory</param>
+    /// <param name="entries">Parsed directory entries (filename -> (dirId, objectId) of target)</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetDirectoryEntries(uint                                                dirId, uint objectId,
+                                    out Dictionary<string, (uint dirId, uint objectId)> entries)
+    {
+        (uint dirId, uint objectId) key = (dirId, objectId);
+
+        if(_directoryCache.TryGetValue(key, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadDirectoryEntries(dirId, objectId, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[key] = entries;
+
+        return errno;
     }
 
     /// <summary>

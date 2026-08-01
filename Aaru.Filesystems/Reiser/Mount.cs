@@ -80,6 +80,7 @@ public sealed partial class Reiser
 
         // Initialize block cache
         _blockCache = [];
+        _directoryCache = new Dictionary<(uint dirId, uint objectId), Dictionary<string, (uint dirId, uint objectId)>>();
 
         // Load root directory
         errno = LoadRootDirectory();
@@ -131,6 +132,7 @@ public sealed partial class Reiser
 
         _rootDirectoryCache?.Clear();
         _blockCache?.Clear();
+        _directoryCache?.Clear();
         _xattrRootEntries?.Clear();
         _rootDirectoryCache = null;
         _blockCache         = null;
