@@ -105,21 +105,10 @@ public sealed partial class AppleHFSPlus
             // But the catalog stores them with slashes (internal format: "file/with/slashes")
             component = component.Replace(":", "/");
 
-            // Look for the component in current directory (case-insensitive)
+            // Look for the component in current directory using the volume's comparison rules
             CatalogEntry foundEntry = null;
 
-            if(currentDirectory != null)
-            {
-                foreach(KeyValuePair<string, CatalogEntry> entry in currentDirectory)
-                {
-                    if(CompareNames(entry.Key, component))
-                    {
-                        foundEntry = entry.Value;
-
-                        break;
-                    }
-                }
-            }
+            currentDirectory?.TryGetValue(component, out foundEntry);
 
             if(foundEntry == null) return ErrorNumber.NoSuchFile;
 
@@ -243,136 +232,14 @@ public sealed partial class AppleHFSPlus
     {
         _directoryCaches ??= new Dictionary<uint, Dictionary<string, CatalogEntry>>();
 
-        var directoryEntries = new Dictionary<string, CatalogEntry>();
+        var directoryEntries = new Dictionary<string, CatalogEntry>(_nameComparer);
 
-        // Use the generic B-Tree traversal to find all entries with parentID == cnid
-        ErrorNumber errno = TraverseCatalogBTree(_catalogBTreeHeader.rootNode,
-                                                 (leafNode, recordOffset) =>
-                                                 {
-                                                     // Parse the catalog key at this offset
-                                                     if(recordOffset + 6 > leafNode.Length) return false;
+        // Keyed range scan: descend the catalog B-tree to the first record of this directory and
+        // walk forward until the parent CNID changes
+        ErrorNumber errno = ScanDirectoryRecords(cnid, directoryEntries);
 
-                                                     var keyLength =
-                                                         BigEndianBitConverter.ToUInt16(leafNode, recordOffset);
+        if(errno != ErrorNumber.NoError) return errno;
 
-                                                     var parentID =
-                                                         BigEndianBitConverter.ToUInt32(leafNode, recordOffset + 2);
-
-                                                     // Check if this entry belongs to the directory we're caching
-                                                     if(parentID != cnid) return false; // Keep searching
-
-                                                     // The record type is after the key
-                                                     int recordTypeOffset = recordOffset + 2 + keyLength;
-
-                                                     if(recordTypeOffset + 2 > leafNode.Length) return false;
-
-                                                     var recordType =
-                                                         BigEndianBitConverter.ToInt16(leafNode, recordTypeOffset);
-
-                                                     // Extract the filename from the key
-                                                     string entryName =
-                                                         ExtractNameFromCatalogKey(leafNode, recordOffset);
-
-                                                     switch(recordType)
-                                                     {
-                                                         // Process folder records
-                                                         case (short)BTreeRecordType.kHFSPlusFolderRecord:
-                                                         {
-                                                             int folderRecordSize =
-                                                                 Marshal.SizeOf(typeof(HFSPlusCatalogFolder));
-
-                                                             if(recordTypeOffset + folderRecordSize > leafNode.Length)
-                                                                 return false; // Keep searching for more entries
-
-                                                             HFSPlusCatalogFolder folder =
-                                                                 Helpers.Marshal
-                                                                        .ByteArrayToStructureBigEndian<
-                                                                             HFSPlusCatalogFolder>(leafNode,
-                                                                             recordTypeOffset,
-                                                                             folderRecordSize);
-
-                                                             var entry = new DirectoryEntry
-                                                             {
-                                                                 Name = entryName,
-                                                                 CNID = folder.folderID,
-                                                                 ParentID = parentID,
-                                                                 Type = (int)BTreeRecordType.kHFSPlusFolderRecord,
-                                                                 Valence = folder.valence,
-                                                                 CreationDate = folder.createDate,
-                                                                 ContentModDate = folder.contentModDate,
-                                                                 AttributeModDate = folder.attributeModDate,
-                                                                 AccessDate = folder.accessDate,
-                                                                 BackupDate = folder.backupDate,
-                                                                 FinderInfo = folder.userInfo,
-                                                                 ExtendedFinderInfo = folder.finderInfo,
-                                                                 TextEncoding = folder.textEncoding,
-                                                                 permissions = folder.permissions
-                                                             };
-
-                                                             if(!string.IsNullOrEmpty(entryName))
-                                                                 directoryEntries[entryName] = entry;
-
-                                                             AaruLogging.Debug(MODULE_NAME,
-                                                                               $"Cached folder: {entryName} (CNID={folder.folderID})");
-                                                         }
-
-                                                             break;
-
-                                                         // Process file records
-                                                         case (short)BTreeRecordType.kHFSPlusFileRecord:
-                                                         {
-                                                             int fileRecordSize =
-                                                                 Marshal.SizeOf(typeof(HFSPlusCatalogFile));
-
-                                                             if(recordTypeOffset + fileRecordSize <= leafNode.Length)
-                                                             {
-                                                                 HFSPlusCatalogFile file =
-                                                                     Helpers.Marshal
-                                                                            .ByteArrayToStructureBigEndian<
-                                                                                 HFSPlusCatalogFile>(leafNode,
-                                                                                 recordTypeOffset,
-                                                                                 fileRecordSize);
-
-                                                                 var entry = new FileEntry
-                                                                 {
-                                                                     Name = entryName,
-                                                                     CNID = file.fileID,
-                                                                     ParentID = parentID,
-                                                                     Type = (int)BTreeRecordType.kHFSPlusFileRecord,
-                                                                     DataForkLogicalSize = file.dataFork.logicalSize,
-                                                                     DataForkPhysicalSize = file.dataFork.logicalSize,
-                                                                     DataForkTotalBlocks = file.dataFork.totalBlocks,
-                                                                     DataForkExtents = file.dataFork.extents,
-                                                                     ResourceForkLogicalSize =
-                                                                         file.resourceFork.logicalSize,
-                                                                     ResourceForkPhysicalSize =
-                                                                         file.resourceFork.logicalSize,
-                                                                     ResourceForkTotalBlocks =
-                                                                         file.resourceFork.totalBlocks,
-                                                                     ResourceForkExtents = file.resourceFork.extents,
-                                                                     CreationDate        = file.createDate,
-                                                                     ContentModDate      = file.contentModDate,
-                                                                     AttributeModDate    = file.attributeModDate,
-                                                                     AccessDate          = file.accessDate,
-                                                                     BackupDate          = file.backupDate
-                                                                 };
-
-                                                                 if(!string.IsNullOrEmpty(entryName))
-                                                                     directoryEntries[entryName] = entry;
-
-                                                                 AaruLogging.Debug(MODULE_NAME,
-                                                                     $"Cached file: {entryName} (CNID={file.fileID})");
-                                                             }
-
-                                                             break;
-                                                         }
-                                                     }
-
-                                                     return false; // Keep searching for more entries
-                                                 });
-
-        // Cache the directory entries regardless of the TraverseCatalogBTree return value
-        // InvalidArgument just means the predicate never returned true, not that we found nothing
         _directoryCaches[cnid] = directoryEntries;
 
         AaruLogging.Debug(MODULE_NAME, $"Cached directory CNID={cnid} with {directoryEntries.Count} entries");

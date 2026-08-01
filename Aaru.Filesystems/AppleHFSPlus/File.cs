@@ -744,18 +744,7 @@ public sealed partial class AppleHFSPlus
             // Look for the component in current directory
             CatalogEntry foundEntry = null;
 
-            if(currentDirectory != null)
-            {
-                foreach(KeyValuePair<string, CatalogEntry> catalogEntry in currentDirectory)
-                {
-                    if(CompareNames(catalogEntry.Key, component))
-                    {
-                        foundEntry = catalogEntry.Value;
-
-                        break;
-                    }
-                }
-            }
+            currentDirectory?.TryGetValue(component, out foundEntry);
 
             if(foundEntry == null) return ErrorNumber.NoSuchFile;
 
@@ -780,13 +769,7 @@ public sealed partial class AppleHFSPlus
 
         if(currentDirectory == null) return ErrorNumber.NoSuchFile;
 
-        foreach(KeyValuePair<string, CatalogEntry> catalogEntry in currentDirectory)
-        {
-            if(!CompareNames(catalogEntry.Key, lastComponent)) continue;
-            entry = catalogEntry.Value;
-
-            return ErrorNumber.NoError;
-        }
+        if(currentDirectory.TryGetValue(lastComponent, out entry)) return ErrorNumber.NoError;
 
         return ErrorNumber.NoSuchFile;
     }

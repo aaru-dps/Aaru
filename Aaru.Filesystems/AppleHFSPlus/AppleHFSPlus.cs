@@ -42,14 +42,20 @@ public sealed partial class AppleHFSPlus : IReadOnlyFilesystem
     /// <summary>Module name for debugging</summary>
     const string MODULE_NAME = "HFS+ plugin";
 
+    /// <summary>Attributes B-Tree header information (null until first read)</summary>
+    BTHeaderRec? _attributesBTreeHeader;
+
     /// <summary>Attributes File fork data (null if attributes file doesn't exist)</summary>
     HFSPlusForkData? _attributesFile;
 
     /// <summary>Whether the Extents Overflow File B-Tree header has been read</summary>
     bool _extentsHeaderLoaded;
 
+    /// <summary>Name equality comparer matching the volume's key comparison rules</summary>
+    HfsPlusNameComparer _nameComparer;
+
     /// <summary>Catalog B-Tree header information</summary>
-    BTHeaderRec _catalogBTreeHeader;
+    BTHeaderRec                                        _catalogBTreeHeader;
     /// <summary>Cached directory entries by CNID, each entry keyed by filename</summary>
     Dictionary<uint, Dictionary<string, CatalogEntry>> _directoryCaches;
 
@@ -87,11 +93,11 @@ public sealed partial class AppleHFSPlus : IReadOnlyFilesystem
     VolumeHeader _volumeHeader;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; set; }
+    public FileSystem                                                Metadata         { get; set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions { get; } = [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces { get; } = [];
+    public Dictionary<string, string>                                Namespaces       { get; } = [];
 
 #region IFilesystem Members
 

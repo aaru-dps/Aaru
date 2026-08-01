@@ -72,7 +72,6 @@ public sealed partial class AppleHFSPlus
 
         // Initialize directory cache dictionary
         _directoryCaches    = new Dictionary<uint, Dictionary<string, CatalogEntry>>();
-        _rootDirectoryCache = new Dictionary<string, CatalogEntry>();
         _catalogBTreeHeader = default(BTHeaderRec);
         _rootFolder         = default(HFSPlusCatalogFolder);
 
@@ -85,6 +84,11 @@ public sealed partial class AppleHFSPlus
 
             return errno;
         }
+
+        // Name comparison rules are known once the catalog header has been read, so entry
+        // dictionaries can now be created with the matching comparer
+        _nameComparer       = new HfsPlusNameComparer(_isCaseSensitive);
+        _rootDirectoryCache = new Dictionary<string, CatalogEntry>(_nameComparer);
 
         // Find and cache the root folder (CNID = 2)
         errno = FindRootFolder();
@@ -146,7 +150,13 @@ public sealed partial class AppleHFSPlus
         _extentsHeaderLoaded = false;
 
         // Clear attributes file
-        _attributesFile = null;
+        _attributesFile        = null;
+        _attributesBTreeHeader = null;
+
+        // Clear catalog extents and name comparer
+        _catalogExtents        = null;
+        _catalogOverflowLoaded = false;
+        _nameComparer          = null;
 
         // Clear volume header
         _volumeHeader = default(VolumeHeader);
@@ -299,7 +309,8 @@ public sealed partial class AppleHFSPlus
         if(_volumeHeader.attributesFile.totalBlocks > 0)
         {
             _attributesFile = _volumeHeader.attributesFile;
- AaruLogging.Debug(MODULE_NAME,
+
+            AaruLogging.Debug(MODULE_NAME,
                               $"Attributes file found: {_volumeHeader.attributesFile.totalBlocks} blocks, {_volumeHeader.attributesFile.logicalSize} bytes");
         }
         else
@@ -401,47 +412,61 @@ public sealed partial class AppleHFSPlus
     /// <returns>ErrorNumber indicating success or failure</returns>
     ErrorNumber FindRootFolder()
     {
-        // The root folder has CNID=2 and its parent ID is 1 (special marker)
-        // Use the generic B-Tree traversal with a predicate that matches the root folder
+        // The root folder record's key is (parentID = kHFSRootParentID, name = volume name). The
+        // name is unknown, so descend with an empty name (which sorts first) and walk forward
+        // while parentID == kHFSRootParentID until the folder record appears
+        var found = false;
 
-        return TraverseCatalogBTree(_catalogBTreeHeader.rootNode,
-                                    (leafNode, recordOffset) =>
-                                    {
-                                        // Parse the catalog key at this offset
-                                        // Key structure: keyLength(2) + parentID(4) + nodeName(variable)
-                                        if(recordOffset + 6 > leafNode.Length) return false;
+        ErrorNumber errno = SearchCatalogRange(kHFSRootParentID,
+                                               "",
+                                               (leafNode, recordOffset) =>
+                                               {
+                                                   if(recordOffset + 6 > leafNode.Length) return true;
 
-                                        var keyLength = BigEndianBitConverter.ToUInt16(leafNode, recordOffset);
-                                        var parentID  = BigEndianBitConverter.ToUInt32(leafNode, recordOffset + 2);
+                                                   var keyLength =
+                                                       BigEndianBitConverter.ToUInt16(leafNode, recordOffset);
 
-                                        // Check if this is the root folder (parentID=1)
-                                        if(parentID != kHFSRootParentID) return false;
+                                                   var parentID =
+                                                       BigEndianBitConverter.ToUInt32(leafNode, recordOffset + 2);
 
-                                        // The record type is after the key
-                                        int recordTypeOffset = recordOffset + 2 + keyLength;
+                                                   // Past the root parent's records: stop
+                                                   if(parentID != kHFSRootParentID) return true;
 
-                                        if(recordTypeOffset + 2 > leafNode.Length) return false;
+                                                   // The record type is after the key
+                                                   int recordTypeOffset = recordOffset + 2 + keyLength;
 
-                                        var recordType = BigEndianBitConverter.ToInt16(leafNode, recordTypeOffset);
+                                                   if(recordTypeOffset + 2 > leafNode.Length) return false;
 
-                                        if(recordType != (short)BTreeRecordType.kHFSPlusFolderRecord) return false;
+                                                   var recordType =
+                                                       BigEndianBitConverter.ToInt16(leafNode, recordTypeOffset);
 
-                                        // This is the root folder record, parse it
-                                        int folderRecordSize =
-                                            System.Runtime.InteropServices.Marshal.SizeOf(typeof(HFSPlusCatalogFolder));
+                                                   if(recordType != (short)BTreeRecordType.kHFSPlusFolderRecord)
+                                                       return false;
 
-                                        if(recordTypeOffset + folderRecordSize > leafNode.Length) return false;
+                                                   int folderRecordSize =
+                                                       System.Runtime.InteropServices.Marshal
+                                                             .SizeOf(typeof(HFSPlusCatalogFolder));
 
-                                        _rootFolder =
-                                            Marshal.ByteArrayToStructureBigEndian<HFSPlusCatalogFolder>(leafNode,
-                                                recordTypeOffset,
-                                                folderRecordSize);
+                                                   if(recordTypeOffset + folderRecordSize > leafNode.Length)
+                                                       return false;
 
-                                        AaruLogging.Debug(MODULE_NAME,
-                                                          $"Found root folder: CNID={_rootFolder.folderID}, valence={_rootFolder.valence}");
+                                                   _rootFolder =
+                                                       Marshal
+                                                          .ByteArrayToStructureBigEndian<HFSPlusCatalogFolder>(leafNode,
+                                                               recordTypeOffset,
+                                                               folderRecordSize);
 
-                                        return true; // Stop traversal
-                                    });
+                                                   found = true;
+
+                                                   AaruLogging.Debug(MODULE_NAME,
+                                                                     $"Found root folder: CNID={_rootFolder.folderID}, valence={_rootFolder.valence}");
+
+                                                   return true; // Stop traversal
+                                               });
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        return found ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
     }
 
     /// <summary>Caches the root folder entries</summary>
@@ -455,145 +480,15 @@ public sealed partial class AppleHFSPlus
 
         AaruLogging.Debug(MODULE_NAME, $"Caching root folder entries (valence={_rootFolder.valence})");
 
-        // Traverse leaf nodes in the catalog B-Tree until we've cached all root folder entries
-        ErrorNumber errno = ReadCatalogNode(_catalogBTreeHeader.firstLeafNode, out byte[] leafNode);
+        // Keyed range scan over all records whose parent is the root folder
+        ErrorNumber errno = ScanDirectoryRecords(kHFSRootFolderID, _rootDirectoryCache);
 
         if(errno != ErrorNumber.NoError) return errno;
-
-        uint currentLeafNode = _catalogBTreeHeader.firstLeafNode;
-
-        while(currentLeafNode != 0 && _rootDirectoryCache.Count < _rootFolder.valence)
-        {
-            errno = ReadCatalogNode(currentLeafNode, out leafNode);
-
-            if(errno != ErrorNumber.NoError) break;
-
-            // Parse leaf node and extract root folder entries
-            ParseLeafNodeForRootEntries(leafNode);
-
-            // Stop early if we've cached all expected entries
-            if(_rootDirectoryCache.Count >= _rootFolder.valence) break;
-
-            // Get the next leaf node
-            int ndSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(BTNodeDescriptor));
-
-            if(leafNode.Length < ndSize) break;
-
-            BTNodeDescriptor nodeDesc = Marshal.ByteArrayToStructureBigEndian<BTNodeDescriptor>(leafNode, 0, ndSize);
-
-            currentLeafNode = nodeDesc.fLink;
-        }
 
         AaruLogging.Debug(MODULE_NAME, $"Cached {_rootDirectoryCache.Count} root folder entries");
 
         return ErrorNumber.NoError;
     }
-
-    /// <summary>Parses a leaf node and extracts root folder entries (parentID=2)</summary>
-    void ParseLeafNodeForRootEntries(byte[] leafNode)
-    {
-        int ndSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(BTNodeDescriptor));
-
-        if(leafNode.Length < ndSize) return;
-
-        BTNodeDescriptor nodeDesc = Marshal.ByteArrayToStructureBigEndian<BTNodeDescriptor>(leafNode, 0, ndSize);
-
-        ushort numRecords = nodeDesc.numRecords;
-
-        for(ushort i = 0; i < numRecords; i++)
-        {
-            int offsetPointerOffset = _catalogBTreeHeader.nodeSize - 2 * (i + 1);
-
-            if(offsetPointerOffset < 0 || offsetPointerOffset + 2 > leafNode.Length) continue;
-
-            var recordOffset = BigEndianBitConverter.ToUInt16(leafNode, offsetPointerOffset);
-
-            if(recordOffset >= leafNode.Length || recordOffset + 4 > leafNode.Length) continue;
-
-            var keyLength = BigEndianBitConverter.ToUInt16(leafNode, recordOffset);
-            var parentID  = BigEndianBitConverter.ToUInt32(leafNode, recordOffset + 2);
-
-            // Only process entries with parentID == 2 (root folder)
-            if(parentID != kHFSRootFolderID) continue;
-
-            if(recordOffset + keyLength + 2 + 2 > leafNode.Length) continue;
-
-            var recordType = BigEndianBitConverter.ToInt16(leafNode, recordOffset + keyLength + 2);
-
-            // Extract the filename from the key
-            string entryName = ExtractNameFromCatalogKey(leafNode, recordOffset);
-
-            // Process folder and file records
-            if(recordType == (short)BTreeRecordType.kHFSPlusFolderRecord)
-            {
-                int folderRecordSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(HFSPlusCatalogFolder));
-
-                if(recordOffset + keyLength + 2 + folderRecordSize <= leafNode.Length)
-                {
-                    HFSPlusCatalogFolder folder =
-                        Marshal.ByteArrayToStructureBigEndian<HFSPlusCatalogFolder>(leafNode,
-                            recordOffset + keyLength + 2,
-                            folderRecordSize);
-
-                    var entry = new DirectoryEntry
-                    {
-                        Name             = entryName,
-                        CNID             = folder.folderID,
-                        ParentID         = parentID,
-                        Type             = (int)BTreeRecordType.kHFSPlusFolderRecord,
-                        Valence          = folder.valence,
-                        CreationDate     = folder.createDate,
-                        ContentModDate   = folder.contentModDate,
-                        AttributeModDate = folder.attributeModDate,
-                        AccessDate       = folder.accessDate,
-                        BackupDate       = folder.backupDate
-                    };
-
-                    _rootDirectoryCache[entryName] = entry;
-
-                    AaruLogging.Debug(MODULE_NAME, $"Cached ROOT folder: {entryName} (CNID={folder.folderID})");
-                }
-            }
-            else if(recordType == (short)BTreeRecordType.kHFSPlusFileRecord)
-            {
-                int fileRecordSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(HFSPlusCatalogFile));
-
-                if(recordOffset + keyLength + 2 + fileRecordSize <= leafNode.Length)
-                {
-                    HFSPlusCatalogFile file =
-                        Marshal.ByteArrayToStructureBigEndian<HFSPlusCatalogFile>(leafNode,
-                            recordOffset + keyLength + 2,
-                            fileRecordSize);
-
-                    var entry = new FileEntry
-                    {
-                        Name                     = entryName,
-                        CNID                     = file.fileID,
-                        ParentID                 = parentID,
-                        Type                     = (int)BTreeRecordType.kHFSPlusFileRecord,
-                        DataForkLogicalSize      = file.dataFork.logicalSize,
-                        DataForkPhysicalSize     = file.dataFork.logicalSize,
-                        DataForkTotalBlocks      = file.dataFork.totalBlocks,
-                        DataForkExtents          = file.dataFork.extents,
-                        ResourceForkLogicalSize  = file.resourceFork.logicalSize,
-                        ResourceForkPhysicalSize = file.resourceFork.logicalSize,
-                        ResourceForkTotalBlocks  = file.resourceFork.totalBlocks,
-                        ResourceForkExtents      = file.resourceFork.extents,
-                        CreationDate             = file.createDate,
-                        ContentModDate           = file.contentModDate,
-                        AttributeModDate         = file.attributeModDate,
-                        AccessDate               = file.accessDate,
-                        BackupDate               = file.backupDate
-                    };
-
-                    _rootDirectoryCache[entryName] = entry;
-
-                    AaruLogging.Debug(MODULE_NAME, $"Cached ROOT file: {entryName} (CNID={file.fileID})");
-                }
-            }
-        }
-    }
-
 
     /// <summary>Populates the Metadata object from the parsed Volume Header</summary>
     void PopulateMetadata()

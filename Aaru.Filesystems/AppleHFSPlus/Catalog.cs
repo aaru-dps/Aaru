@@ -29,9 +29,11 @@
 // ReSharper disable InconsistentNaming
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
+using Aaru.Logging;
 using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace Aaru.Filesystems;
@@ -40,160 +42,176 @@ namespace Aaru.Filesystems;
 /// <summary>Implements detection of Apple Hierarchical File System Plus (HFS+)</summary>
 public sealed partial class AppleHFSPlus
 {
+    /// <summary>Merged extent list of the catalog file (inline extents plus any overflow extents)</summary>
+    List<HFSPlusExtentDescriptor> _catalogExtents;
+    /// <summary>Whether overflow extents for the catalog file have already been merged</summary>
+    bool                          _catalogOverflowLoaded;
+
     /// <summary>Reads a catalog B-Tree node by node number</summary>
     ErrorNumber ReadCatalogNode(uint nodeNumber, out byte[] nodeData)
     {
-        nodeData = null;
-
-        HFSPlusForkData catalogFork = _volumeHeader.catalogFile;
-
-        if(catalogFork.extents.extentDescriptors == null || catalogFork.extents.extentDescriptors.Length == 0)
-            return ErrorNumber.InvalidArgument;
-
-        // Calculate byte offset of node within the catalog file
-        ulong nodeOffset = (ulong)nodeNumber * _catalogBTreeHeader.nodeSize;
-
-        // Find which extent contains this offset
-        ulong currentOffset = 0;
-
-        foreach(HFSPlusExtentDescriptor extent in catalogFork.extents.extentDescriptors)
+        if(_catalogExtents == null)
         {
-            if(extent.blockCount == 0) break;
+            _catalogExtents = [];
 
-            ulong extentSizeInBytes = (ulong)extent.blockCount * _volumeHeader.blockSize;
-
-            if(nodeOffset < currentOffset + extentSizeInBytes)
+            if(_volumeHeader.catalogFile.extents.extentDescriptors != null)
             {
-                // Found the extent containing this node
-                ulong offsetInExtent = nodeOffset                                         - currentOffset;
-                ulong blockOffset    = (ulong)extent.startBlock * _volumeHeader.blockSize + offsetInExtent;
+                foreach(HFSPlusExtentDescriptor extent in _volumeHeader.catalogFile.extents.extentDescriptors)
+                {
+                    if(extent.blockCount == 0) break;
 
-                // Convert to device sector address
-                // For wrapped volumes, blocks start after the HFS+ volume offset
-                // For pure HFS+, _hfsPlusVolumeOffset is 0
-                ulong deviceSector = ((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + blockOffset) /
-                                     _sectorSize;
-
-                var byteOffset = (uint)(((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + blockOffset) %
-                                        _sectorSize);
-
-                uint sectorsToRead = (_catalogBTreeHeader.nodeSize + byteOffset + _sectorSize - 1) / _sectorSize;
-
-                ErrorNumber errno = _imagePlugin.ReadSectors(deviceSector,
-                                                             false,
-                                                             sectorsToRead,
-                                                             out byte[] sectorData,
-                                                             out _);
-
-                if(errno != ErrorNumber.NoError) return errno;
-
-                if(sectorData.Length < byteOffset + _catalogBTreeHeader.nodeSize) return ErrorNumber.InvalidArgument;
-
-                nodeData = new byte[_catalogBTreeHeader.nodeSize];
-                Array.Copy(sectorData, (int)byteOffset, nodeData, 0, _catalogBTreeHeader.nodeSize);
-
-                return ErrorNumber.NoError;
+                    _catalogExtents.Add(extent);
+                }
             }
-
-            currentOffset += extentSizeInBytes;
         }
 
-        return ErrorNumber.InvalidArgument;
+        ErrorNumber errno = ReadBTreeNode(_catalogExtents, _catalogBTreeHeader.nodeSize, nodeNumber, out nodeData);
+
+        if(errno != ErrorNumber.InvalidArgument || _catalogOverflowLoaded) return errno;
+
+        // The node may live beyond the 8 inline extents: merge overflow extents for the catalog
+        // file from the extents overflow B-tree and retry once
+        _catalogOverflowLoaded = true;
+
+        ErrorNumber overflowErr = SearchExtentsOverflowFile(kHFSCatalogFileID, 0x00, _catalogExtents);
+
+        if(overflowErr != ErrorNumber.NoError) return errno;
+
+        return ReadBTreeNode(_catalogExtents, _catalogBTreeHeader.nodeSize, nodeNumber, out nodeData);
     }
 
-    /// <summary>Traverses the B-Tree from a given node, applying a predicate function to each leaf node record</summary>
-    /// <remarks>
-    ///     This is a general-purpose B-Tree traversal method that can be used to search for any catalog entries.
-    ///     The predicate function is called for each record in leaf nodes and should return true to stop traversal.
-    /// </remarks>
-    ErrorNumber TraverseCatalogBTree(uint nodeNumber, Func<byte[], ushort, bool> recordPredicate)
+    /// <summary>
+    ///     Performs a keyed range scan of the catalog B-tree: descends the tree to the first record whose key is
+    ///     not less than (parentID, name), then visits records forward until the visitor stops the walk.
+    /// </summary>
+    ErrorNumber SearchCatalogRange(uint parentID, string name, RecordVisitor visitor) =>
+        SearchBTreeRange(ReadCatalogNode, in _catalogBTreeHeader, MakeCatalogKeyComparer(parentID, name), visitor);
+
+    /// <summary>
+    ///     Scans all catalog records of a directory (all keys with the given parent CNID) and adds folder and
+    ///     file records to the given dictionary, keyed by name. Thread records are skipped.
+    /// </summary>
+    ErrorNumber ScanDirectoryRecords(uint cnid, Dictionary<string, CatalogEntry> entries) => SearchCatalogRange(cnid,
+        "",
+        (nodeData, recordOffset) =>
+        {
+            if(recordOffset + 6 > nodeData.Length) return true;
+
+            var parentID = BigEndianBitConverter.ToUInt32(nodeData, recordOffset + 2);
+
+            if(parentID < cnid) return false; // Defensive: should not happen after keyed descent
+
+            if(parentID > cnid) return true; // Past the directory: stop
+
+            if(!ParseCatalogRecordToEntry(nodeData, recordOffset, out string entryName, out CatalogEntry entry))
+                return false;
+
+            if(!string.IsNullOrEmpty(entryName)) entries[entryName] = entry;
+
+            return false;
+        });
+
+    /// <summary>
+    ///     Parses a catalog leaf record into a <see cref="CatalogEntry" />. Returns false for thread records,
+    ///     truncated records, and any record type other than folder or file.
+    /// </summary>
+    bool ParseCatalogRecordToEntry(byte[] nodeData, ushort recordOffset, out string entryName, out CatalogEntry entry)
     {
-        // Read the node at nodeNumber
-        ErrorNumber errno = ReadCatalogNode(nodeNumber, out byte[] nodeData);
+        entryName = null;
+        entry     = null;
 
-        if(errno != ErrorNumber.NoError) return errno;
+        if(recordOffset + 6 > nodeData.Length) return false;
 
-        // Parse the node descriptor to determine if it's a leaf or index node
-        int ndSize = Marshal.SizeOf(typeof(BTNodeDescriptor));
+        var keyLength = BigEndianBitConverter.ToUInt16(nodeData, recordOffset);
+        var parentID  = BigEndianBitConverter.ToUInt32(nodeData, recordOffset + 2);
 
-        if(nodeData.Length < ndSize) return ErrorNumber.InvalidArgument;
+        // The record data is after the key
+        int recordTypeOffset = recordOffset + 2 + keyLength;
 
-        BTNodeDescriptor nodeDesc =
-            Helpers.Marshal.ByteArrayToStructureBigEndian<BTNodeDescriptor>(nodeData, 0, ndSize);
+        if(recordTypeOffset + 2 > nodeData.Length) return false;
 
-        if(nodeDesc.kind == BTNodeKind.kBTLeafNode)
+        var recordType = BigEndianBitConverter.ToInt16(nodeData, recordTypeOffset);
+
+        switch(recordType)
         {
-            // Process leaf node records with the predicate
-            BTNodeDescriptor descriptor = nodeDesc;
-            ushort           numRecords = descriptor.numRecords;
-
-            var foundMatch = false;
-
-            for(ushort i = 0; i < numRecords; i++)
+            case (short)BTreeRecordType.kHFSPlusFolderRecord:
             {
-                int offsetPointerOffset = _catalogBTreeHeader.nodeSize - 2 * (i + 1);
+                int folderRecordSize = Marshal.SizeOf(typeof(HFSPlusCatalogFolder));
 
-                if(offsetPointerOffset < 0 || offsetPointerOffset + 2 > nodeData.Length) continue;
+                if(recordTypeOffset + folderRecordSize > nodeData.Length) return false;
 
-                var recordOffset = BigEndianBitConverter.ToUInt16(nodeData, offsetPointerOffset);
+                HFSPlusCatalogFolder folder =
+                    Helpers.Marshal.ByteArrayToStructureBigEndian<HFSPlusCatalogFolder>(nodeData,
+                        recordTypeOffset,
+                        folderRecordSize);
 
-                // Call predicate - if it returns true, stop entire traversal
-                if(recordPredicate(nodeData, recordOffset)) return ErrorNumber.NoError;
+                entryName = ExtractNameFromCatalogKey(nodeData, recordOffset);
 
-                // Track if we found at least one matching record
-                // This is determined by the predicate not returning true but processing the record
+                entry = new DirectoryEntry
+                {
+                    Name               = entryName,
+                    CNID               = folder.folderID,
+                    ParentID           = parentID,
+                    Type               = (int)BTreeRecordType.kHFSPlusFolderRecord,
+                    Valence            = folder.valence,
+                    CreationDate       = folder.createDate,
+                    ContentModDate     = folder.contentModDate,
+                    AttributeModDate   = folder.attributeModDate,
+                    AccessDate         = folder.accessDate,
+                    BackupDate         = folder.backupDate,
+                    FinderInfo         = folder.userInfo,
+                    ExtendedFinderInfo = folder.finderInfo,
+                    TextEncoding       = folder.textEncoding,
+                    permissions        = folder.permissions
+                };
+
+                return true;
             }
-
-            // After processing this leaf node, continue to the next leaf node via fLink
-            if(descriptor.fLink != 0)
+            case (short)BTreeRecordType.kHFSPlusFileRecord:
             {
-                // Continue traversing the next leaf node
-                return TraverseCatalogBTree(descriptor.fLink, recordPredicate);
+                int fileRecordSize = Marshal.SizeOf(typeof(HFSPlusCatalogFile));
+
+                if(recordTypeOffset + fileRecordSize > nodeData.Length) return false;
+
+                HFSPlusCatalogFile file =
+                    Helpers.Marshal.ByteArrayToStructureBigEndian<HFSPlusCatalogFile>(nodeData,
+                        recordTypeOffset,
+                        fileRecordSize);
+
+                entryName = ExtractNameFromCatalogKey(nodeData, recordOffset);
+
+                entry = new FileEntry
+                {
+                    Name                     = entryName,
+                    CNID                     = file.fileID,
+                    ParentID                 = parentID,
+                    Type                     = (int)BTreeRecordType.kHFSPlusFileRecord,
+                    DataForkLogicalSize      = file.dataFork.logicalSize,
+                    DataForkPhysicalSize     = file.dataFork.logicalSize,
+                    DataForkTotalBlocks      = file.dataFork.totalBlocks,
+                    DataForkExtents          = file.dataFork.extents,
+                    ResourceForkLogicalSize  = file.resourceFork.logicalSize,
+                    ResourceForkPhysicalSize = file.resourceFork.logicalSize,
+                    ResourceForkTotalBlocks  = file.resourceFork.totalBlocks,
+                    ResourceForkExtents      = file.resourceFork.extents,
+                    CreationDate             = file.createDate,
+                    ContentModDate           = file.contentModDate,
+                    AttributeModDate         = file.attributeModDate,
+                    AccessDate               = file.accessDate,
+                    BackupDate               = file.backupDate
+                };
+
+                return true;
             }
-
-            // No more leaf nodes and no match found
-            return foundMatch ? ErrorNumber.NoError : ErrorNumber.InvalidArgument;
+            default:
+                return false;
         }
-
-        if(nodeDesc.kind == BTNodeKind.kBTIndexNode)
-        {
-            // In index nodes, find the first record which points to a child node
-            ushort numRecords = nodeDesc.numRecords;
-
-            if(numRecords == 0) return ErrorNumber.InvalidArgument;
-
-            // Get the first record offset (stored at nodeSize - 2 * 1)
-            int firstRecordOffsetPos = _catalogBTreeHeader.nodeSize - 2;
-
-            if(firstRecordOffsetPos < 0 || firstRecordOffsetPos + 2 > nodeData.Length)
-                return ErrorNumber.InvalidArgument;
-
-            var firstRecordOffset = BigEndianBitConverter.ToUInt16(nodeData, firstRecordOffsetPos);
-
-            if(firstRecordOffset >= nodeData.Length || firstRecordOffset + 2 > nodeData.Length)
-                return ErrorNumber.InvalidArgument;
-
-            var keyLength = BigEndianBitConverter.ToUInt16(nodeData, firstRecordOffset);
-
-            // Child pointer comes after the key
-            int childPtrOffset = firstRecordOffset + 2 + keyLength;
-
-            if(childPtrOffset + 4 > nodeData.Length) return ErrorNumber.InvalidArgument;
-
-            var childNode = BigEndianBitConverter.ToUInt32(nodeData, childPtrOffset);
-
-            return TraverseCatalogBTree(childNode, recordPredicate);
-        }
-
-        return ErrorNumber.InvalidArgument;
     }
 
     /// <summary>Extracts the filename from a catalog key</summary>
     string ExtractNameFromCatalogKey(byte[] leafNode, ushort keyOffset)
     {
         if(keyOffset + 2 > leafNode.Length) return string.Empty;
-
-        var keyLength = BigEndianBitConverter.ToUInt16(leafNode, keyOffset);
 
         // The key structure is: keyLength(2) + parentID(4) + nodeName (Unicode string with length prefix)
         // nodeName format: length(2) + UTF-16 data
@@ -225,24 +243,25 @@ public sealed partial class AppleHFSPlus
         }
     }
 
+#region Nested type: HfsPlusNameComparer
+
     /// <summary>
-    ///     Compares two filenames according to the volume's case-sensitivity setting.
-    ///     For case-sensitive volumes (HFSX with kHFSBinaryCompare), performs binary comparison.
-    ///     For case-insensitive volumes (HFS+ or HFSX with kHFSCaseFolding), performs case-insensitive comparison.
+    ///     Equality comparer for catalog entry dictionaries that matches the volume's key comparison rules,
+    ///     so name lookups behave exactly like on-disk catalog key comparisons.
     /// </summary>
-    /// <param name="name1">First name to compare</param>
-    /// <param name="name2">Second name to compare</param>
-    /// <returns>True if names match according to volume's comparison rules, false otherwise</returns>
-    private bool CompareNames(string name1, string name2)
+    sealed class HfsPlusNameComparer(bool caseSensitive) : IEqualityComparer<string>
     {
-        if(_isCaseSensitive)
+        public bool Equals(string x, string y)
         {
-            // Case-sensitive: binary comparison of UTF-16 code units
-            // According to TN1150: each character compared as unsigned 16-bit integer
-            return string.Equals(name1, name2, StringComparison.Ordinal);
+            if(x == null || y == null) return x == y;
+
+            return caseSensitive
+                       ? HfsPlusUnicode.BinaryCompare(x, y)      == 0
+                       : HfsPlusUnicode.FastUnicodeCompare(x, y) == 0;
         }
 
-        // Case-insensitive: use Unicode case-folding comparison (same as HFS+)
-        return string.Equals(name1, name2, StringComparison.OrdinalIgnoreCase);
+        public int GetHashCode(string obj) => caseSensitive ? obj.GetHashCode() : HfsPlusUnicode.GetFoldedHashCode(obj);
     }
+
+#endregion
 }

@@ -207,18 +207,7 @@ public sealed partial class AppleHFSPlus
             // Look for the component in current directory
             CatalogEntry foundEntry = null;
 
-            if(currentDirectory != null)
-            {
-                foreach(CatalogEntry catalogEntry in currentDirectory.Values)
-                {
-                    if(CompareNames(catalogEntry.Name, component))
-                    {
-                        foundEntry = catalogEntry;
-
-                        break;
-                    }
-                }
-            }
+            currentDirectory?.TryGetValue(component, out foundEntry);
 
             if(foundEntry == null) return ErrorNumber.NoSuchFile;
 
@@ -244,18 +233,8 @@ public sealed partial class AppleHFSPlus
         // Convert colons back to slashes for catalog lookup
         lastComponent = lastComponent.Replace(":", "/");
 
-        if(currentDirectory != null)
-        {
-            foreach(CatalogEntry catalogEntry in currentDirectory.Values)
-            {
-                if(CompareNames(catalogEntry.Name, lastComponent))
-                {
-                    entry = catalogEntry;
-
-                    return ErrorNumber.NoError;
-                }
-            }
-        }
+        if(currentDirectory != null && currentDirectory.TryGetValue(lastComponent, out entry))
+            return ErrorNumber.NoError;
 
         return ErrorNumber.NoSuchFile;
     }
