@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
-public class MBR() : FilesystemTest("sfs")
+public class MBR() : ReadOnlyFilesystemTest("sfs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (MBR)");
     public override IFilesystem Plugin => new Aaru.Filesystems.SFS();

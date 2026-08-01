@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SFS;
 
 [TestFixture]
-public class APM() : FilesystemTest("sfs")
+public class APM() : ReadOnlyFilesystemTest("sfs")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Smart File System (APM)");
 
