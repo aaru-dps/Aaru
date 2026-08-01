@@ -198,7 +198,10 @@ public sealed partial class AppleHFSPlus
                     ContentModDate           = file.contentModDate,
                     AttributeModDate         = file.attributeModDate,
                     AccessDate               = file.accessDate,
-                    BackupDate               = file.backupDate
+                    BackupDate               = file.backupDate,
+                    FinderInfo               = file.userInfo,
+                    ExtendedFinderInfo       = file.finderInfo,
+                    permissions              = file.permissions
                 };
 
                 return true;
