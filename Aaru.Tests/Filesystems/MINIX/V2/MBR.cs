@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.MINIX.V2;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR : ReadOnlyFilesystemTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v2 filesystem (MBR)");
     public override IFilesystem Plugin => new MinixFS();

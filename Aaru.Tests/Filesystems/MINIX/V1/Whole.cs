@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.MINIX.V1;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole : ReadOnlyFilesystemTest
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "MINIX v1 filesystem");
     public override IFilesystem Plugin     => new MinixFS();
