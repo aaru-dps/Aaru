@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.NTFS;
 
 [TestFixture]
-public class GPT() : FilesystemTest("ntfs")
+public class GPT() : ReadOnlyFilesystemTest("ntfs")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "New Technology File System (GPT)");
