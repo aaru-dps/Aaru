@@ -113,36 +113,29 @@ public sealed partial class Reiser4
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            // Filter . and ..
-            var filtered = new Dictionary<string, LargeKey>(StringComparer.Ordinal);
-
-            foreach(KeyValuePair<string, LargeKey> entry in subEntries)
-            {
-                if(entry.Key is "." or "..") continue;
-
-                filtered[entry.Key] = entry.Value;
-            }
-
             // Last component — this is the directory being opened
             if(i == components.Length - 1)
             {
+                string[] entryNames = subEntries.Keys.Where(static name => name is not ("." or "..")).ToArray();
+
                 node = new Reiser4DirNode
                 {
                     Path     = normalizedPath,
                     Position = 0,
-                    Entries  = filtered.Keys.ToArray()
+                    Entries  = entryNames
                 };
 
                 AaruLogging.Debug(MODULE_NAME,
                                   "OpenDir: opened '{0}' with {1} entries",
                                   normalizedPath,
-                                  filtered.Count);
+                                  entryNames.Length);
 
                 return ErrorNumber.NoError;
             }
 
-            // Intermediate component — descend
-            currentEntries = filtered;
+            // Intermediate component — descend; "." and ".." stay in the cached dictionary
+            // harmlessly since the loop above already special-cases them before lookup
+            currentEntries = subEntries;
         }
 
         return ErrorNumber.NoSuchFile;
@@ -166,8 +159,22 @@ public sealed partial class Reiser4
         return ErrorNumber.NoError;
     }
 
-    /// <summary>Reads the mode field from an object's stat-data given its stat-data key</summary>
+    /// <summary>Reads the mode field from an object's stat-data given its stat-data key, caching by objectid</summary>
     ErrorNumber ReadObjectMode(LargeKey statDataKey, out ushort mode)
+    {
+        ulong objectId = GetStatDataObjectId(statDataKey);
+
+        if(_modeCache.TryGetValue(objectId, out mode)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadObjectModeUncached(statDataKey, out mode);
+
+        if(cacheErrno == ErrorNumber.NoError) _modeCache[objectId] = mode;
+
+        return cacheErrno;
+    }
+
+    /// <summary>Reads the mode field from an object's stat-data given its stat-data key</summary>
+    ErrorNumber ReadObjectModeUncached(LargeKey statDataKey, out ushort mode)
     {
         mode = 0;
 

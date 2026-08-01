@@ -75,6 +75,18 @@ public sealed partial class Reiser4 : IReadOnlyFilesystem
     /// <summary>Cached root directory entries (filename → LargeKey of stat-data)</summary>
     Dictionary<string, LargeKey> _rootDirectoryCache;
 
+    /// <summary>Cached directory contents keyed by directory objectid, so path resolution does not re-walk the tree</summary>
+    Dictionary<ulong, Dictionary<string, LargeKey>> _directoryCache;
+
+    /// <summary>Cached stat-data mode keyed by objectid, so ancestor directories are not re-searched on every call</summary>
+    Dictionary<ulong, ushort> _modeCache;
+
+    /// <summary>Cached parsed stat data keyed by objectid</summary>
+    Dictionary<ulong, Aaru.CommonTypes.Structs.FileEntryInfo> _statCache;
+
+    /// <summary>Cached resolved paths, so a path deep in the tree does not re-walk the whole ancestor chain</summary>
+    Dictionary<string, LargeKey> _pathCache;
+
     /// <inheritdoc />
     public FileSystem Metadata { get; private set; }
 

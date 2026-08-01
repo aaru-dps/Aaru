@@ -93,7 +93,11 @@ public sealed partial class Reiser4
         AaruLogging.Debug(MODULE_NAME, "Format version: {0}", _format40Sb.version);
 
         // Initialize block cache
-        _blockCache = [];
+        _blockCache     = [];
+        _directoryCache = new Dictionary<ulong, Dictionary<string, LargeKey>>();
+        _modeCache      = new Dictionary<ulong, ushort>();
+        _statCache      = new Dictionary<ulong, Aaru.CommonTypes.Structs.FileEntryInfo>();
+        _pathCache      = new Dictionary<string, LargeKey>();
 
         // Load root directory
         errno = LoadRootDirectory();
@@ -135,8 +139,16 @@ public sealed partial class Reiser4
 
         _rootDirectoryCache?.Clear();
         _blockCache?.Clear();
+        _directoryCache?.Clear();
+        _modeCache?.Clear();
+        _statCache?.Clear();
+        _pathCache?.Clear();
         _rootDirectoryCache = null;
         _blockCache         = null;
+        _directoryCache     = null;
+        _modeCache          = null;
+        _statCache          = null;
+        _pathCache          = null;
         _mounted            = false;
         _imagePlugin        = null;
         _partition          = default(Partition);

@@ -601,6 +601,8 @@ public sealed partial class Reiser4
             return ErrorNumber.NoError;
         }
 
+        if(_pathCache.TryGetValue(normalizedPath, out statDataKey)) return ErrorNumber.NoError;
+
         string stripped = normalizedPath.StartsWith("/", StringComparison.Ordinal)
                               ? normalizedPath[1..]
                               : normalizedPath;
@@ -628,7 +630,8 @@ public sealed partial class Reiser4
             // Last component — found it
             if(i == components.Length - 1)
             {
-                statDataKey = target;
+                statDataKey                = target;
+                _pathCache[normalizedPath] = statDataKey;
 
                 return ErrorNumber.NoError;
             }
@@ -651,17 +654,10 @@ public sealed partial class Reiser4
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            // Filter . and .. for traversal
-            var filtered = new Dictionary<string, LargeKey>(StringComparer.Ordinal);
-
-            foreach(KeyValuePair<string, LargeKey> entry in subEntries)
-            {
-                if(entry.Key is "." or "..") continue;
-
-                filtered[entry.Key] = entry.Value;
-            }
-
-            currentEntries = filtered;
+            // "." and ".." are already skipped above before the lookup, so leaving them in the
+            // cached dictionary is harmless and avoids an O(n) copy of every directory's entries
+            // on every single intermediate path component.
+            currentEntries = subEntries;
         }
 
         return ErrorNumber.NoSuchFile;
@@ -672,6 +668,23 @@ public sealed partial class Reiser4
     ///     and populates a <see cref="FileEntryInfo" />.
     /// </summary>
     ErrorNumber ReadStatData(LargeKey statDataKey, out FileEntryInfo stat)
+    {
+        ulong objectId = GetStatDataObjectId(statDataKey);
+
+        if(_statCache.TryGetValue(objectId, out stat)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadStatDataUncached(statDataKey, out stat);
+
+        if(cacheErrno == ErrorNumber.NoError) _statCache[objectId] = stat;
+
+        return cacheErrno;
+    }
+
+    /// <summary>
+    ///     Reads the full stat-data for an object given its stat-data key
+    ///     and populates a <see cref="FileEntryInfo" />.
+    /// </summary>
+    ErrorNumber ReadStatDataUncached(LargeKey statDataKey, out FileEntryInfo stat)
     {
         stat = null;
 

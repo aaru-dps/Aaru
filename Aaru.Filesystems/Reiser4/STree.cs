@@ -328,6 +328,21 @@ public sealed partial class Reiser4
     /// </summary>
     ErrorNumber ReadDirectoryEntries(ulong dirObjectId, out Dictionary<string, LargeKey> entries)
     {
+        if(_directoryCache.TryGetValue(dirObjectId, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadDirectoryEntriesUncached(dirObjectId, out entries);
+
+        if(cacheErrno == ErrorNumber.NoError) _directoryCache[dirObjectId] = entries;
+
+        return cacheErrno;
+    }
+
+    /// <summary>
+    ///     Reads all directory entries from the tree for the directory with the given objectid.
+    ///     Handles both compound (CDE) and simple (SDE) directory entry items.
+    /// </summary>
+    ErrorNumber ReadDirectoryEntriesUncached(ulong dirObjectId, out Dictionary<string, LargeKey> entries)
+    {
         entries = new Dictionary<string, LargeKey>(StringComparer.Ordinal);
 
         LargeKey searchKey = BuildDirEntrySearchKey(dirObjectId);
