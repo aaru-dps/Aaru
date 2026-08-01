@@ -860,18 +860,7 @@ public sealed partial class UDF
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        UdfDirectoryEntry entry = null;
-
-        foreach(KeyValuePair<string, UdfDirectoryEntry> kvp in parentEntries)
-        {
-            if(!kvp.Key.Equals(fileName, StringComparison.OrdinalIgnoreCase)) continue;
-
-            entry = kvp.Value;
-
-            break;
-        }
-
-        if(entry == null) return ErrorNumber.NoSuchFile;
+        if(!TryGetEntry(parentEntries, fileName, out UdfDirectoryEntry entry)) return ErrorNumber.NoSuchFile;
 
         partitionReferenceNumber = entry.Icb.extentLocation.partitionReferenceNumber;
 

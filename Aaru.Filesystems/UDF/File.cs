@@ -316,12 +316,7 @@ public sealed partial class UDF
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        UdfDirectoryEntry entry =
-            (from kvp in parentEntries
-             where kvp.Key.Equals(fileName, StringComparison.OrdinalIgnoreCase)
-             select kvp.Value).FirstOrDefault();
-
-        if(entry == null) return ErrorNumber.NoSuchFile;
+        if(!TryGetEntry(parentEntries, fileName, out UdfDirectoryEntry entry)) return ErrorNumber.NoSuchFile;
 
         icb = entry.Icb;
 
@@ -353,16 +348,11 @@ public sealed partial class UDF
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        foreach(KeyValuePair<string, UdfDirectoryEntry> kvp in parentEntries)
-        {
-            if(!kvp.Key.Equals(fileName, StringComparison.OrdinalIgnoreCase)) continue;
+        if(!TryGetEntry(parentEntries, fileName, out UdfDirectoryEntry entry)) return ErrorNumber.NoSuchFile;
 
-            characteristics = kvp.Value.FileCharacteristics;
+        characteristics = entry.FileCharacteristics;
 
-            return ErrorNumber.NoError;
-        }
-
-        return ErrorNumber.NoSuchFile;
+        return ErrorNumber.NoError;
     }
 
     /// <summary>
@@ -463,13 +453,8 @@ public sealed partial class UDF
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        // Find the entry in the parent directory (case-insensitive)
-        UdfDirectoryEntry entry =
-            (from kvp in parentEntries
-             where kvp.Key.Equals(fileName, StringComparison.OrdinalIgnoreCase)
-             select kvp.Value).FirstOrDefault();
-
-        if(entry == null) return ErrorNumber.NoSuchFile;
+        // Find the entry in the parent directory (case-insensitive via dictionary comparer)
+        if(!TryGetEntry(parentEntries, fileName, out UdfDirectoryEntry entry)) return ErrorNumber.NoSuchFile;
 
         // Read the FileEntry using partition-aware read (handles metadata partitions)
         ErrorNumber feErr = ReadSectorFromPartition(entry.Icb.extentLocation.logicalBlockNumber,

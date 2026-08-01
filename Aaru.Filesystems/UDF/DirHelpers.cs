@@ -45,6 +45,7 @@ public sealed partial class UDF
     /// <returns>Error number</returns>
     ErrorNumber ReadDirectoryContents(LongAllocationDescriptor icb, out Dictionary<string, UdfDirectoryEntry> entries)
     {
+        // Case-sensitive: UDF volumes can contain sibling names differing only in case
         entries = [];
 
         // Read the File Entry for this directory (using partition-aware read for metadata partition support)
@@ -248,6 +249,30 @@ public sealed partial class UDF
     }
 
     /// <summary>
+    ///     Finds a directory entry by name: exact match first (case-differing siblings are legal on UDF), then
+    ///     case-insensitively. The exact match is a dictionary lookup so huge directories are not scanned per file.
+    /// </summary>
+    /// <param name="entries">Directory entries</param>
+    /// <param name="name">Name to look for</param>
+    /// <param name="entry">Found entry</param>
+    /// <returns>True if found</returns>
+    static bool TryGetEntry(Dictionary<string, UdfDirectoryEntry> entries, string name, out UdfDirectoryEntry entry)
+    {
+        if(entries.TryGetValue(name, out entry)) return true;
+
+        foreach(KeyValuePair<string, UdfDirectoryEntry> kvp in entries)
+        {
+            if(!kvp.Key.Equals(name, StringComparison.OrdinalIgnoreCase)) continue;
+
+            entry = kvp.Value;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     ///     Traverses the directory tree to find a directory at a given path
     /// </summary>
     /// <param name="path">Path to the directory</param>
@@ -276,22 +301,8 @@ public sealed partial class UDF
 
         for(var i = 0; i < pieces.Length; i++)
         {
-            // Find the entry in current directory (case-insensitive)
-            // Normalize the search key for case-insensitive lookup
-            string            normalizedKey = pieces[i].ToLowerInvariant();
-            UdfDirectoryEntry entry         = null;
-
-            foreach(KeyValuePair<string, UdfDirectoryEntry> kvp in currentDirectory)
-            {
-                if(kvp.Key.Equals(normalizedKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    entry = kvp.Value;
-
-                    break;
-                }
-            }
-
-            if(entry == null) return ErrorNumber.NoSuchFile;
+            // Find the entry in current directory
+            if(!TryGetEntry(currentDirectory, pieces[i], out UdfDirectoryEntry entry)) return ErrorNumber.NoSuchFile;
 
             if(!entry.FileCharacteristics.HasFlag(FileCharacteristics.Directory)) return ErrorNumber.NotDirectory;
 
