@@ -61,6 +61,12 @@ public sealed partial class UFSPlugin : IReadOnlyFilesystem
     /// </summary>
     readonly Dictionary<uint, CachedDirectory> _directoryCache = new();
 
+    /// <summary>
+    ///     Cached path resolutions (normalized path -> inode number). Resolving walks every ancestor, so
+    ///     without this each Stat/OpenFile of an entry a thousand directories deep re-walks the whole chain.
+    /// </summary>
+    readonly Dictionary<string, uint> _pathCache = new(StringComparer.Ordinal);
+
 #region IFilesystem Members
 
     /// <inheritdoc />

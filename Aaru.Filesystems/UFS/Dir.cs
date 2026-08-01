@@ -172,6 +172,26 @@ public sealed partial class UFSPlugin
 
         if(string.IsNullOrEmpty(stripped)) return ErrorNumber.NoError;
 
+        if(_pathCache.TryGetValue(stripped, out inodeNumber)) return ErrorNumber.NoError;
+
+        // Resolve against the already-cached parent so a path a thousand directories deep does not
+        // re-walk the whole ancestor chain on every call
+        int lastSlash = stripped.LastIndexOf('/');
+
+        if(lastSlash > 0 && _pathCache.TryGetValue(stripped[..lastSlash], out uint parentInode))
+        {
+            ErrorNumber parentErrno = GetDirectory(parentInode, out CachedDirectory parentDir);
+
+            if(parentErrno != ErrorNumber.NoError) return parentErrno;
+
+            if(!parentDir.ByName.TryGetValue(stripped[(lastSlash + 1)..], out inodeNumber))
+                return ErrorNumber.NoSuchFile;
+
+            CachePath(stripped, inodeNumber);
+
+            return ErrorNumber.NoError;
+        }
+
         string[] components = stripped.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
         uint currentInode = UFS_ROOTINO;
@@ -187,8 +207,18 @@ public sealed partial class UFSPlugin
         }
 
         inodeNumber = currentInode;
+        CachePath(stripped, inodeNumber);
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Caches a resolved path, bounding memory use</summary>
+    void CachePath(string strippedPath, uint inodeNumber)
+    {
+        // Bound memory use; resolutions are cheap to redo after a wholesale reset
+        if(_pathCache.Count >= 262144) _pathCache.Clear();
+
+        _pathCache[strippedPath] = inodeNumber;
     }
 
     /// <inheritdoc />
