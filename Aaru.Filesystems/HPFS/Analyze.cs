@@ -136,7 +136,7 @@ public sealed partial class HPFS
             return ErrorNumber.NoError;
         }
 
-        return ReadDirectoryEntries(directoryFnode, out directoryEntries);
+        return GetDirectoryEntries(directoryFnode, out directoryEntries);
     }
 
     ErrorNumber AddOverlappingFile(string                                  path, uint fnodeSector, in FNode fnode,

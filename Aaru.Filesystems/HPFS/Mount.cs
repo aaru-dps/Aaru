@@ -162,6 +162,7 @@ public sealed partial class HPFS
         // Initialize caches
         _fnodeCache         = new Dictionary<uint, FNode>();
         _dnodeCache         = new Dictionary<uint, DNode>();
+        _directoryCache     = new Dictionary<uint, Dictionary<string, uint>>();
         _rootDirectoryCache = new Dictionary<string, uint>();
 
         // Load code page table if available
@@ -256,6 +257,7 @@ public sealed partial class HPFS
 
         _fnodeCache?.Clear();
         _dnodeCache?.Clear();
+        _directoryCache?.Clear();
         _rootDirectoryCache?.Clear();
         _codePageTable = null;
         _mounted       = false;

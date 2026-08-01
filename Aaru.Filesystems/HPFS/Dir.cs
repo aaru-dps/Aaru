@@ -94,7 +94,7 @@ public sealed partial class HPFS
             if(!fnodeStruct.IsDirectory) return ErrorNumber.NotDirectory;
 
             // Read directory entries from the fnode
-            errno = ReadDirectoryEntries(fnode, out Dictionary<string, uint> dirEntries);
+            errno = GetDirectoryEntries(fnode, out Dictionary<string, uint> dirEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 

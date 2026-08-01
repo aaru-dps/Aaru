@@ -194,6 +194,21 @@ public sealed partial class HPFS
         return ErrorNumber.NoError;
     }
 
+    /// <summary>Gets directory entries from a directory fnode, caching them as the filesystem is read-only.</summary>
+    /// <param name="fnode">Fnode sector number of the directory.</param>
+    /// <param name="entries">Dictionary of filename to fnode sector.</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber GetDirectoryEntries(uint fnode, out Dictionary<string, uint> entries)
+    {
+        if(_directoryCache.TryGetValue(fnode, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadDirectoryEntries(fnode, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[fnode] = entries;
+
+        return errno;
+    }
+
     /// <summary>Reads directory entries from a directory fnode.</summary>
     /// <param name="fnode">Fnode sector number of the directory.</param>
     /// <param name="entries">Dictionary of filename to fnode sector.</param>

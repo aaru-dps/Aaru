@@ -45,30 +45,31 @@ namespace Aaru.Filesystems;
 /// <summary>Implements IBM's High Performance File System (HPFS)</summary>
 public sealed partial class HPFS : IReadOnlyFilesystem
 {
-    const string             MODULE_NAME = "HPFS";
-    BiosParameterBlock       _bpb;
-    uint                     _bytesPerSector;
-    byte[]                   _codePageTable;
-    bool                     _debug;
-    Dictionary<uint, DNode>  _dnodeCache;
-    Encoding                 _encoding;
-    Dictionary<uint, FNode>  _fnodeCache;
-    IMediaImage              _image;
-    bool                     _mounted;
-    Partition                _partition;
-    Dictionary<string, uint> _rootDirectoryCache;
-    uint                     _rootDnode;
-    uint                     _rootFnode;
-    SpareBlock               _spareblock;
-    FileSystemInfo           _statfs;
-    SuperBlock               _superblock;
+    const string                               MODULE_NAME = "HPFS";
+    BiosParameterBlock                         _bpb;
+    uint                                       _bytesPerSector;
+    byte[]                                     _codePageTable;
+    bool                                       _debug;
+    Dictionary<uint, DNode>                    _dnodeCache;
+    Dictionary<uint, Dictionary<string, uint>> _directoryCache;
+    Encoding                                   _encoding;
+    Dictionary<uint, FNode>                    _fnodeCache;
+    IMediaImage                                _image;
+    bool                                       _mounted;
+    Partition                                  _partition;
+    Dictionary<string, uint>                   _rootDirectoryCache;
+    uint                                       _rootDnode;
+    uint                                       _rootFnode;
+    SpareBlock                                 _spareblock;
+    FileSystemInfo                             _statfs;
+    SuperBlock                                 _superblock;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions { get; } = [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces { get; } = [];
+    public Dictionary<string, string>                                Namespaces       { get; } = [];
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
