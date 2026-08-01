@@ -158,6 +158,9 @@ public sealed partial class AppleHFS
 
             HfsOffsetToDeviceSector(hfsSector512, out ulong deviceSector, out uint byteOffset);
 
+            // Carry the sub-512 remainder dropped by the truncating division above
+            byteOffset += (uint)(blockByteOffset % 512);
+
             uint sectorsToRead = ((uint)nodeSize + byteOffset + _sectorSize - 1) / _sectorSize;
 
             ErrorNumber errno =
