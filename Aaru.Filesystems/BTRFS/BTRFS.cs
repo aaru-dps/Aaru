@@ -75,12 +75,19 @@ public sealed partial class BTRFS : IReadOnlyFilesystem
     /// <summary>Cache of tree block data keyed by logical byte address</summary>
     Dictionary<ulong, byte[]> _treeBlockCache;
 
+    /// <summary>
+    ///     Cached directory contents keyed by (directory objectid, tree root). Read-only filesystem, so entries
+    ///     never go stale; without this every Stat/OpenFile/OpenDir re-walks the B-tree per path component,
+    ///     which is quadratic on huge or deeply nested directories.
+    /// </summary>
+    Dictionary<(ulong dirObjectId, ulong treeRoot), Dictionary<string, DirEntry>> _directoryCache;
+
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 
 #region IFilesystem Members
 

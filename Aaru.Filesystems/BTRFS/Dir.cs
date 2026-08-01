@@ -94,7 +94,7 @@ public sealed partial class BTRFS
             ulong treeRoot = entry.SubvolTreeRoot != 0 ? entry.SubvolTreeRoot : currentTreeRoot;
 
             ErrorNumber errno =
-                ReadDirectoryContents(entry.ObjectId, treeRoot, out Dictionary<string, DirEntry> dirEntries);
+                GetDirectoryContents(entry.ObjectId, treeRoot, out Dictionary<string, DirEntry> dirEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -314,6 +314,27 @@ public sealed partial class BTRFS
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>
+    ///     Gets the contents of a directory given its inode objectid, caching them as the filesystem is
+    ///     read-only.
+    /// </summary>
+    /// <param name="dirObjectId">The objectid of the directory inode</param>
+    /// <param name="treeRoot">The logical byte address of the tree to read from</param>
+    /// <param name="entries">The directory entries found</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetDirectoryContents(ulong dirObjectId, ulong treeRoot, out Dictionary<string, DirEntry> entries)
+    {
+        (ulong dirObjectId, ulong treeRoot) key = (dirObjectId, treeRoot);
+
+        if(_directoryCache.TryGetValue(key, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadDirectoryContents(dirObjectId, treeRoot, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[key] = entries;
+
+        return errno;
     }
 
     /// <summary>Reads the contents of a directory given its inode objectid by walking the specified tree</summary>

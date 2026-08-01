@@ -443,7 +443,7 @@ public sealed partial class BTRFS
             if(entry.Type != BTRFS_FT_DIR) return ErrorNumber.NotDirectory;
 
             ErrorNumber errno =
-                ReadDirectoryContents(entry.ObjectId, currentTreeRoot, out Dictionary<string, DirEntry> dirEntries);
+                GetDirectoryContents(entry.ObjectId, currentTreeRoot, out Dictionary<string, DirEntry> dirEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 

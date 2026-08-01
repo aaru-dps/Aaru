@@ -50,6 +50,7 @@ public sealed partial class BTRFS
         _partition      = partition;
         _encoding       = encoding ?? Encoding.GetEncoding("iso-8859-15");
         _treeBlockCache = new Dictionary<ulong, byte[]>();
+        _directoryCache = new Dictionary<(ulong dirObjectId, ulong treeRoot), Dictionary<string, DirEntry>>();
 
         // Step 1: Read and validate the superblock
         ErrorNumber errno = ReadSuperblock();
@@ -145,6 +146,7 @@ public sealed partial class BTRFS
         AaruLogging.Debug(MODULE_NAME, "Unmounting btrfs volume");
 
         _rootDirectoryCache?.Clear();
+        _directoryCache?.Clear();
         _chunkMap?.Clear();
         _treeBlockCache?.Clear();
         _rootDirectoryCache = null;
