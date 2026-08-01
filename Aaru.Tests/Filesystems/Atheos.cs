@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Atheos() : FilesystemTest("atheos")
+public class Atheos() : ReadOnlyFilesystemTest("atheos")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "AtheOS (MBR)");
     public override IFilesystem Plugin     => new AtheOS();
