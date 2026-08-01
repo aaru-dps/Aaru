@@ -54,6 +54,13 @@ public sealed partial class UFSPlugin : IReadOnlyFilesystem
     List<DirectoryEntryInfo> _rootEntries;
     UfsSuperBlock            _superBlock;
 
+    /// <summary>
+    ///     Cached directory contents (directory inode number -> parsed entries). Read-only filesystem, so
+    ///     entries never go stale; without this every Stat/OpenFile re-reads whole directories per path
+    ///     component, which is quadratic on huge or deeply nested directories.
+    /// </summary>
+    readonly Dictionary<uint, CachedDirectory> _directoryCache = new();
+
 #region IFilesystem Members
 
     /// <inheritdoc />
@@ -68,9 +75,9 @@ public sealed partial class UFSPlugin : IReadOnlyFilesystem
 #endregion
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 }

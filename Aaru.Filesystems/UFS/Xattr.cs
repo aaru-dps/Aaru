@@ -355,11 +355,11 @@ public sealed partial class UFSPlugin
         xattrs = [];
 
         // Scan /.attribute/system/ and /.attribute/user/ directories
-        errno = ParseDirectory(_extAttrDirInode, out List<DirectoryEntryInfo> attrDirEntries);
+        errno = GetDirectory(_extAttrDirInode, out CachedDirectory attrDir);
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        foreach(DirectoryEntryInfo nsEntry in attrDirEntries)
+        foreach(DirectoryEntryInfo nsEntry in attrDir.Entries)
         {
             string nsPrefix;
 
@@ -370,11 +370,11 @@ public sealed partial class UFSPlugin
             else
                 continue;
 
-            errno = ParseDirectory(nsEntry.Inode, out List<DirectoryEntryInfo> attrEntries);
+            errno = GetDirectory(nsEntry.Inode, out CachedDirectory nsDir);
 
             if(errno != ErrorNumber.NoError) continue;
 
-            foreach(DirectoryEntryInfo attrEntry in attrEntries)
+            foreach(DirectoryEntryInfo attrEntry in nsDir.Entries)
             {
                 if(attrEntry.Name is "." or "..") continue;
 
@@ -419,27 +419,19 @@ public sealed partial class UFSPlugin
         }
 
         // Find the namespace subdirectory
-        errno = ParseDirectory(_extAttrDirInode, out List<DirectoryEntryInfo> attrDirEntries);
+        errno = GetDirectory(_extAttrDirInode, out CachedDirectory attrDir);
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        uint nsDirInode = 0;
-
-        foreach(DirectoryEntryInfo nsEntry in attrDirEntries)
-        {
-            if(nsEntry.Name != targetNsDir) continue;
-
-            nsDirInode = nsEntry.Inode;
-
-            break;
-        }
-
-        if(nsDirInode == 0) return ErrorNumber.NoSuchExtendedAttribute;
+        if(!attrDir.ByName.TryGetValue(targetNsDir, out uint nsDirInode) || nsDirInode == 0)
+            return ErrorNumber.NoSuchExtendedAttribute;
 
         // Find the attribute backing file
-        errno = ParseDirectory(nsDirInode, out List<DirectoryEntryInfo> attrEntries);
+        errno = GetDirectory(nsDirInode, out CachedDirectory nsDir);
 
         if(errno != ErrorNumber.NoError) return errno;
+
+        List<DirectoryEntryInfo> attrEntries = nsDir.Entries;
 
         uint attrFileInode = 0;
 

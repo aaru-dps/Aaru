@@ -125,6 +125,40 @@ public sealed partial class UFSPlugin
         return ErrorNumber.NoError;
     }
 
+    /// <summary>Parsed directory entries plus a name index for O(1) lookups</summary>
+    sealed class CachedDirectory
+    {
+        public Dictionary<string, uint> ByName;
+        public List<DirectoryEntryInfo> Entries;
+    }
+
+    /// <summary>Gets the contents of a directory, caching them as the filesystem is read-only</summary>
+    /// <param name="inodeNumber">Inode number of the directory</param>
+    /// <param name="dir">Parsed directory</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetDirectory(uint inodeNumber, out CachedDirectory dir)
+    {
+        if(_directoryCache.TryGetValue(inodeNumber, out dir)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ParseDirectory(inodeNumber, out List<DirectoryEntryInfo> entries);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        var byName = new Dictionary<string, uint>(StringComparer.Ordinal);
+
+        foreach(DirectoryEntryInfo entry in entries) byName.TryAdd(entry.Name, entry.Inode);
+
+        dir = new CachedDirectory
+        {
+            Entries = entries,
+            ByName  = byName
+        };
+
+        _directoryCache[inodeNumber] = dir;
+
+        return ErrorNumber.NoError;
+    }
+
     /// <summary>Resolves a path string to an inode number</summary>
     ErrorNumber ResolvePath(string path, out uint inodeNumber)
     {
@@ -144,32 +178,12 @@ public sealed partial class UFSPlugin
 
         foreach(string component in components)
         {
-            // Use cached root entries when at root inode
-            List<DirectoryEntryInfo> entries;
+            ErrorNumber errno = GetDirectory(currentInode, out CachedDirectory dir);
 
-            if(currentInode == UFS_ROOTINO && _rootEntries is not null)
-                entries = _rootEntries;
-            else
-            {
-                ErrorNumber errno = ParseDirectory(currentInode, out entries);
-
-                if(errno != ErrorNumber.NoError) return errno;
-            }
+            if(errno != ErrorNumber.NoError) return errno;
 
             // Find matching entry
-            var found = false;
-
-            foreach(DirectoryEntryInfo entry in entries)
-            {
-                if(entry.Name != component) continue;
-
-                currentInode = entry.Inode;
-                found        = true;
-
-                break;
-            }
-
-            if(!found) return ErrorNumber.NoSuchFile;
+            if(!dir.ByName.TryGetValue(component, out currentInode)) return ErrorNumber.NoSuchFile;
         }
 
         inodeNumber = currentInode;
@@ -207,14 +221,14 @@ public sealed partial class UFSPlugin
         }
 
         // Parse directory entries
-        errno = ParseDirectory(inodeNumber, out List<DirectoryEntryInfo> entries);
+        errno = GetDirectory(inodeNumber, out CachedDirectory dir);
 
         if(errno != ErrorNumber.NoError) return errno;
 
         // Collect entry names, skipping . and ..
         List<string> nameList = [];
 
-        foreach(DirectoryEntryInfo entry in entries)
+        foreach(DirectoryEntryInfo entry in dir.Entries)
         {
             if(entry.Name is "." or "..") continue;
 

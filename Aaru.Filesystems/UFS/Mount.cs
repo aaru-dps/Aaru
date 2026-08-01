@@ -280,6 +280,7 @@ public sealed partial class UFSPlugin
         }
 
         // Cache root directory entries
+        _directoryCache.Clear();
         ErrorNumber rootErr = ParseDirectory(UFS_ROOTINO, out _rootEntries);
 
         if(rootErr != ErrorNumber.NoError) return rootErr;
@@ -321,6 +322,7 @@ public sealed partial class UFSPlugin
         _imagePlugin       = null;
         _superBlock        = null;
         _rootEntries       = null;
+        _directoryCache.Clear();
         _hasFreeBsdExtattr = false;
         _extAttrDirInode   = 0;
 
