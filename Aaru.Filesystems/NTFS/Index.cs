@@ -38,7 +38,22 @@ namespace Aaru.Filesystems;
 /// <inheritdoc />
 public sealed partial class NTFS
 {
-    /// <summary>Reads and caches the directory entries for an arbitrary directory given its MFT record number.</summary>
+    /// <summary>Reads the directory entries for a directory, caching them as the filesystem is read-only.</summary>
+    /// <param name="mftRecordNumber">MFT record number of the directory.</param>
+    /// <param name="entries">Output dictionary mapping file names to MFT references.</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber GetDirectoryEntries(uint mftRecordNumber, out Dictionary<string, ulong> entries)
+    {
+        if(_directoryCache.TryGetValue(mftRecordNumber, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadDirectoryEntries(mftRecordNumber, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[mftRecordNumber] = entries;
+
+        return errno;
+    }
+
+    /// <summary>Reads the directory entries for an arbitrary directory given its MFT record number.</summary>
     /// <param name="mftRecordNumber">MFT record number of the directory.</param>
     /// <param name="entries">Output dictionary mapping file names to MFT references.</param>
     /// <returns>Error number indicating success or failure.</returns>

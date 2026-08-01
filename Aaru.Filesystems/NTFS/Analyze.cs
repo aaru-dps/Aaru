@@ -90,7 +90,7 @@ public sealed partial class NTFS
             directoryEntries = new Dictionary<string, ulong>(_rootDirectoryCache, StringComparer.OrdinalIgnoreCase);
         else
         {
-            ErrorNumber errno = ReadDirectoryEntries(directoryMftRecordNumber, out directoryEntries);
+            ErrorNumber errno = GetDirectoryEntries(directoryMftRecordNumber, out directoryEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
         }

@@ -1657,7 +1657,7 @@ public sealed partial class NTFS
             }
 
             // Not the last component — must be a directory
-            ErrorNumber errno = ReadDirectoryEntries(recordNum, out Dictionary<string, ulong> dirEntries);
+            ErrorNumber errno = GetDirectoryEntries(recordNum, out Dictionary<string, ulong> dirEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 

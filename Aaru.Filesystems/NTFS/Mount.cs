@@ -263,6 +263,7 @@ public sealed partial class NTFS
 
         // Initialize caches
         _rootDirectoryCache = new Dictionary<string, ulong>();
+        _directoryCache.Clear();
 
         // Cache root directory entries from the $INDEX_ROOT attribute
         errno = CacheRootDirectory(rootRecord, rootHeader);
@@ -322,6 +323,7 @@ public sealed partial class NTFS
         if(!_mounted) return ErrorNumber.AccessDenied;
 
         _rootDirectoryCache?.Clear();
+        _directoryCache.Clear();
         _securityDescriptors?.Clear();
         _attributeDefinitions?.Clear();
         _ntfsMajorVersion = 0;

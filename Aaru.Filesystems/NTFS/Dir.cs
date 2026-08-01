@@ -84,7 +84,7 @@ public sealed partial class NTFS
 
             // Read directory entries for this MFT record
             ErrorNumber errno =
-                ReadDirectoryEntries((uint)(mftRef & 0x0000FFFFFFFFFFFF), out Dictionary<string, ulong> dirEntries);
+                GetDirectoryEntries((uint)(mftRef & 0x0000FFFFFFFFFFFF), out Dictionary<string, ulong> dirEntries);
 
             if(errno != ErrorNumber.NoError)
             {

@@ -59,16 +59,23 @@ public sealed partial class NTFS : IReadOnlyFilesystem
     string                             _ntfsVersion;
     Partition                          _partition;
     Dictionary<string, ulong>          _rootDirectoryCache;
-    uint                               _sectorsPerCluster;
-    Dictionary<uint, byte[]>           _securityDescriptors;
-    FileSystemInfo                     _statfs;
+
+    /// <summary>
+    ///     Cached directory contents (MFT record number -> entries). Read-only filesystem, so entries never go
+    ///     stale; without this every Stat/OpenFile re-reads and re-parses directory indexes per path component,
+    ///     which is quadratic on huge or deeply nested directories.
+    /// </summary>
+    readonly Dictionary<uint, Dictionary<string, ulong>> _directoryCache = new();
+    uint                                                 _sectorsPerCluster;
+    Dictionary<uint, byte[]>                             _securityDescriptors;
+    FileSystemInfo                                       _statfs;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 
     static Dictionary<string, string> GetDefaultOptions() => new()
     {
