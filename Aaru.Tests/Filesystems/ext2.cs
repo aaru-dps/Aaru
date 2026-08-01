@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Ext2 : FilesystemTest
+public class Ext2() : FilesystemTest("ext2")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext2");
     public override IFilesystem Plugin     => new ext2FS();
@@ -304,42 +304,6 @@ public class Ext2 : FilesystemTest
             Type         = "ext2",
             VolumeName   = "VolumeLabel",
             VolumeSerial = "c9e61e78-98c3-844e-98d5-d54b880d07cb"
-        },
-        new()
-        {
-            TestFile     = "linux_2.4.18_ext3.aif",
-            MediaType    = MediaType.GENERIC_HDD,
-            Sectors      = 262144,
-            SectorSize   = 512,
-            Clusters     = 131008,
-            ClusterSize  = 1024,
-            Type         = "ext3",
-            VolumeName   = "VolumeLabel",
-            VolumeSerial = "40bb6664-4e0e-ca4b-a328-7c744ddd8bf4"
-        },
-        new()
-        {
-            TestFile     = "linux_4.19_ext3_flashdrive.aif",
-            MediaType    = MediaType.GENERIC_HDD,
-            Sectors      = 1024000,
-            SectorSize   = 512,
-            Clusters     = 510976,
-            ClusterSize  = 1024,
-            Type         = "ext3",
-            VolumeName   = "DicSetter",
-            VolumeSerial = "a3914b55-260f-7245-8c72-7ccdf45436cb"
-        },
-        new()
-        {
-            TestFile     = "linux_4.19_ext4_flashdrive.aif",
-            MediaType    = MediaType.GENERIC_HDD,
-            Sectors      = 1024000,
-            SectorSize   = 512,
-            Clusters     = 510976,
-            ClusterSize  = 1024,
-            Type         = "ext4",
-            VolumeName   = "DicSetter",
-            VolumeSerial = "10413797-43d1-6545-8fbc-6ebc9d328be9"
         }
     ];
 }
