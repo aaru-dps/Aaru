@@ -105,6 +105,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 using Aaru.Logging;
@@ -186,13 +187,30 @@ public sealed partial class AppleHFS
 
         if(nodeDesc.ndType != NodeType.ndHdrNode)
         {
-            // On volumes with no overflow extents, the extents B-tree may be
-            // allocated but zeroed out (no header node written). Treat as empty tree.
-            AaruLogging.Debug(MODULE_NAME,
-                              $"ReadExtentsHeader: node type={nodeDesc.ndType}, treating as empty extents tree");
+            // On volumes with no overflow extents, the extents B-tree may be allocated but zeroed
+            // out (no header node written). Only a fully zeroed node qualifies as that case; any
+            // other content means we misread the device (a zeroed buffer decodes as ndIndxNode)
+            // or the volume is corrupt, and it must surface as an error, not an empty tree.
+            if(nodeData.All(b => b == 0))
+            {
+                AaruLogging.Debug(MODULE_NAME,
+                                  "ReadExtentsHeader: node 0 is all zeroes, treating as empty extents tree");
 
-            // Return a zeroed header — caller will see depth=0 and know tree is empty
-            return ErrorNumber.NoError;
+                // Return a zeroed header — caller will see depth=0 and know tree is empty
+                return ErrorNumber.NoError;
+            }
+
+            AaruLogging.Debug(MODULE_NAME, $"ReadExtentsHeader: expected header node, got type={nodeDesc.ndType}");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if(nodeDesc.ndNHeight != 0 || nodeDesc.ndNRecs != 3)
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              $"ReadExtentsHeader: invalid header node, height={nodeDesc.ndNHeight}, nRecs={nodeDesc.ndNRecs}");
+
+            return ErrorNumber.InvalidArgument;
         }
 
         // B-Tree header record starts immediately after the node descriptor (14 bytes)
@@ -201,9 +219,31 @@ public sealed partial class AppleHFS
 
         bthdr = Marshal.ByteArrayToStructureBigEndian<BTHdrRed>(nodeData, nodeDescSize, Marshal.SizeOf<BTHdrRed>());
 
-        // Validate
-        if(bthdr.bthNodeSize > 0 && (bthdr.bthNodeSize & bthdr.bthNodeSize - 1) != 0)
+        // Validate, following Apple's VerifyHeader (lf_hfs_btree_misc_ops.c) and fsck checks
+        if(bthdr.bthNodeSize is not (512 or 1024 or 2048 or 4096 or 8192 or 16384 or 32768))
+        {
+            AaruLogging.Debug(MODULE_NAME, $"ReadExtentsHeader: invalid node size {bthdr.bthNodeSize}");
+
             return ErrorNumber.InvalidArgument;
+        }
+
+        // Empty tree invariant: depth and root are both zero or both non-zero
+        if(bthdr.bthDepth == 0 != (bthdr.bthRoot == 0))
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              $"ReadExtentsHeader: inconsistent empty tree, depth={bthdr.bthDepth}, root={bthdr.bthRoot}");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if(bthdr.bthNNodes > 0 &&
+           (bthdr.bthRoot >= bthdr.bthNNodes || bthdr.bthFNode >= bthdr.bthNNodes || bthdr.bthLNode >= bthdr.bthNNodes))
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              $"ReadExtentsHeader: node number out of range, root={bthdr.bthRoot}, fNode={bthdr.bthFNode}, lNode={bthdr.bthLNode}, totalNodes={bthdr.bthNNodes}");
+
+            return ErrorNumber.InvalidArgument;
+        }
 
         // Extents max key length must be 7
         if(bthdr.bthKeyLen is 0 or 7) return ErrorNumber.NoError;

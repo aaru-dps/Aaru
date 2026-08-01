@@ -524,6 +524,14 @@ public sealed partial class AppleHFS
             return ErrorNumber.InvalidArgument;
         }
 
+        if(nodeDesc.ndNHeight != 0 || nodeDesc.ndNRecs != 3)
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              $"ReadAndValidateCatalog: invalid header node, height={nodeDesc.ndNHeight}, nRecs={nodeDesc.ndNRecs}");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
         // Parse the B-Tree header record which follows the node descriptor
         BTHdrRed bthdr = Marshal.ByteArrayToStructureBigEndian<BTHdrRed>(nodeData, nodeDescSize, btHdrSize);
 
@@ -534,9 +542,26 @@ public sealed partial class AppleHFS
         // Validate: depth and record count must be non-zero
         if(bthdr.bthDepth == 0 || bthdr.bthNRecs == 0) return ErrorNumber.InvalidArgument;
 
-        // Node size must be a power of 2
-        if(bthdr.bthNodeSize == 0 || (bthdr.bthNodeSize & bthdr.bthNodeSize - 1) != 0)
+        // Node size must be one of the values Apple's VerifyHeader accepts
+        if(bthdr.bthNodeSize is not (512 or 1024 or 2048 or 4096 or 8192 or 16384 or 32768))
             return ErrorNumber.InvalidArgument;
+
+        // Node numbers must be within the tree, and the root cannot be the header node
+        if(bthdr.bthNNodes > 0 &&
+           (bthdr.bthRoot >= bthdr.bthNNodes || bthdr.bthFNode >= bthdr.bthNNodes || bthdr.bthLNode >= bthdr.bthNNodes))
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              $"ReadAndValidateCatalog: node number out of range, root={bthdr.bthRoot}, fNode={bthdr.bthFNode}, lNode={bthdr.bthLNode}, totalNodes={bthdr.bthNNodes}");
+
+            return ErrorNumber.InvalidArgument;
+        }
+
+        if(bthdr.bthRoot == 0)
+        {
+            AaruLogging.Debug(MODULE_NAME, "ReadAndValidateCatalog: catalog tree has no root node");
+
+            return ErrorNumber.InvalidArgument;
+        }
 
         // Catalog max key length must be 37
         if(bthdr.bthKeyLen != 37)
