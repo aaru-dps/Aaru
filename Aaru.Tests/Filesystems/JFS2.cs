@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Jfs2() : FilesystemTest("jfs")
+public class Jfs2() : ReadOnlyFilesystemTest("jfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "JFS2");
     public override IFilesystem Plugin     => new JFS();
