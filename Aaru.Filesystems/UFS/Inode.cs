@@ -92,6 +92,26 @@ public sealed partial class UFSPlugin
         return ErrorNumber.NoError;
     }
 
+    /// <summary>Reads the fragment block containing an inode through a bounded cache</summary>
+    /// <param name="fragAddr">Fragment address of the inode table block</param>
+    /// <param name="data">The read block data</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber ReadInodeBlock(long fragAddr, out byte[] data)
+    {
+        if(_inodeBlockCache.TryGetValue(fragAddr, out data)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadFragments(fragAddr, _superBlock.fs_frag, out data);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Bound memory use; blocks are cheap to re-read after a wholesale reset
+        if(_inodeBlockCache.Count >= 1024) _inodeBlockCache.Clear();
+
+        _inodeBlockCache[fragAddr] = data;
+
+        return ErrorNumber.NoError;
+    }
+
     /// <summary>Reads a UFS1 inode from disk given its inode number</summary>
     ErrorNumber ReadInode(uint inodeNumber, out Inode inode)
     {
@@ -103,7 +123,7 @@ public sealed partial class UFSPlugin
                         (inodeNumber % (uint)_superBlock.fs_ipg / _superBlock.fs_inopb << _superBlock.fs_fragshift);
 
         // Read the fragment block containing the inode
-        ErrorNumber errno = ReadFragments(fragAddr, _superBlock.fs_frag, out byte[] data);
+        ErrorNumber errno = ReadInodeBlock(fragAddr, out byte[] data);
 
         if(errno != ErrorNumber.NoError) return errno;
 
@@ -133,7 +153,7 @@ public sealed partial class UFSPlugin
         long fragAddr = CgImin(cg) +
                         (inodeNumber % (uint)_superBlock.fs_ipg / _superBlock.fs_inopb << _superBlock.fs_fragshift);
 
-        ErrorNumber errno = ReadFragments(fragAddr, _superBlock.fs_frag, out byte[] data);
+        ErrorNumber errno = ReadInodeBlock(fragAddr, out byte[] data);
 
         if(errno != ErrorNumber.NoError) return errno;
 
@@ -163,7 +183,7 @@ public sealed partial class UFSPlugin
         long fragAddr = CgImin(cg) +
                         (inodeNumber % (uint)_superBlock.fs_ipg / _superBlock.fs_inopb << _superBlock.fs_fragshift);
 
-        ErrorNumber errno = ReadFragments(fragAddr, _superBlock.fs_frag, out byte[] data);
+        ErrorNumber errno = ReadInodeBlock(fragAddr, out byte[] data);
 
         if(errno != ErrorNumber.NoError) return errno;
 

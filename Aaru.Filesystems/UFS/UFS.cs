@@ -67,6 +67,12 @@ public sealed partial class UFSPlugin : IReadOnlyFilesystem
     /// </summary>
     readonly Dictionary<string, uint> _pathCache = new(StringComparer.Ordinal);
 
+    /// <summary>
+    ///     Cached inode table blocks (fragment address -> block data). Every Stat/OpenFile/ListXAttr reads the
+    ///     block containing the inode, and dozens of inodes share one block, so this avoids re-reading it per call.
+    /// </summary>
+    readonly Dictionary<long, byte[]> _inodeBlockCache = new();
+
 #region IFilesystem Members
 
     /// <inheritdoc />
