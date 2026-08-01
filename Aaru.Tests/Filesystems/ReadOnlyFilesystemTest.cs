@@ -401,9 +401,11 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
         return JsonSerializer.Deserialize<Dictionary<string, FileData>>(stream, ContentsSerializerOptions);
     }
 
-    internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth)
+    internal static Dictionary<string, FileData> BuildDirectory(IReadOnlyFilesystem fs, string path, int currentDepth,
+                                                                HashSet<ulong>      ancestorInodes = null)
     {
         currentDepth++;
+        ancestorInodes ??= [];
 
         if(path == "/") path = "";
 
@@ -431,8 +433,17 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
             if(stat.Attributes.HasFlag(FileAttributes.Directory))
             {
+                // Filesystem plugin bug: a directory pointing back into an ancestor would loop forever
+                if(stat.Inode != 0 && !ancestorInodes.Add(stat.Inode))
+                {
+                    throw new
+                        InvalidOperationException($"Directory loop detected at \"{childPath}\" (inode {stat.Inode})");
+                }
+
                 // Cannot serialize to JSON too many depth levels 🤷‍♀️
-                if(currentDepth < 384) data.Children = BuildDirectory(fs, childPath, currentDepth);
+                if(currentDepth < 384) data.Children = BuildDirectory(fs, childPath, currentDepth, ancestorInodes);
+
+                if(stat.Inode != 0) ancestorInodes.Remove(stat.Inode);
             }
             else if(stat.Attributes.HasFlag(FileAttributes.Symlink))
             {
