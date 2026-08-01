@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class F2Fs() : FilesystemTest("f2fs")
+public class F2Fs() : ReadOnlyFilesystemTest("f2fs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "F2FS");
     public override IFilesystem Plugin     => new F2FS();
