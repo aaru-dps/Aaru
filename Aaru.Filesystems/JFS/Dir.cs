@@ -116,7 +116,7 @@ public sealed partial class JFS
             }
 
             // Parse the child directory's dtree
-            errno = ParseDtreeRoot(childInode.di_u, out Dictionary<string, uint> childEntries);
+            errno = GetDirectoryEntries(childInodeNumber, childInode.di_u, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError)
             {

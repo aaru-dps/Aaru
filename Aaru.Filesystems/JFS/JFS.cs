@@ -44,6 +44,13 @@ public sealed partial class JFS : IReadOnlyFilesystem
     /// <summary>Cache of root directory entries mapped from filename to inode number</summary>
     readonly Dictionary<string, uint> _rootDirectoryCache = new();
 
+    /// <summary>
+    ///     Cached directory contents (directory inode number -> entries). Read-only filesystem, so entries
+    ///     never go stale; without this every Stat/OpenFile/OpenDir re-reads and re-parses the on-disk D-tree
+    ///     per path component, which is quadratic on huge or deeply nested directories.
+    /// </summary>
+    readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = new();
+
     /// <summary>The encoding to use for text data</summary>
     Encoding _encoding;
 
@@ -66,11 +73,11 @@ public sealed partial class JFS : IReadOnlyFilesystem
     SuperBlock _superblock;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 
 #region IFilesystem Members
 

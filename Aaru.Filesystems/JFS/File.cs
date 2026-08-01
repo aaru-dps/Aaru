@@ -356,7 +356,7 @@ public sealed partial class JFS
                 return ErrorNumber.NotDirectory;
             }
 
-            errno = ParseDtreeRoot(dirInode.di_u, out Dictionary<string, uint> childEntries);
+            errno = GetDirectoryEntries(dirInodeNumber, dirInode.di_u, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError)
             {

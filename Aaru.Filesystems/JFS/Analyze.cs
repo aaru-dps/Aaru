@@ -144,7 +144,7 @@ public sealed partial class JFS
             return ErrorNumber.NoError;
         }
 
-        return ParseDtreeRoot(directoryInode.di_u, out directoryEntries);
+        return GetDirectoryEntries(directoryInodeNumber, directoryInode.di_u, out directoryEntries);
     }
 
     ErrorNumber AddOverlappingFile(string path, uint inodeNumber, in Inode inode,

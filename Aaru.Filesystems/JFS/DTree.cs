@@ -41,6 +41,22 @@ public sealed partial class JFS
     /// <param name="extensionData">The inode extension area (di_u, 384 bytes)</param>
     /// <param name="entries">Output dictionary of filename to inode number</param>
     /// <returns>Error code indicating success or failure</returns>
+    /// <summary>Gets the contents of a directory, caching them as the filesystem is read-only</summary>
+    /// <param name="inodeNumber">Inode number of the directory</param>
+    /// <param name="extensionData">The directory inode's di_u extension data</param>
+    /// <param name="entries">Dictionary of filename -> inode number</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber GetDirectoryEntries(uint inodeNumber, byte[] extensionData, out Dictionary<string, uint> entries)
+    {
+        if(_directoryCache.TryGetValue(inodeNumber, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ParseDtreeRoot(extensionData, out entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[inodeNumber] = entries;
+
+        return errno;
+    }
+
     ErrorNumber ParseDtreeRoot(byte[] extensionData, out Dictionary<string, uint> entries)
     {
         entries = new Dictionary<string, uint>(StringComparer.Ordinal);
@@ -142,9 +158,7 @@ public sealed partial class JFS
 
             if(!visited.Add(childAddr))
             {
-                AaruLogging.Debug(MODULE_NAME,
-                                  "DTree internal root: skipping already-visited block {0}",
-                                  childAddr);
+                AaruLogging.Debug(MODULE_NAME, "DTree internal root: skipping already-visited block {0}", childAddr);
 
                 continue;
             }
@@ -212,9 +226,7 @@ public sealed partial class JFS
 
                 if(!visited.Add(childAddr))
                 {
-                    AaruLogging.Debug(MODULE_NAME,
-                                      "DTree page: skipping already-visited block {0}",
-                                      childAddr);
+                    AaruLogging.Debug(MODULE_NAME, "DTree page: skipping already-visited block {0}", childAddr);
 
                     continue;
                 }
@@ -235,7 +247,7 @@ public sealed partial class JFS
     }
 
     /// <summary>Extracts directory entries from a single dtree leaf page</summary>
-    void ParseDtreeLeafPage(byte[] pageData, byte nextindex, byte maxslot, byte stblindex,
+    void ParseDtreeLeafPage(byte[]                   pageData, byte nextindex, byte maxslot, byte stblindex,
                             Dictionary<string, uint> entries)
     {
         // ...existing code stays the same...

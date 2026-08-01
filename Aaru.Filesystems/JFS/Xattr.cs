@@ -145,7 +145,7 @@ public sealed partial class JFS
 
             if((dirInode.di_mode & 0xF000) != 0x4000) return ErrorNumber.NotDirectory;
 
-            errno = ParseDtreeRoot(dirInode.di_u, out Dictionary<string, uint> childEntries);
+            errno = GetDirectoryEntries(dirInodeNumber, dirInode.di_u, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 
