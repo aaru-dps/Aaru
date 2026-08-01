@@ -45,6 +45,9 @@ public sealed partial class AppleHFSPlus : IReadOnlyFilesystem
     /// <summary>Attributes File fork data (null if attributes file doesn't exist)</summary>
     HFSPlusForkData? _attributesFile;
 
+    /// <summary>Whether the Extents Overflow File B-Tree header has been read</summary>
+    bool _extentsHeaderLoaded;
+
     /// <summary>Catalog B-Tree header information</summary>
     BTHeaderRec _catalogBTreeHeader;
     /// <summary>Cached directory entries by CNID, each entry keyed by filename</summary>

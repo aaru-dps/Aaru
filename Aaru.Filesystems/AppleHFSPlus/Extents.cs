@@ -77,119 +77,61 @@ public sealed partial class AppleHFSPlus
 
     /// <summary>
     ///     Searches the Extents Overflow File B-Tree for extent records matching a CNID and fork type.
+    ///     Performs a keyed descent to the first record of the fork and iterates forward, so extents are
+    ///     appended in start block order.
     /// </summary>
     /// <param name="cnid">Catalog Node ID to search for</param>
     /// <param name="forkType">Fork type (0 for data, 0xFF for resource)</param>
     /// <param name="allExtents">List to append found extents to</param>
     /// <returns>Error number</returns>
-    private ErrorNumber SearchExtentsOverflowFile(uint cnid, byte forkType, List<HFSPlusExtentDescriptor> allExtents) =>
-
-        // Traverse the Extents Overflow File B-Tree from the root
-        TraverseExtentsOverflowFile(_extentsFileHeader.rootNode, cnid, forkType, allExtents);
-
-    /// <summary>
-    ///     Recursively traverses the Extents Overflow File B-Tree to find extent records.
-    /// </summary>
-    private ErrorNumber TraverseExtentsOverflowFile(uint nodeNumber, uint targetCNID, byte targetForkType,
-                                                    List<HFSPlusExtentDescriptor> allExtents)
+    private ErrorNumber SearchExtentsOverflowFile(uint cnid, byte forkType, List<HFSPlusExtentDescriptor> allExtents)
     {
-        ErrorNumber errno = ReadExtentsFileNode(nodeNumber, out byte[] nodeData);
+        ErrorNumber headerErr = EnsureExtentsFileHeaderLoaded();
 
-        if(errno != ErrorNumber.NoError) return errno;
+        if(headerErr != ErrorNumber.NoError) return headerErr;
 
-        int ndSize = Marshal.SizeOf(typeof(BTNodeDescriptor));
+        // Empty tree: no overflow extents recorded
+        if(_extentsFileHeader.treeDepth == 0 || _extentsFileHeader.rootNode == 0) return ErrorNumber.NoError;
 
-        if(nodeData.Length < ndSize) return ErrorNumber.InvalidArgument;
+        int extentRecordSize = Marshal.SizeOf(typeof(HFSPlusExtentRecord));
 
-        BTNodeDescriptor nodeDesc =
-            Helpers.Marshal.ByteArrayToStructureBigEndian<BTNodeDescriptor>(nodeData, 0, ndSize);
+        return SearchBTreeRange(ReadExtentsFileNode,
+                                in _extentsFileHeader,
+                                MakeExtentKeyComparer(cnid, forkType, 0),
+                                (nodeData, recordOffset) =>
+                                {
+                                    if(recordOffset + 12 > nodeData.Length) return true;
 
-        switch(nodeDesc.kind)
-        {
-            case BTNodeKind.kBTLeafNode:
-            {
-                // Process leaf node - extract extent records
-                ushort numRecords = nodeDesc.numRecords;
+                                    // Extent key: keyLength(2) + forkType(1) + pad(1) + fileID(4) + startBlock(4)
+                                    var  keyLength      = BigEndianBitConverter.ToUInt16(nodeData, recordOffset);
+                                    byte recordForkType = nodeData[recordOffset                                 + 2];
+                                    var  recordCNID     = BigEndianBitConverter.ToUInt32(nodeData, recordOffset + 4);
 
-                for(ushort i = 0; i < numRecords; i++)
-                {
-                    int offsetPointerOffset = _extentsFileHeader.nodeSize - 2 * (i + 1);
+                                    // Past the fork's records: stop
+                                    if(recordCNID != cnid || recordForkType != forkType) return true;
 
-                    if(offsetPointerOffset < 0 || offsetPointerOffset + 2 > nodeData.Length) continue;
+                                    int extentDataOffset = recordOffset + 2 + keyLength;
 
-                    var recordOffset = BigEndianBitConverter.ToUInt16(nodeData, offsetPointerOffset);
+                                    if(extentDataOffset + extentRecordSize > nodeData.Length) return true;
 
-                    if(recordOffset >= nodeData.Length || recordOffset + 10 > nodeData.Length) continue;
+                                    HFSPlusExtentRecord extentRecord =
+                                        Helpers.Marshal.ByteArrayToStructureBigEndian<HFSPlusExtentRecord>(nodeData,
+                                            extentDataOffset,
+                                            extentRecordSize);
 
-                    // Parse extent key: keyLength(2) + CNID(4) + forkType(1) + padding(1) + startBlock(4)
-                    var  keyLength      = BigEndianBitConverter.ToUInt16(nodeData, recordOffset);
-                    var  recordCNID     = BigEndianBitConverter.ToUInt32(nodeData, recordOffset + 2);
-                    byte recordForkType = nodeData[recordOffset                                 + 6];
+                                    foreach(HFSPlusExtentDescriptor extent in extentRecord.extentDescriptors
+                                               .TakeWhile(static extent => extent.blockCount != 0))
+                                    {
+                                        allExtents.Add(extent);
 
-                    // Check if this record matches our search criteria
-                    if(recordCNID != targetCNID || recordForkType != targetForkType) continue;
+                                        AaruLogging.Debug(MODULE_NAME,
+                                                          "SearchExtentsOverflowFile: Added overflow extent: startBlock={0}, blockCount={1}",
+                                                          extent.startBlock,
+                                                          extent.blockCount);
+                                    }
 
-                    // Found an extent record - parse the extent data
-                    int extentDataOffset = recordOffset + 2 + keyLength;
-
-                    if(extentDataOffset + Marshal.SizeOf(typeof(HFSPlusExtentRecord)) > nodeData.Length) continue;
-
-                    HFSPlusExtentRecord extentRecord =
-                        Helpers.Marshal.ByteArrayToStructureBigEndian<HFSPlusExtentRecord>(nodeData,
-                            extentDataOffset,
-                            Marshal.SizeOf(typeof(HFSPlusExtentRecord)));
-
-                    // Add all extents from this record
-                    foreach(HFSPlusExtentDescriptor extent in extentRecord.extentDescriptors.TakeWhile(static extent =>
-                                extent.blockCount != 0))
-                    {
-                        allExtents.Add(extent);
-
-                        AaruLogging.Debug(MODULE_NAME,
-                                          "TraverseExtentsOverflowFile: Added overflow extent: startBlock={0}, blockCount={1}",
-                                          extent.startBlock,
-                                          extent.blockCount);
-                    }
-                }
-
-                return ErrorNumber.NoError;
-            }
-            case BTNodeKind.kBTIndexNode:
-            {
-                // Index node - traverse child nodes
-                // For now, traverse all children by looking at record offsets
-                ushort numRecords = nodeDesc.numRecords;
-
-                for(ushort i = 0; i < numRecords; i++)
-                {
-                    int offsetPointerOffset = _extentsFileHeader.nodeSize - 2 * (i + 1);
-
-                    if(offsetPointerOffset < 0 || offsetPointerOffset + 2 > nodeData.Length) continue;
-
-                    var recordOffset = BigEndianBitConverter.ToUInt16(nodeData, offsetPointerOffset);
-
-                    if(recordOffset >= nodeData.Length || recordOffset + 2 > nodeData.Length) continue;
-
-                    // Parse index record key to get child pointer
-                    var keyLength      = BigEndianBitConverter.ToUInt16(nodeData, recordOffset);
-                    int childPtrOffset = recordOffset + 2 + keyLength;
-
-                    if(childPtrOffset + 4 > nodeData.Length) continue;
-
-                    var childNode = BigEndianBitConverter.ToUInt32(nodeData, childPtrOffset);
-
-                    // Recursively traverse the child node
-                    ErrorNumber childErr =
-                        TraverseExtentsOverflowFile(childNode, targetCNID, targetForkType, allExtents);
-
-                    if(childErr != ErrorNumber.NoError) return childErr;
-                }
-
-                return ErrorNumber.NoError;
-            }
-            default:
-                return ErrorNumber.InvalidArgument;
-        }
+                                    return false;
+                                });
     }
 
     /// <summary>
@@ -199,25 +141,54 @@ public sealed partial class AppleHFSPlus
     /// <returns>Error number</returns>
     private ErrorNumber EnsureExtentsFileHeaderLoaded()
     {
-        if(_extentsFileHeader.rootNode != 0) return ErrorNumber.NoError; // Already loaded
+        if(_extentsHeaderLoaded) return ErrorNumber.NoError;
 
         if(_volumeHeader.extentsFile.totalBlocks == 0) return ErrorNumber.InvalidArgument; // No Extents Overflow File
 
         AaruLogging.Debug(MODULE_NAME, "EnsureExtentsFileHeaderLoaded: Reading Extents Overflow File header");
 
-        // The Extents Overflow File is similar to the Catalog File - it's a B-Tree
-        // Read the first node (node 0) which contains the header
-        ErrorNumber errno = ReadExtentsFileNode(0, out byte[] headerNode);
+        HFSPlusForkData extentsFork = _volumeHeader.extentsFile;
+
+        if(extentsFork.extents.extentDescriptors               == null ||
+           extentsFork.extents.extentDescriptors.Length        == 0    ||
+           extentsFork.extents.extentDescriptors[0].blockCount == 0)
+            return ErrorNumber.InvalidArgument;
+
+        // The header node is at the start of the first extent. The node size is not known yet, but
+        // the node descriptor and B-tree header record fit in the first 512 bytes of the node
+        ulong extentsFileOffset = (ulong)extentsFork.extents.extentDescriptors[0].startBlock * _volumeHeader.blockSize;
+
+        ulong deviceSector = ((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + extentsFileOffset) / _sectorSize;
+
+        var byteOffset = (uint)(((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + extentsFileOffset) %
+                                _sectorSize);
+
+        int ndSize     = Marshal.SizeOf(typeof(BTNodeDescriptor));
+        int headerSize = Marshal.SizeOf(typeof(BTHeaderRec));
+
+        uint sectorsToRead = ((uint)(ndSize + headerSize) + byteOffset + _sectorSize - 1) / _sectorSize;
+
+        ErrorNumber errno = _imagePlugin.ReadSectors(deviceSector,
+                                                     false,
+                                                     sectorsToRead,
+                                                     out byte[] headerSectors,
+                                                     out _);
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        int headerSize = Marshal.SizeOf(typeof(BTHeaderRec));
+        if(headerSectors.Length < byteOffset + ndSize + headerSize) return ErrorNumber.InvalidArgument;
 
-        if(headerNode.Length < 14 + headerSize) // 14 bytes for node descriptor + header
-            return ErrorNumber.InvalidArgument;
+        BTNodeDescriptor nodeDesc =
+            Helpers.Marshal.ByteArrayToStructureBigEndian<BTNodeDescriptor>(headerSectors, (int)byteOffset, ndSize);
 
-        // Parse the B-Tree header (starts after node descriptor)
-        _extentsFileHeader = Helpers.Marshal.ByteArrayToStructureBigEndian<BTHeaderRec>(headerNode, 14, headerSize);
+        if(nodeDesc.kind != BTNodeKind.kBTHeaderNode) return ErrorNumber.InvalidArgument;
+
+        _extentsFileHeader =
+            Helpers.Marshal.ByteArrayToStructureBigEndian<BTHeaderRec>(headerSectors,
+                                                                       (int)(byteOffset + ndSize),
+                                                                       headerSize);
+
+        _extentsHeaderLoaded = true;
 
         AaruLogging.Debug(MODULE_NAME,
                           "EnsureExtentsFileHeaderLoaded: Extents File B-Tree header: depth={0}, rootNode={1}, nodeSize={2}",
@@ -229,8 +200,8 @@ public sealed partial class AppleHFSPlus
     }
 
     /// <summary>
-    ///     Reads a node from the Extents Overflow File by node number.
-    ///     Similar to reading catalog nodes but uses the Extents File fork data.
+    ///     Reads a node from the Extents Overflow File by node number. The extents file's own extents are
+    ///     guaranteed to fit in the volume header's 8 inline descriptors, so no overflow lookup is needed.
     /// </summary>
     /// <param name="nodeNumber">The node number to read</param>
     /// <param name="nodeData">The node data read from disk</param>
@@ -239,67 +210,13 @@ public sealed partial class AppleHFSPlus
     {
         nodeData = null;
 
-        HFSPlusForkData extentsFork = _volumeHeader.extentsFile;
+        ErrorNumber headerErr = EnsureExtentsFileHeaderLoaded();
 
-        if(extentsFork.extents.extentDescriptors == null || extentsFork.extents.extentDescriptors.Length == 0)
-            return ErrorNumber.InvalidArgument;
+        if(headerErr != ErrorNumber.NoError) return headerErr;
 
-        // Read the B-Tree header first if not already loaded
-        if(_extentsFileHeader.rootNode == 0)
-        {
-            ErrorNumber headerErr = EnsureExtentsFileHeaderLoaded();
-
-            if(headerErr != ErrorNumber.NoError) return headerErr;
-        }
-
-        // Calculate byte offset of node within the extents file
-        ulong nodeOffset = (ulong)nodeNumber * _extentsFileHeader.nodeSize;
-
-        // Find which extent contains this offset
-        ulong currentOffset = 0;
-
-        foreach(HFSPlusExtentDescriptor extent in extentsFork.extents.extentDescriptors)
-        {
-            if(extent.blockCount == 0) break;
-
-            ulong extentSizeInBytes = (ulong)extent.blockCount * _volumeHeader.blockSize;
-
-            if(nodeOffset < currentOffset + extentSizeInBytes)
-            {
-                // Found the extent containing this node
-                ulong offsetInExtent = nodeOffset                                         - currentOffset;
-                ulong blockOffset    = (ulong)extent.startBlock * _volumeHeader.blockSize + offsetInExtent;
-
-                // Convert to device sector address
-                // For wrapped volumes, blocks start after the HFS+ volume offset
-                // For pure HFS+, _hfsPlusVolumeOffset is 0
-                ulong deviceSector = ((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + blockOffset) /
-                                     _sectorSize;
-
-                var byteOffset = (uint)(((_partitionStart + _hfsPlusVolumeOffset) * _sectorSize + blockOffset) %
-                                        _sectorSize);
-
-                uint sectorsToRead = (_extentsFileHeader.nodeSize + byteOffset + _sectorSize - 1) / _sectorSize;
-
-                ErrorNumber errno = _imagePlugin.ReadSectors(deviceSector,
-                                                             false,
-                                                             sectorsToRead,
-                                                             out byte[] sectorData,
-                                                             out _);
-
-                if(errno != ErrorNumber.NoError) return errno;
-
-                if(sectorData.Length < byteOffset + _extentsFileHeader.nodeSize) return ErrorNumber.InvalidArgument;
-
-                nodeData = new byte[_extentsFileHeader.nodeSize];
-                Array.Copy(sectorData, (int)byteOffset, nodeData, 0, _extentsFileHeader.nodeSize);
-
-                return ErrorNumber.NoError;
-            }
-
-            currentOffset += extentSizeInBytes;
-        }
-
-        return ErrorNumber.InvalidArgument;
+        return ReadBTreeNode(_volumeHeader.extentsFile.extents.extentDescriptors,
+                             _extentsFileHeader.nodeSize,
+                             nodeNumber,
+                             out nodeData);
     }
 }

@@ -142,7 +142,8 @@ public sealed partial class AppleHFSPlus
         _catalogBTreeHeader = default(BTHeaderRec);
 
         // Clear extents file header
-        _extentsFileHeader = default(BTHeaderRec);
+        _extentsFileHeader   = default(BTHeaderRec);
+        _extentsHeaderLoaded = false;
 
         // Clear attributes file
         _attributesFile = null;
