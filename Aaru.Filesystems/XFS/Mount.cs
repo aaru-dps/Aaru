@@ -147,6 +147,7 @@ public sealed partial class XFS
 
         _rootDirectoryCache.Clear();
         _inodeCache.Clear();
+        _directoryCache.Clear();
         _mounted          = false;
         _imagePlugin      = null;
         _partition        = default(Partition);
@@ -304,6 +305,7 @@ public sealed partial class XFS
 
         _rootDirectoryCache.Clear();
         _inodeCache.Clear();
+        _directoryCache.Clear();
 
         // Read the root inode
         ErrorNumber errno = ReadInode(_superblock.rootino, out Dinode rootInode);

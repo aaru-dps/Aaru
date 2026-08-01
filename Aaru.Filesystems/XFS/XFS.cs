@@ -47,6 +47,13 @@ public sealed partial class XFS : IReadOnlyFilesystem
     /// <summary>Cached root directory entries (filename -> inode number)</summary>
     readonly Dictionary<string, ulong> _rootDirectoryCache = new();
 
+    /// <summary>
+    ///     Cached directory contents (directory inode number -> entries). Read-only filesystem, so entries
+    ///     never go stale; without this every Stat/OpenFile/OpenDir re-reads and re-parses whole directories
+    ///     per path component, which is quadratic on huge or deeply nested directories.
+    /// </summary>
+    readonly Dictionary<ulong, Dictionary<string, ulong>> _directoryCache = new();
+
     /// <summary>Number of filesystem blocks per directory block (1 for dir v1, 1 &lt;&lt; dirblklog for dir v2)</summary>
     uint _dirBlockFsBlocks;
 
@@ -75,11 +82,11 @@ public sealed partial class XFS : IReadOnlyFilesystem
     bool _v3Inodes;
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 
 #region IFilesystem Members
 

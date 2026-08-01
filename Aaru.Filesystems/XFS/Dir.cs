@@ -192,6 +192,22 @@ public sealed partial class XFS
     /// <returns>Error number indicating success or failure</returns>
     ErrorNumber GetDirectoryContents(ulong inodeNumber, Dinode inode, out Dictionary<string, ulong> entries)
     {
+        if(_directoryCache.TryGetValue(inodeNumber, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadDirectoryContents(inodeNumber, inode, out entries);
+
+        if(cacheErrno == ErrorNumber.NoError) _directoryCache[inodeNumber] = entries;
+
+        return cacheErrno;
+    }
+
+    /// <summary>Reads directory contents for an inode from disk, parsing the on-disk directory structure</summary>
+    /// <param name="inodeNumber">Inode number of the directory</param>
+    /// <param name="inode">The directory inode structure</param>
+    /// <param name="entries">Output dictionary of entries (filename -> inode number), excluding . and ..</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber ReadDirectoryContents(ulong inodeNumber, Dinode inode, out Dictionary<string, ulong> entries)
+    {
         entries = new Dictionary<string, ulong>();
 
         ErrorNumber errno;
