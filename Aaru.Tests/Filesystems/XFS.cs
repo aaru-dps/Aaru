@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class XFS() : FilesystemTest("xfs")
+public class XFS() : ReadOnlyFilesystemTest("xfs")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "XFS");
     public override IFilesystem Plugin     => new Aaru.Filesystems.XFS();
