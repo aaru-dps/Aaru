@@ -414,8 +414,15 @@ public abstract class ReadOnlyFilesystemTest : FilesystemTest
 
         while(fs.ReadDir(node, out string child) == ErrorNumber.NoError && child is not null)
         {
-            var childPath = $"{path}/{child}";
-            fs.Stat(childPath, out FileEntryInfo stat);
+            var         childPath = $"{path}/{child}";
+            ErrorNumber statError = fs.Stat(childPath, out FileEntryInfo stat);
+
+            if(stat is null)
+            {
+                // Filesystem plugin bug: name the offending entry so it can be diagnosed
+                throw new
+                    InvalidOperationException($"Stat of \"{childPath}\" returned {statError} without information");
+            }
 
             var data = new FileData
             {
