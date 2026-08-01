@@ -34,7 +34,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Xia() : FilesystemTest("xia")
+public class Xia() : ReadOnlyFilesystemTest("xia")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "Xia filesystem");
     public override IFilesystem Plugin     => new Aaru.Filesystems.Xia();
