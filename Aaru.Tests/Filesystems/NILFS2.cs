@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Nilfs2() : FilesystemTest("nilfs2")
+public class Nilfs2() : ReadOnlyFilesystemTest("nilfs2")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot,
                                                       "Filesystems",
