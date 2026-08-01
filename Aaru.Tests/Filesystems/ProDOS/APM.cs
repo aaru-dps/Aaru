@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.ProDOS;
 
 [TestFixture]
-public class APM() : FilesystemTest("prodos")
+public class APM() : ReadOnlyFilesystemTest("prodos")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ProDOS filesystem (APM)");
 
