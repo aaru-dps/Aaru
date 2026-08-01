@@ -73,6 +73,13 @@ public sealed partial class UFSPlugin
         // Determine if we use old-format directory entries (no d_type field)
         bool oldFormat = _superBlock.fs_inodefmt != 2;
 
+        // The superblock's inode format does not always match the entry format on disk (Darwin writes
+        // 4.4BSD entries on volumes declaring the old format), so verify against the first entry: it is
+        // always "." with a one-character name, whose byte 6 is the type (nonzero for directories) in the
+        // 4.4BSD format but the high (big-endian) or low (little-endian) half of a 16-bit namlen of 1 in
+        // the old format
+        if(dirData.Length > 8 && dirData[8] == (byte)'.') oldFormat = _bigEndian ? dirData[6] == 0 : dirData[7] == 0;
+
         // Walk through directory entries
         var pos = 0;
 
