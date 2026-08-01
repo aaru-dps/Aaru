@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Hpofs() : FilesystemTest("hpofs")
+public class Hpofs() : ReadOnlyFilesystemTest("hpofs")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "High Performance Optical File System");
