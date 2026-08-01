@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Adfs() : FilesystemTest("adfs")
+public class Adfs() : ReadOnlyFilesystemTest("adfs")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Acorn Advanced Disc Filing System");
