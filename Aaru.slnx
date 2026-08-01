@@ -8,7 +8,6 @@
     <File Path=".gitignore" />
     <File Path=".globalconfig" />
     <File Path="Aaru.sln.DotSettings" />
-    <File Path="BETA_ANNOUNCEMENT.md" />
     <File Path="build.sh" />
     <File Path="Changelog.md" />
     <File Path="codealike.json" />
@@ -88,7 +87,7 @@
   <Project Path="Aaru.Settings/Aaru.Settings.csproj" />
   <Project Path="Aaru.Tests.Devices/Aaru.Tests.Devices.csproj" />
   <Project Path="Aaru.Tests/Aaru.Tests.csproj" />
-  <Project Path="Aaru.Tui\Aaru.Tui.csproj" Type="C#">
+  <Project Path="Aaru.Tui\Aaru.Tui.csproj">
     <Configuration Solution="Debug|x86" Project="Debug|Any CPU" />
     <Configuration Solution="Release|x86" Project="Release|Any CPU" />
   </Project>
