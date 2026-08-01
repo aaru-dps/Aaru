@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Globalization;
 using System.Text;
 using Aaru.Logging;
 
@@ -48,6 +49,27 @@ public static class DateHandlers
     /// <summary>Day 0 of Julian Date system</summary>
     static readonly DateTime _julianEpoch        = new(1858, 11, 17, 0, 0, 0);
     static readonly DateTime _amigaEpoch         = new(1978, 1, 1, 0, 0, 0);
+
+    /// <summary>
+    ///     Validates the given date and time components and builds a DateTime from them, avoiding the exception
+    ///     cost of feeding corrupt on-disk values straight to the DateTime constructor.
+    /// </summary>
+    static bool TryBuildDateTime(int year, int month, int day, int hour, int minute, int second, int millisecond,
+                                 DateTimeKind kind, out DateTime result)
+    {
+        result = DateTime.MinValue;
+
+        if(year is < 1 or > 9999 || month is < 1 or > 12) return false;
+
+        if(day < 1 || day > DateTime.DaysInMonth(year, month)) return false;
+
+        if(hour is < 0 or > 23 || minute is < 0 or > 59 || second is < 0 or > 59 || millisecond is < 0 or > 999)
+            return false;
+
+        result = new DateTime(year, month, day, hour, minute, second, millisecond, kind);
+
+        return true;
+    }
 
     /// <summary>Converts a Macintosh timestamp to a .NET DateTime</summary>
     /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
@@ -131,7 +153,11 @@ public static class DateHandlers
                           "year = \"{0}\"",
                           StringHandlers.CToString(fourCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII), out int year)) year = 0;
+        if(!int.TryParse(StringHandlers.CToString(fourCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int year))
+            year = 0;
 
         twoCharValue[0] = vdDateTime[4];
         twoCharValue[1] = vdDateTime[5];
@@ -140,14 +166,22 @@ public static class DateHandlers
                           "month = \"{0}\"",
                           StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int month)) month = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int month))
+            month = 0;
 
         twoCharValue[0] = vdDateTime[6];
         twoCharValue[1] = vdDateTime[7];
 
         AaruLogging.Debug(ISO9660_MODULE_NAME, "day = \"{0}\"", StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int day)) day = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int day))
+            day = 0;
 
         twoCharValue[0] = vdDateTime[8];
         twoCharValue[1] = vdDateTime[9];
@@ -156,7 +190,11 @@ public static class DateHandlers
                           "hour = \"{0}\"",
                           StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hour)) hour = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int hour))
+            hour = 0;
 
         twoCharValue[0] = vdDateTime[10];
         twoCharValue[1] = vdDateTime[11];
@@ -165,7 +203,11 @@ public static class DateHandlers
                           "minute = \"{0}\"",
                           StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int minute)) minute = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int minute))
+            minute = 0;
 
         twoCharValue[0] = vdDateTime[12];
         twoCharValue[1] = vdDateTime[13];
@@ -174,7 +216,11 @@ public static class DateHandlers
                           "second = \"{0}\"",
                           StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int second)) second = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int second))
+            second = 0;
 
         twoCharValue[0] = vdDateTime[14];
         twoCharValue[1] = vdDateTime[15];
@@ -183,7 +229,11 @@ public static class DateHandlers
                           "hundredths = \"{0}\"",
                           StringHandlers.CToString(twoCharValue, Encoding.ASCII));
 
-        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII), out int hundredths)) hundredths = 0;
+        if(!int.TryParse(StringHandlers.CToString(twoCharValue, Encoding.ASCII),
+                         NumberStyles.Integer,
+                         CultureInfo.InvariantCulture,
+                         out int hundredths))
+            hundredths = 0;
 
         AaruLogging.Debug(ISO9660_MODULE_NAME,
                           "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
@@ -197,19 +247,18 @@ public static class DateHandlers
 
         var difference = (sbyte)vdDateTime[16];
 
-        try
-        {
-            var decodedDt = new DateTime(year, month, day, hour, minute, second, hundredths * 10, DateTimeKind.Utc);
-
-            return decodedDt.AddMinutes(difference * -15);
-        }
-        catch
-        {
-            // Some ISO9660 dates are invalid, return epoch
-#pragma warning disable ERP022
-            return DateTime.MinValue;
-#pragma warning restore ERP022
-        }
+        // Some ISO9660 dates are invalid, return epoch
+        return TryBuildDateTime(year,
+                                month,
+                                day,
+                                hour,
+                                minute,
+                                second,
+                                hundredths * 10,
+                                DateTimeKind.Utc,
+                                out DateTime decodedDt)
+                   ? decodedDt.AddMinutes(difference * -15)
+                   : DateTime.MinValue;
     }
 
     /// <summary>Converts a VMS timestamp to a .NET DateTime</summary>
@@ -257,7 +306,9 @@ public static class DateHandlers
                           month,
                           day);
 
-        return new DateTime(year, month, day);
+        return TryBuildDateTime(year, month, day, 0, 0, 0, 0, DateTimeKind.Unspecified, out DateTime pascalDate)
+                   ? pascalDate
+                   : DateTime.MinValue;
     }
 
     /// <summary>Converts a DOS timestamp to a .NET DateTime</summary>
@@ -287,18 +338,17 @@ public static class DateHandlers
                           minute,
                           second);
 
-        DateTime dosDate;
-
-        try
-        {
-            dosDate = new DateTime(year, month, day, hour, minute, second);
-        }
-        catch(ArgumentOutOfRangeException)
-        {
-            dosDate = new DateTime(1980, 1, 1, 0, 0, 0);
-        }
-
-        return dosDate;
+        return TryBuildDateTime(year,
+                                month,
+                                day,
+                                hour,
+                                minute,
+                                second,
+                                0,
+                                DateTimeKind.Unspecified,
+                                out DateTime dosDate)
+                   ? dosDate
+                   : new DateTime(1980, 1, 1, 0, 0, 0);
     }
 
     /// <summary>Converts a CP/M timestamp to .NET DateTime</summary>
@@ -373,27 +423,20 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime ProDosToDateTime(ushort date, ushort time)
     {
-        try
-        {
-            var tempTimestamp = (uint)((date << 16) + time);
-            var year          = (int)((tempTimestamp & 0xFE000000) >> 25);
-            var month         = (int)((tempTimestamp & 0x1E00000)  >> 21);
-            var day           = (int)((tempTimestamp & 0x1F0000)   >> 16);
-            var hour          = (int)((tempTimestamp & 0x1F00)     >> 8);
-            var minute        = (int)(tempTimestamp & 0x3F);
+        var tempTimestamp = (uint)((date << 16) + time);
+        var year          = (int)((tempTimestamp & 0xFE000000) >> 25);
+        var month         = (int)((tempTimestamp & 0x1E00000)  >> 21);
+        var day           = (int)((tempTimestamp & 0x1F0000)   >> 16);
+        var hour          = (int)((tempTimestamp & 0x1F00)     >> 8);
+        var minute        = (int)(tempTimestamp & 0x3F);
 
-            year += 1900;
+        year += 1900;
 
-            if(year < 1940) year += 100;
+        if(year < 1940) year += 100;
 
-            if(month < 1 || month > 12 || day < 1 || day > 31) return DateTime.MinValue;
-
-            return new DateTime(year, month, day, hour, minute, 0);
-        }
-        catch(ArgumentOutOfRangeException)
-        {
-            return DateTime.MinValue;
-        }
+        return TryBuildDateTime(year, month, day, hour, minute, 0, 0, DateTimeKind.Unspecified, out DateTime proDosDate)
+                   ? proDosDate
+                   : DateTime.MinValue;
     }
 
     /// <summary>Converts an OS-9 timestamp to .NET DateTime</summary>
@@ -403,20 +446,20 @@ public static class DateHandlers
     {
         if(date == null || date.Length != 3 && date.Length != 5) return DateTime.MinValue;
 
-        DateTime os9Date;
+        int hour   = date.Length == 5 ? date[3] : 0;
+        int minute = date.Length == 5 ? date[4] : 0;
 
-        try
-        {
-            os9Date = date.Length == 5
-                          ? new DateTime(1900 + date[0], date[1], date[2], date[3], date[4], 0)
-                          : new DateTime(1900 + date[0], date[1], date[2], 0,       0,       0);
-        }
-        catch(ArgumentOutOfRangeException)
-        {
-            os9Date = new DateTime(1900, 0, 0, 0, 0, 0);
-        }
-
-        return os9Date;
+        return TryBuildDateTime(1900 + date[0],
+                                date[1],
+                                date[2],
+                                hour,
+                                minute,
+                                0,
+                                0,
+                                DateTimeKind.Unspecified,
+                                out DateTime os9Date)
+                   ? os9Date
+                   : DateTime.MinValue;
     }
 
     /// <summary>Converts a LIF timestamp to .NET DateTime</summary>
@@ -441,26 +484,29 @@ public static class DateHandlers
     /// <returns>.NET DateTime</returns>
     public static DateTime LifToDateTime(byte year, byte month, byte day, byte hour, byte minute, byte second)
     {
-        try
-        {
-            int iyear   = (year   >> 4) * 10 + (year   & 0xF);
-            int imonth  = (month  >> 4) * 10 + (month  & 0xF);
-            int iday    = (day    >> 4) * 10 + (day    & 0xF);
-            int iminute = (minute >> 4) * 10 + (minute & 0xF);
-            int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
-            int isecond = (second >> 4) * 10 + (second & 0xF);
+        int iyear   = (year   >> 4) * 10 + (year   & 0xF);
+        int imonth  = (month  >> 4) * 10 + (month  & 0xF);
+        int iday    = (day    >> 4) * 10 + (day    & 0xF);
+        int iminute = (minute >> 4) * 10 + (minute & 0xF);
+        int ihour   = (hour   >> 4) * 10 + (hour   & 0xF);
+        int isecond = (second >> 4) * 10 + (second & 0xF);
 
-            if(iyear >= 70)
-                iyear += 1900;
-            else
-                iyear += 2000;
+        if(iyear >= 70)
+            iyear += 1900;
+        else
+            iyear += 2000;
 
-            return new DateTime(iyear, imonth, iday, ihour, iminute, isecond);
-        }
-        catch(ArgumentOutOfRangeException)
-        {
-            return new DateTime(1970, 1, 1, 0, 0, 0);
-        }
+        return TryBuildDateTime(iyear,
+                                imonth,
+                                iday,
+                                ihour,
+                                iminute,
+                                isecond,
+                                0,
+                                DateTimeKind.Unspecified,
+                                out DateTime lifDate)
+                   ? lifDate
+                   : new DateTime(1970, 1, 1, 0, 0, 0);
     }
 
     /// <summary>Converts an exFAT timestamp to a .NET DateTime</summary>
@@ -491,33 +537,30 @@ public static class DateHandlers
         var month         = (int)(timestamp >> 21 & 0x0F);
         var year          = (int)(timestamp >> 25 & 0x7F);
 
-        if(day < 1 || day > 31 || month < 1 || month > 12) return null;
-
-        try
-        {
-            var dt = new DateTime(1980 + year, month, day, hour, minute, doubleSeconds * 2, DateTimeKind.Local);
-
-            // Add 10ms increments (0-199 represents 0-1990 milliseconds)
-            if(tenMsIncrement is > 0 and < 200) dt = dt.AddMilliseconds(tenMsIncrement * 10);
-
-            // Handle UTC offset if valid (bit 7 set)
-            if((utcOffset & 0x80) != 0)
-            {
-                // Offset is valid - extract 7-bit signed value
-                int offsetQuarters = utcOffset & 0x7F;
-
-                // Convert from 7-bit two's complement to signed integer
-                if(offsetQuarters > 63) offsetQuarters -= 128;
-
-                // Offset is in 15-minute increments, convert to UTC
-                dt = dt.AddMinutes(-offsetQuarters * 15);
-            }
-
-            return dt;
-        }
-        catch(ArgumentOutOfRangeException)
-        {
+        if(!TryBuildDateTime(1980 + year,
+                             month,
+                             day,
+                             hour,
+                             minute,
+                             doubleSeconds * 2,
+                             0,
+                             DateTimeKind.Local,
+                             out DateTime dt))
             return null;
-        }
+
+        // Add 10ms increments (0-199 represents 0-1990 milliseconds)
+        if(tenMsIncrement is > 0 and < 200) dt = dt.AddMilliseconds(tenMsIncrement * 10);
+
+        // Handle UTC offset if valid (bit 7 set)
+        if((utcOffset & 0x80) == 0) return dt;
+
+        // Offset is valid - extract 7-bit signed value
+        int offsetQuarters = utcOffset & 0x7F;
+
+        // Convert from 7-bit two's complement to signed integer
+        if(offsetQuarters > 63) offsetQuarters -= 128;
+
+        // Offset is in 15-minute increments, convert to UTC
+        return dt.AddMinutes(-offsetQuarters * 15);
     }
 }
