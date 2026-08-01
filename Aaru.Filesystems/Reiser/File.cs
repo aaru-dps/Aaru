@@ -97,8 +97,8 @@ public sealed partial class Reiser
             }
 
             errno = GetDirectoryEntries(target.dirId,
-                                         target.objectId,
-                                         out Dictionary<string, (uint dirId, uint objectId)> subEntries);
+                                        target.objectId,
+                                        out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -347,6 +347,24 @@ public sealed partial class Reiser
     /// <returns>Error number indicating success or failure</returns>
     ErrorNumber ReadStatData(uint dirId, uint objectId, out FileEntryInfo stat)
     {
+        (uint dirId, uint objectId) key = (dirId, objectId);
+
+        if(_statCache.TryGetValue(key, out stat)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadStatDataUncached(dirId, objectId, out stat);
+
+        if(cacheErrno == ErrorNumber.NoError) _statCache[key] = stat;
+
+        return cacheErrno;
+    }
+
+    /// <summary>Reads the stat data for an object and returns a populated FileEntryInfo</summary>
+    /// <param name="dirId">Directory (packing locality) id</param>
+    /// <param name="objectId">Object id</param>
+    /// <param name="stat">The populated file entry information</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber ReadStatDataUncached(uint dirId, uint objectId, out FileEntryInfo stat)
+    {
         stat = null;
 
         ErrorNumber errno = SearchByKey(dirId, objectId, 0, TYPE_STAT_DATA, out byte[] leaf, out int index);
@@ -485,8 +503,8 @@ public sealed partial class Reiser
             if((mode & S_IFMT) != S_IFDIR) return ErrorNumber.NotDirectory;
 
             errno = GetDirectoryEntries(target.dirId,
-                                         target.objectId,
-                                         out Dictionary<string, (uint dirId, uint objectId)> subEntries);
+                                        target.objectId,
+                                        out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -519,15 +537,27 @@ public sealed partial class Reiser
             return ErrorNumber.NoError;
         }
 
+        if(_pathCache.TryGetValue(normalizedPath, out (uint dirId, uint objectId) cached))
+        {
+            dirId    = cached.dirId;
+            objectId = cached.objectId;
+
+            return ErrorNumber.NoError;
+        }
+
         string stripped = normalizedPath.StartsWith("/", StringComparison.Ordinal)
                               ? normalizedPath[1..]
                               : normalizedPath;
 
         string[] components = stripped.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-        return components.Length == 0
-                   ? ErrorNumber.InvalidArgument
-                   : LookupObject(components, _rootDirectoryCache, out dirId, out objectId);
+        if(components.Length == 0) return ErrorNumber.InvalidArgument;
+
+        ErrorNumber errno = LookupObject(components, _rootDirectoryCache, out dirId, out objectId);
+
+        if(errno == ErrorNumber.NoError) _pathCache[normalizedPath] = (dirId, objectId);
+
+        return errno;
     }
 
     /// <summary>Reads the generation number from a v2 object's stat data</summary>

@@ -109,8 +109,8 @@ public sealed partial class Reiser
 
             // Read this subdirectory's entries
             errno = GetDirectoryEntries(target.dirId,
-                                         target.objectId,
-                                         out Dictionary<string, (uint dirId, uint objectId)> subEntries);
+                                        target.objectId,
+                                        out Dictionary<string, (uint dirId, uint objectId)> subEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -168,8 +168,22 @@ public sealed partial class Reiser
         return ErrorNumber.NoError;
     }
 
-    /// <summary>Reads the mode field from an object's stat data</summary>
+    /// <summary>Reads the mode field from an object's stat data, caching by (dirId, objectId)</summary>
     ErrorNumber ReadObjectMode(uint dirId, uint objectId, out ushort mode)
+    {
+        (uint dirId, uint objectId) key = (dirId, objectId);
+
+        if(_modeCache.TryGetValue(key, out mode)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadObjectModeUncached(dirId, objectId, out mode);
+
+        if(cacheErrno == ErrorNumber.NoError) _modeCache[key] = mode;
+
+        return cacheErrno;
+    }
+
+    /// <summary>Reads the mode field from an object's stat data</summary>
+    ErrorNumber ReadObjectModeUncached(uint dirId, uint objectId, out ushort mode)
     {
         mode = 0;
 

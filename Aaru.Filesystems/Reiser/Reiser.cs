@@ -65,6 +65,15 @@ public sealed partial class Reiser : IReadOnlyFilesystem
     /// <summary>Cached directory contents keyed by (dirId, objectId), so path resolution does not re-walk the S+Tree</summary>
     Dictionary<(uint dirId, uint objectId), Dictionary<string, (uint dirId, uint objectId)>> _directoryCache;
 
+    /// <summary>Cached raw stat-data mode keyed by (dirId, objectId), so ancestor directories are not re-searched on every call</summary>
+    Dictionary<(uint dirId, uint objectId), ushort> _modeCache;
+
+    /// <summary>Cached parsed stat data keyed by (dirId, objectId)</summary>
+    Dictionary<(uint dirId, uint objectId), Aaru.CommonTypes.Structs.FileEntryInfo> _statCache;
+
+    /// <summary>Cached resolved paths, so a path deep in the tree does not re-walk the whole ancestor chain</summary>
+    Dictionary<string, (uint dirId, uint objectId)> _pathCache;
+
     /// <summary>Cached superblock</summary>
     Superblock _superblock;
 

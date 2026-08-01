@@ -80,7 +80,13 @@ public sealed partial class Reiser
 
         // Initialize block cache
         _blockCache = [];
-        _directoryCache = new Dictionary<(uint dirId, uint objectId), Dictionary<string, (uint dirId, uint objectId)>>();
+
+        _directoryCache =
+            new Dictionary<(uint dirId, uint objectId), Dictionary<string, (uint dirId, uint objectId)>>();
+
+        _modeCache = new Dictionary<(uint dirId, uint objectId), ushort>();
+        _statCache = new Dictionary<(uint dirId, uint objectId), Aaru.CommonTypes.Structs.FileEntryInfo>();
+        _pathCache = new Dictionary<string, (uint dirId, uint objectId)>();
 
         // Load root directory
         errno = LoadRootDirectory();
@@ -133,9 +139,16 @@ public sealed partial class Reiser
         _rootDirectoryCache?.Clear();
         _blockCache?.Clear();
         _directoryCache?.Clear();
+        _modeCache?.Clear();
+        _statCache?.Clear();
+        _pathCache?.Clear();
         _xattrRootEntries?.Clear();
         _rootDirectoryCache = null;
         _blockCache         = null;
+        _directoryCache     = null;
+        _modeCache          = null;
+        _statCache          = null;
+        _pathCache          = null;
         _xattrRootEntries   = null;
         _mounted            = false;
         _imagePlugin        = null;
