@@ -84,7 +84,7 @@ public sealed partial class JFS
     {
         pulseProgress?.Invoke(path);
 
-        ErrorNumber errno = ReadFilesetInode(directoryInodeNumber, out Inode directoryInode);
+        ErrorNumber errno = GetFilesetInode(directoryInodeNumber, out Inode directoryInode);
 
         if(errno != ErrorNumber.NoError) return errno;
         if((directoryInode.di_mode & 0xF000) != 0x4000) return ErrorNumber.NotDirectory;
@@ -108,7 +108,7 @@ public sealed partial class JFS
 
             updateProgress?.Invoke(entryPath, i + 1, maximum);
 
-            errno = ReadFilesetInode(orderedEntries[i].Value, out Inode inode);
+            errno = GetFilesetInode(orderedEntries[i].Value, out Inode inode);
 
             if(errno != ErrorNumber.NoError) return errno;
 

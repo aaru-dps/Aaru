@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.Logging;
 using Marshal = Aaru.Helpers.Marshal;
@@ -64,6 +65,99 @@ public sealed partial class JFS
         inode = Marshal.ByteArrayToStructureLittleEndian<Inode>(inodeData);
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>
+    ///     Resolves a normalized, leading-slash-stripped path to its inode number, caching resolutions and
+    ///     resolving new ones against their already-cached parent so a path deep in the tree does not
+    ///     re-walk the whole ancestor chain on every call.
+    /// </summary>
+    /// <param name="strippedPath">Path without a leading slash; must not be empty (root is handled by the caller)</param>
+    /// <param name="inodeNumber">The resolved inode number</param>
+    /// <returns>Error code indicating success or failure</returns>
+    ErrorNumber ResolvePathToInode(string strippedPath, out uint inodeNumber)
+    {
+        if(_pathCache.TryGetValue(strippedPath, out inodeNumber)) return ErrorNumber.NoError;
+
+        int lastSlash = strippedPath.LastIndexOf('/');
+
+        if(lastSlash > 0 && _pathCache.TryGetValue(strippedPath[..lastSlash], out uint parentInodeNumber))
+        {
+            ErrorNumber parentErrno = GetFilesetInode(parentInodeNumber, out Inode parentInode);
+
+            if(parentErrno != ErrorNumber.NoError) return parentErrno;
+
+            if((parentInode.di_mode & 0xF000) != 0x4000) return ErrorNumber.NotDirectory;
+
+            ErrorNumber dirErrno =
+                GetDirectoryEntries(parentInodeNumber, parentInode.di_u, out Dictionary<string, uint> parentEntries);
+
+            if(dirErrno != ErrorNumber.NoError) return dirErrno;
+
+            if(!parentEntries.TryGetValue(strippedPath[(lastSlash + 1)..], out inodeNumber))
+                return ErrorNumber.NoSuchFile;
+
+            CachePath(strippedPath, inodeNumber);
+
+            return ErrorNumber.NoError;
+        }
+
+        string[] pathComponents = strippedPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        if(pathComponents.Length == 0) return ErrorNumber.InvalidArgument;
+
+        Dictionary<string, uint> currentEntries = _rootDirectoryCache;
+        uint                     currentInode   = ROOT_I;
+
+        for(var i = 0; i < pathComponents.Length; i++)
+        {
+            string component = pathComponents[i];
+
+            if(!currentEntries.TryGetValue(component, out currentInode)) return ErrorNumber.NoSuchFile;
+
+            if(i == pathComponents.Length - 1) break;
+
+            ErrorNumber errno = GetFilesetInode(currentInode, out Inode dirInode);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            if((dirInode.di_mode & 0xF000) != 0x4000) return ErrorNumber.NotDirectory;
+
+            errno = GetDirectoryEntries(currentInode, dirInode.di_u, out Dictionary<string, uint> childEntries);
+
+            if(errno != ErrorNumber.NoError) return errno;
+
+            currentEntries = childEntries;
+        }
+
+        inodeNumber = currentInode;
+        CachePath(strippedPath, inodeNumber);
+
+        return ErrorNumber.NoError;
+    }
+
+    /// <summary>Caches a resolved path, bounding memory use</summary>
+    void CachePath(string strippedPath, uint inodeNumber)
+    {
+        // Bound memory use; resolutions are cheap to redo after a wholesale reset
+        if(_pathCache.Count >= 262144) _pathCache.Clear();
+
+        _pathCache[strippedPath] = inodeNumber;
+    }
+
+    /// <summary>Gets a fileset inode by its inode number, caching it as the filesystem is read-only</summary>
+    /// <param name="inodeNumber">The fileset inode number</param>
+    /// <param name="inode">The inode</param>
+    /// <returns>Error code indicating success or failure</returns>
+    ErrorNumber GetFilesetInode(uint inodeNumber, out Inode inode)
+    {
+        if(_inodeCache.TryGetValue(inodeNumber, out inode)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadFilesetInode(inodeNumber, out inode);
+
+        if(errno == ErrorNumber.NoError) _inodeCache[inodeNumber] = inode;
+
+        return errno;
     }
 
     /// <summary>Reads a fileset inode by its inode number using the FILESYSTEM_I xtree and IAGs</summary>

@@ -120,42 +120,15 @@ public sealed partial class JFS
         if(normalizedPath is "" or ".") normalizedPath = "/";
 
         // Root directory
-        if(normalizedPath == "/") return ReadFilesetInode(ROOT_I, out inode);
+        if(normalizedPath == "/") return GetFilesetInode(ROOT_I, out inode);
 
         string pathWithoutLeadingSlash = normalizedPath.StartsWith("/", StringComparison.Ordinal)
                                              ? normalizedPath[1..]
                                              : normalizedPath;
 
-        string[] pathComponents = pathWithoutLeadingSlash.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        ErrorNumber resolveErrno = ResolvePathToInode(pathWithoutLeadingSlash, out uint targetInodeNumber);
 
-        if(pathComponents.Length == 0) return ErrorNumber.InvalidArgument;
-
-        Dictionary<string, uint> currentEntries = _rootDirectoryCache;
-
-        // Traverse all but the last component (they must be directories)
-        for(var i = 0; i < pathComponents.Length - 1; i++)
-        {
-            string component = pathComponents[i];
-
-            if(!currentEntries.TryGetValue(component, out uint dirInodeNumber)) return ErrorNumber.NoSuchFile;
-
-            ErrorNumber errno = ReadFilesetInode(dirInodeNumber, out Inode dirInode);
-
-            if(errno != ErrorNumber.NoError) return errno;
-
-            if((dirInode.di_mode & 0xF000) != 0x4000) return ErrorNumber.NotDirectory;
-
-            errno = GetDirectoryEntries(dirInodeNumber, dirInode.di_u, out Dictionary<string, uint> childEntries);
-
-            if(errno != ErrorNumber.NoError) return errno;
-
-            currentEntries = childEntries;
-        }
-
-        // Find the target
-        return !currentEntries.TryGetValue(pathComponents[^1], out uint targetInodeNumber)
-                   ? ErrorNumber.NoSuchFile
-                   : ReadFilesetInode(targetInodeNumber, out inode);
+        return resolveErrno != ErrorNumber.NoError ? resolveErrno : GetFilesetInode(targetInodeNumber, out inode);
     }
 
     /// <summary>Reads the EA list data for a given inode, handling both inline and extent EAs</summary>

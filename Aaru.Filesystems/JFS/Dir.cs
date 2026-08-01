@@ -67,65 +67,47 @@ public sealed partial class JFS
         }
 
         // Subdirectory traversal
-        // Remove leading slash and split path
+        // Remove leading slash
         string pathWithoutLeadingSlash = normalizedPath.StartsWith("/", StringComparison.Ordinal)
                                              ? normalizedPath[1..]
                                              : normalizedPath;
 
-        string[] pathComponents = pathWithoutLeadingSlash.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        ErrorNumber resolveErrno = ResolvePathToInode(pathWithoutLeadingSlash, out uint dirInodeNumber);
 
-        if(pathComponents.Length == 0) return ErrorNumber.InvalidArgument;
-
-        AaruLogging.Debug(MODULE_NAME, "OpenDir: traversing path with {0} components", pathComponents.Length);
-
-        // Start from root directory cache
-        Dictionary<string, uint> currentEntries = _rootDirectoryCache;
-
-        // Traverse each path component
-        foreach(string component in pathComponents)
+        if(resolveErrno != ErrorNumber.NoError)
         {
-            AaruLogging.Debug(MODULE_NAME, "OpenDir: navigating to component '{0}'", component);
+            AaruLogging.Debug(MODULE_NAME, "OpenDir: error resolving path: {0}", resolveErrno);
 
-            // Find the component in current directory
-            if(!currentEntries.TryGetValue(component, out uint childInodeNumber))
-            {
-                AaruLogging.Debug(MODULE_NAME, "OpenDir: component '{0}' not found in directory", component);
+            return resolveErrno;
+        }
 
-                return ErrorNumber.NoSuchFile;
-            }
+        ErrorNumber inodeErrno = GetFilesetInode(dirInodeNumber, out Inode dirInode);
 
-            // Read the child inode
-            ErrorNumber errno = ReadFilesetInode(childInodeNumber, out Inode childInode);
+        if(inodeErrno != ErrorNumber.NoError)
+        {
+            AaruLogging.Debug(MODULE_NAME, "OpenDir: error reading inode {0}: {1}", dirInodeNumber, inodeErrno);
 
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "OpenDir: error reading inode {0}: {1}", childInodeNumber, errno);
+            return inodeErrno;
+        }
 
-                return errno;
-            }
+        if((dirInode.di_mode & 0xF000) != 0x4000)
+        {
+            AaruLogging.Debug(MODULE_NAME,
+                              "OpenDir: '{0}' is not a directory (mode=0x{1:X})",
+                              normalizedPath,
+                              dirInode.di_mode);
 
-            // Check if it's a directory
-            if((childInode.di_mode & 0xF000) != 0x4000)
-            {
-                AaruLogging.Debug(MODULE_NAME,
-                                  "OpenDir: component '{0}' is not a directory (mode=0x{1:X})",
-                                  component,
-                                  childInode.di_mode);
+            return ErrorNumber.NotDirectory;
+        }
 
-                return ErrorNumber.NotDirectory;
-            }
+        ErrorNumber dirErrno =
+            GetDirectoryEntries(dirInodeNumber, dirInode.di_u, out Dictionary<string, uint> currentEntries);
 
-            // Parse the child directory's dtree
-            errno = GetDirectoryEntries(childInodeNumber, childInode.di_u, out Dictionary<string, uint> childEntries);
+        if(dirErrno != ErrorNumber.NoError)
+        {
+            AaruLogging.Debug(MODULE_NAME, "OpenDir: error parsing directory dtree: {0}", dirErrno);
 
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "OpenDir: error parsing directory dtree: {0}", errno);
-
-                return errno;
-            }
-
-            currentEntries = childEntries;
+            return dirErrno;
         }
 
         // Filter out . and ..

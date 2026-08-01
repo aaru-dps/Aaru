@@ -119,6 +119,8 @@ public sealed partial class JFS
 
         _rootDirectoryCache.Clear();
         _directoryCache.Clear();
+        _inodeCache.Clear();
+        _pathCache.Clear();
         _superblock  = default(SuperBlock);
         _fsInode     = default(Inode);
         _l2nbperpage = 0;
@@ -216,6 +218,8 @@ public sealed partial class JFS
 
         _rootDirectoryCache.Clear();
         _directoryCache.Clear();
+        _inodeCache.Clear();
+        _pathCache.Clear();
 
         // Step 1: Read the FILESYSTEM_I inode (inode 16) from the fixed aggregate inode table
         ErrorNumber errno = ReadAggregateInode(FILESYSTEM_I, out _fsInode);

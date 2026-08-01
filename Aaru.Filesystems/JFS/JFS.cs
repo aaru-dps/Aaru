@@ -51,6 +51,19 @@ public sealed partial class JFS : IReadOnlyFilesystem
     /// </summary>
     readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = new();
 
+    /// <summary>
+    ///     Cached fileset inodes (inode number -> inode). Every Stat/OpenFile/ListXAttr re-walks the fileset
+    ///     xtree and IAG pages to read an inode, although the same inode is read repeatedly (once per Stat,
+    ///     once per OpenFile, once per xattr call); cache it, as the filesystem is read-only.
+    /// </summary>
+    readonly Dictionary<uint, Inode> _inodeCache = new();
+
+    /// <summary>
+    ///     Cached path resolutions (normalized path -> inode number). Resolving walks every ancestor, so
+    ///     without this each Stat/OpenFile of an entry deep in the tree re-walks the whole chain.
+    /// </summary>
+    readonly Dictionary<string, uint> _pathCache = new(StringComparer.Ordinal);
+
     /// <summary>The encoding to use for text data</summary>
     Encoding _encoding;
 

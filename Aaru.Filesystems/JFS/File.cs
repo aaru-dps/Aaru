@@ -299,7 +299,7 @@ public sealed partial class JFS
         // Root directory handling
         if(normalizedPath == "/")
         {
-            ErrorNumber rootErrno = ReadFilesetInode(ROOT_I, out Inode rootInode);
+            ErrorNumber rootErrno = GetFilesetInode(ROOT_I, out Inode rootInode);
 
             if(rootErrno != ErrorNumber.NoError)
             {
@@ -313,73 +313,22 @@ public sealed partial class JFS
             return ErrorNumber.NoError;
         }
 
-        // Remove leading slash and split path
+        // Remove leading slash
         string pathWithoutLeadingSlash = normalizedPath.StartsWith("/", StringComparison.Ordinal)
                                              ? normalizedPath[1..]
                                              : normalizedPath;
 
-        string[] pathComponents = pathWithoutLeadingSlash.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        ErrorNumber resolveErrno = ResolvePathToInode(pathWithoutLeadingSlash, out uint targetInodeNumber);
 
-        if(pathComponents.Length == 0) return ErrorNumber.InvalidArgument;
-
-        // Navigate to the parent directory
-        Dictionary<string, uint> currentEntries = _rootDirectoryCache;
-
-        // Traverse all but the last component (those must be directories)
-        for(var i = 0; i < pathComponents.Length - 1; i++)
+        if(resolveErrno != ErrorNumber.NoError)
         {
-            string component = pathComponents[i];
+            AaruLogging.Debug(MODULE_NAME, "Stat: error resolving path: {0}", resolveErrno);
 
-            AaruLogging.Debug(MODULE_NAME, "Stat: navigating to component '{0}'", component);
-
-            if(!currentEntries.TryGetValue(component, out uint dirInodeNumber))
-            {
-                AaruLogging.Debug(MODULE_NAME, "Stat: component '{0}' not found", component);
-
-                return ErrorNumber.NoSuchFile;
-            }
-
-            ErrorNumber errno = ReadFilesetInode(dirInodeNumber, out Inode dirInode);
-
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Stat: error reading inode {0}: {1}", dirInodeNumber, errno);
-
-                return errno;
-            }
-
-            // Must be a directory
-            if((dirInode.di_mode & 0xF000) != 0x4000)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Stat: '{0}' is not a directory", component);
-
-                return ErrorNumber.NotDirectory;
-            }
-
-            errno = GetDirectoryEntries(dirInodeNumber, dirInode.di_u, out Dictionary<string, uint> childEntries);
-
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Stat: error parsing directory dtree: {0}", errno);
-
-                return errno;
-            }
-
-            currentEntries = childEntries;
-        }
-
-        // Find the target in the current directory
-        string targetName = pathComponents[^1];
-
-        if(!currentEntries.TryGetValue(targetName, out uint targetInodeNumber))
-        {
-            AaruLogging.Debug(MODULE_NAME, "Stat: target '{0}' not found", targetName);
-
-            return ErrorNumber.NoSuchFile;
+            return resolveErrno;
         }
 
         // Read the target inode
-        ErrorNumber readErrno = ReadFilesetInode(targetInodeNumber, out Inode targetInode);
+        ErrorNumber readErrno = GetFilesetInode(targetInodeNumber, out Inode targetInode);
 
         if(readErrno != ErrorNumber.NoError)
         {
@@ -392,7 +341,7 @@ public sealed partial class JFS
 
         AaruLogging.Debug(MODULE_NAME,
                           "Stat: successful for '{0}': inode={1}, size={2}, mode=0x{3:X}",
-                          targetName,
+                          path,
                           stat.Inode,
                           stat.Length,
                           stat.Mode);
@@ -439,8 +388,7 @@ public sealed partial class JFS
                           };
 
         // For char/block device inodes, extract di_rdev from extension area
-        if(((mode & 0xF000) == 0x2000 || (mode & 0xF000) == 0x6000) &&
-           inode.di_u is { Length: >= RDEV_OFFSET + 4 })
+        if(((mode & 0xF000) == 0x2000 || (mode & 0xF000) == 0x6000) && inode.di_u is { Length: >= RDEV_OFFSET + 4 })
         {
             uint rdev = BitConverter.ToUInt32(inode.di_u, RDEV_OFFSET);
             info.DeviceNo = rdev;
