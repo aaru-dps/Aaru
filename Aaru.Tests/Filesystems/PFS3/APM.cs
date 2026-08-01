@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.PFS3;
 
 [TestFixture]
-public class APM() : FilesystemTest("pfs")
+public class APM() : ReadOnlyFilesystemTest("pfs")
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "Professional File System 3 (APM)");
