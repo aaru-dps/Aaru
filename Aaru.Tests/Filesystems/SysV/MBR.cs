@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SysV;
 
 [TestFixture]
-public class MBR() : FilesystemTest("sysv_r4")
+public class MBR() : ReadOnlyFilesystemTest("sysv_r4")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (MBR)");
     public override IFilesystem Plugin => new SysVfs();
@@ -51,7 +51,7 @@ public class MBR() : FilesystemTest("sysv_r4")
             SectorSize  = 512,
             Clusters    = 511056,
             ClusterSize = 1024,
-            VolumeName  = "/usr3"
+            VolumeName  = "sr3"
         },
         new()
         {
@@ -61,7 +61,7 @@ public class MBR() : FilesystemTest("sysv_r4")
             SectorSize  = 512,
             Clusters    = 255528,
             ClusterSize = 2048,
-            VolumeName  = "/usr3"
+            VolumeName  = "sr3"
         },
         new()
         {

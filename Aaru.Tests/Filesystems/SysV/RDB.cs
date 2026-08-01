@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.SysV;
 
 [TestFixture]
-public class RDB() : FilesystemTest("sysv_r4")
+public class RDB() : ReadOnlyFilesystemTest("sysv_r4")
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "System V filesystem (RDB)");
     public override IFilesystem Plugin => new SysVfs();
