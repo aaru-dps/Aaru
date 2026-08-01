@@ -35,10 +35,10 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UDF._250;
 
 [TestFixture]
-public class Whole : FilesystemTest
+public class Whole : ReadOnlyFilesystemTest
 {
     public override string DataFolder =>
-        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disc Format", "2.50");
+        Path.Combine(Consts.TestFilesRoot, "Filesystems", "Universal Disk Format", "2.50");
 
     public override IFilesystem Plugin     => new Aaru.Filesystems.UDF();
     public override bool        Partitions => false;
