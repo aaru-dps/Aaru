@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems;
 
 [TestFixture]
-public class Ext3() : FilesystemTest("ext3")
+public class Ext3() : ReadOnlyFilesystemTest("ext3")
 {
     public override string      DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ext3");
     public override IFilesystem Plugin     => new ext2FS();
