@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UFS;
 
 [TestFixture]
-public class RDB : FilesystemTest
+public class RDB : ReadOnlyFilesystemTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (RDB)");
     public override IFilesystem Plugin => new UFSPlugin();

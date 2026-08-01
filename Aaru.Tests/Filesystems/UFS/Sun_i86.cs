@@ -37,7 +37,7 @@ namespace Aaru.Tests.Filesystems.UFS;
 
 [TestFixture]
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public class Sun_i86 : FilesystemTest
+public class Sun_i86 : ReadOnlyFilesystemTest
 {
     public override string DataFolder =>
         Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (SunOS x86)");

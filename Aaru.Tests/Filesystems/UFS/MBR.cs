@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UFS;
 
 [TestFixture]
-public class MBR : FilesystemTest
+public class MBR : ReadOnlyFilesystemTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (MBR)");
     public override IFilesystem Plugin => new UFSPlugin();

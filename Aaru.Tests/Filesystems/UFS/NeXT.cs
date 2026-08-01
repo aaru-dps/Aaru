@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace Aaru.Tests.Filesystems.UFS;
 
 [TestFixture]
-public class NeXT : FilesystemTest
+public class NeXT : ReadOnlyFilesystemTest
 {
     public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "UNIX filesystem (NeXT)");
     public override IFilesystem Plugin => new UFSPlugin();
