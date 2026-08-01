@@ -99,7 +99,7 @@ public sealed partial class F2FS
             AaruLogging.Debug(MODULE_NAME, "OpenDir: Component '{0}' found with inode {1}", component, inodeNumber);
 
             // Read directory contents for this inode
-            ErrorNumber errno = ReadDirectoryEntries(inodeNumber, out Dictionary<string, uint> childEntries);
+            ErrorNumber errno = GetDirectoryEntries(inodeNumber, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError)
             {

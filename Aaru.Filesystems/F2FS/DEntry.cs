@@ -37,6 +37,21 @@ namespace Aaru.Filesystems;
 
 public sealed partial class F2FS
 {
+    /// <summary>Gets the directory entries for a given inode, caching them as the filesystem is read-only</summary>
+    /// <param name="nid">Node ID of the directory inode</param>
+    /// <param name="entries">Output dictionary mapping filename → inode number</param>
+    /// <returns>Error code indicating success or failure</returns>
+    ErrorNumber GetDirectoryEntries(uint nid, out Dictionary<string, uint> entries)
+    {
+        if(_directoryCache.TryGetValue(nid, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber cacheErrno = ReadDirectoryEntries(nid, out entries);
+
+        if(cacheErrno == ErrorNumber.NoError) _directoryCache[nid] = entries;
+
+        return cacheErrno;
+    }
+
     /// <summary>Reads the directory entries for a given inode into a dictionary</summary>
     /// <param name="nid">Node ID of the directory inode</param>
     /// <param name="entries">Output dictionary mapping filename → inode number</param>

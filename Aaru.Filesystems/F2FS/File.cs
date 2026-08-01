@@ -357,7 +357,7 @@ public sealed partial class F2FS
             }
 
             // Read directory entries for this component
-            ErrorNumber errno = ReadDirectoryEntries(dirInodeNumber, out Dictionary<string, uint> childEntries);
+            ErrorNumber errno = GetDirectoryEntries(dirInodeNumber, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -785,7 +785,7 @@ public sealed partial class F2FS
 
             if(!currentEntries.TryGetValue(component, out uint dirNid)) return ErrorNumber.NoSuchFile;
 
-            ErrorNumber errno = ReadDirectoryEntries(dirNid, out Dictionary<string, uint> childEntries);
+            ErrorNumber errno = GetDirectoryEntries(dirNid, out Dictionary<string, uint> childEntries);
 
             if(errno != ErrorNumber.NoError) return errno;
 

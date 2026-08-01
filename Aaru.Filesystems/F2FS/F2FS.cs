@@ -63,6 +63,9 @@ public sealed partial class F2FS : IReadOnlyFilesystem
     /// <summary>Cache of root directory entries: filename → inode number</summary>
     readonly Dictionary<string, uint> _rootDirectoryCache = new();
 
+    /// <summary>Cached directory contents (node id -> entries), so path resolution does not re-walk each directory</summary>
+    readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = new();
+
 #region IFilesystem Members
 
     /// <inheritdoc />
@@ -77,9 +80,9 @@ public sealed partial class F2FS : IReadOnlyFilesystem
 #endregion
 
     /// <inheritdoc />
-    public FileSystem Metadata { get; private set; }
+    public FileSystem                                                Metadata         { get; private set; }
     /// <inheritdoc />
     public IEnumerable<(string name, Type type, string description)> SupportedOptions => [];
     /// <inheritdoc />
-    public Dictionary<string, string> Namespaces => [];
+    public Dictionary<string, string>                                Namespaces       => [];
 }

@@ -122,6 +122,7 @@ public sealed partial class F2FS
         AaruLogging.Debug(MODULE_NAME, "Unmounting filesystem...");
 
         _rootDirectoryCache.Clear();
+        _directoryCache.Clear();
         _superblock     = default(Superblock);
         _checkpoint     = default(Checkpoint);
         _natBitmap      = null;
