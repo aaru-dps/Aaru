@@ -68,19 +68,19 @@ public sealed partial class AppleHFS
         /// <summary>Raw data of the current node</summary>
         public byte[] NodeData;
         /// <summary>Number of the current node</summary>
-        public uint NodeNumber;
+        public uint   NodeNumber;
         /// <summary>Index of the current record within the node</summary>
-        public int Record;
+        public int    Record;
         /// <summary>Byte offset of the key within the node</summary>
-        public int KeyOffset;
+        public int    KeyOffset;
         /// <summary>Length of the key in bytes</summary>
-        public int KeyLength;
+        public int    KeyLength;
         /// <summary>Byte offset of the data entry (after key) within the node</summary>
-        public int EntryOffset;
+        public int    EntryOffset;
         /// <summary>Length of the data entry in bytes</summary>
-        public int EntryLength;
+        public int    EntryLength;
         /// <summary>Whether an exact match was found</summary>
-        public bool ExactMatch;
+        public bool   ExactMatch;
     }
 
 #endregion

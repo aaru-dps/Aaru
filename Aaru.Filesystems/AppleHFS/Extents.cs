@@ -496,9 +496,7 @@ public sealed partial class AppleHFS
         public byte[] NodeData;
         public int    Record;
         public int    KeyOffset;
-        public int    KeyLength;
         public int    EntryOffset;
-        public int    EntryLength;
         public bool   ExactMatch;
     }
 
@@ -628,9 +626,7 @@ public sealed partial class AppleHFS
 
         fd.Record      = e;
         fd.KeyOffset   = off;
-        fd.KeyLength   = keyLen;
         fd.EntryOffset = off + keyLen;
-        fd.EntryLength = len - keyLen;
 
         return ErrorNumber.NoError;
     }
