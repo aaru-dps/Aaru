@@ -192,6 +192,7 @@ public sealed partial class PFS
         if(!_mounted) return ErrorNumber.AccessDenied;
 
         _rootDirectoryCache.Clear();
+        _directoryCache.Clear();
         _mounted = false;
 
         return ErrorNumber.NoError;
@@ -205,6 +206,7 @@ public sealed partial class PFS
         AaruLogging.Debug(MODULE_NAME, "Loading root directory");
 
         _rootDirectoryCache.Clear();
+        _directoryCache.Clear();
 
         // Get the root directory anode (ANODE_ROOTDIR = 5)
         ErrorNumber errno = GetAnode(ANODE_ROOTDIR, out Anode rootAnode);

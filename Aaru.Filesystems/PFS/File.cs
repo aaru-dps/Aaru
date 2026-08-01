@@ -323,27 +323,13 @@ public sealed partial class PFS
         {
             string component = pathComponents[i];
 
-            // Find the component in current directory (case-insensitive)
-            string foundKey = null;
-
-            foreach(string key in currentEntries.Keys)
-            {
-                if(string.Equals(key, component, StringComparison.OrdinalIgnoreCase))
-                {
-                    foundKey = key;
-
-                    break;
-                }
-            }
-
-            if(foundKey == null)
+            // Find the component in current directory (case-insensitive via dictionary comparer)
+            if(!currentEntries.TryGetValue(component, out currentEntry))
             {
                 AaruLogging.Debug(MODULE_NAME, "GetEntryForPath: Component '{0}' not found", component);
 
                 return ErrorNumber.NoSuchFile;
             }
-
-            currentEntry = currentEntries[foundKey];
 
             // If not the last component, it must be a directory
             if(i < pathComponents.Length - 1)
@@ -358,14 +344,8 @@ public sealed partial class PFS
                     return ErrorNumber.NotDirectory;
                 }
 
-                // Get the anode for this directory
-                ErrorNumber errno = GetAnode(currentEntry.Anode, out Anode dirAnode);
-
-                if(errno != ErrorNumber.NoError) return errno;
-
                 // Read directory contents
-                currentEntries = new Dictionary<string, DirEntryCacheItem>();
-                errno          = ReadDirectoryBlocks(dirAnode, currentEntries);
+                ErrorNumber errno = GetDirectoryContents(currentEntry.Anode, out currentEntries);
 
                 if(errno != ErrorNumber.NoError) return errno;
             }

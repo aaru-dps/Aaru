@@ -85,27 +85,13 @@ public sealed partial class PFS
         {
             AaruLogging.Debug(MODULE_NAME, "OpenDir: Navigating to component '{0}'", component);
 
-            // Find the component in current directory (case-insensitive)
-            string foundKey = null;
-
-            foreach(string key in currentEntries.Keys)
-            {
-                if(string.Equals(key, component, StringComparison.OrdinalIgnoreCase))
-                {
-                    foundKey = key;
-
-                    break;
-                }
-            }
-
-            if(foundKey == null)
+            // Find the component in current directory (case-insensitive via dictionary comparer)
+            if(!currentEntries.TryGetValue(component, out DirEntryCacheItem entry))
             {
                 AaruLogging.Debug(MODULE_NAME, "OpenDir: Component '{0}' not found in directory", component);
 
                 return ErrorNumber.NoSuchFile;
             }
-
-            DirEntryCacheItem entry = currentEntries[foundKey];
 
             AaruLogging.Debug(MODULE_NAME,
                               "OpenDir: Component '{0}' found with anode {1}, type {2}",
@@ -121,19 +107,8 @@ public sealed partial class PFS
                 return ErrorNumber.NotDirectory;
             }
 
-            // Get the anode for this directory
-            ErrorNumber errno = GetAnode(entry.Anode, out Anode dirAnode);
-
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "OpenDir: Error getting anode {0}: {1}", entry.Anode, errno);
-
-                return errno;
-            }
-
             // Read directory contents
-            currentEntries = new Dictionary<string, DirEntryCacheItem>();
-            errno          = ReadDirectoryBlocks(dirAnode, currentEntries);
+            ErrorNumber errno = GetDirectoryContents(entry.Anode, out currentEntries);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -186,6 +161,26 @@ public sealed partial class PFS
         filename = pfsNode.Entries[pfsNode.Position++];
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Reads the contents of a directory, caching them as the filesystem is read-only</summary>
+    /// <param name="anodeNumber">Anode number of the directory</param>
+    /// <param name="entries">Dictionary of filename -> entry</param>
+    /// <returns>Error code indicating success or failure</returns>
+    ErrorNumber GetDirectoryContents(uint anodeNumber, out Dictionary<string, DirEntryCacheItem> entries)
+    {
+        if(_directoryCache.TryGetValue(anodeNumber, out entries)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = GetAnode(anodeNumber, out Anode dirAnode);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        entries = new Dictionary<string, DirEntryCacheItem>(StringComparer.OrdinalIgnoreCase);
+        errno   = ReadDirectoryBlocks(dirAnode, entries);
+
+        if(errno == ErrorNumber.NoError) _directoryCache[anodeNumber] = entries;
+
+        return errno;
     }
 
     /// <summary>Reads directory blocks following an anode chain and caches entries</summary>
