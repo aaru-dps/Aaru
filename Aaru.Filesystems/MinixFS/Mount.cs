@@ -302,6 +302,53 @@ public sealed partial class MinixFS
         return ErrorNumber.NoError;
     }
 
+    /// <summary>
+    ///     Detects the real directory entry size from the root directory, correcting the superblock magic when
+    ///     they disagree: the first entry is always "." and the second "..", so only the correct entry size
+    ///     lines ".." up right after it.
+    /// </summary>
+    /// <param name="rootInodeObj">Root directory inode</param>
+    void SniffDirectoryEntrySize(object rootInodeObj)
+    {
+        if(_version == FilesystemVersion.V3) return;
+
+        uint firstZone = _version == FilesystemVersion.V1
+                             ? ((V1DiskInode)rootInodeObj).d1_zone[0]
+                             : ((V2DiskInode)rootInodeObj).d2_zone[0];
+
+        if(firstZone == 0) return;
+
+        if(ReadBlock((int)(firstZone << _logZoneSize), out byte[] dirBlock) != ErrorNumber.NoError) return;
+
+        if(MatchesEntrySize(dirBlock, _filenameSize)) return;
+
+        int alternate = _filenameSize == V1_NAME_MAX ? V1_NAME_MAX_LONG : V1_NAME_MAX;
+
+        if(!MatchesEntrySize(dirBlock, alternate)) return;
+
+        AaruLogging.Debug(MODULE_NAME,
+                          "Directory entries have {0} char names despite the superblock magic declaring {1}, adjusting",
+                          alternate,
+                          _filenameSize);
+
+        _filenameSize = alternate;
+    }
+
+    static bool MatchesEntrySize(byte[] dirBlock, int filenameSize)
+    {
+        int entrySize = filenameSize + 2;
+
+        if(dirBlock.Length < entrySize * 2) return false;
+
+        // First entry must be "." (identical layout for both sizes, but check anyway)
+        if(dirBlock[2] != (byte)'.' || dirBlock[3] != 0) return false;
+
+        // Second entry, right after the first, must be ".."
+        return dirBlock[entrySize + 2] == (byte)'.' &&
+               dirBlock[entrySize + 3] == (byte)'.' &&
+               dirBlock[entrySize + 4] == 0;
+    }
+
     /// <summary>Loads the root directory and caches its contents</summary>
     /// <returns>Error number indicating success or failure</returns>
     ErrorNumber LoadRootDirectory()
@@ -350,6 +397,11 @@ public sealed partial class MinixFS
         }
 
         AaruLogging.Debug(MODULE_NAME, "Root inode size: {0} bytes", size);
+
+        // Some formatters set the 14-char-name magic while writing 30-char directory entries (seen on
+        // Linux 2.0.x MINIX V2 volumes), so verify the declared entry size against the root directory
+        // and switch to the one that actually matches
+        SniffDirectoryEntrySize(rootInodeObj);
 
         // Read directory contents
         errno = ReadDirectoryContents(ROOT_INODE, out Dictionary<string, uint> entries);
