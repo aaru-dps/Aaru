@@ -374,7 +374,7 @@ public static class BigEndianBitConverter
                                                                    value[8           + startIndex + 1],
                                                                    value[8           + startIndex + 2],
                                                                    value[8           + startIndex + 3],
-                                                                   value[8           + startIndex + 5],
+                                                                   value[8           + startIndex + 4],
                                                                    value[8           + startIndex + 5],
                                                                    value[8           + startIndex + 6],
                                                                    value[8           + startIndex + 7]);
