@@ -131,6 +131,7 @@ public sealed partial class MinixFS
         _rootDirectoryCache.Clear();
         _inodeCache.Clear();
         _directoryCache.Clear();
+        _indirectBlockCache.Clear();
         _mounted        = false;
         _imagePlugin    = null;
         _partition      = default(Partition);
@@ -310,6 +311,7 @@ public sealed partial class MinixFS
         _rootDirectoryCache.Clear();
         _inodeCache.Clear();
         _directoryCache.Clear();
+        _indirectBlockCache.Clear();
 
         // Read the root inode (inode 1)
         ErrorNumber errno = ReadInode(ROOT_INODE, out object rootInodeObj);

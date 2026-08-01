@@ -83,6 +83,29 @@ public sealed partial class MinixFS
         return ErrorNumber.NoError;
     }
 
+    /// <summary>
+    ///     Reads an indirect zone block through a cache. ReadMap resolves the indirect chain for every logical
+    ///     block, so without this a sequential read re-reads the same chain blocks once per data block.
+    /// </summary>
+    /// <param name="blockNumber">Block number to read</param>
+    /// <param name="data">The read block data</param>
+    /// <returns>Error number indicating success or failure</returns>
+    ErrorNumber ReadIndirectBlock(int blockNumber, out byte[] data)
+    {
+        if(_indirectBlockCache.TryGetValue(blockNumber, out data)) return ErrorNumber.NoError;
+
+        ErrorNumber errno = ReadBlock(blockNumber, out data);
+
+        if(errno != ErrorNumber.NoError) return errno;
+
+        // Bound memory use; chains are cheap to re-read after a wholesale reset
+        if(_indirectBlockCache.Count >= 4096) _indirectBlockCache.Clear();
+
+        _indirectBlockCache[blockNumber] = data;
+
+        return ErrorNumber.NoError;
+    }
+
     /// <summary>Maps a logical file block to a physical disk block (zone)</summary>
     /// <param name="zones">Zone pointers from the inode</param>
     /// <param name="directZones">Number of direct zone pointers</param>
@@ -148,7 +171,7 @@ public sealed partial class MinixFS
             // Read double indirect block
             var doubleIndirectBlock = (int)(doubleIndirectZone << scale);
 
-            ErrorNumber errno = ReadBlock(doubleIndirectBlock, out byte[] doubleIndirectData);
+            ErrorNumber errno = ReadIndirectBlock(doubleIndirectBlock, out byte[] doubleIndirectData);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -181,7 +204,7 @@ public sealed partial class MinixFS
             // Read triple indirect block
             var tripleIndirectBlock = (int)(tripleIndirectZone << scale);
 
-            ErrorNumber errno = ReadBlock(tripleIndirectBlock, out byte[] tripleIndirectData);
+            ErrorNumber errno = ReadIndirectBlock(tripleIndirectBlock, out byte[] tripleIndirectData);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -206,7 +229,7 @@ public sealed partial class MinixFS
             // Read the double indirect block pointed to by triple indirect
             var doubleIndirectBlock = (int)(doubleIndirectZone << scale);
 
-            errno = ReadBlock(doubleIndirectBlock, out byte[] doubleIndirectData);
+            errno = ReadIndirectBlock(doubleIndirectBlock, out byte[] doubleIndirectData);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -224,7 +247,7 @@ public sealed partial class MinixFS
 
         var indirectBlock = (int)(indirectZone << scale);
 
-        ErrorNumber err = ReadBlock(indirectBlock, out byte[] indirectData);
+        ErrorNumber err = ReadIndirectBlock(indirectBlock, out byte[] indirectData);
 
         if(err != ErrorNumber.NoError) return err;
 

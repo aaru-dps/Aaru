@@ -55,6 +55,9 @@ public sealed partial class MinixFS : IReadOnlyFilesystem
     /// </summary>
     readonly Dictionary<uint, Dictionary<string, uint>> _directoryCache = new();
 
+    /// <summary>Cached indirect zone blocks (block number -> data), so sequential reads do not re-read the chain</summary>
+    readonly Dictionary<int, byte[]> _indirectBlockCache = new();
+
 
     /// <summary>Block size in bytes</summary>
     int _blockSize;
