@@ -114,36 +114,29 @@ public sealed partial class Reiser
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            // Filter . and ..
-            var filtered = new Dictionary<string, (uint dirId, uint objectId)>();
-
-            foreach(KeyValuePair<string, (uint dirId, uint objectId)> entry in subEntries)
-            {
-                if(entry.Key is "." or "..") continue;
-
-                filtered[entry.Key] = entry.Value;
-            }
-
             // Last component — this is the directory being opened
             if(i == components.Length - 1)
             {
+                string[] entryNames = subEntries.Keys.Where(static name => name is not ("." or "..")).ToArray();
+
                 node = new ReiserDirNode
                 {
                     Path     = normalizedPath,
                     Position = 0,
-                    Entries  = filtered.Keys.ToArray()
+                    Entries  = entryNames
                 };
 
                 AaruLogging.Debug(MODULE_NAME,
                                   "OpenDir: opened '{0}' with {1} entries",
                                   normalizedPath,
-                                  filtered.Count);
+                                  entryNames.Length);
 
                 return ErrorNumber.NoError;
             }
 
-            // Intermediate component — descend
-            currentEntries = filtered;
+            // Intermediate component — descend; "." and ".." stay in the cached dictionary
+            // harmlessly since the loop above already special-cases them before lookup
+            currentEntries = subEntries;
         }
 
         return ErrorNumber.NoSuchFile;

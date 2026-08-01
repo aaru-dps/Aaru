@@ -102,17 +102,10 @@ public sealed partial class Reiser
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            // Filter . and .. for traversal
-            var filtered = new Dictionary<string, (uint dirId, uint objectId)>();
-
-            foreach(KeyValuePair<string, (uint dirId, uint objectId)> entry in subEntries)
-            {
-                if(entry.Key is "." or "..") continue;
-
-                filtered[entry.Key] = entry.Value;
-            }
-
-            currentEntries = filtered;
+            // No need to filter "." and ".." here: they are already skipped above before the
+            // lookup, so leaving them in the cached dictionary is harmless and avoids an O(n)
+            // copy of every directory's entries on every single intermediate path component.
+            currentEntries = subEntries;
         }
 
         return ErrorNumber.NoSuchFile;
