@@ -27,25 +27,31 @@ public sealed partial class Merger
         };
     }
 
+    /// <summary>
+    ///     Resolves the dump tries for an image: the resume file if given, else the image's own dump hardware.
+    ///     When neither provides any usable extent, every sector of the image is considered good, so a single
+    ///     synthetic extent covering the whole image is returned.
+    /// </summary>
+    static List<DumpHardware> GetDumpTries(Resume resume, IMediaImage image)
+    {
+        List<DumpHardware> tries = resume != null ? resume.Tries : image.DumpHardware;
+
+        if(tries?.Any(static h => h?.Extents?.Count > 0) == true) return tries;
+
+        return
+        [
+            new DumpHardware
+            {
+                Extents = CreateDefaultDumpExtents(image.Info.Sectors)
+            }
+        ];
+    }
+
     List<ulong> CalculateSectorsToCopy(IMediaImage primaryImage,    IMediaImage secondaryImage, Resume primaryResume,
                                        Resume      secondaryResume, List<ulong> overrideSectorsList)
     {
-        List<DumpHardware> primaryTries = (primaryResume != null ? primaryResume.Tries : primaryImage.DumpHardware) ??
-                                          [
-                                              new DumpHardware
-                                              {
-                                                  Extents = CreateDefaultDumpExtents(primaryImage.Info.Sectors)
-                                              }
-                                          ];
-
-        List<DumpHardware> secondaryTries =
-            (secondaryResume != null ? secondaryResume.Tries : secondaryImage.DumpHardware) ??
-            [
-                new DumpHardware
-                {
-                    Extents = CreateDefaultDumpExtents(secondaryImage.Info.Sectors)
-                }
-            ];
+        List<DumpHardware> primaryTries   = GetDumpTries(primaryResume,   primaryImage);
+        List<DumpHardware> secondaryTries = GetDumpTries(secondaryResume, secondaryImage);
 
         // Get all sectors that appear in secondaryTries but not in primaryTries
         var sectorsToCopy = new List<ulong>();
@@ -84,6 +90,27 @@ public sealed partial class Merger
             }
         }
 
+        // Primary sectors marked as bad in the resume file are valid candidates to take from the secondary,
+        // as long as the secondary covers them and does not also mark them as bad
+        if(primaryResume?.BadBlocks != null)
+        {
+            var alreadyListed = new HashSet<ulong>(sectorsToCopy);
+            var secondaryBad  = secondaryResume?.BadBlocks != null ? new HashSet<ulong>(secondaryResume.BadBlocks) : [];
+
+            foreach(ulong sector in primaryResume.BadBlocks)
+            {
+                if(sector >= primaryImage.Info.Sectors || sector >= secondaryImage.Info.Sectors) continue;
+
+                if(secondaryBad.Contains(sector) || alreadyListed.Contains(sector)) continue;
+
+                if(!secondaryTries.Any(h => h?.Extents?.Any(e => sector >= e.Start && sector <= e.End) == true))
+                    continue;
+
+                sectorsToCopy.Add(sector);
+                alreadyListed.Add(sector);
+            }
+        }
+
         sectorsToCopy.AddRange(overrideSectorsList.Where(t => !sectorsToCopy.Contains(t)));
 
         return sectorsToCopy;
@@ -96,22 +123,8 @@ public sealed partial class Merger
         InitProgress?.Invoke();
         InitProgress2?.Invoke();
 
-        List<DumpHardware> primaryTries = (primaryResume != null ? primaryResume.Tries : primaryImage.DumpHardware) ??
-                                          [
-                                              new DumpHardware
-                                              {
-                                                  Extents = CreateDefaultDumpExtents(primaryImage.Info.Sectors)
-                                              }
-                                          ];
-
-        List<DumpHardware> secondaryTries =
-            (secondaryResume != null ? secondaryResume.Tries : secondaryImage.DumpHardware) ??
-            [
-                new DumpHardware
-                {
-                    Extents = CreateDefaultDumpExtents(secondaryImage.Info.Sectors)
-                }
-            ];
+        List<DumpHardware> primaryTries   = GetDumpTries(primaryResume,   primaryImage);
+        List<DumpHardware> secondaryTries = GetDumpTries(secondaryResume, secondaryImage);
 
         var mergedHardware = new List<DumpHardware>();
 

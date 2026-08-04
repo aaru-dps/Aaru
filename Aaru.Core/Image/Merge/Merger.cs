@@ -267,12 +267,6 @@ public sealed partial class Merger
             return ErrorNumber.InvalidArgument;
         }
 
-        int secondarySectorsInRange = sectorsToCopyFromSecondImage.Count(s => s < primaryImage.Info.Sectors);
-
-        UpdateStatus?.Invoke(string.Format(UI.Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary,
-                                           primaryImage.Info.Sectors - (ulong)secondarySectorsInRange,
-                                           sectorsToCopyFromSecondImage.Count));
-
         errno = SetupTapeImage(primaryTape, secondaryTape, outputTape);
 
         if(errno != ErrorNumber.NoError) return errno;
@@ -327,6 +321,12 @@ public sealed partial class Merger
         errno = CopyMediaTags(primaryImage, secondaryImage, outputFormat);
 
         if(errno != ErrorNumber.NoError) return errno;
+
+        int secondarySectorsInRange = sectorsToCopyFromSecondImage.Count(s => s < primaryImage.Info.Sectors);
+
+        UpdateStatus?.Invoke(string.Format(UI.Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary,
+                                           primaryImage.Info.Sectors - (ulong)secondarySectorsInRange,
+                                           sectorsToCopyFromSecondImage.Count));
 
         UpdateStatus?.Invoke(string.Format(UI.Copying_0_sectors_from_primary_image, primaryImage.Info.Sectors));
 
