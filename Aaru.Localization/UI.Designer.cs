@@ -10912,6 +10912,12 @@ namespace Aaru.Localization {
             }
         }
 
+        public static string Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary {
+            get {
+                return ResourceManager.GetString("Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary", resourceCulture);
+            }
+        }
+
         public static string Ignore_mismatched_image_sector_count {
             get {
                 return ResourceManager.GetString("Ignore_mismatched_image_sector_count", resourceCulture);

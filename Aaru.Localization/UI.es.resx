@@ -5482,6 +5482,9 @@ Probadores:
     <data name="Will_copy_0_sectors_from_secondary_image" xml:space="preserve">
         <value>[slateblue1]Se copiarán [teal]{0}[/] sectores de la imagen secundaria.[/]</value>
     </data>
+    <data name="Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary" xml:space="preserve">
+        <value>[slateblue1]Se copiarán [teal]{0}[/] sectores de la imagen primaria y [teal]{1}[/] sectores de la imagen secundaria.[/]</value>
+    </data>
     <data name="Flux_merge_primary_then_secondary_appended" xml:space="preserve">
         <value>[slateblue1]Combinando flujo: primero capturas de la imagen primaria, luego las de la secundaria con índices renumerados...[/]</value>
     </data>

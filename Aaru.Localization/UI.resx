@@ -5569,6 +5569,9 @@ Do you want to continue?</value>
     <data name="Will_copy_0_sectors_from_secondary_image" xml:space="preserve">
         <value>[slateblue1]Will copy [teal]{0}[/] sectors from secondary image.[/]</value>
     </data>
+    <data name="Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary" xml:space="preserve">
+        <value>[slateblue1]Will copy [teal]{0}[/] sectors from primary image and [teal]{1}[/] sectors from secondary image.[/]</value>
+    </data>
     <data name="Flux_merge_primary_then_secondary_appended" xml:space="preserve">
         <value>[slateblue1]Merging flux: primary captures first, then secondary captures appended with renumbered indices...[/]</value>
     </data>
