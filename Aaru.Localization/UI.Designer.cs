@@ -10911,6 +10911,18 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Images_have_different_number_of_sectors_cannot_merge", resourceCulture);
             }
         }
+
+        public static string Ignore_mismatched_image_sector_count {
+            get {
+                return ResourceManager.GetString("Ignore_mismatched_image_sector_count", resourceCulture);
+            }
+        }
+
+        public static string Images_have_different_number_of_sectors_merging_up_to_0 {
+            get {
+                return ResourceManager.GetString("Images_have_different_number_of_sectors_merging_up_to_0", resourceCulture);
+            }
+        }
         
         public static string Parsing_sectors_file {
             get {

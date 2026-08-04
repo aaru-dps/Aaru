@@ -5450,6 +5450,12 @@ Probadores:
     <data name="Images_have_different_number_of_sectors_cannot_merge" xml:space="preserve">
         <value>[red]Las imágenes tienen diferente número de sectores, no se pueden combinar.[/]</value>
     </data>
+    <data name="Ignore_mismatched_image_sector_count" xml:space="preserve">
+        <value>Ignorar el número de sectores no coincidente. Combina hasta el tamaño de la imagen más pequeña; la imagen combinada mantiene el número de sectores de la imagen primaria.</value>
+    </data>
+    <data name="Images_have_different_number_of_sectors_merging_up_to_0" xml:space="preserve">
+        <value>[yellow]Las imágenes tienen diferente número de sectores, combinando hasta el sector {0}...[/]</value>
+    </data>
     <data name="Parsing_sectors_file" xml:space="preserve">
         <value>[slateblue1]Interpretando el fichero de sectores...[/]</value>
     </data>

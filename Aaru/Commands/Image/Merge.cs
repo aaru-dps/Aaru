@@ -46,6 +46,7 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
                                 settings.UseSecondaryTags,
                                 settings.SectorsFile,
                                 settings.IgnoreMediaType,
+                                settings.IgnoreSectorCount,
                                 settings.Comments,
                                 settings.Count,
                                 settings.Creator,
@@ -162,12 +163,13 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
 
         AaruLogging.Debug(MODULE_NAME, "--drive-revision={0}", Markup.Escape(settings.DriveFirmwareRevision ?? ""));
 
-        AaruLogging.Debug(MODULE_NAME, "--drive-serial={0}",       Markup.Escape(settings.DriveSerialNumber ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--ignore-media-type={0}",  settings.IgnoreMediaType);
-        AaruLogging.Debug(MODULE_NAME, "--format={0}",             Markup.Escape(settings.Format       ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--geometry={0}",           Markup.Escape(settings.Geometry     ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--media-barcode={0}",      Markup.Escape(settings.MediaBarcode ?? ""));
-        AaruLogging.Debug(MODULE_NAME, "--media-lastsequence={0}", settings.LastMediaSequence);
+        AaruLogging.Debug(MODULE_NAME, "--drive-serial={0}",        Markup.Escape(settings.DriveSerialNumber ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--ignore-media-type={0}",   settings.IgnoreMediaType);
+        AaruLogging.Debug(MODULE_NAME, "--ignore-sector-count={0}", settings.IgnoreSectorCount);
+        AaruLogging.Debug(MODULE_NAME, "--format={0}",              Markup.Escape(settings.Format       ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--geometry={0}",            Markup.Escape(settings.Geometry     ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--media-barcode={0}",       Markup.Escape(settings.MediaBarcode ?? ""));
+        AaruLogging.Debug(MODULE_NAME, "--media-lastsequence={0}",  settings.LastMediaSequence);
 
         AaruLogging.Debug(MODULE_NAME, "--media-manufacturer={0}", Markup.Escape(settings.MediaManufacturer ?? ""));
 
@@ -222,6 +224,10 @@ class MergeCommand : AsyncCommand<MergeCommand.Settings>
         [DefaultValue(false)]
         [CommandOption("--ignore-media-type")]
         public bool IgnoreMediaType { get; init; }
+        [LocalizedDescription(nameof(UI.Ignore_mismatched_image_sector_count))]
+        [DefaultValue(false)]
+        [CommandOption("--ignore-sector-count")]
+        public bool IgnoreSectorCount { get; init; }
         [LocalizedDescription(nameof(UI.Image_comments))]
         [DefaultValue(null)]
         [CommandOption("--comments")]

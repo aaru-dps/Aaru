@@ -5537,6 +5537,12 @@ Do you want to continue?</value>
     <data name="Images_have_different_number_of_sectors_cannot_merge" xml:space="preserve">
         <value>[red]Images have different number of sectors, cannot merge.[/]</value>
     </data>
+    <data name="Ignore_mismatched_image_sector_count" xml:space="preserve">
+        <value>Ignore mismatched image sector count. Merges up to the smaller image's size; merged image keeps the primary image sector count.</value>
+    </data>
+    <data name="Images_have_different_number_of_sectors_merging_up_to_0" xml:space="preserve">
+        <value>[yellow]Images have different number of sectors, merging up to sector {0}...[/]</value>
+    </data>
     <data name="Parsing_sectors_file" xml:space="preserve">
         <value>[slateblue1]Parsing sectors file...[/]</value>
     </data>

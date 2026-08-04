@@ -60,6 +60,9 @@ public sealed partial class Merger
                 // For each sector in this secondary extent
                 for(ulong sector = secondaryExtent.Start; sector <= secondaryExtent.End; sector++)
                 {
+                    // Sectors beyond the primary image cannot exist in the output, skip them
+                    if(sector >= primaryImage.Info.Sectors) continue;
+
                     // Check if this sector appears in any primary extent
                     var foundInPrimary = false;
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -24,6 +25,7 @@ public sealed partial class Merger
     bool                       useSecondaryTags,
     string                     sectorsFile,
     bool                       ignoreMediaType,
+    bool                       ignoreSectorCount,
     string                     comments,
     int                        count,
     string                     creator,
@@ -169,9 +171,15 @@ public sealed partial class Merger
 
         if(primaryImage.Info.Sectors != secondaryImage.Info.Sectors)
         {
-            StoppingErrorMessage?.Invoke(UI.Images_have_different_number_of_sectors_cannot_merge);
+            if(!ignoreSectorCount)
+            {
+                StoppingErrorMessage?.Invoke(UI.Images_have_different_number_of_sectors_cannot_merge);
 
-            return ErrorNumber.InvalidArgument;
+                return ErrorNumber.InvalidArgument;
+            }
+
+            ErrorMessage?.Invoke(string.Format(UI.Images_have_different_number_of_sectors_merging_up_to_0,
+                                               Math.Min(primaryImage.Info.Sectors, secondaryImage.Info.Sectors)));
         }
 
         errno = ValidateMediaCapabilities(primaryImage, secondaryImage, outputFormat, primaryMediaType);
