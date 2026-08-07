@@ -370,7 +370,7 @@ sealed class LsCommand : Command<LsCommand.Settings>
             {
                 fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
-                stats.Add(entry, stat);
+                stats[entry] = stat;
             }
 
             fs.CloseDir(node);
