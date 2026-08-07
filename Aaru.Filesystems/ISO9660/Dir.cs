@@ -1270,6 +1270,14 @@ public sealed partial class ISO9660
 
         if(mynode.Position >= mynode.Entries.Length) return ErrorNumber.NoError;
 
+        // Skip entries with empty names, they cannot be addressed and make recursive listers loop on themselves
+        while(string.IsNullOrEmpty(mynode.Entries[mynode.Position].Filename))
+        {
+            mynode.Position++;
+
+            if(mynode.Position >= mynode.Entries.Length) return ErrorNumber.NoError;
+        }
+
         switch(_namespace)
         {
             case Namespace.Normal:
