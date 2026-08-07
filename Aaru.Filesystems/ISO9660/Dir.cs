@@ -258,9 +258,12 @@ public sealed partial class ISO9660
             entry.Filename = entry.Filename.Replace('/', '\u2215');
 
             // Tailing '.' is only allowed on RRIP. If present it will be recreated below with the alternate name
-            if(entry.Filename.EndsWith(".", StringComparison.Ordinal)) entry.Filename = entry.Filename[..^1];
+            // Do not touch files literally named "." or ".;1", they'd become empty and break path resolution
+            if(entry.Filename.Length > 1 && entry.Filename.EndsWith(".", StringComparison.Ordinal))
+                entry.Filename = entry.Filename[..^1];
 
-            if(entry.Filename.EndsWith(".;1", StringComparison.Ordinal)) entry.Filename = entry.Filename[..^3] + ";1";
+            if(entry.Filename.Length > 3 && entry.Filename.EndsWith(".;1", StringComparison.Ordinal))
+                entry.Filename = entry.Filename[..^3] + ";1";
 
             // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
             if(_joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
