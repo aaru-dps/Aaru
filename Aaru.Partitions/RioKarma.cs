@@ -105,18 +105,17 @@ public sealed class RioKarma : IPartition
         ulong counter = 0;
 
         partitions = (from entry in table.entries
-                      let part = new Partition
+                      where entry.type == ENTRY_MAGIC
+                      select new Partition
                       {
                           Start    = entry.offset,
-                          Offset   = (ulong)(entry.offset * sector.Length),
-                          Size     = entry.size,
-                          Length   = (ulong)(entry.size * sector.Length),
+                          Offset   = entry.offset * (ulong)sector.Length,
+                          Length   = entry.size,
+                          Size     = entry.size * (ulong)sector.Length,
                           Type     = Localization.Rio_Karma,
                           Sequence = counter++,
                           Scheme   = Name
-                      }
-                      where entry.type == ENTRY_MAGIC
-                      select part).ToList();
+                      }).ToList();
 
         return true;
     }
