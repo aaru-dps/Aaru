@@ -946,6 +946,8 @@ partial class Dump
                 // TODO: Reset device after X errors
                 if(_stopOnError) return; // TODO: Return more cleanly
 
+                if(l1 + _skip > l0Video + l1Video) _skip = (uint)(l0Video + l1Video - l1);
+
                 // Write empty data
                 _writeStopwatch.Restart();
 
@@ -969,7 +971,8 @@ partial class Dump
                               _skip);
 
                 AaruLogging.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, l1);
-                l1 += _skip - blocksToRead;
+                l1            += _skip - blocksToRead;
+                currentSector += _skip - blocksToRead;
 
                 string[] senseLines = Sense.PrettifySense(senseBuf)
                                            .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
