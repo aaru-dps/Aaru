@@ -144,7 +144,7 @@ public sealed partial class DeviceReport
                     logicalSectorSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    physicalSectorSize = (uint)(logicalSectorSize * (1 << ataId.PhysLogSectorSize & 0xF));
+                    physicalSectorSize = (uint)(logicalSectorSize * (1 << (ataId.PhysLogSectorSize & 0xF)));
                 else
                     physicalSectorSize = logicalSectorSize;
             }
