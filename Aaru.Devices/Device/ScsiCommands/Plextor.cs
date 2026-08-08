@@ -383,6 +383,7 @@ public partial class Device
         cdb.Clear();
 
         cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+        cdb[1]  = (byte)PlextorSubCommands.GetMode;
         cdb[2]  = (byte)PlextorSubCommands.SecuRec;
         cdb[10] = (byte)buffer.Length;
 
@@ -437,10 +438,10 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
 
-        cdb[0] = (byte)ScsiCommands.PlextorExtend;
-        cdb[1] = (byte)PlextorSubCommands.GetMode;
-        cdb[2] = (byte)PlextorSubCommands.SessionHide;
-        cdb[9] = (byte)buffer.Length;
+        cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+        cdb[1]  = (byte)PlextorSubCommands.GetMode;
+        cdb[2]  = (byte)PlextorSubCommands.SessionHide;
+        cdb[10] = (byte)buffer.Length;
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -466,10 +467,10 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..12];
         cdb.Clear();
 
-        cdb[0] = (byte)ScsiCommands.PlextorExtend;
-        cdb[1] = (byte)PlextorSubCommands.GetMode;
-        cdb[2] = (byte)PlextorSubCommands.BitSet;
-        cdb[9] = (byte)buffer.Length;
+        cdb[0]  = (byte)ScsiCommands.PlextorExtend;
+        cdb[1]  = (byte)PlextorSubCommands.GetMode;
+        cdb[2]  = (byte)PlextorSubCommands.BitSet;
+        cdb[10] = (byte)buffer.Length;
 
         if(dualLayer)
             cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
