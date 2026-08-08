@@ -145,7 +145,7 @@ public partial class Device
         cdb.Clear();
         senseBuffer = SenseBuffer;
 
-        cdb[0] = (byte)ScsiCommands.AdaptecTranslate;
+        cdb[0] = (byte)ScsiCommands.AdaptecReadCounters;
 
         if(drive1) cdb[1] += 0x20;
 
