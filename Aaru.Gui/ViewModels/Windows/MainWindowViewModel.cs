@@ -135,13 +135,13 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _genericOpticalIcon = new SvgImage
         {
-            Source = SvgSource.Load(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/media-tape.svg")))
+            Source =
+                SvgSource.Load(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/drive-optical.svg")))
         };
 
         _genericTapeIcon = new SvgImage
         {
-            Source =
-                SvgSource.Load(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/drive-optical.svg")))
+            Source = SvgSource.Load(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/media-tape.svg")))
         };
 
         _genericFolderIcon = new SvgImage
@@ -150,14 +150,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 SvgSource.Load(AssetLoader.Open(new Uri("avares://Aaru.Gui/Assets/Icons/oxygen/inode-directory.svg")))
         };
 
-        switch(DetectOS.GetRealPlatformID())
-        {
-            case PlatformID.Win32NT:
-            case PlatformID.Linux:
-                DevicesSupported = true;
-
-                break;
-        }
+        if(DetectOS.GetRealPlatformID() is PlatformID.Win32NT or PlatformID.Linux) DevicesSupported = true;
 
         TreeRoot =
         [
@@ -214,53 +207,34 @@ public partial class MainWindowViewModel : ViewModelBase
 
             SetProperty(ref field, value);
 
-            ContentPanel = null;
-
-            switch(value)
-            {
-                case ImageModel imageModel:
-                    ContentPanel = new ImageInfo
-                    {
-                        DataContext = imageModel.ViewModel
-                    };
-
-                    break;
-                case PartitionModel partitionModel:
-                    ContentPanel = new Views.Panels.Partition
-                    {
-                        DataContext = partitionModel.ViewModel
-                    };
-
-                    break;
-                case FileSystemModel fileSystemModel:
-                    ContentPanel = new Views.Panels.FileSystem
-                    {
-                        DataContext = fileSystemModel.ViewModel
-                    };
-
-                    break;
-                case SubdirectoryModel subdirectoryModel:
-                    ContentPanel = new Subdirectory
-                    {
-                        DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
-                    };
-
-                    break;
-                case ArchiveModel archiveModel:
-                    ContentPanel = new ArchiveInfo
-                    {
-                        DataContext = archiveModel.ViewModel
-                    };
-
-                    break;
-                case ArchiveSubdirectoryModel archiveSubdirectoryModel:
-                    ContentPanel = new ArchiveSubdirectory
-                    {
-                        DataContext = new ArchiveSubdirectoryViewModel(archiveSubdirectoryModel, _view)
-                    };
-
-                    break;
-            }
+            ContentPanel = value switch
+                           {
+                               ImageModel imageModel => new ImageInfo
+                               {
+                                   DataContext = imageModel.ViewModel
+                               },
+                               PartitionModel partitionModel => new Views.Panels.Partition
+                               {
+                                   DataContext = partitionModel.ViewModel
+                               },
+                               FileSystemModel fileSystemModel => new Views.Panels.FileSystem
+                               {
+                                   DataContext = fileSystemModel.ViewModel
+                               },
+                               SubdirectoryModel subdirectoryModel => new Subdirectory
+                               {
+                                   DataContext = new SubdirectoryViewModel(subdirectoryModel, _view)
+                               },
+                               ArchiveModel archiveModel => new ArchiveInfo
+                               {
+                                   DataContext = archiveModel.ViewModel
+                               },
+                               ArchiveSubdirectoryModel archiveSubdirectoryModel => new ArchiveSubdirectory
+                               {
+                                   DataContext = new ArchiveSubdirectoryViewModel(archiveSubdirectoryModel, _view)
+                               },
+                               _ => null
+                           };
         }
     }
 
@@ -272,10 +246,11 @@ public partial class MainWindowViewModel : ViewModelBase
         return dialog.ShowDialog(_view);
     }
 
-    async Task CreateMetadataAsync()
+    Task CreateMetadataAsync()
     {
         var dialog = new MetadataEditor();
-        await dialog.ShowDialog(_view);
+
+        return dialog.ShowDialog(_view);
     }
 
     async Task EditMetadataAsync()
@@ -309,7 +284,7 @@ public partial class MainWindowViewModel : ViewModelBase
         await dialog.ShowDialog(_view);
     }
 
-    void OpenDevice()
+    static void OpenDevice()
     {
         var deviceListWindow = new DeviceList();
 
@@ -501,11 +476,13 @@ public partial class MainWindowViewModel : ViewModelBase
                                {
                                    Source = SvgSource.Load(AssetLoader.Open(mediaResource))
                                }
-                               : imageFormat.Info.MetadataMediaType == MetadataMediaType.BlockMedia
-                                   ? _genericHddIcon
-                                   : imageFormat.Info.MetadataMediaType == MetadataMediaType.OpticalDisc
-                                       ? _genericOpticalIcon
-                                       : _genericFolderIcon,
+                               : imageFormat.Info.MetadataMediaType switch
+                                 {
+                                     MetadataMediaType.BlockMedia  => _genericHddIcon,
+                                     MetadataMediaType.OpticalDisc => _genericOpticalIcon,
+                                     MetadataMediaType.LinearMedia => _genericTapeIcon,
+                                     _                             => _genericFolderIcon
+                                 },
                     FileName  = Path.GetFileName(result[0].Path.LocalPath),
                     Image     = imageFormat,
                     ViewModel = new ImageInfoViewModel(result[0].Path.LocalPath, inputFilter, imageFormat, _view),
