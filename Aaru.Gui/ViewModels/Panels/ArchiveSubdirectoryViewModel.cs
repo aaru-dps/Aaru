@@ -101,7 +101,7 @@ public sealed class ArchiveSubdirectoryViewModel
 
         Statistics.AddCommand("extract-files");
 
-        string folder = result[0].Path.AbsolutePath;
+        string folder = result[0].Path.LocalPath;
 
         foreach(ArchiveFileModel file in SelectedEntries)
         {

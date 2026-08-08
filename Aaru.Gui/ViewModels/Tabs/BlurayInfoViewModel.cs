@@ -178,7 +178,7 @@ public sealed class BlurayInfoViewModel
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         await saveFs.WriteAsync(data, 0, data.Length);
 
         saveFs.Close();

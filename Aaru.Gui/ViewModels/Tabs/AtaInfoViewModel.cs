@@ -117,7 +117,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
 
         if(_ata != null)
             saveFs.Write(_ata,                       0, _ata.Length);
@@ -138,7 +138,7 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
         await saveSw.WriteAsync(AtaIdentifyText);
         saveFs.Close();

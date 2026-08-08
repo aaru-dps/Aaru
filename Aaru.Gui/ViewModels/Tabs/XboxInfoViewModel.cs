@@ -102,7 +102,7 @@ public sealed class XboxInfoViewModel
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(data, 0, data.Length);
 
         saveFs.Close();

@@ -240,7 +240,7 @@ public sealed partial class ImageSidecarViewModel : ViewModelBase
             return;
         }
 
-        DestinationText = result.Path.AbsolutePath;
+        DestinationText = result.Path.LocalPath;
         if(string.IsNullOrEmpty(Path.GetExtension(DestinationText))) DestinationText += ".json";
     }
 }

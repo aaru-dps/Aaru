@@ -85,7 +85,7 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         try
         {
-            var logFs = new FileStream(result.Path.AbsolutePath, FileMode.Create, FileAccess.ReadWrite);
+            var logFs = new FileStream(result.Path.LocalPath, FileMode.Create, FileAccess.ReadWrite);
             var logSw = new StreamWriter(logFs);
 
             await logSw.WriteLineAsync(string.Format(UI.Log_saved_at_0, DateTime.Now));

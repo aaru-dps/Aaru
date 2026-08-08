@@ -182,7 +182,7 @@ public sealed partial class PcmciaInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(_cis, 0, _cis.Length);
 
         saveFs.Close();

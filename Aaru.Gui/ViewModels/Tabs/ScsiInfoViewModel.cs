@@ -779,7 +779,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(InquiryData, 0, InquiryData.Length);
 
         saveFs.Close();
@@ -797,7 +797,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         var saveSw = new StreamWriter(saveFs);
         await saveSw.WriteAsync(ScsiInquiryText);
         saveFs.Close();
@@ -815,7 +815,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(_scsiModeSense6, 0, _scsiModeSense6.Length);
 
         saveFs.Close();
@@ -833,7 +833,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(_scsiModeSense10, 0, _scsiModeSense10.Length);
 
         saveFs.Close();
@@ -853,7 +853,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(pageModel.Data, 0, pageModel.Data.Length);
 
         saveFs.Close();
@@ -871,7 +871,7 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.AbsolutePath, FileMode.Create);
+        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
         saveFs.Write(_configuration, 0, _configuration.Length);
 
         saveFs.Close();

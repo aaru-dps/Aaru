@@ -518,7 +518,7 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
 
             try
             {
-                var fs = new FileStream(result[0].Path.AbsolutePath, FileMode.Open);
+                var fs = new FileStream(result[0].Path.LocalPath, FileMode.Open);
 
                 Sidecar =
                     (JsonSerializer.Deserialize(fs, typeof(MetadataJson), MetadataJsonContext.Default) as MetadataJson)
@@ -563,7 +563,7 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
             return;
         }
 
-        Destination = result.Path.AbsolutePath;
+        Destination = result.Path.LocalPath;
 
         _outputPrefix = Path.Combine(Path.GetDirectoryName(Destination) ?? "",
                                      Path.GetFileNameWithoutExtension(Destination));
