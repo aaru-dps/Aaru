@@ -451,8 +451,9 @@ partial class Dump
 
         // 9th Q subchannel is always FRAME when in user data area
         // LBA 35 => MSF 00:02:35 => FRAME 35 (in hexadecimal 0x23)
-        // Sometimes drive returns a pregap here but MSF 00:02:3x => FRAME 3x (hexadecimal 0x20 to 0x27)
-        bcdSubchannel = (tmpBuf[21] & 0x30) > 0;
+        // Sometimes drive returns a pregap here but MSF 00:02:3x => FRAME 3x (hexadecimal 0x1E to 0x27)
+        // In BCD the frame reads 0x30-0x39 (high nibble 3); in binary it reads 0x1E-0x27 (high nibble 1 or 2)
+        bcdSubchannel = (tmpBuf[21] & 0xF0) == 0x30;
 
         UpdateStatus?.Invoke(bcdSubchannel
                                  ? Localization.Core.Drive_returns_subchannel_in_BCD
