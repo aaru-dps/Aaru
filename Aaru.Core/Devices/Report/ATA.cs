@@ -649,7 +649,10 @@ public sealed partial class DeviceReport
             if(!string.IsNullOrWhiteSpace(ataId.MediaManufacturer)) capabilities.Manufacturer = ataId.MediaManufacturer;
         }
 
-        const ulong checkCorrectRead = 0;
+        ulong checkCorrectRead = 0;
+
+        if(!_dev.AtaIdentify(out byte[] identifyBuf, out _, _dev.Timeout, out _) && identifyBuf.Length >= 8)
+            checkCorrectRead = BitConverter.ToUInt64(identifyBuf, 0);
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
