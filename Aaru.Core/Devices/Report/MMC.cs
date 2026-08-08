@@ -2250,28 +2250,28 @@ public sealed partial class DeviceReport
 
                         mediaTest.RWSubchannelWithC2Data = buffer;
 
-                        mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer,
-                                                                         out _,
-                                                                         16,
-                                                                         2712,
-                                                                         1,
-                                                                         MmcSectorTypes.AllTypes,
-                                                                         false,
-                                                                         false,
-                                                                         true,
-                                                                         MmcHeaderCodes.AllHeaders,
-                                                                         true,
-                                                                         true,
-                                                                         MmcErrorField.C2Pointers,
-                                                                         MmcSubchannel.Rw,
-                                                                         _dev.Timeout,
-                                                                         out _);
-
                         // AccessTek/Optorite DD0203 returns OK but then the firmware dies
                         if(_dev.Model.StartsWith("DVD RW 4XMax", StringComparison.Ordinal))
-                            mediaTest.CanReadCorrectedSubchannel = false;
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = false;
                         else
                         {
+                            mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer,
+                                                                             out _,
+                                                                             16,
+                                                                             2712,
+                                                                             1,
+                                                                             MmcSectorTypes.AllTypes,
+                                                                             false,
+                                                                             false,
+                                                                             true,
+                                                                             MmcHeaderCodes.AllHeaders,
+                                                                             true,
+                                                                             true,
+                                                                             MmcErrorField.C2Pointers,
+                                                                             MmcSubchannel.Rw,
+                                                                             _dev.Timeout,
+                                                                             out _);
+
                             if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                             {
                                 mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer,
