@@ -44,7 +44,7 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Xbox partitions</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Constants document the full on-disk layout")]
 public sealed partial class Xbox : IPartition
 {
     const uint XBOX_CIGAM                  = 0x46415458;
@@ -56,7 +56,7 @@ public sealed partial class Xbox : IPartition
     const long XBOX368_SYS_EXT_OFF         = 0x10C080000;
     const long XBOX360_SYS_EXT2_OFF        = 0x118EB0000;
     const long XBOX360_COMPAT_OFF          = 0x120EB0000;
-    const long XBOX_360DATA_OFF            = 0x130EB0000;
+    const long XBOX_360_DATA_OFF            = 0x130EB0000;
     const long XBOX360_SECURITY_SECTOR_LEN = 0x80000;
     const long XBOX360_SYSTEM_CACHE_LEN    = 0x80000000;
     const long XBOX360_GAME_CACHE_LEN      = 0xA0E30000;
@@ -90,9 +90,9 @@ public sealed partial class Xbox : IPartition
 
         Xbox360DevKitPartitionTable table = Marshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
-        if(table.magic                             == XBOX360_DEVKIT_MAGIC     &&
-           table.contentOff   + table.contentLen   <= imagePlugin.Info.Sectors &&
-           table.dashboardOff + table.dashboardLen <= imagePlugin.Info.Sectors)
+        if(table.magic                                    == XBOX360_DEVKIT_MAGIC     &&
+           (ulong)table.contentOff   + table.contentLen   <= imagePlugin.Info.Sectors &&
+           (ulong)table.dashboardOff + table.dashboardLen <= imagePlugin.Info.Sectors)
         {
             var contentPart = new Partition
             {
@@ -167,10 +167,10 @@ public sealed partial class Xbox : IPartition
             }
         }
 
-        if(imagePlugin.Info.Sectors <= (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize)) return false;
+        if(imagePlugin.Info.Sectors <= (ulong)(XBOX_360_DATA_OFF / imagePlugin.Info.SectorSize)) return false;
 
         {
-            errno = imagePlugin.ReadSector((ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),
+            errno = imagePlugin.ReadSector((ulong)(XBOX_360_DATA_OFF / imagePlugin.Info.SectorSize),
                                            false,
                                            out sector,
                                            out _);
@@ -251,8 +251,8 @@ public sealed partial class Xbox : IPartition
             {
                 Description = Localization.Data_volume,
                 Sequence    = 7,
-                Offset      = XBOX_360DATA_OFF,
-                Start       = (ulong)(XBOX_360DATA_OFF / imagePlugin.Info.SectorSize),
+                Offset      = XBOX_360_DATA_OFF,
+                Start       = (ulong)(XBOX_360_DATA_OFF / imagePlugin.Info.SectorSize),
                 Scheme      = Name
             };
 
