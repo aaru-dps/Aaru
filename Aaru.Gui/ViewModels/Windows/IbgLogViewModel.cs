@@ -114,6 +114,8 @@ public partial class IbgLogViewModel : ViewModelBase
                                  .ShowWindowDialogAsync(_window);
 
             _window.Close();
+
+            return;
         }
 
         stream.Position = 0;
