@@ -434,7 +434,7 @@ public partial class Device
                        ulong      objectId, uint transferLen, uint objectSize, uint timeout, out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        Span<byte> cdb = CdbBuffer[..6];
+        Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
         senseBuffer = SenseBuffer;
         byte[] idBytes = BitConverter.GetBytes(objectId);
