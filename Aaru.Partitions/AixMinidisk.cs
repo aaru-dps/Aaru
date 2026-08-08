@@ -36,7 +36,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
-using Aaru.CommonTypes.Attributes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Logging;
@@ -47,7 +46,7 @@ namespace Aaru.Partitions;
 /// <inheritdoc />
 /// <summary>Implements decoding of the AIX minidisk (VTOC) partitioning scheme</summary>
 [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original AIX headers")]
-public sealed partial class AixMinidisk : IPartition
+public sealed class AixMinidisk : IPartition
 {
     const string MODULE_NAME = "AIX minidisk plugin";
 
@@ -99,7 +98,7 @@ public sealed partial class AixMinidisk : IPartition
             return false;
         }
 
-        Vtoc1 vtoc = Marshal.ByteArrayToStructureBigEndian<Vtoc1>(sector);
+        Vtoc1 vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc1>(sector);
 
         AaruLogging.Debug(MODULE_NAME,
                           "vtoc.magic_string = \"{0}\"",
@@ -239,52 +238,48 @@ public sealed partial class AixMinidisk : IPartition
 
 #region Nested type: Minidisk
 
-    /// <inheritdoc />
     /// <summary>AIX minidisk entry structure</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    [SwapEndian]
-    partial struct Minidisk
+    readonly struct Minidisk
     {
         /// <summary>Starting block number</summary>
-        public uint   s_block;
+        public readonly uint   s_block;
         /// <summary>Length of minidisk in blocks</summary>
-        public uint   num_blks;
+        public readonly uint   num_blks;
         /// <summary>Type of minidisk</summary>
-        public byte   type;
+        public readonly byte   type;
         /// <summary>Minidisk ID number</summary>
-        public byte   mdisk_id;
+        public readonly byte   mdisk_id;
         /// <summary>Index into string table</summary>
-        public ushort str_index;
+        public readonly ushort str_index;
     }
 
 #endregion
 
 #region Nested type: Vtoc1
 
-    /// <inheritdoc />
     /// <summary>AIX VTOC sector 1 structure</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    [SwapEndian]
-    partial struct Vtoc1
+    readonly struct Vtoc1
     {
         /// <summary>"VTOC" magic string</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public byte[] magic_string;
+        public readonly byte[] magic_string;
         /// <summary>Version number</summary>
-        public byte   version;
+        public readonly byte   version;
         /// <summary>Sequence number (must match others)</summary>
-        public byte   seq_num;
+        public readonly byte   seq_num;
         /// <summary>Max length of boot 1 in disk blocks</summary>
-        public ushort bootsize;
+        public readonly ushort bootsize;
         /// <summary>Number of bad blocks (ST506 only)</summary>
-        public ushort numbadblks;
+        public readonly ushort numbadblks;
         /// <summary>Offset within the bad block minidisk</summary>
-        public ushort badblkoff;
+        public readonly ushort badblkoff;
         /// <summary>Spare (to put mini[] on 8 byte boundary)</summary>
-        public int    vt_spare;
+        public readonly int    vt_spare;
         /// <summary>Minidisk entries</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_MINIDISKS)]
-        public Minidisk[] mini;
+        public readonly Minidisk[] mini;
     }
 
 #endregion
