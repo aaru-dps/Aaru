@@ -594,7 +594,7 @@ public sealed partial class ImageConvertViewModel : ViewModelBase
 
             fs.Close();
 
-            if(resume?.Tries?.Any() == false)
+            if(resume?.Tries?.Any() == true)
             {
                 _resume        = resume;
                 ResumeFileText = result[0].Path.LocalPath;
