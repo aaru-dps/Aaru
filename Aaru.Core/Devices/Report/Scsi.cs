@@ -513,10 +513,9 @@ public sealed partial class DeviceReport
     /// <returns>Media report</returns>
     public TestedMedia ReportScsiMedia()
     {
-        var                mediaTest   = new TestedMedia();
-        var                sense       = true;
-        byte[]             buffer      = [];
-        ReadOnlySpan<byte> senseBuffer = [];
+        var    mediaTest = new TestedMedia();
+        var    sense     = true;
+        byte[] buffer    = [];
 
         Spectre.ProgressSingleSpinner(ctx =>
         {
@@ -917,9 +916,8 @@ public sealed partial class DeviceReport
     /// <returns>Media report</returns>
     public TestedMedia ReportScsi()
     {
-        var                sense       = true;
-        byte[]             buffer      = [];
-        ReadOnlySpan<byte> senseBuffer = [];
+        var    sense  = true;
+        byte[] buffer = [];
 
         var capabilities = new TestedMedia
         {

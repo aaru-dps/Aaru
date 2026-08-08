@@ -73,8 +73,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
         AaruLogging.Debug(MODULE_NAME, "--device={0}",  Markup.Escape(settings.Path ?? ""));
         AaruLogging.Debug(MODULE_NAME, "--verbose={0}", settings.Verbose);
 
-        string             devicePath  = settings.Path;
-        ReadOnlySpan<byte> senseBuffer = [];
+        string devicePath = settings.Path;
 
         if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
             devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
@@ -909,7 +908,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                                 mediaTests.Add(mediaTest);
 
                                 dev.AllowMediumRemoval(out _, dev.Timeout, out _);
-                                dev.EjectTray(out senseBuffer, dev.Timeout, out _);
+                                dev.EjectTray(out _, dev.Timeout, out _);
                             }
 
                             report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
