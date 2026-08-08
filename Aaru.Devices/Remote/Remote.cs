@@ -133,7 +133,7 @@ public class Remote : IDisposable
 
             AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
-            AaruLogging.Error($"{nop.reason}");
+            AaruLogging.Error(nop.reason);
 
             throw new ArgumentException();
         }
@@ -293,16 +293,19 @@ public class Remote : IDisposable
     /// <summary>Disconnects from remote</summary>
     public void Disconnect()
     {
+        if(_socket.SafeHandle.IsClosed) return;
+
         try
         {
             _socket.Shutdown(SocketShutdown.Both);
-            _socket.Close();
         }
-        catch(ObjectDisposedException ex)
+        catch(SocketException ex)
         {
-            // Ignore if already disposed
+            // The peer may already be gone
             SentrySdk.CaptureException(ex);
         }
+
+        _socket.Close();
     }
 
     /// <summary>Lists devices attached to remote</summary>
@@ -375,7 +378,7 @@ public class Remote : IDisposable
 
             AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
-            AaruLogging.Error($"{nop.reason}");
+            AaruLogging.Error(nop.reason);
 
             return [];
         }
@@ -502,10 +505,10 @@ public class Remote : IDisposable
             case AaruNopReason.OpenOk:
                 return true;
             case AaruNopReason.NotImplemented:
-                throw new NotImplementedException($"{nop.reason}");
+                throw new NotImplementedException(nop.reason);
         }
 
-        AaruLogging.Error($"{nop.reason}");
+        AaruLogging.Error(nop.reason);
         lastError = nop.errno;
 
         return false;
@@ -1510,6 +1513,24 @@ public class Remote : IDisposable
     /// <returns>Retrieved number of bytes</returns>
     static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
     {
+        if(socketFlags.HasFlag(SocketFlags.Peek))
+        {
+            // MSG_PEEK does not consume data, so every call reads from the front of the queue and
+            // accumulating at an offset would duplicate the leading bytes.
+            var got = 0;
+
+            while(got < size)
+            {
+                int len = socket.Receive(buffer, 0, size, socketFlags);
+
+                if(len <= 0) break;
+
+                got = len;
+            }
+
+            return got;
+        }
+
         var offset = 0;
 
         while(size > 0)
@@ -1542,13 +1563,15 @@ public class Remote : IDisposable
 
         byte[] buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
 
+        if(_socket.SafeHandle.IsClosed) return;
+
         try
         {
             _socket.Send(buf, SocketFlags.None);
         }
-        catch(ObjectDisposedException ex)
+        catch(SocketException ex)
         {
-            // Ignore if already disposed
+            // The peer may already be gone
             SentrySdk.CaptureException(ex);
         }
     }
@@ -1720,8 +1743,8 @@ public class Remote : IDisposable
     /// <param name="sense">Set to <c>true</c> if any of the commands returned an error status, <c>false</c> otherwise</param>
     /// <param name="timeout">Maximum allowed time to execute a single command</param>
     /// <returns>0 if no error occurred, otherwise, errno</returns>
-    int SendMultipleMmcCommandsV1(Devices.Device.MmcSingleCommand[] commands, out double duration, out bool sense,
-                                  uint                              timeout)
+    int SendMultipleMmcCommandsV1(IEnumerable<Devices.Device.MmcSingleCommand> commands, out double duration,
+                                  out bool                                     sense,    uint       timeout)
     {
         sense    = false;
         duration = 0;
