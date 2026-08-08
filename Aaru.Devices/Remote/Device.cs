@@ -139,7 +139,7 @@ public sealed partial class Device : Devices.Device
             return null;
         }
 
-        if(dev._remote.ServerOperatingSystem == "Linux") _readMultipleBlockCannotSetBlockCount = true;
+        if(dev._remote.ServerOperatingSystem == "Linux") dev.ReadMultipleBlockCannotSetBlockCount = true;
 
         dev.Type     = DeviceType.Unknown;
         dev.ScsiType = PeripheralDeviceTypes.UnknownDevice;
