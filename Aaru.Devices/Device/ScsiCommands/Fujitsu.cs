@@ -64,13 +64,13 @@ public partial class Device
         if(!string.IsNullOrWhiteSpace(firstHalf))
         {
             tmp = Encoding.ASCII.GetBytes(firstHalf);
-            Array.Copy(tmp, 0, firstHalfBytes, 0, 8);
+            Array.Copy(tmp, 0, firstHalfBytes, 0, Math.Min(tmp.Length, 8));
         }
 
         if(!string.IsNullOrWhiteSpace(secondHalf))
         {
             tmp = Encoding.ASCII.GetBytes(secondHalf);
-            Array.Copy(tmp, 0, secondHalfBytes, 0, 8);
+            Array.Copy(tmp, 0, secondHalfBytes, 0, Math.Min(tmp.Length, 8));
         }
 
         if(mode != FujitsuDisplayModes.Half)
