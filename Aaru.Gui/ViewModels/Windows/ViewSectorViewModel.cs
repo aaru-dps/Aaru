@@ -33,12 +33,10 @@
 using System.Collections.Generic;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
-using Aaru.CommonTypes.Metadata;
 using Aaru.Gui.Controls;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JetBrains.Annotations;
-using Spectre.Console;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
@@ -90,7 +88,7 @@ public sealed partial class ViewSectorViewModel : ViewModelBase
 
     void ReadSectorAt(long displaySector)
     {
-        bool negative = displaySector < 0;
+        bool  negative      = displaySector < 0;
         ulong sectorAddress = negative ? (ulong)-displaySector : (ulong)displaySector;
 
         ErrorNumber errno = LongSectorChecked
@@ -105,40 +103,43 @@ public sealed partial class ViewSectorViewModel : ViewModelBase
 
     void ColorSector()
     {
+        HighlightRanges = [];
+
         if(SectorData.LongLength == 2064 && LongSectorChecked)
         {
             // DVD sector
 
-            ColorRange dvd_id_si = new ColorRange
+            ColorRange dvdIdSi = new ColorRange
             {
                 Color = Brushes.DeepPink,
                 Start = 0,
                 End   = 0
             };
 
-            ColorRange dvd_id_sn = new ColorRange
+            ColorRange dvdIdSn = new ColorRange
             {
                 Color = Brushes.Yellow,
                 Start = 1,
                 End   = 3
             };
 
-            ColorRange dvd_ied = new ColorRange
+            ColorRange dvdIed = new ColorRange
             {
                 Color = Brushes.Green,
                 Start = 4,
                 End   = 5
             };
 
-            ColorRange dvd_cprmai = new ColorRange
+            ColorRange dvdCprmai = new ColorRange
             {
                 Color = Brushes.Orange,
                 Start = 6,
                 End   = 11
             };
 
-            if (_inputFormat.Info.MediaType is CommonTypes.MediaType.GOD or CommonTypes.MediaType.WOD){
-                dvd_cprmai = new ColorRange
+            if(_inputFormat.Info.MediaType is CommonTypes.MediaType.GOD or CommonTypes.MediaType.WOD)
+            {
+                dvdCprmai = new ColorRange
                 {
                     Color = Brushes.Orange,
                     Start = 2054,
@@ -146,14 +147,14 @@ public sealed partial class ViewSectorViewModel : ViewModelBase
                 };
             }
 
-            ColorRange dvd_edc = new ColorRange
+            ColorRange dvdEdc = new ColorRange
             {
                 Color = Brushes.LimeGreen,
                 Start = 2060,
                 End   = 2063
             };
 
-            HighlightRanges = [dvd_id_si, dvd_id_sn, dvd_ied, dvd_cprmai, dvd_edc];
+            HighlightRanges = [dvdIdSi, dvdIdSn, dvdIed, dvdCprmai, dvdEdc];
 
             return;
         }
@@ -162,14 +163,16 @@ public sealed partial class ViewSectorViewModel : ViewModelBase
         {
             // Blu-ray sector
 
-            ColorRange bd_edc = new ColorRange
+            ColorRange bdEdc = new ColorRange
             {
                 Color = Brushes.LimeGreen,
                 Start = 2048,
                 End   = 2051
             };
 
-            HighlightRanges = [bd_edc];
+            HighlightRanges = [bdEdc];
+
+            return;
         }
 
         // Not a standard CD sector
