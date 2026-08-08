@@ -144,8 +144,9 @@ partial class Dump
                     if(_stopOnError) return;
 
                     _writeStopwatch.Restart();
+
                     outputFormat.WriteSectorsLong(new byte[blockSize * toRead],
-                                                  sectorAddress,
+                                                  sectorAddress - toRead + 1,
                                                   true,
                                                   toRead,
                                                   Enumerable.Repeat(SectorStatus.NotDumped, (int)toRead).ToArray());
