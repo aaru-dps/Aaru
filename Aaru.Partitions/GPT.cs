@@ -152,9 +152,15 @@ public sealed class GuidPartitionTable : IPartition
             sectorSize = imagePlugin.Info.SectorSize;
         }
 
-        uint totalEntriesSectors = hdr.entries * hdr.entriesSize / imagePlugin.Info.SectorSize;
+        // Compute in 64-bit and bound the table to something sane so a corrupt header
+        // cannot request a gigantic read or drive a multi-million entry loop
+        ulong entriesTableBytes = (ulong)hdr.entries * hdr.entriesSize;
 
-        if(hdr.entries * hdr.entriesSize % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
+        if(hdr.entriesSize == 0 || entriesTableBytes > 16 * 1024 * 1024) return false;
+
+        var totalEntriesSectors = (uint)(entriesTableBytes / imagePlugin.Info.SectorSize);
+
+        if(entriesTableBytes % imagePlugin.Info.SectorSize > 0) totalEntriesSectors++;
 
         errno = imagePlugin.ReadSectors(hdr.entryLBA / divisor,
                                         false,
@@ -196,8 +202,10 @@ public sealed class GuidPartitionTable : IPartition
             AaruLogging.Debug(MODULE_NAME, "entry.attributes = 0x{0:X16}", entry.attributes);
             AaruLogging.Debug(MODULE_NAME, "entry.name = {0}",             entry.name);
 
-            if(entry.startLBA / divisor > imagePlugin.Info.Sectors || entry.endLBA / divisor > imagePlugin.Info.Sectors)
-                return false;
+            if(entry.endLBA           < entry.startLBA                ||
+               entry.startLBA / divisor >= imagePlugin.Info.Sectors ||
+               entry.endLBA   / divisor >= imagePlugin.Info.Sectors)
+                continue;
 
             var part = new Partition
             {
