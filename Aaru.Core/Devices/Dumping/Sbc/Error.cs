@@ -338,7 +338,15 @@ partial class Dump
                         if(TransformNgcwLongSectors(scsiReader, buffer, badSector, 1, out SectorStatus[] statuses))
                             outputFormat.WriteSectorLong(buffer, badSector, false, statuses[0]);
                         else
+                        {
                             outputFormat.WriteSectorLong(buffer, badSector, false, SectorStatus.NotDumped);
+
+                            // The transform failed, so the sector was not really recovered
+                            _resume.BadBlocks.Add(badSector);
+                            extents.Remove(badSector);
+
+                            continue;
+                        }
                     }
                     else
                     {
