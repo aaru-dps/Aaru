@@ -47,29 +47,29 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of Sun disklabels</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original SunOS/Solaris headers")]
 public sealed partial class SunDisklabel : IPartition
 {
     /// <summary>Sun disklabel magic number</summary>
-    const ushort DKL_MAGIC = 0xDABE;
+    const ushort DKL_MAGIC     = 0xDABE;
     /// <summary>Sun VTOC magic number</summary>
-    const uint VTOC_SANE = 0x600DDEEE;
+    const uint   VTOC_SANE     = 0x600DDEEE;
     /// <summary>Sun disklabel magic number, byte-swapped</summary>
-    const ushort DKL_CIGAM = 0xBEDA;
+    const ushort DKL_CIGAM     = 0xBEDA;
     /// <summary>Sun VTOC magic number, byte-swapped</summary>
-    const uint VTOC_ENAS = 0xEEDE0D60;
+    const uint   VTOC_ENAS     = 0xEEDE0D60;
     /// <summary># of logical partitions</summary>
-    const int NDKMAP = 8;
+    const int    NDKMAP        = 8;
     /// <summary># of logical partitions</summary>
-    const int NDKMAP16 = 16;
+    const int    NDKMAP16      = 16;
     /// <summary>Disk label size</summary>
-    const int DK_LABEL_SIZE = 512;
+    const int    DK_LABEL_SIZE = 512;
     /// <summary>Volume label size</summary>
-    const int LEN_DKL_ASCII = 128;
+    const int    LEN_DKL_ASCII = 128;
     /// <summary>Length of v_volume</summary>
-    const int LEN_DKL_VVOL = 8;
+    const int    LEN_DKL_VVOL  = 8;
     /// <summary>Size of padding in SunOS disk label</summary>
-    const int LEN_DKL_PAD = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
+    const int    LEN_DKL_PAD   = DK_LABEL_SIZE - (LEN_DKL_ASCII + NDKMAP * 8 + 14 * 2);
     /// <summary>Size of padding in Solaris disk label with 8 partitions</summary>
     const int LEN_DKL_PAD8 = DK_LABEL_SIZE -
                              (LEN_DKL_ASCII +
@@ -202,12 +202,12 @@ public sealed partial class SunDisklabel : IPartition
 
             for(var i = 0; i < NDKMAP; i++)
             {
-                if(dkl.dkl_map[i].dkl_cylno <= 0 || dkl.dkl_map[i].dkl_nblk <= 0) continue;
+                if(dkl.dkl_map[i].dkl_cylno < 0 || dkl.dkl_map[i].dkl_nblk <= 0) continue;
 
                 var part = new Partition
                 {
-                    Size     = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                    Length   = (ulong)(dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                    Size     = (ulong)dkl.dkl_map[i].dkl_nblk                 * DK_LABEL_SIZE,
+                    Length   = (ulong)dkl.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                     Sequence = (ulong)i,
                     Offset   = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                     Start = ((ulong)dkl.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
@@ -217,7 +217,7 @@ public sealed partial class SunDisklabel : IPartition
                     Scheme = Name
                 };
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End < imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
         else if(useDkl8)
@@ -292,7 +292,7 @@ public sealed partial class SunDisklabel : IPartition
                 {
                     Description = SunFlagsToString(dkl8.dkl_vtoc.v_part[i].p_flag),
                     Size = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE,
-                    Length = (ulong)(dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize),
+                    Length = (ulong)dkl8.dkl_map[i].dkl_nblk * DK_LABEL_SIZE / imagePlugin.Info.SectorSize,
                     Sequence = (ulong)i,
                     Offset = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) * DK_LABEL_SIZE,
                     Start = ((ulong)dkl8.dkl_map[i].dkl_cylno * sectorsPerCylinder + sectorOffset) *
@@ -310,7 +310,7 @@ public sealed partial class SunDisklabel : IPartition
                                       DateHandlers.UnixToDateTime(dkl8.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End < imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
         else
@@ -391,9 +391,9 @@ public sealed partial class SunDisklabel : IPartition
                     Description = SunFlagsToString(dkl16.dkl_vtoc.v_part[i].p_flag),
                     Size        = (ulong)dkl16.dkl_vtoc.v_part[i].p_size * dkl16.dkl_vtoc.v_sectorsz,
                     Length =
-                        (ulong)(dkl16.dkl_vtoc.v_part[i].p_size *
-                                dkl16.dkl_vtoc.v_sectorsz /
-                                imagePlugin.Info.SectorSize),
+                        (ulong)dkl16.dkl_vtoc.v_part[i].p_size *
+                        dkl16.dkl_vtoc.v_sectorsz /
+                        imagePlugin.Info.SectorSize,
                     Sequence = (ulong)i,
                     Offset   = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) * dkl16.dkl_vtoc.v_sectorsz,
                     Start = ((ulong)dkl16.dkl_vtoc.v_part[i].p_start + sectorOffset) *
@@ -411,7 +411,7 @@ public sealed partial class SunDisklabel : IPartition
                                       DateHandlers.UnixToDateTime(dkl16.dkl_vtoc.v_timestamp[i]));
                 }
 
-                if(part.Start < imagePlugin.Info.Sectors && part.End <= imagePlugin.Info.Sectors) partitions.Add(part);
+                if(part.Start < imagePlugin.Info.Sectors && part.End < imagePlugin.Info.Sectors) partitions.Add(part);
             }
         }
 
@@ -462,6 +462,7 @@ public sealed partial class SunDisklabel : IPartition
 
 #region Nested type: dk_label
 
+    /// <inheritdoc />
     /// <summary>SunOS disk label</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
@@ -517,29 +518,29 @@ public sealed partial class SunDisklabel : IPartition
         /// <summary>vtoc inclusions from AT&amp;T SVr4</summary>
         public dk_vtoc16 dkl_vtoc;
         /// <summary># of physical cylinders</summary>
-        public uint dkl_pcyl;
+        public uint      dkl_pcyl;
         /// <summary># of data cylinders</summary>
-        public uint dkl_ncyl;
+        public uint      dkl_ncyl;
         /// <summary># of alternate cylinders</summary>
-        public ushort dkl_acyl;
+        public ushort    dkl_acyl;
         /// <summary>cyl offset (for fixed head area)</summary>
-        public ushort dkl_bcyl;
+        public ushort    dkl_bcyl;
         /// <summary># of heads</summary>
-        public uint dkl_nhead;
+        public uint      dkl_nhead;
         /// <summary># of data sectors per track</summary>
-        public uint dkl_nsect;
+        public uint      dkl_nsect;
         /// <summary>interleave factor</summary>
-        public ushort dkl_intrlv;
+        public ushort    dkl_intrlv;
         /// <summary>skew factor</summary>
-        public ushort dkl_skew;
+        public ushort    dkl_skew;
         /// <summary>alternates per cyl (SCSI only)  </summary>
-        public ushort dkl_apc;
+        public ushort    dkl_apc;
         /// <summary>revolutions per minute</summary>
-        public ushort dkl_rpm;
+        public ushort    dkl_rpm;
         /// <summary># sectors to skip, writes</summary>
-        public ushort dkl_write_reinstruct;
+        public ushort    dkl_write_reinstruct;
         /// <summary># sectors to skip, reads </summary>
-        public ushort dkl_read_reinstruct;
+        public ushort    dkl_read_reinstruct;
         /// <summary>for compatible expansion</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
         public ushort[] dkl_extra;
@@ -566,9 +567,9 @@ public sealed partial class SunDisklabel : IPartition
         /// <summary>vtoc inclusions from AT&amp;T SVr4</summary>
         public dk_vtoc8 dkl_vtoc;
         /// <summary># sectors to skip, writes</summary>
-        public ushort dkl_write_reinstruct;
+        public ushort   dkl_write_reinstruct;
         /// <summary># sectors to skip, reads</summary>
-        public ushort dkl_read_reinstruct;
+        public ushort   dkl_read_reinstruct;
         /// <summary>unused part of 512 bytes</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = LEN_DKL_PAD8)]
         public byte[] dkl_pad;
@@ -609,6 +610,7 @@ public sealed partial class SunDisklabel : IPartition
 
 #region Nested type: dk_map
 
+    /// <inheritdoc />
     /// <summary>SunOS logical partitions</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
@@ -624,13 +626,14 @@ public sealed partial class SunDisklabel : IPartition
 
 #region Nested type: dk_map2
 
+    /// <inheritdoc />
     /// <summary>Solaris logical partition for small disk label</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
     partial struct dk_map2
     {
         /// <summary> ID tag of partition</summary>
-        public SunTag p_tag;
+        public SunTag   p_tag;
         /// <summary> permission flag</summary>
         public SunFlags p_flag;
     }
@@ -708,19 +711,20 @@ public sealed partial class SunDisklabel : IPartition
 
 #region Nested type: dkl_partition
 
+    /// <inheritdoc />
     /// <summary>Solaris logical partition</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
     partial struct dkl_partition
     {
         /// <summary>ID tag of partition</summary>
-        public SunTag p_tag;
+        public SunTag   p_tag;
         /// <summary>permision flags</summary>
         public SunFlags p_flag;
         /// <summary>start sector no of partition</summary>
-        public int p_start;
+        public int      p_start;
         /// <summary># of blocks in partition</summary>
-        public int p_size;
+        public int      p_size;
     }
 
 #endregion
