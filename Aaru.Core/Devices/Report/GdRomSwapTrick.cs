@@ -2058,7 +2058,8 @@ public sealed partial class DeviceReport
                     break;
             }
 
-            report.GdRomSwapDiscCapabilities.MaximumReadableSectorInHdArea = lba + cluster - 1;
+            report.GdRomSwapDiscCapabilities.MaximumReadableSectorInHdArea =
+                Math.Min(lba + cluster - 1, (uint)(sectors - 1));
         }
 
         AaruLogging.WriteLine();
