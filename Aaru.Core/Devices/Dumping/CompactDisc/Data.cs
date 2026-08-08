@@ -494,8 +494,17 @@ partial class Dump
                     }
 
                     // Repack the C2 read into the normal block layout so downstream handling is unchanged, flagging
-                    // any audio sector whose C2 pointers report concealed samples.
-                    if(readWithC2 && !sense) RepackAudioC2(ref cmdBuf, blocksToRead, blockSize, subSize, firstSectorToRead);
+                    // any audio sector whose C2 pointers report concealed samples. With a negative offset the read
+                    // started sectorsForOffset earlier than i, so C2 flags must be attributed relative to the
+                    // offset-corrected LBA, not the physical read position.
+                    if(readWithC2 && !sense)
+                    {
+                        uint c2FirstSector = firstSectorToRead;
+
+                        if(_fixOffset && !inData && offsetBytes < 0) c2FirstSector += (uint)sectorsForOffset;
+
+                        RepackAudioC2(ref cmdBuf, blocksToRead, blockSize, subSize, c2FirstSector);
+                    }
                 }
 
                 totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
