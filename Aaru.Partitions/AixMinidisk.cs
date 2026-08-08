@@ -174,10 +174,11 @@ public sealed class AixMinidisk : IPartition
 
             var part = new Partition
             {
-                Start    = (ulong)md.s_block * BLOCKSIZE / imagePlugin.Info.SectorSize + sectorOffset,
-                Offset   = (ulong)md.s_block             * BLOCKSIZE + sectorOffset * imagePlugin.Info.SectorSize,
-                Length   = (ulong)md.num_blks            * BLOCKSIZE / imagePlugin.Info.SectorSize,
-                Size     = (ulong)md.num_blks                        * BLOCKSIZE,
+                // s_block is an absolute disk block, not relative to sectorOffset
+                Start    = (ulong)md.s_block * BLOCKSIZE  / imagePlugin.Info.SectorSize,
+                Offset   = (ulong)md.s_block              * BLOCKSIZE,
+                Length   = (ulong)md.num_blks * BLOCKSIZE / imagePlugin.Info.SectorSize,
+                Size     = (ulong)md.num_blks             * BLOCKSIZE,
                 Type     = TypeToString(md.type),
                 Sequence = counter,
                 Scheme   = Name,
