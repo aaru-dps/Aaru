@@ -910,7 +910,8 @@ public partial class Device
 
         if(sense) return true;
 
-        var availableLength = (ushort)((buffer[0] << 8) + buffer[1] + 2);
+        // The allocation length is 16-bit, clamp instead of wrapping
+        var availableLength = (ushort)Math.Min((buffer[0] << 8) + buffer[1] + 2, ushort.MaxValue);
         buffer      = new byte[availableLength];
         cdb[7]      = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8]      = (byte)(buffer.Length & 0xFF);

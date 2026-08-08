@@ -97,7 +97,8 @@ public partial class Device
 
         if(sense) return true;
 
-        var pagesLength = (byte)(buffer[4] + 5);
+        // The allocation length is a single byte, clamp instead of wrapping
+        var pagesLength = (byte)Math.Min(buffer[4] + 5, byte.MaxValue);
 
         cdb[0] = (byte)ScsiCommands.Inquiry;
         cdb[1] = 0;
@@ -285,8 +286,11 @@ public partial class Device
 
         if(sense) return true;
 
-        var modeLength = (byte)(buffer[0] + 1);
-        if(modeLength % 2 != 0) modeLength++;
+        int modeLengthInt = buffer[0] + 1;
+        if(modeLengthInt % 2 != 0) modeLengthInt++;
+
+        // The allocation length is a single byte, clamp instead of wrapping
+        var modeLength = (byte)Math.Min(modeLengthInt, byte.MaxValue);
 
         buffer      = new byte[modeLength];
         cdb[4]      = (byte)buffer.Length;
