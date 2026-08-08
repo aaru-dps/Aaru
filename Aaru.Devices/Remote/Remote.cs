@@ -1674,7 +1674,7 @@ public class Remote : IDisposable
                     buf_len     = (uint)(command.buffer?.Length ?? 0),
                     command     = command.command,
                     flags       = command.flags,
-                    timeout     = timeout,
+                    timeout     = timeout * 1000,
                     write       = command.write
                 }))
         {
