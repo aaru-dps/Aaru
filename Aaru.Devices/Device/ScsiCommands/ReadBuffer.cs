@@ -41,15 +41,14 @@ namespace Aaru.Devices;
 public partial class Device
 {
     // ReadBuffer 3C detection fields
-    private byte _detectedReadBufferMode;      // Detected buffer mode (0x00, 0x01, 0x02)
-    private byte _detectedReadBufferId;        // Detected buffer ID (0x00, 0x01, 0x02)
-    private uint _detectedBufferStride;        // Detected stride in bytes per sector
-    private bool _readBuffer3CDetected;        // Flag to track if detection has been performed
+    private byte _detectedReadBufferMode; // Detected buffer mode (0x00, 0x01, 0x02)
+    private byte _detectedReadBufferId;   // Detected buffer ID (0x00, 0x01, 0x02)
+    private uint _detectedBufferStride;   // Detected stride in bytes per sector
+    private bool _readBuffer3CDetected;   // Flag to track if detection has been performed
 
     // Buffer format and management fields
     private enum BufferFormat
     {
-        Unknown = 0,
         FullEccInterleaved,
         PoOnly,
         SectorDataOnly,
@@ -60,6 +59,7 @@ public partial class Device
     private uint _bufferCapacityInSectors = 714; // Default capacity, will be refined dynamically when offset is lost
     private BufferFormat _bufferFormat;
     private uint _totalSectorsRead; // Tracks cumulative sectors read successfully since last buffer reset
+
     /// <summary>Reads from device buffer using SCSI READ BUFFER command with specified variant</summary>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
     /// <param name="buffer">Buffer where the ReadBuffer response will be stored</param>
@@ -71,7 +71,7 @@ public partial class Device
     /// <param name="mode">Buffer mode (CDB byte 1, e.g., 0x01 for data, 0x02 for descriptors)</param>
     /// <param name="bufferId">Buffer ID (CDB byte 2, e.g., 0x01, 0x00)</param>
     public bool ScsiReadBuffer(out byte[] buffer,         out ReadOnlySpan<byte> senseBuffer, uint bufferOffset,
-                                uint       transferLength, uint timeout, out double duration, byte mode, byte bufferId)
+                               uint       transferLength, uint timeout, out double duration, byte mode, byte bufferId)
     {
         senseBuffer = SenseBuffer;
         Span<byte> cdb = CdbBuffer[..10];
@@ -181,7 +181,8 @@ public partial class Device
 
         for(var j = 0; j < transferLength; j++)
         {
-            for(var i = 0; i < 12; i++) Array.Copy(buffer, j * stride + i * 182, deinterleaved, j * 2064 + i * 172, 172);
+            for(var i = 0; i < 12; i++)
+                Array.Copy(buffer, j * stride + i * 182, deinterleaved, j * 2064 + i * 172, 172);
         }
 
         return deinterleaved;
@@ -198,10 +199,7 @@ public partial class Device
     {
         var deinterleaved = new byte[2064 * transferLength];
 
-        for(var j = 0; j < transferLength; j++)
-        {
-            Array.Copy(buffer, j * stride, deinterleaved, j * 2064, 2064);
-        }
+        for(var j = 0; j < transferLength; j++) Array.Copy(buffer, j * stride, deinterleaved, j * 2064, 2064);
 
         return deinterleaved;
     }
@@ -213,11 +211,10 @@ public partial class Device
     /// <param name="transferLength">How many blocks in buffer</param>
     /// <param name="stride">Bytes per sector in buffer</param>
     /// <returns>The deinterleaved sectors</returns>
-    static byte[] DeinterleaveFullEccWithPadding(byte[] buffer, uint transferLength, uint stride)
-    {
+    static byte[] DeinterleaveFullEccWithPadding(byte[] buffer, uint transferLength, uint stride) =>
+
         // Same as FullEccInterleaved, padding is ignored
-        return DeinterleaveFullEccInterleaved(buffer, transferLength, stride);
-    }
+        DeinterleaveFullEccInterleaved(buffer, transferLength, stride);
 
     /// <summary>
     ///     Detects which ReadBuffer 3C command variant works for this drive
@@ -249,33 +246,41 @@ public partial class Device
         {
             // Try to read buffer with this variant
             // Read enough for at least 3 sectors (minimum needed for stride detection)
-            uint readSize = 3 * 3000; // Enough for 3 sectors even with large stride
-            bool sense = ScsiReadBuffer(out byte[] buffer, out _, 0, readSize, timeout, out double readBufferDuration,
-                                        variant.mode, variant.bufferId);
+            const uint readSize = 3 * 3000; // Enough for 3 sectors even with large stride
+
+            bool sense = ScsiReadBuffer(out byte[] buffer,
+                                        out _,
+                                        0,
+                                        readSize,
+                                        timeout,
+                                        out double readBufferDuration,
+                                        variant.mode,
+                                        variant.bufferId);
+
             duration += readBufferDuration;
 
             // Check if command succeeded, returned valid data, and has correct sector header (00 03 00)
-            if(!sense && buffer != null && buffer.Length >= 2236 * 3)
+            if(sense || buffer is not { Length: >= 2236 * 3 }) continue;
+
+            // Validate that the data starts with the expected DVD sector header pattern
+            if(buffer.Length >= 4 && buffer[1] == 0x03 && buffer[2] == 0x00 && buffer[3] == 0x00)
             {
-                // Validate that the data starts with the expected DVD sector header pattern
-                if(buffer.Length >= 4 &&
-                   buffer[1] == 0x03 &&
-                   buffer[2] == 0x00 &&
-                   buffer[3] == 0x00)
-                {
-                    AaruLogging.Debug(SCSI_MODULE_NAME, "ReadBuffer 3C variant {0:x2}{1:x2} detected", variant.mode,
-                                      variant.bufferId);
-
-                    return (variant.mode, variant.bufferId);
-                }
-
                 AaruLogging.Debug(SCSI_MODULE_NAME,
-                                  "ReadBuffer 3C variant {0:x2}{1:x2} returned data but header pattern incorrect",
-                                  variant.mode, variant.bufferId);
+                                  "ReadBuffer 3C variant {0:x2}{1:x2} detected",
+                                  variant.mode,
+                                  variant.bufferId);
+
+                return (variant.mode, variant.bufferId);
             }
+
+            AaruLogging.Debug(SCSI_MODULE_NAME,
+                              "ReadBuffer 3C variant {0:x2}{1:x2} returned data but header pattern incorrect",
+                              variant.mode,
+                              variant.bufferId);
         }
 
         AaruLogging.Debug(SCSI_MODULE_NAME, "No working ReadBuffer 3C variant found");
+
         return null;
     }
 
@@ -295,9 +300,17 @@ public partial class Device
         Read12(out _, out _, 0, false, false, false, false, lba, 2048, 0, 16, false, timeout, out duration);
 
         // Read a large buffer chunk (enough for 16+ sectors)
-        uint readSize = 16 * 3000; // Enough for 16 sectors even with large stride
-        bool sense = ScsiReadBuffer(out byte[] buffer, out _, 0, readSize, timeout, out double readDuration, mode,
+        const uint readSize = 16 * 3000; // Enough for 16 sectors even with large stride
+
+        bool sense = ScsiReadBuffer(out byte[] buffer,
+                                    out _,
+                                    0,
+                                    readSize,
+                                    timeout,
+                                    out double readDuration,
+                                    mode,
                                     bufferId);
+
         duration += readDuration;
 
         if(sense || buffer == null || buffer.Length < 2236 * 3) // Need at least 3 sectors worth
@@ -311,13 +324,14 @@ public partial class Device
         // Search for pattern 03 00 00 starting from beginning + 1 byte
         // Find first occurrence
         int firstOffset = -1;
-        for(int i = 0; i < buffer.Length - 3; i++)
+
+        for(var i = 0; i < buffer.Length - 3; i++)
         {
-            if(buffer[i + 1] == 0x03 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x00)
-            {
-                firstOffset = i;
-                break;
-            }
+            if(buffer[i + 1] != 0x03 || buffer[i + 2] != 0x00 || buffer[i + 3] != 0x00) continue;
+
+            firstOffset = i;
+
+            break;
         }
 
         if(firstOffset != 0)
@@ -330,13 +344,15 @@ public partial class Device
 
         // Find second occurrence to calculate stride
         int secondOffset = -1;
-        for(int i = firstOffset + 2064; i < Math.Min(firstOffset + 2500, buffer.Length - 3); i++)
+
+        // firstOffset is always 0 here, the pattern was required to be at the start
+        for(var i = 2064; i < Math.Min(2500, buffer.Length - 3); i++)
         {
-            if(buffer[i + 1] == 0x03 && buffer[i + 2] == 0x00 && buffer[i + 3] == 0x01)
-            {
-                secondOffset = i;
-                break;
-            }
+            if(buffer[i + 1] != 0x03 || buffer[i + 2] != 0x00 || buffer[i + 3] != 0x01) continue;
+
+            secondOffset = i;
+
+            break;
         }
 
         if(secondOffset == -1)
@@ -353,14 +369,13 @@ public partial class Device
         for(int sectorNum = 2; sectorNum <= 3; sectorNum++)
         {
             int expectedOffset = (int)(firstOffset + stride * sectorNum);
+
             if(expectedOffset + 3 >= buffer.Length) break;
 
             if(buffer[expectedOffset + 1] != 0x03 ||
                buffer[expectedOffset + 2] != 0x00 ||
-               (buffer[expectedOffset + 3] != 0x02 && buffer[expectedOffset + 3] != 0x03))
-            {
+               buffer[expectedOffset + 3] != 0x02 && buffer[expectedOffset + 3] != 0x03)
                 return 0; // Verification failed
-            }
         }
 
         AaruLogging.Debug(SCSI_MODULE_NAME, "ReadBuffer stride detection succeeded, stride: {0}", stride);
@@ -380,12 +395,7 @@ public partial class Device
         duration = 0;
 
         // If already detected, return success
-        if(_readBuffer3CDetected)
-        {
-            if(_detectedBufferStride == 0) return false;
-
-            return true;
-        }
+        if(_readBuffer3CDetected) return _detectedBufferStride != 0;
 
         // Try to detect variant
         (byte mode, byte bufferId)? variant = DetectReadBufferVariant(lba, timeout, out double variantDuration);
@@ -394,6 +404,7 @@ public partial class Device
         if(!variant.HasValue)
         {
             _readBuffer3CDetected = true; // Mark as attempted even if failed
+
             return false;
         }
 
@@ -401,14 +412,19 @@ public partial class Device
         _detectedReadBufferId   = variant.Value.bufferId;
 
         // Detect stride using the found variant
-        uint stride = DetectBufferStride(lba, timeout, _detectedReadBufferMode, _detectedReadBufferId,
+        uint stride = DetectBufferStride(lba,
+                                         timeout,
+                                         _detectedReadBufferMode,
+                                         _detectedReadBufferId,
                                          out double strideDuration);
+
         duration += strideDuration;
 
-        if(stride == 0 || stride < 2064 || stride > 10000)
+        if(stride is 0 or < 2064 or > 10000)
         {
             AaruLogging.Debug(SCSI_MODULE_NAME,
-                              "ReadBuffer 3C stride detection failed or invalid stride: {0}, using default", stride);
+                              "ReadBuffer 3C stride detection failed or invalid stride: {0}, using default",
+                              stride);
 
             _detectedBufferStride = 2384; // Default to known value
             _readBuffer3CDetected = true;
@@ -416,12 +432,14 @@ public partial class Device
             return false; // Detection partially succeeded but stride failed
         }
 
-        _detectedBufferStride  = stride;
-        _readBuffer3CDetected  = true;
+        _detectedBufferStride = stride;
+        _readBuffer3CDetected = true;
 
         AaruLogging.Debug(SCSI_MODULE_NAME,
                           "ReadBuffer 3C detection succeeded, variant: {0:x2}{1:x2}, stride: {2}",
-                          _detectedReadBufferMode, _detectedReadBufferId, _detectedBufferStride);
+                          _detectedReadBufferMode,
+                          _detectedReadBufferId,
+                          _detectedBufferStride);
 
         return true;
     }
@@ -436,8 +454,8 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="layerbreak">The address in which the layerbreak occur</param>
     /// <param name="otp">Set to <c>true</c> if disk is Opposite Track Path (OTP)</param>
-    public bool ReadBuffer3CRawDvd(out byte[] buffer,  out ReadOnlySpan<byte> senseBuffer, uint lba, uint transferLength,
-                                   uint       timeout, out double             duration,    uint layerbreak, bool otp)
+    public bool ReadBuffer3CRawDvd(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint lba, uint transferLength,
+                                   uint       timeout, out double duration, uint layerbreak, bool otp)
     {
         // Detect ReadBuffer 3C variant and stride on first call
         if(!_readBuffer3CDetected)
@@ -450,10 +468,10 @@ public partial class Device
                 AaruLogging.Debug(SCSI_MODULE_NAME,
                                   "ReadBuffer 3C detection failed - raw reading is not supported on this drive");
 
-                buffer      = Array.Empty<byte>();
-                senseBuffer = SenseBuffer;
-                duration    = detectDuration;
-                Error       = true;
+                buffer                = Array.Empty<byte>();
+                senseBuffer           = SenseBuffer;
+                duration              = detectDuration;
+                Error                 = true;
                 _readBuffer3CDetected = true;
 
                 return true; // Return failure - raw reading not supported
@@ -461,22 +479,23 @@ public partial class Device
 
             // Detect format based on stride
             _bufferFormat = _detectedBufferStride switch
-            {
-                2064 => BufferFormat.SectorDataOnly,
-                2236 => BufferFormat.PoOnly,
-                2384 => BufferFormat.FullEccInterleaved,
-                > 2384 => BufferFormat.FullEccWithPadding,
-                _ => BufferFormat.FullEccInterleaved // Default for backward compatibility
-            };
+                            {
+                                2064   => BufferFormat.SectorDataOnly,
+                                2236   => BufferFormat.PoOnly,
+                                2384   => BufferFormat.FullEccInterleaved,
+                                > 2384 => BufferFormat.FullEccWithPadding,
+                                _      => BufferFormat.FullEccInterleaved // Default for backward compatibility
+                            };
 
             AaruLogging.Debug(SCSI_MODULE_NAME,
                               "ReadBuffer 3C buffer format detected based on stride: {0}, format: {1}",
-                              _detectedBufferStride, _bufferFormat);
+                              _detectedBufferStride,
+                              _bufferFormat);
 
             // Initialize buffer capacity with default value (will be refined dynamically when offset is lost)
             _bufferCapacityInSectors = 714;
-            _totalSectorsRead = 0; // Initialize tracking for dynamic capacity detection
-            _readBuffer3CDetected = true;
+            _totalSectorsRead        = 0; // Initialize tracking for dynamic capacity detection
+            _readBuffer3CDetected    = true;
         }
 
         _bufferOffset %= _bufferCapacityInSectors;
@@ -541,8 +560,14 @@ public partial class Device
         Read12(out _, out _, 0, false, false, false, false, lba, 2048, 0, 16, false, timeout, out duration);
 
         // Use generic ReadBuffer method with detected variant
-        return ScsiReadBuffer(out buffer, out senseBuffer, bufferOffset, transferLength, timeout, out duration,
-                              _detectedReadBufferMode, _detectedReadBufferId);
+        return ScsiReadBuffer(out buffer,
+                              out senseBuffer,
+                              bufferOffset,
+                              transferLength,
+                              timeout,
+                              out duration,
+                              _detectedReadBufferMode,
+                              _detectedReadBufferId);
     }
 
     /// <summary>
@@ -557,9 +582,9 @@ public partial class Device
     /// <param name="transferLength">How many blocks to read.</param>
     /// <param name="layerbreak">The address in which the layerbreak occur</param>
     /// <param name="otp">Set to <c>true</c> if disk is Opposite Track Path (OTP)</param>
-    private bool ReadSectorsFromBuffer(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint lba,
-                                       uint transferLength, uint timeout, out double duration, uint layerbreak,
-                                       bool otp)
+    private bool ReadSectorsFromBuffer(out byte[] buffer,         out ReadOnlySpan<byte> senseBuffer, uint lba,
+                                       uint       transferLength, uint timeout, out double duration, uint layerbreak,
+                                       bool       otp)
     {
         bool sense = ReadBuffer3CInternal(out buffer,
                                           out senseBuffer,
@@ -575,20 +600,22 @@ public partial class Device
         {
             // Buffer offset lost - this means we've wrapped around
             // Use the number of sectors read to detect buffer capacity
-            if(_totalSectorsRead > 0 && _totalSectorsRead >= 16 && _totalSectorsRead <= 2000)
+            if(_totalSectorsRead is > 0 and >= 16 and <= 2000)
             {
                 uint detectedCapacity = _totalSectorsRead;
                 uint oldCapacity      = _bufferCapacityInSectors;
 
                 // If we already have a capacity, verify new detection is consistent
                 if(_bufferCapacityInSectors == 714 || // Update if using default
-                   (detectedCapacity >= _bufferCapacityInSectors * 9 / 10 &&
+                   (detectedCapacity >= _bufferCapacityInSectors * 9  / 10 &&
                     detectedCapacity <= _bufferCapacityInSectors * 11 / 10)) // Or within 10%
                 {
                     _bufferCapacityInSectors = detectedCapacity;
+
                     AaruLogging.Debug(SCSI_MODULE_NAME,
                                       "Buffer capacity dynamically detected: {0} sectors (was {1})",
-                                      detectedCapacity, oldCapacity);
+                                      detectedCapacity,
+                                      oldCapacity);
                 }
             }
 
@@ -620,7 +647,7 @@ public partial class Device
 
         buffer = scrambledBuffer;
 
-        _bufferOffset += transferLength;
+        _bufferOffset     += transferLength;
         _totalSectorsRead += transferLength; // Track successful read for capacity detection
 
         return sense;
@@ -639,27 +666,27 @@ public partial class Device
     /// <param name="layerbreak">The address in which the layerbreak occur</param>
     /// <param name="otp">Set to <c>true</c> if disk is Opposite Track Path (OTP)</param>
     private bool ReadSectorsAcrossBufferBorder(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint lba,
-                                               uint       transferLength, uint timeout, out double duration,
-                                               uint       layerbreak, bool otp)
+                                               uint transferLength, uint timeout, out double duration, uint layerbreak,
+                                               bool otp)
     {
         uint newTransferLength1 = _bufferCapacityInSectors - _bufferOffset;
         uint newTransferLength2 = transferLength           - newTransferLength1;
 
         bool sense1 = ReadBuffer3CInternal(out byte[] buffer1,
-                                          out _,
-                                          _bufferOffset      * _detectedBufferStride,
-                                          newTransferLength1 * _detectedBufferStride,
-                                          timeout,
-                                          out double duration1,
-                                          lba);
+                                           out _,
+                                           _bufferOffset      * _detectedBufferStride,
+                                           newTransferLength1 * _detectedBufferStride,
+                                           timeout,
+                                           out double duration1,
+                                           lba);
 
         bool sense2 = ReadBuffer3CInternal(out byte[] buffer2,
-                                          out _,
-                                          0,
-                                          newTransferLength2 * _detectedBufferStride,
-                                          timeout,
-                                          out double duration2,
-                                          lba);
+                                           out _,
+                                           0,
+                                           newTransferLength2 * _detectedBufferStride,
+                                           timeout,
+                                           out double duration2,
+                                           lba);
 
         senseBuffer = SenseBuffer; // TODO
 
@@ -678,10 +705,10 @@ public partial class Device
 
         buffer = scrambledBuffer;
 
-        _bufferOffset = newTransferLength2;
+        _bufferOffset     =  newTransferLength2;
         _totalSectorsRead += transferLength; // Track successful read for capacity detection
 
-        return sense1 && sense2;
+        return sense1 || sense2;
     }
 
     /// <summary>
@@ -696,8 +723,13 @@ public partial class Device
     {
         for(uint i = 0; i < _bufferCapacityInSectors; i++)
         {
-            ReadBuffer3CInternal(out byte[] buffer, out _, i * _detectedBufferStride, _detectedBufferStride, timeout,
-                                out double _, lba);
+            ReadBuffer3CInternal(out byte[] buffer,
+                                 out _,
+                                 i * _detectedBufferStride,
+                                 _detectedBufferStride,
+                                 timeout,
+                                 out double _,
+                                 lba);
 
             byte[] deinterleaved = DeinterleaveEccBlock(buffer, 1, _detectedBufferStride, _bufferFormat);
 
@@ -715,16 +747,15 @@ public partial class Device
     /// <param name="stride">Bytes per sector in buffer</param>
     /// <param name="format">Buffer format type</param>
     /// <returns>The deinterleaved sectors</returns>
-    private byte[] DeinterleaveEccBlock(byte[] buffer, uint transferLength, uint stride, BufferFormat format)
+    private static byte[] DeinterleaveEccBlock(byte[] buffer, uint transferLength, uint stride, BufferFormat format)
     {
         return format switch
-        {
-            BufferFormat.FullEccInterleaved => DeinterleaveFullEccInterleaved(buffer, transferLength, stride),
-            BufferFormat.PoOnly => DeinterleavePoOnly(buffer, transferLength, stride),
-            BufferFormat.SectorDataOnly => buffer, // No deinterleaving needed for sector-data-only format
-            BufferFormat.FullEccWithPadding => DeinterleaveFullEccWithPadding(buffer, transferLength, stride),
-            _ => DeinterleaveFullEccInterleaved(buffer, transferLength, stride) // Default fallback
-        };
+               {
+                   BufferFormat.FullEccInterleaved => DeinterleaveFullEccInterleaved(buffer, transferLength, stride),
+                   BufferFormat.PoOnly => DeinterleavePoOnly(buffer, transferLength, stride),
+                   BufferFormat.SectorDataOnly => buffer, // No deinterleaving needed for sector-data-only format
+                   BufferFormat.FullEccWithPadding => DeinterleaveFullEccWithPadding(buffer, transferLength, stride),
+                   _ => DeinterleaveFullEccInterleaved(buffer, transferLength, stride) // Default fallback
+               };
     }
 }
-
