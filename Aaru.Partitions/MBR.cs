@@ -55,7 +55,7 @@ public sealed class MBR : IPartition
     const ushort DM_MAGIC    = 0x55AA;
     const string MODULE_NAME = "Master Boot Record (MBR) plugin";
 
-    [SuppressMessage("ReSharper", "StringLiteralTypo")]
+    [SuppressMessage("ReSharper", "StringLiteralTypo", Justification = "Partition type names are verbatim")]
     static readonly string[] _mbrTypes =
     [
         // 0x00
@@ -308,7 +308,7 @@ public sealed class MBR : IPartition
     {
         partitions = [];
 
-        ErrorNumber errno = imagePlugin.ReadSector(start, false, out byte[] sector, out _);
+        ErrorNumber errno = imagePlugin.ReadSector(start + sectorOffset, false, out byte[] sector, out _);
 
         if(errno != ErrorNumber.NoError) return false;
 
@@ -363,7 +363,7 @@ public sealed class MBR : IPartition
 
                 mnxSectors = CHS.ToLBA(endCylinder,
                                        mnxEntry.end_head,
-                                       mnxEntry.end_sector,
+                                       endSector,
                                        imagePlugin.Info.Heads,
                                        imagePlugin.Info.SectorsPerTrack) -
                              mnxStart;
@@ -479,18 +479,18 @@ public sealed class MBR : IPartition
         /// <summary>Set to 0</summary>
         public readonly ushort zero;
         /// <summary>Original physical drive</summary>
-        public readonly byte drive;
+        public readonly byte   drive;
         /// <summary>Disk timestamp, seconds</summary>
-        public readonly byte seconds;
+        public readonly byte   seconds;
         /// <summary>Disk timestamp, minutes</summary>
-        public readonly byte minutes;
+        public readonly byte   minutes;
         /// <summary>Disk timestamp, hours</summary>
-        public readonly byte hours;
+        public readonly byte   hours;
         /// <summary>Boot code, continuation</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 216)]
         public readonly byte[] boot_code2;
         /// <summary>Disk serial number</summary>
-        public readonly uint serial;
+        public readonly uint   serial;
         /// <summary>Set to 0</summary>
         public readonly ushort zero2;
         /// <summary>Partitions</summary>
@@ -565,7 +565,7 @@ public sealed class MBR : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 440)]
         public readonly byte[] boot_code;
         /// <summary>Disk serial number</summary>
-        public readonly uint serial;
+        public readonly uint   serial;
         /// <summary>Set to 0</summary>
         public readonly ushort zero;
         /// <summary>Partitions</summary>
@@ -590,13 +590,13 @@ public sealed class MBR : IPartition
         /// <summary>Set to 0</summary>
         public readonly ushort zero;
         /// <summary>Original physical drive</summary>
-        public readonly byte drive;
+        public readonly byte   drive;
         /// <summary>Disk timestamp, seconds</summary>
-        public readonly byte seconds;
+        public readonly byte   seconds;
         /// <summary>Disk timestamp, minutes</summary>
-        public readonly byte minutes;
+        public readonly byte   minutes;
         /// <summary>Disk timestamp, hours</summary>
-        public readonly byte hours;
+        public readonly byte   hours;
         /// <summary>Boot code, continuation</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 222)]
         public readonly byte[] boot_code2;
@@ -623,7 +623,7 @@ public sealed class MBR : IPartition
     public string Author => Authors.NATALIA_PORTILLO;
 
     /// <inheritdoc />
-    [SuppressMessage("ReSharper", "UnusedVariable")]
+    [SuppressMessage("ReSharper", "UnusedVariable", Justification = "Decoded fields aid debugging")]
     public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
     {
         ulong counter = 0;
@@ -710,7 +710,13 @@ public sealed class MBR : IPartition
             var extended = false;
             var minix    = false;
 
-            if(entry.status != 0x00 && entry.status != 0x80) return false; // Maybe a FAT filesystem
+            if(entry.status != 0x00 && entry.status != 0x80)
+            {
+                // Maybe a FAT filesystem
+                if(partitions.Count == 0) return false;
+
+                break;
+            }
 
             valid &= entry.type != 0x00;
 
@@ -741,7 +747,7 @@ public sealed class MBR : IPartition
 
                 lbaSectors = CHS.ToLBA(endCylinder,
                                        entry.end_head,
-                                       entry.end_sector,
+                                       endSector,
                                        imagePlugin.Info.Heads,
                                        imagePlugin.Info.SectorsPerTrack) -
                              lbaStart;
@@ -753,14 +759,15 @@ public sealed class MBR : IPartition
 
             if(minix && lbaStart == sectorOffset) minix = false;
 
-            if(lbaStart > imagePlugin.Info.Sectors)
+            if(lbaStart >= imagePlugin.Info.Sectors)
             {
                 valid    = false;
                 extended = false;
             }
 
             // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-            if(lbaStart + lbaSectors > imagePlugin.Info.Sectors) lbaSectors = imagePlugin.Info.Sectors - lbaStart;
+            if(lbaStart < imagePlugin.Info.Sectors && lbaStart + lbaSectors > imagePlugin.Info.Sectors)
+                lbaSectors = imagePlugin.Info.Sectors          - lbaStart;
 
             AaruLogging.Debug(MODULE_NAME, "entry.status {0}",         entry.status);
             AaruLogging.Debug(MODULE_NAME, "entry.type {0}",           entry.type);
@@ -824,7 +831,7 @@ public sealed class MBR : IPartition
 
             while(processingExtended)
             {
-                errno = imagePlugin.ReadSector(lbaStart, false, out sector, out _);
+                errno = imagePlugin.ReadSector(lbaStart + sectorOffset, false, out sector, out _);
 
                 if(errno != ErrorNumber.NoError) break;
 
@@ -881,7 +888,7 @@ public sealed class MBR : IPartition
 
                         extSectors = CHS.ToLBA(endCylinder,
                                                ebrEntry.end_head,
-                                               ebrEntry.end_sector,
+                                               endSector,
                                                imagePlugin.Info.Heads,
                                                imagePlugin.Info.SectorsPerTrack) -
                                      extStart;
@@ -903,16 +910,16 @@ public sealed class MBR : IPartition
                     }
 
                     extStart += lbaStart;
-                    extValid &= extStart <= imagePlugin.Info.Sectors;
+                    extValid &= extStart < imagePlugin.Info.Sectors;
 
                     // Some buggy implementations do some rounding errors getting a few sectors beyond device size
-                    if(extStart + extSectors > imagePlugin.Info.Sectors)
-                        extSectors = imagePlugin.Info.Sectors - extStart;
+                    if(extStart < imagePlugin.Info.Sectors && extStart + extSectors > imagePlugin.Info.Sectors)
+                        extSectors = imagePlugin.Info.Sectors          - extStart;
 
                     if(extValid && extMinix) // Let's mix the fun
                     {
                         if(GetMinix(imagePlugin,
-                                    lbaStart,
+                                    extStart,
                                     divider,
                                     sectorOffset,
                                     sectorSize,
