@@ -109,8 +109,9 @@ public sealed partial class Human68K : IPartition
         switch(imagePlugin.Info.SectorSize)
         {
             case 256:
-                errno        = imagePlugin.ReadSector(4 + sectorOffset, false, out sector, out _);
-                sectsPerUnit = 1;
+                // The table lives at byte offset 2048 and the partition unit is 1024 bytes
+                errno        = imagePlugin.ReadSector(8 + sectorOffset, false, out sector, out _);
+                sectsPerUnit = 4;
 
                 break;
             case 512:
@@ -154,23 +155,25 @@ public sealed partial class Human68K : IPartition
 
             var part = new Partition
             {
-                Start    = (entry.stateStart & 0xFFFFFF) * sectsPerUnit,
+                Start    = (entry.stateStart & 0xFFFFFF) * sectsPerUnit + sectorOffset,
                 Length   = entry.length                  * sectsPerUnit,
                 Type     = StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)),
                 Sequence = counter,
                 Scheme   = Name
             };
 
-            part.Offset = part.Start  * (ulong)sector.Length;
-            part.Size   = part.Length * (ulong)sector.Length;
+            part.Offset = part.Start  * imagePlugin.Info.SectorSize;
+            part.Size   = part.Length * imagePlugin.Info.SectorSize;
 
-            if(entry.length <= 0) continue;
+            if(entry.length == 0) continue;
+
+            if(part.Start >= imagePlugin.Info.Sectors || part.End >= imagePlugin.Info.Sectors) continue;
 
             partitions.Add(part);
             counter++;
         }
 
-        return true;
+        return partitions.Count > 0;
     }
 
 #endregion
