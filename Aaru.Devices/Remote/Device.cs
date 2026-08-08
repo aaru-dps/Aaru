@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
@@ -60,8 +61,9 @@ public sealed partial class Device : Devices.Device
     }
 
     /// <summary>Current device is remote</summary>
-
-    // ReSharper disable once UnusedMember.Global
+    [SuppressMessage("ReSharper",
+                     "UnusedMember.Global",
+                     Justification = "Public API used by consumers of the library.")]
     public bool IsRemote => _remote != null;
 
     /// <summary>Remote application</summary>
@@ -132,6 +134,8 @@ public sealed partial class Device : Devices.Device
         {
             errno = (ErrorNumber)remoteErrno;
 
+            dev._remote.Disconnect();
+
             return null;
         }
 
@@ -165,7 +169,6 @@ public sealed partial class Device : Devices.Device
                 break;
         }
 
-#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -200,9 +203,6 @@ public sealed partial class Device : Devices.Device
             return dev;
         }
 
-#endregion SecureDigital / MultiMediaCard
-
-#region USB
 
         if(dev._remote.GetUsbData(out byte[] remoteUsbDescriptors,
                                   out ushort remoteUsbVendor,
@@ -220,9 +220,6 @@ public sealed partial class Device : Devices.Device
             dev.UsbSerialString       = remoteUsbSerial;
         }
 
-#endregion USB
-
-#region FireWire
 
         if(dev._remote.GetFireWireData(out dev.FirewireVendor,
                                        out dev.FirewireModel,
@@ -235,16 +232,12 @@ public sealed partial class Device : Devices.Device
             dev.FireWireModelName  = remoteFireWireModelName;
         }
 
-#endregion FireWire
-
-#region PCMCIA
 
         if(!dev._remote.GetPcmciaData(out byte[] cisBuf)) return dev;
 
         dev.IsPcmcia = true;
         dev.Cis      = cisBuf;
 
-#endregion PCMCIA
 
         return dev;
     }

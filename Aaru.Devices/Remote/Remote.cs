@@ -86,37 +86,63 @@ public class Remote : IDisposable
         var ipEndPoint = new IPEndPoint(ipAddress, uri.Port > 0 ? uri.Port : 6666);
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        _socket.Connect(ipEndPoint);
-
-        AaruLogging.WriteLine(Localization.Connected_to_0, uri.Host);
-
-        var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
-
-        int len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
-
-        if(len < hdrBuf.Length)
+        try
         {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            _socket.Connect(ipEndPoint);
 
-            throw new IOException();
-        }
+            AaruLogging.WriteLine(Localization.Connected_to_0, uri.Host);
 
-        AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
-        if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
-        {
-            AaruLogging.Error(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
+            int len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
-            throw new ArgumentException();
-        }
-
-        byte[] buf;
-
-        if(hdr.packetType != AaruPacketType.Hello)
-        {
-            if(hdr.packetType != AaruPacketType.Nop)
+            if(len < hdrBuf.Length)
             {
-                AaruLogging.Error(Localization.Expected_Hello_Packet_got_packet_type_0, hdr.packetType);
+                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+                throw new IOException();
+            }
+
+            AaruPacketHeader hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
+
+            if(hdr.remote_id != Consts.REMOTE_ID || hdr.packet_id != Consts.PACKET_ID)
+            {
+                AaruLogging.Error(Localization.Received_data_is_not_an_Aaru_Remote_Packet);
+
+                throw new ArgumentException();
+            }
+
+            byte[] buf;
+
+            if(hdr.packetType != AaruPacketType.Hello)
+            {
+                if(hdr.packetType != AaruPacketType.Nop)
+                {
+                    AaruLogging.Error(Localization.Expected_Hello_Packet_got_packet_type_0, hdr.packetType);
+
+                    throw new ArgumentException();
+                }
+
+                buf = new byte[hdr.len];
+                len = Receive(_socket, buf, buf.Length, SocketFlags.None);
+
+                if(len < buf.Length)
+                {
+                    AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+                    throw new IOException();
+                }
+
+                AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
+
+                AaruLogging.Error(nop.reason);
+
+                throw new ArgumentException();
+            }
+
+            if(hdr.version != Consts.PACKET_VERSION)
+            {
+                AaruLogging.Error(Localization.Unrecognized_packet_version);
 
                 throw new ArgumentException();
             }
@@ -131,66 +157,50 @@ public class Remote : IDisposable
                 throw new IOException();
             }
 
-            AaruPacketNop nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
+            AaruPacketHello serverHello = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHello>(buf);
 
-            AaruLogging.Error(nop.reason);
+            ServerApplication            = serverHello.application;
+            ServerVersion                = serverHello.version;
+            ServerOperatingSystem        = serverHello.sysname;
+            ServerOperatingSystemVersion = serverHello.release;
+            ServerArchitecture           = serverHello.machine;
+            ServerProtocolVersion        = serverHello.maxProtocol;
 
-            throw new ArgumentException();
-        }
+            var clientHello = new AaruPacketHello
+            {
+                application = "Aaru",
+                version     = Version.GetInformationalVersion(),
+                maxProtocol = Consts.MAX_PROTOCOL,
+                sysname     = DetectOS.GetPlatformName(DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
+                release     = DetectOS.GetVersion(),
+                machine     = RuntimeInformation.ProcessArchitecture.ToString(),
+                hdr = new AaruPacketHeader
+                {
+                    remote_id  = Consts.REMOTE_ID,
+                    packet_id  = Consts.PACKET_ID,
+                    len        = (uint)Marshal.SizeOf<AaruPacketHello>(),
+                    version    = Consts.PACKET_VERSION,
+                    packetType = AaruPacketType.Hello
+                }
+            };
 
-        if(hdr.version != Consts.PACKET_VERSION)
-        {
-            AaruLogging.Error(Localization.Unrecognized_packet_version);
+            buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
 
-            throw new ArgumentException();
-        }
+            len = _socket.Send(buf, SocketFlags.None);
 
-        buf = new byte[hdr.len];
-        len = Receive(_socket, buf, buf.Length, SocketFlags.None);
+            if(len >= buf.Length) return;
 
-        if(len < buf.Length)
-        {
-            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+            AaruLogging.Error(Localization.Could_not_write_to_the_network);
 
             throw new IOException();
         }
-
-        AaruPacketHello serverHello = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHello>(buf);
-
-        ServerApplication            = serverHello.application;
-        ServerVersion                = serverHello.version;
-        ServerOperatingSystem        = serverHello.sysname;
-        ServerOperatingSystemVersion = serverHello.release;
-        ServerArchitecture           = serverHello.machine;
-        ServerProtocolVersion        = serverHello.maxProtocol;
-
-        var clientHello = new AaruPacketHello
+        catch
         {
-            application = "Aaru",
-            version     = Version.GetInformationalVersion(),
-            maxProtocol = Consts.MAX_PROTOCOL,
-            sysname     = DetectOS.GetPlatformName(DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
-            release     = DetectOS.GetVersion(),
-            machine     = RuntimeInformation.ProcessArchitecture.ToString(),
-            hdr = new AaruPacketHeader
-            {
-                remote_id  = Consts.REMOTE_ID,
-                packet_id  = Consts.PACKET_ID,
-                len        = (uint)Marshal.SizeOf<AaruPacketHello>(),
-                version    = Consts.PACKET_VERSION,
-                packetType = AaruPacketType.Hello
-            }
-        };
+            // Don't leak the socket when the connection or the handshake fails
+            _socket.Close();
 
-        buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
-
-        len = _socket.Send(buf, SocketFlags.None);
-
-        if(len >= buf.Length) return;
-
-        AaruLogging.Error(Localization.Could_not_write_to_the_network);
-
-        throw new IOException();
+            throw;
+        }
     }
 
     /// <summary>Remote server application</summary>
