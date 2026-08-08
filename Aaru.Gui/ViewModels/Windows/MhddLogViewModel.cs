@@ -97,6 +97,8 @@ public partial class MhddLogViewModel : ViewModelBase
                                  .ShowWindowDialogAsync(_window);
 
             _window.Close();
+
+            return;
         }
 
         stream.Position = 4;
@@ -162,6 +164,10 @@ public partial class MhddLogViewModel : ViewModelBase
                                  .ShowWindowDialogAsync(_window);
 
             _window.Close();
+
+            stream.Close();
+
+            return;
         }
 
         stream.Position = pointer;
