@@ -830,23 +830,7 @@ partial class Dump
                             if(supportsLongSectors)
                                 outputFormat.WriteSectorsLong(data, i + r, false, 1, [sectorStatus]);
                             else
-                            {
-                                var cooked = new MemoryStream();
-                                var sector = new byte[sectorSize];
-
-                                for(var b = 0; b < blocksToRead; b++)
-                                {
-                                    Array.Copy(cmdBuf, (int)(0 + b * blockSize), sector, 0, sectorSize);
-                                    byte[] cookedSector = Sector.GetUserData(sector);
-                                    cooked.Write(cookedSector, 0, cookedSector.Length);
-                                }
-
-                                outputFormat.WriteSectors(cooked.ToArray(),
-                                                          i,
-                                                          false,
-                                                          blocksToRead,
-                                                          Enumerable.Repeat(sectorStatus, (int)blocksToRead).ToArray());
-                            }
+                                outputFormat.WriteSectors(Sector.GetUserData(data), i + r, false, 1, [sectorStatus]);
 
                             bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                 desiredSubchannel,
@@ -948,21 +932,10 @@ partial class Dump
                                 outputFormat.WriteSectorsLong(cmdBuf, i + r, false, 1, [sectorStatus]);
                             else
                             {
-                                var cooked = new MemoryStream();
                                 var sector = new byte[sectorSize];
+                                Array.Copy(cmdBuf, 0, sector, 0, sectorSize);
 
-                                for(var b = 0; b < blocksToRead; b++)
-                                {
-                                    Array.Copy(cmdBuf, (int)(b * sectorSize), sector, 0, sectorSize);
-                                    byte[] cookedSector = Sector.GetUserData(sector);
-                                    cooked.Write(cookedSector, 0, cookedSector.Length);
-                                }
-
-                                outputFormat.WriteSectors(cooked.ToArray(),
-                                                          i,
-                                                          false,
-                                                          blocksToRead,
-                                                          Enumerable.Repeat(sectorStatus, (int)blocksToRead).ToArray());
+                                outputFormat.WriteSectors(Sector.GetUserData(sector), i + r, false, 1, [sectorStatus]);
                             }
                         }
 
