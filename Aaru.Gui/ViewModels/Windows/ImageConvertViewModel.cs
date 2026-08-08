@@ -37,7 +37,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Aaru.CommonTypes;
@@ -60,7 +59,7 @@ using Convert = Aaru.Core.Image.Convert;
 
 namespace Aaru.Gui.ViewModels.Windows;
 
-[SuppressMessage("ReSharper", "AsyncVoidLambda")]
+[SuppressMessage("ReSharper", "AsyncVoidLambda", Justification = "Event handler lambdas must be async void.")]
 public sealed partial class ImageConvertViewModel : ViewModelBase
 {
     readonly IMediaImage _inputFormat;
@@ -295,11 +294,11 @@ public sealed partial class ImageConvertViewModel : ViewModelBase
             return;
         }
 
-        new Thread(DoWork).Start(SelectedPlugin.Plugin);
+        object plugin = SelectedPlugin.Plugin;
+        _ = Task.Run(() => DoWorkAsync(plugin));
     }
 
-    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void DoWork(object plugin)
+    async Task DoWorkAsync(object plugin)
     {
         var warning = false;
 
