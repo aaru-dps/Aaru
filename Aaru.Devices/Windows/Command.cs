@@ -460,7 +460,7 @@ partial class Device
 
                 return 0;
             }
-            case MmcCommands.SendCsd when CachedCid != null:
+            case MmcCommands.SendCsd when CachedCsd != null:
             {
                 cmdStopwatch.Restart();
                 buffer = new byte[CachedCsd.Length];

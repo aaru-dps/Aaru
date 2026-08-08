@@ -37,7 +37,12 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices.Remote;
 
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+[SuppressMessage("ReSharper",
+                 "MemberCanBePrivate.Global",
+                 Justification = "Public API used by consumers of the library.")]
+[SuppressMessage("ReSharper",
+                 "ClassCannotBeInstantiated",
+                 Justification = "Instantiated through the platform-specific factory for remote devices.")]
 public partial class Device
 {
     /// <inheritdoc />
@@ -131,7 +136,7 @@ public partial class Device
 
                 return 0;
             }
-            case MmcCommands.SendCsd when CachedCid != null:
+            case MmcCommands.SendCsd when CachedCsd != null:
             {
                 cmdStopwatch.Restart();
                 buffer = new byte[CachedCsd.Length];
