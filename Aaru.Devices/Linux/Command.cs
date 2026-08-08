@@ -231,7 +231,7 @@ partial class Device
                                     out duration,
                                     out sense);
 
-        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 && SenseBuffer[9] != 0x0C) return error;
+        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 || SenseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = SenseBuffer[11];
 
@@ -295,7 +295,7 @@ partial class Device
                                     out duration,
                                     out sense);
 
-        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 && SenseBuffer[9] != 0x0C) return error;
+        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 || SenseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = SenseBuffer[11];
 
@@ -365,7 +365,7 @@ partial class Device
                                     out duration,
                                     out sense);
 
-        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 && SenseBuffer[9] != 0x0C) return error;
+        if(SenseBuffer.Length < 22 || SenseBuffer[8] != 0x09 || SenseBuffer[9] != 0x0C) return error;
 
         errorRegisters.Error = SenseBuffer[11];
 
