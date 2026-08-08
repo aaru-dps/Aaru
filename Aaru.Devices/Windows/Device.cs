@@ -49,8 +49,8 @@ partial class Device : Devices.Device, IDisposable
     private       nuint _capacity;
     /// <summary>Gets the file handle representing this device</summary>
     /// <value>The file handle</value>
-    SafeFileHandle _fileHandle;
-    private nuint _nativeBuffer;
+    SafeFileHandle      _fileHandle;
+    private nuint       _nativeBuffer;
 
     Device() {}
 
@@ -59,6 +59,7 @@ partial class Device : Devices.Device, IDisposable
     public new unsafe void Dispose()
     {
         if(_nativeBuffer == 0) return;
+
         NativeMemory.AlignedFree((void*)_nativeBuffer);
         _nativeBuffer = 0;
         _capacity     = 0;
@@ -308,12 +309,11 @@ partial class Device : Devices.Device, IDisposable
 
             if(!sense)
             {
-                dev.CachedScr = new byte[4];
-                Array.Copy(sdBuffer, 0, dev.CachedScr, 0, 4);
+                dev.CachedOcr = new byte[4];
+                Array.Copy(sdBuffer, 0, dev.CachedOcr, 0, 4);
             }
         }
 
-#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -348,9 +348,7 @@ partial class Device : Devices.Device, IDisposable
             return dev;
         }
 
-#endregion SecureDigital / MultiMediaCard
 
-#region USB
 
         Usb.UsbDevice usbDevice = null;
 
@@ -378,21 +376,16 @@ partial class Device : Devices.Device, IDisposable
                 usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
         }
 
-#endregion USB
 
-#region FireWire
 
         // TODO: Implement
 
         dev.IsFireWire = false;
 
-#endregion FireWire
 
-#region PCMCIA
 
         // TODO: Implement
 
-#endregion PCMCIA
 
         return dev;
     }
