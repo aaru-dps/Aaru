@@ -524,15 +524,14 @@ public partial class Device
         if(pmi)
         {
             cdb[14] = 0x01;
-            byte[] temp = BitConverter.GetBytes(address);
-            cdb[2] = temp[7];
-            cdb[3] = temp[6];
-            cdb[4] = temp[5];
-            cdb[5] = temp[4];
-            cdb[6] = temp[3];
-            cdb[7] = temp[2];
-            cdb[8] = temp[1];
-            cdb[9] = temp[0];
+            cdb[2]  = (byte)(address >> 56);
+            cdb[3]  = (byte)(address >> 48);
+            cdb[4]  = (byte)(address >> 40);
+            cdb[5]  = (byte)(address >> 32);
+            cdb[6]  = (byte)(address >> 24);
+            cdb[7]  = (byte)(address >> 16);
+            cdb[8]  = (byte)(address >> 8);
+            cdb[9]  = (byte)address;
         }
 
         cdb[10] = (byte)((buffer.Length & 0xFF000000) >> 24);

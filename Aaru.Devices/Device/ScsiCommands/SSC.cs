@@ -263,8 +263,7 @@ public partial class Device
         senseBuffer = SenseBuffer;
         Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
-        byte[] buffer  = [];
-        byte[] idBytes = BitConverter.GetBytes(identifier);
+        byte[] buffer = [];
 
         cdb[0] = (byte)ScsiCommands.Locate16;
         cdb[1] = (byte)((byte)destType << 3);
@@ -277,14 +276,14 @@ public partial class Device
 
         cdb[3] = partition;
 
-        cdb[4]  = idBytes[7];
-        cdb[5]  = idBytes[6];
-        cdb[6]  = idBytes[5];
-        cdb[7]  = idBytes[4];
-        cdb[8]  = idBytes[3];
-        cdb[9]  = idBytes[2];
-        cdb[10] = idBytes[1];
-        cdb[11] = idBytes[0];
+        cdb[4]  = (byte)(identifier >> 56);
+        cdb[5]  = (byte)(identifier >> 48);
+        cdb[6]  = (byte)(identifier >> 40);
+        cdb[7]  = (byte)(identifier >> 32);
+        cdb[8]  = (byte)(identifier >> 24);
+        cdb[9]  = (byte)(identifier >> 16);
+        cdb[10] = (byte)(identifier >> 8);
+        cdb[11] = (byte)identifier;
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.None, out duration, out bool sense);
 
@@ -439,7 +438,6 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
         senseBuffer = SenseBuffer;
-        byte[] idBytes = BitConverter.GetBytes(objectId);
 
         cdb[0] = (byte)ScsiCommands.Read16;
 
@@ -448,14 +446,14 @@ public partial class Device
         if(sili) cdb[1] += 0x02;
 
         cdb[3]  = partition;
-        cdb[4]  = idBytes[7];
-        cdb[5]  = idBytes[6];
-        cdb[6]  = idBytes[5];
-        cdb[7]  = idBytes[4];
-        cdb[8]  = idBytes[3];
-        cdb[9]  = idBytes[2];
-        cdb[10] = idBytes[1];
-        cdb[11] = idBytes[0];
+        cdb[4]  = (byte)(objectId >> 56);
+        cdb[5]  = (byte)(objectId >> 48);
+        cdb[6]  = (byte)(objectId >> 40);
+        cdb[7]  = (byte)(objectId >> 32);
+        cdb[8]  = (byte)(objectId >> 24);
+        cdb[9]  = (byte)(objectId >> 16);
+        cdb[10] = (byte)(objectId >> 8);
+        cdb[11] = (byte)objectId;
         cdb[12] = (byte)((transferLen & 0xFF0000) >> 16);
         cdb[13] = (byte)((transferLen & 0xFF00)   >> 8);
         cdb[14] = (byte)(transferLen & 0xFF);
@@ -764,7 +762,6 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
         senseBuffer = SenseBuffer;
-        byte[] idBytes = BitConverter.GetBytes(objectId);
 
         cdb[0] = (byte)ScsiCommands.ReadReverse16;
 
@@ -775,14 +772,14 @@ public partial class Device
         if(byteOrder) cdb[1] += 0x04;
 
         cdb[3]  = partition;
-        cdb[4]  = idBytes[7];
-        cdb[5]  = idBytes[6];
-        cdb[6]  = idBytes[5];
-        cdb[7]  = idBytes[4];
-        cdb[8]  = idBytes[3];
-        cdb[9]  = idBytes[2];
-        cdb[10] = idBytes[1];
-        cdb[11] = idBytes[0];
+        cdb[4]  = (byte)(objectId >> 56);
+        cdb[5]  = (byte)(objectId >> 48);
+        cdb[6]  = (byte)(objectId >> 40);
+        cdb[7]  = (byte)(objectId >> 32);
+        cdb[8]  = (byte)(objectId >> 24);
+        cdb[9]  = (byte)(objectId >> 16);
+        cdb[10] = (byte)(objectId >> 8);
+        cdb[11] = (byte)objectId;
         cdb[12] = (byte)((transferLen & 0xFF0000) >> 16);
         cdb[13] = (byte)((transferLen & 0xFF00)   >> 8);
         cdb[14] = (byte)(transferLen & 0xFF);
@@ -997,13 +994,12 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..6];
         cdb.Clear();
         byte[] buffer = [];
-        byte[] countB = BitConverter.GetBytes(count);
 
         cdb[0] = (byte)ScsiCommands.Space;
         cdb[1] = (byte)((byte)code & 0x0F);
-        cdb[2] = countB[2];
-        cdb[3] = countB[1];
-        cdb[4] = countB[0];
+        cdb[2] = (byte)(count >> 16);
+        cdb[3] = (byte)(count >> 8);
+        cdb[4] = (byte)count;
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.None, out duration, out bool sense);
 

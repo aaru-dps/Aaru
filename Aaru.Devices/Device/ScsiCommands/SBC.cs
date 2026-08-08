@@ -233,7 +233,6 @@ public partial class Device
         senseBuffer = SenseBuffer;
         Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
-        byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0] = (byte)ScsiCommands.Read16;
         cdb[1] = (byte)((rdprotect & 0x07) << 5);
@@ -244,14 +243,14 @@ public partial class Device
 
         if(fuaNv) cdb[1] += 0x02;
 
-        cdb[2]  = lbaBytes[7];
-        cdb[3]  = lbaBytes[6];
-        cdb[4]  = lbaBytes[5];
-        cdb[5]  = lbaBytes[4];
-        cdb[6]  = lbaBytes[3];
-        cdb[7]  = lbaBytes[2];
-        cdb[8]  = lbaBytes[1];
-        cdb[9]  = lbaBytes[0];
+        cdb[2]  = (byte)(lba >> 56);
+        cdb[3]  = (byte)(lba >> 48);
+        cdb[4]  = (byte)(lba >> 40);
+        cdb[5]  = (byte)(lba >> 32);
+        cdb[6]  = (byte)(lba >> 24);
+        cdb[7]  = (byte)(lba >> 16);
+        cdb[8]  = (byte)(lba >> 8);
+        cdb[9]  = (byte)lba;
         cdb[10] = (byte)((transferLength & 0xFF000000) >> 24);
         cdb[11] = (byte)((transferLength & 0xFF0000)   >> 16);
         cdb[12] = (byte)((transferLength & 0xFF00)     >> 8);
@@ -333,18 +332,17 @@ public partial class Device
         senseBuffer = SenseBuffer;
         Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
-        byte[] lbaBytes = BitConverter.GetBytes(lba);
 
         cdb[0]  = (byte)ScsiCommands.ServiceActionIn;
         cdb[1]  = (byte)ScsiServiceActions.ReadLong16;
-        cdb[2]  = lbaBytes[7];
-        cdb[3]  = lbaBytes[6];
-        cdb[4]  = lbaBytes[5];
-        cdb[5]  = lbaBytes[4];
-        cdb[6]  = lbaBytes[3];
-        cdb[7]  = lbaBytes[2];
-        cdb[8]  = lbaBytes[1];
-        cdb[9]  = lbaBytes[0];
+        cdb[2]  = (byte)(lba >> 56);
+        cdb[3]  = (byte)(lba >> 48);
+        cdb[4]  = (byte)(lba >> 40);
+        cdb[5]  = (byte)(lba >> 32);
+        cdb[6]  = (byte)(lba >> 24);
+        cdb[7]  = (byte)(lba >> 16);
+        cdb[8]  = (byte)(lba >> 8);
+        cdb[9]  = (byte)lba;
         cdb[12] = (byte)((transferBytes & 0xFF00) >> 8);
         cdb[13] = (byte)(transferBytes & 0xFF);
 
