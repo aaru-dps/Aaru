@@ -54,6 +54,18 @@ public partial class Device
     public bool HlDtStReadRawDvd(out byte[] buffer,  out ReadOnlySpan<byte> senseBuffer, uint lba, uint transferLength,
                                  uint       timeout, out double             duration,    uint layerbreak, bool otp)
     {
+        // The transfer size field is 16-bit, so more than 31 sectors of 2064 bytes cannot be requested
+        if(transferLength > ushort.MaxValue / 2064)
+        {
+            buffer      = [];
+            senseBuffer = SenseBuffer;
+            duration    = 0;
+            Error       = true;
+            LastError   = 22; // EINVAL
+
+            return true;
+        }
+
         // We need to fill the buffer before reading it with the HL-DT-ST command. We don't care about sense,
         // because the data can be wrong anyway, so we check the buffer data later instead.
         Read12(out _, out _, 0, false, false, false, false, lba, 2048, 0, 16, false, timeout, out duration);
