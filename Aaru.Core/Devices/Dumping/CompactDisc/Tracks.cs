@@ -371,9 +371,17 @@ partial class Dump
                   cmdBuf[10 + bufOffset] != 0xFF ||
                   cmdBuf[11 + bufOffset] != 0x00)
             {
-                if(bufOffset + 12 >= cmdBuf.Length) break;
+                if(bufOffset + 16 >= cmdBuf.Length) break;
 
                 bufOffset++;
+            }
+
+            if(bufOffset + 18 >= cmdBuf.Length)
+            {
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Unable_to_guess_mode_for_track_0_continuing,
+                                                   trk.Sequence));
+
+                continue;
             }
 
             switch(cmdBuf[15 + bufOffset])
@@ -394,7 +402,7 @@ partial class Dump
                         break;
                     }
 
-                    if((cmdBuf[0x012] & 0x20) == 0x20) // mode 2 form 2
+                    if((cmdBuf[0x012 + bufOffset] & 0x20) == 0x20) // mode 2 form 2
                     {
                         UpdateStatus?.Invoke(string.Format(Localization.Core.Track_0_is_MODE2_FORM_2, trk.Sequence));
                         trk.Type = TrackType.CdMode2Form2;
