@@ -66,6 +66,7 @@ partial class Device : Devices.Device, IDisposable
     public new unsafe void Dispose()
     {
         if(_nativeBuffer == 0) return;
+
         NativeMemory.AlignedFree((void*)_nativeBuffer);
         _nativeBuffer = 0;
         _capacity     = 0;
@@ -164,45 +165,43 @@ partial class Device : Devices.Device, IDisposable
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sg", StringComparison.Ordinal))
         {
-            if(!dev.ScsiInquiry(out byte[] _, out _))
-                dev.Type = DeviceType.SCSI;
+            if(!dev.ScsiInquiry(out byte[] _, out _)) dev.Type = DeviceType.SCSI;
+        }
 
-            // MultiMediaCard and SecureDigital go here
-            else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
+        // MultiMediaCard and SecureDigital go here
+        else if(devicePath.StartsWith("/dev/mmcblk", StringComparison.Ordinal))
+        {
+            devPath = devicePath[5..];
+
+            if(File.Exists("/sys/block/" + devPath + "/device/csd"))
             {
-                devPath = devicePath[5..];
+                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out dev.CachedCsd);
 
-                if(File.Exists("/sys/block/" + devPath + "/device/csd"))
-                {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/csd", out dev.CachedCsd);
+                if(len == 0) dev.CachedCsd = null;
+            }
 
-                    if(len == 0) dev.CachedCsd = null;
-                }
+            if(File.Exists("/sys/block/" + devPath + "/device/cid"))
+            {
+                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out dev.CachedCid);
 
-                if(File.Exists("/sys/block/" + devPath + "/device/cid"))
-                {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/cid", out dev.CachedCid);
+                if(len == 0) dev.CachedCid = null;
+            }
 
-                    if(len == 0) dev.CachedCid = null;
-                }
+            if(File.Exists("/sys/block/" + devPath + "/device/scr"))
+            {
+                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out dev.CachedScr);
 
-                if(File.Exists("/sys/block/" + devPath + "/device/scr"))
-                {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/scr", out dev.CachedScr);
+                if(len == 0) dev.CachedScr = null;
+            }
 
-                    if(len == 0) dev.CachedScr = null;
-                }
+            if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
+            {
+                int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out dev.CachedOcr);
 
-                if(File.Exists("/sys/block/" + devPath + "/device/ocr"))
-                {
-                    int len = ConvertFromFileHexAscii("/sys/block/" + devPath + "/device/ocr", out dev.CachedOcr);
-
-                    if(len == 0) dev.CachedOcr = null;
-                }
+                if(len == 0) dev.CachedOcr = null;
             }
         }
 
-#region SecureDigital / MultiMediaCard
 
         if(dev.CachedCid != null)
         {
@@ -237,9 +236,7 @@ partial class Device : Devices.Device, IDisposable
             return dev;
         }
 
-#endregion SecureDigital / MultiMediaCard
 
-#region USB
 
         string resolvedLink;
 
@@ -323,9 +320,7 @@ partial class Device : Devices.Device, IDisposable
             }
         }
 
-#endregion USB
 
-#region FireWire
 
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
@@ -401,9 +396,7 @@ partial class Device : Devices.Device, IDisposable
             }
         }
 
-#endregion FireWire
 
-#region PCMCIA
 
         if(!devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) &&
            !devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) &&
@@ -448,7 +441,6 @@ partial class Device : Devices.Device, IDisposable
             break;
         }
 
-#endregion PCMCIA
 
         return dev;
     }
