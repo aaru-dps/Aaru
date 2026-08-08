@@ -386,6 +386,8 @@ partial class Dump
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Reading_0_sectors_at_a_time, blocksToRead));
 
+        if(_skip < blocksToRead) _skip = blocksToRead;
+
         var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin",
                                   _dev,
                                   blocks,
