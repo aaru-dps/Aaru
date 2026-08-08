@@ -58,6 +58,9 @@ public partial class Device
     ///     reserved :3.
     /// </summary>
     /// <param name="discType">0 = CD, 1 = DVD, 2 = BD (redumper <c>OmniDrive_DiscType</c>).</param>
+    /// <param name="rawAddressing">Set to <c>true</c> to use raw addressing.</param>
+    /// <param name="fua">Set to <c>true</c> if the command should use FUA.</param>
+    /// <param name="descramble">Set to <c>true</c> if the data should be descrambled by the device.</param>
     static byte EncodeOmniDriveReadCdb1(OmniDriveDiscType discType, bool rawAddressing, bool fua, bool descramble)
     {
         int d = (byte)discType & 3;
@@ -102,16 +105,12 @@ public partial class Device
 
         Inquiry? inquiry = Inquiry.Decode(buffer);
 
-        if(!inquiry.HasValue || inquiry.Value.Reserved5 == null || inquiry.Value.Reserved5.Length < 11) return false;
+        if(inquiry?.Reserved5 is not { Length: >= 12 }) return false;
 
-        byte[] reserved5 = inquiry.Value.Reserved5;
-        byte[] omnidrive = [0x4F, 0x6D, 0x6E, 0x69, 0x44, 0x72, 0x69, 0x76, 0x65]; // "OmniDrive"
+        byte[]             reserved5 = inquiry.Value.Reserved5;
+        ReadOnlySpan<byte> omnidrive = "OmniDrive"u8;
 
-        if(reserved5.Length < omnidrive.Length) return false;
-
-        for(var i = 0; i < omnidrive.Length; i++)
-            if(reserved5[i] != omnidrive[i])
-                return false;
+        if(!omnidrive.SequenceEqual(reserved5.AsSpan(0, omnidrive.Length))) return false;
 
         major    = reserved5[9];
         minor    = reserved5[10];
@@ -130,6 +129,7 @@ public partial class Device
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <param name="fua">Set to <c>true</c> if the command should use FUA.</param>
     /// <param name="descramble">Set to <c>true</c> if the data should be descrambled by the device.</param>
+    /// <param name="rawAddresing">Set to <c>true</c> to use raw addressing.</param>
     public bool OmniDriveReadRawDvd(out byte[] buffer,            out ReadOnlySpan<byte> senseBuffer, uint lba,
                                     uint       transferLength,    uint timeout, out double duration, bool fua = false,
                                     bool       descramble = true, bool rawAddresing = false)
@@ -139,9 +139,9 @@ public partial class Device
         buffer = new byte[2064 * transferLength];
 
         FillOmniDriveReadCdb(cdb,
-                                lba,
-                                transferLength,
-                                EncodeOmniDriveReadCdb1(OmniDriveDiscType.DVD, rawAddresing, fua, descramble));
+                             lba,
+                             transferLength,
+                             EncodeOmniDriveReadCdb1(OmniDriveDiscType.Dvd, rawAddresing, fua, descramble));
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -167,17 +167,17 @@ public partial class Device
     /// <param name="fua">Set to <c>true</c> if the command should use FUA.</param>
     /// <param name="descramble">Set to <c>true</c> if the data should be descrambled by the device.</param>
     public bool OmniDriveReadRawBd(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint lba, uint transferLength,
-                                   uint timeout, out double duration, bool fua = false, bool descramble = true)
+                                   uint       timeout, out double duration, bool fua = false, bool descramble = true)
     {
         senseBuffer = SenseBuffer;
-        Span<byte> cdb = CdbBuffer[..12];
-        byte[] deviceBuffer = new byte[OMNIDRIVE_BD_TRANSFER_PER_LBA * transferLength];
+        Span<byte> cdb          = CdbBuffer[..12];
+        byte[]     deviceBuffer = new byte[OMNIDRIVE_BD_TRANSFER_PER_LBA * transferLength];
         buffer = new byte[OMNIDRIVE_BD_DATA_FRAME_SIZE * transferLength];
 
         FillOmniDriveReadCdb(cdb,
                              lba,
                              transferLength,
-                             EncodeOmniDriveReadCdb1(OmniDriveDiscType.BD, false, fua, descramble));
+                             EncodeOmniDriveReadCdb1(OmniDriveDiscType.Bd, false, fua, descramble));
 
         LastError = SendScsiCommand(cdb, ref deviceBuffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -194,7 +194,9 @@ public partial class Device
             int dataOffset   = (int)(i * OMNIDRIVE_BD_DATA_FRAME_SIZE);
             Array.Copy(deviceBuffer, deviceOffset, buffer, dataOffset, OMNIDRIVE_BD_DATA_FRAME_SIZE);
 
-            if(descramble && !Decoders.Bluray.Sector.CheckEdc(buffer.AsSpan(dataOffset, OMNIDRIVE_BD_DATA_FRAME_SIZE).ToArray())) return true;
+            if(descramble &&
+               !Decoders.Bluray.Sector.CheckEdc(buffer.AsSpan(dataOffset, OMNIDRIVE_BD_DATA_FRAME_SIZE).ToArray()))
+                return true;
         }
 
         Error = LastError != 0;
@@ -219,6 +221,14 @@ public partial class Device
     ///     descramble.
     /// </param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
+    /// <param name="buffer">Buffer where the descrambled sector data will be stored.</param>
+    /// <param name="senseBuffer">Sense buffer.</param>
+    /// <param name="lba">Start block address (LBA).</param>
+    /// <param name="transferLength">Number of 2064-byte sectors to read.</param>
+    /// <param name="timeout">Timeout in seconds.</param>
+    /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
+    /// <param name="fua">Set to <c>true</c> if the command should use FUA.</param>
+    /// <param name="descramble">Set to <c>true</c> if the data should be descrambled by the host.</param>
     public bool OmniDriveReadNintendoDvd(out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint lba,
                                          uint       transferLength, uint timeout, out double duration, bool fua = false,
                                          bool       descramble         = true, byte? derivedDiscKey = null,
@@ -231,7 +241,7 @@ public partial class Device
         FillOmniDriveReadCdb(cdb,
                              lba,
                              transferLength,
-                             EncodeOmniDriveReadCdb1(OmniDriveDiscType.DVD, false, fua, false));
+                             EncodeOmniDriveReadCdb1(OmniDriveDiscType.Dvd, false, fua, false));
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
@@ -263,7 +273,7 @@ public partial class Device
                     errno = _nintendoSectorDecoder.Scramble(slice, key, out descrambled);
                 }
 
-                if(errno != ErrorNumber.NoError || descrambled == null)
+                if(errno != ErrorNumber.NoError)
                 {
                     LastError = (int)errno;
                     Error     = true;
@@ -293,7 +303,7 @@ public partial class Device
 
         cdb.Clear();
         cdb[0]  = (byte)ScsiCommands.ReadOmniDrive;
-        cdb[1]  = EncodeOmniDriveReadCdb1(OmniDriveDiscType.CD, rawAddressing, fua, false);
+        cdb[1]  = EncodeOmniDriveReadCdb1(OmniDriveDiscType.Cd, rawAddressing, fua, false);
         cdb[2]  = (byte)(lba >> 24            & 0xFF);
         cdb[3]  = (byte)(lba >> 16            & 0xFF);
         cdb[4]  = (byte)(lba >> 8             & 0xFF);
@@ -324,7 +334,7 @@ public partial class Device
 
         cdb.Clear();
         cdb[0]  = (byte)ScsiCommands.ReadOmniDrive;
-        cdb[1]  = EncodeOmniDriveReadCdb1(OmniDriveDiscType.CD, rawAddressing, fua, false);
+        cdb[1]  = EncodeOmniDriveReadCdb1(OmniDriveDiscType.Cd, rawAddressing, fua, false);
         cdb[2]  = (byte)(lba >> 24            & 0xFF);
         cdb[3]  = (byte)(lba >> 16            & 0xFF);
         cdb[4]  = (byte)(lba >> 8             & 0xFF);
@@ -347,8 +357,8 @@ public partial class Device
 
     enum OmniDriveDiscType
     {
-        CD  = 0,
-        DVD = 1,
-        BD  = 2
+        Cd  = 0,
+        Dvd = 1,
+        Bd  = 2
     }
 }
