@@ -91,6 +91,8 @@ public partial class Device
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
+        Error = LastError != 0;
+
         return sense;
     }
 
@@ -502,7 +504,7 @@ public partial class Device
 
         bool sense;
 
-        if(layerbreak > 0 && transferLength > 1 && lba + 0x30000 > layerbreak - 256 && lba + 0x30000 < layerbreak + 256)
+        if(layerbreak > 0 && transferLength > 1 && lba + 0x30000 + 256 > layerbreak && lba + 0x30000 < layerbreak + 256)
         {
             buffer      = new byte[transferLength * 2064];
             duration    = 0;
