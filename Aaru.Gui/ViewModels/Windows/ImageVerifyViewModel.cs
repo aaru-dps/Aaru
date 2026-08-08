@@ -34,9 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -126,7 +125,7 @@ public sealed partial class ImageVerifyViewModel : ViewModelBase
     [ObservableProperty]
     bool _verifyImageEnabled;
     [ObservableProperty]
-    bool _VerifyOnlyDataChecked;
+    bool _verifyOnlyDataChecked;
     [ObservableProperty]
     bool _verifySectorsChecked;
     [ObservableProperty]
@@ -172,11 +171,10 @@ public sealed partial class ImageVerifyViewModel : ViewModelBase
         Progress2Visible     = false;
 
         // TODO: Do not offer the option to use this form if the image does not support any kind of verification
-        new Thread(DoWork).Start();
+        _ = Task.Run(DoWork);
     }
 
-    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void DoWork()
+    async Task DoWork()
     {
         bool formatHasTracks;
         var  inputOptical           = _inputFormat as IOpticalMediaImage;
