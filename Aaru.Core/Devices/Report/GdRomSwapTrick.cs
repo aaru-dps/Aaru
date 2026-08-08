@@ -213,6 +213,8 @@ public sealed partial class DeviceReport
             DecodedSense? decodedSense = Sense.Decode(senseBuffer);
 
             if(decodedSense is not { ASC: 0x04, ASCQ: 0x01 }) break;
+
+            Thread.Sleep(2000);
         } while(retries < 25);
 
         if(sense)
