@@ -43,7 +43,7 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of DragonFly BSD disklabels</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Fields document the full on-disk layout")]
 public sealed class DragonFlyBSD : IPartition
 {
     const uint DISK_MAGIC64 = 0xC4464C59;
@@ -79,8 +79,10 @@ public sealed class DragonFlyBSD : IPartition
 
         ulong counter = 0;
 
-        foreach(Partition64 entry in disklabel.d_partitions)
+        for(var i = 0; i < disklabel.d_partitions.Length && i < disklabel.d_npartitions; i++)
         {
+            Partition64 entry = disklabel.d_partitions[i];
+
             var part = new Partition
             {
                 Start    = entry.p_boffset / imagePlugin.Info.SectorSize + sectorOffset,
@@ -97,13 +99,13 @@ public sealed class DragonFlyBSD : IPartition
 
             if(entry.p_bsize % imagePlugin.Info.SectorSize > 0) part.Length++;
 
-            if(entry.p_bsize <= 0 || entry.p_boffset <= 0) continue;
+            if(entry.p_bsize == 0 || entry.p_boffset == 0) continue;
 
             partitions.Add(part);
             counter++;
         }
 
-        return true;
+        return partitions.Count > 0;
     }
 
 #endregion
