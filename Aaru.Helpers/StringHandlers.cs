@@ -143,7 +143,7 @@ public static class StringHandlers
             break;
         }
 
-        return len == 0 ? "" : encoding.GetString(spacePaddedString, start, len);
+        return len == 0 ? "" : encoding.GetString(spacePaddedString, start, len - start);
     }
 
     /// <summary>Converts an OSTA compressed unicode byte array to a C# string</summary>
