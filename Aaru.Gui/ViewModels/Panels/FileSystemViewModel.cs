@@ -80,7 +80,9 @@ public sealed class FileSystemViewModel([NotNull] FileSystem metadata, string in
 
     public string FreeClustersText { get; } = string.Format(Aaru.Localization.Core.Volume_has_0_clusters_free_1,
                                                             metadata.FreeClusters,
-                                                            metadata.FreeClusters / metadata.Clusters);
+                                                            metadata.Clusters == 0
+                                                                ? 0
+                                                                : (double?)metadata.FreeClusters / metadata.Clusters);
 
     public string FilesText { get; } = string.Format(Aaru.Localization.Core.Volume_contains_0_files, metadata.Files);
     public bool   BootableChecked { get; } = metadata.Bootable;
