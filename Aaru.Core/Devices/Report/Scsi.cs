@@ -791,7 +791,8 @@ public sealed partial class DeviceReport
 
                         if(sense || _dev.Error) continue;
 
-                        mediaTest.LongBlockSize = testSize;
+                        mediaTest.SupportsReadLong = true;
+                        mediaTest.LongBlockSize    = testSize;
 
                         break;
                     }
@@ -828,7 +829,8 @@ public sealed partial class DeviceReport
 
                         if(sense || _dev.Error) continue;
 
-                        mediaTest.LongBlockSize = testSize;
+                        mediaTest.SupportsReadLong = true;
+                        mediaTest.LongBlockSize    = testSize;
 
                         break;
                     }
@@ -848,7 +850,11 @@ public sealed partial class DeviceReport
                                                   _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 2380;
+                    if(!sense && !_dev.Error)
+                    {
+                        mediaTest.SupportsReadLong = true;
+                        mediaTest.LongBlockSize    = 2380;
+                    }
 
                     break;
                 }
@@ -865,7 +871,11 @@ public sealed partial class DeviceReport
                                                   _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 4760;
+                    if(!sense && !_dev.Error)
+                    {
+                        mediaTest.SupportsReadLong = true;
+                        mediaTest.LongBlockSize    = 4760;
+                    }
 
                     break;
                 }
@@ -882,7 +892,11 @@ public sealed partial class DeviceReport
                                                   _dev.Timeout,
                                                   out _);
 
-                    if(!sense && !_dev.Error) mediaTest.LongBlockSize = 9424;
+                    if(!sense && !_dev.Error)
+                    {
+                        mediaTest.SupportsReadLong = true;
+                        mediaTest.LongBlockSize    = 9424;
+                    }
 
                     break;
                 }
