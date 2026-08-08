@@ -47,6 +47,7 @@ public sealed class DirColorsParser
     {
         var     map          = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         string? directoryHex = null;
+        string? normalHex    = null;
 
         // Choose ~/.dir_colors or embedded fallback
         string   home     = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -55,7 +56,7 @@ public sealed class DirColorsParser
 
         foreach(string raw in rawLines)
         {
-            string? line = raw?.Trim();
+            string line = raw.Trim();
 
             if(string.IsNullOrEmpty(line) || line is ['#', ..]) continue;
 
@@ -76,9 +77,10 @@ public sealed class DirColorsParser
             }
             else
             {
-                string[] parts = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = line.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
 
                 if(parts.Length < 2) continue;
+
                 pattern = parts[0];
                 sgr     = parts[1];
             }
@@ -97,8 +99,9 @@ public sealed class DirColorsParser
                 Color color = AnsiColorParser.Parse(ansi);
                 hex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
             }
-            catch
+            catch(Exception ex)
             {
+                _ = ex;
 #pragma warning disable ERP022
                 continue;
 #pragma warning restore ERP022
@@ -112,10 +115,10 @@ public sealed class DirColorsParser
                 continue;
             }
 
-            // Directory color pattern
+            // Normal file color pattern
             if(pattern.Equals("NORM", StringComparison.OrdinalIgnoreCase))
             {
-                directoryHex = hex;
+                normalHex = hex;
 
                 continue;
             }
@@ -124,6 +127,7 @@ public sealed class DirColorsParser
         }
 
         DirectoryColor  = directoryHex;
+        NormalColor     = normalHex ?? "white";
         ExtensionColors = map;
     }
 
@@ -137,9 +141,9 @@ public sealed class DirColorsParser
 
     /// <summary>
     ///     The hex color (e.g. "#RRGGBB") used for normal files ("NORM" pattern).
-    ///     Null if no directory color was defined.
+    ///     Falls back to "white" if no normal file color was defined.
     /// </summary>
-    public string NormalColor => "white";
+    public string NormalColor { get; }
 
     /// <summary>
     ///     Maps file extensions (including the leading '.') to hex color strings.
@@ -161,6 +165,6 @@ public sealed class DirColorsParser
 
         using var reader = new StreamReader(stream);
 
-        while(!reader.EndOfStream) yield return reader.ReadLine()!;
+        while(reader.ReadLine() is {} line) yield return line;
     }
 }
