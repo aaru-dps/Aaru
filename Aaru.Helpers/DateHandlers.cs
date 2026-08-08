@@ -74,7 +74,12 @@ public static class DateHandlers
     /// <summary>Converts a Macintosh timestamp to a .NET DateTime</summary>
     /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
     /// <returns>.NET DateTime</returns>
-    public static DateTime MacToDateTime(ulong macTimeStamp) => _macEpoch.AddTicks((long)(macTimeStamp * 10000000));
+    public static DateTime MacToDateTime(ulong macTimeStamp) =>
+        macTimeStamp > (ulong)(DateTime.MaxValue - _macEpoch).TotalSeconds
+
+            // Corrupt on-disk values can overflow DateTime, return epoch
+            ? DateTime.MinValue
+            : _macEpoch.AddTicks((long)macTimeStamp * 10000000);
 
     /// <summary>Converts a Lisa timestamp to a .NET DateTime</summary>
     /// <param name="lisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
@@ -269,7 +274,10 @@ public static class DateHandlers
     {
         double delta = vmsDate * 0.0001; // Tenths of microseconds to milliseconds, will lose some detail
 
-        return _julianEpoch.AddMilliseconds(delta);
+        // Corrupt on-disk values can overflow DateTime, return epoch
+        return delta > (DateTime.MaxValue - _julianEpoch).TotalMilliseconds
+                   ? DateTime.MinValue
+                   : _julianEpoch.AddMilliseconds(delta);
     }
 
     /// <summary>Converts an Amiga timestamp to a .NET DateTime</summary>
@@ -388,7 +396,12 @@ public static class DateHandlers
         long ticks = (long)centiseconds * 100000 + (long)hundredsOfMicroseconds * 1000 + (long)microseconds * 10;
 
         if(specification == 0)
-            return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc).AddTicks(ticks);
+        {
+            // Corrupt on-disk values make an invalid date, return epoch
+            return TryBuildDateTime(year, month, day, hour, minute, second, 0, DateTimeKind.Utc, out DateTime utcDate)
+                       ? utcDate.AddTicks(ticks)
+                       : DateTime.MinValue;
+        }
 
         var   preOffset = (ushort)(typeAndTimeZone & 0xFFF);
         short offset;
@@ -398,18 +411,29 @@ public static class DateHandlers
         else
             offset = (short)(preOffset & 0x7FF);
 
+        // Corrupt on-disk values make an invalid date, return epoch
+        if(!TryBuildDateTime(year,
+                             month,
+                             day,
+                             hour,
+                             minute,
+                             second,
+                             0,
+                             DateTimeKind.Unspecified,
+                             out DateTime ecmaDate))
+            return DateTime.MinValue;
+
         switch(offset)
         {
             case -2047:
-                return new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified).AddTicks(ticks);
+                return ecmaDate.AddTicks(ticks);
             case < -1440 or > 1440:
                 offset = 0;
 
                 break;
         }
 
-        return new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(0, offset, 0)).AddTicks(ticks)
-           .DateTime;
+        return new DateTimeOffset(ecmaDate, new TimeSpan(0, offset, 0)).AddTicks(ticks).DateTime;
     }
 
     /// <summary>Converts a Solaris high resolution timestamp to .NET DateTime</summary>
