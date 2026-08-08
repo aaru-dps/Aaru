@@ -1044,6 +1044,8 @@ partial class Dump
 
                     elapsed += _speedStopwatch.Elapsed.TotalMilliseconds;
 
+                    _speedStopwatch.Reset();
+
                     if(elapsed < 100) continue;
 
                     currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed / 1000);
@@ -1124,11 +1126,10 @@ partial class Dump
                             _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_ECC_P_mismatch);
                         }
 
-                        if(correctEccQ != true)
-                        {
-                            UpdateStatus?.Invoke(string.Format(UI.Incorrect_ECC_Q_in_sector_0, i + (ulong)b));
-                            _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_ECC_Q_mismatch);
-                        }
+                        if(correctEccQ == true) continue;
+
+                        UpdateStatus?.Invoke(string.Format(UI.Incorrect_ECC_Q_in_sector_0, i + (ulong)b));
+                        _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_ECC_Q_mismatch);
                     }
 
                     if(supportsLongSectors)
