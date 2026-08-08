@@ -156,7 +156,8 @@ partial class Dump
 
                         if(errno != ErrorNumber.NoError)
                         {
-                            ErrorMessage?.Invoke(string.Format(Localization.Core.Error_retrieving_title_key_for_sector_0,
+                            ErrorMessage?.Invoke(string.Format(Localization.Core
+                                                                           .Error_retrieving_title_key_for_sector_0,
                                                                badSector));
                         }
                         else
