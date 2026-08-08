@@ -282,8 +282,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadLbaData = readBuf;
@@ -300,8 +300,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadRetryLbaData = readBuf;
@@ -318,8 +318,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadDmaLbaData = readBuf;
@@ -336,8 +336,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadDmaRetryLbaData = readBuf;
@@ -353,8 +353,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error);
+                              errorLba.Status,
+                              errorLba.Error);
 
             Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -368,8 +368,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba48.Status,
+                              errorLba48.Error,
                               readBuf.Length);
 
             mediaTest.ReadLba48Data = readBuf;
@@ -386,8 +386,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba48.Status,
+                              errorLba48.Error,
                               readBuf.Length);
 
             mediaTest.ReadDmaLba48Data = readBuf;
@@ -493,8 +493,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadLongLbaData = readBuf;
@@ -521,8 +521,8 @@ public sealed partial class DeviceReport
             AaruLogging.Debug(ATA_MODULE_NAME,
                               Localization.Core.Sense_0_Status_1_Error_2_Length_3,
                               sense,
-                              errorChs.Status,
-                              errorChs.Error,
+                              errorLba.Status,
+                              errorLba.Error,
                               readBuf.Length);
 
             mediaTest.ReadLongRetryLbaData = readBuf;
