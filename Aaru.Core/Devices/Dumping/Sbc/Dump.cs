@@ -78,7 +78,7 @@ partial class Dump
         byte               scsiMediumType = 0;
         byte               scsiDensityCode = 0;
         var                containsFloppyPage = false;
-        const ushort       sbcProfile = 0x0001;
+        ushort             sbcProfile = 0x0001;
         const uint         DvdLeadinSectors = 4096; // Usable Lead-in before LBA 0 per DVD spec (PSN 0x02F000–0x02FFFF)
         const uint         BdFallbackNegativeSectors = 4832 * 32; // Usable lead-in clusters before LBA 0 per BD spec
         double             totalDuration = 0;
@@ -395,6 +395,22 @@ partial class Dump
                                   blocksToRead,
                                   _private,
                                   _dimensions);
+
+        if(opticalDisc)
+        {
+            sense = _dev.GetConfiguration(out byte[] cmdBuf,
+                                          out _,
+                                          0,
+                                          MmcGetConfigurationRt.Current,
+                                          _dev.Timeout,
+                                          out _);
+
+            if(!sense)
+            {
+                Features.SeparatedFeatures ftr = Features.Separate(cmdBuf);
+                sbcProfile = ftr.CurrentProfile;
+            }
+        }
 
         var ibgLog       = new IbgLog(_outputPrefix + ".ibg", sbcProfile);
         var imageCreated = false;
