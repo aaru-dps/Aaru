@@ -270,7 +270,7 @@ public sealed partial class MediaScan
             {
                 for(byte hd = 0; hd < heads; hd++)
                 {
-                    for(byte sc = 1; sc < sectors; sc++)
+                    for(byte sc = 1; sc <= sectors; sc++)
                     {
                         if(_aborted) break;
 
