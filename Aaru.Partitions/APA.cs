@@ -45,31 +45,32 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of PlayStation 2 APA partitions</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Constants document the full on-disk layout")]
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "APA is the scheme's name")]
 public sealed class APA : IPartition
 {
     const string MODULE_NAME = "APA partitioning plugin";
 
-    const uint   APA_MAGIC         = 0x00415041; // 'APA\0'
-    const int    APA_HEADER_SIZE   = 1024;       // 2 sectors of 512 bytes
-    const int    APA_IDMAX         = 32;
-    const int    APA_PASSMAX       = 8;
-    const int    APA_MAXSUB        = 64;
-    const int    APA_MBR_MAGIC_LEN = 32;
-    const int    APA_NNAME         = 128;
-    const uint   APA_RESV_MAIN     = 4 * 1024 * 1024 / 512; // 8192 sectors (4 MiB)
-    const uint   APA_RESV_SUB      = 4 * 1024        / 512; // 8 sectors (4 KiB)
-    const ushort APA_TYPE_FREE     = 0x0000;
-    const ushort APA_TYPE_MBR      = 0x0001;
-    const ushort APA_TYPE_EXT2SWAP = 0x0082;
-    const ushort APA_TYPE_EXT2     = 0x0083;
-    const ushort APA_TYPE_REISER   = 0x0088;
-    const ushort APA_TYPE_PFS      = 0x0100;
-    const ushort APA_TYPE_CFS      = 0x0101;
-    const ushort APA_TYPE_HDL      = 0x1337;
-    const ushort APA_FLAG_SUB      = 0x0001;
+    const uint   APA_MAGIC          = 0x00415041; // 'APA\0'
+    const int    APA_HEADER_SIZE    = 1024;       // 2 sectors of 512 bytes
+    const int    APA_IDMAX          = 32;
+    const int    APA_PASSMAX        = 8;
+    const int    APA_MAXSUB         = 64;
+    const int    APA_MBR_MAGIC_LEN  = 32;
+    const int    APA_NNAME          = 128;
+    const uint   APA_RESV_MAIN      = 4 * 1024 * 1024 / 512; // 8192 sectors (4 MiB)
+    const uint   APA_RESV_SUB       = 4 * 1024        / 512; // 8 sectors (4 KiB)
+    const ushort APA_TYPE_FREE      = 0x0000;
+    const ushort APA_TYPE_MBR       = 0x0001;
+    const ushort APA_TYPE_EXT2_SWAP = 0x0082;
+    const ushort APA_TYPE_EXT2      = 0x0083;
+    const ushort APA_TYPE_REISER    = 0x0088;
+    const ushort APA_TYPE_PFS       = 0x0100;
+    const ushort APA_TYPE_CFS       = 0x0101;
+    const ushort APA_TYPE_HDL       = 0x1337;
+    const ushort APA_FLAG_SUB       = 0x0001;
 
-    static readonly string _mbrMagic = "Sony Computer Entertainment Inc.";
+    const string MBR_MAGIC = "Sony Computer Entertainment Inc.";
 
 #region Nested type: ApaPs2Time
 
@@ -202,7 +203,7 @@ public sealed class APA : IPartition
         // Verify MBR magic string
         string mbrMagicString = Encoding.ASCII.GetString(mbrHeader.mbr.magic, 0, APA_MBR_MAGIC_LEN).TrimEnd('\0');
 
-        if(mbrMagicString != _mbrMagic)
+        if(mbrMagicString != MBR_MAGIC)
         {
             AaruLogging.Debug(MODULE_NAME, Localization.APA_MBR_magic_not_found);
 
@@ -229,7 +230,7 @@ public sealed class APA : IPartition
             }
 
             // Sanity check
-            if(nextLba + 2 > imagePlugin.Info.Sectors) break;
+            if((ulong)nextLba + 2 > imagePlugin.Info.Sectors) break;
 
             errno = imagePlugin.ReadSectors(nextLba, false, 2, out byte[] headerBytes, out _);
 
@@ -249,7 +250,7 @@ public sealed class APA : IPartition
             }
 
             // Skip free and MBR partitions
-            if(header.type != APA_TYPE_FREE && header.type != APA_TYPE_MBR)
+            if(header.type != APA_TYPE_FREE && header.type != APA_TYPE_MBR && header.length > APA_RESV_MAIN)
             {
                 string partId   = Encoding.ASCII.GetString(header.id,   0, APA_IDMAX).TrimEnd('\0');
                 string partName = Encoding.ASCII.GetString(header.name, 0, APA_NNAME).TrimEnd('\0');
@@ -259,13 +260,13 @@ public sealed class APA : IPartition
 
                 // Reserves 4 MiB (8192 sectors) at the start of main partitions,
                 // and 4 KiB (8 sectors) for sub-partitions.
-                uint dataStart  = header.start  + APA_RESV_MAIN;
-                uint dataLength = header.length - APA_RESV_MAIN;
+                ulong dataStart  = (ulong)header.start + APA_RESV_MAIN;
+                uint  dataLength = header.length       - APA_RESV_MAIN;
 
                 var part = new Partition
                 {
                     Start    = dataStart,
-                    Offset   = (ulong)dataStart * imagePlugin.Info.SectorSize,
+                    Offset   = dataStart * imagePlugin.Info.SectorSize,
                     Length   = dataLength,
                     Size     = (ulong)dataLength * imagePlugin.Info.SectorSize,
                     Type     = typeName,
@@ -280,15 +281,15 @@ public sealed class APA : IPartition
                 // Add sub-partitions
                 for(uint i = 0; i < header.nsub && i < APA_MAXSUB; i++)
                 {
-                    if(header.subs[i].length == 0) continue;
+                    if(header.subs[i].length <= APA_RESV_SUB) continue;
 
-                    uint subDataStart  = header.subs[i].start  + APA_RESV_SUB;
-                    uint subDataLength = header.subs[i].length - APA_RESV_SUB;
+                    ulong subDataStart  = (ulong)header.subs[i].start + APA_RESV_SUB;
+                    uint  subDataLength = header.subs[i].length       - APA_RESV_SUB;
 
                     var sub = new Partition
                     {
                         Start    = subDataStart,
-                        Offset   = (ulong)subDataStart * imagePlugin.Info.SectorSize,
+                        Offset   = subDataStart * imagePlugin.Info.SectorSize,
                         Length   = subDataLength,
                         Size     = (ulong)subDataLength * imagePlugin.Info.SectorSize,
                         Type     = typeName,
@@ -325,7 +326,7 @@ public sealed class APA : IPartition
     static string TypeToString(ushort type) => type switch
                                                {
                                                    APA_TYPE_MBR => Localization.APA_type_MBR,
-                                                   APA_TYPE_EXT2SWAP => Localization.APA_type_EXT2_swap,
+                                                   APA_TYPE_EXT2_SWAP => Localization.APA_type_EXT2_swap,
                                                    APA_TYPE_EXT2 => Localization.APA_type_EXT2,
                                                    APA_TYPE_REISER => Localization.APA_type_ReiserFS,
                                                    APA_TYPE_PFS => Localization.APA_type_PFS,
