@@ -163,7 +163,7 @@ partial class Dump
                                                   sectorAddress - toRead + 1,
                                                   true,
                                                   toRead,
-                                                  Enumerable.Repeat(SectorStatus.NotDumped, (int)toRead).ToArray());
+                                                  Enumerable.Repeat(SectorStatus.Errored, (int)toRead).ToArray());
 
                     imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                     _writeStopwatch.Stop();
@@ -244,7 +244,7 @@ partial class Dump
                                               i,
                                               false,
                                               _skip,
-                                              Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                              ErroredThenSkippedStatuses(blocksToRead, _skip));
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
@@ -331,7 +331,7 @@ partial class Dump
                                                   lba,
                                                   false,
                                                   toRead,
-                                                  Enumerable.Repeat(SectorStatus.NotDumped, (int)toRead).ToArray());
+                                                  Enumerable.Repeat(SectorStatus.Errored, (int)toRead).ToArray());
 
                     imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 }

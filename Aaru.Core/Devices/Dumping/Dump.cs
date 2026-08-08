@@ -68,6 +68,22 @@ public enum DumpSubchannel
 
 public partial class Dump
 {
+    /// <summary>
+    ///     Builds the sector status array for a failed read followed by a skip: the sectors that were attempted and
+    ///     errored are marked <see cref="SectorStatus.Errored" />, while the skipped tail that was never attempted is
+    ///     marked <see cref="SectorStatus.NotDumped" />.
+    /// </summary>
+    /// <param name="attempted">Number of sectors the failed read command covered</param>
+    /// <param name="total">Total number of sectors being written (attempted plus skipped)</param>
+    static SectorStatus[] ErroredThenSkippedStatuses(uint attempted, uint total)
+    {
+        if(attempted > total) attempted = total;
+
+        return Enumerable.Repeat(SectorStatus.Errored, (int)attempted)
+                         .Concat(Enumerable.Repeat(SectorStatus.NotDumped, (int)(total - attempted)))
+                         .ToArray();
+    }
+
     const           string                     PREGAP_MODULE_NAME = "Pregap calculator";
     const           string                     MODULE_NAME        = "Media dumping";
     static readonly TimeSpan                   _oneSecond         = 1.Seconds();
@@ -124,8 +140,8 @@ public partial class Dump
     int                                        _c2Offset;       // Byte offset of the 294-byte C2 region in a C2 block
     int                                        _c2SubOffset;    // Byte offset of the subchannel region in a C2 block
     HashSet<ulong>                             _c2SuspectAudio; // Audio sectors the drive flagged with C2 (concealed)
-    AaruContext                                _ctx;   // Main database context
-    Database.Models.Device                     _dbDev; // Device database entry
+    AaruContext                                _ctx;            // Main database context
+    Database.Models.Device                     _dbDev;          // Device database entry
     bool                                       _dumpFirstTrackPregap;
     bool                                       _fixOffset;
     int                                        _fixedSectors;

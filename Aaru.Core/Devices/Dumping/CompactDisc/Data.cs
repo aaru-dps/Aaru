@@ -1178,19 +1178,51 @@ partial class Dump
                 }
                 else
                 {
-                    if(supportsLongSectors)
+                    var sectorStatus = new SectorStatus[blocksToRead];
+                    var sector       = new byte[sectorSize];
+
+                    for(var b = 0; b < blocksToRead; b++)
                     {
-                        outputFormat.WriteSectorsLong(cmdBuf,
-                                                      i,
-                                                      false,
-                                                      blocksToRead,
-                                                      Enumerable.Repeat(SectorStatus.Dumped, (int)blocksToRead)
-                                                                .ToArray());
+                        sectorStatus[b] = SectorStatus.Dumped;
+
+                        if(!inData || !_paranoia) continue;
+
+                        Array.Copy(cmdBuf, (int)(b * blockSize), sector, 0, sectorSize);
+
+                        // Check valid sector
+                        CdChecksums.CheckCdSector(sector,
+                                                  out bool? correctEccP,
+                                                  out bool? correctEccQ,
+                                                  out bool? correctEdc);
+
+                        if(correctEdc == true && correctEccP == true && correctEccQ == true) continue;
+
+                        sectorStatus[b] = SectorStatus.Errored;
+                        _resume.BadBlocks.Add(i + (ulong)b);
+
+                        if(correctEdc != true)
+                        {
+                            UpdateStatus?.Invoke(string.Format(UI.Incorrect_EDC_in_sector_0, i + (ulong)b));
+                            _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_EDC_mismatch);
+                        }
+
+                        if(correctEccP != true)
+                        {
+                            UpdateStatus?.Invoke(string.Format(UI.Incorrect_ECC_P_in_sector_0, i + (ulong)b));
+                            _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_ECC_P_mismatch);
+                        }
+
+                        if(correctEccQ == true) continue;
+
+                        UpdateStatus?.Invoke(string.Format(UI.Incorrect_ECC_Q_in_sector_0, i + (ulong)b));
+                        _errorLog?.WriteLine(i + (ulong)b, Localization.Core.Reason_ECC_Q_mismatch);
                     }
+
+                    if(supportsLongSectors)
+                        outputFormat.WriteSectorsLong(cmdBuf, i, false, blocksToRead, sectorStatus);
                     else
                     {
                         var cooked = new MemoryStream();
-                        var sector = new byte[sectorSize];
 
                         for(var b = 0; b < blocksToRead; b++)
                         {
@@ -1199,11 +1231,7 @@ partial class Dump
                             cooked.Write(cookedSector, 0, cookedSector.Length);
                         }
 
-                        outputFormat.WriteSectors(cooked.ToArray(),
-                                                  i,
-                                                  false,
-                                                  blocksToRead,
-                                                  Enumerable.Repeat(SectorStatus.Dumped, (int)blocksToRead).ToArray());
+                        outputFormat.WriteSectors(cooked.ToArray(), i, false, blocksToRead, sectorStatus);
                     }
                 }
 
@@ -1239,7 +1267,7 @@ partial class Dump
                                                   i,
                                                   false,
                                                   _skip,
-                                                  Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                                  ErroredThenSkippedStatuses(blocksToRead, _skip));
 
                     if(desiredSubchannel != MmcSubchannel.None)
                     {
@@ -1258,7 +1286,7 @@ partial class Dump
                                                       i,
                                                       false,
                                                       _skip,
-                                                      Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                                      ErroredThenSkippedStatuses(blocksToRead, _skip));
                     }
                     else
                     {
@@ -1268,7 +1296,7 @@ partial class Dump
                                                       i,
                                                       false,
                                                       _skip,
-                                                      Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                                      ErroredThenSkippedStatuses(blocksToRead, _skip));
                         }
                         else
                         {
@@ -1276,8 +1304,7 @@ partial class Dump
                                                           i,
                                                           false,
                                                           _skip,
-                                                          Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip)
-                                                                    .ToArray());
+                                                          ErroredThenSkippedStatuses(blocksToRead, _skip));
                         }
                     }
                 }

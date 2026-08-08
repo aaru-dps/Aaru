@@ -419,9 +419,12 @@ partial class Dump
                     var data    = new byte[sectorSize * blocksToRead];
                     var sub     = new byte[subSize    * blocksToRead];
                     var tmpData = new byte[sectorSize];
+                    var status  = new SectorStatus[blocksToRead];
 
                     for(var b = 0; b < blocksToRead; b++)
                     {
+                        status[b] = SectorStatus.Dumped;
+
                         if(cdiReadyReadAsAudio)
                         {
                             Array.Copy(cmdBuf, (int)(0 + b * blockSize), tmpData, 0, sectorSize);
@@ -432,6 +435,7 @@ partial class Dump
                             {
                                 _resume.BadBlocks.Add(i + (ulong)b);
                                 paintBad.Add(i          + (ulong)b);
+                                status[b] = SectorStatus.Errored;
                             }
 
                             Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
@@ -445,6 +449,7 @@ partial class Dump
                             {
                                 _resume.BadBlocks.Add(i + (ulong)b);
                                 paintBad.Add(i          + (ulong)b);
+                                status[b] = SectorStatus.Errored;
                             }
 
                             Array.Copy(tmpData, 0, data, sectorSize * b, sectorSize);
@@ -453,11 +458,7 @@ partial class Dump
                         Array.Copy(cmdBuf, (int)(sectorSize + b * blockSize), sub, subSize * b, subSize);
                     }
 
-                    outputOptical.WriteSectorsLong(data,
-                                                   i,
-                                                   false,
-                                                   blocksToRead,
-                                                   Enumerable.Repeat(SectorStatus.Dumped, (int)blocksToRead).ToArray());
+                    outputOptical.WriteSectorsLong(data, i, false, blocksToRead, status);
 
                     bool indexesChanged = Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                         desiredSubchannel,

@@ -495,7 +495,7 @@ partial class Dump
                                                   i,
                                                   false,
                                                   sectorsToMark,
-                                                  [.. Enumerable.Repeat(SectorStatus.NotDumped, (int)sectorsToMark)]);
+                                                  ErroredThenSkippedStatuses(blocksToRead, sectorsToMark));
 
                     if(desiredSubchannel != MmcSubchannel.None)
                     {
@@ -514,10 +514,7 @@ partial class Dump
                                                       i,
                                                       false,
                                                       sectorsToMark,
-                                                      [
-                                                          .. Enumerable.Repeat(SectorStatus.NotDumped,
-                                                                               (int)sectorsToMark)
-                                                      ]);
+                                                      ErroredThenSkippedStatuses(blocksToRead, sectorsToMark));
                     }
                     else
                     {
@@ -527,10 +524,7 @@ partial class Dump
                                                       i,
                                                       false,
                                                       sectorsToMark,
-                                                      [
-                                                          .. Enumerable.Repeat(SectorStatus.NotDumped,
-                                                                               (int)sectorsToMark)
-                                                      ]);
+                                                      ErroredThenSkippedStatuses(blocksToRead, sectorsToMark));
                         }
                         else
                         {
@@ -538,8 +532,7 @@ partial class Dump
                                                           i,
                                                           false,
                                                           sectorsToMark,
-                                                          Enumerable.Repeat(SectorStatus.NotDumped, (int)sectorsToMark)
-                                                                    .ToArray());
+                                                          ErroredThenSkippedStatuses(blocksToRead, sectorsToMark));
                         }
                     }
                 }

@@ -694,7 +694,7 @@ public partial class Dump
                                           i,
                                           false,
                                           _skip,
-                                          Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                          ErroredThenSkippedStatuses(blocksToRead, _skip));
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 AaruLogging.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1, _skip, i);

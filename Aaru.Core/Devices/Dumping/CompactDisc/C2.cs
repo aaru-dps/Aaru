@@ -363,7 +363,7 @@ partial class Dump
             // the sector as bad so it is reported and tracked as not correctly dumped at the end of the dump.
             if(merged is not null)
             {
-                outputOptical.WriteSectorLong(merged, badSector, false, SectorStatus.Dumped);
+                outputOptical.WriteSectorLong(merged, badSector, false, SectorStatus.Errored);
                 improved++;
 
                 _errorLog?.WriteLine(badSector,

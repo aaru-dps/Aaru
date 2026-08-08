@@ -1094,7 +1094,7 @@ partial class Dump
 
                 // Write empty data
                 _writeStopwatch.Restart();
-                outputTape.WriteSector(new byte[blockSize], currentBlock, false, SectorStatus.NotDumped);
+                outputTape.WriteSector(new byte[blockSize], currentBlock, false, SectorStatus.Errored);
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
                 mhddLog.Write(currentBlock,

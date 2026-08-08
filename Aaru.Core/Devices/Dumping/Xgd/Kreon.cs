@@ -722,7 +722,7 @@ partial class Dump
                                               i,
                                               false,
                                               _skip,
-                                              Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                              ErroredThenSkippedStatuses(blocksToRead, _skip));
 
                     imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
@@ -960,7 +960,7 @@ partial class Dump
                                           currentSector,
                                           false,
                                           _skip,
-                                          Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
+                                          ErroredThenSkippedStatuses(blocksToRead, _skip));
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 

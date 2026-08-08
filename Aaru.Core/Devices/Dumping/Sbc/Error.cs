@@ -339,7 +339,7 @@ partial class Dump
                             outputFormat.WriteSectorLong(buffer, badSector, false, statuses[0]);
                         else
                         {
-                            outputFormat.WriteSectorLong(buffer, badSector, false, SectorStatus.NotDumped);
+                            outputFormat.WriteSectorLong(buffer, badSector, false, SectorStatus.Errored);
 
                             // The transform failed, so the sector was not really recovered
                             _resume.BadBlocks.Add(badSector);

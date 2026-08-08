@@ -425,7 +425,8 @@ partial class Dump
             {
                 if(_omnidrive)
                 {
-                    var sector = new byte[sectorSize];
+                    var recovered = false;
+                    var sector    = new byte[sectorSize];
                     Array.Copy(cmdBuf, 0, sector, 0, sectorSize);
 
                     if(IsScrambledData(sector, (int)badSector, out _) || !audioExtents.Contains(badSector))
@@ -450,6 +451,7 @@ partial class Dump
                             _resume.BadBlocks.Remove(badSector);
                             extents.Add(badSector);
                             _mediaGraph?.PaintSectorGood(badSector);
+                            recovered = true;
                         }
                         else if(!audioExtents.Contains(badSector))
                         {
@@ -479,6 +481,7 @@ partial class Dump
                                 _resume.BadBlocks.Remove(badSector);
                                 extents.Add(badSector);
                                 _mediaGraph?.PaintSectorGood(badSector);
+                                recovered = true;
                             }
                         }
 
@@ -489,6 +492,13 @@ partial class Dump
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
                         _mediaGraph?.PaintSectorGood(badSector);
+                        recovered = true;
+                    }
+
+                    if(!recovered)
+                    {
+                        sectorStatus = SectorStatus.Errored;
+                        _mediaGraph?.PaintSectorBad(badSector);
                     }
                 }
                 else if(!audioExtents.Contains(badSector) && _paranoia)

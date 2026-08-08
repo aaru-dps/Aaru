@@ -565,13 +565,15 @@ partial class Dump
                               false);
             }
 
-            SectorStatus sectorStatus = SectorStatus.Dumped;
+            // On a failed read only the persistent mode reaches the write below, storing partial data
+            SectorStatus sectorStatus = sense || _dev.Error ? SectorStatus.Errored : SectorStatus.Dumped;
 
             if(!sense && !_dev.Error)
             {
                 if(_omnidrive)
                 {
-                    var sector = new byte[sectorSize];
+                    var recovered = false;
+                    var sector    = new byte[sectorSize];
                     Array.Copy(cmdBuf, 0, sector, 0, sectorSize);
 
                     if(IsScrambledData(sector, (int)badSector, out _) || !audioExtents.Contains(badSector))
@@ -601,6 +603,7 @@ partial class Dump
                             extents.Add(badSector);
                             _mediaGraph?.PaintSectorGood(badSector);
                             sectorsNotEvenPartial.Remove(badSector);
+                            recovered = true;
 
                             UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_sector_0_in_pass_1,
                                                                badSector,
@@ -635,6 +638,7 @@ partial class Dump
                                 extents.Add(badSector);
                                 _mediaGraph?.PaintSectorGood(badSector);
                                 sectorsNotEvenPartial.Remove(badSector);
+                                recovered = true;
 
                                 UpdateStatus?.Invoke(string.Format(Localization.Core
                                                                       .Correctly_retried_sector_0_in_pass_1,
@@ -651,6 +655,13 @@ partial class Dump
                         extents.Add(badSector);
                         _mediaGraph?.PaintSectorGood(badSector);
                         sectorsNotEvenPartial.Remove(badSector);
+                        recovered = true;
+                    }
+
+                    if(!recovered)
+                    {
+                        sectorStatus = SectorStatus.Errored;
+                        _mediaGraph?.PaintSectorBad(badSector);
                     }
                 }
                 else if(!audioExtents.Contains(badSector) && _paranoia)
@@ -753,6 +764,7 @@ partial class Dump
                     extents.Add(badSector);
                     _mediaGraph?.PaintSectorGood(badSector);
                     sectorsNotEvenPartial.Remove(badSector);
+                    sectorStatus = SectorStatus.Dumped;
 
                     UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_sector_0_in_pass_1,
                                                        badSector,
