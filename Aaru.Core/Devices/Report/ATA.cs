@@ -86,7 +86,7 @@ public sealed partial class DeviceReport
                     Sectors   = ataId.SectorsPerTrack
                 };
 
-                mediaTest.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
+                mediaTest.Blocks = (ulong)ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack;
             }
 
             if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
@@ -100,8 +100,9 @@ public sealed partial class DeviceReport
 
                 if(mediaTest.Blocks == 0)
                 {
-                    mediaTest.Blocks =
-                        (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+                    mediaTest.Blocks = (ulong)ataId.CurrentCylinders *
+                                       ataId.CurrentHeads            *
+                                       ataId.CurrentSectorsPerTrack;
                 }
             }
 
@@ -555,7 +556,7 @@ public sealed partial class DeviceReport
                 Sectors   = ataId.SectorsPerTrack
             };
 
-            capabilities.Blocks = (ulong)(ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack);
+            capabilities.Blocks = (ulong)ataId.Cylinders * ataId.Heads * ataId.SectorsPerTrack;
         }
 
         if(ataId.CurrentCylinders > 0 && ataId is { CurrentHeads: > 0, CurrentSectorsPerTrack: > 0 })
@@ -567,7 +568,10 @@ public sealed partial class DeviceReport
                 Sectors   = ataId.CurrentSectorsPerTrack
             };
 
-            capabilities.Blocks = (ulong)(ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack);
+            if(capabilities.Blocks == 0)
+            {
+                capabilities.Blocks = (ulong)ataId.CurrentCylinders * ataId.CurrentHeads * ataId.CurrentSectorsPerTrack;
+            }
         }
 
         if(ataId.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
