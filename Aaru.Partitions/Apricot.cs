@@ -100,25 +100,25 @@ public sealed class Apricot : IPartition
         /// <summary>Sectors per track.</summary>
         public readonly ushort spt;
         /// <summary>Tracks per side.</summary>
-        public readonly uint cylinders;
+        public readonly uint   cylinders;
         /// <summary>Sides.</summary>
-        public readonly byte heads;
+        public readonly byte   heads;
         /// <summary>Interleave factor.</summary>
-        public readonly byte interleave;
+        public readonly byte   interleave;
         /// <summary>Skew factor.</summary>
         public readonly ushort skew;
         /// <summary>Sector where boot code starts.</summary>
-        public readonly uint bootLocation;
+        public readonly uint   bootLocation;
         /// <summary>Size in sectors of boot code.</summary>
         public readonly ushort bootSize;
         /// <summary>Address at which to load boot code.</summary>
-        public readonly uint bootAddress;
+        public readonly uint   bootAddress;
         /// <summary>Offset where to jump to boot.</summary>
         public readonly ushort bootOffset;
         /// <summary>Segment where to jump to boot.</summary>
         public readonly ushort bootSegment;
         /// <summary>First data sector.</summary>
-        public readonly uint firstDataBlock;
+        public readonly uint   firstDataBlock;
         /// <summary>Generation.</summary>
         public readonly ushort generation;
         /// <summary>Copy count.</summary>
@@ -160,11 +160,11 @@ public sealed class Apricot : IPartition
         [MarshalAs(UnmanagedType.U1)]
         public readonly bool enableGraphics;
         /// <summary>Length in sectors of DOS.</summary>
-        public readonly byte dosLength;
+        public readonly byte   dosLength;
         /// <summary>Length in sectors of FONT file.</summary>
-        public readonly byte fontLength;
+        public readonly byte   fontLength;
         /// <summary>Length in sectors of KEYBOARD file.</summary>
-        public readonly byte keyboardLength;
+        public readonly byte   keyboardLength;
         /// <summary>Starting sector of DOS.</summary>
         public readonly ushort dosStart;
         /// <summary>Starting sector of FONT file.</summary>
@@ -172,7 +172,7 @@ public sealed class Apricot : IPartition
         /// <summary>Starting sector of KEYBOARD file.</summary>
         public readonly ushort keyboardStart;
         /// <summary>Keyboard click volume.</summary>
-        public readonly byte keyboardVolume;
+        public readonly byte   keyboardVolume;
         /// <summary>Auto-repeat enabled?.</summary>
         [MarshalAs(UnmanagedType.U1)]
         public readonly bool autorepeat;
@@ -217,9 +217,9 @@ public sealed class Apricot : IPartition
         [MarshalAs(UnmanagedType.U1)]
         public readonly bool rxXonXoff;
         /// <summary>Xon character.</summary>
-        public readonly byte xonCharacter;
+        public readonly byte   xonCharacter;
         /// <summary>Xoff character.</summary>
-        public readonly byte xoffCharacter;
+        public readonly byte   xoffCharacter;
         /// <summary>Xon/Xoff buffer on RX.</summary>
         public readonly ushort rxXonXoffBuffer;
         /// <summary>DTR/DSR enabled?.</summary>
@@ -281,6 +281,7 @@ public sealed class Apricot : IPartition
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
         public readonly byte[] spare;
         /// <summary>CP/M double side indicator?.</summary>
+        [MarshalAs(UnmanagedType.U1)]
         public readonly bool cpmDoubleSided;
     }
 
@@ -289,26 +290,26 @@ public sealed class Apricot : IPartition
 #region Nested type: ParameterBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct ParameterBlock
+    readonly struct ParameterBlock
     {
         /// <summary>Bytes per sector</summary>
         public readonly ushort bps;
         /// <summary>Sectors per cluster</summary>
-        public readonly byte spc;
+        public readonly byte   spc;
         /// <summary>Reserved sectors between BPB and FAT</summary>
         public readonly ushort rsectors;
         /// <summary>Number of FATs</summary>
-        public readonly byte fats_no;
+        public readonly byte   fats_no;
         /// <summary>Number of entries on root directory</summary>
         public readonly ushort root_ent;
         /// <summary>Sectors in volume</summary>
         public readonly ushort sectors;
         /// <summary>Media descriptor</summary>
-        public readonly byte media;
+        public readonly byte   media;
         /// <summary>Sectors per FAT</summary>
         public readonly ushort spfat;
         /// <summary>Disk type</summary>
-        public readonly byte diskType;
+        public readonly byte   diskType;
         /// <summary>Volume starting sector</summary>
         public readonly ushort startSector;
     }
@@ -342,7 +343,7 @@ public sealed class Apricot : IPartition
 
         // Not much to check but...
         ulong deviceSectors              = imagePlugin.Info.Sectors;
-        ulong deviceSizeAccordingToLabel = label.cylinders * label.heads * label.spt;
+        ulong deviceSizeAccordingToLabel = (ulong)label.cylinders * label.heads * label.spt;
 
         if(label.operatingSystem      > 4             ||
            label.bootType             > 5             ||
@@ -580,12 +581,12 @@ public sealed class Apricot : IPartition
             var part = new Partition
             {
                 Start    = label.partitions[i].startSector,
-                Size     = (ulong)(label.partitions[i].sectors * label.sectorSize),
+                Size     = (ulong)label.partitions[i].sectors * label.sectorSize,
                 Length   = label.partitions[i].sectors,
                 Type     = "ACT Apricot partition",
                 Sequence = i,
                 Scheme   = Name,
-                Offset   = (ulong)(label.partitions[i].startSector * label.sectorSize)
+                Offset   = (ulong)label.partitions[i].startSector * label.sectorSize
             };
 
             if(part.Start < deviceSectors && part.End < deviceSectors) partitions.Add(part);
