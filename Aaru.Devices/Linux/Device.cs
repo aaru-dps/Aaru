@@ -54,7 +54,7 @@ partial class Device : Devices.Device, IDisposable
     private       nuint _capacity;
     /// <summary>Gets the file handle representing this device</summary>
     /// <value>The file handle</value>
-    int                 _fileDescriptor;
+    int                 _fileDescriptor = -1;
 
 // Persistent, aligned native buffer
     private nuint _nativeBuffer;
@@ -459,10 +459,11 @@ partial class Device : Devices.Device, IDisposable
     /// <inheritdoc />
     public override void Close()
     {
-        if(_fileDescriptor == 0) return;
+        // 0 is a legal file descriptor, only negative values mean the device is not open
+        if(_fileDescriptor < 0) return;
 
         Extern.close(_fileDescriptor);
 
-        _fileDescriptor = 0;
+        _fileDescriptor = -1;
     }
 }

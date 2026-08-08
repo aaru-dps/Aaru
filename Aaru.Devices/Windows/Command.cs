@@ -633,6 +633,9 @@ partial class Device
     {
         _fileHandle.Dispose();
 
+        // Don't keep a disposed handle around if reopening fails
+        _fileHandle = null;
+
         SafeFileHandle newFd = Extern.CreateFile(DevicePath,
                                                  FileAccess.GenericRead | FileAccess.GenericWrite,
                                                  FileShare.Read         | FileShare.Write,

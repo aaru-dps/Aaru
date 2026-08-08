@@ -612,6 +612,9 @@ partial class Device
     {
         int ret = Extern.close(_fileDescriptor);
 
+        // Don't keep a closed (and possibly recycled) descriptor around if reopening fails
+        _fileDescriptor = -1;
+
         if(ret < 0)
         {
             LastError = Marshal.GetLastWin32Error();
