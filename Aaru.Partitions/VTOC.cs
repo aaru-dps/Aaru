@@ -47,7 +47,7 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of UNIX VTOC partitions</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Members document the full on-disk layout")]
 public sealed partial class VTOC : IPartition
 {
     const uint   PD_MAGIC    = 0xCA5E600D;
@@ -242,7 +242,14 @@ public sealed partial class VTOC : IPartition
                               relSecPtr + sectorOffset,
                               relSecOff);
 
-            if(relSecPtr + sectorOffset + secCount >= imagePlugin.Info.Sectors)
+            if(pd.vtoc_len < 4 || secCount == 0)
+            {
+                AaruLogging.Debug(MODULE_NAME, Localization.Going_to_read_past_device_size_aborting);
+
+                return false;
+            }
+
+            if(relSecPtr + sectorOffset + secCount > imagePlugin.Info.Sectors)
             {
                 AaruLogging.Debug(MODULE_NAME, Localization.Going_to_read_past_device_size_aborting);
 
@@ -259,6 +266,8 @@ public sealed partial class VTOC : IPartition
 
             if(magic is VTOC_SANE or VTOC_ENAS)
             {
+                if(vtocsector.Length < System.Runtime.InteropServices.Marshal.SizeOf<Vtoc>()) return false;
+
                 magicFound = true;
                 AaruLogging.Debug(MODULE_NAME, Localization.New_VTOC_found);
 
@@ -391,7 +400,7 @@ public sealed partial class VTOC : IPartition
 
         for(var i = 0; i < V_NUMPAR; i++)
         {
-            if(parts[i].p_tag == pTag.V_UNUSED) continue;
+            if(parts[i].p_tag == pTag.V_UNUSED || parts[i].p_start < 0 || parts[i].p_size <= 0) continue;
 
             var part = new Partition
             {
@@ -478,29 +487,29 @@ public sealed partial class VTOC : IPartition
         public uint sanity;  /*verifies device sanity*/
         public uint version; /*version number*/
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] serial;  /*serial number of the device*/
-        public uint cyls;      /*number of cylinders per drive*/
-        public uint tracks;    /*number tracks per cylinder*/
-        public uint sectors;   /*number sectors per track*/
-        public uint bytes;     /*number of bytes per sector*/
-        public uint logicalst; /*sector address of logical sector 0*/
-        public uint errlogst;  /*sector address of error log area*/
-        public uint errlogsz;  /*size in bytes of error log area*/
-        public uint mfgst;     /*sector address of mfg. defect info*/
-        public uint mfgsz;     /*size in bytes of mfg. defect info*/
-        public uint defectst;  /*sector address of the defect map*/
-        public uint defectsz;  /*size in bytes of defect map*/
-        public uint relno;     /*number of relocation areas*/
-        public uint relst;     /*sector address of relocation area*/
-        public uint relsz;     /*size in sectors of relocation area*/
-        public uint relnext;   /*address of next avail reloc sector*/
+        public byte[] serial;     /*serial number of the device*/
+        public uint   cyls;       /*number of cylinders per drive*/
+        public uint   tracks;     /*number tracks per cylinder*/
+        public uint   sectors;    /*number sectors per track*/
+        public uint   bytes;      /*number of bytes per sector*/
+        public uint   logicalst;  /*sector address of logical sector 0*/
+        public uint   errlogst;   /*sector address of error log area*/
+        public uint   errlogsz;   /*size in bytes of error log area*/
+        public uint   mfgst;      /*sector address of mfg. defect info*/
+        public uint   mfgsz;      /*size in bytes of mfg. defect info*/
+        public uint   defectst;   /*sector address of the defect map*/
+        public uint   defectsz;   /*size in bytes of defect map*/
+        public uint   relno;      /*number of relocation areas*/
+        public uint   relst;      /*sector address of relocation area*/
+        public uint   relsz;      /*size in sectors of relocation area*/
+        public uint   relnext;    /*address of next avail reloc sector*/
         /* the previous items are left intact from AT&T's 3b2 pdinfo.  Following
            are added for the 80386 port */
-        public uint   vtoc_ptr; /*byte offset of vtoc block*/
-        public ushort vtoc_len; /*byte length of vtoc block*/
-        public ushort vtoc_pad; /* pad for 16-bit machine alignment */
-        public uint   alt_ptr;  /*byte offset of alternates table*/
-        public ushort alt_len;  /*byte length of alternates table*/
+        public uint   vtoc_ptr;   /*byte offset of vtoc block*/
+        public ushort vtoc_len;   /*byte length of vtoc block*/
+        public ushort vtoc_pad;   /* pad for 16-bit machine alignment */
+        public uint   alt_ptr;    /*byte offset of alternates table*/
+        public ushort alt_len;    /*byte length of alternates table*/
         /* new in version 3 */
         public uint   pcyls;      /*physical cylinders per drive*/
         public uint   ptracks;    /*physical tracks per cylinder*/
@@ -552,7 +561,7 @@ public sealed partial class VTOC : IPartition
 #region Nested type: pFlag
 
     [Flags]
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original UNIX headers")]
     enum pFlag : ushort
     {
         /* Partition permission flags */
@@ -568,53 +577,53 @@ public sealed partial class VTOC : IPartition
 
 #region Nested type: pTag
 
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original UNIX headers")]
     enum pTag : ushort
     {
         /// <summary>empty</summary>
-        V_UNUSED = 0x0000,
+        V_UNUSED      = 0x0000,
         /// <summary>boot</summary>
-        V_BOOT = 0x0001,
+        V_BOOT        = 0x0001,
         /// <summary>root</summary>
-        V_ROOT = 0x0002,
+        V_ROOT        = 0x0002,
         /// <summary>swap</summary>
-        V_SWAP = 0x0003,
+        V_SWAP        = 0x0003,
         /// <summary>/usr</summary>
-        V_USER = 0x0004,
+        V_USER        = 0x0004,
         /// <summary>whole disk</summary>
-        V_BACKUP = 0x0005,
+        V_BACKUP      = 0x0005,
         /// <summary>stand partition ??</summary>
-        V_STAND_OLD = 0x0006,
+        V_STAND_OLD   = 0x0006,
         /// <summary>alternate sector space</summary>
-        V_ALTS_OLD = 0x0006,
+        V_ALTS_OLD    = 0x0006,
         /// <summary>/var</summary>
-        V_VAR_OLD = 0x0007,
+        V_VAR_OLD     = 0x0007,
         /// <summary>non UNIX</summary>
-        V_OTHER = 0x0007,
+        V_OTHER       = 0x0007,
         /// <summary>/home</summary>
-        V_HOME_OLD = 0x0008,
+        V_HOME_OLD    = 0x0008,
         /// <summary>alternate track space</summary>
-        V_ALTS = 0x0008,
+        V_ALTS        = 0x0008,
         /// <summary>alternate sector track</summary>
         V_ALTSCTR_OLD = 0x0009,
         /// <summary>stand partition ??</summary>
-        V_STAND = 0x0009,
+        V_STAND       = 0x0009,
         /// <summary>cache</summary>
-        V_CACHE = 0x000A,
+        V_CACHE       = 0x000A,
         /// <summary>/var</summary>
-        V_VAR = 0x000A,
+        V_VAR         = 0x000A,
         /// <summary>reserved</summary>
-        V_RESERVED = 0x000B,
+        V_RESERVED    = 0x000B,
         /// <summary>/home</summary>
-        V_HOME = 0x000B,
+        V_HOME        = 0x000B,
         /// <summary>dump partition</summary>
-        V_DUMP = 0x000C,
+        V_DUMP        = 0x000C,
         /// <summary>alternate sector track</summary>
-        V_ALTSCTR = 0x000D,
+        V_ALTSCTR     = 0x000D,
         /// <summary>volume mgt public partition</summary>
-        V_VMPUBLIC = 0x000E,
+        V_VMPUBLIC    = 0x000E,
         /// <summary>volume mgt private partition</summary>
-        V_VMPRIVATE = 0x000F
+        V_VMPRIVATE   = 0x000F
     }
 
 #endregion
