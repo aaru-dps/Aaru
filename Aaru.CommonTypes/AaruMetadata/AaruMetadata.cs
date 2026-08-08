@@ -46,7 +46,7 @@ using Schemas;
 
 namespace Aaru.CommonTypes.AaruMetadata;
 
-[JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+[JsonSourceGenerationOptions(WriteIndented = true, NewLine = "\n", DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
 [JsonSerializable(typeof(MetadataJson))]
 
 // ReSharper disable once PartialTypeWithSinglePart
