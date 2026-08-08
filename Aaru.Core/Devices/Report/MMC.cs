@@ -614,7 +614,7 @@ public sealed partial class DeviceReport
                                 0xFFFFFFFF) +
                                1;
 
-            mediaTest.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+            mediaTest.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
         }
 
         Spectre.ProgressSingleSpinner(ctx =>
