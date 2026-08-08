@@ -329,10 +329,11 @@ partial class Device : Devices.Device, IDisposable
             if(Directory.Exists("/sys/block/" + devPath))
             {
                 resolvedLink = ReadLink("/sys/block/" + devPath);
-                resolvedLink = "/sys" + resolvedLink[2..];
 
                 if(!string.IsNullOrEmpty(resolvedLink))
                 {
+                    resolvedLink = "/sys" + resolvedLink[2..];
+
                     while(resolvedLink?.Contains("firewire") == true)
                     {
                         resolvedLink = Path.GetDirectoryName(resolvedLink);
@@ -405,9 +406,10 @@ partial class Device : Devices.Device, IDisposable
         if(!Directory.Exists("/sys/block/" + devPath)) return dev;
 
         resolvedLink = ReadLink("/sys/block/" + devPath);
-        resolvedLink = "/sys" + resolvedLink[2..];
 
         if(string.IsNullOrEmpty(resolvedLink)) return dev;
+
+        resolvedLink = "/sys" + resolvedLink[2..];
 
         while(resolvedLink.Contains("/sys/devices"))
         {
