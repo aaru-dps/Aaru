@@ -615,7 +615,7 @@ public partial class DeviceViewModel : ViewModelBase
 
                             PlextorSilentModeCdWriteSpeedLimit =
                                 devInfo.PlextorFeatures.CdWriteSpeedLimit > 0
-                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
+                                    ? $"{devInfo.PlextorFeatures.CdWriteSpeedLimit}x"
                                     : UI.unlimited_as_in_speed;
 
                             if(devInfo.PlextorFeatures.IsDvd)
