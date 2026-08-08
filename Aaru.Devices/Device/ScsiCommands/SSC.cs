@@ -38,7 +38,9 @@ using Aaru.Logging;
 
 namespace Aaru.Devices;
 
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper",
+                 "UnusedMethodReturnValue.Global",
+                 Justification = "Public API used by consumers of the library.")]
 public partial class Device
 {
     /// <summary>Prepares the medium for reading</summary>
@@ -759,12 +761,12 @@ public partial class Device
                               uint       timeout,  out double duration)
     {
         buffer = fixedLen ? new byte[objectSize * transferLen] : new byte[transferLen];
-        Span<byte> cdb = CdbBuffer[..6];
+        Span<byte> cdb = CdbBuffer[..16];
         cdb.Clear();
         senseBuffer = SenseBuffer;
         byte[] idBytes = BitConverter.GetBytes(objectId);
 
-        cdb[0] = (byte)ScsiCommands.Read16;
+        cdb[0] = (byte)ScsiCommands.ReadReverse16;
 
         if(fixedLen) cdb[1] += 0x01;
 

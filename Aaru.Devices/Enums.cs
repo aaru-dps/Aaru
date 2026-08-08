@@ -511,7 +511,7 @@ public enum AtaCommands : byte
 
     /// <summary>Requests SPC-4 style error data</summary>
     RequestSenseDataExt = 0x0B,
-    SanitizeCommands = 0xB4,
+    SanitizeCommands    = 0xB4,
 
     /// <summary>Executes a Security Protocol command that does not require a transfer of data</summary>
     TrustedNonData = 0x5B,
@@ -1177,7 +1177,7 @@ public enum ScsiCommands : byte
     CompareAndWrite = 0x89,
 
     /// <summary>Formats the medium into addressable logical blocks ECMA-111 (SCSI-1)</summary>
-    FormatUnit = SasiCommands.FormatUnit,
+    FormatUnit       = SasiCommands.FormatUnit,
     FormatWithPreset = 0x38,
 
     /// <summary>Locks blocks from eviction of device's cache SCSI-2 X3T9.2/375R rev. 10l</summary>
@@ -1234,7 +1234,7 @@ public enum ScsiCommands : byte
 
     /// <summary>Requests the device to set the LUN in a vendor specific state ECMA-111 (SCSI-1)</summary>
     RezeroUnit = SasiCommands.RezeroUnit,
-    Sanitize = 0x48,
+    Sanitize   = 0x48,
 
     /// <summary>Searches data on blocks ECMA-111 (SCSI-1)</summary>
     SearchDataEqual = SasiCommands.SearchDataEqual,
@@ -1350,6 +1350,9 @@ public enum ScsiCommands : byte
 
     /// <summary>Reads blocks from the device, in reverse order ECMA-111 (SCSI-1)</summary>
     ReadReverse = 0x0F,
+
+    /// <summary>Reads objects from the device, in reverse order SSC-2 rev. 09</summary>
+    ReadReverse16 = 0x81,
 
     /// <summary>
     ///     Retrieves data from the device buffer that has not been successfully written to the medium (or printed)
@@ -1752,7 +1755,7 @@ public enum ScsiCommands : byte
 
     /// <summary>Sets the spindle speed to be used while reading/writing data to a CD</summary>
     SetCdSpeed = 0xDA,
-    WriteCdp = 0xE3,
+    WriteCdp   = 0xE3,
 
 #endregion
 
@@ -1978,19 +1981,19 @@ public enum ScsiCommands : byte
 #region MiniDisc vendor commands
 
     /// <summary>Gets some list of pointers only present on MD-DATA discs</summary>
-    MiniDiscReadDTOC = 0xD1,
+    MiniDiscReadDTOC     = 0xD1,
     /// <summary>Writes some list of pointers only present on MD-DATA discs</summary>
-    MiniDiscWriteDTOC = 0xD2,
+    MiniDiscWriteDTOC    = 0xD2,
     /// <summary>Reads UTOC</summary>
-    MiniDiscReadUTOC = 0xD4,
+    MiniDiscReadUTOC     = 0xD4,
     /// <summary>Unknown, returns 4 empty bytes</summary>
-    MiniDiscD5 = 0xD5,
+    MiniDiscD5           = 0xD5,
     /// <summary>Stops playing audio</summary>
-    MiniDiscStopPlay = 0xD6,
+    MiniDiscStopPlay     = 0xD6,
     /// <summary>Gets current audio playing position</summary>
     MiniDiscReadPosition = 0xD7,
     /// <summary>Gets some values that are identical amongst audio discs and data discs, different between them</summary>
-    MiniDiscGetType = 0xD8,
+    MiniDiscGetType      = 0xD8,
 
 #endregion
 
@@ -2103,13 +2106,13 @@ public enum ZbcSubCommands : byte
     ResetWritePointer = 0x04,
 
     /// <summary>Requests device to transfer parameters describing realms</summary>
-    ReportRealms = 0x06,
+    ReportRealms      = 0x06,
     /// <summary>Requests device to transfer parameters describing the zone domains structure</summary>
     ReportZoneDomains = 0x07,
     /// <summary>Requests device to perform a zone activation operation</summary>
-    ZoneActivate = 0x08,
+    ZoneActivate      = 0x08,
     /// <summary>Requests information about a zone</summary>
-    ZoneQuery = 0x09,
+    ZoneQuery         = 0x09,
     /// <summary>Requests device to perform sequentialize zone operations</summary>
     SequentializeZone = 0x10
 }
@@ -2154,7 +2157,7 @@ public enum MmcGetConfigurationRt : byte
     Current = 0x01,
 
     /// <summary>Drive shall return only the Feature Header with the chosen Feature Descriptor</summary>
-    Single = 0x02,
+    Single   = 0x02,
     Reserved = 0x03
 }
 
@@ -2660,8 +2663,8 @@ public enum MmcCommands : byte
 
     /// <summary>The host sends the bus testing data pattern to a device (ADTC, R1)</summary>
     BusTestWrite = 19,
-    SpiReadOcr  = 58,
-    SpicrcOnOff = 59,
+    SpiReadOcr   = 58,
+    SpicrcOnOff  = 59,
 
 #endregion Class 1 MMC Commands (Basic and read-stream)
 
@@ -2865,7 +2868,9 @@ public enum SecureDigitalCommands : byte
 }
 
 [Flags]
-[SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
+[SuppressMessage("ReSharper",
+                 "ShiftExpressionZeroLeftOperand",
+                 Justification = "Zero shifts kept for readability of the flag table.")]
 public enum MmcFlags : uint
 {
     ResponsePresent = 1 << 0,
@@ -3079,7 +3084,7 @@ public enum AtaFeatures : byte
 
     /// <summary>Disable SERVICE interrupt</summary>
     DisableServiceInterrupt = 0xDE,
-    VendorSpecific = 0xE0
+    VendorSpecific          = 0xE0
 }
 
 public enum KreonLockStates : byte
