@@ -240,17 +240,29 @@ public sealed partial class NeXTDisklabel : IPartition
 
             var part = new Partition
             {
-                Size     = (ulong)(label.dl_dt.d_partitions[i].p_size                         * label.dl_dt.d_secsize),
-                Offset   = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) * label.dl_dt.d_secsize),
+                Size     = (ulong)label.dl_dt.d_partitions[i].p_size * (uint)label.dl_dt.d_secsize,
                 Type     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type),
                 Sequence = (ulong)i,
                 Name     = StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt),
-                Length   = (ulong)(label.dl_dt.d_partitions[i].p_size * label.dl_dt.d_secsize / sectorSize),
-                Start = (ulong)((label.dl_dt.d_partitions[i].p_base + label.dl_dt.d_front) *
-                                label.dl_dt.d_secsize /
-                                sectorSize),
+                Length = (ulong)label.dl_dt.d_partitions[i].p_size *
+                         (uint)label.dl_dt.d_secsize /
+                         sectorSize,
+                Offset = ((ulong)label.dl_dt.d_partitions[i].p_base + (uint)label.dl_dt.d_front) *
+                         (uint)label.dl_dt.d_secsize +
+                         sectorOffset * sectorSize,
+                Start = ((ulong)label.dl_dt.d_partitions[i].p_base + (uint)label.dl_dt.d_front) *
+                        (uint)label.dl_dt.d_secsize /
+                        sectorSize +
+                        sectorOffset,
                 Scheme = Name
             };
+
+            if(part.Start >= imagePlugin.Info.Sectors)
+            {
+                AaruLogging.Debug(MODULE_NAME, Localization.Partition_bigger_than_device_reducing);
+
+                continue;
+            }
 
             if(part.Start + part.Length > imagePlugin.Info.Sectors)
             {
@@ -351,7 +363,7 @@ public sealed partial class NeXTDisklabel : IPartition
 #region Nested type: Entry
 
     /// <summary>Partition entries, 44 bytes each</summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 2)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     [SwapEndian]
     partial struct Entry
     {
