@@ -423,7 +423,7 @@ partial class Dump
                     }
                     else
                     {
-                        outputFormat.WriteSectors(new byte[2064 * _skip],
+                        outputFormat.WriteSectors(new byte[2048 * _skip],
                                                   i,
                                                   false,
                                                   _skip,
