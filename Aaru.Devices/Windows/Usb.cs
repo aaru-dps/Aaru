@@ -42,9 +42,9 @@ namespace Aaru.Devices.Windows;
 
 // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
 /// <summary>Implements functions for getting and accessing information from the USB bus</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
-[SuppressMessage("ReSharper", "UnusedType.Local")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Local",  Justification = "Kept for completeness of the Windows USB API.")]
+[SuppressMessage("ReSharper", "UnusedType.Local",    Justification = "Kept for completeness of the Windows USB API.")]
+[SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Kept for completeness of the Windows USB API.")]
 static partial class Usb
 {
     /// <summary>Return a list of USB Host Controllers</summary>
@@ -801,8 +801,11 @@ static partial class Usb
                                IntPtr.Zero))
             {
                 var ptrStringDesc = IntPtr.Add(dcrPtrRequest, Marshal.SizeOf(dcrRequest));
-                device.BinaryDeviceDescriptors = new byte[nBytesReturned];
-                Marshal.Copy(ptrStringDesc, device.BinaryDeviceDescriptors, 0, nBytesReturned);
+
+                // The returned byte count includes the request header, don't read past the allocation
+                int descriptorsLength = Math.Max(0, Math.Min(nBytesReturned, nBytes) - Marshal.SizeOf(dcrRequest));
+                device.BinaryDeviceDescriptors = new byte[descriptorsLength];
+                Marshal.Copy(ptrStringDesc, device.BinaryDeviceDescriptors, 0, descriptorsLength);
             }
 
             Marshal.FreeHGlobal(dcrPtrRequest);
@@ -1043,7 +1046,7 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct UsbHcdDriverkeyName
+    readonly struct UsbHcdDriverkeyName
     {
         internal readonly int ActualLength;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = BUFFER_SIZE)]
@@ -1051,7 +1054,7 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct UsbRootHubName
+    readonly struct UsbRootHubName
     {
         internal readonly int ActualLength;
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = BUFFER_SIZE)]
@@ -1059,7 +1062,7 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct UsbHubDescriptor
+    readonly struct UsbHubDescriptor
     {
         internal readonly byte  bDescriptorLength;
         internal readonly byte  bDescriptorType;
@@ -1072,7 +1075,7 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct UsbHubInformation
+    readonly struct UsbHubInformation
     {
         internal readonly UsbHubDescriptor HubDescriptor;
         internal readonly byte             HubIsBusPowered;
@@ -1102,7 +1105,9 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper",
+                     "MemberCanBePrivate.Global",
+                     Justification = "Kept for completeness of the Windows USB API.")]
     internal struct UsbDeviceDescriptor
     {
         internal byte  bLength;
@@ -1122,7 +1127,7 @@ static partial class Usb
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct UsbStringDescriptor
+    readonly struct UsbStringDescriptor
     {
         internal readonly byte bLength;
         internal readonly byte bDescriptorType;
@@ -1200,10 +1205,11 @@ static partial class Usb
                    EntryPoint = "SetupDiGetDeviceRegistryPropertyW",
                    SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool SetupDiGetDeviceRegistryProperty(
-        IntPtr  deviceInfoSet,       ref SpDevinfoData deviceInfoData, int iProperty,
-        ref int propertyRegDataType, IntPtr            propertyBuffer, int propertyBufferSize,
-        ref int requiredSize);
+    private static partial bool SetupDiGetDeviceRegistryProperty(IntPtr deviceInfoSet,
+                                                                 ref SpDevinfoData deviceInfoData, int iProperty,
+                                                                 ref int propertyRegDataType,
+                                                                 IntPtr propertyBuffer, int propertyBufferSize,
+                                                                 ref int requiredSize);
 
     [LibraryImport("setupapi.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]

@@ -165,6 +165,9 @@ partial class Device : Devices.Device, IDisposable
                 RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
             };
 
+            // Clamp to the queried buffer size, the driver-reported length is not trusted
+            if(descriptor.RawPropertiesLength > 1000 - 36) descriptor.RawPropertiesLength = 1000 - 36;
+
             descriptor.RawDeviceProperties = new byte[descriptor.RawPropertiesLength];
 
             Array.Copy(descriptorB, 36, descriptor.RawDeviceProperties, 0, descriptor.RawPropertiesLength);
