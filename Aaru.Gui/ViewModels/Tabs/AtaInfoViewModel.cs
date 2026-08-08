@@ -117,13 +117,11 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
+        await using var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
 
         if(_ata != null)
-            saveFs.Write(_ata,                       0, _ata.Length);
-        else if(_atapi != null) saveFs.Write(_atapi, 0, _atapi.Length);
-
-        saveFs.Close();
+            await saveFs.WriteAsync(_ata);
+        else if(_atapi != null) await saveFs.WriteAsync(_atapi);
     }
 
     async Task SaveAtaTextAsync()
@@ -138,9 +136,8 @@ public sealed class AtaInfoViewModel : ViewModelBase
 
         if(result is null) return;
 
-        var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
-        var saveSw = new StreamWriter(saveFs);
+        await using var saveFs = new FileStream(result.Path.LocalPath, FileMode.Create);
+        await using var saveSw = new StreamWriter(saveFs);
         await saveSw.WriteAsync(AtaIdentifyText);
-        saveFs.Close();
     }
 }
