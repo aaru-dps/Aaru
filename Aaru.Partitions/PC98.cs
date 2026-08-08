@@ -157,6 +157,7 @@ public sealed class PC98 : IPartition
                               StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
             if(entry.dp_scyl  == entry.dp_ecyl                   ||
+               entry.dp_ecyl  < entry.dp_scyl                    ||
                entry.dp_ecyl  <= 0                               ||
                entry.dp_scyl  > imagePlugin.Info.Cylinders       ||
                entry.dp_ecyl  > imagePlugin.Info.Cylinders       ||
@@ -201,7 +202,7 @@ public sealed class PC98 : IPartition
 
             if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
                part.Start >= imagePlugin.Info.Sectors                         ||
-               part.End   > imagePlugin.Info.Sectors)
+               part.End   >= imagePlugin.Info.Sectors)
                 continue;
 
             partitions.Add(part);
