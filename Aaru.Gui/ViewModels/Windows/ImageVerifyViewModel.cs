@@ -298,7 +298,7 @@ public sealed partial class ImageVerifyViewModel : ViewModelBase
                         ProgressValue++;
                     });
 
-                    ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector;
+                    ulong remainingSectors = currentTrack.EndSector - currentTrack.StartSector + 1;
                     ulong currentSector    = 0;
 
                     while(remainingSectors > 0)
