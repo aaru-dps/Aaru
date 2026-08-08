@@ -39,7 +39,9 @@ using Aaru.Logging;
 
 namespace Aaru.Devices;
 
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper",
+                 "UnusedMethodReturnValue.Global",
+                 Justification = "Public API used by consumers of the library.")]
 public partial class Device
 {
     /// <summary>Sends the MMC GET CONFIGURATION command for all Features</summary>
@@ -312,6 +314,23 @@ public partial class Device
 
         Error = LastError != 0;
 
+        if(sense)
+        {
+            buffer = tmpBuffer;
+
+            AaruLogging.Debug(SCSI_MODULE_NAME,
+                              Localization
+                                 .READ_TOC_PMA_ATIP_took_MSF_1_Format_2_Track_Session_Number_3_Sense_4_LastError_5_0_ms,
+                              duration,
+                              msf,
+                              format,
+                              trackSessionNumber,
+                              true,
+                              LastError);
+
+            return true;
+        }
+
         var strctLength = (uint)((tmpBuffer[0] << 8) + tmpBuffer[1] + 2);
         buffer = new byte[strctLength];
 
@@ -326,13 +345,16 @@ public partial class Device
                               msf,
                               format,
                               trackSessionNumber,
-                              sense,
+                              false,
                               LastError);
 
-            return sense;
+            return false;
         }
 
         double tmpDuration = duration;
+
+        cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
+        cdb[8] = (byte)(buffer.Length & 0xFF);
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out sense);
 
@@ -715,7 +737,9 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
+    [SuppressMessage("ReSharper",
+                     "ShiftExpressionZeroLeftOperand",
+                     Justification = "Zero shifts kept for readability.")]
     public bool ReadMcn(out string mcn, out byte[] buffer, out ReadOnlySpan<byte> senseBuffer, uint timeout,
                         out double duration)
     {
@@ -756,7 +780,9 @@ public partial class Device
     /// <param name="timeout">Timeout in seconds.</param>
     /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
     /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
-    [SuppressMessage("ReSharper", "ShiftExpressionZeroLeftOperand")]
+    [SuppressMessage("ReSharper",
+                     "ShiftExpressionZeroLeftOperand",
+                     Justification = "Zero shifts kept for readability.")]
     public bool ReadIsrc(byte trackNumber, out string isrc, out byte[] buffer, out ReadOnlySpan<byte> senseBuffer,
                          uint timeout,     out double duration)
     {
