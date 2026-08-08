@@ -295,7 +295,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.SCSI_INQUIRY, out scsiInquiryData);
 
-            if(errno == ErrorNumber.NoError)
+            if(errno == ErrorNumber.NoError && scsiInquiryData.Length > 0)
             {
                 scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
 
@@ -431,7 +431,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_ATIP, out atip);
 
-            if(errno == ErrorNumber.NoError)
+            if(errno == ErrorNumber.NoError && atip.Length >= 4)
             {
                 uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
 
@@ -454,7 +454,7 @@ public sealed class ImageInfoViewModel : ViewModelBase
         {
             errno = imageFormat.ReadMediaTag(MediaTagType.CD_TEXT, out cdtext);
 
-            if(errno == ErrorNumber.NoError)
+            if(errno == ErrorNumber.NoError && cdtext.Length >= 2)
             {
                 ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(cdtext, 0));
 
