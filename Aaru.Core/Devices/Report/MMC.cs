@@ -1166,7 +1166,7 @@ public sealed partial class DeviceReport
                      or "PlayStation 4 game"
                      or "PlayStation 5 game"
                      or "Xbox One game"
-                     or "Nintendo Wii game")
+                     or "Nintendo Wii U game")
         {
             Spectre.ProgressSingleSpinner(ctx =>
             {
