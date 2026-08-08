@@ -115,7 +115,7 @@ public partial class Device
 
         LastError = SendMmcCommand(MmcCommands.SendOpCond,
                                    false,
-                                   true,
+                                   false,
                                    MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 | MmcFlags.CommandBcr,
                                    0,
                                    4,
@@ -395,7 +395,7 @@ public partial class Device
 
         LastError = SendMmcCommand(MmcCommands.SendStatus,
                                    false,
-                                   true,
+                                   false,
                                    MmcFlags.ResponseSpiR1 | MmcFlags.ResponseR1 | MmcFlags.CommandAc,
                                    0,
                                    4,
