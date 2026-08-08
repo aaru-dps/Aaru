@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Aaru.CommonTypes;
 using Aaru.CommonTypes.Enums;
@@ -78,15 +79,22 @@ public sealed class Plan9 : IPartition
                                          .Select(static part => part.Split(' '))
                                          .TakeWhile(static tokens => tokens.Length == 4))
         {
-            if(!ulong.TryParse(tokens[2], out ulong start) || !ulong.TryParse(tokens[3], out ulong end)) break;
+            if(!ulong.TryParse(tokens[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out ulong start) ||
+               !ulong.TryParse(tokens[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out ulong end))
+                break;
+
+            // "end" is exclusive: the next partition starts exactly at the previous one's end
+            if(end <= start || start + sectorOffset >= imagePlugin.Info.Sectors) continue;
+
+            if(end + sectorOffset > imagePlugin.Info.Sectors) continue;
 
             var part = new Partition
             {
-                Length   = end - start + 1,
+                Length   = end - start,
                 Offset   = (start + sectorOffset) * imagePlugin.Info.SectorSize,
                 Scheme   = Name,
                 Sequence = (ulong)partitions.Count,
-                Size     = (end - start + 1) * imagePlugin.Info.SectorSize,
+                Size     = (end - start) * imagePlugin.Info.SectorSize,
                 Start    = start + sectorOffset,
                 Type     = tokens[1]
             };
