@@ -274,9 +274,8 @@ public sealed class ImageInfoViewModel : ViewModelBase
         }
 
         if(imageFormat.Info.ReadableMediaTags is { Count: > 0 })
-        {
-            foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.Order()) MediaTagsList.Add(tag.Humanize());
-        }
+            foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.Order())
+                MediaTagsList.Add(tag.Humanize());
 
         if(imageFormat.Info.ReadableSectorTags is { Count: > 0 })
         {
@@ -461,10 +460,10 @@ public sealed class ImageInfoViewModel : ViewModelBase
 
                 if(dataLen + 2 != cdtext.Length)
                 {
-                    var tmp = new byte[cdtext.Length + 4];
-                    Array.Copy(cdtext, 0, tmp, 4, cdtext.Length);
-                    tmp[0] = (byte)((cdtext.Length + 2 & 0xFF00) >> 8);
-                    tmp[1] = (byte)(cdtext.Length + 2 & 0xFF);
+                    var tmp = new byte[cdtext.Length + 2];
+                    Array.Copy(cdtext, 0, tmp, 2, cdtext.Length);
+                    tmp[0] = (byte)((cdtext.Length & 0xFF00) >> 8);
+                    tmp[1] = (byte)(cdtext.Length & 0xFF);
                     cdtext = tmp;
                 }
 
