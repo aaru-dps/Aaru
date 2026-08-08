@@ -62,7 +62,7 @@ public static class ListDevices
 
     /// <summary>Gets a list of all known storage devices on Windows</summary>
     /// <returns>List of devices</returns>
-    [SuppressMessage("ReSharper", "RedundantCatchClause")]
+    [SuppressMessage("ReSharper", "RedundantCatchClause", Justification = "Catch is only redundant in DEBUG builds.")]
     public static DeviceInfo[] GetList()
     {
         var deviceIDs = new List<string>();
@@ -113,7 +113,12 @@ public static class ListDevices
                                                   0,
                                                   IntPtr.Zero);
 
-            if(fd.IsInvalid) continue;
+            if(fd.IsInvalid)
+            {
+                fd.Dispose();
+
+                continue;
+            }
 
             var query = new StoragePropertyQuery
             {
@@ -128,94 +133,103 @@ public static class ListDevices
             IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
             var    descriptorB   = new byte[1000];
 
-            uint returned = 0;
-            var  error    = 0;
-
-            bool hasError = !Extern.DeviceIoControlStorageQuery(fd,
-                                                                WindowsIoctl.IoctlStorageQueryProperty,
-                                                                ref query,
-                                                                (uint)Marshal.SizeOf(query),
-                                                                descriptorPtr,
-                                                                1000,
-                                                                ref returned,
-                                                                IntPtr.Zero);
-
-            if(hasError) error = Marshal.GetLastWin32Error();
-
-            Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
-
-            if(hasError && error != 0) continue;
-
-            var descriptor = new StorageDeviceDescriptor
+            try
             {
-                Version               = BitConverter.ToUInt32(descriptorB, 0),
-                Size                  = BitConverter.ToUInt32(descriptorB, 4),
-                DeviceType            = descriptorB[8],
-                DeviceTypeModifier    = descriptorB[9],
-                RemovableMedia        = BitConverter.ToBoolean(descriptorB, 10),
-                CommandQueueing       = BitConverter.ToBoolean(descriptorB, 11),
-                VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
-                ProductIdOffset       = BitConverter.ToInt32(descriptorB, 16),
-                ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
-                SerialNumberOffset    = BitConverter.ToInt32(descriptorB, 24),
-                BusType               = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
-                RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
-            };
+                uint returned = 0;
+                var  error    = 0;
 
-            var info = new DeviceInfo
-            {
-                Path = physId,
-                Bus  = descriptor.BusType.ToString()
-            };
+                bool hasError = !Extern.DeviceIoControlStorageQuery(fd,
+                                                                    WindowsIoctl.IoctlStorageQueryProperty,
+                                                                    ref query,
+                                                                    (uint)Marshal.SizeOf(query),
+                                                                    descriptorPtr,
+                                                                    1000,
+                                                                    ref returned,
+                                                                    IntPtr.Zero);
 
-            if(descriptor.VendorIdOffset > 0)
-                info.Vendor = StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
+                if(hasError) error = Marshal.GetLastWin32Error();
 
-            if(descriptor.ProductIdOffset > 0)
-                info.Model = StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
+                Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
-            // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
-            if(descriptor.SerialNumberOffset > 0)
-            {
-                info.Serial =
-                    StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.SerialNumberOffset);
+                if(hasError && error != 0) continue;
 
-                // fix any serial numbers that are returned as hex-strings
-                if(Array.TrueForAll(info.Serial.ToCharArray(), static c => "0123456789abcdef".IndexOf(c) >= 0) &&
-                   info.Serial.Length == 40)
-                    info.Serial = HexStringToString(info.Serial).Trim();
-            }
-
-            if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
-            {
-                string[] pieces = info.Model?.Split(' ');
-
-                if(pieces?.Length > 1)
+                var descriptor = new StorageDeviceDescriptor
                 {
-                    info.Vendor = pieces[0];
-                    info.Model  = info.Model[(pieces[0].Length + 1)..];
+                    Version               = BitConverter.ToUInt32(descriptorB, 0),
+                    Size                  = BitConverter.ToUInt32(descriptorB, 4),
+                    DeviceType            = descriptorB[8],
+                    DeviceTypeModifier    = descriptorB[9],
+                    RemovableMedia        = BitConverter.ToBoolean(descriptorB, 10),
+                    CommandQueueing       = BitConverter.ToBoolean(descriptorB, 11),
+                    VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
+                    ProductIdOffset       = BitConverter.ToInt32(descriptorB, 16),
+                    ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
+                    SerialNumberOffset    = BitConverter.ToInt32(descriptorB, 24),
+                    BusType               = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
+                    RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
+                };
+
+                var info = new DeviceInfo
+                {
+                    Path = physId,
+                    Bus  = descriptor.BusType.ToString()
+                };
+
+                if(descriptor.VendorIdOffset > 0)
+                    info.Vendor =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
+
+                if(descriptor.ProductIdOffset > 0)
+                    info.Model =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
+
+                // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
+                if(descriptor.SerialNumberOffset > 0)
+                {
+                    info.Serial =
+                        StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.SerialNumberOffset);
+
+                    // fix any serial numbers that are returned as hex-strings
+                    if(Array.TrueForAll(info.Serial.ToCharArray(), static c => "0123456789abcdef".IndexOf(c) >= 0) &&
+                       info.Serial.Length == 40)
+                        info.Serial = HexStringToString(info.Serial).Trim();
                 }
+
+                if(string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA")
+                {
+                    string[] pieces = info.Model?.Split(' ');
+
+                    if(pieces?.Length > 1)
+                    {
+                        info.Vendor = pieces[0];
+                        info.Model  = info.Model[(pieces[0].Length + 1)..];
+                    }
+                }
+
+                info.Supported = descriptor.BusType switch
+                                 {
+                                     StorageBusType.SCSI
+                                      or StorageBusType.ATAPI
+                                      or StorageBusType.ATA
+                                      or StorageBusType.FireWire
+                                      or StorageBusType.SSA
+                                      or StorageBusType.Fibre
+                                      or StorageBusType.USB
+                                      or StorageBusType.iSCSI
+                                      or StorageBusType.SAS
+                                      or StorageBusType.SATA
+                                      or StorageBusType.SecureDigital
+                                      or StorageBusType.MultiMediaCard => true,
+                                     _ => info.Supported
+                                 };
+
+                devList.Add(info);
             }
-
-            info.Supported = descriptor.BusType switch
-                             {
-                                 StorageBusType.SCSI
-                                  or StorageBusType.ATAPI
-                                  or StorageBusType.ATA
-                                  or StorageBusType.FireWire
-                                  or StorageBusType.SSA
-                                  or StorageBusType.Fibre
-                                  or StorageBusType.USB
-                                  or StorageBusType.iSCSI
-                                  or StorageBusType.SAS
-                                  or StorageBusType.SATA
-                                  or StorageBusType.SecureDigital
-                                  or StorageBusType.MultiMediaCard => true,
-                                 _ => info.Supported
-                             };
-
-            Marshal.FreeHGlobal(descriptorPtr);
-            devList.Add(info);
+            finally
+            {
+                Marshal.FreeHGlobal(descriptorPtr);
+                fd.Dispose();
+            }
         }
 
         DeviceInfo[] devices = devList.ToArray();
