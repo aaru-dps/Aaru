@@ -631,7 +631,7 @@ partial class Device
     /// <inheritdoc />
     public override bool ReOpen()
     {
-        Extern.CloseHandle(_fileHandle);
+        _fileHandle.Dispose();
 
         SafeFileHandle newFd = Extern.CreateFile(DevicePath,
                                                  FileAccess.GenericRead | FileAccess.GenericWrite,
