@@ -225,6 +225,8 @@ partial class Dump
                     {
                         if(_stopOnError) return;
 
+                        if(i + _skip > blocks) _skip = (uint)(blocks - i);
+
                         outputFormat.WriteSectorsLong(new byte[blockSize * _skip],
                                                       i,
                                                       false,
