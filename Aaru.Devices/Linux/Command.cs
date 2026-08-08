@@ -662,30 +662,37 @@ partial class Device
     static string ReadLink(string path)
     {
         nint buf = Marshal.AllocHGlobal(4096);
-        int  resultSize;
 
-        if(DetectOS.Is64Bit)
+        try
         {
-            long result64 = Extern.readlink64(path, buf, 4096);
+            int resultSize;
 
-            if(result64 <= 0) return null;
+            if(DetectOS.Is64Bit)
+            {
+                long result64 = Extern.readlink64(path, buf, 4096);
 
-            resultSize = (int)result64;
+                if(result64 <= 0) return null;
+
+                resultSize = (int)result64;
+            }
+            else
+            {
+                int result = Extern.readlink(path, buf, 4096);
+
+                if(result <= 0) return null;
+
+                resultSize = result;
+            }
+
+            var resultString = new byte[resultSize];
+            Marshal.Copy(buf, resultString, 0, resultSize);
+
+            return Encoding.ASCII.GetString(resultString);
         }
-        else
+        finally
         {
-            int result = Extern.readlink(path, buf, 4096);
-
-            if(result <= 0) return null;
-
-            resultSize = result;
+            Marshal.FreeHGlobal(buf);
         }
-
-        var resultString = new byte[resultSize];
-        Marshal.Copy(buf, resultString, 0, resultSize);
-        Marshal.FreeHGlobal(buf);
-
-        return Encoding.ASCII.GetString(resultString);
     }
 
     /// <inheritdoc />
