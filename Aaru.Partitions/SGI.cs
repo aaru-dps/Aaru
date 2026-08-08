@@ -48,7 +48,7 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of the SGI Disk Volume Header</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original IRIX headers")]
 public sealed partial class SGI : IPartition
 {
     const int    SGI_MAGIC   = 0x0BE5A941;
@@ -133,10 +133,15 @@ public sealed partial class SGI : IPartition
 
             var part = new CommonTypes.Partition
             {
-                Start    = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
-                Offset   = dvh.partitions[i].first_block * dvh.device_params.dp_secbytes,
-                Length   = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
-                Size     = dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
+                Start =
+                    (ulong)dvh.partitions[i].first_block * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize +
+                    sectorOffset,
+                Offset =
+                    (ulong)dvh.partitions[i].first_block * dvh.device_params.dp_secbytes +
+                    sectorOffset                         * imagePlugin.Info.SectorSize,
+                Length =
+                    (ulong)dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes / imagePlugin.Info.SectorSize,
+                Size     = (ulong)dvh.partitions[i].num_blocks * dvh.device_params.dp_secbytes,
                 Type     = TypeToString(dvh.partitions[i].type),
                 Sequence = counter,
                 Scheme   = Name
@@ -148,7 +153,7 @@ public sealed partial class SGI : IPartition
             counter++;
         }
 
-        return true;
+        return partitions.Count > 0;
     }
 
 #endregion
