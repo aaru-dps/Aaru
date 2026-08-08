@@ -1223,7 +1223,7 @@ public class Remote : IDisposable
 
         if(res.ocr_len > 0)
         {
-            if(res.ocr_len > 16) res.ocr_len = 16;
+            if(res.ocr_len > 4) res.ocr_len = 4;
 
             ocr = new byte[res.ocr_len];
 
@@ -1234,8 +1234,8 @@ public class Remote : IDisposable
         {
             case <= 0:
                 return res.isSdhci;
-            case > 16:
-                res.scr_len = 16;
+            case > 8:
+                res.scr_len = 8;
 
                 break;
         }
