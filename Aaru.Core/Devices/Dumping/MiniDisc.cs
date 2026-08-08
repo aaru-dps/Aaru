@@ -365,6 +365,7 @@ partial class Dump
 
             _speedStopwatch.Stop();
 
+            elapsed       += _speedStopwatch.Elapsed.TotalMilliseconds;
             totalDuration += _speedStopwatch.Elapsed.TotalMilliseconds;
 
             if(!sense && !_dev.Error)
