@@ -36,6 +36,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes;
+using Aaru.CommonTypes.Attributes;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Logging;
@@ -45,8 +46,8 @@ namespace Aaru.Partitions;
 
 /// <inheritdoc />
 /// <summary>Implements decoding of the AIX minidisk (VTOC) partitioning scheme</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-public sealed class AixMinidisk : IPartition
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original AIX headers")]
+public sealed partial class AixMinidisk : IPartition
 {
     const string MODULE_NAME = "AIX minidisk plugin";
 
@@ -98,7 +99,7 @@ public sealed class AixMinidisk : IPartition
             return false;
         }
 
-        Vtoc1 vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc1>(sector);
+        Vtoc1 vtoc = Marshal.ByteArrayToStructureBigEndian<Vtoc1>(sector);
 
         AaruLogging.Debug(MODULE_NAME,
                           "vtoc.magic_string = \"{0}\"",
@@ -174,10 +175,10 @@ public sealed class AixMinidisk : IPartition
 
             var part = new Partition
             {
-                Start    = md.s_block * BLOCKSIZE  / imagePlugin.Info.SectorSize,
-                Offset   = md.s_block              * BLOCKSIZE,
-                Length   = md.num_blks * BLOCKSIZE / imagePlugin.Info.SectorSize,
-                Size     = md.num_blks             * BLOCKSIZE,
+                Start    = (ulong)md.s_block * BLOCKSIZE / imagePlugin.Info.SectorSize + sectorOffset,
+                Offset   = (ulong)md.s_block             * BLOCKSIZE + sectorOffset * imagePlugin.Info.SectorSize,
+                Length   = (ulong)md.num_blks            * BLOCKSIZE / imagePlugin.Info.SectorSize,
+                Size     = (ulong)md.num_blks                        * BLOCKSIZE,
                 Type     = TypeToString(md.type),
                 Sequence = counter,
                 Scheme   = Name,
@@ -238,48 +239,52 @@ public sealed class AixMinidisk : IPartition
 
 #region Nested type: Minidisk
 
+    /// <inheritdoc />
     /// <summary>AIX minidisk entry structure</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Minidisk
+    [SwapEndian]
+    partial struct Minidisk
     {
         /// <summary>Starting block number</summary>
-        public readonly uint s_block;
+        public uint   s_block;
         /// <summary>Length of minidisk in blocks</summary>
-        public readonly uint num_blks;
+        public uint   num_blks;
         /// <summary>Type of minidisk</summary>
-        public readonly byte type;
+        public byte   type;
         /// <summary>Minidisk ID number</summary>
-        public readonly byte mdisk_id;
+        public byte   mdisk_id;
         /// <summary>Index into string table</summary>
-        public readonly ushort str_index;
+        public ushort str_index;
     }
 
 #endregion
 
 #region Nested type: Vtoc1
 
+    /// <inheritdoc />
     /// <summary>AIX VTOC sector 1 structure</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct Vtoc1
+    [SwapEndian]
+    partial struct Vtoc1
     {
         /// <summary>"VTOC" magic string</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public readonly byte[] magic_string;
+        public byte[] magic_string;
         /// <summary>Version number</summary>
-        public readonly byte version;
+        public byte   version;
         /// <summary>Sequence number (must match others)</summary>
-        public readonly byte seq_num;
+        public byte   seq_num;
         /// <summary>Max length of boot 1 in disk blocks</summary>
-        public readonly ushort bootsize;
+        public ushort bootsize;
         /// <summary>Number of bad blocks (ST506 only)</summary>
-        public readonly ushort numbadblks;
+        public ushort numbadblks;
         /// <summary>Offset within the bad block minidisk</summary>
-        public readonly ushort badblkoff;
+        public ushort badblkoff;
         /// <summary>Spare (to put mini[] on 8 byte boundary)</summary>
-        public readonly int vt_spare;
+        public int    vt_spare;
         /// <summary>Minidisk entries</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_MINIDISKS)]
-        public readonly Minidisk[] mini;
+        public Minidisk[] mini;
     }
 
 #endregion
