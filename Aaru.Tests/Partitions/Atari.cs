@@ -66,10 +66,10 @@ public class Atari : PartitionSchemeTest
                 {
                     Description = "Macintosh partition",
                     Length      = 102399,
-                    Offset      = 512,
-                    Sequence    = 1,
+                    Offset      = 120587264,
+                    Sequence    = 3,
                     Size        = 52428288,
-                    Start       = 1,
+                    Start       = 235522,
                     Type        = "MAC"
                 },
                 new Partition
@@ -77,7 +77,7 @@ public class Atari : PartitionSchemeTest
                     Description = "Linux partition",
                     Length      = 92160,
                     Offset      = 73400832,
-                    Sequence    = 3,
+                    Sequence    = 2,
                     Size        = 47185920,
                     Start       = 143361,
                     Type        = "LNX"
