@@ -423,7 +423,10 @@ partial class Dump
                     continue;
                 }
 
-                outputFormat.WriteSector(buffer, badSector, false, SectorStatus.Errored);
+                if(scsiReader.ReadBuffer3CReadRaw || scsiReader.OmniDriveReadRaw || scsiReader.HldtstReadRaw)
+                    outputFormat.WriteSectorLong(buffer, badSector, false, SectorStatus.Errored);
+                else
+                    outputFormat.WriteSector(buffer, badSector, false, SectorStatus.Errored);
             }
         }
 
