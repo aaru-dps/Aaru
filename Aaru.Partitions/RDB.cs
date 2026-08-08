@@ -243,7 +243,7 @@ public sealed class AmigaRigidDiskBlock : IPartition
         rdb.Checksum        = BigEndianBitConverter.ToInt32(sector, 0x08);
         rdb.TargetId        = BigEndianBitConverter.ToUInt32(sector, 0x0C);
         rdb.BlockSize       = BigEndianBitConverter.ToUInt32(sector, 0x10);
-        rdb.Flags           = BigEndianBitConverter.ToUInt32(sector, 0x04);
+        rdb.Flags           = BigEndianBitConverter.ToUInt32(sector, 0x14);
         rdb.BadblockPtr     = BigEndianBitConverter.ToUInt32(sector, 0x18);
         rdb.PartitionPtr    = BigEndianBitConverter.ToUInt32(sector, 0x1C);
         rdb.FsheaderPtr     = BigEndianBitConverter.ToUInt32(sector, 0x20);
@@ -276,7 +276,6 @@ public sealed class AmigaRigidDiskBlock : IPartition
         rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x8C);
         rdb.CylBlocks       = BigEndianBitConverter.ToUInt32(sector, 0x90);
         rdb.AutoParkSeconds = BigEndianBitConverter.ToUInt32(sector, 0x94);
-        rdb.HighCylinder    = BigEndianBitConverter.ToUInt32(sector, 0x98);
         rdb.Reserved15      = BigEndianBitConverter.ToUInt32(sector, 0x9C);
 
         var tmpString = new byte[8];
@@ -347,7 +346,6 @@ public sealed class AmigaRigidDiskBlock : IPartition
         AaruLogging.Debug(MODULE_NAME, "RDB.HighCylinder = {0}",           rdb.HighCylinder);
         AaruLogging.Debug(MODULE_NAME, "RDB.CylBlocks = {0}",              rdb.CylBlocks);
         AaruLogging.Debug(MODULE_NAME, "RDB.AutoParkSeconds = {0}",        rdb.AutoParkSeconds);
-        AaruLogging.Debug(MODULE_NAME, "RDB.HighCylinder = {0}",           rdb.HighCylinder);
         AaruLogging.Debug(MODULE_NAME, "RDB.reserved15 = 0x{0:X8}",        rdb.Reserved15);
         AaruLogging.Debug(MODULE_NAME, "RDB.diskVendor = \"{0}\"",         rdb.DiskVendor);
         AaruLogging.Debug(MODULE_NAME, "RDB.diskProduct = \"{0}\"",        rdb.DiskProduct);
@@ -369,12 +367,13 @@ public sealed class AmigaRigidDiskBlock : IPartition
         // Reading BadBlock list
         List<BadBlockList> badBlockChain = [];
         ulong              nextBlock     = rdb.BadblockPtr;
+        var                visitedBlocks = new HashSet<ulong>();
 
-        while(nextBlock != 0xFFFFFFFF)
+        while(nextBlock != 0xFFFFFFFF && visitedBlocks.Add(nextBlock))
         {
             AaruLogging.Debug(MODULE_NAME, Localization.Going_to_block_0_in_search_of_a_BadBlock_block, nextBlock);
 
-            errno = imagePlugin.ReadSector(nextBlock, false, out sector, out _);
+            errno = imagePlugin.ReadSector(nextBlock + sectorOffset, false, out sector, out _);
 
             if(errno != ErrorNumber.NoError) break;
 
@@ -394,7 +393,13 @@ public sealed class AmigaRigidDiskBlock : IPartition
                 Reserved = BigEndianBitConverter.ToUInt32(sector, 0x14)
             };
 
-            ulong entries = (chainEntry.Size - 6) / 2;
+            if(chainEntry.Size < 6) break;
+
+            ulong entries = (chainEntry.Size - 6UL) / 2;
+
+            // Entries must fit in the block that was read
+            if(0x18 + entries * 8 > (ulong)sector.Length) entries = ((ulong)sector.Length - 0x18) / 8;
+
             chainEntry.BlockPairs = new BadBlockEntry[entries];
 
             AaruLogging.Debug(MODULE_NAME, "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
@@ -428,8 +433,9 @@ public sealed class AmigaRigidDiskBlock : IPartition
         // Reading BadBlock list
         List<PartitionEntry> partitionEntries = [];
         nextBlock = rdb.PartitionPtr;
+        visitedBlocks.Clear();
 
-        while(nextBlock != 0xFFFFFFFF)
+        while(nextBlock != 0xFFFFFFFF && visitedBlocks.Add(nextBlock))
         {
             AaruLogging.Debug(MODULE_NAME,
                               Localization.Going_to_block_0_in_search_of_a_PartitionEntry_block,
@@ -588,14 +594,15 @@ public sealed class AmigaRigidDiskBlock : IPartition
         List<FileSystemHeader> fshdEntries    = [];
         List<LoadSegment>      segmentEntries = [];
         nextBlock = rdb.FsheaderPtr;
+        visitedBlocks.Clear();
 
-        while(nextBlock != 0xFFFFFFFF)
+        while(nextBlock != 0xFFFFFFFF && visitedBlocks.Add(nextBlock))
         {
             AaruLogging.Debug(MODULE_NAME,
                               Localization.Going_to_block_0_in_search_of_a_FileSystemHeader_block,
                               nextBlock);
 
-            errno = imagePlugin.ReadSector(nextBlock, false, out sector, out _);
+            errno = imagePlugin.ReadSector(nextBlock + sectorOffset, false, out sector, out _);
 
             if(errno != ErrorNumber.NoError) break;
 
@@ -667,14 +674,15 @@ public sealed class AmigaRigidDiskBlock : IPartition
             nextBlock = fshd.Dnode.SeglistPtr;
             var thereAreLoadSegments = false;
             var sha1Ctx              = new Sha1Context();
+            var visitedSegments      = new HashSet<ulong>();
 
-            while(nextBlock != 0xFFFFFFFF)
+            while(nextBlock != 0xFFFFFFFF && visitedSegments.Add(nextBlock))
             {
                 AaruLogging.Debug(MODULE_NAME,
                                   Localization.Going_to_block_0_in_search_of_a_LoadSegment_block,
                                   nextBlock);
 
-                errno = imagePlugin.ReadSector(nextBlock, false, out sector, out _);
+                errno = imagePlugin.ReadSector(nextBlock + sectorOffset, false, out sector, out _);
 
                 if(errno != ErrorNumber.NoError) break;
 
@@ -695,8 +703,15 @@ public sealed class AmigaRigidDiskBlock : IPartition
                     NextPtr  = BigEndianBitConverter.ToUInt32(sector, 0x10)
                 };
 
-                loadSeg.LoadData = new byte[(loadSeg.Size - 5) * 4];
-                Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (loadSeg.Size - 5) * 4);
+                if(loadSeg.Size < 5) break;
+
+                ulong loadDataBytes = (loadSeg.Size - 5UL) * 4;
+
+                // Data must fit in the block that was read
+                if(0x14 + loadDataBytes > (ulong)sector.Length) loadDataBytes = (ulong)sector.Length - 0x14;
+
+                loadSeg.LoadData = new byte[loadDataBytes];
+                Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (long)loadDataBytes);
 
                 AaruLogging.Debug(MODULE_NAME, "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
 
@@ -730,20 +745,22 @@ public sealed class AmigaRigidDiskBlock : IPartition
                     Name        = rdbEntry.DriveName,
                     Sequence    = sequence,
                     Length =
-                        (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                        rdbEntry.DosEnvVec.Surfaces                                            *
+                        ((ulong)rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                        rdbEntry.DosEnvVec.Surfaces                                                   *
                         rdbEntry.DosEnvVec.Bpt,
                     Start =
-                        rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                        (ulong)rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
                         sectorOffset,
                     Type   = AmigaDosTypeToString(rdbEntry.DosEnvVec.DosType),
                     Scheme = Name,
-                    Offset = (rdbEntry.DosEnvVec.LowCylinder * rdbEntry.DosEnvVec.Surfaces * rdbEntry.DosEnvVec.Bpt +
+                    Offset = ((ulong)rdbEntry.DosEnvVec.LowCylinder *
+                              rdbEntry.DosEnvVec.Surfaces           *
+                              rdbEntry.DosEnvVec.Bpt +
                               sectorOffset) *
                              rdb.BlockSize,
-                    Size = (rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
-                           rdbEntry.DosEnvVec.Surfaces                                            *
-                           rdbEntry.DosEnvVec.Bpt                                                 *
+                    Size = ((ulong)rdbEntry.DosEnvVec.HighCylinder + 1 - rdbEntry.DosEnvVec.LowCylinder) *
+                           rdbEntry.DosEnvVec.Surfaces                                                   *
+                           rdbEntry.DosEnvVec.Bpt                                                        *
                            rdb.BlockSize
                 }))
         {
