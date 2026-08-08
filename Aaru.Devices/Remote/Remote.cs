@@ -623,6 +623,14 @@ public class Remote : IDisposable
 
         AaruPacketResScsi res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResScsi>(buf);
 
+        if(res.sense_len                                                            > (uint)senseBuffer.Length ||
+           (ulong)Marshal.SizeOf<AaruPacketResScsi>() + res.sense_len + res.buf_len > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+            return -1;
+        }
+
         buf.AsSpan(Marshal.SizeOf<AaruPacketResScsi>(), (int)res.sense_len).CopyTo(senseBuffer);
         buffer = new byte[res.buf_len];
         Array.Copy(buf, Marshal.SizeOf<AaruPacketResScsi>() + res.sense_len, buffer, 0, res.buf_len);
@@ -728,6 +736,13 @@ public class Remote : IDisposable
         }
 
         AaruPacketResAtaChs res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaChs>(buf);
+
+        if((ulong)Marshal.SizeOf<AaruPacketResAtaChs>() + res.buf_len > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+            return -1;
+        }
 
         buffer = new byte[res.buf_len];
         Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaChs>(), buffer, 0, res.buf_len);
@@ -835,6 +850,13 @@ public class Remote : IDisposable
 
         AaruPacketResAtaLba28 res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaLba28>(buf);
 
+        if((ulong)Marshal.SizeOf<AaruPacketResAtaLba28>() + res.buf_len > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+            return -1;
+        }
+
         buffer = new byte[res.buf_len];
         Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaLba28>(), buffer, 0, res.buf_len);
         duration       = res.duration;
@@ -940,6 +962,13 @@ public class Remote : IDisposable
         }
 
         AaruPacketResAtaLba48 res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaLba48>(buf);
+
+        if((ulong)Marshal.SizeOf<AaruPacketResAtaLba48>() + res.buf_len > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+            return -1;
+        }
 
         buffer = new byte[res.buf_len];
         Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaLba48>(), buffer, 0, res.buf_len);
@@ -1052,6 +1081,13 @@ public class Remote : IDisposable
         }
 
         AaruPacketResSdhci res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResSdhci>(buf);
+
+        if((ulong)Marshal.SizeOf<AaruPacketResSdhci>() + res.res.buf_len > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+            return -1;
+        }
 
         buffer = new byte[res.res.buf_len];
         Array.Copy(buf, Marshal.SizeOf<AaruPacketResSdhci>(), buffer, 0, res.res.buf_len);
@@ -1730,13 +1766,20 @@ public class Remote : IDisposable
 
             if(cmdRes.sense != 0) sense = true;
 
-            if(cmdRes.buf_len > 0) command.buffer = new byte[cmdRes.buf_len];
+            command.buffer = new byte[cmdRes.buf_len];
 
             off += Marshal.SizeOf<AaruResSdhci>();
         }
 
-        foreach(Devices.Device.MmcSingleCommand command in commands)
+        foreach(Devices.Device.MmcSingleCommand command in commands.Where(static c => c.buffer != null))
         {
+            if((ulong)off + (ulong)command.buffer.Length > (ulong)buf.Length)
+            {
+                AaruLogging.Error(Localization.Could_not_read_from_the_network);
+
+                return -1;
+            }
+
             Array.Copy(buf, off, command.buffer, 0, command.buffer.Length);
             off += command.buffer.Length;
         }
@@ -1965,6 +2008,13 @@ public class Remote : IDisposable
         if(osRead.errno != 0)
         {
             AaruLogging.Error(Localization.Remote_error_0_in_OS_Read, osRead.errno);
+
+            return false;
+        }
+
+        if((ulong)Marshal.SizeOf<AaruPacketResOsRead>() + length > (ulong)buf.Length)
+        {
+            AaruLogging.Error(Localization.Could_not_read_from_the_network);
 
             return false;
         }
