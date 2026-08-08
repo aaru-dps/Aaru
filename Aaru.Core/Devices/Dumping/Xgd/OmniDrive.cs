@@ -449,10 +449,10 @@ partial class Dump
                 }
 
                 _writeStopwatch.Stop();
-                blocksToRead      =  saveBlocksToRead;
-                currentSector     =  i + 1;
+                currentSector     =  i + blocksToRead;
                 _resume.NextBlock =  currentSector;
                 sectorSpeedStart  += blocksToRead;
+                blocksToRead      =  saveBlocksToRead;
 
                 if(elapsed < 100) continue;
 
@@ -504,11 +504,11 @@ partial class Dump
 
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
-                blocksToRead       =  saveBlocksToRead;
                 extents.Add(i, blocksToRead, true);
-                currentSector     = i + 1;
-                _resume.NextBlock = currentSector;
                 _mediaGraph?.PaintSectorsGood(i, blocksToRead);
+                currentSector     = i + blocksToRead;
+                _resume.NextBlock = currentSector;
+                blocksToRead      = saveBlocksToRead;
             }
 
             if(!_aborted) currentSector = extentEnd + 1;
