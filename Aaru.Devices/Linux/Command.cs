@@ -214,7 +214,7 @@ partial class Device
             cdb[2] |= (byte)((int)transferRegister & 0x03);
         }
 
-        //cdb[2] |= 0x20;
+        cdb[2] |= 0x20;
 
         cdb[4]  = registers.Feature;
         cdb[6]  = registers.SectorCount;
