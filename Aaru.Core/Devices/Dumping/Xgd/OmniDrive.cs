@@ -238,7 +238,7 @@ partial class Dump
             if(_mediaGraph is not null)
             {
                 foreach(Tuple<ulong, ulong> e in extents.ToArray())
-                    _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 2));
+                    _mediaGraph?.PaintSectorsGood(e.Item1, (uint)(e.Item2 - e.Item1 + 1));
             }
 
             _mediaGraph?.PaintSectorsBad(_resume.BadBlocks);
