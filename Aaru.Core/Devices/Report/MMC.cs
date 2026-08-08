@@ -2764,7 +2764,9 @@ public sealed partial class DeviceReport
                     !_dev.ReadBuffer3CRawDvd(out buffer, out _, 16, 1, _dev.Timeout, out _, 0xffff, false);
             });
 
-            AaruLogging.Debug(SCSI_MODULE_NAME, Localization.Core.Sense_equals_0, !mediaTest.SupportsReadBuffer3CRawDVD);
+            AaruLogging.Debug(SCSI_MODULE_NAME,
+                              Localization.Core.Sense_equals_0,
+                              !mediaTest.SupportsReadBuffer3CRawDVD);
 
             if(mediaTest.SupportsReadBuffer3CRawDVD == true)
                 mediaTest.SupportsReadBuffer3CRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
@@ -2784,18 +2786,29 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying ReadBuffer 3C variant 3c 00 00").IsIndeterminate();
 
-                    _dev.Read12(out _, out _, 0, false, false, false, false, 16, 2048, 0, 16, false,
-                        _dev.Timeout, out _);
+                    _dev.Read12(out _,
+                                out _,
+                                0,
+                                false,
+                                false,
+                                false,
+                                false,
+                                16,
+                                2048,
+                                0,
+                                16,
+                                false,
+                                _dev.Timeout,
+                                out _);
 
-                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440,
-                                                         _dev.Timeout, out _, 0x00, 0x00);
+                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440, _dev.Timeout, out _, 0x00, 0x00);
 
                     if(success && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     {
                         mediaTest.ReadBuffer3CReadBufferData.Add(new CompressedBufferRead
                         {
-                            CommandVariant    = "3c0000",
-                            CompressedData    = CompressBuffer(buffer),
+                            CommandVariant   = "3c0000",
+                            CompressedData   = CompressBuffer(buffer),
                             UncompressedSize = 61440
                         });
                     }
@@ -2806,15 +2819,14 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying ReadBuffer 3C variant 3c 01 00").IsIndeterminate();
 
-                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440,
-                                                         _dev.Timeout, out _, 0x01, 0x00);
+                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440, _dev.Timeout, out _, 0x01, 0x00);
 
                     if(success && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     {
                         mediaTest.ReadBuffer3CReadBufferData.Add(new CompressedBufferRead
                         {
-                            CommandVariant    = "3c0100",
-                            CompressedData    = CompressBuffer(buffer),
+                            CommandVariant   = "3c0100",
+                            CompressedData   = CompressBuffer(buffer),
                             UncompressedSize = 61440
                         });
                     }
@@ -2825,15 +2837,14 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying ReadBuffer 3C variant 3c 01 01").IsIndeterminate();
 
-                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440,
-                                                         _dev.Timeout, out _, 0x01, 0x01);
+                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440, _dev.Timeout, out _, 0x01, 0x01);
 
                     if(success && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     {
                         mediaTest.ReadBuffer3CReadBufferData.Add(new CompressedBufferRead
                         {
-                            CommandVariant    = "3c0101",
-                            CompressedData    = CompressBuffer(buffer),
+                            CommandVariant   = "3c0101",
+                            CompressedData   = CompressBuffer(buffer),
                             UncompressedSize = 61440
                         });
                     }
@@ -2844,15 +2855,14 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying ReadBuffer 3C variant 3c 01 02").IsIndeterminate();
 
-                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440,
-                                                         _dev.Timeout, out _, 0x01, 0x02);
+                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440, _dev.Timeout, out _, 0x01, 0x02);
 
                     if(success && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     {
                         mediaTest.ReadBuffer3CReadBufferData.Add(new CompressedBufferRead
                         {
-                            CommandVariant    = "3c0102",
-                            CompressedData    = CompressBuffer(buffer),
+                            CommandVariant   = "3c0102",
+                            CompressedData   = CompressBuffer(buffer),
                             UncompressedSize = 61440
                         });
                     }
@@ -2863,15 +2873,14 @@ public sealed partial class DeviceReport
                 {
                     ctx.AddTask("Trying ReadBuffer 3C variant 3c 02 00").IsIndeterminate();
 
-                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440,
-                                                         _dev.Timeout, out _, 0x02, 0x00);
+                    bool success = !_dev.ScsiReadBuffer(out buffer, out _, 0, 61440, _dev.Timeout, out _, 0x02, 0x00);
 
                     if(success && !ArrayHelpers.ArrayIsNullOrEmpty(buffer))
                     {
                         mediaTest.ReadBuffer3CReadBufferData.Add(new CompressedBufferRead
                         {
-                            CommandVariant    = "3c0200",
-                            CompressedData    = CompressBuffer(buffer),
+                            CommandVariant   = "3c0200",
+                            CompressedData   = CompressBuffer(buffer),
                             UncompressedSize = 61440
                         });
                     }
