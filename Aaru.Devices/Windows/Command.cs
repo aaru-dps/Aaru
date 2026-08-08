@@ -40,7 +40,10 @@ using Microsoft.Win32.SafeHandles;
 
 namespace Aaru.Devices.Windows;
 
-[SuppressMessage("ReSharper", "UnusedParameter.Global")]
+[SuppressMessage("ReSharper", "UnusedParameter.Global", Justification = "Signature mandated by the base class.")]
+[SuppressMessage("ReSharper",
+                 "ClassCannotBeInstantiated",
+                 Justification = "Instantiated through the platform-specific factory when running on Windows.")]
 partial class Device
 {
     /// <inheritdoc />
@@ -537,11 +540,12 @@ partial class Device
         var commandB = new byte[commandData.size + commandData.protocolArgumentSize + commandData.deviceDataBufferSize];
 
         Array.Copy(buffer, 0, commandB, commandData.size + commandData.protocolArgumentSize, buffer.Length);
-        IntPtr hBuf = Marshal.AllocHGlobal(commandB.Length);
-        Marshal.StructureToPtr(commandData, hBuf, true);
+        int    headersLength = commandData.size          + commandData.protocolArgumentSize;
+        IntPtr hBuf          = Marshal.AllocHGlobal(headersLength);
+        Marshal.StructureToPtr(commandData, hBuf, false);
         var descriptorOffset = IntPtr.Add(hBuf, commandData.size);
-        Marshal.StructureToPtr(commandDescriptor, descriptorOffset, true);
-        Marshal.Copy(hBuf, commandB, 0, commandB.Length);
+        Marshal.StructureToPtr(commandDescriptor, descriptorOffset, false);
+        Marshal.Copy(hBuf, commandB, 0, headersLength);
         Marshal.FreeHGlobal(hBuf);
 
         var error = 0;
