@@ -1064,7 +1064,7 @@ partial class Dump
                                                       badSector,
                                                       pass));
 
-            uint startSector = badSector - 2;
+            uint startSector = badSector >= 2 ? badSector - 2 : 0;
 
             if(_supportsPlextorD8)
             {
@@ -1111,7 +1111,7 @@ partial class Dump
             Media.CompactDisc.WriteSubchannelToImage(supportedSubchannel,
                                                      desiredSubchannel,
                                                      cmdBuf,
-                                                     badSector,
+                                                     startSector,
                                                      5,
                                                      subLog,
                                                      isrcs,
