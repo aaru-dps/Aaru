@@ -44,7 +44,7 @@ namespace Aaru.Partitions;
 // Currently only DEC devices used in Ultrix are added, probably it's missing a lot of entries.
 /// <inheritdoc />
 /// <summary>Implements decoding of historic UNIX static partitions</summary>
-[SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the original UNIX drive tables")]
 public sealed class UNIX : IPartition
 {
     readonly Partition[] RA60 =
@@ -377,7 +377,7 @@ public sealed class UNIX : IPartition
             Length      = 25600,
             Start       = 25200,
             Size        = 13107200,
-            Offset      = 6758400,
+            Offset      = 12902400,
             Sequence    = 5
         },
         new()
@@ -386,8 +386,8 @@ public sealed class UNIX : IPartition
             Name        = Localization.maintenance_area,
             Type        = Localization.maintenance,
             Length      = 102,
-            Start       = 890072,
-            Size        = 50800,
+            Start       = 50800,
+            Size        = 52224,
             Offset      = 26009600,
             Sequence    = 8
         }
@@ -472,7 +472,7 @@ public sealed class UNIX : IPartition
             Type        = Localization.data,
             Length      = 17300,
             Start       = 9700,
-            Size        = 102400,
+            Size        = 8857600,
             Offset      = 4966400,
             Sequence    = 1
         },
@@ -531,7 +531,7 @@ public sealed class UNIX : IPartition
             Type        = Localization.data,
             Length      = 7460,
             Start       = 0,
-            Size        = 4608000,
+            Size        = 3819520,
             Offset      = 0,
             Sequence    = 0
         },
@@ -565,7 +565,7 @@ public sealed class UNIX : IPartition
             Length      = 11868,
             Start       = 9700,
             Size        = 6076416,
-            Offset      = 6758400,
+            Offset      = 4966400,
             Sequence    = 4
         },
         new()
@@ -941,7 +941,7 @@ public sealed class UNIX : IPartition
             Length      = 5400,
             Start       = 9320,
             Size        = 2764800,
-            Offset      = 2764800,
+            Offset      = 4771840,
             Sequence    = 1
         },
         new()
@@ -1097,9 +1097,9 @@ public sealed class UNIX : IPartition
             Name        = Localization.user,
             Type        = Localization.data,
             Length      = 154368,
-            Start       = 192128,
+            Start       = 345952,
             Size        = 79036416,
-            Offset      = 98369536,
+            Offset      = 177127424,
             Sequence    = 6
         },
         new()
@@ -1253,7 +1253,7 @@ public sealed class UNIX : IPartition
             Type        = Localization.swap,
             Length      = 6070,
             Start       = 29878,
-            Size        = 1587200,
+            Size        = 3107840,
             Offset      = 15297536,
             Sequence    = 2
         },
@@ -1323,7 +1323,7 @@ public sealed class UNIX : IPartition
             Type        = Localization.swap,
             Length      = 6070,
             Start       = 29878,
-            Size        = 1587200,
+            Size        = 3107840,
             Offset      = 15297536,
             Sequence    = 2
         },
@@ -1472,7 +1472,7 @@ public sealed class UNIX : IPartition
                 return false;
         }
 
-        for(var i = 0; i < parts.Length; i++) parts[i].Scheme = "";
+        for(var i = 0; i < parts.Length; i++) parts[i].Scheme = Name;
 
         partitions = parts.ToList();
 
