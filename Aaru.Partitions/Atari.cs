@@ -227,7 +227,7 @@ public sealed class AtariPartitions : IPartition
                 case TYPE_MINIX2:
                     validTable = true;
 
-                    if(table.Entries[i].Start <= imagePlugin.Info.Sectors)
+                    if(table.Entries[i].Start < imagePlugin.Info.Sectors)
                     {
                         if(table.Entries[i].Start + table.Entries[i].Length > imagePlugin.Info.Sectors)
                         {
@@ -250,8 +250,8 @@ public sealed class AtariPartitions : IPartition
                             Length   = table.Entries[i].Length,
                             Sequence = partitionSequence,
                             Name     = "",
-                            Offset   = table.Entries[i].Start * sectorSize,
-                            Start    = table.Entries[i].Start,
+                            Offset   = (table.Entries[i].Start + sectorOffset) * sectorSize,
+                            Start    = table.Entries[i].Start + sectorOffset,
                             Type     = Encoding.ASCII.GetString(partType),
                             Scheme   = Name,
                             Description = type switch
@@ -276,7 +276,11 @@ public sealed class AtariPartitions : IPartition
 
                     break;
                 case TYPE_EXTENDED:
-                    errno = imagePlugin.ReadSector(table.Entries[i].Start, false, out byte[] extendedSector, out _);
+                    ulong extendedStart = table.Entries[i].Start + sectorOffset;
+
+                    if(extendedStart >= imagePlugin.Info.Sectors) break;
+
+                    errno = imagePlugin.ReadSector(extendedStart, false, out byte[] extendedSector, out _);
 
                     if(errno != ErrorNumber.NoError) break;
 
@@ -316,9 +320,11 @@ public sealed class AtariPartitions : IPartition
 
                         validTable = true;
 
-                        if(extendedTable.Entries[j].Start > imagePlugin.Info.Sectors) continue;
+                        // Entries inside an XGM sector are relative to the XGM sector itself
+                        if(extendedStart + extendedTable.Entries[j].Start >= imagePlugin.Info.Sectors) continue;
 
-                        if(extendedTable.Entries[j].Start + extendedTable.Entries[j].Length > imagePlugin.Info.Sectors)
+                        if(extendedStart + extendedTable.Entries[j].Start + extendedTable.Entries[j].Length >
+                           imagePlugin.Info.Sectors)
                         {
                             AaruLogging.Debug(MODULE_NAME,
                                               Localization.WARNING_End_of_partition_goes_beyond_device_size);
@@ -339,8 +345,8 @@ public sealed class AtariPartitions : IPartition
                             Length   = extendedTable.Entries[j].Length,
                             Sequence = partitionSequence,
                             Name     = "",
-                            Offset   = extendedTable.Entries[j].Start * sectorSize,
-                            Start    = extendedTable.Entries[j].Start,
+                            Offset   = (extendedStart + extendedTable.Entries[j].Start) * sectorSize,
+                            Start    = extendedStart + extendedTable.Entries[j].Start,
                             Type     = Encoding.ASCII.GetString(partType),
                             Scheme   = Name,
                             Description = extendedType switch
@@ -386,7 +392,7 @@ public sealed class AtariPartitions : IPartition
                type != TYPE_MINIX2)
                 continue;
 
-            if(table.IcdEntries[i].Start > imagePlugin.Info.Sectors) continue;
+            if(table.IcdEntries[i].Start >= imagePlugin.Info.Sectors) continue;
 
             if(table.IcdEntries[i].Start + table.IcdEntries[i].Length > imagePlugin.Info.Sectors)
                 AaruLogging.Debug(MODULE_NAME, Localization.WARNING_End_of_partition_goes_beyond_device_size);
@@ -406,8 +412,8 @@ public sealed class AtariPartitions : IPartition
                 Length   = table.IcdEntries[i].Length,
                 Sequence = partitionSequence,
                 Name     = "",
-                Offset   = table.IcdEntries[i].Start * sectorSize,
-                Start    = table.IcdEntries[i].Start,
+                Offset   = (table.IcdEntries[i].Start + sectorOffset) * sectorSize,
+                Start    = table.IcdEntries[i].Start + sectorOffset,
                 Type     = Encoding.ASCII.GetString(partType),
                 Scheme   = Name,
                 Description = type switch
