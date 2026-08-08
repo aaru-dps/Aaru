@@ -39,8 +39,12 @@ using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
 namespace Aaru.Devices;
 
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper",
+                 "MemberCanBePrivate.Global",
+                 Justification = "Public API used by consumers of the library.")]
+[SuppressMessage("ReSharper",
+                 "UnusedMethodReturnValue.Global",
+                 Justification = "Public API used by consumers of the library.")]
 public partial class Device
 {
     /// <summary>Sends the SPC INQUIRY command to the device using default device timeout.</summary>
@@ -787,11 +791,13 @@ public partial class Device
         Span<byte> cdb = CdbBuffer[..10];
         cdb.Clear();
 
+        cdb[0] = (byte)ScsiCommands.ModeSelect10;
+
         if(pageFormat) cdb[1] += 0x10;
 
         if(savePages) cdb[1] += 0x01;
 
-        cdb[7] = (byte)((buffer.Length & 0xFF00) << 8);
+        cdb[7] = (byte)((buffer.Length & 0xFF00) >> 8);
         cdb[8] = (byte)(buffer.Length & 0xFF);
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.Out, out duration, out bool sense);
