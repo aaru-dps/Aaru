@@ -666,7 +666,8 @@ partial class Dump
                         ErrorMessage?.Invoke(Localization.Core
                                                          .Could_not_check_current_position_unable_to_resume_Dumping_from_the_start);
 
-                        canLocateLong = false;
+                        canLocateLong     = false;
+                        _resume.NextBlock = 0;
                     }
                     else
                     {
@@ -685,7 +686,8 @@ partial class Dump
                             ErrorMessage?.Invoke(Localization.Core
                                                              .Current_position_is_not_as_expected_unable_to_resume_Dumping_from_the_start);
 
-                            canLocateLong = false;
+                            canLocateLong     = false;
+                            _resume.NextBlock = 0;
                         }
                     }
                 }
@@ -702,7 +704,8 @@ partial class Dump
                     ErrorMessage?.Invoke(Localization.Core
                                                      .Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start);
 
-                    canLocateLong = false;
+                    canLocateLong     = false;
+                    _resume.NextBlock = 0;
                 }
             }
             else if(canLocate)
@@ -726,7 +729,8 @@ partial class Dump
                         ErrorMessage?.Invoke(Localization.Core
                                                          .Could_not_check_current_position_unable_to_resume_Dumping_from_the_start);
 
-                        canLocate = false;
+                        canLocate         = false;
+                        _resume.NextBlock = 0;
                     }
                     else
                     {
@@ -745,7 +749,8 @@ partial class Dump
                             ErrorMessage?.Invoke(Localization.Core
                                                              .Current_position_is_not_as_expected_unable_to_resume_Dumping_from_the_start);
 
-                            canLocate = false;
+                            canLocate         = false;
+                            _resume.NextBlock = 0;
                         }
                     }
                 }
@@ -762,7 +767,8 @@ partial class Dump
                     ErrorMessage?.Invoke(Localization.Core
                                                      .Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start);
 
-                    canLocate = false;
+                    canLocate         = false;
+                    _resume.NextBlock = 0;
                 }
             }
             else
@@ -776,7 +782,8 @@ partial class Dump
                 }
 
                 ErrorMessage?.Invoke(Localization.Core.Cannot_reposition_tape_unable_to_resume_Dumping_from_the_start);
-                canLocate = false;
+                canLocate         = false;
+                _resume.NextBlock = 0;
             }
         }
         else
