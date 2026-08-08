@@ -333,8 +333,6 @@ partial class Dump
                         }
                     }
                 }
-
-                totalDuration += cmdDuration;
             }
             else if(read16)
             {
