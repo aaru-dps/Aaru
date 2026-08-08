@@ -168,7 +168,8 @@ public partial class Device
         else if(readLong)
         {
             buffer = new byte[blockSize];
-            cdb[4] = 1;
+            cdb[7] = 0;
+            cdb[8] = 1;
         }
         else
             buffer = [];
