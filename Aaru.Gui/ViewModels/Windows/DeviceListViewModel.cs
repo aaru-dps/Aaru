@@ -170,6 +170,8 @@ public partial class DeviceListViewModel : ViewModelBase
 
                     _window.Close();
                 });
+
+                return;
             }
 
             using var remote = new Remote(aaruUri);
