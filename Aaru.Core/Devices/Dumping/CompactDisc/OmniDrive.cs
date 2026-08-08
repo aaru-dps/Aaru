@@ -102,7 +102,6 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        int    currentReadSpeed      = _speed;
         var    crossingLeadOut       = false;
         var    failedCrossingLeadOut = false;
         var    skippingLead          = false;
@@ -113,7 +112,7 @@ partial class Dump
         {
             UpdateStatus?.Invoke(UI.Yes__sir__Setting_ludicrous_speed_sir);
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 0xFFFF, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(0xFFFF);
         }
         else if(_hyperSpeed)
         {
@@ -122,35 +121,34 @@ partial class Dump
 
             if(t is null)
             {
-                UpdateStatus?.Invoke(UI.Setting_speed_to_8x_for_scrambled_reading);
+                UpdateStatus?.Invoke(_speed is 0xFFFF or 0
+                                         ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                         : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
+                                                         _speed));
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(0xFFFF);
             }
             else if(t.Type == TrackType.Audio)
             {
                 UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_audio_reading);
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(1416);
             }
             else
             {
-                UpdateStatus?.Invoke(_speed == 0xFFFF
+                UpdateStatus?.Invoke(_speed is 0xFFFF or 0
                                          ? Localization.Core.Setting_speed_to_MAX_for_data_reading
                                          : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
                                                          _speed));
 
-                _speed *= _speedMultiplier;
-
-                if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(0xFFFF);
             }
         }
         else
         {
             UpdateStatus?.Invoke(UI.Setting_speed_to_8x_for_scrambled_reading);
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(1416);
         }
 
         // Spin up
@@ -206,28 +204,19 @@ partial class Dump
             if(speedSectorCounter > 1000)
             {
                 if(_ludicrousSpeed)
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 0xFFFF, 0, _dev.Timeout, out _);
+                    SetCdSpeedClamped(0xFFFF);
                 else if(_hyperSpeed)
                 {
                     Track t = tracks.FirstOrDefault(t => t.StartSector <= _resume.NextBlock &&
                                                          t.EndSector   >= _resume.NextBlock);
 
-                    if(t is null || t.Type == TrackType.Audio)
-                        _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    if(t is not null && t.Type == TrackType.Audio)
+                        SetCdSpeedClamped(1416);
                     else
-                    {
-                        if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-                        _dev.SetCdSpeed(out _,
-                                        RotationalControl.ClvAndImpureCav,
-                                        (ushort)_speed,
-                                        0,
-                                        _dev.Timeout,
-                                        out _);
-                    }
+                        SetCdSpeedClamped(0xFFFF);
                 }
                 else
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    SetCdSpeedClamped(1416);
 
                 speedSectorCounter = 0;
             }
@@ -628,7 +617,7 @@ partial class Dump
         {
             UpdateStatus?.Invoke(UI.Yes__sir__Setting_ludicrous_speed_sir);
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 0xFFFF, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(0xFFFF);
         }
         else if(_hyperSpeed)
         {
@@ -637,35 +626,34 @@ partial class Dump
 
             if(t is null)
             {
-                UpdateStatus?.Invoke(UI.Setting_speed_to_8x_for_scrambled_reading);
+                UpdateStatus?.Invoke(_speed is 0xFFFF or 0
+                                         ? Localization.Core.Setting_speed_to_MAX_for_data_reading
+                                         : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
+                                                         _speed));
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(0xFFFF);
             }
             else if(t.Type == TrackType.Audio)
             {
                 UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_audio_reading);
 
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(1416);
             }
             else
             {
-                UpdateStatus?.Invoke(_speed == 0xFFFF
+                UpdateStatus?.Invoke(_speed is 0xFFFF or 0
                                          ? Localization.Core.Setting_speed_to_MAX_for_data_reading
                                          : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
                                                          _speed));
 
-                _speed *= _speedMultiplier;
-
-                if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+                SetCdSpeedClamped(0xFFFF);
             }
         }
         else
         {
             UpdateStatus?.Invoke(UI.Setting_speed_to_8x_for_scrambled_reading);
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(1416);
         }
 
         InitProgress?.Invoke();
@@ -697,28 +685,19 @@ partial class Dump
             if(speedSectorCounter > 1000)
             {
                 if(_ludicrousSpeed)
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 0xFFFF, 0, _dev.Timeout, out _);
+                    SetCdSpeedClamped(0xFFFF);
                 else if(_hyperSpeed)
                 {
                     Track t = tracks.FirstOrDefault(t => t.StartSector <= _resume.NextBlock &&
                                                          t.EndSector   >= _resume.NextBlock);
 
-                    if(t is null || t.Type == TrackType.Audio)
-                        _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    if(t is not null && t.Type == TrackType.Audio)
+                        SetCdSpeedClamped(1416);
                     else
-                    {
-                        if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-                        _dev.SetCdSpeed(out _,
-                                        RotationalControl.ClvAndImpureCav,
-                                        (ushort)_speed,
-                                        0,
-                                        _dev.Timeout,
-                                        out _);
-                    }
+                        SetCdSpeedClamped(0xFFFF);
                 }
                 else
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+                    SetCdSpeedClamped(1416);
 
                 speedSectorCounter = 0;
             }

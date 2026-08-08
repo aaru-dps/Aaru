@@ -185,7 +185,7 @@ partial class Dump
         {
             UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_CD_i_Ready_reading_as_audio);
 
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(1416);
         }
 
         InitProgress?.Invoke();

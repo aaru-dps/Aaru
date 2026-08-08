@@ -121,7 +121,7 @@ partial class Dump
 
         InitProgress?.Invoke();
 
-        int    currentReadSpeed      = _speed;
+        int    currentReadSpeed      = -1;
         var    crossingLeadOut       = false;
         var    failedCrossingLeadOut = false;
         var    skippingLead          = false;
@@ -216,33 +216,23 @@ partial class Dump
                 }
             }
 
-            switch(inData)
+            ushort wantedSpeed = inData ? _speedCapKbps : Math.Min((ushort)1416, _speedCapKbps);
+
+            if(currentReadSpeed != wantedSpeed)
             {
-                case false when currentReadSpeed == 0xFFFF:
-                    UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_audio_reading);
-
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, 1416, 0, _dev.Timeout, out _);
-
-                    currentReadSpeed = 1200;
-
-                    break;
-                case true when currentReadSpeed != _speed:
+                if(inData)
                 {
-                    UpdateStatus?.Invoke(_speed == 0xFFFF
+                    UpdateStatus?.Invoke(_speed is 0xFFFF or 0
                                              ? Localization.Core.Setting_speed_to_MAX_for_data_reading
                                              : string.Format(Localization.Core.Setting_speed_to_0_x_for_data_reading,
                                                              _speed));
-
-                    _speed *= _speedMultiplier;
-
-                    if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-                    currentReadSpeed = _speed;
-
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
-
-                    break;
                 }
+                else
+                    UpdateStatus?.Invoke(Localization.Core.Setting_speed_to_8x_for_audio_reading);
+
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, wantedSpeed, 0, _dev.Timeout, out _);
+
+                currentReadSpeed = wantedSpeed;
             }
 
             if(inData && crossingLeadOut)

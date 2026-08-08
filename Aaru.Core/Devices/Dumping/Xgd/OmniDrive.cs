@@ -122,17 +122,15 @@ partial class Dump
         var speedSectorCounter = 0;
 
         // Set speed
+        _speedCapKbps = ComputeSpeedCap();
+
         if(_speedMultiplier >= 0)
         {
             UpdateStatus?.Invoke(_speed == 0
                                      ? Localization.Core.Setting_speed_to_MAX
                                      : string.Format(Localization.Core.Setting_speed_to_0_x, _speed));
 
-            _speed *= _speedMultiplier;
-
-            if(_speed is 0 or > 0xFFFF) _speed = 0xFFFF;
-
-            _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+            SetCdSpeedClamped(0xFFFF);
         }
 
         while(true)
@@ -345,7 +343,7 @@ partial class Dump
 
                 if(speedSectorCounter > 1000)
                 {
-                    _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+                    SetCdSpeedClamped(0xFFFF);
 
                     speedSectorCounter = 0;
                 }

@@ -155,6 +155,7 @@ public partial class Dump
     uint                                       _skip;
     bool                                       _skipCdireadyHole;
     int                                        _speed;
+    ushort                                     _speedCapKbps; // Effective KiB/s cap from user speed; 0xFFFF = drive max
     int                                        _speedMultiplier;
     bool                                       _supportsPlextorD8;
     bool                                       _useBufferedReads;
@@ -242,6 +243,7 @@ public partial class Dump
         _subchannel            = subchannel;
         _speedMultiplier       = -1;
         _speed                 = speed;
+        _speedCapKbps          = 0xFFFF;
         _private               = @private;
         _fixSubchannelPosition = fixSubchannelPosition;
         _retrySubchannel       = retrySubchannel;
@@ -273,6 +275,26 @@ public partial class Dump
         _writeStopwatch        = new Stopwatch();
         _imageCloseStopwatch   = new Stopwatch();
     }
+
+    /// <summary>Computes the KiB/s cap from the user mandated speed and the media speed multiplier</summary>
+    /// <returns>KiB/s cap, <c>0xFFFF</c> meaning drive maximum</returns>
+    ushort ComputeSpeedCap()
+    {
+        if(_speed <= 0 || _speedMultiplier <= 0) return 0xFFFF;
+
+        long kbps = (long)_speed * _speedMultiplier;
+
+        return kbps is <= 0 or > 0xFFFF ? (ushort)0xFFFF : (ushort)kbps;
+    }
+
+    /// <summary>Sets the drive speed, clamped to the user mandated speed cap</summary>
+    /// <param name="requestedKbps">Requested speed in KiB/s, <c>0xFFFF</c> meaning drive maximum</param>
+    void SetCdSpeedClamped(ushort requestedKbps) => _dev.SetCdSpeed(out _,
+                                                                    RotationalControl.ClvAndImpureCav,
+                                                                    Math.Min(requestedKbps, _speedCapKbps),
+                                                                    0,
+                                                                    _dev.Timeout,
+                                                                    out _);
 
     /// <summary>Starts dumping with the established fields and autodetecting the device type</summary>
     public void Start()
