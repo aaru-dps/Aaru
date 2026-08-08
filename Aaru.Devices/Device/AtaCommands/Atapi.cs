@@ -73,8 +73,8 @@ public partial class Device
 
         var registers = new AtaRegistersChs
         {
-            Command = (byte)AtaCommands.IdentifyPacketDevice,
-            Sector  = 1
+            Command     = (byte)AtaCommands.IdentifyPacketDevice,
+            SectorCount = 1
         };
 
         LastError = SendAtaCommand(registers,
