@@ -45,6 +45,8 @@ public static partial class ArrayHelpers
     {
         ArgumentNullException.ThrowIfNull(destinationArray);
 
+        if(value.Length == 0) return;
+
         if(value.Length > destinationArray.Length)
             throw new ArgumentException(Localization.Length_of_value_array_must_not_be_more_than_length_of_destination);
 
