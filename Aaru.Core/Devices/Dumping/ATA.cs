@@ -371,8 +371,7 @@ public partial class Dump
                                                       i,
                                                       false,
                                                       _skip,
-                                                      Enumerable.Repeat(SectorStatus.NotDumped, (int)blocksToRead)
-                                                                .ToArray());
+                                                      Enumerable.Repeat(SectorStatus.NotDumped, (int)_skip).ToArray());
 
                             imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
