@@ -101,22 +101,23 @@ public sealed class DEC : IPartition
 
         ulong counter = 0;
 
-        foreach(CommonTypes.Partition part in table.pt_part.Select(entry => new CommonTypes.Partition
+        foreach(CommonTypes.Partition part in table.pt_part.Where(static entry => entry.pi_nblocks > 0)
+                                                   .Select(entry => new CommonTypes.Partition
                                                     {
-                                                        Start    = entry.pi_blkoff,
-                                                        Offset   = (ulong)(entry.pi_blkoff * sector.Length),
-                                                        Size     = (ulong)entry.pi_nblocks,
-                                                        Length   = (ulong)(entry.pi_nblocks * sector.Length),
+                                                        Start = entry.pi_blkoff + sectorOffset,
+                                                        Offset = (entry.pi_blkoff + sectorOffset) *
+                                                                 (ulong)sector.Length,
+                                                        Length   = (ulong)entry.pi_nblocks,
+                                                        Size     = (ulong)entry.pi_nblocks * (ulong)sector.Length,
                                                         Sequence = counter,
                                                         Scheme   = Name
-                                                    })
-                                                   .Where(static part => part.Size > 0))
+                                                    }))
         {
             partitions.Add(part);
             counter++;
         }
 
-        return true;
+        return partitions.Count > 0;
     }
 
 #endregion
