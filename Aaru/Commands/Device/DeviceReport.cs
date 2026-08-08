@@ -152,13 +152,6 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
         jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
-        if(settings.TrapDisc && dev.ScsiType != PeripheralDeviceTypes.MultiMediaDevice)
-        {
-            AaruLogging.Error(UI.Device_does_not_report_with_trap_discs);
-
-            return (int)ErrorNumber.InvalidArgument;
-        }
-
         var reporter = new Core.Devices.Report.DeviceReport(dev);
 
         if(dev.IsUsb && AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_USB}[/]"))
@@ -378,541 +371,507 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                             dev.Manufacturer.Equals("iomega", StringComparison.InvariantCultureIgnoreCase) &&
                             dev.Model.StartsWith("rrd", StringComparison.InvariantCultureIgnoreCase);
 
-                        if(settings.TrapDisc)
+
+                        List<string> mediaTypes = [];
+
+                        report.SCSI.MultiMediaDevice = new Mmc
                         {
-                            if(iomegaRev)
-                            {
-                                AaruLogging.Error(UI.Device_does_not_report_with_trap_discs);
+                            ModeSense2AData = cdromMode,
+                            Features        = reporter.ReportMmcFeatures()
+                        };
 
-                                return (int)ErrorNumber.InvalidArgument;
-                            }
-
-                            if(!AnsiConsole.Confirm($"[italic]{UI.Sure_report_trap_disc}[/]"))
-                                return (int)ErrorNumber.NoError;
-
-                            if(!AnsiConsole.Confirm($"[italic]{UI.Do_you_have_audio_trap_disc}[/]"))
-                            {
-                                AaruLogging.Error(UI.Please_burn_audio_trap_disc);
-
-                                return (int)ErrorNumber.NoError;
-                            }
-
-                            if(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_GD_ROM_disc}[/]"))
-                                reporter.ReportGdRomSwapTrick(report);
-                            else
-                                return (int)ErrorNumber.NoError;
-                        }
-                        else
+                        if(report.SCSI.MultiMediaDevice.Features?.BinaryData != null)
                         {
-                            List<string> mediaTypes = [];
+                            Features.SeparatedFeatures ftr =
+                                Features.Separate(report.SCSI.MultiMediaDevice.Features.BinaryData);
 
-                            report.SCSI.MultiMediaDevice = new Mmc
+                            if(ftr.Descriptors != null)
                             {
-                                ModeSense2AData = cdromMode,
-                                Features        = reporter.ReportMmcFeatures()
-                            };
-
-                            if(report.SCSI.MultiMediaDevice.Features?.BinaryData != null)
-                            {
-                                Features.SeparatedFeatures ftr =
-                                    Features.Separate(report.SCSI.MultiMediaDevice.Features.BinaryData);
-
-                                if(ftr.Descriptors != null)
+                                foreach(Profile prof in from desc in ftr.Descriptors
+                                                        where desc.Code == 0x0000
+                                                        select Features.Decode_0000(desc.Data)
+                                                        into ftr0000
+                                                        where ftr0000 != null
+                                                        from prof in ftr0000.Value.Profiles
+                                                        select prof)
                                 {
-                                    foreach(Profile prof in from desc in ftr.Descriptors
-                                                            where desc.Code == 0x0000
-                                                            select Features.Decode_0000(desc.Data)
-                                                            into ftr0000
-                                                            where ftr0000 != null
-                                                            from prof in ftr0000.Value.Profiles
-                                                            select prof)
+                                    switch(prof.Number)
                                     {
-                                        switch(prof.Number)
-                                        {
-                                            case ProfileNumber.CDROM:
-                                            case ProfileNumber.CDR:
-                                            case ProfileNumber.CDRW:
-                                                mediaTypes.Add("CD-ROM");
-                                                mediaTypes.Add("Audio CD");
-                                                mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-                                                mediaTypes.Add("CD-R");
-                                                mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-                                                mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-                                                mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                        case ProfileNumber.CDROM:
+                                        case ProfileNumber.CDR:
+                                        case ProfileNumber.CDRW:
+                                            mediaTypes.Add("CD-ROM");
+                                            mediaTypes.Add("Audio CD");
+                                            mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                                            mediaTypes.Add("CD-R");
+                                            mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                            mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                            mediaTypes.Add("CD-RW (marked 4x or lower)");
 
-                                                break;
-                                            case ProfileNumber.DVDRWRes:
-                                            case ProfileNumber.DVDRWSeq:
-                                            case ProfileNumber.DVDRDLSeq:
-                                            case ProfileNumber.DVDRDLJump:
-                                            case ProfileNumber.DVDRWDL:
-                                            case ProfileNumber.DVDDownload:
-                                            case ProfileNumber.DVDRWPlus:
-                                            case ProfileNumber.DVDRPlus:
-                                            case ProfileNumber.DVDRSeq:
-                                            case ProfileNumber.DVDRWDLPlus:
-                                            case ProfileNumber.DVDRDLPlus:
+                                            break;
+                                        case ProfileNumber.DVDRWRes:
+                                        case ProfileNumber.DVDRWSeq:
+                                        case ProfileNumber.DVDRDLSeq:
+                                        case ProfileNumber.DVDRDLJump:
+                                        case ProfileNumber.DVDRWDL:
+                                        case ProfileNumber.DVDDownload:
+                                        case ProfileNumber.DVDRWPlus:
+                                        case ProfileNumber.DVDRPlus:
+                                        case ProfileNumber.DVDRSeq:
+                                        case ProfileNumber.DVDRWDLPlus:
+                                        case ProfileNumber.DVDRDLPlus:
 
-                                            case ProfileNumber.DVDROM:
-                                                mediaTypes.Add("DVD-ROM");
-                                                mediaTypes.Add("DVD-R");
-                                                mediaTypes.Add("DVD-RW");
-                                                mediaTypes.Add("DVD+R");
-                                                mediaTypes.Add("DVD+RW");
-                                                mediaTypes.Add("DVD-R DL");
-                                                mediaTypes.Add("DVD+R DL");
-                                                mediaTypes.Add("Nintendo GameCube game");
-                                                mediaTypes.Add("Nintendo Wii game");
+                                        case ProfileNumber.DVDROM:
+                                            mediaTypes.Add("DVD-ROM");
+                                            mediaTypes.Add("DVD-R");
+                                            mediaTypes.Add("DVD-RW");
+                                            mediaTypes.Add("DVD+R");
+                                            mediaTypes.Add("DVD+RW");
+                                            mediaTypes.Add("DVD-R DL");
+                                            mediaTypes.Add("DVD+R DL");
+                                            mediaTypes.Add("Nintendo GameCube game");
+                                            mediaTypes.Add("Nintendo Wii game");
 
-                                                break;
-                                            case ProfileNumber.DVDRAM:
-                                                mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
-                                                mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                                            break;
+                                        case ProfileNumber.DVDRAM:
+                                            mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                            mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
 
-                                                break;
-                                            case ProfileNumber.DDCDROM:
-                                            case ProfileNumber.DDCDR:
-                                            case ProfileNumber.DDCDRW:
-                                                mediaTypes.Add("DDCD-ROM");
-                                                mediaTypes.Add("DDCD-R");
-                                                mediaTypes.Add("DDCD-RW");
+                                            break;
+                                        case ProfileNumber.DDCDROM:
+                                        case ProfileNumber.DDCDR:
+                                        case ProfileNumber.DDCDRW:
+                                            mediaTypes.Add("DDCD-ROM");
+                                            mediaTypes.Add("DDCD-R");
+                                            mediaTypes.Add("DDCD-RW");
 
-                                                break;
-                                            case ProfileNumber.BDROM:
-                                            case ProfileNumber.BDRSeq:
-                                            case ProfileNumber.BDRRdm:
-                                            case ProfileNumber.BDRE:
-                                                mediaTypes.Add("BD-ROM");
-                                                mediaTypes.Add("BD-R HTL (not LTH)");
-                                                mediaTypes.Add("BD-RE");
-                                                mediaTypes.Add("BD-R LTH");
-                                                mediaTypes.Add("BD-R Triple Layer (100Gb)");
-                                                mediaTypes.Add("BD-R Quad Layer (128Gb)");
-                                                mediaTypes.Add("Ultra HD Blu-ray movie");
-                                                mediaTypes.Add("PlayStation 3 game");
-                                                mediaTypes.Add("PlayStation 4 game");
-                                                mediaTypes.Add("PlayStation 5 game");
-                                                mediaTypes.Add("Xbox One game");
-                                                mediaTypes.Add("Nintendo Wii U game");
+                                            break;
+                                        case ProfileNumber.BDROM:
+                                        case ProfileNumber.BDRSeq:
+                                        case ProfileNumber.BDRRdm:
+                                        case ProfileNumber.BDRE:
+                                            mediaTypes.Add("BD-ROM");
+                                            mediaTypes.Add("BD-R HTL (not LTH)");
+                                            mediaTypes.Add("BD-RE");
+                                            mediaTypes.Add("BD-R LTH");
+                                            mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                            mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                            mediaTypes.Add("Ultra HD Blu-ray movie");
+                                            mediaTypes.Add("PlayStation 3 game");
+                                            mediaTypes.Add("PlayStation 4 game");
+                                            mediaTypes.Add("PlayStation 5 game");
+                                            mediaTypes.Add("Xbox One game");
+                                            mediaTypes.Add("Nintendo Wii U game");
 
-                                                break;
-                                            case ProfileNumber.HDDVDROM:
-                                            case ProfileNumber.HDDVDR:
-                                            case ProfileNumber.HDDVDRW:
-                                            case ProfileNumber.HDDVDRDL:
-                                            case ProfileNumber.HDDVDRWDL:
-                                                mediaTypes.Add("HD DVD-ROM");
-                                                mediaTypes.Add("HD DVD-R");
-                                                mediaTypes.Add("HD DVD-RW");
+                                            break;
+                                        case ProfileNumber.HDDVDROM:
+                                        case ProfileNumber.HDDVDR:
+                                        case ProfileNumber.HDDVDRW:
+                                        case ProfileNumber.HDDVDRDL:
+                                        case ProfileNumber.HDDVDRWDL:
+                                            mediaTypes.Add("HD DVD-ROM");
+                                            mediaTypes.Add("HD DVD-R");
+                                            mediaTypes.Add("HD DVD-RW");
 
-                                                break;
-                                            case ProfileNumber.HDDVDRAM:
-                                                mediaTypes.Add("HD DVD-RAM");
+                                            break;
+                                        case ProfileNumber.HDDVDRAM:
+                                            mediaTypes.Add("HD DVD-RAM");
 
-                                                break;
-                                        }
+                                            break;
                                     }
                                 }
                             }
+                        }
 
-                            if(cdromMode != null && !iomegaRev)
+                        if(cdromMode != null && !iomegaRev)
+                        {
+                            mediaTypes.Add("CD-ROM");
+                            mediaTypes.Add("Audio CD");
+                            mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+
+                            if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR) mediaTypes.Add("CD-R");
+
+                            if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
+                            {
+                                mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                mediaTypes.Add("CD-RW (marked 4x or lower)");
+                            }
+
+                            if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM) mediaTypes.Add("DVD-ROM");
+
+                            if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM)
+                            {
+                                mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                            }
+
+                            if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
+                        }
+
+                        if(report.SCSI.MultiMediaDevice.Features != null && !iomegaRev)
+                        {
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
+                            {
+                                mediaTypes.Add("BD-ROM");
+                                mediaTypes.Add("BD-R HTL (not LTH)");
+                                mediaTypes.Add("BD-RE");
+                                mediaTypes.Add("BD-R LTH");
+                                mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                mediaTypes.Add("Ultra HD Blu-ray movie");
+                                mediaTypes.Add("PlayStation 3 game");
+                                mediaTypes.Add("PlayStation 4 game");
+                                mediaTypes.Add("PlayStation 5 game");
+                                mediaTypes.Add("Xbox One game");
+                                mediaTypes.Add("Nintendo Wii U game");
+                            }
+
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
+                               report.SCSI.MultiMediaDevice.Features.MultiRead)
                             {
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
                                 mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR) mediaTypes.Add("CD-R");
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
-                                {
-                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM) mediaTypes.Add("DVD-ROM");
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM)
-                                {
-                                    mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
-                                    mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
-                            }
-
-                            if(report.SCSI.MultiMediaDevice.Features != null && !iomegaRev)
-                            {
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE1   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDRE2   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadBDROM   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDR  ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDRE ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
-                                {
-                                    mediaTypes.Add("BD-ROM");
-                                    mediaTypes.Add("BD-R HTL (not LTH)");
-                                    mediaTypes.Add("BD-RE");
-                                    mediaTypes.Add("BD-R LTH");
-                                    mediaTypes.Add("BD-R Triple Layer (100Gb)");
-                                    mediaTypes.Add("BD-R Quad Layer (128Gb)");
-                                    mediaTypes.Add("Ultra HD Blu-ray movie");
-                                    mediaTypes.Add("PlayStation 3 game");
-                                    mediaTypes.Add("PlayStation 4 game");
-                                    mediaTypes.Add("PlayStation 5 game");
-                                    mediaTypes.Add("Xbox One game");
-                                    mediaTypes.Add("Nintendo Wii U game");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
-                                   report.SCSI.MultiMediaDevice.Features.MultiRead)
-                                {
-                                    mediaTypes.Add("CD-ROM");
-                                    mediaTypes.Add("Audio CD");
-                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
-                                    mediaTypes.Add("CD-R");
-                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
-                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
-                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW) mediaTypes.Add("CD-MRW");
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
-                                {
-                                    mediaTypes.Add("DDCD-ROM");
-                                    mediaTypes.Add("DDCD-R");
-                                    mediaTypes.Add("DDCD-RW");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
-                                   report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
-                                {
-                                    mediaTypes.Add("DVD-ROM");
-                                    mediaTypes.Add("DVD-R");
-                                    mediaTypes.Add("DVD-RW");
-                                    mediaTypes.Add("DVD+R");
-                                    mediaTypes.Add("DVD+RW");
-                                    mediaTypes.Add("DVD-R DL");
-                                    mediaTypes.Add("DVD+R DL");
-                                    mediaTypes.Add("Nintendo GameCube game");
-                                    mediaTypes.Add("Nintendo Wii game");
-                                    mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
-                                    mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW) mediaTypes.Add("DVD+MRW");
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
-                                   report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
-                                {
-                                    mediaTypes.Add("HD DVD-ROM");
-                                    mediaTypes.Add("HD DVD-R");
-                                    mediaTypes.Add("HD DVD-RW");
-                                }
-
-                                if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM) mediaTypes.Add("HD DVD-RAM");
-                            }
-
-                            if(iomegaRev)
-                            {
-                                mediaTypes.Add("REV 35Gb");
-                                mediaTypes.Add("REV 70Gb");
-                                mediaTypes.Add("REV 120Gb");
-                            }
-
-                            // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
-                            // Also don't get confident, some drives didn't know CD-RW but are able to read them
-                            if(mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
-                            {
-                                mediaTypes.Add("CD-ROM");
-                                mediaTypes.Add("Audio CD");
                                 mediaTypes.Add("CD-R");
                                 mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
                                 mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
                                 mediaTypes.Add("CD-RW (marked 4x or lower)");
-                                mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                             }
 
-                            mediaTypes = mediaTypes.Distinct().ToList();
-                            mediaTypes.Sort();
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW) mediaTypes.Add("CD-MRW");
 
-                            bool tryPlextor      = false,
-                                 tryHldtst       = false,
-                                 tryPioneer      = false,
-                                 tryNec          = false,
-                                 tryMediaTekF106 = false,
-                                 tryReadBuffer3C = false;
-
-                            tryPlextor |=
-                                dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase);
-
-                            tryHldtst |=
-                                dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase);
-
-                            tryPioneer |=
-                                dev.Manufacturer.Equals("pioneer", StringComparison.InvariantCultureIgnoreCase);
-
-                            tryNec |= dev.Manufacturer.Equals("nec", StringComparison.InvariantCultureIgnoreCase);
-
-                            if(!iomegaRev)
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadDDCD)
                             {
-                                if(!tryPlextor)
-                                {
-                                    tryPlextor |=
-                                        AnsiConsole
-                                           .Confirm($"[italic]{UI.Do_you_want_to_try_Plextor_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                    false);
-                                }
-
-                                if(!tryNec)
-                                {
-                                    tryNec |=
-                                        AnsiConsole
-                                           .Confirm($"[italic]{UI.Do_you_want_to_try_NEC_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                    false);
-                                }
-
-                                if(!tryPioneer)
-                                {
-                                    tryPioneer |=
-                                        AnsiConsole
-                                           .Confirm($"[italic]{UI.Do_you_want_to_try_Pioneer_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                    false);
-                                }
-
-                                if(!tryHldtst)
-                                {
-                                    tryHldtst |=
-                                        AnsiConsole
-                                           .Confirm($"[italic]{UI.Do_you_want_to_try_HLDTST_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                    false);
-                                }
-
-                                tryReadBuffer3C =
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_ReadBuffer3C_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
-
-                                tryMediaTekF106 =
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_MediaTek_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
+                                mediaTypes.Add("DDCD-ROM");
+                                mediaTypes.Add("DDCD-R");
+                                mediaTypes.Add("DDCD-RW");
                             }
 
-                            if(dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
-
-                            List<TestedMedia> mediaTests = [];
-
-                            foreach(string mediaType in mediaTypes)
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadDVD        ||
+                               report.SCSI.MultiMediaDevice.Features.DVDMultiRead      ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusR   ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRDL ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRW  ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusRWDL)
                             {
-                                if(!AnsiConsole.Confirm($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)
-                                }[/]"))
-                                    continue;
-
-                                AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
-
-                                Console.ReadKey(true);
-
-                                var mediaIsRecognized = true;
-
-                                await AnsiConsole.Status()
-                                                 .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
-                                                             async ctx =>
-                                                             {
-                                                                 sense =
-                                                                     dev.ScsiTestUnitReady(out ReadOnlySpan<byte>
-                                                                             localSense,
-                                                                         dev.Timeout,
-                                                                         out _);
-
-                                                                 if(!sense) return;
-
-                                                                 DecodedSense? decSense = Sense.Decode(localSense);
-
-                                                                 if(decSense.HasValue)
-                                                                 {
-                                                                     switch(decSense.Value.ASC)
-                                                                     {
-                                                                         case 0x3A:
-                                                                         // These should be trapped by the OS but seems in some cases they're not
-                                                                         case 0x04 when decSense.Value.ASCQ == 0x01:
-                                                                         case 0x28:
-                                                                         {
-                                                                             var leftRetries = 50;
-
-                                                                             while(leftRetries > 0)
-                                                                             {
-                                                                                 await Task.Delay(2000);
-
-                                                                                 sense =
-                                                                                     dev
-                                                                                        .ScsiTestUnitReady(out
-                                                                                             localSense,
-                                                                                             dev.Timeout,
-                                                                                             out _);
-
-                                                                                 if(!sense) break;
-
-                                                                                 leftRetries--;
-                                                                             }
-
-                                                                             AaruLogging.WriteLine();
-
-                                                                             mediaIsRecognized &= !sense;
-
-                                                                             break;
-                                                                         }
-                                                                         default:
-                                                                             AaruLogging.Debug(MODULE_NAME,
-                                                                                 Localization.Core
-                                                                                    .Device_not_ready_Sense,
-                                                                                 decSense.Value.SenseKey,
-                                                                                 decSense.Value.ASC,
-                                                                                 decSense.Value.ASCQ);
-
-                                                                             mediaIsRecognized = false;
-
-                                                                             break;
-                                                                     }
-                                                                 }
-                                                                 else
-                                                                 {
-                                                                     AaruLogging.Debug(MODULE_NAME,
-                                                                         Localization.Core
-                                                                            .Got_sense_status_but_no_sense_buffer);
-
-                                                                     mediaIsRecognized = false;
-                                                                 }
-                                                             });
-
-                                var mediaTest = new TestedMedia();
-
-                                if(mediaIsRecognized)
-                                {
-                                    mediaTest = reporter.ReportMmcMedia(mediaType,
-                                                                        tryPlextor,
-                                                                        tryPioneer,
-                                                                        tryNec,
-                                                                        tryHldtst,
-                                                                        tryMediaTekF106,
-                                                                        tryReadBuffer3C);
-
-                                    if(mediaTest is null) continue;
-
-                                    if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
-                                       mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
-                                       AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                                       }[/]"))
-                                    {
-                                        AnsiConsole.Progress()
-                                                   .AutoClear(true)
-                                                   .HideCompleted(true)
-                                                   .Columns(new TaskDescriptionColumn(),
-                                                            new ProgressBarColumn(),
-                                                            new PercentageColumn())
-                                                   .Start(ctx =>
-                                                    {
-                                                        ProgressTask task =
-                                                            ctx.AddTask(Localization.Core.Trying_READ_LONG);
-
-                                                        task.MaxValue = ushort.MaxValue;
-
-                                                        for(var i = (ushort)(mediaTest.BlockSize ?? 0);; i++)
-                                                        {
-                                                            task.Description =
-                                                                string.Format($"[slateblue1]{Localization.Core
-                                                                   .Trying_READ_LONG_with_size_0}[/]",
-                                                                              $"[lime]{i}[/]");
-
-                                                            task.Value = i;
-
-                                                            sense = mediaTest.SupportsReadLong16 == true
-                                                                        ? dev.ReadLong16(out buffer,
-                                                                            out _,
-                                                                            false,
-                                                                            0,
-                                                                            i,
-                                                                            dev.Timeout,
-                                                                            out _)
-                                                                        : dev.ReadLong10(out buffer,
-                                                                            out _,
-                                                                            false,
-                                                                            false,
-                                                                            0,
-                                                                            i,
-                                                                            dev.Timeout,
-                                                                            out _);
-
-                                                            if(!sense)
-                                                            {
-                                                                mediaTest.LongBlockSize = i;
-
-                                                                break;
-                                                            }
-
-                                                            if(i == ushort.MaxValue) break;
-                                                        }
-                                                    });
-                                    }
-
-                                    if(mediaTest.SupportsReadLong == true &&
-                                       mediaTest.LongBlockSize    != mediaTest.BlockSize)
-                                    {
-                                        Core.Spectre.ProgressSingleSpinner(ctx =>
-                                        {
-                                            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
-
-                                            sense = dev.ReadLong10(out buffer,
-                                                                   out _,
-                                                                   false,
-                                                                   false,
-                                                                   0,
-                                                                   (ushort)(mediaTest.LongBlockSize ??
-                                                                            mediaTest.BlockSize ?? 0),
-                                                                   dev.Timeout,
-                                                                   out _);
-                                        });
-
-                                        if(!sense) mediaTest.ReadLong10Data = buffer;
-                                    }
-
-                                    if(mediaTest.SupportsReadLong16 == true &&
-                                       mediaTest.LongBlockSize      != mediaTest.BlockSize)
-                                    {
-                                        Core.Spectre.ProgressSingleSpinner(ctx =>
-                                        {
-                                            ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
-
-                                            sense = dev.ReadLong16(out buffer,
-                                                                   out _,
-                                                                   false,
-                                                                   0,
-                                                                   mediaTest.LongBlockSize ?? mediaTest.BlockSize ?? 0,
-                                                                   dev.Timeout,
-                                                                   out _);
-                                        });
-
-                                        if(!sense) mediaTest.ReadLong16Data = buffer;
-                                    }
-                                }
-
-                                mediaTest.MediumTypeName    = mediaType;
-                                mediaTest.MediaIsRecognized = mediaIsRecognized;
-                                mediaTests.Add(mediaTest);
-
-                                dev.AllowMediumRemoval(out _, dev.Timeout, out _);
-                                dev.EjectTray(out _, dev.Timeout, out _);
+                                mediaTypes.Add("DVD-ROM");
+                                mediaTypes.Add("DVD-R");
+                                mediaTypes.Add("DVD-RW");
+                                mediaTypes.Add("DVD+R");
+                                mediaTypes.Add("DVD+RW");
+                                mediaTypes.Add("DVD-R DL");
+                                mediaTypes.Add("DVD+R DL");
+                                mediaTypes.Add("Nintendo GameCube game");
+                                mediaTypes.Add("Nintendo Wii game");
+                                mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
                             }
 
-                            report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW) mediaTypes.Add("DVD+MRW");
+
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVD ||
+                               report.SCSI.MultiMediaDevice.Features.CanReadHDDVDR)
+                            {
+                                mediaTypes.Add("HD DVD-ROM");
+                                mediaTypes.Add("HD DVD-R");
+                                mediaTypes.Add("HD DVD-RW");
+                            }
+
+                            if(report.SCSI.MultiMediaDevice.Features.CanReadHDDVDRAM) mediaTypes.Add("HD DVD-RAM");
                         }
+
+                        if(iomegaRev)
+                        {
+                            mediaTypes.Add("REV 35Gb");
+                            mediaTypes.Add("REV 70Gb");
+                            mediaTypes.Add("REV 120Gb");
+                        }
+
+                        // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
+                        // Also don't get confident, some drives didn't know CD-RW but are able to read them
+                        if(mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
+                        {
+                            mediaTypes.Add("CD-ROM");
+                            mediaTypes.Add("Audio CD");
+                            mediaTypes.Add("CD-R");
+                            mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                            mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                            mediaTypes.Add("CD-RW (marked 4x or lower)");
+                            mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
+                        }
+
+                        mediaTypes = mediaTypes.Distinct().ToList();
+                        mediaTypes.Sort();
+
+                        bool tryPlextor      = false,
+                             tryHldtst       = false,
+                             tryPioneer      = false,
+                             tryNec          = false,
+                             tryMediaTekF106 = false,
+                             tryReadBuffer3C = false;
+
+                        tryPlextor |= dev.Manufacturer.Equals("plextor", StringComparison.InvariantCultureIgnoreCase);
+
+                        tryHldtst |= dev.Manufacturer.Equals("hl-dt-st", StringComparison.InvariantCultureIgnoreCase);
+
+                        tryPioneer |= dev.Manufacturer.Equals("pioneer", StringComparison.InvariantCultureIgnoreCase);
+
+                        tryNec |= dev.Manufacturer.Equals("nec", StringComparison.InvariantCultureIgnoreCase);
+
+                        if(!iomegaRev)
+                        {
+                            if(!tryPlextor)
+                            {
+                                tryPlextor |=
+                                    AnsiConsole
+                                       .Confirm($"[italic]{UI.Do_you_want_to_try_Plextor_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                false);
+                            }
+
+                            if(!tryNec)
+                            {
+                                tryNec |=
+                                    AnsiConsole
+                                       .Confirm($"[italic]{UI.Do_you_want_to_try_NEC_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                false);
+                            }
+
+                            if(!tryPioneer)
+                            {
+                                tryPioneer |=
+                                    AnsiConsole
+                                       .Confirm($"[italic]{UI.Do_you_want_to_try_Pioneer_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                false);
+                            }
+
+                            if(!tryHldtst)
+                            {
+                                tryHldtst |=
+                                    AnsiConsole
+                                       .Confirm($"[italic]{UI.Do_you_want_to_try_HLDTST_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                false);
+                            }
+
+                            tryReadBuffer3C =
+                                AnsiConsole
+                                   .Confirm($"[italic]{UI.Do_you_want_to_try_ReadBuffer3C_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                            false);
+
+                            tryMediaTekF106 =
+                                AnsiConsole
+                                   .Confirm($"[italic]{UI.Do_you_want_to_try_MediaTek_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                            false);
+                        }
+
+                        if(dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
+
+                        List<TestedMedia> mediaTests = [];
+
+                        foreach(string mediaType in mediaTypes)
+                        {
+                            if(!AnsiConsole.Confirm($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)
+                            }[/]"))
+                                continue;
+
+                            AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
+
+                            Console.ReadKey(true);
+
+                            var mediaIsRecognized = true;
+
+                            await AnsiConsole.Status()
+                                             .StartAsync(Localization.Core.Waiting_for_drive_to_become_ready,
+                                                         async ctx =>
+                                                         {
+                                                             sense =
+                                                                 dev.ScsiTestUnitReady(out ReadOnlySpan<byte>
+                                                                         localSense,
+                                                                     dev.Timeout,
+                                                                     out _);
+
+                                                             if(!sense) return;
+
+                                                             DecodedSense? decSense = Sense.Decode(localSense);
+
+                                                             if(decSense.HasValue)
+                                                             {
+                                                                 switch(decSense.Value.ASC)
+                                                                 {
+                                                                     case 0x3A:
+                                                                     // These should be trapped by the OS but seems in some cases they're not
+                                                                     case 0x04 when decSense.Value.ASCQ == 0x01:
+                                                                     case 0x28:
+                                                                     {
+                                                                         var leftRetries = 50;
+
+                                                                         while(leftRetries > 0)
+                                                                         {
+                                                                             await Task.Delay(2000);
+
+                                                                             sense =
+                                                                                 dev.ScsiTestUnitReady(out localSense,
+                                                                                     dev.Timeout,
+                                                                                     out _);
+
+                                                                             if(!sense) break;
+
+                                                                             leftRetries--;
+                                                                         }
+
+                                                                         AaruLogging.WriteLine();
+
+                                                                         mediaIsRecognized &= !sense;
+
+                                                                         break;
+                                                                     }
+                                                                     default:
+                                                                         AaruLogging.Debug(MODULE_NAME,
+                                                                             Localization.Core.Device_not_ready_Sense,
+                                                                             decSense.Value.SenseKey,
+                                                                             decSense.Value.ASC,
+                                                                             decSense.Value.ASCQ);
+
+                                                                         mediaIsRecognized = false;
+
+                                                                         break;
+                                                                 }
+                                                             }
+                                                             else
+                                                             {
+                                                                 AaruLogging.Debug(MODULE_NAME,
+                                                                     Localization.Core
+                                                                        .Got_sense_status_but_no_sense_buffer);
+
+                                                                 mediaIsRecognized = false;
+                                                             }
+                                                         });
+
+                            var mediaTest = new TestedMedia();
+
+                            if(mediaIsRecognized)
+                            {
+                                mediaTest = reporter.ReportMmcMedia(mediaType,
+                                                                    tryPlextor,
+                                                                    tryPioneer,
+                                                                    tryNec,
+                                                                    tryHldtst,
+                                                                    tryMediaTekF106,
+                                                                    tryReadBuffer3C);
+
+                                if(mediaTest is null) continue;
+
+                                if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
+                                   mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
+                                   AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                                   }[/]"))
+                                {
+                                    AnsiConsole.Progress()
+                                               .AutoClear(true)
+                                               .HideCompleted(true)
+                                               .Columns(new TaskDescriptionColumn(),
+                                                        new ProgressBarColumn(),
+                                                        new PercentageColumn())
+                                               .Start(ctx =>
+                                                {
+                                                    ProgressTask task = ctx.AddTask(Localization.Core.Trying_READ_LONG);
+
+                                                    task.MaxValue = ushort.MaxValue;
+
+                                                    for(var i = (ushort)(mediaTest.BlockSize ?? 0);; i++)
+                                                    {
+                                                        task.Description =
+                                                            string.Format($"[slateblue1]{Localization.Core
+                                                               .Trying_READ_LONG_with_size_0}[/]",
+                                                                          $"[lime]{i}[/]");
+
+                                                        task.Value = i;
+
+                                                        sense = mediaTest.SupportsReadLong16 == true
+                                                                    ? dev.ReadLong16(out buffer,
+                                                                        out _,
+                                                                        false,
+                                                                        0,
+                                                                        i,
+                                                                        dev.Timeout,
+                                                                        out _)
+                                                                    : dev.ReadLong10(out buffer,
+                                                                        out _,
+                                                                        false,
+                                                                        false,
+                                                                        0,
+                                                                        i,
+                                                                        dev.Timeout,
+                                                                        out _);
+
+                                                        if(!sense)
+                                                        {
+                                                            mediaTest.LongBlockSize = i;
+
+                                                            break;
+                                                        }
+
+                                                        if(i == ushort.MaxValue) break;
+                                                    }
+                                                });
+                                }
+
+                                if(mediaTest.SupportsReadLong == true && mediaTest.LongBlockSize != mediaTest.BlockSize)
+                                {
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_10).IsIndeterminate();
+
+                                        sense = dev.ReadLong10(out buffer,
+                                                               out _,
+                                                               false,
+                                                               false,
+                                                               0,
+                                                               (ushort)(mediaTest.LongBlockSize ??
+                                                                        mediaTest.BlockSize ?? 0),
+                                                               dev.Timeout,
+                                                               out _);
+                                    });
+
+                                    if(!sense) mediaTest.ReadLong10Data = buffer;
+                                }
+
+                                if(mediaTest.SupportsReadLong16 == true &&
+                                   mediaTest.LongBlockSize      != mediaTest.BlockSize)
+                                {
+                                    Core.Spectre.ProgressSingleSpinner(ctx =>
+                                    {
+                                        ctx.AddTask(Localization.Core.Trying_SCSI_READ_LONG_16).IsIndeterminate();
+
+                                        sense = dev.ReadLong16(out buffer,
+                                                               out _,
+                                                               false,
+                                                               0,
+                                                               mediaTest.LongBlockSize ?? mediaTest.BlockSize ?? 0,
+                                                               dev.Timeout,
+                                                               out _);
+                                    });
+
+                                    if(!sense) mediaTest.ReadLong16Data = buffer;
+                                }
+                            }
+
+                            mediaTest.MediumTypeName    = mediaType;
+                            mediaTest.MediaIsRecognized = mediaIsRecognized;
+                            mediaTests.Add(mediaTest);
+
+                            dev.AllowMediumRemoval(out _, dev.Timeout, out _);
+                            dev.EjectTray(out _, dev.Timeout, out _);
+                        }
+
+                        report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
                     }
 
                         break;
@@ -1579,10 +1538,6 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
     public class Settings : DeviceFamily
     {
-        [LocalizedDescription(nameof(UI.Device_report_using_trap_disc))]
-        [CommandOption("-t|--trap-disc")]
-        public bool TrapDisc { get; init; }
-
         [LocalizedDescription(nameof(UI.Device_path))]
         [CommandArgument(0, "<device-path>")]
         public string Path { get; init; }
