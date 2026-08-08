@@ -101,8 +101,19 @@ public partial class Device
         cdb[9]  = (byte)(endMsf & 0xFF);
         cdb[10] = (byte)subchannel;
 
-        var transferLength = (uint)((cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]));
-        buffer = new byte[blockSize * transferLength];
+        int transferLengthInt = (cdb[7] - cdb[3]) * 60 * 75 + (cdb[8] - cdb[4]) * 75 + (cdb[9] - cdb[5]);
+
+        if(transferLengthInt <= 0)
+        {
+            buffer    = [];
+            duration  = 0;
+            Error     = true;
+            LastError = 22; // EINVAL
+
+            return true;
+        }
+
+        buffer = new byte[blockSize * (uint)transferLengthInt];
 
         LastError = SendScsiCommand(cdb, ref buffer, timeout, ScsiDirection.In, out duration, out bool sense);
 
