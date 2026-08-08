@@ -888,13 +888,12 @@ partial class Dump
 
                                     if(sectorTrack.Session != prevTrack.Session) continue;
 
-                                    if(sectorTrack.Type != prevTrack.Type)
-                                    {
-                                        _resume.BadBlocks.Add(newPregapSector);
+                                    if(sectorTrack.Type == prevTrack.Type) continue;
 
-                                        _errorLog?.WriteLine(newPregapSector,
-                                                             Localization.Core.Reason_pregap_track_type_mismatch);
-                                    }
+                                    _resume.BadBlocks.Add(newPregapSector);
+
+                                    _errorLog?.WriteLine(newPregapSector,
+                                                         Localization.Core.Reason_pregap_track_type_mismatch);
                                 }
 
                                 if(i >= blocksToRead)
@@ -1039,11 +1038,9 @@ partial class Dump
 
                     _writeStopwatch.Stop();
 
-                    sectorSpeedStart += r;
+                    sectorSpeedStart++;
 
-                    _resume.NextBlock = i + r;
-
-                    _speedStopwatch.Reset();
+                    _resume.NextBlock = i + r + 1;
 
                     elapsed += _speedStopwatch.Elapsed.TotalMilliseconds;
 
