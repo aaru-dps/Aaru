@@ -3211,11 +3211,10 @@ public sealed partial class DeviceReport
                                       secondSessionFirstTrack.PSEC,
                                       secondSessionFirstTrack.PFRAME);
 
-                    // Skip Lead-Out pre-gap
+                    // MSF to LBA (-150), then skip Lead-Out pre-gap (+150)
                     var firstSessionLeadOutLba = (uint)(firstSessionLeadOutTrack.PMIN * 60 * 75 +
                                                         firstSessionLeadOutTrack.PSEC * 75      +
-                                                        firstSessionLeadOutTrack.PFRAME         +
-                                                        150);
+                                                        firstSessionLeadOutTrack.PFRAME);
 
                     // Skip second session track pre-gap
                     var secondSessionLeadInLba = (uint)(secondSessionFirstTrack.PMIN * 60 * 75 +
