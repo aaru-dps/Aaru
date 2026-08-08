@@ -31,11 +31,13 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 
 namespace Aaru.Devices.Linux;
 
+[SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names match the native entry points.")]
 static partial class Extern
 {
     [LibraryImport("libc",
@@ -76,10 +78,15 @@ static partial class Extern
     internal static partial nint udev_device_new_from_subsystem_sysname(nint udev, string subsystem, string sysname);
 
     [LibraryImport("libudev",
+                   EntryPoint = "udev_device_get_property_value",
                    SetLastError = true,
                    StringMarshalling = StringMarshalling.Custom,
                    StringMarshallingCustomType = typeof(AnsiStringMarshaller))]
-    internal static partial string udev_device_get_property_value(nint udevDevice, string key);
+    private static partial nint udev_device_get_property_value_ptr(nint udevDevice, string key);
+
+    // The returned string is owned by the udev device; marshalling it as a string would free it.
+    internal static string udev_device_get_property_value(nint udevDevice, string key) =>
+        Marshal.PtrToStringAnsi(udev_device_get_property_value_ptr(udevDevice, key));
 
     [LibraryImport("libc", EntryPoint = "ioctl", SetLastError = true)]
     internal static partial int ioctlMmcMulti(int fd, LinuxIoctl request, nint value);
