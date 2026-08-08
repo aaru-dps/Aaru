@@ -90,7 +90,7 @@ public sealed class Acorn : IPartition
 
         if(errno != ErrorNumber.NoError) return;
 
-        if(checksum == bootBlock.checksum)
+        if((checksum & 0xFF) == bootBlock.checksum)
         {
             var part = new Partition
             {
@@ -119,8 +119,8 @@ public sealed class Acorn : IPartition
                     var part = new Partition
                     {
                         Start    = (ulong)(mapSector + entry.start),
-                        Size     = entry.size,
-                        Length   = (ulong)(entry.size * sector.Length),
+                        Length   = entry.size,
+                        Size     = (ulong)entry.size * (uint)sector.Length,
                         Sequence = counter,
                         Scheme   = "Filecore/Linux",
                         Type = entry.magic switch
@@ -153,8 +153,8 @@ public sealed class Acorn : IPartition
                         var part = new Partition
                         {
                             Start    = (ulong)(mapSector + entry.start),
-                            Size     = entry.length,
-                            Length   = (ulong)(entry.length * sector.Length),
+                            Length   = entry.length,
+                            Size     = (ulong)entry.length * (uint)sector.Length,
                             Name     = StringHandlers.CToString(entry.name, Encoding.GetEncoding("iso-8859-1")),
                             Sequence = counter,
                             Scheme   = "Filecore/RISCiX",
@@ -205,7 +205,7 @@ public sealed class Acorn : IPartition
                 {
                     Start    = entry.start,
                     Length   = (ulong)entry.size,
-                    Size     = (ulong)(entry.size * sector.Length),
+                    Size     = (ulong)entry.size * (uint)sector.Length,
                     Type     = Localization.Filecore,
                     Sequence = counter,
                     Scheme   = "ICS"
@@ -229,8 +229,8 @@ public sealed class Acorn : IPartition
             part = new Partition
             {
                 Start  = entry.start,
-                Length = (ulong)(entry.size * -1),
-                Size   = (ulong)(entry.size * -1 * sector.Length),
+                Length = (ulong)(-(long)entry.size),
+                Size   = (ulong)(-(long)entry.size) * (ulong)sector.Length,
                 Type = sector[9] == 'N'
                            ? Localization.Linux
                            : sector[9] == 'S'
@@ -250,7 +250,7 @@ public sealed class Acorn : IPartition
 #region Nested type: AcornBootBlock
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct AcornBootBlock
+    readonly struct AcornBootBlock
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
         public readonly byte[] spare;
@@ -265,7 +265,7 @@ public sealed class Acorn : IPartition
 #region Nested type: DiscRecord
 
     [StructLayout(LayoutKind.Sequential)]
-    struct DiscRecord
+    readonly struct DiscRecord
     {
         public readonly byte   log2secsize;
         public readonly byte   spt;
@@ -298,7 +298,7 @@ public sealed class Acorn : IPartition
 #region Nested type: IcsEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IcsEntry
+    readonly struct IcsEntry
     {
         public readonly uint start;
         public readonly int  size;
@@ -309,7 +309,7 @@ public sealed class Acorn : IPartition
 #region Nested type: IcsTable
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct IcsTable
+    readonly struct IcsTable
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public readonly IcsEntry[] entries;
@@ -320,7 +320,7 @@ public sealed class Acorn : IPartition
 #region Nested type: LinuxEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct LinuxEntry
+    readonly struct LinuxEntry
     {
         public readonly uint magic;
         public readonly uint start;
@@ -332,7 +332,7 @@ public sealed class Acorn : IPartition
 #region Nested type: LinuxTable
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct LinuxTable
+    readonly struct LinuxTable
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
         public readonly LinuxEntry[] entries;
@@ -345,7 +345,7 @@ public sealed class Acorn : IPartition
 #region Nested type: RiscIxEntry
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct RiscIxEntry
+    readonly struct RiscIxEntry
     {
         public readonly uint start;
         public readonly uint length;
@@ -359,7 +359,7 @@ public sealed class Acorn : IPartition
 #region Nested type: RiscIxTable
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    struct RiscIxTable
+    readonly struct RiscIxTable
     {
         public readonly uint magic;
         public readonly uint date;
