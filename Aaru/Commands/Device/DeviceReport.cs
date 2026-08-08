@@ -398,7 +398,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                             }
 
                             if(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_GD_ROM_disc}[/]"))
-                                reporter.ReportGdRomSwapTrick(ref report);
+                                reporter.ReportGdRomSwapTrick(report);
                             else
                                 return (int)ErrorNumber.NoError;
                         }

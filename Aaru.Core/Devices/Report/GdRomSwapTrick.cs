@@ -47,7 +47,7 @@ public sealed partial class DeviceReport
 {
     /// <summary>Tries and checks reading a GD-ROM disc using the swap disc trick and adds the result to a device report</summary>
     /// <param name="report">Device report</param>
-    public void ReportGdRomSwapTrick(ref CommonTypes.Metadata.DeviceReport report)
+    public void ReportGdRomSwapTrick(CommonTypes.Metadata.DeviceReport report)
     {
         report.GdRomSwapDiscCapabilities = new GdRomSwapDiscCapabilities();
 
@@ -104,7 +104,7 @@ public sealed partial class DeviceReport
         if(sense)
         {
             AaruLogging.WriteLine(Localization.Core.READ_FULL_TOC_failed);
-            AaruLogging.Debug(GDROM_MODULE_NAME, "{0}", Sense.PrettifySense(senseBuffer.ToArray()));
+            AaruLogging.Debug(GDROM_MODULE_NAME, Sense.PrettifySense(senseBuffer.ToArray()));
 
             report.GdRomSwapDiscCapabilities.RecognizedSwapDisc = false;
             report.GdRomSwapDiscCapabilities.TestCrashed        = false;
@@ -220,7 +220,7 @@ public sealed partial class DeviceReport
         if(sense)
         {
             AaruLogging.WriteLine(Localization.Core.READ_FULL_TOC_failed);
-            AaruLogging.Debug(GDROM_MODULE_NAME, "{0}", Sense.PrettifySense(senseBuffer.ToArray()));
+            AaruLogging.Debug(GDROM_MODULE_NAME, Sense.PrettifySense(senseBuffer.ToArray()));
 
             report.GdRomSwapDiscCapabilities.RecognizedSwapDisc = false;
             report.GdRomSwapDiscCapabilities.TestCrashed        = false;
