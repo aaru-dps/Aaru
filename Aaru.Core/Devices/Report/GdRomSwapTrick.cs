@@ -1957,11 +1957,13 @@ public sealed partial class DeviceReport
             else if(report.GdRomSwapDiscCapabilities.Lba450000AudioPqReadable) subchannel = MmcSubchannel.Q16;
         }
 
-        Console.CancelKeyPress += (_, e) =>
+        ConsoleCancelEventHandler cancelHandler = (_, e) =>
         {
             e.Cancel = true;
             aborted  = true;
         };
+
+        Console.CancelKeyPress += cancelHandler;
 
         report.GdRomSwapDiscCapabilities.MinimumReadableSectorInHdArea = startingSector;
 
@@ -2061,6 +2063,8 @@ public sealed partial class DeviceReport
             report.GdRomSwapDiscCapabilities.MaximumReadableSectorInHdArea =
                 Math.Min(lba + cluster - 1, (uint)(sectors - 1));
         }
+
+        Console.CancelKeyPress -= cancelHandler;
 
         AaruLogging.WriteLine();
 
