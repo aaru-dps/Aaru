@@ -322,6 +322,11 @@ partial class Dump
                 extentEnd   = blocks - 1;
             }
 
+            // Keep protection extents red on the graph even when a resumed dump repainted them green as part
+            // of the already-dumped extents
+            if(ei < protectionExtentIndices.Length && extentEnd >= extentStart)
+                _mediaGraph?.PaintSectorsBad(extentStart, (uint)(extentEnd - extentStart + 1));
+
             if(currentSector > extentEnd) continue;
 
             for(ulong i = currentSector; i < extentStart; i += blocksToRead)
@@ -482,7 +487,7 @@ partial class Dump
                 mhddLog.Write(i, _speedStopwatch.Elapsed.TotalMilliseconds, blocksToRead);
                 ibgLog.Write(i, currentSpeed * 1024);
 
-                // Write empty data
+                // Write empty data; protection extents are unreadable by design, so they are recorded as errored
                 _writeStopwatch.Restart();
 
                 if(_dumpRaw)
@@ -491,7 +496,7 @@ partial class Dump
                                                   i,
                                                   false,
                                                   blocksToRead,
-                                                  Enumerable.Repeat(SectorStatus.Dumped, (int)blocksToRead).ToArray());
+                                                  Enumerable.Repeat(SectorStatus.Errored, (int)blocksToRead).ToArray());
                 }
                 else
                 {
@@ -499,13 +504,13 @@ partial class Dump
                                               i,
                                               false,
                                               blocksToRead,
-                                              Enumerable.Repeat(SectorStatus.Dumped, (int)blocksToRead).ToArray());
+                                              Enumerable.Repeat(SectorStatus.Errored, (int)blocksToRead).ToArray());
                 }
 
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
                 extents.Add(i, blocksToRead, true);
-                _mediaGraph?.PaintSectorsGood(i, blocksToRead);
+                _mediaGraph?.PaintSectorsBad(i, blocksToRead);
                 currentSector     = i + blocksToRead;
                 _resume.NextBlock = currentSector;
                 blocksToRead      = saveBlocksToRead;
