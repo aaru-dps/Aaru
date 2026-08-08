@@ -464,7 +464,7 @@ public sealed partial class StatisticsViewModel : ViewModelBase
             DevicesVisible = true;
 
             foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(static n => n.Manufacturer)
-                                        .ThenBy(static n => n.Manufacturer)
+                                        .ThenBy(static n => n.Model)
                                         .ThenBy(static n => n.Revision)
                                         .ThenBy(static n => n.Bus))
             {
