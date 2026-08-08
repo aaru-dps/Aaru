@@ -54,18 +54,18 @@ partial class Device : Devices.Device, IDisposable
 
     Device() {}
 
-#region IDisposable Members
-
-    public new unsafe void Dispose()
+    /// <inheritdoc />
+    protected override unsafe void Dispose(bool disposing)
     {
-        if(_nativeBuffer == 0) return;
+        if(_nativeBuffer != 0)
+        {
+            NativeMemory.AlignedFree((void*)_nativeBuffer);
+            _nativeBuffer = 0;
+            _capacity     = 0;
+        }
 
-        NativeMemory.AlignedFree((void*)_nativeBuffer);
-        _nativeBuffer = 0;
-        _capacity     = 0;
+        base.Dispose(disposing);
     }
-
-#endregion
 
     private unsafe void EnsureCapacityAligned(nuint size)
     {
@@ -349,7 +349,6 @@ partial class Device : Devices.Device, IDisposable
         }
 
 
-
         Usb.UsbDevice usbDevice = null;
 
         // I have to search for USB disks, floppies and CD-ROMs as separate device types
@@ -377,11 +376,9 @@ partial class Device : Devices.Device, IDisposable
         }
 
 
-
         // TODO: Implement
 
         dev.IsFireWire = false;
-
 
 
         // TODO: Implement

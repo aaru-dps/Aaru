@@ -30,8 +30,6 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
-using System.Runtime.InteropServices;
-
 namespace Aaru.Devices;
 
 public partial class Device
@@ -40,11 +38,9 @@ public partial class Device
     ///     Releases unmanaged resources and performs other cleanup operations before the <see cref="Device" /> is
     ///     reclaimed by garbage collection.
     /// </summary>
-    unsafe ~Device()
+    ~Device()
     {
-        if(CdbPtr != null) NativeMemory.AlignedFree(CdbPtr);
-
-        Close();
+        Dispose(false);
     }
 
     /// <summary>Closes a device</summary>

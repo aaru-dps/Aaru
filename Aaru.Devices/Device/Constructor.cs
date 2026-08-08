@@ -45,10 +45,15 @@ using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace Aaru.Devices;
 
+/// <inheritdoc />
 /// <summary>Implements a device or media containing drive</summary>
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
-[SuppressMessage("ReSharper", "UnusedMethodReturnValue.Global")]
+[SuppressMessage("ReSharper",
+                 "MemberCanBePrivate.Global",
+                 Justification = "Public API used by consumers of the library.")]
+[SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Public API used by consumers of the library.")]
+[SuppressMessage("ReSharper",
+                 "UnusedMethodReturnValue.Global",
+                 Justification = "Public API used by consumers of the library.")]
 public partial class Device : IDisposable
 {
     // Pointer to send CDB to device
@@ -73,12 +78,25 @@ public partial class Device : IDisposable
 #region IDisposable Members
 
     /// <inheritdoc />
-    public unsafe void Dispose()
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>Releases the native buffers and closes the device</summary>
+    /// <param name="disposing"><c>true</c> if called from <see cref="Dispose()" />, <c>false</c> from the finalizer</param>
+    protected virtual unsafe void Dispose(bool disposing)
     {
         void* p = CdbPtr;
         CdbPtr = null;
         if(p != null) NativeMemory.AlignedFree(p);
-        GC.SuppressFinalize(this);
+
+        p        = SensePtr;
+        SensePtr = null;
+        if(p != null) NativeMemory.AlignedFree(p);
+
+        Close();
     }
 
 #endregion

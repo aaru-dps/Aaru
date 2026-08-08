@@ -237,7 +237,6 @@ partial class Device : Devices.Device, IDisposable
         }
 
 
-
         string resolvedLink;
 
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
@@ -321,7 +320,6 @@ partial class Device : Devices.Device, IDisposable
         }
 
 
-
         if(devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
            devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
@@ -395,7 +393,6 @@ partial class Device : Devices.Device, IDisposable
                 }
             }
         }
-
 
 
         if(!devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) &&
