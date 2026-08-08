@@ -293,7 +293,7 @@ public static class BigEndianBitConverter
     ///     minus 1.
     /// </exception>
     public static string ToString(byte[] value, int startIndex) =>
-        BitConverter.ToString(value.Reverse().ToArray(), startIndex);
+        BitConverter.ToString(value.Skip(startIndex).Reverse().ToArray());
 
     /// <summary>
     ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal
@@ -316,7 +316,7 @@ public static class BigEndianBitConverter
     ///     value; that is, the startIndex parameter is greater than the length of value minus the length parameter.
     /// </exception>
     public static string ToString(byte[] value, int startIndex, int length) =>
-        BitConverter.ToString(value.Reverse().ToArray(), startIndex, length);
+        BitConverter.ToString(value.Skip(startIndex).Take(length).Reverse().ToArray());
 
     /// <summary>Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.</summary>
     /// <param name="value">The array of bytes.</param>
