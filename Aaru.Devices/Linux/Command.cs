@@ -469,8 +469,9 @@ partial class Device
 
         if(timeout > 0)
         {
-            ioCmd.data_timeout_ns = timeout * 1000000000;
-            ioCmd.cmd_timeout_ms  = timeout * 1000;
+            // Both fields are 32-bit in the kernel ABI, so clamp instead of overflowing
+            ioCmd.data_timeout_ns = (uint)Math.Min(timeout * 1000000000UL, uint.MaxValue);
+            ioCmd.cmd_timeout_ms  = (uint)Math.Min(timeout * 1000UL,       uint.MaxValue);
         }
 
         ioCmd.data_ptr = (ulong)bufPtr;
@@ -536,8 +537,9 @@ partial class Device
 
             if(timeout > 0)
             {
-                ioCmd.data_timeout_ns = timeout * 1000000000;
-                ioCmd.cmd_timeout_ms  = timeout * 1000;
+                // Both fields are 32-bit in the kernel ABI, so clamp instead of overflowing
+                ioCmd.data_timeout_ns = (uint)Math.Min(timeout * 1000000000UL, uint.MaxValue);
+                ioCmd.cmd_timeout_ms  = (uint)Math.Min(timeout * 1000UL,       uint.MaxValue);
             }
 
             ioCmd.data_ptr = (ulong)bufferPointers[i];
