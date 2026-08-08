@@ -1128,7 +1128,6 @@ public sealed partial class DeviceReport
 
         if(sense && !_dev.Error)
         {
-            capabilities.SupportsReadLong16 = true;
             DecodedSense? decSense = Sense.Decode(senseBytes);
 
             if(decSense is { SenseKey: SenseKeys.IllegalRequest, ASC: 0x24, ASCQ: 0x00 })
