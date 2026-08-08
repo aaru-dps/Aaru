@@ -282,12 +282,12 @@ public static class Marshal
 
         var off = 0;
 
-        if(hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) off = 2;
+        if(hex.Length >= 2 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) off = 2;
 
         outBuf = new byte[(hex.Length - off) / 2];
         var count = 0;
 
-        for(int i = off; i < hex.Length; i += 2)
+        for(int i = off; i + 1 < hex.Length; i += 2)
         {
             char c = hex[i];
 
