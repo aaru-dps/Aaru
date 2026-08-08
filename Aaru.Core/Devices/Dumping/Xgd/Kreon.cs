@@ -549,9 +549,9 @@ partial class Dump
             Spiral.DiscParameters discSpiralParameters = Spiral.DiscParametersFromMediaType(dskType);
 
             if(discSpiralParameters is not null)
-                _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, blocks);
+                _mediaGraph = new Spiral((int)_dimensions, (int)_dimensions, discSpiralParameters, totalSize);
             else
-                _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, blocks);
+                _mediaGraph = new BlockMap((int)_dimensions, (int)_dimensions, totalSize);
 
             _mediaGraph?.TryLoadExisting($"{_outputPrefix}.graph.png");
 
