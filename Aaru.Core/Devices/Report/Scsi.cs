@@ -133,6 +133,9 @@ public sealed partial class DeviceReport
                     case 0x83:
                         buffer = ClearPage83(buffer);
 
+                        // Malformed page, skip it rather than store it unscrubbed
+                        if(buffer is null) continue;
+
                         break;
                     case 0x80:
                         var identify = new byte[512];
@@ -178,11 +181,11 @@ public sealed partial class DeviceReport
 
     static byte[] ClearPage83(byte[] pageResponse)
     {
-        if(pageResponse?[1] != 0x83) return null;
+        if(pageResponse is null || pageResponse.Length < 6) return null;
 
-        if(pageResponse[3] + 4 != pageResponse.Length) return null;
+        if(pageResponse[1] != 0x83) return null;
 
-        if(pageResponse.Length < 6) return null;
+        if((pageResponse[2] << 8) + pageResponse[3] + 4 != pageResponse.Length) return null;
 
         var position = 4;
 
@@ -190,7 +193,7 @@ public sealed partial class DeviceReport
         {
             byte length = pageResponse[position + 3];
 
-            if(length + position + 4 >= pageResponse.Length) length = (byte)(pageResponse.Length - position - 4);
+            if(length + position + 4 > pageResponse.Length) length = (byte)(pageResponse.Length - position - 4);
 
             var empty = new byte[length];
             Array.Copy(empty, 0, pageResponse, position + 4, length);
