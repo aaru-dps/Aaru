@@ -802,6 +802,8 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
     async Task SaveModeSense6Async()
     {
+        if(_scsiModeSense6 is null) return;
+
         IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             FileTypeChoices = new List<FilePickerFileType>
@@ -818,6 +820,8 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
     async Task SaveModeSense10Async()
     {
+        if(_scsiModeSense10 is null) return;
+
         IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             FileTypeChoices = new List<FilePickerFileType>
@@ -852,6 +856,8 @@ public sealed partial class ScsiInfoViewModel : ViewModelBase
 
     async Task SaveMmcFeaturesAsync()
     {
+        if(_configuration is null) return;
+
         IStorageFile result = await _view.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             FileTypeChoices = new List<FilePickerFileType>
