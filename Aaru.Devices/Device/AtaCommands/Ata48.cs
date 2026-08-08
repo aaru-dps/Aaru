@@ -55,6 +55,8 @@ public partial class Device
             Feature = 0x0000
         };
 
+        registers.DeviceHead += 0x40;
+
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.NonData,
