@@ -49,18 +49,18 @@ namespace Aaru.Partitions;
 // Constants from image testing
 /// <inheritdoc />
 /// <summary>Implements decoding of the Apple Partition Map</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Members document the full on-disk layout")]
 public sealed partial class AppleMap : IPartition
 {
     /// <summary>"ER", driver descriptor magic</summary>
-    const ushort DDM_MAGIC = 0x4552;
+    const ushort DDM_MAGIC     = 0x4552;
     /// <summary>"PM", new entry magic</summary>
-    const ushort APM_MAGIC = 0x504D;
+    const ushort APM_MAGIC     = 0x504D;
     /// <summary>"TS", old map magic</summary>
     const ushort APM_MAGIC_OLD = 0x5453;
     /// <summary>Old indicator for HFS partition, "TFS1"</summary>
-    const uint HFS_MAGIC_OLD = 0x54465331;
-    const string MODULE_NAME = "Apple Partition Map (APM) Plugin";
+    const uint   HFS_MAGIC_OLD = 0x54465331;
+    const string MODULE_NAME   = "Apple Partition Map (APM) Plugin";
 
 #region IPartition Members
 
@@ -137,10 +137,10 @@ public sealed partial class AppleMap : IPartition
 
                     var part = new Partition
                     {
-                        Size     = (ulong)(ddm.sbMap[i].ddSize       * 512),
-                        Length   = (ulong)(ddm.sbMap[i].ddSize * 512 / sectorSize),
+                        Size     = (ulong)ddm.sbMap[i].ddSize       * 512,
+                        Length   = (ulong)ddm.sbMap[i].ddSize * 512 / sectorSize,
                         Sequence = sequence,
-                        Offset   = ddm.sbMap[i].ddBlock * sectorSize,
+                        Offset   = (ulong)ddm.sbMap[i].ddBlock * sectorSize,
                         Start    = ddm.sbMap[i].ddBlock + sectorOffset,
                         Type     = "Apple_Driver"
                     };
@@ -164,7 +164,7 @@ public sealed partial class AppleMap : IPartition
         // This is the easy one, no sector size mixing
         if(oldMap.pdSig == APM_MAGIC_OLD)
         {
-            for(var i = 2; i < partSector.Length; i += 12)
+            for(var i = 2; i + 12 <= partSector.Length; i += 12)
             {
                 var tmp = new byte[12];
                 Array.Copy(partSector, i, tmp, 0, 12);
@@ -187,11 +187,11 @@ public sealed partial class AppleMap : IPartition
 
                 var part = new Partition
                 {
-                    Size     = oldEntry.pdStart                   * ddm.sbBlockSize,
-                    Length   = oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
+                    Size     = (ulong)oldEntry.pdSize                   * ddm.sbBlockSize,
+                    Length   = (ulong)oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
                     Sequence = sequence,
-                    Offset   = oldEntry.pdSize                   * ddm.sbBlockSize,
-                    Start    = oldEntry.pdSize * ddm.sbBlockSize / sectorSize,
+                    Offset   = (ulong)oldEntry.pdStart                   * ddm.sbBlockSize,
+                    Start    = (ulong)oldEntry.pdStart * ddm.sbBlockSize / sectorSize,
                     Scheme   = Name,
                     Type     = oldEntry.pdFSID == HFS_MAGIC_OLD ? "Apple_HFS" : $"0x{oldEntry.pdFSID:X8}"
                 };
@@ -258,6 +258,9 @@ public sealed partial class AppleMap : IPartition
                 return partitions.Count > 0;
         }
 
+        // A corrupt entry count would request a gigantic read
+        if(entryCount > 2048) return partitions.Count > 0;
+
         errno = imagePlugin.ReadSectors(sectorOffset, false, sectorsToRead, out byte[] entries, out _);
 
         if(errno != ErrorNumber.NoError) return false;
@@ -267,12 +270,16 @@ public sealed partial class AppleMap : IPartition
         AaruLogging.Debug(MODULE_NAME, "skip_ddm = {0}",        skipDdm);
         AaruLogging.Debug(MODULE_NAME, "sectors_to_read = {0}", sectorsToRead);
 
+        if(entries.Length <= skipDdm) return partitions.Count > 0;
+
         var copy = new byte[entries.Length - skipDdm];
         Array.Copy(entries, skipDdm, copy, 0, copy.Length);
         entries = copy;
 
         for(var i = 0; i < entryCount; i++)
         {
+            if((ulong)(i + 1) * entrySize > (ulong)entries.Length) break;
+
             var tmp = new byte[entrySize];
             Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
             entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
@@ -326,10 +333,10 @@ public sealed partial class AppleMap : IPartition
                 Sequence = sequence,
                 Type     = StringHandlers.CToString(entry.type),
                 Name     = StringHandlers.CToString(entry.name),
-                Offset   = entry.start   * entrySize,
-                Size     = entry.sectors * entrySize,
-                Start    = entry.start * entrySize / sectorSize + sectorOffset,
-                Length   = entry.sectors           * entrySize / sectorSize,
+                Offset   = (ulong)entry.start   * entrySize,
+                Size     = (ulong)entry.sectors * entrySize,
+                Start    = (ulong)entry.start * entrySize / sectorSize + sectorOffset,
+                Length   = (ulong)entry.sectors           * entrySize / sectorSize,
                 Scheme   = Name
             };
 
@@ -407,13 +414,13 @@ public sealed partial class AppleMap : IPartition
         /// <summary>Bytes per sector</summary>
         public ushort sbBlockSize;
         /// <summary>Sectors of the disk</summary>
-        public uint sbBlocks;
+        public uint   sbBlocks;
         /// <summary>Device type</summary>
         public ushort sbDevType;
         /// <summary>Device ID</summary>
         public ushort sbDevId;
         /// <summary>Reserved</summary>
-        public uint sbData;
+        public uint   sbData;
         /// <summary>Number of entries of the driver descriptor</summary>
         public ushort sbDrvrCount;
         /// <summary>Entries of the driver descriptor</summary>
@@ -430,7 +437,7 @@ public sealed partial class AppleMap : IPartition
     partial struct AppleDriverEntry
     {
         /// <summary>First sector of the driver</summary>
-        public uint ddBlock;
+        public uint   ddBlock;
         /// <summary>Size in 512bytes sectors of the driver</summary>
         public ushort ddSize;
         /// <summary>Operating system (MacOS = 1)</summary>
@@ -445,29 +452,29 @@ public sealed partial class AppleMap : IPartition
     enum AppleMapFlags : uint
     {
         /// <summary>Partition is valid</summary>
-        Valid = 0x01,
+        Valid     = 0x01,
         /// <summary>Partition is allocated</summary>
         Allocated = 0x02,
         /// <summary>Partition is in use</summary>
-        InUse = 0x04,
+        InUse     = 0x04,
         /// <summary>Partition is bootable</summary>
-        Bootable = 0x08,
+        Bootable  = 0x08,
         /// <summary>Partition is readable</summary>
-        Readable = 0x10,
+        Readable  = 0x10,
         /// <summary>Partition is writable</summary>
-        Writable = 0x20,
+        Writable  = 0x20,
         /// <summary>Partition boot code is position independent</summary>
-        PicCode = 0x40,
+        PicCode   = 0x40,
         /// <summary>OS specific flag</summary>
         Specific1 = 0x80,
         /// <summary>OS specific flag</summary>
         Specific2 = 0x100,
         /// <summary>Unknown, seen in the wild</summary>
-        Unknown = 0x200,
+        Unknown   = 0x200,
         /// <summary>Unknown, seen in the wild</summary>
-        Unknown2 = 0x40000000,
+        Unknown2  = 0x40000000,
         /// <summary>Reserved, not seen in the wild</summary>
-        Reserved = 0xBFFFFC00
+        Reserved  = 0xBFFFFC00
     }
 
 #endregion
@@ -499,11 +506,11 @@ public sealed partial class AppleMap : IPartition
         /// <summary>Reserved</summary>
         public ushort reserved1;
         /// <summary>Number of entries on the partition map, each one sector</summary>
-        public uint entries;
+        public uint   entries;
         /// <summary>First sector of the partition</summary>
-        public uint start;
+        public uint   start;
         /// <summary>Number of sectos of the partition</summary>
-        public uint sectors;
+        public uint   sectors;
         /// <summary>Partition name, 32 bytes, null-padded</summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
         public byte[] name;
