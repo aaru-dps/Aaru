@@ -880,6 +880,11 @@ partial class Dump
         InitProgress?.Invoke();
         elapsed = 0;
 
+        // Video partition sectors are only addressable while the drive is locked, so their errors are tracked apart
+        // from _resume.BadBlocks (which the wxripper-unlocked trim and retry passes handle) and retried before
+        // unlocking. Stored as device LBAs; the image sector is deviceLba + blocks + middleZone - l0Video.
+        List<ulong> videoBadBlocks = [];
+
         for(ulong l1 = currentSector - blocks - middleZone + l0Video; l1 < l0Video + l1Video; l1 += blocksToRead)
         {
             if(_aborted)
@@ -959,9 +964,12 @@ partial class Dump
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
 
-                // TODO: Handle errors in video partition
-                //errored += blocksToRead;
-                //resume.BadBlocks.Add(l1);
+                for(ulong b = 0; b < _skip; b++)
+                {
+                    videoBadBlocks.Add(l1                     + b);
+                    _mediaGraph?.PaintSectorBad(currentSector + b);
+                }
+
                 AaruLogging.Debug(MODULE_NAME, Localization.Core.READ_error_0, Sense.PrettifySense(senseBuf));
 
                 mhddLog.Write(l1,
@@ -996,6 +1004,102 @@ partial class Dump
         }
 
         EndProgress?.Invoke();
+
+#region Video partition error handling
+
+        // Sectors recorded on a previous, resumed run live in _resume.BadBlocks as image sectors; pull them back to
+        // device LBAs so they are retried here, while the drive is still locked and the video partition readable.
+        foreach(ulong bad in _resume.BadBlocks.Where(b => b >= blocks + middleZone).ToArray())
+        {
+            videoBadBlocks.Add(bad - blocks - middleZone + l0Video);
+            _resume.BadBlocks.Remove(bad);
+        }
+
+        if(videoBadBlocks.Count > 0 && !_aborted && _retryPasses > 0)
+        {
+            videoBadBlocks = videoBadBlocks.Distinct().ToList();
+            videoBadBlocks.Sort();
+
+            var videoPass    = 1;
+            var videoForward = true;
+
+            InitProgress?.Invoke();
+
+        repeatVideoRetry:
+
+            foreach(ulong badSector in videoBadBlocks.ToArray())
+            {
+                if(_aborted)
+                {
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
+
+                    break;
+                }
+
+                PulseProgress?.Invoke(videoForward
+                                          ? string.Format(Localization.Core.Retrying_sector_0_pass_1_forward,
+                                                          badSector,
+                                                          videoPass)
+                                          : string.Format(Localization.Core.Retrying_sector_0_pass_1_reverse,
+                                                          badSector,
+                                                          videoPass));
+
+                sense = _dev.Read12(out readBuffer,
+                                    out senseBuf,
+                                    0,
+                                    false,
+                                    false,
+                                    false,
+                                    false,
+                                    (uint)badSector,
+                                    blockSize,
+                                    0,
+                                    1,
+                                    false,
+                                    _dev.Timeout,
+                                    out double cmdDuration);
+
+                totalDuration += cmdDuration;
+
+                if(sense || _dev.Error)
+                {
+                    _errorLog?.WriteLine(badSector, _dev.Error, _dev.LastError, senseBuf);
+
+                    continue;
+                }
+
+                ulong imageSector = badSector + blocks + middleZone - l0Video;
+
+                videoBadBlocks.Remove(badSector);
+                extents.Add(imageSector);
+                outputFormat.WriteSector(readBuffer, imageSector, false, SectorStatus.Dumped);
+                _mediaGraph?.PaintSectorGood(imageSector);
+
+                UpdateStatus?.Invoke(string.Format(Localization.Core.Correctly_retried_block_0_in_pass_1,
+                                                   badSector,
+                                                   videoPass));
+            }
+
+            if(videoPass < _retryPasses && !_aborted && videoBadBlocks.Count > 0)
+            {
+                videoPass++;
+                videoForward = !videoForward;
+                videoBadBlocks.Sort();
+
+                if(!videoForward) videoBadBlocks.Reverse();
+
+                goto repeatVideoRetry;
+            }
+
+            EndProgress?.Invoke();
+        }
+
+        // Whatever remains unreadable is recorded in the resume data as image sectors; the placeholders were already
+        // written when the error happened.
+        foreach(ulong badSector in videoBadBlocks) _resume.BadBlocks.Add(badSector + blocks + middleZone - l0Video);
+
+#endregion Video partition error handling
 
         UpdateStatus?.Invoke(Localization.Core.Unlocking_drive_Wxripper);
         sense = _dev.KreonUnlockWxripper(out senseBuf, _dev.Timeout, out _);
@@ -1062,6 +1166,10 @@ partial class Dump
                     break;
                 }
 
+                // Video partition sectors are only readable while the drive is locked; they were already retried
+                // before unlocking and reading them here would return data from the wrong LBA
+                if(badSector >= blocks) continue;
+
                 PulseProgress?.Invoke(string.Format(Localization.Core.Trimming_sector_0, badSector));
 
                 sense = _dev.Read12(out readBuffer,
@@ -1111,6 +1219,14 @@ partial class Dump
 
             foreach(ulong ur in _resume.BadBlocks)
             {
+                // Video partition sectors are recorded individually and cannot be retried here
+                if(ur >= blocks)
+                {
+                    tmpList.Add(ur);
+
+                    continue;
+                }
+
                 for(ulong i = ur; i < ur + blocksToRead; i++) tmpList.Add(i);
             }
 
@@ -1243,6 +1359,10 @@ partial class Dump
 
                     break;
                 }
+
+                // Video partition sectors are only readable while the drive is locked; they were already retried
+                // before unlocking and reading them here would return data from the wrong LBA
+                if(badSector >= blocks) continue;
 
                 if(forward)
                 {
