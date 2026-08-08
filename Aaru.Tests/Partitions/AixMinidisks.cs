@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : Acorn.cs
+// Filename       : AixMinidisks.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Aaru unit testing.
@@ -33,43 +33,79 @@ using NUnit.Framework;
 namespace Aaru.Tests.Partitions;
 
 [TestFixture]
-public class Acorn : PartitionSchemeTest
+public class AixMinidisks : PartitionSchemeTest
 {
-    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "Acorn");
+    public override string DataFolder => Path.Combine(Consts.TestFilesRoot, "Partitioning schemes", "AIX minidisks");
 
     public override PartitionTest[] Tests =>
     [
         new()
         {
-            TestFile = "linux_ics.aif",
+            TestFile = "aixps2_1.3.aif",
             Partitions =
             [
                 new Partition
                 {
-                    Length   = 99792,
-                    Offset   = 519096,
+                    Length   = 11608,
+                    Offset   = 147456,
                     Sequence = 0,
-                    Size     = 51093504,
-                    Start    = 1008,
-                    Type     = "Linux"
+                    Size     = 5943296,
+                    Start    = 288,
+                    Type     = "AIX filesystem"
                 },
                 new Partition
                 {
-                    Length   = 368928,
-                    Offset   = 103219200,
+                    Length   = 261792,
+                    Offset   = 147456,
                     Sequence = 1,
-                    Size     = 188891136,
-                    Start    = 201600,
-                    Type     = "Linux"
+                    Size     = 134037504,
+                    Start    = 288,
+                    Type     = "0x09"
                 },
                 new Partition
                 {
-                    Length   = 359856,
-                    Offset   = 343719936,
+                    Length   = 8000,
+                    Offset   = 6090752,
                     Sequence = 2,
-                    Size     = 184246272,
-                    Start    = 671328,
-                    Type     = "Linux swap"
+                    Size     = 4096000,
+                    Start    = 11896,
+                    Type     = "AIX dump space"
+                },
+                new Partition
+                {
+                    Length   = 8000,
+                    Offset   = 10186752,
+                    Sequence = 3,
+                    Size     = 4096000,
+                    Start    = 19896,
+                    Type     = "AIX paging space"
+                },
+                new Partition
+                {
+                    Length   = 199128,
+                    Offset   = 14282752,
+                    Sequence = 4,
+                    Size     = 101953536,
+                    Start    = 27896,
+                    Type     = "AIX filesystem"
+                },
+                new Partition
+                {
+                    Length   = 15408,
+                    Offset   = 116236288,
+                    Sequence = 5,
+                    Size     = 7888896,
+                    Start    = 227024,
+                    Type     = "AIX boot"
+                },
+                new Partition
+                {
+                    Length   = 19648,
+                    Offset   = 124125184,
+                    Sequence = 6,
+                    Size     = 10059776,
+                    Start    = 242432,
+                    Type     = "AIX filesystem"
                 }
             ]
         }
