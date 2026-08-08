@@ -58,15 +58,16 @@ public partial class Device
             LbaLow     = (byte)((lba & 0xFF)      / 0x1)
         };
 
-        registers.DeviceHead += 0x40;
+        registers.DeviceHead  += 0x40;
+        registers.SectorCount =  1;
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 
@@ -97,16 +98,17 @@ public partial class Device
             CylinderHigh = (byte)((cylinder & 0xFF00) / 0x100),
             CylinderLow  = (byte)((cylinder & 0xFF)   / 0x1),
             Sector       = sector,
-            DeviceHead   = (byte)(head & 0x0F)
+            DeviceHead   = (byte)(head & 0x0F),
+            SectorCount  = 1
         };
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 

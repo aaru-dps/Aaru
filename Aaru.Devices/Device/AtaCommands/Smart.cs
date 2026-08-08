@@ -226,19 +226,20 @@ public partial class Device
 
         var registers = new AtaRegistersLba28
         {
-            Command = (byte)AtaCommands.Smart,
-            Feature = (byte)AtaSmartSubCommands.ReadData,
-            LbaHigh = 0xC2,
-            LbaMid  = 0x4F
+            Command     = (byte)AtaCommands.Smart,
+            Feature     = (byte)AtaSmartSubCommands.ReadData,
+            LbaHigh     = 0xC2,
+            LbaMid      = 0x4F,
+            SectorCount = 1
         };
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 
@@ -263,20 +264,21 @@ public partial class Device
 
         var registers = new AtaRegistersLba28
         {
-            Command = (byte)AtaCommands.Smart,
-            Feature = (byte)AtaSmartSubCommands.ReadLog,
-            LbaHigh = 0xC2,
-            LbaMid  = 0x4F,
-            LbaLow  = logAddress
+            Command     = (byte)AtaCommands.Smart,
+            Feature     = (byte)AtaSmartSubCommands.ReadLog,
+            LbaHigh     = 0xC2,
+            LbaMid      = 0x4F,
+            LbaLow      = logAddress,
+            SectorCount = 1
         };
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 

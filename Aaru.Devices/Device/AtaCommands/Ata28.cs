@@ -52,16 +52,17 @@ public partial class Device
 
         var registers = new AtaRegistersLba28
         {
-            Command = (byte)AtaCommands.ReadBuffer
+            Command     = (byte)AtaCommands.ReadBuffer,
+            SectorCount = 1
         };
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.PioIn,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 
@@ -85,16 +86,17 @@ public partial class Device
 
         var registers = new AtaRegistersLba28
         {
-            Command = (byte)AtaCommands.ReadBufferDma
+            Command     = (byte)AtaCommands.ReadBufferDma,
+            SectorCount = 1
         };
 
         LastError = SendAtaCommand(registers,
                                    out statusRegisters,
                                    AtaProtocol.Dma,
-                                   AtaTransferRegister.NoTransfer,
+                                   AtaTransferRegister.SectorCount,
                                    ref buffer,
                                    timeout,
-                                   false,
+                                   true,
                                    out duration,
                                    out bool sense);
 
