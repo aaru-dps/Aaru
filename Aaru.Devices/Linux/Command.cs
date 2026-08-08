@@ -33,6 +33,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 using Aaru.CommonTypes.Interop;
@@ -40,6 +41,9 @@ using Aaru.Decoders.ATA;
 
 namespace Aaru.Devices.Linux;
 
+[SuppressMessage("ReSharper",
+                 "ClassCannotBeInstantiated",
+                 Justification = "Instantiated through the platform-specific factory when running on Linux.")]
 partial class Device
 {
     /// <inheritdoc />
@@ -718,7 +722,7 @@ partial class Device
         else if(errno == 0) errno = -22;
 
         LastError = errno;
-        Error     = errno == 0;
+        Error     = errno != 0;
 
         return errno != 0;
     }
