@@ -200,7 +200,9 @@ partial class Dump
 
             ulong nextBlock = extent.Item1;
 
-            if(extent.Item1 < _resume.NextBlock) nextBlock = (uint)_resume.NextBlock;
+            if(extent.Item1 < _resume.NextBlock) nextBlock = _resume.NextBlock;
+
+            blocksToRead = maxBlocksToRead;
 
             _speedStopwatch.Restart();
 
