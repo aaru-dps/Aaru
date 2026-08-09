@@ -224,6 +224,8 @@ public partial class IbgLogViewModel : ViewModelBase
                 speeds[sector] = speed;
         }
 
+        sr.Close();
+
         double maxSpeedValue = 0;
 
         switch(mediaType)
