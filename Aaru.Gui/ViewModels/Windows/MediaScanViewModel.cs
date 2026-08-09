@@ -132,7 +132,7 @@ public sealed partial class MediaScanViewModel : ViewModelBase
     [ObservableProperty]
     double _stepsY;
     [ObservableProperty]
-    string _stopEnabled;
+    bool _stopEnabled;
     [ObservableProperty]
     bool _stopVisible;
     [ObservableProperty]
@@ -146,6 +146,7 @@ public sealed partial class MediaScanViewModel : ViewModelBase
         _devicePath  = devicePath;
         _view        = view;
         StopVisible  = false;
+        StopEnabled  = true;
         StartCommand = new RelayCommand(Start);
         CloseCommand = new RelayCommand(Close);
         StopCommand  = new RelayCommand(Stop);
@@ -161,10 +162,15 @@ public sealed partial class MediaScanViewModel : ViewModelBase
 
     void Close() => _view.Close();
 
-    internal void Stop() => _scanner?.Abort();
+    internal void Stop()
+    {
+        StopEnabled = false;
+        _scanner?.Abort();
+    }
 
     void Start()
     {
+        StopEnabled     = true;
         StopVisible     = true;
         StartVisible    = false;
         CloseVisible    = false;
@@ -197,8 +203,11 @@ public sealed partial class MediaScanViewModel : ViewModelBase
         {
             lock(_pendingSectorDataLock)
             {
-                foreach((ulong startingSector, double duration) item in _pendingSectorData)
-                    BlockMapSectorData.Add(item);
+                if(BlockMapSectorData != null)
+                {
+                    foreach((ulong startingSector, double duration) item in _pendingSectorData)
+                        BlockMapSectorData.Add(item);
+                }
 
                 _pendingSectorData.Clear();
             }
@@ -250,7 +259,7 @@ public sealed partial class MediaScanViewModel : ViewModelBase
 
     async void ScanSpeed(ulong sector, double currentSpeed) => await Dispatcher.UIThread.InvokeAsync(() =>
     {
-        SpeedData.Add((sector, currentSpeed));
+        SpeedData?.Add((sector, currentSpeed));
 
         if(currentSpeed > MaxY) MaxY = currentSpeed + currentSpeed / 10d;
     });
