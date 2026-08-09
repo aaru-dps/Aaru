@@ -154,6 +154,8 @@ sealed class MediaScanCommand : Command<MediaScanCommand.Settings>
                         results = scanner.Scan();
                     });
 
+        if(scanner.Aborted) AaruLogging.WriteLine(Localization.Core.Scan_aborted_partial_results);
+
         AaruLogging.WriteLine(Localization.Core.Took_a_total_of_0_1_processing_commands,
                               results.TotalTime.Seconds().Humanize(minUnit: TimeUnit.Second),
                               results.ProcessingTime.Seconds().Humanize(minUnit: TimeUnit.Second));

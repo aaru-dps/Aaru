@@ -51,7 +51,7 @@ public sealed partial class MediaScan
     readonly        bool      _seekTest;
     readonly        Stopwatch _speedStopwatch;
     readonly        bool      _useBufferedReads;
-    bool                      _aborted;
+    volatile        bool      _aborted;
 
     /// <param name="mhddLogPath">Path to a MHDD log file</param>
     /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
@@ -81,18 +81,25 @@ public sealed partial class MediaScan
     /// <exception cref="NotSupportedException">Unknown device type</exception>
     public ScanResults Scan()
     {
-        return _dev.Type switch
-               {
-                   DeviceType.ATA => Ata(),
-                   DeviceType.MMC or DeviceType.SecureDigital => SecureDigital(),
-                   DeviceType.NVMe => Nvme(),
-                   DeviceType.ATAPI or DeviceType.SCSI => Scsi(),
-                   _ => throw new NotSupportedException(Localization.Core.Unknown_device_type)
-               };
+        ScanResults results = _dev.Type switch
+                              {
+                                  DeviceType.ATA => Ata(),
+                                  DeviceType.MMC or DeviceType.SecureDigital => SecureDigital(),
+                                  DeviceType.NVMe => Nvme(),
+                                  DeviceType.ATAPI or DeviceType.SCSI => Scsi(),
+                                  _ => throw new NotSupportedException(Localization.Core.Unknown_device_type)
+                              };
+
+        if(_aborted) UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
+
+        return results;
     }
 
     /// <summary>Aborts the running media scan</summary>
     public void Abort() => _aborted = true;
+
+    /// <summary>Set when the scan has been aborted and the results are partial</summary>
+    public bool Aborted => _aborted;
 
     /// <summary>Event raised when the progress bar is not longer needed</summary>
     public event EndProgressHandler EndProgress;
