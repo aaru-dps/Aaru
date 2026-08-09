@@ -30,6 +30,7 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
@@ -83,6 +84,25 @@ public static class Error
                    PlatformID.NonStop      => string.Format(Localization.Core.error_code_0, errno),
                    PlatformID.Unknown      => string.Format(Localization.Core.error_code_0, errno),
                    _                       => string.Format(Localization.Core.error_code_0, errno)
+               };
+    }
+
+    /// <summary>Prints the description of an Aaru error number.</summary>
+    /// <param name="errno">Aaru error number.</param>
+    /// <returns>Error description.</returns>
+    public static string Print(ErrorNumber errno)
+    {
+        return errno switch
+               {
+                   ErrorNumber.NoSuchFile or ErrorNumber.NoSuchDevice or ErrorNumber.NoSuchDeviceOrAddress =>
+                       Localization.Core.The_specified_device_cannot_be_found,
+                   ErrorNumber.AccessDenied or ErrorNumber.NotPermitted => Localization.Core
+                      .Not_enough_permissions_to_open_the_device,
+                   ErrorNumber.Busy => Localization.Core.The_specified_device_is_in_use_by_another_process,
+                   ErrorNumber.ReadOnly => Localization.Core
+                                                       .Cannot_open_the_device_in_writable_mode_as_needed_by_some_commands,
+                   ErrorNumber.InvalidArgument => Localization.Core.Tried_to_open_a_file_instead_of_a_device,
+                   _                           => string.Format(Localization.Core.error_code_0, errno)
                };
     }
 
