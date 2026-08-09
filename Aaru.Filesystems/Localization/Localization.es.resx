@@ -2449,6 +2449,9 @@
     <data name="UNICOS_Name" xml:space="preserve">
     <value>Extensión del sistema de ficheros UNICOS</value>
   </data>
+    <data name="Raw_MRW_layout_detected" xml:space="preserve">
+    <value>Detectada disposición MRW cruda (modo no compatible), traduciendo direcciones de sectores</value>
+  </data>
     <data name="Universal_Disk_Format" xml:space="preserve">
     <value>[bold][fuchsia]Formato de Disco Universal[/][/]</value>
   </data>

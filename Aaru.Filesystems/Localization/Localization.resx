@@ -3713,6 +3713,9 @@
     <data name="UDF_Name" xml:space="preserve">
     <value>Universal Disk Format</value>
   </data>
+    <data name="Raw_MRW_layout_detected" xml:space="preserve">
+    <value>Raw (non-compatible mode) MRW layout detected, translating sector addresses</value>
+  </data>
     <data name="Universal_Disk_Format" xml:space="preserve">
     <value>[bold][fuchsia]Universal Disk Format[/][/]</value>
   </data>

@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Aaru.CommonTypes.AaruMetadata;
+using Aaru.Logging;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.CommonTypes.Structs;
@@ -60,15 +61,27 @@ public sealed partial class UDF
         ulong  beaSector = 0;
         byte[] buffer;
 
-        for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+        _mrw = false;
+
+        for(var pass = 0; pass < 2 && !beaFound; pass++)
         {
-            ulong sector = vrsStart + i;
-
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
-
-            // Check for BEA01 identifier at offset 1
-            if(buffer.Length >= 6 && buffer[1..6].SequenceEqual(_bea))
+            // On the second pass, look for the VRS as laid out on a raw (non-compatible mode) MRW medium
+            if(pass == 1)
             {
+                if(!MrwPossible(imagePlugin)) break;
+
+                _mrw = true;
+            }
+
+            for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+            {
+                ulong sector = vrsStart + i;
+
+                if(ReadMrwAwareSector(imagePlugin, _mrw, sector, out buffer) != ErrorNumber.NoError) continue;
+
+                // Check for BEA01 identifier at offset 1
+                if(buffer.Length < 6 || !buffer[1..6].SequenceEqual(_bea)) continue;
+
                 beaFound  = true;
                 beaSector = sector;
 
@@ -78,6 +91,8 @@ public sealed partial class UDF
 
         if(!beaFound) return ErrorNumber.InvalidArgument;
 
+        if(_mrw) AaruLogging.Debug(MODULE_NAME, Localization.Raw_MRW_layout_detected);
+
         // Now search within the extended area (after BEA) for NSR02/NSR03 before TEA
         var foundNsr = false;
 
@@ -85,7 +100,7 @@ public sealed partial class UDF
         {
             ulong sector = beaSector + i;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError)
+            if(ReadMrwAwareSector(imagePlugin, _mrw, sector, out buffer) != ErrorNumber.NoError)
                 return ErrorNumber.InvalidArgument;
 
             // Check identifier at offset 1-5
@@ -111,12 +126,15 @@ public sealed partial class UDF
         AnchorVolumeDescriptorPointer avdp      = default;
         var                           avdpFound = false;
 
+        // On a raw MRW medium only the user data area is addressable by the volume
+        ulong sectors = _mrw ? MrwUserSectors(imagePlugin.Info.Sectors) : imagePlugin.Info.Sectors;
+
         foreach(ulong location in new[]
                 {
-                    256UL, imagePlugin.Info.Sectors - 256, imagePlugin.Info.Sectors - 1
+                    256UL, sectors - 256, sectors - 1
                 })
         {
-            if(imagePlugin.ReadSector(location, false, out buffer, out _) != ErrorNumber.NoError)
+            if(ReadMrwAwareSector(imagePlugin, _mrw, location, out buffer) != ErrorNumber.NoError)
                 return ErrorNumber.InvalidArgument;
 
             avdp = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(buffer);
@@ -143,7 +161,7 @@ public sealed partial class UDF
 
         for(uint i = 0; i < vdsLength; i++)
         {
-            if(imagePlugin.ReadSector(vdsLocation + i, false, out buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, _mrw, vdsLocation + i, out buffer) != ErrorNumber.NoError) continue;
 
             var tagId = (TagIdentifier)BitConverter.ToUInt16(buffer, 0);
 
@@ -181,7 +199,7 @@ public sealed partial class UDF
         if(!lvd.domainIdentifier.identifier.SequenceEqual(_magic)) return ErrorNumber.InvalidArgument;
 
         // Read the Logical Volume Integrity Descriptor to check UDF revision
-        if(imagePlugin.ReadSector(lvd.integritySequenceExtent.location, false, out byte[] lvidBuffer, out _) !=
+        if(ReadMrwAwareSector(imagePlugin, _mrw, lvd.integritySequenceExtent.location, out byte[] lvidBuffer) !=
            ErrorNumber.NoError)
             return ErrorNumber.InvalidArgument;
 
@@ -321,7 +339,7 @@ public sealed partial class UDF
             ModificationDate      = EcmaToDateTime(lvid.recordingDateTime),
             ApplicationIdentifier = Encoding.ASCII.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
             SystemIdentifier      = Encoding.ASCII.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
-            Bootable              = IsBootable(imagePlugin, partition)
+            Bootable              = IsBootable(imagePlugin, _mrw)
         };
 
 
@@ -356,6 +374,7 @@ public sealed partial class UDF
         // Clear instance fields
         _imagePlugin               = null;
         _sectorSize                = 0;
+        _mrw                       = false;
         _partitionStartingLocation = 0;
         _rootDirectoryIcb          = default(LongAllocationDescriptor);
         _statfs                    = null;
@@ -515,7 +534,7 @@ public sealed partial class UDF
 
             if(sector < physicalPartition.partitionStartingLocation) break;
 
-            if(imagePlugin.ReadSector(sector, false, out byte[] buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, _mrw, sector, out byte[] buffer) != ErrorNumber.NoError) continue;
 
             if(buffer.Length < 16) continue;
 
@@ -572,7 +591,7 @@ public sealed partial class UDF
         // Try to find it by scanning the first part of the volume
         for(ulong sector = 0; sector < 256; sector++)
         {
-            if(imagePlugin.ReadSector(sector, false, out byte[] buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, _mrw, sector, out byte[] buffer) != ErrorNumber.NoError) continue;
 
             if(buffer.Length < 24) continue;
 
@@ -633,14 +652,15 @@ public sealed partial class UDF
         // Read the metadata file entry from the physical partition
         ulong metadataFileSector = physicalPartition.partitionStartingLocation + _metadataFileLocation;
 
-        if(imagePlugin.ReadSector(metadataFileSector, false, out byte[] metadataFeBuffer, out _) != ErrorNumber.NoError)
+        if(ReadMrwAwareSector(imagePlugin, _mrw, metadataFileSector, out byte[] metadataFeBuffer) !=
+           ErrorNumber.NoError)
         {
             // Try the mirror location if primary fails
             if(_metadataMirrorFileLocation != 0xFFFFFFFF)
             {
                 metadataFileSector = physicalPartition.partitionStartingLocation + _metadataMirrorFileLocation;
 
-                if(imagePlugin.ReadSector(metadataFileSector, false, out metadataFeBuffer, out _) !=
+                if(ReadMrwAwareSector(imagePlugin, _mrw, metadataFileSector, out metadataFeBuffer) !=
                    ErrorNumber.NoError)
                     return ErrorNumber.InvalidArgument;
             }
@@ -739,7 +759,7 @@ public sealed partial class UDF
         // For other partitions, translate and read from the image
         ulong absoluteSector = TranslateLogicalBlock(logicalBlock, partitionNumber, partitionStart);
 
-        return _imagePlugin.ReadSector(absoluteSector, false, out buffer, out _);
+        return ReadMrwAwareSector(_imagePlugin, _mrw, absoluteSector, out buffer);
     }
 
     /// <summary>
@@ -775,6 +795,6 @@ public sealed partial class UDF
         // For other partitions, translate and read from the image
         ulong absoluteSector = TranslateLogicalBlock(logicalBlock, partitionNumber, partitionStart);
 
-        return _imagePlugin.ReadSectors(absoluteSector, false, count, out buffer, out _);
+        return ReadMrwAwareSectors(absoluteSector, count, out buffer);
     }
 }

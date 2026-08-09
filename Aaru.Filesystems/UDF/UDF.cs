@@ -45,6 +45,7 @@ public sealed partial class UDF : IReadOnlyFilesystem
     Dictionary<string, Dictionary<string, UdfDirectoryEntry>> _directoryCache;
     IMediaImage                                               _imagePlugin;
     bool                                                      _mounted;
+    bool                                                      _mrw;
     uint                                                      _partitionStartingLocation;
     Dictionary<string, UdfDirectoryEntry>                     _rootDirectoryCache;
     LongAllocationDescriptor                                  _rootDirectoryIcb;

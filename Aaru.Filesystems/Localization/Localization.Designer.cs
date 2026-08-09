@@ -7414,6 +7414,12 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string Raw_MRW_layout_detected {
+            get {
+                return ResourceManager.GetString("Raw_MRW_layout_detected", resourceCulture);
+            }
+        }
+
         internal static string Universal_Disk_Format {
             get {
                 return ResourceManager.GetString("Universal_Disk_Format", resourceCulture);

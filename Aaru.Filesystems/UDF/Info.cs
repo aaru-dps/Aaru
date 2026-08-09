@@ -40,7 +40,7 @@ namespace Aaru.Filesystems;
 
 /// <inheritdoc />
 /// <summary>Implements detection of the Universal Disk Format filesystem</summary>
-[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Kept for completeness of on-disk structures")]
 public sealed partial class UDF
 {
 #region IFilesystem Members
@@ -68,16 +68,27 @@ public sealed partial class UDF
         var    beaFound  = false;
         ulong  beaSector = 0;
         byte[] buffer    = [];
+        var    mrw       = false;
 
-        for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+        for(var pass = 0; pass < 2 && !beaFound; pass++)
         {
-            ulong sector = vrsStart + i;
-
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
-
-            // Check for BEA01 identifier at offset 1
-            if(buffer.Length >= 6 && buffer[1..6].SequenceEqual(_bea))
+            // On the second pass, look for the VRS as laid out on a raw (non-compatible mode) MRW medium
+            if(pass == 1)
             {
+                if(!MrwPossible(imagePlugin)) break;
+
+                mrw = true;
+            }
+
+            for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+            {
+                ulong sector = vrsStart + i;
+
+                if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
+
+                // Check for BEA01 identifier at offset 1
+                if(buffer.Length < 6 || !buffer[1..6].SequenceEqual(_bea)) continue;
+
                 beaFound  = true;
                 beaSector = sector;
 
@@ -94,7 +105,7 @@ public sealed partial class UDF
         {
             ulong sector = beaSector + i;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
 
             // Check identifier at offset 1-5
             if(buffer.Length < 6) continue;
@@ -116,14 +127,16 @@ public sealed partial class UDF
         // Now search for anchor volume descriptor pointer
         var anchor = new AnchorVolumeDescriptorPointer();
 
-        // All positions where anchor may reside
-        ulong[] anchorPositions = [256, imagePlugin.Info.Sectors - 256, imagePlugin.Info.Sectors - 1];
+        // On a raw MRW medium only the user data area is addressable by the volume
+        ulong sectors = mrw ? MrwUserSectors(imagePlugin.Info.Sectors) : imagePlugin.Info.Sectors;
 
-        var  anchorFound = false;
-        uint ratio       = sectorSize == 2048 ? 1 : 2048 / sectorSize;
+        // All positions where anchor may reside
+        ulong[] anchorPositions = [256, sectors - 256, sectors - 1];
+
+        var anchorFound = false;
 
         foreach(ulong position in from position in anchorPositions
-                                  let errno = imagePlugin.ReadSector(position, false, out buffer, out _)
+                                  let errno = ReadMrwAwareSector(imagePlugin, mrw, position, out buffer)
                                   where errno == ErrorNumber.NoError
                                   select position)
         {
@@ -145,10 +158,10 @@ public sealed partial class UDF
 
         while(count < 256)
         {
-            ErrorNumber errno = imagePlugin.ReadSector(anchor.mainVolumeDescriptorSequenceExtent.location + count,
-                                                       false,
-                                                       out buffer,
-                                                       out _);
+            ErrorNumber errno = ReadMrwAwareSector(imagePlugin,
+                                                   mrw,
+                                                   anchor.mainVolumeDescriptorSequenceExtent.location + count,
+                                                   out buffer);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -210,19 +223,32 @@ public sealed partial class UDF
         // We must traverse them all until finding BEA
         var   beaFound  = false;
         ulong beaSector = 0;
+        var   mrw       = false;
 
-        for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+        for(var pass = 0; pass < 2 && !beaFound; pass++)
         {
-            ulong sector = vrsStart + i;
+            // On the second pass, look for the VRS as laid out on a raw (non-compatible mode) MRW medium
+            if(pass == 1)
+            {
+                if(!MrwPossible(imagePlugin)) break;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
+                mrw = true;
+            }
 
-            // Check for BEA01 identifier at offset 1
-            if(buffer.Length < 6 || !buffer[1..6].SequenceEqual(_bea)) continue;
-            beaFound  = true;
-            beaSector = sector;
+            for(ulong i = 0; i < 32; i++) // Search up to 32 sectors
+            {
+                ulong sector = vrsStart + i;
 
-            break;
+                if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
+
+                // Check for BEA01 identifier at offset 1
+                if(buffer.Length < 6 || !buffer[1..6].SequenceEqual(_bea)) continue;
+
+                beaFound  = true;
+                beaSector = sector;
+
+                break;
+            }
         }
 
         if(!beaFound) return;
@@ -234,7 +260,7 @@ public sealed partial class UDF
         {
             ulong sector = beaSector + i;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
 
             // Check identifier at offset 1-5
             if(buffer.Length < 6) continue;
@@ -256,14 +282,17 @@ public sealed partial class UDF
         // Now search for anchor volume descriptor pointer
         var anchor = new AnchorVolumeDescriptorPointer();
 
+        // On a raw MRW medium only the user data area is addressable by the volume
+        ulong sectors = mrw ? MrwUserSectors(imagePlugin.Info.Sectors) : imagePlugin.Info.Sectors;
+
         // All positions where anchor may reside
-        ulong[] anchorPositions = [256, imagePlugin.Info.Sectors - 256, imagePlugin.Info.Sectors - 1];
+        ulong[] anchorPositions = [256, sectors - 256, sectors - 1];
 
         var anchorFound = false;
 
         foreach(ulong position in anchorPositions)
         {
-            errno = imagePlugin.ReadSector(position, false, out buffer, out _);
+            errno = ReadMrwAwareSector(imagePlugin, mrw, position, out buffer);
 
             if(errno != ErrorNumber.NoError) continue;
 
@@ -288,10 +317,10 @@ public sealed partial class UDF
 
         while(count < 256)
         {
-            errno = imagePlugin.ReadSector(anchor.mainVolumeDescriptorSequenceExtent.location + count,
-                                           false,
-                                           out buffer,
-                                           out _);
+            errno = ReadMrwAwareSector(imagePlugin,
+                                       mrw,
+                                       anchor.mainVolumeDescriptorSequenceExtent.location + count,
+                                       out buffer);
 
             if(errno != ErrorNumber.NoError)
             {
@@ -325,7 +354,7 @@ public sealed partial class UDF
             count++;
         }
 
-        errno = imagePlugin.ReadSector(lvd.integritySequenceExtent.location, false, out buffer, out _);
+        errno = ReadMrwAwareSector(imagePlugin, mrw, lvd.integritySequenceExtent.location, out buffer);
 
         if(errno != ErrorNumber.NoError) return;
 
@@ -400,7 +429,7 @@ public sealed partial class UDF
             VolumeSetIdentifier   = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
             VolumeSerial          = StringHandlers.DecompressUnicode(pvd.volumeSetIdentifier),
             SystemIdentifier      = encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
-            Bootable              = IsBootable(imagePlugin, partition)
+            Bootable              = IsBootable(imagePlugin, mrw)
         };
 
         metadata.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / metadata.ClusterSize;
@@ -414,9 +443,9 @@ public sealed partial class UDF
     ///     The BOOT2 descriptor must appear within the extended area (after BEA, before TEA).
     /// </summary>
     /// <param name="imagePlugin">The media image</param>
-    /// <param name="partition">The partition containing the UDF volume</param>
+    /// <param name="mrw">Medium follows the raw (non-compatible mode) MRW layout</param>
     /// <returns>True if the volume contains a valid Boot Descriptor</returns>
-    static bool IsBootable(IMediaImage imagePlugin, Partition partition)
+    static bool IsBootable(IMediaImage imagePlugin, bool mrw)
     {
         // Volume Recognition Sequence starts at sector 16 (for 2048 bps) or byte offset 0x8000 (for other bps)
         uint sectorSize = imagePlugin.Info.SectorSize;
@@ -435,10 +464,11 @@ public sealed partial class UDF
         {
             ulong sector = vrsStart + i;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
 
             // Check for BEA01 identifier at offset 1
             if(buffer.Length < 6 || !buffer[1..6].SequenceEqual(_bea)) continue;
+
             beaFound  = true;
             beaSector = sector;
 
@@ -452,7 +482,7 @@ public sealed partial class UDF
         {
             ulong sector = beaSector + i;
 
-            if(imagePlugin.ReadSector(sector, false, out buffer, out _) != ErrorNumber.NoError) continue;
+            if(ReadMrwAwareSector(imagePlugin, mrw, sector, out buffer) != ErrorNumber.NoError) continue;
 
             if(buffer.Length < 6) continue;
 
