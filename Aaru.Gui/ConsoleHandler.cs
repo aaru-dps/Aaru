@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -35,14 +35,13 @@ using System;
 using System.Collections.ObjectModel;
 using Aaru.Localization;
 using Aaru.Logging;
+using Avalonia.Threading;
 using JetBrains.Annotations;
 
 namespace Aaru.Gui;
 
 static class ConsoleHandler
 {
-    static bool _verbose;
-
     public static bool Debug
     {
         set
@@ -66,14 +65,22 @@ static class ConsoleHandler
 
     public static ObservableCollection<LogEntry> Entries { get; } = [];
 
-    static void OnWriteExceptionEvent([NotNull] Exception ex, string message, params object[] objects) =>
-        Entries.Add(new LogEntry
+    static void AddEntry(string message, string module, string type)
+    {
+        var entry = new LogEntry
         {
-            Message   = string.Format(message, objects),
-            Module    = null,
+            Message   = message,
+            Module    = module,
             Timestamp = DateTime.Now,
-            Type      = UI.LogEntry_Type_Exception
-        });
+            Type      = type
+        };
+
+        // Log events can come from any worker thread, but Entries is bound to the console window
+        Dispatcher.UIThread.Post(() => Entries.Add(entry));
+    }
+
+    static void OnWriteExceptionEvent([NotNull] Exception ex, string message, params object[] objects) =>
+        AddEntry(SafeFormat(message, objects), null, UI.LogEntry_Type_Exception);
 
     internal static void Init()
     {
@@ -81,43 +88,39 @@ static class ConsoleHandler
         AaruLogging.ErrorEvent     += OnErrorWriteHandler;
     }
 
+    static string SafeFormat([NotNull] string format, [NotNull] object[] arg)
+    {
+        if(arg.Length == 0) return format;
+
+        try
+        {
+            return string.Format(format, arg);
+        }
+        catch(FormatException)
+        {
+            return format;
+        }
+    }
+
     static void OnWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
         if(format == null || arg == null) return;
 
-        Entries.Add(new LogEntry
-        {
-            Message   = string.Format(format, arg),
-            Module    = null,
-            Timestamp = DateTime.Now,
-            Type      = UI.LogEntry_Type_Info
-        });
+        AddEntry(SafeFormat(format, arg), null, UI.LogEntry_Type_Info);
     }
 
     static void OnErrorWriteHandler([CanBeNull] string format, [CanBeNull] params object[] arg)
     {
         if(format == null || arg == null) return;
 
-        Entries.Add(new LogEntry
-        {
-            Message   = string.Format(format, arg),
-            Module    = null,
-            Timestamp = DateTime.Now,
-            Type      = UI.LogEntry_Type_Error
-        });
+        AddEntry(SafeFormat(format, arg), null, UI.LogEntry_Type_Error);
     }
 
     static void OnDebugWriteHandler(string module, [CanBeNull] string format, [CanBeNull] params object[] arg)
     {
         if(format == null || arg == null) return;
 
-        Entries.Add(new LogEntry
-        {
-            Message   = string.Format(format, arg),
-            Module    = module,
-            Timestamp = DateTime.Now,
-            Type      = UI.LogEntry_Type_Debug
-        });
+        AddEntry(SafeFormat(format, arg), module, UI.LogEntry_Type_Debug);
     }
 }
 
