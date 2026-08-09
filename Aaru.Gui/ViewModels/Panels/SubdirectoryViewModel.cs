@@ -348,10 +348,12 @@ public sealed class SubdirectoryViewModel
                     continue;
                 }
 
-                var fs = new FileStream(outputPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                await using(var fs = new FileStream(outputPath,
+                                                    FileMode.CreateNew,
+                                                    FileAccess.ReadWrite,
+                                                    FileShare.None))
+                    await fs.WriteAsync(outBuf);
 
-                fs.Write(outBuf, 0, outBuf.Length);
-                fs.Close();
                 var fi = new FileInfo(outputPath);
 
                 try
