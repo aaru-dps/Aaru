@@ -333,7 +333,7 @@ public partial class SpectreTextBlock : TextBlock
 
         if(markups.Count == 0)
         {
-            inlines.Add(new Run(Text));
+            inlines.Add(new Run(Text.Replace("[[", "[").Replace("]]", "]")));
             Inlines = inlines;
 
             return;
@@ -388,7 +388,7 @@ public partial class SpectreTextBlock : TextBlock
                                            .ThenByDescending(static m => m.End) // Then by latest end
                                            .ToList();
 
-            var run = new Run(Text.Substring(start, end - start));
+            var run = new Run(Text.Substring(start, end - start).Replace("[[", "[").Replace("]]", "]"));
 
             foreach(MarkupTag markup in applicableMarkups)
             {
@@ -399,9 +399,26 @@ public partial class SpectreTextBlock : TextBlock
 
                 if(markup.Tag.Contains("underline")) run.TextDecorations = Avalonia.Media.TextDecorations.Underline;
 
-                if(!_colorMarkupRegex.IsMatch(markup.Tag)) continue;
+                // Strip style words so combined tags like [bold red] still yield their colour
+                string colorCandidate = string.Join(' ',
+                                                    markup.Tag
+                                                          .Split(' ',
+                                                                 StringSplitOptions.RemoveEmptyEntries |
+                                                                 StringSplitOptions.TrimEntries)
+                                                          .Where(static t => t is not ("bold"
+                                                                     or "italic"
+                                                                     or "underline"
+                                                                     or "dim"
+                                                                     or "invert"
+                                                                     or "reverse"
+                                                                     or "strikethrough"
+                                                                     or "slowblink"
+                                                                     or "rapidblink"
+                                                                     or "conceal")));
 
-                Match   match      = _colorMarkupRegex.Match(markup.Tag);
+                if(!_colorMarkupRegex.IsMatch(colorCandidate)) continue;
+
+                Match   match      = _colorMarkupRegex.Match(colorCandidate);
                 string  foreground = match.Groups["fg"].Value;
                 string? background = match.Groups["bg"].Success ? match.Groups["bg"].Value : null;
 
@@ -480,6 +497,14 @@ public partial class SpectreTextBlock : TextBlock
         {
             if(text[i] == '[')
             {
+                // Spectre escapes a literal bracket as [[
+                if(i + 1 < text.Length && text[i + 1] == '[')
+                {
+                    i += 2;
+
+                    continue;
+                }
+
                 int tagStart = i;
                 i++;
 
