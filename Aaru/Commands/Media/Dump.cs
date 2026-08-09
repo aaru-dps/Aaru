@@ -289,11 +289,11 @@ sealed class DumpMediaCommand : Command<DumpMediaCommand.Settings>
             {
                 case null:
                 {
-                    AaruLogging.Error(string.Format(UI.Could_not_open_device_error_0, devErrno));
+                    AaruLogging.Error(string.Format(UI.Could_not_open_device_error_0, Error.Print(devErrno)));
 
                     if(isResponse) continue;
 
-                    return (int)devErrno;
+                    return (int)ErrorNumber.CannotOpenDevice;
                 }
                 case Devices.Remote.Device remoteDev:
                     Statistics.AddRemote(remoteDev.RemoteApplication,
