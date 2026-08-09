@@ -227,7 +227,7 @@ public sealed partial class ImageChecksumViewModel : ViewModelBase
             Progress1Visible = true;
             Progress2Visible = true;
             ProgressMax      = 1;
-            Progress2Max     = (int)(_inputFormat.Info.Sectors / SECTORS_TO_READ);
+            Progress2Max     = _inputFormat.Info.Sectors / (double)SECTORS_TO_READ;
 
             if(formatHasTracks && ChecksumTracksChecked && opticalMediaImage != null)
                 ProgressMax += opticalMediaImage.Tracks.Count;
