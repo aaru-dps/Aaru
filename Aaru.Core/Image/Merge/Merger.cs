@@ -58,7 +58,7 @@ public sealed partial class Merger
 )
 {
     const string            MODULE_NAME = "Image merger";
-    bool                    _aborted;
+    volatile bool           _aborted;
     readonly PluginRegister _plugins = PluginRegister.Singleton;
     byte[][]?               _aacsDecryptedCpsUnitKeys;
 
@@ -498,6 +498,7 @@ public sealed partial class Merger
 
         if(_aborted)
         {
+            UpdateStatus?.Invoke(Localization.Core.Operation_aborted_by_user);
             UpdateStatus?.Invoke(UI.Operation_canceled_the_output_file_is_not_correct);
 
             return ErrorNumber.Canceled;
