@@ -110,23 +110,25 @@ public sealed partial class DecodeMediaTagsViewModel : ViewModelBase
                 return;
             }
 
+            byte[] data = value.Data;
+
             uint dataLen;
 
             switch(value.Tag)
             {
                 case MediaTagType.CD_TOC:
-                    dataLen = Swapping.Swap(BitConverter.ToUInt16(value.Data, 0));
+                    dataLen = data.Length >= 2 ? Swapping.Swap(BitConverter.ToUInt16(data, 0)) : 0u;
 
-                    if(dataLen + 2 != value.Data.Length)
+                    if(dataLen + 2 != data.Length)
                     {
-                        var tmp = new byte[value.Data.Length + 2];
-                        Array.Copy(value.Data, 0, tmp, 2, value.Data.Length);
-                        tmp[0]     = (byte)((value.Data.Length & 0xFF00) >> 8);
-                        tmp[1]     = (byte)(value.Data.Length & 0xFF);
-                        value.Data = tmp;
+                        var tmp = new byte[data.Length + 2];
+                        Array.Copy(data, 0, tmp, 2, data.Length);
+                        tmp[0] = (byte)((data.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(data.Length & 0xFF);
+                        data   = tmp;
                     }
 
-                    DecodedText = TOC.Prettify(value.Data);
+                    DecodedText = TOC.Prettify(data);
 
                     if(string.IsNullOrEmpty(DecodedText)) DecodedVisible = false;
 
@@ -137,68 +139,68 @@ public sealed partial class DecodeMediaTagsViewModel : ViewModelBase
 
                     break;
                 case MediaTagType.CD_FullTOC:
-                    dataLen = Swapping.Swap(BitConverter.ToUInt16(value.Data, 0));
+                    dataLen = data.Length >= 2 ? Swapping.Swap(BitConverter.ToUInt16(data, 0)) : 0u;
 
-                    if(dataLen + 2 != value.Data.Length)
+                    if(dataLen + 2 != data.Length)
                     {
-                        var tmp = new byte[value.Data.Length + 2];
-                        Array.Copy(value.Data, 0, tmp, 2, value.Data.Length);
-                        tmp[0]     = (byte)((value.Data.Length & 0xFF00) >> 8);
-                        tmp[1]     = (byte)(value.Data.Length & 0xFF);
-                        value.Data = tmp;
+                        var tmp = new byte[data.Length + 2];
+                        Array.Copy(data, 0, tmp, 2, data.Length);
+                        tmp[0] = (byte)((data.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(data.Length & 0xFF);
+                        data   = tmp;
                     }
 
-                    DecodedText = FullTOC.Prettify(value.Data);
+                    DecodedText = FullTOC.Prettify(data);
                     if(string.IsNullOrEmpty(DecodedText)) DecodedVisible = false;
 
                     break;
                 case MediaTagType.CD_PMA:
-                    dataLen = Swapping.Swap(BitConverter.ToUInt16(value.Data, 0));
+                    dataLen = data.Length >= 2 ? Swapping.Swap(BitConverter.ToUInt16(data, 0)) : 0u;
 
-                    if(dataLen + 2 != value.Data.Length)
+                    if(dataLen + 2 != data.Length)
                     {
-                        var tmp = new byte[value.Data.Length + 2];
-                        Array.Copy(value.Data, 0, tmp, 2, value.Data.Length);
-                        tmp[0]     = (byte)((value.Data.Length & 0xFF00) >> 8);
-                        tmp[1]     = (byte)(value.Data.Length & 0xFF);
-                        value.Data = tmp;
+                        var tmp = new byte[data.Length + 2];
+                        Array.Copy(data, 0, tmp, 2, data.Length);
+                        tmp[0] = (byte)((data.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(data.Length & 0xFF);
+                        data   = tmp;
                     }
 
-                    DecodedText = PMA.Prettify(value.Data);
+                    DecodedText = PMA.Prettify(data);
                     if(string.IsNullOrEmpty(DecodedText)) DecodedVisible = false;
 
                     break;
                 case MediaTagType.CD_ATIP:
-                    dataLen = Swapping.Swap(BitConverter.ToUInt32(value.Data, 0));
+                    dataLen = data.Length >= 4 ? Swapping.Swap(BitConverter.ToUInt32(data, 0)) : 0u;
 
-                    if(dataLen + 4 != value.Data.Length)
+                    if(dataLen + 4 != data.Length)
                     {
-                        var tmp = new byte[value.Data.Length + 4];
-                        Array.Copy(value.Data, 0, tmp, 4, value.Data.Length);
-                        tmp[0]     = (byte)((value.Data.Length & 0xFF000000) >> 24);
-                        tmp[1]     = (byte)((value.Data.Length & 0xFF0000)   >> 16);
-                        tmp[2]     = (byte)((value.Data.Length & 0xFF00)     >> 8);
-                        tmp[3]     = (byte)(value.Data.Length & 0xFF);
-                        value.Data = tmp;
+                        var tmp = new byte[data.Length + 4];
+                        Array.Copy(data, 0, tmp, 4, data.Length);
+                        tmp[0] = (byte)((data.Length & 0xFF000000) >> 24);
+                        tmp[1] = (byte)((data.Length & 0xFF0000)   >> 16);
+                        tmp[2] = (byte)((data.Length & 0xFF00)     >> 8);
+                        tmp[3] = (byte)(data.Length & 0xFF);
+                        data   = tmp;
                     }
 
-                    DecodedText = ATIP.Prettify(value.Data);
+                    DecodedText = ATIP.Prettify(data);
                     if(string.IsNullOrEmpty(DecodedText)) DecodedVisible = false;
 
                     break;
                 case MediaTagType.CD_TEXT:
-                    dataLen = Swapping.Swap(BitConverter.ToUInt32(value.Data, 0));
+                    dataLen = data.Length >= 2 ? Swapping.Swap(BitConverter.ToUInt16(data, 0)) : 0u;
 
-                    if(dataLen + 2 != value.Data.Length)
+                    if(dataLen + 2 != data.Length)
                     {
-                        var tmp = new byte[value.Data.Length + 4];
-                        Array.Copy(value.Data, 0, tmp, 4, value.Data.Length);
-                        tmp[0]     = (byte)((value.Data.Length + 2 & 0xFF00) >> 8);
-                        tmp[1]     = (byte)(value.Data.Length + 2 & 0xFF);
-                        value.Data = tmp;
+                        var tmp = new byte[data.Length + 2];
+                        Array.Copy(data, 0, tmp, 2, data.Length);
+                        tmp[0] = (byte)((data.Length & 0xFF00) >> 8);
+                        tmp[1] = (byte)(data.Length & 0xFF);
+                        data   = tmp;
                     }
 
-                    DecodedText = CDTextOnLeadIn.Prettify(value.Data);
+                    DecodedText = CDTextOnLeadIn.Prettify(data);
                     if(string.IsNullOrEmpty(DecodedText)) DecodedVisible = false;
 
                     break;
