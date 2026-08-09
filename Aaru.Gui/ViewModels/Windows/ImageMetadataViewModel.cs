@@ -176,6 +176,8 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
 
             await msbox.ShowAsync();
 
+            IsOpened = false;
+
             _view.Close();
 
             return;
@@ -202,6 +204,8 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
                                                             Icon.Error);
 
             await msbox.ShowAsync();
+
+            IsOpened = false;
 
             _view.Close();
 
@@ -289,6 +293,8 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
 
                 await msbox.ShowAsync();
 
+                inputFilter.Close();
+
                 return;
             }
 
@@ -309,6 +315,8 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
                     AaruLogging.Error(UI.Unable_to_open_image_format);
                     AaruLogging.Error(UI.No_error_given);
 
+                    inputFilter.Close();
+
                     return;
                 }
 
@@ -321,6 +329,9 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
 
                     await msbox.ShowAsync();
 
+                    imageFormat.Close();
+                    inputFilter.Close();
+
                     return;
                 }
 
@@ -330,6 +341,12 @@ public sealed partial class ImageMetadataViewModel : ViewModelBase
 
                 Size =
                     $"[teal]{ByteSize.FromBytes(imageFormat.Info.Sectors * imageFormat.Info.SectorSize).Humanize()}[/]";
+
+                if(IsOpened)
+                {
+                    _imageFormat?.Close();
+                    _inputFilter?.Close();
+                }
 
                 _inputFilter = inputFilter;
                 _imageFormat = imageFormat;
