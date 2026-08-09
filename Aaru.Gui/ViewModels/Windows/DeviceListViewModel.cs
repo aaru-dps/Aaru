@@ -178,10 +178,10 @@ public partial class DeviceListViewModel : ViewModelBase
 
             DeviceInfo[] devices = remote.ListDevices();
 
-            Devices = [];
-
             Dispatcher.UIThread.Invoke(() =>
             {
+                Devices = [];
+
                 foreach(DeviceInfo device in devices)
                 {
                     Devices.Add(new DeviceModel
