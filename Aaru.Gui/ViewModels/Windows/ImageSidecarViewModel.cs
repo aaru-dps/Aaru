@@ -126,10 +126,32 @@ public sealed partial class ImageSidecarViewModel : ViewModelBase
     public ICommand CloseCommand       { get; }
     public ICommand StopCommand        { get; }
 
-    void Start() => new Thread(DoWork).Start();
+    void Start()
+    {
+        if(string.IsNullOrWhiteSpace(DestinationText)) return;
 
-    [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-    async void DoWork()
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await DoWorkAsync();
+            }
+            catch(Exception ex)
+            {
+                AaruLogging.Exception(ex, Aaru.Localization.Core.Writing_metadata_sidecar);
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    CloseVisible    = true;
+                    StopVisible     = false;
+                    ProgressVisible = false;
+                    StatusVisible   = false;
+                });
+            }
+        });
+    }
+
+    async Task DoWorkAsync()
     {
         // Prepare UI
         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -155,17 +177,16 @@ public sealed partial class ImageSidecarViewModel : ViewModelBase
 
         AaruLogging.WriteLine(Aaru.Localization.Core.Writing_metadata_sidecar);
 
-        var jsonFs = new FileStream(DestinationText, FileMode.Create);
-
-        await JsonSerializer.SerializeAsync(jsonFs,
-                                            new MetadataJson
-                                            {
-                                                AaruMetadata = sidecar
-                                            },
-                                            typeof(MetadataJson),
-                                            MetadataJsonContext.Default);
-
-        jsonFs.Close();
+        await using(var jsonFs = new FileStream(DestinationText, FileMode.Create))
+        {
+            await JsonSerializer.SerializeAsync(jsonFs,
+                                                new MetadataJson
+                                                {
+                                                    AaruMetadata = sidecar
+                                                },
+                                                typeof(MetadataJson),
+                                                MetadataJsonContext.Default);
+        }
 
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -219,7 +240,7 @@ public sealed partial class ImageSidecarViewModel : ViewModelBase
     {
         ProgressText = Aaru.Localization.Core.Aborting;
         StopEnabled  = false;
-        _sidecarClass.Abort();
+        _sidecarClass?.Abort();
     }
 
     async Task DestinationAsync()
