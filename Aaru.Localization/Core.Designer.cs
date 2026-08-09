@@ -1274,6 +1274,36 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Aborted", resourceCulture);
             }
         }
+
+        public static string Operation_aborted_by_user {
+            get {
+                return ResourceManager.GetString("Operation_aborted_by_user", resourceCulture);
+            }
+        }
+
+        public static string Dump_aborted_due_to_fatal_error {
+            get {
+                return ResourceManager.GetString("Dump_aborted_due_to_fatal_error", resourceCulture);
+            }
+        }
+
+        public static string Dump_aborted_after_0 {
+            get {
+                return ResourceManager.GetString("Dump_aborted_after_0", resourceCulture);
+            }
+        }
+
+        public static string Scan_aborted_partial_results {
+            get {
+                return ResourceManager.GetString("Scan_aborted_partial_results", resourceCulture);
+            }
+        }
+
+        public static string Sidecar_aborted_partial_metadata {
+            get {
+                return ResourceManager.GetString("Sidecar_aborted_partial_metadata", resourceCulture);
+            }
+        }
         
         public static string Reading_sector_0_of_1_2 {
             get {

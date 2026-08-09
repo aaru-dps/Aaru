@@ -647,6 +647,21 @@
     <data name="Aborted" xml:space="preserve">
         <value>[red]Aborted![/]</value>
     </data>
+    <data name="Operation_aborted_by_user" xml:space="preserve">
+        <value>[red]Operation aborted by user.[/]</value>
+    </data>
+    <data name="Dump_aborted_due_to_fatal_error" xml:space="preserve">
+        <value>[red]Dump aborted due to a fatal error, see messages above.[/]</value>
+    </data>
+    <data name="Dump_aborted_after_0" xml:space="preserve">
+        <value>[red]Dump aborted after [aqua]{0}[/].[/]</value>
+    </data>
+    <data name="Scan_aborted_partial_results" xml:space="preserve">
+        <value>[red]Scan aborted; results below are partial.[/]</value>
+    </data>
+    <data name="Sidecar_aborted_partial_metadata" xml:space="preserve">
+        <value>[red]Sidecar generation aborted; metadata is incomplete.[/]</value>
+    </data>
     <data name="Reading_sector_0_of_1_2" xml:space="preserve">
     <value>[slateblue1]Reading sector [lime]{0}[/] of [violet]{1}[/] ([aqua]{2}[/])[/]</value>
   </data>
