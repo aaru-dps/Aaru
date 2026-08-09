@@ -578,7 +578,7 @@
     <value>No se pudo encontrar el fichero de resumen, no se continuará...</value>
   </data>
     <data name="Could_not_open_device_error_0" xml:space="preserve">
-    <value>No se pudo abrir el dispositivo debido al error {0}.</value>
+    <value>No se pudo abrir el dispositivo: {0}</value>
   </data>
     <data name="Could_not_remove_local_database" xml:space="preserve">
     <value>No se pudo eliminar la base de datos local.</value>

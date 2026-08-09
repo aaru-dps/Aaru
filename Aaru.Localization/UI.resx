@@ -222,7 +222,7 @@
     <value>Does a device report using a trap disc.</value>
   </data>
     <data name="Could_not_open_device_error_0" xml:space="preserve">
-    <value>Could not open device, error {0}.</value>
+    <value>Could not open device: {0}</value>
   </data>
     <data name="Device_report_must_be_run_as_admin" xml:space="preserve">
     <value>Because of the commands sent to a device, device report must be run with administrative privileges.</value>
