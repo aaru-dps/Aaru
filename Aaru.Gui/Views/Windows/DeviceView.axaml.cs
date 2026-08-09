@@ -32,7 +32,6 @@
 
 using System;
 using Aaru.Gui.ViewModels.Windows;
-using Avalonia;
 using Avalonia.Controls;
 
 namespace Aaru.Gui.Views.Windows;
@@ -42,6 +41,8 @@ public partial class DeviceView : Window
     public DeviceView()
     {
         InitializeComponent();
+
+        Closed += (_, _) => (DataContext as DeviceViewModel)?.Closed();
     }
 
     /// <inheritdoc />
@@ -51,7 +52,6 @@ public partial class DeviceView : Window
 
         if(DataContext is not DeviceViewModel vm) return;
 
-        Closed += (_, _) => vm?.Closed();
-        vm?.LoadData();
+        vm.LoadData();
     }
 }
