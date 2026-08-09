@@ -30,6 +30,9 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System.Linq;
+using Aaru.Gui.Models;
+using Aaru.Gui.ViewModels.Panels;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -40,4 +43,12 @@ public sealed class Subdirectory : UserControl
     public Subdirectory() => InitializeComponent();
 
     void InitializeComponent() => AvaloniaXamlLoader.Load(this);
+
+    void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if(DataContext is not SubdirectoryViewModel vm || sender is not DataGrid grid) return;
+
+        vm.SelectedEntries.Clear();
+        vm.SelectedEntries.AddRange(grid.SelectedItems.OfType<FileModel>());
+    }
 }

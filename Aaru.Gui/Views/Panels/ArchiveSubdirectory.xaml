@@ -46,7 +46,8 @@
     <DataGrid Margin="12"
               ItemsSource="{Binding Entries, Mode=OneWay}"
               IsReadOnly="True"
-              SelectionMode="Extended">
+              SelectionMode="Extended"
+              SelectionChanged="OnSelectionChanged">
         <DataGrid.Styles>
             <Style Selector="DataGridRow">
                 <Setter Property="Foreground"
