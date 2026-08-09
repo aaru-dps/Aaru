@@ -69,18 +69,34 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Dispatcher.UIThread.Post(InitializeConsole);
     }
 
+    void RunStage(Action work, Action next)
+    {
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                work();
+            }
+            catch(Exception ex)
+            {
+                AaruLogging.Exception(ex, UI.Title_Error);
+                SentrySdk.CaptureException(ex);
+            }
+
+            Dispatcher.UIThread.Post(next);
+        });
+    }
+
     void InitializeConsole()
     {
         CurrentProgress++;
         Message = UI.Initializing_console;
 
-        _ = Task.Run(() =>
+        RunStage(() =>
         {
             ConsoleHandler.Init();
             AaruLogging.WriteLine(UI.Aaru_started);
-
-            Dispatcher.UIThread.Post(LoadSettings);
-        });
+        }, LoadSettings);
     }
 
     void LoadSettings()
@@ -89,13 +105,8 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Loading_settings;
         AaruLogging.WriteLine(UI.Loading_settings);
 
-        _ = Task.Run(() =>
-        {
-            // TODO: Detect there are no settings yet
-            Settings.Settings.LoadSettings();
-
-            Dispatcher.UIThread.Post(MigrateLocalDatabase);
-        });
+        // TODO: Detect there are no settings yet
+        RunStage(Settings.Settings.LoadSettings, MigrateLocalDatabase);
     }
 
     void MigrateLocalDatabase()
@@ -104,7 +115,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Migrating_local_database;
         AaruLogging.WriteLine(UI.Migrating_local_database);
 
-        _ = Task.Run(() =>
+        RunStage(() =>
         {
             AaruContext ctx = null;
 
@@ -172,9 +183,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
                                                               d.Revision     == null));
 
             ctx.SaveChanges();
-
-            Dispatcher.UIThread.Post(UpdateMainDatabase);
-        });
+        }, UpdateMainDatabase);
     }
 
     void UpdateMainDatabase()
@@ -183,7 +192,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Updating_main_database;
         AaruLogging.WriteLine(UI.Updating_main_database);
 
-        _ = Task.Run(() =>
+        RunStage(() =>
         {
             bool mainDbUpdate = !File.Exists(Settings.Settings.MainDbPath);
 
@@ -212,9 +221,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
 
                 // TODO: Update database
             }
-
-            Dispatcher.UIThread.Post(CheckGdprCompliance);
-        });
+        }, CheckGdprCompliance);
     }
 
     [SuppressMessage("ReSharper", "AsyncVoidMethod")]
@@ -241,12 +248,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Loading_statistics;
         AaruLogging.WriteLine(UI.Loading_statistics);
 
-        _ = Task.Run(() =>
-        {
-            Statistics.LoadStats();
-
-            Dispatcher.UIThread.Post(RegisterEncodings);
-        });
+        RunStage(Statistics.LoadStats, RegisterEncodings);
     }
 
     void RegisterEncodings()
@@ -255,12 +257,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Registering_encodings;
         AaruLogging.WriteLine(UI.Registering_encodings);
 
-        _ = Task.Run(() =>
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
-            Dispatcher.UIThread.Post(RegisterPlugins);
-        });
+        RunStage(() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance), RegisterPlugins);
     }
 
     // There are too many places that depend on this being inited to be sure all are covered, so init it here.
@@ -270,11 +267,7 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
         Message = UI.Registering_plugins;
         AaruLogging.WriteLine(UI.Registering_plugins);
 
-        _ = Task.Run(() =>
-        {
-            PluginBase.Init();
-            Dispatcher.UIThread.Post(SaveStatistics);
-        });
+        RunStage(PluginBase.Init, SaveStatistics);
     }
 
     void SaveStatistics()
@@ -285,7 +278,15 @@ public sealed partial class SplashWindowViewModel(SplashWindow view) : ViewModel
 
         _ = Task.Run(async () =>
         {
-            await Statistics.SaveStatsAsync();
+            try
+            {
+                await Statistics.SaveStatsAsync();
+            }
+            catch(Exception ex)
+            {
+                AaruLogging.Exception(ex, UI.Title_Error);
+                SentrySdk.CaptureException(ex);
+            }
 
             Dispatcher.UIThread.Post(LoadMainWindow);
         });
