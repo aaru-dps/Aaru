@@ -769,10 +769,10 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
                            false,
                            false);
 
-        new Thread(DoWork).Start();
+        _ = Task.Run(DoWork);
     }
 
-    async void DoWork()
+    async Task DoWork()
     {
         _dumper.UpdateStatus         += UpdateStatus;
         _dumper.ErrorMessage         += ErrorMessage;
@@ -786,8 +786,6 @@ public sealed partial class MediaDumpViewModel : ViewModelBase
         _dumper.EndProgress2         += EndProgress2;
 
         _dumper.Start();
-
-        _dev.Close();
 
         await WorkFinishedAsync();
     }
