@@ -55,7 +55,7 @@ public sealed partial class Sidecar
     readonly string                                  _imagePath;
     readonly Checksum                                _imgChkWorker;
     readonly PluginRegister                          _plugins;
-    bool                                             _aborted;
+    volatile bool                                    _aborted;
     FileStream                                       _fs;
     Metadata                                         _sidecar;
 
@@ -108,7 +108,12 @@ public sealed partial class Sidecar
 
         while(position < _fi.Length - 1048576)
         {
-            if(_aborted) return _sidecar;
+            if(_aborted)
+            {
+                UpdateStatus(Localization.Core.Operation_aborted_by_user);
+
+                return _sidecar;
+            }
 
             _fs.EnsureRead(data, 0, 1048576);
 
@@ -134,7 +139,12 @@ public sealed partial class Sidecar
 
         List<CommonTypes.AaruMetadata.Checksum> imgChecksums = _imgChkWorker.End();
 
-        if(_aborted) return _sidecar;
+        if(_aborted)
+        {
+            UpdateStatus(Localization.Core.Operation_aborted_by_user);
+
+            return _sidecar;
+        }
 
         switch(_image.Info.MetadataMediaType)
         {
@@ -199,6 +209,8 @@ public sealed partial class Sidecar
                 break;
         }
 
+        if(_aborted) UpdateStatus(Localization.Core.Operation_aborted_by_user);
+
         return _sidecar;
     }
 
@@ -208,4 +220,7 @@ public sealed partial class Sidecar
         UpdateStatus(Localization.Core.Aborting);
         _aborted = true;
     }
+
+    /// <summary>Set when the sidecar generation has been aborted and the metadata is incomplete</summary>
+    public bool Aborted => _aborted;
 }

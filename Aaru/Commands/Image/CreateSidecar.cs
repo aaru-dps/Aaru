@@ -228,6 +228,8 @@ sealed class CreateSidecarCommand : Command<CreateSidecarCommand.Settings>
                                 sidecar = sidecarClass.Create();
                             });
 
+                if(sidecarClass.Aborted) AaruLogging.WriteLine(Localization.Core.Sidecar_aborted_partial_metadata);
+
                 Core.Spectre.ProgressSingleSpinner(ctx =>
                 {
                     ctx.AddTask(Localization.Core.Writing_metadata_sidecar).IsIndeterminate();
@@ -324,6 +326,8 @@ sealed class CreateSidecarCommand : Command<CreateSidecarCommand.Settings>
                                                              files,
                                                              (uint)settings.BlockSize);
                         });
+
+            if(sidecarClass.Aborted) AaruLogging.WriteLine(Localization.Core.Sidecar_aborted_partial_metadata);
 
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
