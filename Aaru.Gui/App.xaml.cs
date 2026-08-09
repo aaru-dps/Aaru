@@ -71,13 +71,25 @@ public sealed class App : Application
         // Close splash window
         desktop.MainWindow?.Close();
 
-        // Create and show main window
-        desktop.MainWindow             = new MainWindow();
-        desktop.MainWindow.DataContext = new MainWindowViewModel(desktop.MainWindow as MainWindow);
-        desktop.MainWindow.Show();
+        try
+        {
+            // Create and show main window
+            desktop.MainWindow             = new MainWindow();
+            desktop.MainWindow.DataContext = new MainWindowViewModel(desktop.MainWindow as MainWindow);
+            desktop.MainWindow.Show();
+        }
+        catch(Exception)
+        {
+            // Without a main window the application would stay alive with no UI
+            desktop.Shutdown(-1);
 
-        // Now can close when all windows are closed
-        desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+            throw;
+        }
+        finally
+        {
+            // Now can close when all windows are closed
+            desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        }
     }
 
     void OnAboutClicked(object sender, EventArgs args)
