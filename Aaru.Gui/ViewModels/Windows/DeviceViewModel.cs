@@ -384,7 +384,7 @@ public partial class DeviceViewModel : ViewModelBase
         switch(dev)
         {
             case null:
-                if(OperatingSystem.IsWindows() && (int)devErrno == 5)
+                if(devErrno == ErrorNumber.AccessDenied)
                 {
                     AaruLogging.Error(UI.Insufficient_permissions_trying_to_open_device);
 
@@ -402,12 +402,12 @@ public partial class DeviceViewModel : ViewModelBase
                 }
                 else
                 {
-                    AaruLogging.Error(string.Format(UI.Could_not_open_device_error_0, devErrno));
+                    AaruLogging.Error(string.Format(UI.Could_not_open_device_error_0, Error.Print(devErrno)));
 
                     Dispatcher.UIThread.Invoke(() =>
                     {
                         IMsBox<ButtonResult> msbox = MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
-                            string.Format(UI.Could_not_open_device_error_0, devErrno),
+                            string.Format(UI.Could_not_open_device_error_0, Error.Print(devErrno)),
                             ButtonEnum.Ok,
                             Icon.Error);
 
