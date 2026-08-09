@@ -443,6 +443,74 @@ partial class Dump
                 foreach(ulong b in paintBad) _mediaGraph?.PaintSectorsBad(b, 1);
 
                 imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+
+                // OmniDrive rarely reports sense: damaged sectors surface here as uncorrectable ECC/EDC in an
+                // otherwise successful read, so the skip-on-error behaviour must be applied in this branch too.
+                if(paintBad.Count > 0)
+                {
+                    newTrim = true;
+
+                    ulong firstBad  = paintBad[0];
+                    ulong skipStart = i        + blocksToRead;
+                    ulong skipEnd   = firstBad + _skip;
+
+                    if(skipEnd > (ulong)(lastSector + 1)) skipEnd = (ulong)(lastSector + 1);
+
+                    // Do not skip over Lead-Out sectors, only user area sectors
+                    for(ulong b = skipStart; b < skipEnd; b++)
+                    {
+                        if(!leadOutExtents.Contains(b)) continue;
+
+                        skipEnd = b;
+
+                        break;
+                    }
+
+                    if(_skip > 0 && skipEnd > skipStart)
+                    {
+                        var sectorsToSkip   = (uint)(skipEnd - skipStart);
+                        var skippedStatuses = new SectorStatus[sectorsToSkip];
+                        Array.Fill(skippedStatuses, SectorStatus.NotDumped);
+
+                        _writeStopwatch.Restart();
+
+                        if(supportsLongSectors)
+                        {
+                            outputFormat.WriteSectorsLong(new byte[sectorSize * sectorsToSkip],
+                                                          skipStart,
+                                                          false,
+                                                          sectorsToSkip,
+                                                          skippedStatuses);
+                        }
+                        else
+                        {
+                            outputFormat.WriteSectors(new byte[2048 * sectorsToSkip],
+                                                      skipStart,
+                                                      false,
+                                                      sectorsToSkip,
+                                                      skippedStatuses);
+                        }
+
+                        if(supportedSubchannel != MmcSubchannel.None && desiredSubchannel != MmcSubchannel.None)
+                        {
+                            outputFormat.WriteSectorsTag(new byte[subSize * sectorsToSkip],
+                                                         skipStart,
+                                                         false,
+                                                         sectorsToSkip,
+                                                         SectorTagType.CdSectorSubchannel);
+                        }
+
+                        imageWriteDuration += _writeStopwatch.Elapsed.TotalSeconds;
+
+                        for(ulong b = skipStart; b < skipEnd; b++) _resume.BadBlocks.Add(b);
+
+                        AaruLogging.WriteLine(Localization.Core.Skipping_0_blocks_from_errored_block_1,
+                                              sectorsToSkip,
+                                              firstBad);
+
+                        i = skipEnd - blocksToRead;
+                    }
+                }
             }
             else
             {
