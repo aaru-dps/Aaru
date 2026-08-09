@@ -54,6 +54,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Humanizer;
+using JetBrains.Annotations;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
@@ -122,6 +123,7 @@ public partial class DeviceViewModel : ViewModelBase
     [ObservableProperty]
     bool _kreonXtremeUnlock360;
     [ObservableProperty]
+    [CanBeNull]
     string _manufacturer;
     [ObservableProperty]
     string _maxBlockSize;
@@ -147,6 +149,7 @@ public partial class DeviceViewModel : ViewModelBase
     [ObservableProperty]
     bool _mmcVisible;
     [ObservableProperty]
+    [CanBeNull]
     string _model;
     [ObservableProperty]
     PcmciaInfo _pcmciaInfo;
@@ -229,6 +232,7 @@ public partial class DeviceViewModel : ViewModelBase
     [ObservableProperty]
     bool _removableChecked;
     [ObservableProperty]
+    [CanBeNull]
     string _revision;
     [ObservableProperty]
     bool _saveGetConfigurationVisible;
@@ -251,6 +255,7 @@ public partial class DeviceViewModel : ViewModelBase
     [ObservableProperty]
     SdMmcInfo _sdMmcInfo;
     [ObservableProperty]
+    [CanBeNull]
     string _serial;
     [ObservableProperty]
     bool _ssc;
@@ -331,7 +336,24 @@ public partial class DeviceViewModel : ViewModelBase
 
     public void LoadData()
     {
-        _ = Task.Run(Worker);
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                Worker();
+            }
+            catch(Exception ex)
+            {
+                AaruLogging.Exception(ex, UI.Title_Error);
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    StatusMessage = string.Format(UI.Error_0_opening_device, ex.Message);
+
+                    StatusMessageVisible = true;
+                });
+            }
+        });
     }
 
     async Task SaveUsbDescriptorsAsync()
@@ -410,6 +432,8 @@ public partial class DeviceViewModel : ViewModelBase
         {
             AaruLogging.Error(Error.Print(dev.LastError));
 
+            dev.Close();
+
             Dispatcher.UIThread.Invoke(() =>
             {
                 IMsBox<ButtonResult> msbox = MessageBoxManager.GetMessageBoxStandard(UI.Title_Error,
@@ -428,10 +452,10 @@ public partial class DeviceViewModel : ViewModelBase
         Dispatcher.UIThread.Invoke(() =>
         {
             DeviceType       = $"[rosybrown]{dev.Type.Humanize()}[/]";
-            Manufacturer     = (dev.Manufacturer     != null ? $"[blue]{dev.Manufacturer}[/]" : null)!;
-            Model            = (dev.Model            != null ? $"[purple]{dev.Model}[/]" : null)!;
-            Revision         = (dev.FirmwareRevision != null ? $"[teal]{dev.FirmwareRevision}[/]" : null)!;
-            Serial           = (dev.Serial           != null ? $"[fuchsia]{dev.Serial}[/]" : null)!;
+            Manufacturer     = (dev.Manufacturer     != null ? $"[blue]{dev.Manufacturer}[/]" : null);
+            Model            = (dev.Model            != null ? $"[purple]{dev.Model}[/]" : null);
+            Revision         = (dev.FirmwareRevision != null ? $"[teal]{dev.FirmwareRevision}[/]" : null);
+            Serial           = (dev.Serial           != null ? $"[fuchsia]{dev.Serial}[/]" : null);
             ScsiType         = $"[orange]{dev.ScsiType.Humanize()}[/]";
             RemovableChecked = dev.IsRemovable;
             UsbConnected     = dev.IsUsb;
@@ -758,10 +782,10 @@ public partial class DeviceViewModel : ViewModelBase
                 return;
             }
 
-            MediaIsInserted = true;
-
             Dispatcher.UIThread.Invoke(() =>
             {
+                MediaIsInserted = true;
+
                 var genericHddIcon = new SvgImage
                 {
                     Source =
