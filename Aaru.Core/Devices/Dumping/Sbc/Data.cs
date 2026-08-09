@@ -153,7 +153,7 @@ partial class Dump
                         }
 
                         outputFormat.WriteSectorTag(titleKey.Value.Key, i + j, false, SectorTagType.DvdSectorTitleKey);
-                        MarkTitleKeyDumped(i + j);
+                        MarkTitleKeyDumped(i                              + j);
 
                         CSS.DecryptTitleKey(discKey, titleKey.Value.Key, out tmpBuf);
                         outputFormat.WriteSectorTag(tmpBuf, i + j, false, SectorTagType.DvdTitleKeyDecrypted);
@@ -212,7 +212,8 @@ partial class Dump
                     _resume.BadBlocks.Add(i);
                     _resume.BadBlocks = _resume.BadBlocks.Distinct().ToList();
                     _resume.NextBlock++;
-                    _aborted = true;
+                    _abortReason = AbortReason.FatalError;
+                    _aborted     = true;
 
 
                     UpdateStatus?.Invoke(Localization.Core

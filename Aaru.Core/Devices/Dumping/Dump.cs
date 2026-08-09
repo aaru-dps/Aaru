@@ -133,7 +133,8 @@ public partial class Dump
     readonly        bool                       _trim;
     readonly        Stopwatch                  _trimStopwatch;
     readonly        Stopwatch                  _writeStopwatch;
-    bool                                       _aborted;
+    volatile        bool                       _aborted;
+    AbortReason                                _abortReason;
     int                                        _correctSectors;
     bool                                       _c2Supported;    // Drive returns C2 pointers alongside subchannel
     uint                                       _c2BlockSize;    // Block size when reading data + C2 + subchannel
@@ -237,6 +238,7 @@ public partial class Dump
         _trim                  = trim;
         _dumpFirstTrackPregap  = dumpFirstTrackPregap;
         _aborted               = false;
+        _abortReason           = AbortReason.None;
         _fixOffset             = fixOffset;
         _debug                 = debug;
         _maximumReadable       = maximumReadable;
@@ -356,6 +358,13 @@ public partial class Dump
                 break;
         }
 
+        if(_aborted)
+        {
+            UpdateStatus?.Invoke(_abortReason == AbortReason.User
+                                     ? Localization.Core.Operation_aborted_by_user
+                                     : Localization.Core.Dump_aborted_due_to_fatal_error);
+        }
+
         _errorLog.Close();
 
         if(_resume == null || !_doResume) return;
@@ -390,8 +399,17 @@ public partial class Dump
     /// <summary>Aborts the dump in progress</summary>
     public void Abort()
     {
-        _aborted = true;
+        _abortReason = AbortReason.User;
+        _aborted     = true;
         _sidecarClass?.Abort();
+    }
+
+    /// <summary>Why the dump in progress was aborted</summary>
+    enum AbortReason
+    {
+        None,
+        User,
+        FatalError
     }
 
     /// <summary>Event raised when the progress bar is not longer needed</summary>
