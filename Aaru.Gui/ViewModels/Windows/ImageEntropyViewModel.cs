@@ -30,8 +30,8 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -126,7 +126,19 @@ public sealed partial class ImageEntropyViewModel : ViewModelBase
 
         var inputOptical = inputFormat as IOpticalMediaImage;
 
-        if(inputOptical?.Tracks.Count > 0)
+        bool hasTracks;
+
+        try
+        {
+            hasTracks = inputOptical?.Tracks?.Count > 0;
+        }
+        catch(Exception ex)
+        {
+            AaruLogging.Exception(ex, UI.Title_Error);
+            hasTracks = false;
+        }
+
+        if(hasTracks)
         {
             SeparatedTracksVisible = true;
             WholeDiscVisible       = true;
@@ -170,30 +182,46 @@ public sealed partial class ImageEntropyViewModel : ViewModelBase
 
         _ = Task.Run(async () =>
         {
-            if(SeparatedTracksChecked)
+            try
             {
-                _tracksEntropy = entropyCalculator.CalculateTracksEntropy(DuplicatedSectorsChecked);
+                await CalculateAsync(entropyCalculator);
+            }
+            catch(Exception ex)
+            {
+                AaruLogging.Exception(ex, UI.Title_Error);
 
-                foreach(EntropyResults trackEntropy in _tracksEntropy)
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    AaruLogging.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track, trackEntropy.Entropy);
+                    ProgressVisible = false;
+                    CloseVisible    = true;
+                });
+            }
+        });
+    }
 
-                    if(trackEntropy.UniqueSectors != null)
-                    {
-                        AaruLogging.WriteLine(UI.Track_0_has_1_unique_sectors_2,
-                                              trackEntropy.Track,
-                                              trackEntropy.UniqueSectors,
-                                              (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
-                    }
+    async Task CalculateAsync(Entropy entropyCalculator)
+    {
+        if(SeparatedTracksChecked)
+        {
+            _tracksEntropy = entropyCalculator.CalculateTracksEntropy(DuplicatedSectorsChecked);
+
+            foreach(EntropyResults trackEntropy in _tracksEntropy)
+            {
+                AaruLogging.WriteLine(UI.Entropy_for_track_0_is_1, trackEntropy.Track, trackEntropy.Entropy);
+
+                if(trackEntropy.UniqueSectors != null)
+                {
+                    AaruLogging.WriteLine(UI.Track_0_has_1_unique_sectors_2,
+                                          trackEntropy.Track,
+                                          trackEntropy.UniqueSectors,
+                                          (double)trackEntropy.UniqueSectors / trackEntropy.Sectors);
                 }
             }
+        }
 
-            if(!WholeDiscChecked) return;
+        if(WholeDiscChecked) _entropy = entropyCalculator.CalculateMediaEntropy(DuplicatedSectorsChecked);
 
-            _entropy = entropyCalculator.CalculateMediaEntropy(DuplicatedSectorsChecked);
-
-            await Dispatcher.UIThread.InvokeAsync(Finish);
-        });
+        await Dispatcher.UIThread.InvokeAsync(Finish);
     }
 
     void Finish()
@@ -238,16 +266,15 @@ public sealed partial class ImageEntropyViewModel : ViewModelBase
         // Not implemented
     }
 
-    void InitProgress() => Progress1Visible = true;
+    void InitProgress() => Dispatcher.UIThread.Post(() => Progress1Visible = true);
 
-    void EndProgress() => Progress1Visible = false;
+    void EndProgress() => Dispatcher.UIThread.Post(() => Progress1Visible = false);
 
-    void InitProgress2() => Progress2Visible = true;
+    void InitProgress2() => Dispatcher.UIThread.Post(() => Progress2Visible = true);
 
-    void EndProgress2() => Progress2Visible = false;
+    void EndProgress2() => Dispatcher.UIThread.Post(() => Progress2Visible = false);
 
-    [SuppressMessage("ReSharper", "AsyncVoidMethod", Justification = "Used as direct event handler for dispatcher")]
-    async void UpdateProgress(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    void UpdateProgress(string text, long current, long maximum) => Dispatcher.UIThread.Post(() =>
     {
         ProgressText = text;
 
@@ -264,8 +291,7 @@ public sealed partial class ImageEntropyViewModel : ViewModelBase
         ProgressValue = current;
     });
 
-    [SuppressMessage("ReSharper", "AsyncVoidMethod", Justification = "Used as direct event handler for dispatcher")]
-    async void UpdateProgress2(string text, long current, long maximum) => await Dispatcher.UIThread.InvokeAsync(() =>
+    void UpdateProgress2(string text, long current, long maximum) => Dispatcher.UIThread.Post(() =>
     {
         Progress2Text = text;
 
