@@ -59,7 +59,7 @@ public sealed partial class ImageChecksumViewModel : ViewModelBase
     readonly Window      _view;
     [ObservableProperty]
     bool _adler32Checked;
-    bool _cancel;
+    volatile bool _cancel;
     [ObservableProperty]
     bool _checksumMediaChecked;
     [ObservableProperty]

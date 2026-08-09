@@ -57,7 +57,7 @@ public sealed partial class ImageVerifyViewModel : ViewModelBase
 {
     readonly IMediaImage _inputFormat;
     readonly Window      _view;
-    bool                 _cancel;
+    volatile bool        _cancel;
     [ObservableProperty]
     bool _closeVisible;
     [ObservableProperty]

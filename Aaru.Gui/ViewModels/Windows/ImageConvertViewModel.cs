@@ -67,7 +67,7 @@ public sealed partial class ImageConvertViewModel : ViewModelBase
     Metadata             _aaruMetadata;
     [ObservableProperty]
     bool _aaruMetadataFromImageVisible;
-    bool _cancel;
+    volatile bool _cancel;
     [ObservableProperty]
     bool _closeVisible;
     [ObservableProperty]
