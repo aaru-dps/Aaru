@@ -32,7 +32,6 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Sockets;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interop;
 using Aaru.CommonTypes.Structs.Devices.SCSI;
@@ -118,10 +117,7 @@ public sealed partial class Device : Devices.Device
         {
             SentrySdk.CaptureException(ex);
 
-            if(ex is SocketException sockEx)
-                errno = (ErrorNumber)(-1 * sockEx.ErrorCode);
-            else
-                errno = ErrorNumber.NoSuchDeviceOrAddress;
+            errno = ErrorNumber.NoSuchDeviceOrAddress;
 
             return null;
         }
@@ -129,10 +125,10 @@ public sealed partial class Device : Devices.Device
         dev.Error     = !dev._remote.Open(devicePath, out int remoteErrno);
         dev.LastError = remoteErrno;
 
-        // TODO: Convert error codes
         if(dev.Error)
         {
-            errno = (ErrorNumber)remoteErrno;
+            // The remote server reports a raw UNIX errno
+            errno = ErrnoToErrorNumber(remoteErrno);
 
             dev._remote.Disconnect();
 
@@ -146,7 +142,7 @@ public sealed partial class Device : Devices.Device
 
         if(dev.Error)
         {
-            errno = (ErrorNumber)dev.LastError;
+            errno = ErrnoToErrorNumber(dev.LastError);
 
             return null;
         }

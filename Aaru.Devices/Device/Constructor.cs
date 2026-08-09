@@ -101,6 +101,12 @@ public partial class Device : IDisposable
 
 #endregion
 
+    /// <summary>Converts a raw UNIX errno into its <see cref="ErrorNumber" /> equivalent</summary>
+    /// <param name="errno">Raw positive UNIX error number</param>
+    /// <returns>The matching <see cref="ErrorNumber" />, or <see cref="ErrorNumber.CannotOpenDevice" /> if unknown</returns>
+    internal static ErrorNumber ErrnoToErrorNumber(int errno) =>
+        Enum.IsDefined(typeof(ErrorNumber), -errno) ? (ErrorNumber)(-errno) : ErrorNumber.CannotOpenDevice;
+
     /// <summary>Opens the device for sending direct commands</summary>
     /// <param name="devicePath">Device path</param>
     /// <param name="errno">Sets the error if a device cannot be opened</param>

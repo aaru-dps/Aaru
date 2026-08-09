@@ -78,6 +78,24 @@ partial class Device : Devices.Device, IDisposable
         _capacity = size;
     }
 
+    /// <summary>Converts a raw Win32 error code into its <see cref="ErrorNumber" /> equivalent</summary>
+    /// <param name="error">Raw Win32 error code</param>
+    /// <returns>The matching <see cref="ErrorNumber" />, or <see cref="ErrorNumber.CannotOpenDevice" /> if unknown</returns>
+    static ErrorNumber Win32ErrorToErrorNumber(int error) => error switch
+                                                             {
+                                                                 2 or 3 => ErrorNumber
+                                                                    .NoSuchFile, // ERROR_FILE_NOT_FOUND, ERROR_PATH_NOT_FOUND
+                                                                 5  => ErrorNumber.AccessDenied, // ERROR_ACCESS_DENIED
+                                                                 19 => ErrorNumber.ReadOnly, // ERROR_WRITE_PROTECT
+                                                                 21 => ErrorNumber.NoSuchDevice, // ERROR_NOT_READY
+                                                                 32 or 33 or 108 or 170 =>
+                                                                     ErrorNumber
+                                                                        .Busy, // Sharing violation, lock violation, drive locked, busy
+                                                                 130 => ErrorNumber
+                                                                    .InvalidArgument, // ERROR_DIRECT_ACCESS_HANDLE
+                                                                 _ => ErrorNumber.CannotOpenDevice
+                                                             };
+
     internal new static Device Create(string devicePath, out ErrorNumber errno)
     {
         errno = ErrorNumber.NoError;
@@ -105,7 +123,7 @@ partial class Device : Devices.Device, IDisposable
 
         if(dev.Error)
         {
-            errno = (ErrorNumber)dev.LastError;
+            errno = Win32ErrorToErrorNumber(dev.LastError);
 
             return null;
         }
@@ -115,7 +133,7 @@ partial class Device : Devices.Device, IDisposable
 
         if(dev.Error)
         {
-            errno = (ErrorNumber)dev.LastError;
+            errno = Win32ErrorToErrorNumber(dev.LastError);
 
             return null;
         }

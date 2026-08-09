@@ -134,13 +134,11 @@ partial class Device : Devices.Device, IDisposable
             }
             else
                 dev.Error = true;
-
-            dev.LastError = Marshal.GetLastWin32Error();
         }
 
         if(dev.Error)
         {
-            errno = (ErrorNumber)dev.LastError;
+            errno = ErrnoToErrorNumber(dev.LastError);
 
             return null;
         }
@@ -153,7 +151,7 @@ partial class Device : Devices.Device, IDisposable
 
         if(dev.Error)
         {
-            errno = (ErrorNumber)dev.LastError;
+            errno = ErrnoToErrorNumber(dev.LastError);
 
             return null;
         }
