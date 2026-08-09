@@ -80,7 +80,7 @@ static class ConsoleHandler
     }
 
     static void OnWriteExceptionEvent([NotNull] Exception ex, string message, params object[] objects) =>
-        AddEntry(SafeFormat(message, objects), null, UI.LogEntry_Type_Exception);
+        AddEntry($"{SafeFormat(message, objects)}{Environment.NewLine}{ex}", null, UI.LogEntry_Type_Exception);
 
     internal static void Init()
     {
