@@ -672,7 +672,9 @@ public partial class MainWindowViewModel : ViewModelBase
                 Statistics.AddMedia(imageFormat.Info.MediaType, false);
                 Statistics.AddFilter(inputFilter.Name);
 
-                // Close any previously opened archive before replacing the tree
+                // Close any previously opened image or archive before replacing the tree
+                _image?.Filter?.Close();
+                _image = null;
                 _archive?.Archive?.Close();
                 _archive      = null;
                 ArchiveLoaded = false;
@@ -823,7 +825,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
             Statistics.AddFilter(inputFilter.Name);
 
-            // Close any previously opened archive before replacing the tree
+            // Close any previously opened image or archive before replacing the tree
+            _image?.Filter?.Close();
             _archive?.Archive?.Close();
 
             TreeRoot.Clear();
@@ -908,6 +911,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     internal void Exit()
     {
+        _image?.Filter?.Close();
+        _image = null;
         _archive?.Archive?.Close();
         _archive = null;
 
@@ -943,8 +948,6 @@ public partial class MainWindowViewModel : ViewModelBase
         var imageEntropyWindow = new ImageEntropy();
         imageEntropyWindow.DataContext = new ImageEntropyViewModel(imageModel.Image, imageEntropyWindow);
 
-        imageEntropyWindow.Closed += (_, _) => imageEntropyWindow = null;
-
         imageEntropyWindow.Show();
     }
 
@@ -955,8 +958,6 @@ public partial class MainWindowViewModel : ViewModelBase
         var imageVerifyWindow = new ImageVerify();
         imageVerifyWindow.DataContext = new ImageVerifyViewModel(imageModel.Image, imageVerifyWindow);
 
-        imageVerifyWindow.Closed += (_, _) => imageVerifyWindow = null;
-
         imageVerifyWindow.Show();
     }
 
@@ -966,8 +967,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
         var imageChecksumWindow = new ImageChecksum();
         imageChecksumWindow.DataContext = new ImageChecksumViewModel(imageModel.Image, imageChecksumWindow);
-
-        imageChecksumWindow.Closed += (_, _) => imageChecksumWindow = null;
 
         imageChecksumWindow.Show();
     }
@@ -980,8 +979,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
         imageConvertWindow.DataContext =
             new ImageConvertViewModel(imageModel.Image, imageModel.Path, imageConvertWindow);
-
-        imageConvertWindow.Closed += (_, _) => imageConvertWindow = null;
 
         imageConvertWindow.Show();
     }
