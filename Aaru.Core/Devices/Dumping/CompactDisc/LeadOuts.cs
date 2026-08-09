@@ -108,7 +108,7 @@ partial class Dump
                 if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                    AaruLogging.WriteLine(Localization.Core.Aborted);
+                    UpdateStatus?.Invoke(Localization.Core.Aborted);
 
                     break;
                 }

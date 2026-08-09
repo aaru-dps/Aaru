@@ -731,7 +731,7 @@ public partial class Dump
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                      _devicePath);
 
-        UpdateStatus?.Invoke(string.Format(Localization.Core.Dump_finished_in_0,
+        UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
