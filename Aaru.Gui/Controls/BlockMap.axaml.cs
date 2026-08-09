@@ -142,12 +142,16 @@ public partial class BlockMap : UserControl
 
         if(_bitmap != null && _bitmap.PixelSize.Width == width && _bitmap.PixelSize.Height == height) return;
 
-        _bitmap?.Dispose();
+        // Sanity cap: a runaway row count would otherwise allocate a gigantic framebuffer
+        if(width <= 0 || height <= 0 || (long)width * height > 64 * 1024 * 1024) return;
 
-        _bitmap = new WriteableBitmap(new PixelSize(width, height),
-                                      new Vector(96, 96),
-                                      PixelFormat.Bgra8888,
-                                      AlphaFormat.Premul);
+        var newBitmap = new WriteableBitmap(new PixelSize(width, height),
+                                            new Vector(96, 96),
+                                            PixelFormat.Bgra8888,
+                                            AlphaFormat.Premul);
+
+        _bitmap?.Dispose();
+        _bitmap = newBitmap;
 
         if(_image == null) return;
 
@@ -158,7 +162,24 @@ public partial class BlockMap : UserControl
 
     private void RedrawAll()
     {
-        if(_sectorData == null || _sectorData.Count == 0 || _blocksPerRow == 0) return;
+        if(_sectorData == null || _sectorData.Count == 0)
+        {
+            if(_bitmap == null || _image == null) return;
+
+            using(ILockedFramebuffer fb = _bitmap.Lock())
+            {
+                unsafe
+                {
+                    new Span<byte>((void*)fb.Address, fb.Size.Height * fb.RowBytes).Clear();
+                }
+            }
+
+            _image.InvalidateVisual();
+
+            return;
+        }
+
+        if(_blocksPerRow == 0) return;
         CalculateBlocksPerRow();
 
         if(_bitmap == null) return;
@@ -190,6 +211,8 @@ public partial class BlockMap : UserControl
     static void DrawBlock(ILockedFramebuffer fb, int x, int y, Color color)
     {
         int stride = fb.RowBytes;
+
+        if(x < 0 || y < 0 || (x + BlockSize) * 4 > stride || y + BlockSize > fb.Size.Height) return;
 
         unsafe
         {
@@ -452,5 +475,18 @@ public partial class BlockMap : UserControl
                                  0                    // B: stays 0
                                 );
         }
+    }
+
+    /// <inheritdoc />
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+
+        if(_sectorData != null) _sectorData.CollectionChanged -= OnSectorDataChanged;
+
+        if(_image != null) _image.Source = null;
+
+        _bitmap?.Dispose();
+        _bitmap = null;
     }
 }
