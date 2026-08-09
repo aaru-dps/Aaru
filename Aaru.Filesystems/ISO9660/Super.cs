@@ -497,6 +497,8 @@ public sealed partial class ISO9660
                                       : _highSierra
                                           ? DecodeHighSierraDirectory(rootLocation + rootXattrLength, rootSize)
                                           : DecodeIsoDirectory(rootLocation        + rootXattrLength, rootSize);
+
+            _rootLocation = rootLocation + rootXattrLength;
         }
 
         Metadata.Type = fsFormat;
@@ -511,6 +513,8 @@ public sealed partial class ISO9660
             _joliet = true;
 
             _rootDirectoryCache = DecodeIsoDirectory(rootLocation + rootXattrLength, rootSize);
+
+            _rootLocation = rootLocation + rootXattrLength;
 
             Metadata.VolumeName = decodedJolietVd.VolumeIdentifier;
 
@@ -746,6 +750,8 @@ public sealed partial class ISO9660
                                                                   : GetSubdirsFromIsoPathTable(""))
                 _rootDirectoryCache[subDirectory.Filename] = subDirectory;
         }
+
+        RemoveLoopingDirectoryEntries(_rootDirectoryCache, [_rootLocation]);
 
         _mounted = true;
 

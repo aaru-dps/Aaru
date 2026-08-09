@@ -1157,6 +1157,21 @@ public sealed partial class ISO9660
         return entries.ToArray();
     }
 
+    // Some discs contain directory entries whose extent points back at their own directory or an ancestor,
+    // making recursive listers loop forever. Remove them, they cannot be traversed meaningfully.
+    static void RemoveLoopingDirectoryEntries(Dictionary<string, DecodedDirectoryEntry> directory,
+                                              HashSet<ulong>                            ancestorExtents)
+    {
+        string[] looping = directory
+                          .Where(e => e.Value.Flags.HasFlag(FileFlags.Directory) &&
+                                      e.Value.Extents?.Count > 0                 &&
+                                      ancestorExtents.Contains((ulong)e.Value.Extents[0].extent + e.Value.XattrLength))
+                          .Select(static e => e.Key)
+                          .ToArray();
+
+        foreach(string key in looping) directory.Remove(key);
+    }
+
 #region IReadOnlyFilesystem Members
 
     /// <inheritdoc />
@@ -1207,6 +1222,8 @@ public sealed partial class ISO9660
 
         currentDirectory = _rootDirectoryCache;
 
+        HashSet<ulong> ancestorExtents = [_rootLocation];
+
         for(var p = 0; p < pieces.Length; p++)
         {
             entry = currentDirectory.FirstOrDefault(t => t.Key.Equals(pieces[p],
@@ -1217,6 +1234,9 @@ public sealed partial class ISO9660
             if(!entry.Value.Flags.HasFlag(FileFlags.Directory)) return ErrorNumber.NotDirectory;
 
             currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
+
+            if(entry.Value.Extents.Count > 0)
+                ancestorExtents.Add((ulong)entry.Value.Extents[0].extent + entry.Value.XattrLength);
 
             if(_directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
@@ -1241,6 +1261,8 @@ public sealed partial class ISO9660
                                                                       : GetSubdirsFromIsoPathTable(currentPath))
                     currentDirectory[subDirectory.Filename] = subDirectory;
             }
+
+            RemoveLoopingDirectoryEntries(currentDirectory, ancestorExtents);
 
             _directoryCache.Add(currentPath, currentDirectory);
         }

@@ -57,6 +57,7 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
     Dictionary<int, Dictionary<string, int>>  _pathTableLookup;
     ulong                                     _partitionStart;
     Dictionary<string, DecodedDirectoryEntry> _rootDirectoryCache;
+    ulong                                     _rootLocation;
     FileSystemInfo                            _statfs;
     bool                                      _useEvd;
     bool                                      _usePathTable;
