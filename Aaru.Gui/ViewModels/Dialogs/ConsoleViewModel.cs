@@ -33,6 +33,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -85,8 +86,8 @@ public sealed class ConsoleViewModel : ViewModelBase
 
         try
         {
-            var logFs = new FileStream(result.Path.LocalPath, FileMode.Create, FileAccess.ReadWrite);
-            var logSw = new StreamWriter(logFs);
+            await using var logFs = new FileStream(result.Path.LocalPath, FileMode.Create, FileAccess.ReadWrite);
+            await using var logSw = new StreamWriter(logFs);
 
             await logSw.WriteLineAsync(string.Format(UI.Log_saved_at_0, DateTime.Now));
 
@@ -120,7 +121,7 @@ public sealed class ConsoleViewModel : ViewModelBase
 
             await logSw.WriteLineAsync(UI.Console_with_ornament);
 
-            foreach(LogEntry entry in ConsoleHandler.Entries)
+            foreach(LogEntry entry in ConsoleHandler.Entries.ToArray())
             {
                 if(entry.Type != UI.LogEntry_Type_Info)
                     await logSw.WriteLineAsync($"{entry.Timestamp}: ({entry.Type.ToLower()}) {entry.Message}");
@@ -128,8 +129,6 @@ public sealed class ConsoleViewModel : ViewModelBase
                     await logSw.WriteLineAsync($"{entry.Timestamp}: {entry.Message}");
             }
 
-            logSw.Close();
-            logFs.Close();
         }
         catch(Exception exception)
         {
