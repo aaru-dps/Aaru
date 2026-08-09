@@ -452,10 +452,10 @@ public partial class DeviceViewModel : ViewModelBase
         Dispatcher.UIThread.Invoke(() =>
         {
             DeviceType       = $"[rosybrown]{dev.Type.Humanize()}[/]";
-            Manufacturer     = (dev.Manufacturer     != null ? $"[blue]{dev.Manufacturer}[/]" : null);
-            Model            = (dev.Model            != null ? $"[purple]{dev.Model}[/]" : null);
-            Revision         = (dev.FirmwareRevision != null ? $"[teal]{dev.FirmwareRevision}[/]" : null);
-            Serial           = (dev.Serial           != null ? $"[fuchsia]{dev.Serial}[/]" : null);
+            Manufacturer     = (dev.Manufacturer     != null ? $"[blue]{dev.Manufacturer}[/]" : "");
+            Model            = (dev.Model            != null ? $"[purple]{dev.Model}[/]" : "");
+            Revision         = (dev.FirmwareRevision != null ? $"[teal]{dev.FirmwareRevision}[/]" : "");
+            Serial           = (dev.Serial           != null ? $"[fuchsia]{dev.Serial}[/]" : "");
             ScsiType         = $"[orange]{dev.ScsiType.Humanize()}[/]";
             RemovableChecked = dev.IsRemovable;
             UsbConnected     = dev.IsUsb;
