@@ -97,7 +97,8 @@ public partial class DiscSpeedGraph : UserControl
         _speedLine = new Polyline
         {
             Stroke          = new SolidColorBrush(Color.FromRgb(0, 255, 255)), // Aqua
-            StrokeThickness = 2
+            StrokeThickness = 2,
+            ZIndex          = 1 // Above the grid lines
         };
 
         _canvas?.Children.Add(_speedLine);
@@ -448,8 +449,9 @@ public partial class DiscSpeedGraph : UserControl
             double x = MARGIN_LEFT + graphWidth * sector / MaxSector;
             double y = MARGIN_TOP  + graphHeight         * (1 - speedKbps / effectiveMaxSpeed);
 
-            // Clamp Y to graph bounds
-            y = Math.Max(MARGIN_TOP, Math.Min(MARGIN_TOP + graphHeight, y));
+            // Clamp to graph bounds
+            x = Math.Max(MARGIN_LEFT, Math.Min(MARGIN_LEFT + graphWidth,  x));
+            y = Math.Max(MARGIN_TOP,  Math.Min(MARGIN_TOP  + graphHeight, y));
 
             _speedLine.Points.Add(new Point(x, y));
         }
@@ -475,8 +477,9 @@ public partial class DiscSpeedGraph : UserControl
             double x = MARGIN_LEFT + graphWidth * sector / MaxSector;
             double y = MARGIN_TOP  + graphHeight         * (1 - speedKbps / effectiveMaxSpeed);
 
-            // Clamp Y to graph bounds
-            y = Math.Max(MARGIN_TOP, Math.Min(MARGIN_TOP + graphHeight, y));
+            // Clamp to graph bounds
+            x = Math.Max(MARGIN_LEFT, Math.Min(MARGIN_LEFT + graphWidth,  x));
+            y = Math.Max(MARGIN_TOP,  Math.Min(MARGIN_TOP  + graphHeight, y));
 
             _speedLine.Points.Add(new Point(x, y));
         }
