@@ -112,6 +112,14 @@ public static class MMC
         0xFF, 0xFF, 0xFF, 0x00
     ];
 
+    /// <summary>
+    ///     Frame header marker for black and white VideoNow discs. The video (left) channel repeats 0xE1 for 1340
+    ///     bytes at the start of every frame, while the audio (right) channel interleaves audio samples with sync data,
+    ///     so every right channel byte is zeroed before comparison.
+    /// </summary>
+    static readonly byte[] _videoNowFrameMarker =
+        Enumerable.Repeat<byte[]>([0xE1, 0xE1, 0x00, 0x00], 335).SelectMany(static b => b).ToArray();
+
     static bool IsData(byte[] sector)
     {
         if(sector?.Length != 2352) return false;
@@ -215,6 +223,54 @@ public static class MMC
         }
 
         return false;
+    }
+
+    static bool IsVideoNow(byte[] videoFrame)
+    {
+        if(videoFrame is null || videoFrame.Length < _videoNowFrameMarker.Length) return false;
+
+        var buffer = new byte[_videoNowFrameMarker.Length];
+
+        for(var framePosition = 0; framePosition + buffer.Length < videoFrame.Length; framePosition++)
+        {
+            Array.Copy(videoFrame, framePosition, buffer, 0, buffer.Length);
+
+            for(var ab = 2; ab < buffer.Length; ab += 4)
+            {
+                buffer[ab]     = 0;
+                buffer[ab + 1] = 0;
+            }
+
+            if(!_videoNowFrameMarker.SequenceEqual(buffer)) continue;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    internal static int GetVideoNowOffset(byte[] data)
+    {
+        var buffer = new byte[_videoNowFrameMarker.Length];
+
+        for(var framePosition = 0; framePosition + buffer.Length < data.Length; framePosition++)
+        {
+            Array.Copy(data, framePosition, buffer, 0, buffer.Length);
+
+            for(var ab = 2; ab < buffer.Length; ab += 4)
+            {
+                buffer[ab]     = 0;
+                buffer[ab + 1] = 0;
+            }
+
+            if(!_videoNowFrameMarker.SequenceEqual(buffer)) continue;
+
+            // The first 0xE1 run starts after 5062 video channel bytes, which is sample 2531, byte 10124 in the
+            // interleaved stream
+            return 10124 - framePosition;
+        }
+
+        return 0;
     }
 
     internal static int GetVideoNowColorOffset(byte[] data)
@@ -1962,13 +2018,21 @@ public static class MMC
                     }
                 }
 
-                // TODO: Detect black and white VideoNow
                 // TODO: Detect VideoNow XP
                 if(IsVideoNowColor(videoNowColorFrame))
                 {
                     mediaType = MediaType.VideoNowColor;
 
                     AaruLogging.Debug(MODULE_NAME, Localization.Core.Found_VideoNow_Color_frame);
+
+                    return;
+                }
+
+                if(IsVideoNow(videoNowColorFrame))
+                {
+                    mediaType = MediaType.VideoNow;
+
+                    AaruLogging.Debug(MODULE_NAME, Localization.Core.Found_VideoNow_frame);
 
                     return;
                 }

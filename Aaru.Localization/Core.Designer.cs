@@ -5467,6 +5467,24 @@ namespace Aaru.Localization {
                 return ResourceManager.GetString("Found_VideoNow_Color_frame", resourceCulture);
             }
         }
+
+        public static string Found_VideoNow_frame {
+            get {
+                return ResourceManager.GetString("Found_VideoNow_frame", resourceCulture);
+            }
+        }
+
+        public static string Could_not_find_VideoNow_frame_offset {
+            get {
+                return ResourceManager.GetString("Could_not_find_VideoNow_frame_offset", resourceCulture);
+            }
+        }
+
+        public static string VideoNow_frame_is_offset_0_bytes {
+            get {
+                return ResourceManager.GetString("VideoNow_frame_is_offset_0_bytes", resourceCulture);
+            }
+        }
         
         public static string Found_enhanced_graphics_RW_packet {
             get {

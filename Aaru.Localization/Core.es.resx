@@ -450,6 +450,9 @@
     <data name="Could_not_find_VideoNow_Color_frame_offset" xml:space="preserve">
         <value>[olive]No se pudo encontrar el desplazamiento del fotograma de VideoNow Color, el volcado podría ser incorrecto.[/]</value>
     </data>
+    <data name="Could_not_find_VideoNow_frame_offset" xml:space="preserve">
+        <value>[olive]No se pudo encontrar el desplazamiento del fotograma de VideoNow, el volcado podría ser incorrecto.[/]</value>
+    </data>
     <data name="Could_not_get_a_working_read_command" xml:space="preserve">
         <value>[red]¡No se pudo encontrar un comando de lectura que funcione![/]</value>
     </data>
@@ -1317,6 +1320,9 @@
   </data>
     <data name="Found_VideoNow_Color_frame" xml:space="preserve">
     <value>Encontrado fotograma de VideoNow! Color, estableciendo tipo como VideoNow Color.</value>
+  </data>
+    <data name="Found_VideoNow_frame" xml:space="preserve">
+    <value>Encontrado fotograma de VideoNow!, estableciendo tipo como VideoNow.</value>
   </data>
     <data name="Found_Video_CD_description_file" xml:space="preserve">
     <value>Encontrado fichero de descripción de Video CD, estableciendo tipo como Video CD.</value>
@@ -3321,6 +3327,9 @@ No tiene sentido hacerlo y supondría demasiado esfuerzo para la cinta.</value>
   </data>
     <data name="VideoNow_Color_frame_is_offset_0_bytes" xml:space="preserve">
     <value>[slateblue1]El fotograma de VideoNow Color está desplazado [lime]{0}[/] bytes.[/]</value>
+  </data>
+    <data name="VideoNow_frame_is_offset_0_bytes" xml:space="preserve">
+    <value>[slateblue1]El fotograma de VideoNow está desplazado [lime]{0}[/] bytes.[/]</value>
   </data>
     <data name="Video_layer_0_size_0_sectors" xml:space="preserve">
         <value>[slateblue1]Tamaño de la capa [teal]0[/] de video: [violet]{0}[/] sectores[/]</value>

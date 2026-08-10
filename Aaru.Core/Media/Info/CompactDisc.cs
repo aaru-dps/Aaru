@@ -82,7 +82,7 @@ public static class CompactDisc
         combinedOffset          = null;
         supportsPlextorReadCdDa = false;
 
-        if(dskType != MediaType.VideoNowColor)
+        if(dskType != MediaType.VideoNowColor && dskType != MediaType.VideoNow)
         {
             if(tracks.Any(static t => t.Type != TrackType.Audio))
             {
@@ -402,13 +402,23 @@ public static class CompactDisc
             }
 
             if(videoNowColorFrame is null)
-                updateStatus?.Invoke(Localization.Core.Could_not_find_VideoNow_Color_frame_offset);
-            else
+            {
+                updateStatus?.Invoke(dskType == MediaType.VideoNowColor
+                                         ? Localization.Core.Could_not_find_VideoNow_Color_frame_offset
+                                         : Localization.Core.Could_not_find_VideoNow_frame_offset);
+            }
+            else if(dskType == MediaType.VideoNowColor)
             {
                 combinedOffset = MMC.GetVideoNowColorOffset(videoNowColorFrame);
 
                 updateStatus?.Invoke(string.Format(Localization.Core.VideoNow_Color_frame_is_offset_0_bytes,
                                                    combinedOffset));
+            }
+            else
+            {
+                combinedOffset = MMC.GetVideoNowOffset(videoNowColorFrame);
+
+                updateStatus?.Invoke(string.Format(Localization.Core.VideoNow_frame_is_offset_0_bytes, combinedOffset));
             }
         }
     }

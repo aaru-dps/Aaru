@@ -2760,6 +2760,9 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     <data name="Found_VideoNow_Color_frame" xml:space="preserve">
     <value>Found VideoNow! Color frame, setting disc type to VideoNow Color.</value>
   </data>
+    <data name="Found_VideoNow_frame" xml:space="preserve">
+    <value>Found VideoNow! frame, setting disc type to VideoNow.</value>
+  </data>
     <data name="Found_enhanced_graphics_RW_packet" xml:space="preserve">
     <value>Found enhanced graphics RW packet, setting disc type to CD+EG.</value>
   </data>
@@ -2819,6 +2822,12 @@ It has no sense to do it, and it will put too much strain on the tape.</value>
     </data>
     <data name="VideoNow_Color_frame_is_offset_0_bytes" xml:space="preserve">
     <value>[slateblue1]VideoNow Color frame is offset [lime]{0}[/] bytes.[/]</value>
+  </data>
+    <data name="Could_not_find_VideoNow_frame_offset" xml:space="preserve">
+        <value>[olive]Could not find VideoNow frame offset, dump may not be correct.[/]</value>
+    </data>
+    <data name="VideoNow_frame_is_offset_0_bytes" xml:space="preserve">
+    <value>[slateblue1]VideoNow frame is offset [lime]{0}[/] bytes.[/]</value>
   </data>
     <data name="READ_DISC_STRUCTURE_Recognized_Format_Layers_0" xml:space="preserve">
     <value>READ DISC STRUCTURE: Recognized Format Layers
