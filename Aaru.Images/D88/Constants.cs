@@ -37,6 +37,7 @@ namespace Aaru.Images;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class D88
 {
-    const    byte   READ_ONLY      = 0x10;
-    readonly byte[] _reservedEmpty = new byte[9];
+    const    byte   READ_ONLY          = 0x10;
+    const    int    TRACK_TABLE_OFFSET = 0x20;
+    readonly byte[] _reservedEmpty     = new byte[9];
 }

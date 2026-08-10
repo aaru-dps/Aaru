@@ -79,21 +79,29 @@ public sealed partial class D88
 
         if(!hdr.reserved.SequenceEqual(_reservedEmpty)) return ErrorNumber.InvalidArgument;
 
-        var trkCounter = 0;
+        int tableEntries = TrackTableLength(hdr.track_table);
 
-        foreach(int t in hdr.track_table)
+        AaruLogging.Debug(MODULE_NAME, "d88hdr.track_table entries = {0}", tableEntries);
+
+        List<int> trackOffsets = [];
+
+        for(var i = 0; i < tableEntries; i++)
         {
-            if(t > 0) trkCounter++;
+            int t = hdr.track_table[i];
 
-            if(t < 0 || t > stream.Length) return ErrorNumber.InvalidArgument;
+            if(t > 0) trackOffsets.Add(t);
+
+            if(t < 0 || t >= stream.Length) return ErrorNumber.InvalidArgument;
         }
+
+        int trkCounter = trackOffsets.Count;
 
         AaruLogging.Debug(MODULE_NAME, Localization._0_tracks, trkCounter);
 
         if(trkCounter == 0) return ErrorNumber.InvalidArgument;
 
         hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
-        stream.Seek(hdr.track_table[0], SeekOrigin.Begin);
+        stream.Seek(trackOffsets[0], SeekOrigin.Begin);
         stream.EnsureRead(hdrB, 0, hdrB.Length);
 
         SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
@@ -115,7 +123,7 @@ public sealed partial class D88
 
         for(var i = 0; i < trkCounter; i++)
         {
-            stream.Seek(hdr.track_table[i], SeekOrigin.Begin);
+            stream.Seek(trackOffsets[i], SeekOrigin.Begin);
             stream.EnsureRead(hdrB, 0, hdrB.Length);
             SortedDictionary<byte, byte[]> sectors = new();
 
@@ -193,7 +201,7 @@ public sealed partial class D88
                 _imageInfo.MediaType = MediaType.NEC_525_HD;
             else if(bps == IBMSectorSizeCode.HalfKilo)
             {
-                switch(hdr.track_table.Length)
+                switch(trkCounter)
                 {
                     case 40:
                     {

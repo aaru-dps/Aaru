@@ -47,6 +47,27 @@ public sealed partial class D88 : IMediaImage
     ImageInfo    _imageInfo;
     List<byte[]> _sectorsData;
 
+    // Old-style images have a 0x2A0 bytes header with 160 track table entries, new-style ones have 0x2B0 bytes
+    // and 164 entries. The table is self-delimiting: it ends where the lowest track offset points, so entries
+    // past that point belong to track data and must be ignored.
+    static int TrackTableLength(int[] trackTable)
+    {
+        int entries = trackTable.Length;
+
+        for(var i = 0; i < entries; i++)
+        {
+            int t = trackTable[i];
+
+            if(t <= 0) continue;
+
+            int implied = (t - TRACK_TABLE_OFFSET) / 4;
+
+            if(implied < entries) entries = implied;
+        }
+
+        return entries;
+    }
+
     public D88() => _imageInfo = new ImageInfo
     {
         ReadableSectorTags    = [],

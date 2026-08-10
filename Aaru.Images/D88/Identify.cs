@@ -75,13 +75,19 @@ public sealed partial class D88
 
         if(!hdr.reserved.SequenceEqual(_reservedEmpty)) return false;
 
+        int tableEntries = TrackTableLength(hdr.track_table);
+
+        AaruLogging.Debug(MODULE_NAME, "d88hdr.track_table entries = {0}", tableEntries);
+
         var counter = 0;
 
-        foreach(int t in hdr.track_table)
+        for(var i = 0; i < tableEntries; i++)
         {
+            int t = hdr.track_table[i];
+
             if(t > 0) counter++;
 
-            if(t < 0 || t > stream.Length) return false;
+            if(t < 0 || t >= stream.Length) return false;
         }
 
         AaruLogging.Debug(MODULE_NAME, Localization._0_tracks, counter);
