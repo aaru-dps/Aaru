@@ -295,22 +295,19 @@ public sealed partial class FAT
 
             if(bpbKind != BpbKind.Human)
             {
-                int reservedSectors = fakeBpb.rsectors                      +
-                                      fakeBpb.fats_no       * fakeBpb.spfat +
-                                      fakeBpb.root_ent * 32 / fakeBpb.bps;
+                if(fakeBpb.bps == 0) return ErrorNumber.InvalidArgument;
 
-                if(fakeBpb.sectors == 0)
-                {
-                    clusters = (ulong)(fakeBpb.spc == 0
-                                           ? fakeBpb.big_sectors - reservedSectors
-                                           : (fakeBpb.big_sectors - reservedSectors) / fakeBpb.spc);
-                }
-                else
-                {
-                    clusters = (ulong)(fakeBpb.spc == 0
-                                           ? fakeBpb.sectors - reservedSectors
-                                           : (fakeBpb.sectors - reservedSectors) / fakeBpb.spc);
-                }
+                long reservedSectors = fakeBpb.rsectors                       +
+                                       (long)fakeBpb.fats_no  * fakeBpb.spfat +
+                                       fakeBpb.root_ent * 32L / fakeBpb.bps;
+
+                long dataSectors = (fakeBpb.sectors == 0 ? fakeBpb.big_sectors : fakeBpb.sectors) - reservedSectors;
+
+                // A bogus BPB (e.g. a false positive on random data) can declare more metadata sectors than the
+                // volume has, which must not end as a negative value sign-extended into a huge cluster count
+                if(dataSectors <= 0) return ErrorNumber.InvalidArgument;
+
+                clusters = (ulong)(fakeBpb.spc == 0 ? dataSectors : dataSectors / fakeBpb.spc);
             }
             else
                 clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
@@ -762,6 +759,9 @@ public sealed partial class FAT
                        };
 
         _bytesPerCluster = _sectorsPerCluster * imagePlugin.Info.SectorSize;
+
+        // A corrupt or bogus BPB could declare more clusters than can ever be allocated as an array
+        if(_statfs.Blocks + 2 > int.MaxValue) return ErrorNumber.InvalidArgument;
 
         // The first 2 FAT entries do not count as allocation clusters in FAT12 and FAT16
         var firstFatEntries  = new ushort[_statfs.Blocks + 2];
