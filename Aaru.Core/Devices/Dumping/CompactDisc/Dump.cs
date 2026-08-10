@@ -591,7 +591,12 @@ sealed partial class Dump
                                                     SectorTagType.CdTrackIsrc,
                                                     out byte[] isrcBytes);
 
-                if(errno == ErrorNumber.NoError) isrcs[(byte)imgTrack.Sequence] = Encoding.ASCII.GetString(isrcBytes);
+                if(errno == ErrorNumber.NoError)
+                {
+                    string imgIsrc = Encoding.ASCII.GetString(isrcBytes);
+
+                    if(Subchannel.IsrcIsPresent(imgIsrc)) isrcs[(byte)imgTrack.Sequence] = imgIsrc;
+                }
 
                 Track trk = tracks.FirstOrDefault(t => t.Sequence == imgTrack.Sequence);
 
@@ -673,7 +678,7 @@ sealed partial class Dump
             {
                 sense = _dev.ReadIsrc((byte)trk.Sequence, out string isrc, out _, out _, _dev.Timeout, out _);
 
-                if(sense || isrc is null or "000000000000") continue;
+                if(sense || !Subchannel.IsrcIsPresent(isrc)) continue;
 
                 isrcs[(byte)trk.Sequence] = isrc;
 
@@ -1148,7 +1153,9 @@ sealed partial class Dump
                      blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000),
                      _devicePath);
 
-        UpdateStatus?.Invoke(string.Format(_aborted ? Localization.Core.Dump_aborted_after_0 : Localization.Core.Dump_finished_in_0,
+        UpdateStatus?.Invoke(string.Format(_aborted
+                                               ? Localization.Core.Dump_aborted_after_0
+                                               : Localization.Core.Dump_finished_in_0,
                                            _dumpStopwatch.Elapsed.Humanize(minUnit: TimeUnit.Second)));
 
         UpdateStatus?.Invoke(string.Format(Localization.Core.Average_dump_speed_0,
@@ -1321,6 +1328,8 @@ sealed partial class Dump
 
         foreach(KeyValuePair<byte, string> isrc in isrcs)
         {
+            if(!Subchannel.IsrcIsPresent(isrc.Value)) continue;
+
             // TODO: Track tags
             if(!outputOptical.WriteSectorTag(Encoding.ASCII.GetBytes(isrc.Value),
                                              isrc.Key,

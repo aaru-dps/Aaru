@@ -1409,7 +1409,7 @@ public sealed class ScsiInfo
                         {
                             sense = dev.ReadIsrc(i, out string isrc, out _, out _, dev.Timeout, out _);
 
-                            if(!sense && isrc != null && isrc != "000000000000") Isrcs.Add(i, isrc);
+                            if(!sense && Subchannel.IsrcIsPresent(isrc)) Isrcs.Add(i, isrc);
                         }
 
                         if(Isrcs.Count == 0) Isrcs = null;

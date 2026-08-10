@@ -179,6 +179,15 @@ public class SubchannelTests
         deinterleaved[24..].Should().OnlyContain(static b => b == 0);
     }
 
+    [TestCase("USRC17607839", ExpectedResult = true)]
+    [TestCase("0#ZZ!17607__", ExpectedResult = true, Description = "Non-conformant ISRCs on real discs must be kept")]
+    [TestCase("000000000000", ExpectedResult = false)]
+    [TestCase("            ", ExpectedResult = false)]
+    [TestCase("0000    \0\0\0\0", ExpectedResult = false)]
+    [TestCase("", ExpectedResult = false)]
+    [TestCase(null, ExpectedResult = false)]
+    public bool IsrcIsPresentDetectsAbsentIsrcs(string isrc) => Subchannel.IsrcIsPresent(isrc);
+
     [Test]
     public void DecodeMcnFormatsBcdDigits()
     {

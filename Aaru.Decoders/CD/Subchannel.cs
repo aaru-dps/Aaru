@@ -956,6 +956,12 @@ public static class Subchannel
     public static string DecodeIsrc(byte[] q) =>
         $"{_isrcTable[q[1] / 4]}{_isrcTable[(q[1] & 3) * 16 + q[2] / 16]}{_isrcTable[(q[2] & 0xF) * 4 + q[3] / 64]}{_isrcTable[q[3] & 0x3F]}{_isrcTable[q[4] / 4]}{q[5]:X2}{q[6]:X2}{q[7]:X2}{q[8] / 16:X1}";
 
+    /// <summary>Tells whether an ISRC value read from the media is actually present, i.e. not null, empty, all
+    ///     zeroes or blank padding. Does not validate structure: non-conformant ISRCs found on real discs must be
+    ///     preserved as-is.</summary>
+    public static bool IsrcIsPresent(string isrc) =>
+        !string.IsNullOrEmpty(isrc) && isrc.AsSpan().IndexOfAnyExcept('0', ' ', '\0') >= 0;
+
     public static string DecodeMcn(byte[] q) => $"{q[1]:X2}{q[2]:X2}{q[3]:X2}{q[4]:X2}{q[5]:X2}{q[6]:X2}{q[7] >> 4:X}";
 
     public static byte GetIsrcCode(char c) => c switch

@@ -331,7 +331,7 @@ public static class CompactDisc
                 {
                     string isrc = Subchannel.DecodeIsrc(q);
 
-                    if(isrc is null or "000000000000") continue;
+                    if(!Subchannel.IsrcIsPresent(isrc)) continue;
 
                     if(!crcOk) continue;
 
@@ -1433,7 +1433,7 @@ public static class CompactDisc
                 }
 
                 // We know the ISRC
-                if(isrc != null)
+                if(Subchannel.IsrcIsPresent(isrc))
                 {
                     byte i1 = Subchannel.GetIsrcCode(isrc[0]);
                     byte i2 = Subchannel.GetIsrcCode(isrc[1]);
