@@ -161,6 +161,10 @@ public sealed partial class FAT
 
             bool correctSpcApricot = apricotBpb.mainBPB.spc is 1 or 2 or 4 or 8 or 16 or 32 or 64;
 
+            ushort apricotRawSectors  = apricotBpb.mainBPB.sectors;
+            ushort dos33RawSectors    = dos33Bpb.sectors;
+            uint   dos33RawBigSectors = dos33Bpb.big_sectors;
+
             // This is to support FAT partitions on hybrid ISO/USB images
             if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
             {
@@ -227,10 +231,17 @@ public sealed partial class FAT
             }
             else if(bitsInBpsApricot == 1                                             &&
                     correctSpcApricot                                                 &&
-                    apricotBpb.mainBPB is { fats_no: <= 2, root_ent: > 0 }            &&
+                    apricotBpb.mainBPB is { fats_no: 1 or 2, root_ent: > 0 }          &&
                     apricotBpb.mainBPB.sectors <= partition.End - partition.Start + 1 &&
                     apricotBpb.mainBPB.spfat   > 0                                    &&
-                    apricotBpb.partitionCount  == 0)
+                    apricotBpb.partitionCount  == 0                                   &&
+                    HasDataArea(apricotRawSectors,
+                                0,
+                                apricotBpb.mainBPB.rsectors,
+                                apricotBpb.mainBPB.fats_no,
+                                apricotBpb.mainBPB.spfat,
+                                apricotBpb.mainBPB.root_ent,
+                                apricotBpb.mainBPB.bps))
             {
                 AaruLogging.Debug(MODULE_NAME, Localization.Using_Apricot_BPB);
                 useApricotBpb = true;
@@ -278,8 +289,15 @@ public sealed partial class FAT
             else if(bitsInBpsDos33 == 1                                 &&
                     correctSpcDos33                                     &&
                     dos33Bpb.rsectors < partition.End - partition.Start &&
-                    dos33Bpb.fats_no  <= 2                              &&
-                    dos33Bpb is { root_ent: > 0, spfat: > 0 })
+                    dos33Bpb.fats_no is 1 or 2                          &&
+                    dos33Bpb is { root_ent: > 0, spfat: > 0 }           &&
+                    HasDataArea(dos33RawSectors,
+                                dos33RawBigSectors,
+                                dos33Bpb.rsectors,
+                                dos33Bpb.fats_no,
+                                dos33Bpb.spfat,
+                                dos33Bpb.root_ent,
+                                dos33Bpb.bps))
             {
                 if(dos33Bpb.sectors     == 0               &&
                    dos33Bpb.hsectors    <= partition.Start &&

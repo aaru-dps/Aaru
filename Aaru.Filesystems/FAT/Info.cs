@@ -212,6 +212,9 @@ public sealed partial class FAT
         AaruLogging.Debug(MODULE_NAME, "apricot_media_descriptor = 0x{0:X2}", apricotMediaDescriptor);
         AaruLogging.Debug(MODULE_NAME, "apricot_fat_sectors = {0}",           apricotFatSectors);
 
+        ushort rawSectors    = sectors;
+        uint   rawBigSectors = bigSectors;
+
         // This is to support FAT partitions on hybrid ISO/USB images
         if(imagePlugin.Info.MetadataMediaType == MetadataMediaType.OpticalDisc)
         {
@@ -232,8 +235,7 @@ public sealed partial class FAT
         }
 
         // QNX4
-        if(oemString.Contains("QNX4FS"))
-            return false;
+        if(oemString.Contains("QNX4FS")) return false;
 
         // HPFS
         if(16 + partition.Start <= partition.End)
@@ -291,23 +293,37 @@ public sealed partial class FAT
             // BPB
             case 1 when correctSpc                                     &&
                         reservedSecs < partition.End - partition.Start &&
-                        numberOfFats <= 2                              &&
-                        rootEntries  > 0                               &&
-                        fatSectors   > 0:
+                        numberOfFats is 1 or 2                         &&
+                        rootEntries > 0                                &&
+                        fatSectors  > 0                                &&
+                        HasDataArea(rawSectors,
+                                    rawBigSectors,
+                                    reservedSecs,
+                                    numberOfFats,
+                                    fatSectors,
+                                    rootEntries,
+                                    bps):
                 return sectors          == 0
                            ? bigSectors <= partition.End - partition.Start + 1
                            : sectors    <= partition.End - partition.Start + 1;
         }
 
         // Apricot BPB
-        if(bitsInApricotBps == 1                                      &&
-           apricotCorrectSpc                                          &&
-           apricotReservedSecs < partition.End - partition.Start      &&
-           apricotFatsNo       <= 2                                   &&
-           apricotRootEntries  > 0                                    &&
-           apricotFatSectors   > 0                                    &&
-           apricotSectors      <= partition.End - partition.Start + 1 &&
-           apricotPartitions   == 0)
+        if(bitsInApricotBps == 1                                     &&
+           apricotCorrectSpc                                         &&
+           apricotReservedSecs < partition.End - partition.Start     &&
+           apricotFatsNo is 1 or 2                                   &&
+           apricotRootEntries > 0                                    &&
+           apricotFatSectors  > 0                                    &&
+           apricotSectors     <= partition.End - partition.Start + 1 &&
+           apricotPartitions  == 0                                   &&
+           HasDataArea(apricotSectors,
+                       0,
+                       apricotReservedSecs,
+                       apricotFatsNo,
+                       apricotFatSectors,
+                       apricotRootEntries,
+                       apricotBps))
             return true;
 
         // All FAT12 without BPB can only be used on floppies, without partitions.
@@ -1155,4 +1171,16 @@ public sealed partial class FAT
     }
 
 #endregion
+
+    // A FAT volume must have at least one data cluster after the reserved sectors, the FATs and the root directory.
+    // Random data (e.g. audio tracks) often satisfies the individual field checks but not this one.
+    static bool HasDataArea(uint sectors,     uint bigSectors, uint reservedSectors, uint fats, uint sectorsPerFat,
+                            uint rootEntries, uint bytesPerSector)
+    {
+        if(bytesPerSector == 0) return false;
+
+        long metadataSectors = reservedSectors + (long)fats * sectorsPerFat + rootEntries * 32L / bytesPerSector;
+
+        return (sectors == 0 ? bigSectors : sectors) > metadataSectors;
+    }
 }
