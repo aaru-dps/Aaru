@@ -359,7 +359,8 @@ public sealed partial class Cdrdao
                                          ulong.Parse(lengthString[1]) * 75      +
                                          ulong.Parse(lengthString[2]);
 
-                    currentTrack.Indexes.Add(nextIndex, nextIndexPos + currentTrack.Pregap + currentTrack.StartSector);
+                    currentTrack.Indexes.Add(nextIndex++,
+                                             nextIndexPos + currentTrack.Pregap + currentTrack.StartSector);
                 }
                 else if(matchPregap.Success)
                 {
