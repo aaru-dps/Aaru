@@ -108,7 +108,7 @@ public sealed partial class Reiser4
         {
             Type         = FS_TYPE,
             ClusterSize  = reiserSb.blocksize,
-            Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
+            Clusters     = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
             VolumeName   = StringHandlers.CToString(reiserSb.label, encoding),
             VolumeSerial = reiserSb.uuid.ToString()
         };
