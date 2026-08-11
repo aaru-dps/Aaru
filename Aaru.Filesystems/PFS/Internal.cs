@@ -39,21 +39,21 @@ public sealed partial class PFS
     sealed class DirEntryCacheItem
     {
         /// <summary>Anode number for this entry</summary>
-        public uint Anode { get; init; }
+        public uint           Anode          { get; init; }
         /// <summary>Entry type (file, directory, link, etc.)</summary>
-        public EntryType Type { get; init; }
+        public EntryType      Type           { get; init; }
         /// <summary>File size in bytes</summary>
-        public uint Size { get; set; }
+        public uint           Size           { get; set; }
         /// <summary>Protection bits</summary>
-        public ProtectionBits Protection { get; init; }
+        public ProtectionBits Protection     { get; init; }
         /// <summary>Creation day (days since Jan 1, 1978)</summary>
-        public ushort CreationDay { get; init; }
+        public ushort         CreationDay    { get; init; }
         /// <summary>Creation minute</summary>
-        public ushort CreationMinute { get; init; }
+        public ushort         CreationMinute { get; init; }
         /// <summary>Creation tick</summary>
-        public ushort CreationTick { get; init; }
+        public ushort         CreationTick   { get; init; }
         /// <summary>File comment</summary>
-        public string Comment { get; set; }
+        public string         Comment        { get; set; }
     }
 
 #endregion
@@ -94,6 +94,9 @@ public sealed partial class PFS
 
         /// <summary>File size in bytes</summary>
         internal uint FileSize { get; init; }
+
+        /// <summary>File position the anode/block cursor corresponds to</summary>
+        internal long CursorPosition { get; set; }
 
         /// <inheritdoc />
         public string Path { get; init; }

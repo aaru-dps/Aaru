@@ -181,6 +181,32 @@ public sealed partial class PFS
         // Limit read to remaining file size
         if(length > pfsNode.Length - pfsNode.Offset) length = pfsNode.Length - pfsNode.Offset;
 
+        // A Seek only updates Offset; re-derive the anode/block cursor if they disagree
+        if(pfsNode.Offset != pfsNode.CursorPosition)
+        {
+            ErrorNumber seekErrno = GetAnode(pfsNode.StartAnode, out Anode anode);
+
+            if(seekErrno != ErrorNumber.NoError) return seekErrno;
+
+            var blockIndex = (ulong)pfsNode.Offset / _blockSize;
+
+            while(anode.clustersize > 0 && blockIndex >= anode.clustersize)
+            {
+                if(anode.next == ANODE_EOF) return ErrorNumber.InvalidArgument;
+
+                blockIndex -= anode.clustersize;
+
+                seekErrno = GetAnode(anode.next, out anode);
+
+                if(seekErrno != ErrorNumber.NoError) return seekErrno;
+            }
+
+            pfsNode.CurrentAnode   = anode;
+            pfsNode.AnodeOffset    = (uint)blockIndex;
+            pfsNode.BlockOffset    = (uint)((ulong)pfsNode.Offset % _blockSize);
+            pfsNode.CursorPosition = pfsNode.Offset;
+        }
+
         var  bufferOffset   = 0;
         long bytesRemaining = length;
 
@@ -207,9 +233,10 @@ public sealed partial class PFS
             // Copy data to buffer
             Array.Copy(blockData, (int)pfsNode.BlockOffset, buffer, bufferOffset, dataInBlock);
 
-            bufferOffset   += dataInBlock;
-            bytesRemaining -= dataInBlock;
-            pfsNode.Offset += dataInBlock;
+            bufferOffset           += dataInBlock;
+            bytesRemaining         -= dataInBlock;
+            pfsNode.Offset         += dataInBlock;
+            pfsNode.CursorPosition =  pfsNode.Offset;
 
             // Update position within block
             pfsNode.BlockOffset += (uint)dataInBlock;
