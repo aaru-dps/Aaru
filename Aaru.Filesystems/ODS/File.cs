@@ -131,7 +131,7 @@ public sealed partial class ODS
         long length;
 
         if(efblk > 0)
-            length = (efblk - 1) * ODS_BLOCK_SIZE + fileHeader.recattr.ffbyte;
+            length = ((long)efblk - 1) * ODS_BLOCK_SIZE + fileHeader.recattr.ffbyte;
         else
             length = 0;
 
@@ -301,7 +301,7 @@ public sealed partial class ODS
         long length;
 
         if(efblk > 0)
-            length = (efblk - 1) * ODS_BLOCK_SIZE + fileHeader.recattr.ffbyte;
+            length = ((long)efblk - 1) * ODS_BLOCK_SIZE + fileHeader.recattr.ffbyte;
         else
             length = 0;
 
@@ -546,7 +546,7 @@ public sealed partial class ODS
         uint efblk = header.recattr.efblk.Value;
 
         if(efblk > 0)
-            info.Length = (efblk - 1) * ODS_BLOCK_SIZE + header.recattr.ffbyte;
+            info.Length = ((long)efblk - 1) * ODS_BLOCK_SIZE + header.recattr.ffbyte;
         else
             info.Length = 0;
 
