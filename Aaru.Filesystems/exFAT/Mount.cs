@@ -80,6 +80,9 @@ public sealed partial class exFAT
         _clusterCount                = vbr.ClusterCount;
         _firstClusterOfRootDirectory = vbr.FirstClusterOfRootDirectory;
 
+        if((ulong)_clusterCount * _sectorsPerCluster > partition.End - partition.Start + 1)
+            return ErrorNumber.InvalidArgument;
+
         // Determine which FAT to use
         _useFirstFat = !vbr.VolumeFlags.HasFlag(VolumeFlags.ActiveFat);
 
@@ -107,7 +110,8 @@ public sealed partial class exFAT
 
         // Cast FAT bytes to uint array (exFAT uses 32-bit FAT entries)
         _fatEntries = new uint[_clusterCount + 2];
-        Buffer.BlockCopy(fatBytes, 0, _fatEntries, 0, Math.Min(fatBytes.Length, (int)((_clusterCount + 2) * 4)));
+
+        Buffer.BlockCopy(fatBytes, 0, _fatEntries, 0, (int)Math.Min(fatBytes.Length, ((long)_clusterCount + 2) * 4));
 
         // Validate FAT entries 0 and 1
         if((_fatEntries[0] & 0xFFFFFFF0) != 0xFFFFFFF0)
