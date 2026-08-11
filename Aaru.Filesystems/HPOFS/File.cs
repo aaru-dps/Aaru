@@ -246,7 +246,7 @@ public sealed partial class HPOFS
             extentStart += extentBytes;
         }
 
-        mynode.Offset += read;
+        mynode.Offset += bytesRead;
         read          =  bytesRead;
 
         return ErrorNumber.NoError;
