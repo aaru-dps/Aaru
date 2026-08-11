@@ -121,9 +121,9 @@ public sealed partial class exFAT
             {
                 // For non-contiguous files, follow the FAT chain
                 clusterNumber = GetClusterAtPosition(myNode.FirstCluster, (uint)(firstCluster + i));
-
-                if(clusterNumber < 2 || clusterNumber > _clusterCount + 1) return ErrorNumber.InvalidArgument;
             }
+
+            if(clusterNumber < 2 || clusterNumber > _clusterCount + 1) return ErrorNumber.InvalidArgument;
 
             // Calculate sector for this cluster
             ulong sector = _clusterHeapOffset + (ulong)(clusterNumber - 2) * _sectorsPerCluster;
