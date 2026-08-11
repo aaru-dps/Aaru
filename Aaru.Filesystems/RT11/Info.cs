@@ -113,7 +113,7 @@ public sealed partial class RT11
         {
             Type        = FS_TYPE,
             ClusterSize = (uint)(homeblock.cluster * 512),
-            Clusters    = homeblock.cluster,
+            Clusters    = homeblock.cluster > 0 ? (partition.End - partition.Start + 1) / homeblock.cluster : 0,
             VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, encoding),
             Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
         };
