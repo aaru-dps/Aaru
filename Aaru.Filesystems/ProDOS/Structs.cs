@@ -75,15 +75,15 @@ public sealed partial class ProDOSPlugin
         /// <summary>Creation time. Offset 0x1A, 2 bytes</summary>
         public ushort creation_time;
         /// <summary>Version. Offset 0x1C, 1 byte</summary>
-        public byte version;
+        public byte   version;
         /// <summary>Minimum version. Offset 0x1D, 1 byte</summary>
-        public byte min_version;
+        public byte   min_version;
         /// <summary>Access flags. Offset 0x1E, 1 byte</summary>
-        public byte access;
+        public byte   access;
         /// <summary>Entry length (always 0x27). Offset 0x1F, 1 byte</summary>
-        public byte entry_length;
+        public byte   entry_length;
         /// <summary>Entries per block (always 0x0D). Offset 0x20, 1 byte</summary>
-        public byte entries_per_block;
+        public byte   entries_per_block;
         /// <summary>Number of active entries. Offset 0x21, 2 bytes</summary>
         public ushort entry_count;
         /// <summary>Bitmap start block. Offset 0x23, 2 bytes</summary>
@@ -115,19 +115,19 @@ public sealed partial class ProDOSPlugin
         /// <summary>GS/OS case bits for filename Offset 0x1C, 2 bytes</summary>
         public ushort case_bits;
         /// <summary>Access flags Offset 0x1E, 1 byte</summary>
-        public byte access;
+        public byte   access;
         /// <summary>Entry length (always 0x27) Offset 0x1F, 1 byte</summary>
-        public byte entry_length;
+        public byte   entry_length;
         /// <summary>Entries per block (always 0x0D) Offset 0x20, 1 byte</summary>
-        public byte entries_per_block;
+        public byte   entries_per_block;
         /// <summary>Number of active entries Offset 0x21, 2 bytes</summary>
         public ushort entry_count;
         /// <summary>Parent directory block Offset 0x23, 2 bytes</summary>
         public ushort parent_block;
         /// <summary>Entry number in parent block Offset 0x25, 1 byte</summary>
-        public byte parent_entry;
+        public byte   parent_entry;
         /// <summary>Parent entry length Offset 0x26, 1 byte</summary>
-        public byte parent_entry_length;
+        public byte   parent_entry_length;
     }
 
 #endregion
@@ -144,7 +144,7 @@ public sealed partial class ProDOSPlugin
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
         public byte[] file_name;
         /// <summary>File type Offset 0x10, 1 byte</summary>
-        public byte file_type;
+        public byte   file_type;
         /// <summary>Key block pointer Offset 0x11, 2 bytes</summary>
         public ushort key_pointer;
         /// <summary>Blocks used Offset 0x13, 2 bytes</summary>
@@ -159,7 +159,7 @@ public sealed partial class ProDOSPlugin
         /// <summary>GS/OS case bits for filename Offset 0x1C, 2 bytes</summary>
         public ushort case_bits;
         /// <summary>Access flags Offset 0x1E, 1 byte</summary>
-        public byte access;
+        public byte   access;
         /// <summary>Auxiliary type Offset 0x1F, 2 bytes</summary>
         public ushort aux_type;
         /// <summary>Modification date Offset 0x21, 2 bytes</summary>
@@ -199,8 +199,8 @@ public sealed partial class ProDOSPlugin
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     struct ForkEntry
     {
-        /// <summary>Storage type (0x10=seedling, 0x20=sapling, 0x30=tree) Offset 0x00, 1 byte</summary>
-        public byte storage_type;
+        /// <summary>Storage type (0x01=seedling, 0x02=sapling, 0x03=tree) Offset 0x00, 1 byte</summary>
+        public byte   storage_type;
         /// <summary>Key block pointer Offset 0x01, 2 bytes</summary>
         public ushort key_block;
         /// <summary>Blocks used by this fork Offset 0x03, 2 bytes</summary>

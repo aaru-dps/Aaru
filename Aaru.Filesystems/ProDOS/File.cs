@@ -90,7 +90,7 @@ public sealed partial class ProDOSPlugin
                          extKeyBlock.data_fork.eof[2] << 16;
 
             // Use data fork's storage type and key block
-            storageType = (byte)(extKeyBlock.data_fork.storage_type >> 4);
+            storageType = extKeyBlock.data_fork.storage_type;
             keyBlock    = extKeyBlock.data_fork.key_block;
         }
         else

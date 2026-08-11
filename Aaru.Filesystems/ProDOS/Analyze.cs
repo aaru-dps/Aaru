@@ -155,7 +155,7 @@ public sealed partial class ProDOSPlugin
 
             ExtendedKeyBlock extKeyBlock = Marshal.ByteArrayToStructureLittleEndian<ExtendedKeyBlock>(extBlock);
 
-            var dataStorageType = (byte)(extKeyBlock.data_fork.storage_type >> 4);
+            var dataStorageType = extKeyBlock.data_fork.storage_type;
 
             var dataForkEof = (uint)(extKeyBlock.data_fork.eof[0]      |
                                      extKeyBlock.data_fork.eof[1] << 8 |
@@ -172,7 +172,7 @@ public sealed partial class ProDOSPlugin
 
             if(errno != ErrorNumber.NoError) return errno;
 
-            var resourceStorageType = (byte)(extKeyBlock.resource_fork.storage_type >> 4);
+            var resourceStorageType = extKeyBlock.resource_fork.storage_type;
 
             var resourceForkEof = (uint)(extKeyBlock.resource_fork.eof[0]      |
                                          extKeyBlock.resource_fork.eof[1] << 8 |

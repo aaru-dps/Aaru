@@ -167,7 +167,7 @@ public sealed partial class ProDOSPlugin
         if(resForkEof == 0) return ErrorNumber.NoSuchExtendedAttribute;
 
         // Read the resource fork data based on its storage type
-        var storageType = (byte)(extKeyBlock.resource_fork.storage_type >> 4);
+        var storageType = extKeyBlock.resource_fork.storage_type;
 
         return ReadForkData(storageType, extKeyBlock.resource_fork.key_block, resForkEof, ref buf);
     }
