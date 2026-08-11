@@ -136,7 +136,15 @@ public sealed partial class HPFS
     /// <param name="dnode">The dnode to process.</param>
     /// <param name="cache">Dictionary to cache entries into (filename to fnode mapping).</param>
     /// <returns>Error number indicating success or failure.</returns>
-    ErrorNumber CacheDNodeEntries(DNode dnode, Dictionary<string, uint> cache)
+    ErrorNumber CacheDNodeEntries(DNode dnode, Dictionary<string, uint> cache) =>
+        CacheDNodeEntries(dnode, cache, [dnode.self]);
+
+    /// <summary>Recursively caches directory entries from a dnode and its children.</summary>
+    /// <param name="dnode">The dnode to process.</param>
+    /// <param name="cache">Dictionary to cache entries into (filename to fnode mapping).</param>
+    /// <param name="visited">Dnode sectors already visited, to break pointer loops.</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber CacheDNodeEntries(DNode dnode, Dictionary<string, uint> cache, HashSet<uint> visited)
     {
         // Parse directory entries from the dnode
         var offset    = 0;
@@ -177,10 +185,13 @@ public sealed partial class HPFS
                 {
                     var downDnode = BitConverter.ToUInt32(dnode.dirent, downPtrOffset);
 
-                    // Recursively process child dnode
-                    ErrorNumber errno = ReadDNode(downDnode, out DNode childDnode);
+                    // Recursively process child dnode, skipping already visited ones to break loops
+                    if(visited.Add(downDnode))
+                    {
+                        ErrorNumber errno = ReadDNode(downDnode, out DNode childDnode);
 
-                    if(errno == ErrorNumber.NoError) CacheDNodeEntries(childDnode, cache);
+                        if(errno == ErrorNumber.NoError) CacheDNodeEntries(childDnode, cache, visited);
+                    }
                 }
             }
 
@@ -264,7 +275,16 @@ public sealed partial class HPFS
     /// <param name="name">Name to search for (case-insensitive).</param>
     /// <param name="entry">The found directory entry.</param>
     /// <returns>Error number indicating success or failure.</returns>
-    ErrorNumber FindEntryInDnode(uint dnodeSector, string name, out DirectoryEntry entry)
+    ErrorNumber FindEntryInDnode(uint dnodeSector, string name, out DirectoryEntry entry) =>
+        FindEntryInDnode(dnodeSector, name, out entry, [dnodeSector]);
+
+    /// <summary>Searches a dnode tree for an entry by name.</summary>
+    /// <param name="dnodeSector">Starting dnode sector.</param>
+    /// <param name="name">Name to search for (case-insensitive).</param>
+    /// <param name="entry">The found directory entry.</param>
+    /// <param name="visited">Dnode sectors already visited, to break pointer loops.</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber FindEntryInDnode(uint dnodeSector, string name, out DirectoryEntry entry, HashSet<uint> visited)
     {
         entry = default(DirectoryEntry);
 
@@ -315,7 +335,9 @@ public sealed partial class HPFS
                         {
                             var downDnode = BitConverter.ToUInt32(dnode.dirent, downPtrOffset);
 
-                            return FindEntryInDnode(downDnode, name, out entry);
+                            if(!visited.Add(downDnode)) return ErrorNumber.NoSuchFile;
+
+                            return FindEntryInDnode(downDnode, name, out entry, visited);
                         }
                     }
                 }
@@ -332,7 +354,11 @@ public sealed partial class HPFS
 
                     // If this is the last entry, search its subtree
                     if(currentEntry.flags.HasFlag(DirectoryEntryFlags.Last))
-                        return FindEntryInDnode(downDnode, name, out entry);
+                    {
+                        if(!visited.Add(downDnode)) return ErrorNumber.NoSuchFile;
+
+                        return FindEntryInDnode(downDnode, name, out entry, visited);
+                    }
                 }
             }
 
