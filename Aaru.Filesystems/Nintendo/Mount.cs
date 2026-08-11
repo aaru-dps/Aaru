@@ -908,7 +908,7 @@ public sealed partial class NintendoPlugin
 
         AaruLogging.Debug(MODULE_NAME, "FST has {0} entries", totalEntries);
 
-        if(totalEntries == 0 || totalEntries * 12 > (uint)fstData.Length)
+        if(totalEntries == 0 || (ulong)totalEntries * 12 > (ulong)fstData.Length)
         {
             AaruLogging.Debug(MODULE_NAME,
                               "ParseFst: invalid totalEntries ({0}), fstData.Length = {1}",
@@ -935,6 +935,13 @@ public sealed partial class NintendoPlugin
             partition.FstEntries[i] = Marshal.ByteArrayToStructureBigEndian<FstEntry>(fstData, (int)(i * 12), 12);
 
             uint nameOffset = partition.FstEntries[i].TypeAndNameOffset & 0x00FFFFFF;
+
+            if(stringTableOffset + nameOffset >= (uint)fstData.Length)
+            {
+                AaruLogging.Debug(MODULE_NAME, "ParseFst: entry[{0}] name offset out of bounds", i);
+
+                return ErrorNumber.InvalidArgument;
+            }
 
             partition.FstNames[i] =
                 StringHandlers.CToString(fstData, _encoding, false, (int)(stringTableOffset + nameOffset));
