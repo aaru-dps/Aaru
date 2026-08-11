@@ -423,9 +423,7 @@ public sealed partial class Cdrdao
                         currentTrack.Trackfile = new CdrdaoTrackFile
                         {
                             Datafilter =
-                                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                                    matchAudioFile.Groups["filename"]
-                                                                                       .Value)),
+                                ResolveDataFile(matchAudioFile.Groups["filename"].Value, imageFilter.ParentFolder),
                             Datafile = matchAudioFile.Groups["filename"].Value,
                             Offset = matchAudioFile.Groups["base_offset"].Value != ""
                                          ? ulong.Parse(matchAudioFile.Groups["base_offset"].Value)
@@ -433,6 +431,14 @@ public sealed partial class Cdrdao
                             Filetype = "BINARY",
                             Sequence = currentTrackNumber
                         };
+
+                        if(currentTrack.Trackfile.Datafilter is null)
+                        {
+                            AaruLogging.Error(Localization.Cannot_find_data_file_0,
+                                              matchAudioFile.Groups["filename"].Value);
+
+                            return ErrorNumber.NoSuchFile;
+                        }
 
                         ulong startSectors = 0;
 
@@ -472,17 +478,21 @@ public sealed partial class Cdrdao
 
                         currentTrack.Trackfile = new CdrdaoTrackFile
                         {
-                            Datafilter =
-                                PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                                    matchFile.Groups["filename"]
-                                                                                       .Value)),
-                            Datafile = matchAudioFile.Groups["filename"].Value,
+                            Datafilter = ResolveDataFile(matchFile.Groups["filename"].Value, imageFilter.ParentFolder),
+                            Datafile   = matchFile.Groups["filename"].Value,
                             Offset = matchFile.Groups["base_offset"].Value != ""
                                          ? ulong.Parse(matchFile.Groups["base_offset"].Value)
                                          : 0,
                             Filetype = "BINARY",
                             Sequence = currentTrackNumber
                         };
+
+                        if(currentTrack.Trackfile.Datafilter is null)
+                        {
+                            AaruLogging.Error(Localization.Cannot_find_data_file_0, matchFile.Groups["filename"].Value);
+
+                            return ErrorNumber.NoSuchFile;
+                        }
 
                         if(matchFile.Groups["length"].Value != "")
                         {
@@ -1611,6 +1621,38 @@ public sealed partial class Cdrdao
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Resolves the path of a file referenced by a TOC</summary>
+    /// <remarks>
+    ///     TOC files are commonly moved away from the machine that created them, so the path they contain is often
+    ///     meaningless, or written for another operating system. Files sitting next to the TOC therefore take
+    ///     precedence over anything the path itself points to, including the current working directory.
+    /// </remarks>
+    /// <param name="datafile">Path, as written in the TOC</param>
+    /// <param name="parentFolder">Folder containing the TOC</param>
+    /// <returns>Filter for the referenced file, <c>null</c> if it cannot be found</returns>
+    static IFilter ResolveDataFile(string datafile, string parentFolder)
+    {
+        IFilter filter = null;
+
+        // Path as written in the TOC, relative to the TOC itself, with the separators of this operating
+        // system, so paths written in another one still resolve
+        if(!Path.IsPathRooted(datafile))
+        {
+            string relative = datafile.Replace('\\', '/').Replace('/', Path.DirectorySeparatorChar);
+
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, relative));
+        }
+
+        // Filename alone, next to the TOC, which is where it is found when the TOC has been moved
+        string filename = datafile[(datafile.LastIndexOfAny(['/', '\\']) + 1)..];
+
+        if(filter is null && filename.Length > 0)
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, filename));
+
+        // Path as written in the TOC, verbatim, be it absolute or relative to the working directory
+        return filter ?? PluginRegister.Singleton.GetFilter(datafile);
     }
 
     /// <inheritdoc />
