@@ -199,9 +199,9 @@ public sealed partial class CPM
                         Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
 
                     // Check that format byte and sidedness indicate the same number of sizes
-                    if(amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0 ||
-                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 1 ||
-                       amsSb.format == 2 && (amsSb.sidedness & 0x02) == 2)
+                    if(amsSb.format == 0 && (amsSb.sidedness & 0x03) == 0 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x03) == 1 ||
+                       amsSb.format == 2 && (amsSb.sidedness & 0x03) == 2)
                     {
                         // Calculate device limits
                         var sides       = (ulong)(amsSb.format == 0 ? 1 : 2);
@@ -281,7 +281,7 @@ public sealed partial class CPM
 
                             if(amsSb.format == 2)
                             {
-                                _workingDefinition.order = (amsSb.sidedness & 0x02) switch
+                                _workingDefinition.order = (amsSb.sidedness & 0x03) switch
                                                            {
                                                                1 => "SIDES",
                                                                2 => "CYLINDERS",
