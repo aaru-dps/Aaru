@@ -686,7 +686,7 @@ public sealed partial class ODS
             accdate = BitConverter.ToUInt64(header.reserved, identOffsetInRes + 36);
             attdate = BitConverter.ToUInt64(header.reserved, identOffsetInRes + 44);
         }
-        else if(identOffsetInRes + 46 <= header.reserved.Length)
+        else if(identOffsetInRes + 54 <= header.reserved.Length)
         {
             // ODS-2 ident area
             // Skip filename (20 bytes), revision (2) = offset 22 for credate
