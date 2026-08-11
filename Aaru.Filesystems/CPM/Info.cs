@@ -955,6 +955,8 @@ public sealed partial class CPM
                             // Head changes after whole side
                             else if(string.Equals(def.order, "CYLINDERS", StringComparison.InvariantCultureIgnoreCase))
                             {
+                                _sectorMask = new int[def.side1.sectorIds.Length + def.side2.sectorIds.Length];
+
                                 for(var m = 0; m < def.side1.sectorIds.Length; m++)
                                     _sectorMask[m] = def.side1.sectorIds[m] - def.side1.sectorIds[0];
 
