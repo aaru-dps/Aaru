@@ -49,7 +49,7 @@ public sealed partial class BFS
 
         if(sectorsToRead == 0) sectorsToRead = 1;
 
-        if(_partition.Start + sectorAddress >= _partition.End)
+        if(_partition.Start + sectorAddress + sectorsToRead > _partition.End + 1)
         {
             AaruLogging.Debug(MODULE_NAME, "Block {0} is past partition end", blockNumber);
 

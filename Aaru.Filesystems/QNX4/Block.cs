@@ -55,7 +55,7 @@ public sealed partial class QNX4
         // QNX4 block numbers are 1-based, convert to 0-based sector
         ulong sectorAddress = blockNumber - 1;
 
-        if(_partition.Start + sectorAddress >= _partition.End)
+        if(_partition.Start + sectorAddress > _partition.End)
         {
             AaruLogging.Debug(MODULE_NAME, "ReadBlock: Block {0} is past partition end", blockNumber);
 
