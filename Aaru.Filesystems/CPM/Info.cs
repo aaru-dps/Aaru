@@ -411,7 +411,8 @@ public sealed partial class CPM
                             for(var si = 0; si < hddSb.sectorsPerTrack; si++)
                                 _workingDefinition.side1.sectorIds[si] = si + 1;
 
-                            for(var si = 0; si < hddSb.spt; si++) _workingDefinition.side2.sectorIds[si] = si + 1;
+                            for(var si = 0; si < hddSb.sectorsPerTrack; si++)
+                                _workingDefinition.side2.sectorIds[si] = si + 1;
                         }
                     }
                 }
