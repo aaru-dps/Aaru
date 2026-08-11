@@ -587,6 +587,8 @@ public sealed partial class FAT
 
                 if((lfnEntry.sequence & LFN_ERASED) > 0) continue;
 
+                if(lfnSequence is < 1 or > 20) continue;
+
                 if((lfnEntry.sequence & LFN_LAST) > 0)
                 {
                     lastLfnName     = new byte[lfnSequence * 26];
@@ -598,6 +600,8 @@ public sealed partial class FAT
                 if(lfnEntry.checksum != lastLfnChecksum) continue;
 
                 lfnSequence--;
+
+                if(lfnSequence * 26 + 26 > lastLfnName.Length) continue;
 
                 Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26,      10);
                 Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
