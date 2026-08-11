@@ -792,16 +792,16 @@ public sealed partial class NintendoPlugin
     /// <param name="offset">Offset within the partition data (in decrypted space)</param>
     /// <param name="size">Number of bytes to read</param>
     /// <returns>Decrypted data, or null on error</returns>
-    byte[] ReadWiiPartitionData(PartitionInfo partition, uint offset, uint size)
+    byte[] ReadWiiPartitionData(PartitionInfo partition, ulong offset, uint size)
     {
-        var  result     = new byte[size];
-        uint bytesRead  = 0;
-        uint currentOff = offset;
+        var   result     = new byte[size];
+        uint  bytesRead  = 0;
+        ulong currentOff = offset;
 
         while(bytesRead < size)
         {
-            uint blockIndex  = currentOff / WII_CLUSTER_DATA_SIZE;
-            uint blockOffset = currentOff % WII_CLUSTER_DATA_SIZE;
+            var  blockIndex  = (uint)(currentOff / WII_CLUSTER_DATA_SIZE);
+            var  blockOffset = (uint)(currentOff % WII_CLUSTER_DATA_SIZE);
             uint bytesToRead = Math.Min(size - bytesRead, WII_CLUSTER_DATA_SIZE - blockOffset);
 
             // Physical offset on disc = partition offset + data offset + block * 0x8000

@@ -186,8 +186,14 @@ public sealed partial class NintendoPlugin
                                    DOL_VIRTUAL_INDEX      => partition.DolOffset,
                                    BOOT_BIN_VIRTUAL_INDEX => BOOT_BIN_OFFSET,
                                    BI2_BIN_VIRTUAL_INDEX  => BI2_BIN_OFFSET,
-                                   _ when entryIndex >= 0 => partition.FstEntries[entryIndex].OffsetOrParent,
-                                   _                      => 0UL
+
+                                   // Wii FST entries store file offsets divided by 4
+                                   _ when entryIndex >= 0 => _isWii
+                                                                 ? (ulong)partition.FstEntries[entryIndex]
+                                                                      .OffsetOrParent <<
+                                                                   2
+                                                                 : partition.FstEntries[entryIndex].OffsetOrParent,
+                                   _ => 0UL
                                };
 
         ulong length = entryIndex switch

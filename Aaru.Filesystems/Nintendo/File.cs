@@ -325,13 +325,16 @@ public sealed partial class NintendoPlugin
         PartitionInfo partition = _partitions[myNode.PartitionIndex];
 
         // Get the file's data offset from the FST entry or virtual file offset
-        uint fileDataOffset = myNode.FstIndex switch
-                              {
-                                  DOL_VIRTUAL_INDEX      => partition.DolOffset,
-                                  BOOT_BIN_VIRTUAL_INDEX => BOOT_BIN_OFFSET,
-                                  BI2_BIN_VIRTUAL_INDEX  => BI2_BIN_OFFSET,
-                                  _                      => partition.FstEntries[myNode.FstIndex].OffsetOrParent
-                              };
+        // Wii FST entries store file offsets divided by 4
+        ulong fileDataOffset = myNode.FstIndex switch
+                               {
+                                   DOL_VIRTUAL_INDEX      => partition.DolOffset,
+                                   BOOT_BIN_VIRTUAL_INDEX => BOOT_BIN_OFFSET,
+                                   BI2_BIN_VIRTUAL_INDEX  => BI2_BIN_OFFSET,
+                                   _ => _isWii
+                                            ? (ulong)partition.FstEntries[myNode.FstIndex].OffsetOrParent << 2
+                                            : partition.FstEntries[myNode.FstIndex].OffsetOrParent
+                               };
 
         if(_isWiiU)
         {
@@ -355,7 +358,7 @@ public sealed partial class NintendoPlugin
         else if(_isWii)
         {
             // Wii: read from encrypted partition data
-            byte[] data = ReadWiiPartitionData(partition, (uint)(fileDataOffset + myNode.Offset), (uint)length);
+            byte[] data = ReadWiiPartitionData(partition, fileDataOffset + (ulong)myNode.Offset, (uint)length);
 
             if(data == null) return ErrorNumber.InOutError;
 
