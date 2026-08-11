@@ -104,7 +104,7 @@ public sealed partial class BTRFS
 
             int dataOffset = headerSize + (int)item.offset;
 
-            if(dataOffset + inlineHeaderLen > leafData.Length) continue;
+            if(dataOffset < headerSize || dataOffset + inlineHeaderLen > leafData.Length) continue;
 
             FileExtentItem extentItem =
                 Marshal.ByteArrayToStructureLittleEndian<FileExtentItem>(leafData,
