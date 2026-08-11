@@ -258,9 +258,9 @@ public sealed partial class Locus
 
         while(offset + DIRSIZ + 2 <= data.Length) // 2 bytes for inode + 14 bytes for name
         {
-            short ino = _bigEndian
-                            ? (short)(data[offset] << 8 | data[offset + 1])
-                            : (short)(data[offset]      | data[offset + 1] << 8);
+            ushort ino = _bigEndian
+                             ? (ushort)(data[offset] << 8 | data[offset + 1])
+                             : (ushort)(data[offset]      | data[offset + 1] << 8);
 
             offset += 2;
 
