@@ -147,7 +147,7 @@ public sealed partial class VxFS
         sbInformation.AppendFormat(Localization.Volume_name_0, StringHandlers.CToString(vxSb.vs_fname, encoding))
                      .AppendLine();
 
-        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, vxSb.vs_bsize, vxSb.vs_size)
+        sbInformation.AppendFormat(Localization.Volume_has_0_blocks_of_1_bytes_each, vxSb.vs_size, vxSb.vs_bsize)
                      .AppendLine();
 
         sbInformation.AppendFormat(Localization.Volume_has_0_inodes_per_block, vxSb.vs_inopb).AppendLine();
