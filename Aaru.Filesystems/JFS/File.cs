@@ -353,12 +353,12 @@ public sealed partial class JFS
     /// <param name="inode">The JFS inode</param>
     /// <param name="inodeNumber">The inode number</param>
     /// <returns>The FileEntryInfo structure</returns>
-    static FileEntryInfo InodeToFileEntryInfo(in Inode inode, uint inodeNumber)
+    FileEntryInfo InodeToFileEntryInfo(in Inode inode, uint inodeNumber)
     {
         var info = new FileEntryInfo
         {
             Attributes          = FileAttributes.None,
-            BlockSize           = PSIZE,
+            BlockSize           = _superblock.s_bsize,
             Inode               = inodeNumber,
             Length              = (long)inode.di_size,
             Links               = inode.di_nlink,

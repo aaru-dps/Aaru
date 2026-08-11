@@ -47,7 +47,6 @@ public sealed partial class BOFS
         Track0 track0 = Marshal.ByteArrayToStructureBigEndian<Track0>(sector);
 
         return track0.VersionNumber is 0x30000 && track0.BytesPerSector is 512;
-        return false;
     }
 
     /// <inheritdoc />
