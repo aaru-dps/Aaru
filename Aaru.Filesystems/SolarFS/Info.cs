@@ -90,7 +90,7 @@ public sealed partial class SolarFS
         var bpbStrings = new byte[8];
         Array.Copy(bpbSector, 0x03, bpbStrings, 0, 8);
         bpb.OEMName = StringHandlers.CToString(bpbStrings);
-        bpbStrings  = new byte[8];
+        bpbStrings  = new byte[11];
         Array.Copy(bpbSector, 0x2A, bpbStrings, 0, 11);
         bpb.vol_name = StringHandlers.CToString(bpbStrings, encoding);
         bpbStrings   = new byte[8];
