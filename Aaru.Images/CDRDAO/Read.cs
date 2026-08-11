@@ -1354,6 +1354,8 @@ public sealed partial class Cdrdao
                 return ErrorNumber.NotSupported;
         }
 
+        if(aaruTrack.Subchannel && tag != SectorTagType.CdSectorSubchannel) sectorSkip += 96;
+
         buffer = new byte[sectorSize * length];
 
         _imageStream = aaruTrack.Trackfile.Datafilter.GetDataForkStream();
