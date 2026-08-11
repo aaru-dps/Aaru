@@ -252,6 +252,8 @@ public sealed partial class NTFS
         List<(long offset, long length)> runs          = [];
         long                             currentOffset = 0;
 
+        if(end > data.Length) end = data.Length;
+
         while(offset < end)
         {
             byte header = data[offset];
