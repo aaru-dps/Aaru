@@ -61,6 +61,9 @@ public sealed partial class RT11
         // Radix-50 character set: " ABCDEFGHIJKLMNOPQRSTUVWXYZ$.%0123456789"
         const string radix50Chars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ$.%0123456789";
 
+        // Maximum legal Radix-50 word is 39*1600 + 39*40 + 39 = 63999
+        if(word >= 64000) return "";
+
         var chars = new char[3];
 
         // Extract 3 characters (each is 0-39, requiring ~5.3 bits, packed in base-40)
