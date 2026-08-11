@@ -269,7 +269,7 @@ public sealed partial class CPM
 
                     bool hidden = (entry.statusUser & 0x80) == 0x80;
                     bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
-                    bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+                    bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[1] & 0x80) == 0x80;
 
                     //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
                     int user = entry.statusUser & 0x0F;
@@ -376,7 +376,7 @@ public sealed partial class CPM
 
                     bool hidden = (entry.statusUser & 0x80) == 0x80;
                     bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
-                    bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[2] & 0x80) == 0x80;
+                    bool system = (entry.filename[1] & 0x80) == 0x80 || (entry.extension[1] & 0x80) == 0x80;
 
                     //bool backed = (entry.filename[3] & 0x80) == 0x80 || (entry.extension[3] & 0x80) == 0x80;
                     int user = entry.statusUser & 0x0F;
