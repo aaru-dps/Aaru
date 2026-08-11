@@ -239,7 +239,7 @@ public sealed partial class ISO9660
         node = new Iso9660FileNode
         {
             Path   = path,
-            Length = (long)entry.Size,
+            Length = entry.Zisofs is not null ? entry.Zisofs.Value.uncomp_len : (long)entry.Size,
             Offset = 0,
             Dentry = entry
         };
