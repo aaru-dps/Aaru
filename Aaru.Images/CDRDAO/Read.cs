@@ -973,12 +973,13 @@ public sealed partial class Cdrdao
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -1062,7 +1063,7 @@ public sealed partial class Cdrdao
 
         if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
         for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
@@ -1208,7 +1209,7 @@ public sealed partial class Cdrdao
 
         if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         uint sectorOffset = 0;
         uint sectorSize   = 0;
@@ -1439,7 +1440,7 @@ public sealed partial class Cdrdao
 
         if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = new SectorStatus[length];
         for(uint i = 0; i < length; i++) sectorStatus[i] = SectorStatus.Dumped;
