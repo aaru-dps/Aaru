@@ -354,37 +354,35 @@ public sealed partial class Lha
                 break;
 
             case EXT_COMBINED_UNIX:
-                if(len >= 12)
+            {
+                // DOS attrs(2) + POSIX mode(2) + gid(2) + uid(2) + create_time(4) + mod_time(4)
+                const int pos = 1;
+
+                // entry.DosAttributes already set from main header
+                if(len >= 4)
                 {
-                    // DOS attrs(2) + POSIX mode(2) + gid(2) + uid(2) + create_time(4) + mod_time(4)
-                    // Minimum 12 for timestamps, may have more
-                    var pos = 1;
+                    entry.UnixPermissions    = BitConverter.ToUInt16(data, pos + 2);
+                    entry.HasUnixPermissions = true;
+                }
 
-                    // entry.DosAttributes already set from main header
-                    if(len >= 2)
-                    {
-                        entry.UnixPermissions    = BitConverter.ToUInt16(data, pos + 2);
-                        entry.HasUnixPermissions = true;
-                    }
+                if(len >= 8)
+                {
+                    entry.Gid = BitConverter.ToUInt16(data, pos + 4);
+                    entry.Uid = BitConverter.ToUInt16(data, pos + 6);
+                }
 
-                    if(len >= 8)
-                    {
-                        entry.Gid = BitConverter.ToUInt16(data, pos + 4);
-                        entry.Uid = BitConverter.ToUInt16(data, pos + 6);
-                    }
+                if(len >= 16)
+                {
+                    var createUnix = BitConverter.ToUInt32(data, pos + 8);
+                    var modUnix    = BitConverter.ToUInt32(data, pos + 12);
 
-                    if(len >= 16)
-                    {
-                        var createUnix = BitConverter.ToUInt32(data, pos + 8);
-                        var modUnix    = BitConverter.ToUInt32(data, pos + 12);
+                    if(createUnix > 0) entry.CreationTime = DateTimeOffset.FromUnixTimeSeconds(createUnix).DateTime;
 
-                        if(createUnix > 0) entry.CreationTime = DateTimeOffset.FromUnixTimeSeconds(createUnix).DateTime;
-
-                        if(modUnix > 0) entry.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(modUnix).DateTime;
-                    }
+                    if(modUnix > 0) entry.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(modUnix).DateTime;
                 }
 
                 break;
+            }
 
             case EXT_EXTENDED_UNIX:
                 if(len >= 20)
@@ -498,7 +496,7 @@ public sealed partial class Lha
             if(firstByte <= 0) break;
 
             // Need at least the method field to continue
-            if(_stream.Position + 1 >= _stream.Length) break;
+            if(_stream.Position + 1 > _stream.Length) break;
 
             int secondByte = _stream.ReadByte();
 
@@ -606,21 +604,18 @@ public sealed partial class Lha
 
             entry.DosAttributes = attrs;
 
-            if(entry.Method != Method.Directory || entry.IsDirectory)
+            if(entry.Method != Method.Stored && entry.CompressedSize > 0)
+                _features |= ArchiveSupportedFeature.SupportsCompression;
+
+            if(entry.IsDirectory)
             {
-                if(entry.Method != Method.Stored && entry.CompressedSize > 0)
-                    _features |= ArchiveSupportedFeature.SupportsCompression;
-
-                if(entry.IsDirectory)
-                {
-                    _features |= ArchiveSupportedFeature.HasExplicitDirectories |
-                                 ArchiveSupportedFeature.SupportsSubdirectories;
-                }
-
-                if(entry.Comment is not null) _features |= ArchiveSupportedFeature.SupportsXAttrs;
-
-                _entries.Add(entry);
+                _features |= ArchiveSupportedFeature.HasExplicitDirectories |
+                             ArchiveSupportedFeature.SupportsSubdirectories;
             }
+
+            if(entry.Comment is not null) _features |= ArchiveSupportedFeature.SupportsXAttrs;
+
+            _entries.Add(entry);
         }
 
     done:
