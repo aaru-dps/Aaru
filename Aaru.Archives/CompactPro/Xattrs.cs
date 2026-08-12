@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.Compression.CompactPro;
 using Aaru.Helpers.IO;
+using Aaru.Logging;
 
 namespace Aaru.Archives;
 
@@ -13,16 +15,21 @@ public sealed partial class CompactPro
     {
         buffer = null;
 
+        // Validate against the file size, OffsetStream throws on invalid bounds
+        if(entry.ResourceCompressedSize                        <= 0 ||
+           entry.ResourceOffset                                < 0  ||
+           entry.ResourceOffset + entry.ResourceCompressedSize > _stream.Length)
+            return ErrorNumber.InvalidArgument;
+
         Stream stream = new OffsetStream(new NonClosableStream(_stream),
                                          entry.ResourceOffset,
                                          entry.ResourceOffset + entry.ResourceCompressedSize - 1);
 
         try
         {
-            if(entry.ResourceLzh)
-                stream = new LzhStream(stream, entry.ResourceUncompressedSize);
-            else
-                stream = new RleStream(stream, entry.ResourceUncompressedSize);
+            stream = entry.ResourceLzh
+                         ? new LzhStream(stream, entry.ResourceUncompressedSize)
+                         : new RleStream(stream, entry.ResourceUncompressedSize);
 
             buffer          = new byte[stream.Length];
             stream.Position = 0;
@@ -30,8 +37,10 @@ public sealed partial class CompactPro
 
             return ErrorNumber.NoError;
         }
-        catch
+        catch(Exception ex)
         {
+            AaruLogging.Debug(MODULE_NAME, "Exception reading resource fork: {0}", ex);
+
             return ErrorNumber.InOutError;
         }
     }
@@ -121,9 +130,7 @@ public sealed partial class CompactPro
                 return ReadResourceFork(entry, out buffer);
 
             case XATTR_APPLE_FINDER_INFO:
-                if(entry.IsDirectory) return ErrorNumber.NoSuchExtendedAttribute;
-
-                if(entry.FileType == 0 && entry.Creator == 0 && entry.FinderFlags == 0)
+                if(entry.IsDirectory || entry is { FileType: 0, Creator: 0, FinderFlags: 0 })
                     return ErrorNumber.NoSuchExtendedAttribute;
 
                 buffer = BuildFinderInfo(entry);
