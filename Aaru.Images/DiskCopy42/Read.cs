@@ -144,6 +144,8 @@ public sealed partial class DiskCopy42
 
         imageInfo.Sectors = header.DataSize / 512;
 
+        if(imageInfo.Sectors == 0) return ErrorNumber.InvalidArgument;
+
         if(header.TagSize != 0)
         {
             bptag = (uint)(header.TagSize / imageInfo.Sectors);
