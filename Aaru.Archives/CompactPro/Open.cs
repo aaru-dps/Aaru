@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -7,8 +8,11 @@ namespace Aaru.Archives;
 
 public sealed partial class CompactPro
 {
-    void ParseDirectory(string parentPath, int numEntries)
+    void ParseDirectory(string parentPath, int numEntries, int depth)
     {
+        // Cap recursion depth so a crafted directory tree cannot overflow the stack
+        if(depth > MAX_DIRECTORY_DEPTH) return;
+
         while(numEntries > 0)
         {
             int namelenByte = _stream.ReadByte();
@@ -46,7 +50,7 @@ public sealed partial class CompactPro
 
                 _entries.Add(dirEntry);
 
-                ParseDirectory(dirPath, numDirEntries);
+                ParseDirectory(dirPath, numDirEntries, depth + 1);
 
                 // The directory entry plus its children count as numDirEntries + 1
                 numEntries -= numDirEntries + 1;
@@ -141,7 +145,14 @@ public sealed partial class CompactPro
 
         _entries = [];
 
-        ParseDirectory("", numEntries);
+        try
+        {
+            ParseDirectory("", numEntries, 0);
+        }
+        catch(EndOfStreamException)
+        {
+            return ErrorNumber.InvalidArgument;
+        }
 
         _features = ArchiveSupportedFeature.SupportsFilenames | ArchiveSupportedFeature.HasEntryTimestamp;
 

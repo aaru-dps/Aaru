@@ -2,6 +2,9 @@ namespace Aaru.Archives;
 
 public sealed partial class CompactPro
 {
+    /// <summary>Maximum accepted directory nesting depth</summary>
+    const int MAX_DIRECTORY_DEPTH = 255;
+
     const int MIN_HEADER_SIZE = 8;
 
     /// <summary>First byte of a Compact Pro archive is always 0x01.</summary>
