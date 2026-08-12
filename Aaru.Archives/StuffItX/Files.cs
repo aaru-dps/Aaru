@@ -24,7 +24,8 @@ public sealed partial class StuffItX
                 int exponent = compressedStream.ReadByte();
                 int maxOrder = compressedStream.ReadByte();
 
-                if(exponent < 0 || maxOrder < 0 || exponent > 31) return null;
+                // Exponent 31 would overflow the allocation size to a negative value
+                if(exponent < 0 || maxOrder < 0 || exponent > 30) return null;
 
                 int allocSize = 1 << exponent;
 
@@ -273,6 +274,10 @@ public sealed partial class StuffItX
             solidStream.Position = 0;
             var solidData = new byte[solidStream.Length];
             solidStream.ReadExactly(solidData, 0, solidData.Length);
+
+            // Reject offsets outside the solid stream or beyond what a MemoryStream can slice
+            if(entry.SolidOffset is < 0 or > int.MaxValue || entry.UncompressedSize > int.MaxValue)
+                return ErrorNumber.InvalidArgument;
 
             // Slice the entry's portion from the solid stream
             if(entry.SolidOffset + entry.UncompressedSize > solidData.Length)

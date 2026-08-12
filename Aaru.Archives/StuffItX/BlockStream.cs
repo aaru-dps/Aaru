@@ -19,6 +19,9 @@ public sealed partial class StuffItX
 
             if(blockSize == 0) break;
 
+            // Reject block sizes that wrap negative or exceed the remaining stream
+            if((long)blockSize < 0 || (long)blockSize > reader.BaseStream.Length - reader.BaseStream.Position) break;
+
             reader.FlushBits();
 
             var block = new byte[blockSize];
