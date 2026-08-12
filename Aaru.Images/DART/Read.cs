@@ -78,7 +78,7 @@ public sealed partial class Dart
 
                 break;
             case DISK_APPLE2:
-                if(header.srcSize != DISK_APPLE2) return ErrorNumber.InvalidArgument;
+                if(header.srcSize != SIZE_APPLE2) return ErrorNumber.InvalidArgument;
 
                 break;
             case DISK_MAC_HD:
