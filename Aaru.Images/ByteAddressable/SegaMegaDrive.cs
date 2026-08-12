@@ -110,10 +110,13 @@ public partial class SegaMegaDrive : IByteAddressableImage
         // SEGA
         if(buffer[0] == 0x53 && buffer[1] == 0x45 && buffer[2] == 0x47 && buffer[3] == 0x41) return true;
 
-        // EA
+        // EA: odd bytes of "SEGA" at 0x100 land at 0x80 in the interleaved first half
+        stream.Position = 128;
+        stream.EnsureRead(buffer, 0, 2);
+
         if(buffer[0] == 0x45 && buffer[1] == 0x41)
         {
-            stream.Position = stream.Length / 2 + 256;
+            stream.Position = stream.Length / 2 + 128;
             stream.EnsureRead(buffer, 0, 2);
 
             // SG
@@ -151,10 +154,13 @@ public partial class SegaMegaDrive : IByteAddressableImage
         // SEGA
         bool found = buffer[0] == 0x53 && buffer[1] == 0x45 && buffer[2] == 0x47 && buffer[3] == 0x41;
 
-        // EA
+        // EA: odd bytes of "SEGA" at 0x100 land at 0x80 in the interleaved first half
+        stream.Position = 128;
+        stream.EnsureRead(buffer, 0, 2);
+
         if(buffer[0] == 0x45 && buffer[1] == 0x41)
         {
-            stream.Position = stream.Length / 2 + 256;
+            stream.Position = stream.Length / 2 + 128;
             stream.EnsureRead(buffer, 0, 2);
 
             // SG
@@ -215,10 +221,11 @@ public partial class SegaMegaDrive : IByteAddressableImage
             var tmp  = new byte[_data.Length];
             int half = _data.Length / 2;
 
+            // Same polarity as SMD banks: odd bytes in the first half, even bytes in the second
             for(var i = 0; i < half; i++)
             {
-                tmp[i * 2]     = _data[i];
-                tmp[i * 2 + 1] = _data[i + half];
+                tmp[i * 2 + 1] = _data[i];
+                tmp[i * 2]     = _data[i + half];
             }
 
             _data = tmp;
