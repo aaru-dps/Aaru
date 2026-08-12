@@ -37,7 +37,7 @@ public sealed partial class Amg
 
         _files = [];
 
-        while(_stream.Position + fileHeaderLen < _stream.Length)
+        while(_stream.Position + fileHeaderLen <= _stream.Length)
         {
             var fileHdr = new byte[fileHeaderLen];
 
