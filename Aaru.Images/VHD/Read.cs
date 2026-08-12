@@ -613,6 +613,11 @@ public sealed partial class Vhd
                             break;
                     }
 
+                    // Locators are Windows paths, NUL padded to the platform data length
+                    parentPath = parentPath?.TrimEnd('\0').Replace('\\', Path.DirectorySeparatorChar);
+
+                    if(string.IsNullOrEmpty(parentPath)) parentPath = null;
+
                     if(parentPath != null)
                     {
                         AaruLogging.Debug(MODULE_NAME, Localization.Possible_parent_path_0, parentPath);
@@ -621,6 +626,20 @@ public sealed partial class Vhd
                             PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, parentPath));
 
                         if(parentFilter != null) locatorFound = true;
+
+                        if(!locatorFound)
+                        {
+                            // Absolute locators are useless on another machine: try the file next to the child image
+                            string filename = parentPath[(parentPath.LastIndexOf(Path.DirectorySeparatorChar) + 1)..];
+
+                            if(filename.Length > 0 &&
+                               PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, filename)) !=
+                               null)
+                            {
+                                parentPath   = filename;
+                                locatorFound = true;
+                            }
+                        }
 
                         if(!locatorFound) parentPath = null;
                     }
