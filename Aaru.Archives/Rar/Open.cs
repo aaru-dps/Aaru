@@ -22,9 +22,8 @@ public sealed partial class Rar
 
         // Read file entries until end of archive or stream
         while(_stream.Position < _stream.Length)
-        {
-            if(!ReadRar4Block()) break;
-        }
+            if(!ReadRar4Block())
+                break;
 
         return ErrorNumber.NoError;
     }
@@ -152,18 +151,15 @@ public sealed partial class Rar
         }
 
         // Read filename
-        if(nameLength == 0 || nameLength > 4096) return;
+        if(nameLength is 0 or > 4096) return;
 
         var nameData = new byte[nameLength];
 
         if(_stream.Read(nameData, 0, nameLength) < nameLength) return;
 
-        string filename;
-
-        if((flags & LHD_UNICODE) != 0)
-            filename = DecodeUnicodeFilename(nameData, nameLength, _encoding);
-        else
-            filename = _encoding.GetString(nameData, 0, nameLength);
+        string filename = (flags & LHD_UNICODE) != 0
+                              ? DecodeUnicodeFilename(nameData, nameLength, _encoding)
+                              : _encoding.GetString(nameData, 0, nameLength);
 
         // Normalize path separators
         filename = filename.Replace('\\', '/');
@@ -252,17 +248,14 @@ public sealed partial class Rar
     ErrorNumber ParseRar5()
     {
         while(_stream.Position < _stream.Length)
-        {
-            if(!ReadRar5Block()) break;
-        }
+            if(!ReadRar5Block())
+                break;
 
         return ErrorNumber.NoError;
     }
 
     bool ReadRar5Block()
     {
-        long blockStart = _stream.Position;
-
         // CRC32 (4 bytes)
         var crcBuf = new byte[4];
 
@@ -277,10 +270,9 @@ public sealed partial class Rar
         ulong blockType  = ReadVint(_stream);
         ulong blockFlags = ReadVint(_stream);
 
-        ulong extraSize = 0;
-        ulong dataSize  = 0;
+        ulong dataSize = 0;
 
-        if((blockFlags & RAR5_BLOCK_HAS_EXTRA) != 0) extraSize = ReadVint(_stream);
+        if((blockFlags & RAR5_BLOCK_HAS_EXTRA) != 0) _ = ReadVint(_stream);
 
         if((blockFlags & RAR5_BLOCK_HAS_DATA) != 0) dataSize = ReadVint(_stream);
 
@@ -290,7 +282,7 @@ public sealed partial class Rar
         switch((Rar5BlockType)blockType)
         {
             case Rar5BlockType.Main:
-                ParseRar5MainHeader(blockFlags);
+                ParseRar5MainHeader();
 
                 break;
 
@@ -306,10 +298,6 @@ public sealed partial class Rar
 
             case Rar5BlockType.End:
                 return false;
-
-            case Rar5BlockType.Service:
-            default:
-                break;
         }
 
         // Advance past header + data
@@ -318,7 +306,7 @@ public sealed partial class Rar
         return true;
     }
 
-    void ParseRar5MainHeader(ulong blockFlags)
+    void ParseRar5MainHeader()
     {
         ulong archFlags = ReadVint(_stream);
 
@@ -380,7 +368,7 @@ public sealed partial class Rar
         // Filename (UTF-8)
         ulong nameLength = ReadVint(_stream);
 
-        if(nameLength == 0 || nameLength > 4096)
+        if(nameLength is 0 or > 4096)
         {
             _stream.Position = headerEnd + dataSize;
 
@@ -406,9 +394,7 @@ public sealed partial class Rar
         var      hasAccessTime   = false;
 
         // Parse extra area for additional metadata
-        long extraEnd = headerEnd;
-
-        while(_stream.Position < extraEnd)
+        while(_stream.Position < headerEnd)
         {
             ulong extraBlockSize = ReadVint(_stream);
             long  extraDataStart = _stream.Position;
@@ -434,7 +420,7 @@ public sealed partial class Rar
             // Advance past extra block (size is measured from after the size vint)
             _stream.Position = extraDataStart + (long)extraBlockSize;
 
-            if(extraDataStart + (long)extraBlockSize >= extraEnd) break;
+            if(extraDataStart + (long)extraBlockSize >= headerEnd) break;
         }
 
         // Map RAR5 compression method to a CompressionMethod value
