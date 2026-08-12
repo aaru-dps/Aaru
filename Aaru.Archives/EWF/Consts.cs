@@ -81,4 +81,7 @@ public sealed partial class EwfArchive
 
     /// <summary>Ltree header size in bytes</summary>
     const int LTREE_HEADER_SIZE = 48;
+
+    /// <summary>Maximum accepted decompressed ltree size, 256 MiB</summary>
+    const uint MAX_LTREE_SIZE = 268435456;
 }

@@ -195,7 +195,7 @@ public sealed partial class EwfArchive
 
     void ParseVolumeSection(Stream segStream, long dataSize, ref bool volumeFound)
     {
-        if(dataSize < VOLUME_SECTION_SIZE_SMART) return;
+        if(dataSize < VOLUME_SECTION_SIZE_SMART || dataSize > segStream.Length - segStream.Position) return;
 
         var volumeData = new byte[dataSize];
         segStream.ReadExactly(volumeData, 0, (int)dataSize);
@@ -289,7 +289,10 @@ public sealed partial class EwfArchive
         // Read the compressed ltree data
         long compressedSize = dataSize - LTREE_HEADER_SIZE;
 
-        if(compressedSize <= 0) return null;
+        if(compressedSize <= 0 || compressedSize > segStream.Length - segStream.Position) return null;
+
+        // Cap the declared decompressed size to something sane
+        if(ltreeHeader.data_size > MAX_LTREE_SIZE) return null;
 
         var compressedData = new byte[compressedSize];
         segStream.ReadExactly(compressedData, 0, (int)compressedSize);

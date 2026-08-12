@@ -343,6 +343,10 @@ public sealed partial class EwfArchive
             return null;
 
         Stream segStream = _segmentStreams[chunk.segmentIndex];
+
+        // Reject chunks pointing outside their segment file
+        if(chunk.offset < 0 || chunk.size == 0 || chunk.offset + chunk.size > segStream.Length) return null;
+
         segStream.Seek(chunk.offset, SeekOrigin.Begin);
 
         byte[] chunkData;
