@@ -150,7 +150,7 @@ public sealed partial class D88
             {
                 secB = new byte[sechdr.size_of_data];
                 stream.EnsureRead(secB, 0, secB.Length);
-                sectors.Add(sechdr.r, secB);
+                sectors[sechdr.r] = secB;
                 stream.EnsureRead(hdrB, 0, hdrB.Length);
 
                 sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
@@ -172,7 +172,7 @@ public sealed partial class D88
 
             secB = new byte[sechdr.size_of_data];
             stream.EnsureRead(secB, 0, secB.Length);
-            sectors.Add(sechdr.r, secB);
+            sectors[sechdr.r] = secB;
 
             foreach(KeyValuePair<byte, byte[]> kvp in sectors) _sectorsData.Add(kvp.Value);
         }
