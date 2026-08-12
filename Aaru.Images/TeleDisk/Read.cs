@@ -347,6 +347,9 @@ public sealed partial class TeleDisk
             }
         }
 
+        // Single-cylinder images never take the branch that sets this
+        if(_imageInfo.SectorsPerTrack == uint.MaxValue) _imageInfo.SectorsPerTrack = (uint)(maxSector + 1);
+
         _sectorsData = new byte[totalCylinders][][][];
 
         // Total sectors per track
@@ -575,9 +578,12 @@ public sealed partial class TeleDisk
 
         if(head >= _sectorsData[cylinder].Length) return ErrorNumber.SectorNotFound;
 
-        if(sector > _sectorsData[cylinder][head].Length) return ErrorNumber.SectorNotFound;
+        if(sector >= _sectorsData[cylinder][head].Length) return ErrorNumber.SectorNotFound;
 
-        buffer       = _sectorsData[cylinder][head][sector];
+        buffer = _sectorsData[cylinder][head][sector];
+
+        if(buffer is null) return ErrorNumber.SectorNotFound;
+
         sectorStatus = SectorStatus.Dumped;
 
         return ErrorNumber.NoError;
