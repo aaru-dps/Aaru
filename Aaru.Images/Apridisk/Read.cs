@@ -195,7 +195,7 @@ public sealed partial class Apridisk
 
                     if(realLength < _imageInfo.SectorSize) _imageInfo.SectorSize = realLength;
 
-                    headerSizes += record.headerSize + record.dataSize;
+                    headerSizes += record.headerSize;
 
                     break;
             }
