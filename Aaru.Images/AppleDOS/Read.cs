@@ -49,6 +49,9 @@ public sealed partial class AppleDos
         Stream stream = imageFilter.GetDataForkStream();
         stream.Seek(0, SeekOrigin.Begin);
 
+        // The DOS detection below reads fixed offsets up to 0x11037
+        if(imageFilter.DataForkLength < 0x11038) return ErrorNumber.InvalidArgument;
+
         var tmp = new byte[imageFilter.DataForkLength];
         stream.EnsureRead(tmp, 0, tmp.Length);
 
