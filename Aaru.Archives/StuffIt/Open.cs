@@ -30,8 +30,8 @@ public sealed partial class StuffIt
         // ushort numFiles = BigEndianBitConverter.ToUInt16(hdr, 4);
         var totalSize = BigEndianBitConverter.ToUInt32(hdr, 6);
 
-        long baseOffset = 0;
-        long endOffset  = totalSize + baseOffset;
+        // Do not trust the declared archive size beyond the real file size
+        long endOffset = Math.Min(totalSize, _stream.Length);
 
         _entries = [];
 
