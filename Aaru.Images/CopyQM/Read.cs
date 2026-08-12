@@ -99,7 +99,12 @@ public sealed partial class CopyQm
 
         _calculatedDataCrc = 0;
 
-        while(stream.Position + 2 < stream.Length)
+        // Never decode more than the geometry the header declares, and never trust that geometry blindly
+        long expectedSize = (long)_header.sectorsPerTrack * _header.heads * _header.totalCylinders * _header.sectorSize;
+
+        if(expectedSize is <= 0 or > int.MaxValue) return ErrorNumber.InvalidArgument;
+
+        while(stream.Position + 2 <= stream.Length && _decodedImage.Length < expectedSize)
         {
             var runLengthBytes = new byte[2];
 
@@ -140,9 +145,7 @@ public sealed partial class CopyQm
         }
 
         // In case there is omitted data
-        long sectors = _header.sectorsPerTrack * _header.heads * _header.totalCylinders;
-
-        long fillingLen = sectors * _header.sectorSize - _decodedImage.Length;
+        long fillingLen = expectedSize - _decodedImage.Length;
 
         if(fillingLen > 0)
         {
@@ -172,7 +175,7 @@ public sealed partial class CopyQm
         _imageInfo.LastModificationTime = _imageInfo.CreationTime;
         _imageInfo.MediaTitle           = _header.volumeLabel;
         _imageInfo.ImageSize            = (ulong)(stream.Length - 133 - _header.commentLength);
-        _imageInfo.Sectors              = (ulong)sectors;
+        _imageInfo.Sectors              = (ulong)(expectedSize / _header.sectorSize);
         _imageInfo.SectorSize           = _header.sectorSize;
 
         _imageInfo.MediaType = Geometry.GetMediaType((_header.totalCylinders, (byte)_header.heads,
