@@ -671,7 +671,8 @@ public sealed partial class VMware
         {
             grain      = new byte[SECTOR_SIZE * _grainSize];
             dataStream = currentExtent.Filter.GetDataForkStream();
-            dataStream.Seek((long)((grainOff - extentStartSector) * SECTOR_SIZE), SeekOrigin.Begin);
+            // The grain table entry is a sector offset inside the extent file itself
+            dataStream.Seek((long)grainOff * SECTOR_SIZE, SeekOrigin.Begin);
             dataStream.EnsureRead(grain, 0, grain.Length);
 
             if(_grainCache.Count >= _maxCachedGrains) _grainCache.Clear();
