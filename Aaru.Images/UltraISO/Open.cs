@@ -452,7 +452,7 @@ public sealed partial class UltraISO
                 {
                     type = IszChunkType.Data,
                     length = i == numChunks - 1
-                                 ? _header.totalSectors * _header.sectorSize % _header.chunkSize
+                                 ? (uint)((ulong)_header.totalSectors * _header.sectorSize % _header.chunkSize)
                                  : _header.chunkSize
                 };
 
