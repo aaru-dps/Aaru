@@ -48,6 +48,9 @@ public sealed partial class Amg
             // Not a valid file magic
             if(fh.magic != FILE_MAGIC) break;
 
+            // Compressed size includes the header, path and comment; reject sizes smaller than those
+            if(fh.compressed < fh.pathLength + fh.commentLength + fileHeaderLen) return ErrorNumber.InvalidArgument;
+
             var entry = new FileEntry
             {
                 Attributes   = (FileAttributes)fh.attr,
