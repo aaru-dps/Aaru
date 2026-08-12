@@ -12,8 +12,8 @@ public sealed partial class Lha
 {
     List<Entry> _entries;
 
-    bool ParseLevel0(long headerStart,  byte headerSizeByte, uint      compressedSize, uint uncompressedSize,
-                     uint dosTimestamp, byte attrs,          ref Entry entry)
+    bool ParseLevel0(long headerStart,  byte      headerSizeByte, uint compressedSize, uint uncompressedSize,
+                     uint dosTimestamp, ref Entry entry)
     {
         int headerSize = headerSizeByte + 2;
 
@@ -58,11 +58,8 @@ public sealed partial class Lha
         return true;
     }
 
-    bool ParseLevel1(long headerStart,  byte headerSizeByte, uint      compressedSize, uint uncompressedSize,
-                     uint dosTimestamp, byte attrs,          ref Entry entry)
+    bool ParseLevel1(uint compressedSize, uint uncompressedSize, uint dosTimestamp, ref Entry entry)
     {
-        int headerSize = headerSizeByte + 2;
-
         // After level byte, read: namelen(1), filename(namelen), crc16(2), os(1)
         if(_stream.Position >= _stream.Length) return false;
 
@@ -114,8 +111,8 @@ public sealed partial class Lha
         return true;
     }
 
-    bool ParseLevel2(long headerStart,   ushort totalHeaderSize, uint      compressedSize, uint uncompressedSize,
-                     uint unixTimestamp, byte   attrs,           ref Entry entry)
+    bool ParseLevel2(long headerStart,   ushort    totalHeaderSize, uint compressedSize, uint uncompressedSize,
+                     uint unixTimestamp, ref Entry entry)
     {
         // Fixed part of a level 2 header is 24 bytes, reject sizes that cannot contain it,
         // a too small size would re-parse the same bytes forever
@@ -149,8 +146,7 @@ public sealed partial class Lha
         return true;
     }
 
-    bool ParseLevel3(long      headerStart, uint compressedSize, uint uncompressedSize, uint unixTimestamp, byte attrs,
-                     ref Entry entry)
+    bool ParseLevel3(long headerStart, uint compressedSize, uint uncompressedSize, uint unixTimestamp, ref Entry entry)
     {
         // After level byte: crc16(2), os(1), total_headersize(4)
         if(_stream.Position + 7 > _stream.Length) return false;
@@ -273,9 +269,8 @@ public sealed partial class Lha
 
                     // Replace 0xFF separators with '/'
                     for(var i = 0; i < dirBytes.Length; i++)
-                    {
-                        if(dirBytes[i] == 0xFF) dirBytes[i] = (byte)'/';
-                    }
+                        if(dirBytes[i] == 0xFF)
+                            dirBytes[i] = (byte)'/';
 
                     entry.DirectoryPath = _encoding.GetString(dirBytes).TrimEnd('\0', '/');
                 }
@@ -388,7 +383,7 @@ public sealed partial class Lha
                 if(len >= 20)
                 {
                     // POSIX perms(4) + gid(4) + uid(4) + create_time(4) + mod_time(4)
-                    var pos = 1;
+                    const int pos = 1;
                     entry.UnixPermissions    = (ushort)(BitConverter.ToUInt32(data, pos) & 0xFFFF);
                     entry.HasUnixPermissions = true;
                     entry.Gid                = (ushort)BitConverter.ToUInt32(data, pos + 4);
@@ -413,44 +408,35 @@ public sealed partial class Lha
         byte family2 = methodBytes[2];
         byte method  = methodBytes[3];
 
-        if(family1 == (byte)'l' && family2 == (byte)'h')
-        {
-            return method switch
-                   {
-                       (byte)'0' => Method.Stored,
-                       (byte)'1' => Method.Lh1,
-                       (byte)'2' => Method.Lh2,
-                       (byte)'3' => Method.Lh3,
-                       (byte)'4' => Method.Lh4,
-                       (byte)'5' => Method.Lh5,
-                       (byte)'6' => Method.Lh6,
-                       (byte)'7' => Method.Lh7,
-                       (byte)'d' => Method.Directory,
-                       _         => Method.Stored
-                   };
-        }
-
-        if(family1 == (byte)'l' && family2 == (byte)'z')
-        {
-            return method switch
-                   {
-                       (byte)'s' => Method.Lzs,
-                       (byte)'5' => Method.Lz5,
-                       _         => Method.Stored // lz0, lz4 are stored
-                   };
-        }
-
-        if(family1 == (byte)'p' && family2 == (byte)'m')
-        {
-            return method switch
-                   {
-                       (byte)'1' => Method.Pm1,
-                       (byte)'2' => Method.Pm2,
-                       _         => Method.Stored // pm0 is stored
-                   };
-        }
-
-        return Method.Stored;
+        return (char)family1 switch
+               {
+                   'l' when family2 == (byte)'h' => method switch
+                                                    {
+                                                        (byte)'0' => Method.Stored,
+                                                        (byte)'1' => Method.Lh1,
+                                                        (byte)'2' => Method.Lh2,
+                                                        (byte)'3' => Method.Lh3,
+                                                        (byte)'4' => Method.Lh4,
+                                                        (byte)'5' => Method.Lh5,
+                                                        (byte)'6' => Method.Lh6,
+                                                        (byte)'7' => Method.Lh7,
+                                                        (byte)'d' => Method.Directory,
+                                                        _         => Method.Stored
+                                                    },
+                   'l' when family2 == (byte)'z' => method switch
+                                                    {
+                                                        (byte)'s' => Method.Lzs,
+                                                        (byte)'5' => Method.Lz5,
+                                                        _         => Method.Stored // lz0, lz4 are stored
+                                                    },
+                   'p' when family2 == (byte)'m' => method switch
+                                                    {
+                                                        (byte)'1' => Method.Pm1,
+                                                        (byte)'2' => Method.Pm2,
+                                                        _         => Method.Stored // pm0 is stored
+                                                    },
+                   _ => Method.Stored
+               };
     }
 
     /// <summary>Split a filename with an embedded path into DirectoryPath and Filename components.</summary>
@@ -540,10 +526,13 @@ public sealed partial class Lha
             if(levelByte < 0) break;
 
             Method method = ParseMethod(methodBytes);
-            var    entry  = new Entry();
-            entry.Method      = method;
-            entry.Os          = OsType.Generic;
-            entry.IsDirectory = method == Method.Directory;
+
+            var entry = new Entry
+            {
+                Method      = method,
+                Os          = OsType.Generic,
+                IsDirectory = method == Method.Directory
+            };
 
             AaruLogging.Debug(MODULE_NAME, "[navy]level[/] = [teal]{0}[/]", levelByte);
 
@@ -564,20 +553,12 @@ public sealed partial class Lha
                                     compressedSize,
                                     uncompressedSize,
                                     timestamp,
-                                    attrs,
                                     ref entry))
                         goto done;
 
                     break;
                 case 1:
-                    if(!ParseLevel1(headerStart,
-                                    (byte)firstByte,
-                                    compressedSize,
-                                    uncompressedSize,
-                                    timestamp,
-                                    attrs,
-                                    ref entry))
-                        goto done;
+                    if(!ParseLevel1(compressedSize, uncompressedSize, timestamp, ref entry)) goto done;
 
                     break;
                 case 2:
@@ -586,14 +567,12 @@ public sealed partial class Lha
                                     compressedSize,
                                     uncompressedSize,
                                     timestamp,
-                                    attrs,
                                     ref entry))
                         goto done;
 
                     break;
                 case 3:
-                    if(!ParseLevel3(headerStart, compressedSize, uncompressedSize, timestamp, attrs, ref entry))
-                        goto done;
+                    if(!ParseLevel3(headerStart, compressedSize, uncompressedSize, timestamp, ref entry)) goto done;
 
                     break;
                 default:
