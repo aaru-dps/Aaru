@@ -46,24 +46,29 @@ public sealed partial class Stfs
 
         int fileTablePosition = BlockToPosition(fileTableBlockNumber, (int)header.Metadata.HeaderSize);
 
+        if(vd.FileTableBlockCount                             <= 0 ||
+           fileTablePosition                                  < 0  ||
+           fileTablePosition + 4096L * vd.FileTableBlockCount > _stream.Length)
+            return ErrorNumber.InvalidArgument;
+
         var buffer = new byte[4096 * vd.FileTableBlockCount];
         _stream.Position = fileTablePosition;
         _stream.ReadExactly(buffer, 0, buffer.Length);
 
         List<FileTableEntry> entries   = [];
         int                  entrySize = Marshal.SizeOf<FileTableEntry>();
-        var                  in_pos    = 0;
+        var                  inPos    = 0;
 
         do
         {
-            FileTableEntry entry = Marshal.ByteArrayToStructureBigEndian<FileTableEntry>(buffer, in_pos, entrySize);
+            FileTableEntry entry = Marshal.ByteArrayToStructureBigEndian<FileTableEntry>(buffer, inPos, entrySize);
 
             if(entry.FilenameLength == 0) break;
 
             entries.Add(entry);
 
-            in_pos += entrySize;
-        } while(in_pos + entrySize < buffer.Length);
+            inPos += entrySize;
+        } while(inPos + entrySize < buffer.Length);
 
         _entries = new FileEntry[entries.Count];
 
