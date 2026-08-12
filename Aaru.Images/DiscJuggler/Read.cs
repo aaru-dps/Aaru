@@ -412,8 +412,12 @@ public sealed partial class DiscJuggler
 
                                 return ErrorNumber.InvalidArgument;
                             case 2:
-                                track.RawBytesPerSector =  2352;
-                                currentOffset           += trackLen * (ulong)track.RawBytesPerSector;
+                                track.RawBytesPerSector = 2352;
+
+                                if(firstTrack) currentOffset += 150 * (ulong)track.RawBytesPerSector;
+
+                                track.FileOffset =  currentOffset;
+                                currentOffset    += trackLen * (ulong)track.RawBytesPerSector;
 
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -528,8 +532,12 @@ public sealed partial class DiscJuggler
 
                                 break;
                             case 2:
-                                track.RawBytesPerSector =  2352;
-                                currentOffset           += trackLen * (ulong)track.RawBytesPerSector;
+                                track.RawBytesPerSector = 2352;
+
+                                if(firstTrack) currentOffset += 150 * (ulong)track.RawBytesPerSector;
+
+                                track.FileOffset =  currentOffset;
+                                currentOffset    += trackLen * (ulong)track.RawBytesPerSector;
 
                                 if(!_imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     _imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -804,12 +812,13 @@ public sealed partial class DiscJuggler
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
