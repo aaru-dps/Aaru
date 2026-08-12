@@ -999,28 +999,6 @@ public sealed partial class BlindWrite5
                         lowerCaseFileName  = true;
                         lowerCaseExtension = true;
                     }
-                    else if(File.Exists(Path.Combine("", $"{filename}.{firstExtension}")))
-                        basePath = "";
-                    else if(File.Exists(Path.Combine("", $"{filename}.{firstExtensionLower}")))
-                    {
-                        basePath           = "";
-                        lowerCaseExtension = true;
-                    }
-                    else if(File.Exists(Path.Combine("",
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{firstExtension
-                                                     }")))
-                    {
-                        basePath          = "";
-                        lowerCaseFileName = true;
-                    }
-                    else if(File.Exists(Path.Combine("",
-                                                     $"{filename.ToLower(CultureInfo.CurrentCulture)}.{
-                                                         firstExtensionLower}")))
-                    {
-                        basePath           = "";
-                        lowerCaseFileName  = true;
-                        lowerCaseExtension = true;
-                    }
                     else
                     {
                         AaruLogging.Error(Localization.Could_not_find_image_for_track_0, trk.point);
@@ -1473,12 +1451,13 @@ public sealed partial class BlindWrite5
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, false, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
