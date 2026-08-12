@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers.IO;
+using Aaru.Logging;
 
 namespace Aaru.Archives;
 
@@ -12,6 +14,10 @@ public sealed partial class StuffIt
         buffer = null;
 
         if(entry.ResourceCompressedSize <= 0) return ErrorNumber.NoSuchExtendedAttribute;
+
+        // Validate against the file size, OffsetStream throws on invalid bounds
+        if(entry.ResourceOffset < 0 || entry.ResourceOffset + entry.ResourceCompressedSize > _stream.Length)
+            return ErrorNumber.InvalidArgument;
 
         Stream stream = new OffsetStream(new NonClosableStream(_stream),
                                          entry.ResourceOffset,
@@ -29,8 +35,10 @@ public sealed partial class StuffIt
 
             return ErrorNumber.NoError;
         }
-        catch
+        catch(Exception ex)
         {
+            AaruLogging.Debug(MODULE_NAME, "Exception reading resource fork: {0}", ex);
+
             return ErrorNumber.InOutError;
         }
     }
