@@ -280,20 +280,21 @@ public sealed partial class Arj
             uint accessTime    = 0;
             uint creationTime  = 0;
 
-            if(firstHdrSize >= FIRST_HDR_SIZE)
+            // Do not trust first_hdr_size alone, the header actually read can be shorter
+            if(firstHdrSize >= FIRST_HDR_SIZE && headerData.Length >= pos + 2)
             {
                 extFlags      = headerData[pos++];
                 chapterNumber = headerData[pos++];
             }
 
-            if(firstHdrSize >= FIRST_HDR_SIZE_V)
+            if(firstHdrSize >= FIRST_HDR_SIZE_V && headerData.Length >= pos + 4)
             {
                 pos++;    // prot_blocks
                 pos++;    // arjprot_id
                 pos += 2; // reserved
             }
 
-            if(firstHdrSize >= R9_HDR_SIZE)
+            if(firstHdrSize >= R9_HDR_SIZE && headerData.Length >= pos + 16)
             {
                 pos          += 4; // resume_position
                 accessTime   =  BitConverter.ToUInt32(headerData, pos);
