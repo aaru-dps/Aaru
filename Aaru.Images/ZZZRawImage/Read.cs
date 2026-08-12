@@ -1609,7 +1609,7 @@ public sealed partial class ZZZRawImage
         buffer = null;
 
         if(_imageInfo.MetadataMediaType != MetadataMediaType.OpticalDisc ||
-           !_rawCompactDisc && !_toastXa && tag != SectorTagType.CdTrackFlags)
+           !_rawCompactDisc && !_toastXa && !_rawDvd && tag != SectorTagType.CdTrackFlags)
             return ErrorNumber.NotSupported;
 
         return ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
