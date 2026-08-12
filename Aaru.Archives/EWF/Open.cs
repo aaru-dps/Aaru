@@ -90,6 +90,10 @@ public sealed partial class EwfArchive
                 ParseSegmentV1(segStream, segIdx, ref currentChunk, ref volumeFound, ref ltreeDecompressed);
         }
 
+        // Reject chunk geometries that are zero or overflow, chunk size is used as divisor
+        if(_sectorsPerChunk == 0 || _bytesPerSector == 0 || (ulong)_sectorsPerChunk * _bytesPerSector > int.MaxValue)
+            return ErrorNumber.InvalidArgument;
+
         _chunkSize     = _sectorsPerChunk * _bytesPerSector;
         _maxChunkCache = (int)(MAX_CACHE_SIZE / _chunkSize);
 
