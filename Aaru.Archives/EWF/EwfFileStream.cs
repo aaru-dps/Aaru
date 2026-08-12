@@ -36,31 +36,29 @@ using System.IO;
 namespace Aaru.Archives;
 
 /// <summary>Read-only stream that reads file data from EWF logical evidence chunks.</summary>
-sealed class EwfFileStream : Stream
+sealed class EwfFileStream(EwfArchive archive, long dataOffset, long dataSize) : Stream
 {
-    readonly EwfArchive _archive;
-    readonly long       _dataOffset;
+    readonly EwfArchive _archive    = archive;
+    readonly long       _dataOffset = dataOffset;
     long                _position;
 
-    public EwfFileStream(EwfArchive archive, long dataOffset, long dataSize)
-    {
-        _archive    = archive;
-        _dataOffset = dataOffset;
-        Length      = dataSize;
-        _position   = 0;
-    }
-
+    /// <inheritdoc />
     public override bool CanRead  => true;
+    /// <inheritdoc />
     public override bool CanSeek  => true;
+    /// <inheritdoc />
     public override bool CanWrite => false;
-    public override long Length   { get; }
+    /// <inheritdoc />
+    public override long Length   { get; } = dataSize;
 
+    /// <inheritdoc />
     public override long Position
     {
         get => _position;
         set => _position = Math.Max(0, Math.Min(value, Length));
     }
 
+    /// <inheritdoc />
     public override int Read(byte[] buffer, int offset, int count)
     {
         if(_position >= Length) return 0;
@@ -82,7 +80,11 @@ sealed class EwfFileStream : Stream
             if(chunkData == null) break;
 
             int available = chunkData.Length - offsetInChunk;
-            int toCopy    = Math.Min(toRead - totalRead, available);
+
+            // A chunk shorter than expected would copy nothing and loop forever
+            if(available <= 0) break;
+
+            int toCopy = Math.Min(toRead - totalRead, available);
 
             Array.Copy(chunkData, offsetInChunk, buffer, offset + totalRead, toCopy);
 
@@ -93,6 +95,7 @@ sealed class EwfFileStream : Stream
         return totalRead;
     }
 
+    /// <inheritdoc />
     public override long Seek(long offset, SeekOrigin origin)
     {
         switch(origin)
@@ -114,9 +117,12 @@ sealed class EwfFileStream : Stream
         return Position;
     }
 
+    /// <inheritdoc />
     public override void Flush() {}
 
+    /// <inheritdoc />
     public override void SetLength(long value) => throw new NotSupportedException();
 
+    /// <inheritdoc />
     public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
 }
