@@ -266,9 +266,9 @@ public sealed partial class RayDim
         var header = new Header
         {
             signature       = Encoding.ASCII.GetBytes(headerSignature),
-            cylinders       = (byte)_imageInfo.Cylinders,
+            cylinders       = (byte)(_imageInfo.Cylinders - 1),
             diskType        = RayDiskTypes.Mf2ed,
-            heads           = (byte)_imageInfo.Heads,
+            heads           = (byte)(_imageInfo.Heads - 1),
             sectorsPerTrack = (byte)_imageInfo.SectorsPerTrack
         };
 
