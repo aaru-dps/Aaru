@@ -78,7 +78,12 @@ public sealed partial class StuffItX
 
             while(n > 0)
             {
-                if(ReadBitLE() == 1)
+                int b = ReadBitLE();
+
+                // At end of stream return 0, the terminator value, so callers stop instead of looping forever
+                if(b < 0) return 0;
+
+                if(b == 1)
                 {
                     n--;
                     value |= bit;
@@ -114,6 +119,8 @@ public sealed partial class StuffItX
         public byte[] ReadSitxString()
         {
             var len = (int)ReadSitxP2();
+
+            if(len <= 0) return [];
 
             var data = new byte[len];
             BaseStream.ReadExactly(data, 0, len);
