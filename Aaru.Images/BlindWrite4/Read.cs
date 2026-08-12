@@ -84,6 +84,8 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.VolumeIdLength = BitConverter.ToUInt32(tmpUInt, 0);
+        if(_header.VolumeIdLength > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray               = new byte[_header.VolumeIdLength];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.VolumeIdBytes    = tmpArray;
@@ -91,6 +93,8 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.SysIdLength = BitConverter.ToUInt32(tmpUInt, 0);
+        if(_header.SysIdLength > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray            = new byte[_header.SysIdLength];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.SysIdBytes       = tmpArray;
@@ -98,6 +102,8 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.CommentsLength = BitConverter.ToUInt32(tmpUInt, 0);
+        if(_header.CommentsLength > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray               = new byte[_header.CommentsLength];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.CommentsBytes = tmpArray;
@@ -108,6 +114,8 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.DataFileLength = BitConverter.ToUInt32(tmpUInt, 0);
+        if(_header.DataFileLength > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray               = new byte[_header.DataFileLength];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.DataFileBytes = tmpArray;
@@ -115,6 +123,8 @@ public sealed partial class BlindWrite4
 
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.SubchannelFileLength = BitConverter.ToUInt32(tmpUInt, 0);
+        if(_header.SubchannelFileLength > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray                     = new byte[_header.SubchannelFileLength];
         stream.EnsureRead(tmpArray, 0, tmpArray.Length);
         _header.SubchannelFileBytes = tmpArray;
@@ -123,6 +133,8 @@ public sealed partial class BlindWrite4
         stream.EnsureRead(tmpUInt, 0, 4);
         _header.Unknown2 = BitConverter.ToUInt32(tmpUInt, 0);
         _header.Unknown3 = (byte)stream.ReadByte();
+        if(_header.Unknown3 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         tmpArray         = new byte[_header.Unknown3];
         stream.EnsureRead(tmpArray, 0, _header.Unknown3);
         _header.Unknown4 = tmpArray;
@@ -160,6 +172,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.filenameLen = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.filenameLen > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray          = new byte[track.filenameLen];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.filenameBytes = tmpArray;
@@ -217,6 +231,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.titleLen = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.titleLen > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray       = new byte[track.titleLen];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.titleBytes = tmpArray;
@@ -224,6 +240,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.performerLen = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.performerLen > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray           = new byte[track.performerLen];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.performerBytes = tmpArray;
@@ -231,6 +249,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen1 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen1 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen1];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes1 = tmpArray;
@@ -238,6 +258,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen2 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen2 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen2];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes2 = tmpArray;
@@ -245,6 +267,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen3 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen3 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen3];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes3 = tmpArray;
@@ -252,6 +276,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen4 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen4 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen4];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes4 = tmpArray;
@@ -259,6 +285,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.discIdLen = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.discIdLen > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray        = new byte[track.discIdLen];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.discIdBytes = tmpArray;
@@ -266,6 +294,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen5 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen5 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen5];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes5 = tmpArray;
@@ -273,6 +303,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen6 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen6 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen6];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes6 = tmpArray;
@@ -280,6 +312,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen7 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen7 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen7];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes7 = tmpArray;
@@ -287,6 +321,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen8 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen8 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen8];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes8 = tmpArray;
@@ -294,6 +330,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen9 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen9 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray         = new byte[track.unkStrLen9];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes9 = tmpArray;
@@ -301,6 +339,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen10 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen10 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray          = new byte[track.unkStrLen10];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes10 = tmpArray;
@@ -308,6 +348,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.unkStrLen11 = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.unkStrLen11 > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray          = new byte[track.unkStrLen11];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.unkStrBytes11 = tmpArray;
@@ -315,6 +357,8 @@ public sealed partial class BlindWrite4
 
             stream.EnsureRead(tmpUInt, 0, 4);
             track.isrcLen = BitConverter.ToUInt32(tmpUInt, 0);
+            if(track.isrcLen > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
             tmpArray      = new byte[track.isrcLen];
             stream.EnsureRead(tmpArray, 0, tmpArray.Length);
             track.isrcBytes = tmpArray;
@@ -827,12 +871,13 @@ public sealed partial class BlindWrite4
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, false, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
