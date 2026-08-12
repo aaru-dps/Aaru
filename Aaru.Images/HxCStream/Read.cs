@@ -183,6 +183,9 @@ public sealed partial class HxCStream
 
             if(chunkHeader.size > fileData.Length - fileOffset) return ErrorNumber.InvalidArgument;
 
+            // A chunk must at least hold its own header and CRC, and size 0 would loop forever
+            if(chunkHeader.size < Marshal.SizeOf<HxCStreamChunkHeader>() + 4) return ErrorNumber.InvalidArgument;
+
             // Verify CRC32 - calculate CRC of chunk data (excluding the CRC itself)
             var chunkData = new byte[chunkHeader.size - 4];
             Array.Copy(fileData, (int)fileOffset, chunkData, 0, (int)(chunkHeader.size - 4));
