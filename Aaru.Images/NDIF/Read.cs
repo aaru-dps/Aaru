@@ -83,7 +83,7 @@ public sealed partial class Ndif
 
         _imageInfo.Sectors = 0;
 
-        foreach(byte[] bcem in bcems.Select(_ => rsrc.GetResource(NDIF_RESOURCEID)))
+        foreach(byte[] bcem in bcems.Select(id => rsrc.GetResource(id)))
         {
             if(bcem.Length < 128) return ErrorNumber.InvalidArgument;
 
