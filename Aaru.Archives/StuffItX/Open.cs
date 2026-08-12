@@ -39,7 +39,7 @@ public sealed partial class StuffItX
 
             ulong value = reader.ReadSitxP2();
 
-            if(attrType <= 10) element.Attribs[attrType - 1] = (long)value;
+            if(attrType is >= 1 and <= 10) element.Attribs[attrType - 1] = (long)value;
         }
 
         // Read algorithm list
@@ -51,7 +51,7 @@ public sealed partial class StuffItX
 
             ulong value = reader.ReadSitxP2();
 
-            if(algType <= 6) element.AlgList[algType - 1] = (long)value;
+            if(algType is >= 1 and <= 6) element.AlgList[algType - 1] = (long)value;
 
             if(algType == 4) element.AlgList3Extra = (long)reader.ReadSitxP2();
         }
