@@ -45,10 +45,15 @@ public sealed partial class Apridisk
 
         uint uLen = 0;
 
+        // No sector can be larger than this, do not let corrupt input expand unboundedly
+        const uint maxDecompressed = 65536;
+
         while(cLen >= 3)
         {
             var blklen = BitConverter.ToUInt16(compressed, readp);
             readp += 2;
+
+            if(uLen + blklen > maxDecompressed) break;
 
             for(var i = 0; i < blklen; i++) buffer.WriteByte(compressed[readp]);
 
