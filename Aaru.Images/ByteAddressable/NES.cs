@@ -76,7 +76,7 @@ public partial class Nes : IByteAddressableImage
 
         stream.Position = 0;
         var magicBytes = new byte[4];
-        stream.EnsureRead(magicBytes, 0, 8);
+        stream.EnsureRead(magicBytes, 0, 4);
         var magic = BitConverter.ToUInt32(magicBytes, 0);
 
         return magic == 0x1A53454E;
@@ -94,7 +94,7 @@ public partial class Nes : IByteAddressableImage
 
         stream.Position = 0;
         var header = new byte[16];
-        stream.EnsureRead(header, 0, 8);
+        stream.EnsureRead(header, 0, 16);
         var magic = BitConverter.ToUInt32(header, 0);
 
         if(magic != 0x1A53454E) return ErrorNumber.InvalidArgument;
@@ -129,13 +129,14 @@ public partial class Nes : IByteAddressableImage
             _nesHeaderInfo.Mapper      += (ushort)((header[8] & 0xF) << 8);
             _nesHeaderInfo.Submapper   =  (byte)(header[8]           >> 4);
 
+            // Exponent-multiplier notation: 2^E * (MM * 2 + 1)
             if((header[9] & 0xF) == 0xF)
-                _prgLen = (1 << (header[4] >> 2)) * (header[4] & 0x3);
+                _prgLen = (1 << (header[4] >> 2)) * ((header[4] & 0x3) * 2 + 1);
             else
                 _prgLen += (header[9] & 0xF) * 16384;
 
             if(header[9] >> 4 == 0xF)
-                _chrLen = (1 << (header[5] >> 2)) * (header[5] & 0x3);
+                _chrLen = (1 << (header[5] >> 2)) * ((header[5] & 0x3) * 2 + 1);
             else
                 _chrLen += (header[9] >> 4) * 8192;
 
