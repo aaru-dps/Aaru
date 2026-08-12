@@ -858,9 +858,11 @@ public sealed partial class Vhd
                                                     false,
                                                     length - remainingInBlock,
                                                     out suffix,
-                                                    out sectorStatus);
+                                                    out SectorStatus[] suffixStatus);
 
                     if(errno != ErrorNumber.NoError) return errno;
+
+                    Array.Copy(suffixStatus, 0, sectorStatus, (int)remainingInBlock, suffixStatus.Length);
 
                     sectorsToReadHere = remainingInBlock;
                 }
