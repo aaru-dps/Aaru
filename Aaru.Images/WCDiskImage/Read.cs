@@ -174,7 +174,7 @@ public sealed partial class WCDiskImage
         _fileHeader    = fheader;
         _wcImageFilter = imageFilter;
 
-        return ErrorNumber.InvalidArgument;
+        return ErrorNumber.NoError;
     }
 
     /// <inheritdoc />
