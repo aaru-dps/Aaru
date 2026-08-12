@@ -448,7 +448,7 @@ public sealed partial class Vhdx
 
                         break;
                     case SECTOR_BITMAP_PRESENT:
-                        stream.Seek((long)((pt & BAT_FILE_OFFSET_MASK) * 1048576), SeekOrigin.Begin);
+                        stream.Seek((long)(pt & BAT_FILE_OFFSET_MASK), SeekOrigin.Begin);
                         var bmp = new byte[1048576];
                         stream.EnsureRead(bmp, 0, bmp.Length);
                         sectorBmpMs.Write(bmp, 0, bmp.Length);
