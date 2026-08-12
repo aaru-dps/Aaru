@@ -616,7 +616,7 @@ public sealed partial class PowerISO
         // Open additional parts if it is a split archive
         if(_numParts > 1)
         {
-            string basePath = imageFilter.Filename;
+            string basePath = Path.Combine(imageFilter.ParentFolder, imageFilter.Filename);
 
             for(var p = 1; p < _numParts; p++)
             {
