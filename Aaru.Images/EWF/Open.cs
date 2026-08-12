@@ -298,7 +298,7 @@ public sealed partial class Ewf
 
             // Read section descriptor
             var descBytes = new byte[SECTION_DESCRIPTOR_V1_SIZE];
-            int bytesRead = segStream.Read(descBytes, 0, SECTION_DESCRIPTOR_V1_SIZE);
+            int bytesRead = segStream.EnsureRead(descBytes, 0, SECTION_DESCRIPTOR_V1_SIZE);
 
             if(bytesRead < SECTION_DESCRIPTOR_V1_SIZE) break;
 
@@ -375,7 +375,8 @@ public sealed partial class Ewf
 
                 case SECTION_TYPE_TABLE:
                 case SECTION_TYPE_TABLE2:
-                    ParseTableSectionV1(segStream, segIdx, dataSize, ref currentChunk, (long)descriptor.next_offset);
+                    // Chunk data ends where the table section itself begins
+                    ParseTableSectionV1(segStream, segIdx, dataSize, ref currentChunk, sectionStart);
 
                     break;
 
@@ -433,6 +434,9 @@ public sealed partial class Ewf
 
             // Move to next section
             if(descriptor.next_offset == 0 || sectionType is SECTION_TYPE_DONE or SECTION_TYPE_NEXT) break;
+
+            // A section pointing at or before itself would loop forever
+            if((long)descriptor.next_offset <= sectionStart) break;
 
             segStream.Seek((long)descriptor.next_offset, SeekOrigin.Begin);
         }
@@ -500,6 +504,9 @@ public sealed partial class Ewf
                               (EwfCompressionLevel)vol.compression_level);
         }
 
+        // Table parsing needs the real chunk size before all segments are done
+        if(_sectorsPerChunk > 0 && _bytesPerSector > 0) _chunkSize = _sectorsPerChunk * _bytesPerSector;
+
         volumeFound = true;
     }
 
@@ -520,9 +527,12 @@ public sealed partial class Ewf
                           tableHeader.number_of_entries,
                           tableHeader.base_offset);
 
-        // Read all table entries
+        // Read all table entries, never more than the stream can hold
         var entryCount = (int)tableHeader.number_of_entries;
-        var entryData  = new byte[entryCount * 4];
+
+        if(entryCount < 0 || (long)entryCount * 4 > segStream.Length - segStream.Position) return;
+
+        var entryData = new byte[entryCount * 4];
         segStream.EnsureRead(entryData, 0, entryData.Length);
 
         // Skip entries checksum (4 bytes)
@@ -667,6 +677,19 @@ public sealed partial class Ewf
 
                     break;
 
+                case EwfSectionTypeV2.DeviceInformation:
+                case EwfSectionTypeV2.CaseData:
+                {
+                    if(dataStart < 0 || descriptor.data_size == 0) break;
+
+                    segStream.Seek(dataStart, SeekOrigin.Begin);
+                    var textBytes = new byte[descriptor.data_size];
+                    segStream.EnsureRead(textBytes, 0, textBytes.Length);
+                    ParseTextSectionV2(textBytes, ref volumeFound, ref totalSectors);
+
+                    break;
+                }
+
                 case EwfSectionTypeV2.Md5Hash:
                     if(_md5Stored                 == null &&
                        (long)descriptor.data_size >= System.Runtime.InteropServices.Marshal.SizeOf<EwfMd5HashV2>())
@@ -712,10 +735,74 @@ public sealed partial class Ewf
                     break;
             }
 
-            // Move to previous section
-            if(descriptor.previous_offset == 0) break;
+            // Move to previous section, which must be strictly before this one or we would loop forever
+            if(descriptor.previous_offset == 0 || (long)descriptor.previous_offset >= position) break;
 
             position = (long)descriptor.previous_offset;
+        }
+    }
+
+    /// <summary>
+    ///     Parses an EWF v2 device information or case data section: a zlib-compressed UTF-16 table of
+    ///     tab-separated keys and values. Extracts the media geometry the volume section carried in v1.
+    /// </summary>
+    void ParseTextSectionV2(byte[] data, ref bool volumeFound, ref ulong totalSectors)
+    {
+        byte[] raw = data;
+
+        try
+        {
+            using var zms = new MemoryStream(data);
+            using var z = new System.IO.Compression.ZLibStream(zms, System.IO.Compression.CompressionMode.Decompress);
+            using var outMs = new MemoryStream();
+            z.CopyTo(outMs);
+            raw = outMs.ToArray();
+        }
+        catch(Exception)
+        {
+            // Not compressed, use as-is
+        }
+
+        string text = raw.Length >= 2 && raw[0] == 0xFF && raw[1] == 0xFE
+                          ? Encoding.Unicode.GetString(raw, 2, raw.Length - 2)
+                          : Encoding.Unicode.GetString(raw);
+
+        string[] lines = text.Split('\n');
+
+        for(var i = 0; i + 1 < lines.Length; i++)
+        {
+            string[] keys   = lines[i].TrimEnd('\r', '\0').Split('\t');
+            string[] values = lines[i + 1].TrimEnd('\r', '\0').Split('\t');
+
+            if(keys.Length < 2 || keys.Length != values.Length) continue;
+
+            for(var k = 0; k < keys.Length; k++)
+            {
+                switch(keys[k])
+                {
+                    // Bytes per sector
+                    case "bps":
+                        if(uint.TryParse(values[k], out uint bps) && bps > 0) _bytesPerSector = bps;
+
+                        break;
+
+                    // Sectors per chunk (case data)
+                    case "sb":
+                        if(uint.TryParse(values[k], out uint spc) && spc > 0) _sectorsPerChunk = spc;
+
+                        break;
+
+                    // Total sectors (device information)
+                    case "ts":
+                        if(ulong.TryParse(values[k], out ulong ts) && ts > 0)
+                        {
+                            totalSectors = ts;
+                            volumeFound  = true;
+                        }
+
+                        break;
+                }
+            }
         }
     }
 
@@ -741,8 +828,8 @@ public sealed partial class Ewf
 
             EwfTableEntryV2 entry = Marshal.ByteArrayToStructureLittleEndian<EwfTableEntryV2>(entryBytes);
 
-            // Flag 0x00000001 means uncompressed in v2
-            bool compressed = (entry.chunk_data_flags & 0x00000001) == 0;
+            // Flag 0x00000001 means compressed in v2
+            bool compressed = (entry.chunk_data_flags & 0x00000001) != 0;
 
             ulong chunkIndex = firstChunk + (ulong)i;
 
