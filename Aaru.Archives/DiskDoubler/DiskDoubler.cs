@@ -8,6 +8,8 @@ namespace Aaru.Archives;
 
 public sealed partial class DiskDoubler : IArchive
 {
+    const string MODULE_NAME = "DiskDoubler Archive Plugin";
+
     Encoding                _encoding;
     List<Entry>             _entries;
     ArchiveSupportedFeature _features;

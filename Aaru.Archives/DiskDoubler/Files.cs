@@ -6,6 +6,7 @@ using Aaru.CommonTypes.Structs;
 using Aaru.Compression.DiskDoubler;
 using Aaru.Filters;
 using Aaru.Helpers;
+using Aaru.Logging;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
 namespace Aaru.Archives;
@@ -29,10 +30,15 @@ public sealed partial class DiskDoubler
     {
         if(uncompressedSize == 0) return [];
 
+        // Validate sizes and offsets against the file before allocating
+        if(offset < 0 || uncompressedSize is < 0 or > int.MaxValue) return null;
+
         int effectiveMethod = method & 0x7F;
 
         if(effectiveMethod == 0)
         {
+            if(offset + uncompressedSize > _stream.Length) return null;
+
             // No compression — read raw data
             var raw = new byte[uncompressedSize];
             _stream.Position = offset;
@@ -42,6 +48,8 @@ public sealed partial class DiskDoubler
 
             return raw;
         }
+
+        if(compressedSize <= 0 || offset + compressedSize > _stream.Length) return null;
 
         // Read compressed data
         var compData = new byte[compressedSize];
@@ -54,17 +62,12 @@ public sealed partial class DiskDoubler
         {
             case DiskDoublerMethod.Compress:
             {
+                if(compData.Length < 4) return null;
+
                 bool xor   = NeedsXorMask(info1, info2);
-                byte m1    = compData[0];
-                byte m2    = compData[1];
                 byte flags = compData[2];
 
-                if(xor)
-                {
-                    m1    ^= XOR_MASK;
-                    m2    ^= XOR_MASK;
-                    flags ^= XOR_MASK;
-                }
+                if(xor) flags ^= XOR_MASK;
 
                 // Strip 3-byte header, pass remaining to LzwStream
                 var lzwData = new byte[compressedSize - 3];
@@ -72,14 +75,10 @@ public sealed partial class DiskDoubler
 
                 if(xor) ApplyXor(lzwData, XOR_MASK);
 
-                using(var ms = new MemoryStream(lzwData))
-                {
-                    using(var lzw = new LzwStream(ms, uncompressedSize, flags))
-                    {
-                        result = new byte[uncompressedSize];
-                        lzw.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms  = new MemoryStream(lzwData);
+                using var lzw = new LzwStream(ms, uncompressedSize, flags);
+                result = new byte[uncompressedSize];
+                lzw.ReadExactly(result, 0, result.Length);
 
                 break;
             }
@@ -90,14 +89,10 @@ public sealed partial class DiskDoubler
 
                 if(xor) ApplyXor(compData, XOR_MASK);
 
-                using(var ms = new MemoryStream(compData))
-                {
-                    using(var m2s = new Method2Stream(ms, uncompressedSize, 256))
-                    {
-                        result = new byte[uncompressedSize];
-                        m2s.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms       = new MemoryStream(compData);
+                using var m2Stream = new Method2Stream(ms, uncompressedSize, 256);
+                result = new byte[uncompressedSize];
+                m2Stream.ReadExactly(result, 0, result.Length);
 
                 if(xor) ApplyXor(result, XOR_MASK);
 
@@ -106,6 +101,8 @@ public sealed partial class DiskDoubler
 
             case DiskDoublerMethod.Method5:
             {
+                if(compData.Length < 2) return null;
+
                 bool xor = NeedsXorMask(info1, info2);
 
                 if(xor) ApplyXor(compData, XOR_MASK);
@@ -118,14 +115,10 @@ public sealed partial class DiskDoubler
                 var m5Data = new byte[compressedSize - 1];
                 Buffer.BlockCopy(compData, 1, m5Data, 0, m5Data.Length);
 
-                using(var ms = new MemoryStream(m5Data))
-                {
-                    using(var m2s = new Method2Stream(ms, uncompressedSize, numTrees))
-                    {
-                        result = new byte[uncompressedSize];
-                        m2s.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms       = new MemoryStream(m5Data);
+                using var m2Stream = new Method2Stream(ms, uncompressedSize, numTrees);
+                result = new byte[uncompressedSize];
+                m2Stream.ReadExactly(result, 0, result.Length);
 
                 if(xor) ApplyXor(result, XOR_MASK);
 
@@ -141,25 +134,26 @@ public sealed partial class DiskDoubler
             case DiskDoublerMethod.Ads:
             case DiskDoublerMethod.Ad:
             {
-                using(var ms = new MemoryStream(compData))
-                {
-                    using(var adn = new AdnStream(ms, uncompressedSize))
-                    {
-                        result = new byte[uncompressedSize];
-                        adn.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms  = new MemoryStream(compData);
+                using var adn = new AdnStream(ms, uncompressedSize);
+                result = new byte[uncompressedSize];
+                adn.ReadExactly(result, 0, result.Length);
 
                 break;
             }
 
             case DiskDoublerMethod.StacLzs:
             {
+                if(compData.Length < 10) return null;
+
                 // Skip table header: 6 bytes + 4-byte entry count + 8 + 2*count bytes
-                var pos        = 6;
-                var numEntries = BigEndianBitConverter.ToUInt32(compData, pos);
-                pos += 4;
-                pos += (int)(8 + 2 * numEntries);
+                var  numEntries = BigEndianBitConverter.ToUInt32(compData, 6);
+                long tableEnd   = 6 + 4 + 8 + 2L * numEntries;
+
+                // The table cannot extend past the compressed data
+                if(tableEnd >= compData.Length) return null;
+
+                var pos = (int)tableEnd;
 
                 // XOR remaining data with 0xFF
                 int lzsLen  = compData.Length - pos;
@@ -167,14 +161,10 @@ public sealed partial class DiskDoubler
                 Buffer.BlockCopy(compData, pos, lzsData, 0, lzsLen);
                 ApplyXor(lzsData, XOR_STAC);
 
-                using(var ms = new MemoryStream(lzsData))
-                {
-                    using(var stac = new StacLzsStream(ms, uncompressedSize))
-                    {
-                        result = new byte[uncompressedSize];
-                        stac.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms   = new MemoryStream(lzsData);
+                using var stac = new StacLzsStream(ms, uncompressedSize);
+                result = new byte[uncompressedSize];
+                stac.ReadExactly(result, 0, result.Length);
 
                 // XOR output with 0xFF
                 ApplyXor(result, XOR_STAC);
@@ -184,28 +174,20 @@ public sealed partial class DiskDoubler
 
             case DiskDoublerMethod.CompactPro:
             {
-                using(var ms = new MemoryStream(compData))
-                {
-                    using(var cpt = new CompactProStream(ms, uncompressedSize))
-                    {
-                        result = new byte[uncompressedSize];
-                        cpt.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms  = new MemoryStream(compData);
+                using var cpt = new CompactProStream(ms, uncompressedSize);
+                result = new byte[uncompressedSize];
+                cpt.ReadExactly(result, 0, result.Length);
 
                 break;
             }
 
             case DiskDoublerMethod.Ddn:
             {
-                using(var ms = new MemoryStream(compData))
-                {
-                    using(var ddn = new DdnStream(ms, uncompressedSize))
-                    {
-                        result = new byte[uncompressedSize];
-                        ddn.ReadExactly(result, 0, result.Length);
-                    }
-                }
+                using var ms  = new MemoryStream(compData);
+                using var ddn = new DdnStream(ms, uncompressedSize);
+                result = new byte[uncompressedSize];
+                ddn.ReadExactly(result, 0, result.Length);
 
                 break;
             }
@@ -333,13 +315,24 @@ public sealed partial class DiskDoubler
 
         if(entry.IsDirectory) return ErrorNumber.InvalidArgument;
 
-        byte[] data = DecompressFork(entry.DataOffset,
-                                     entry.DataCompressedSize,
-                                     entry.DataUncompressedSize,
-                                     entry.DataMethod,
-                                     entry.DataDelta,
-                                     entry.Info1,
-                                     entry.Info2);
+        byte[] data;
+
+        try
+        {
+            data = DecompressFork(entry.DataOffset,
+                                  entry.DataCompressedSize,
+                                  entry.DataUncompressedSize,
+                                  entry.DataMethod,
+                                  entry.DataDelta,
+                                  entry.Info1,
+                                  entry.Info2);
+        }
+        catch(Exception ex)
+        {
+            AaruLogging.Debug(MODULE_NAME, "Exception decompressing fork: {0}", ex);
+
+            return ErrorNumber.InOutError;
+        }
 
         if(data is null) return ErrorNumber.NotSupported;
 
