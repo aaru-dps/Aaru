@@ -102,6 +102,10 @@ public sealed partial class DiskCopy42
                 return ErrorNumber.InvalidArgument;
         }
 
+        // Even for Twiggy the declared sizes cannot exceed what the file holds
+        if((long)header.DataSize + header.TagSize + 0x54 > imageFilter.DataForkLength)
+            return ErrorNumber.InvalidArgument;
+
         if(header.Format != kSonyFormat400K    &&
            header.Format != kSonyFormat800K    &&
            header.Format != kSonyFormat720K    &&
@@ -189,6 +193,9 @@ public sealed partial class DiskCopy42
 
         if(imageInfo.MediaType == MediaType.AppleFileWare)
         {
+            // The MFS probe below reads two bytes at half the data plus 0x412
+            if(header.DataSize / 2 + 0x414 > header.DataSize) return ErrorNumber.InvalidArgument;
+
             var data = new byte[header.DataSize];
             var tags = new byte[header.TagSize];
 
@@ -220,9 +227,10 @@ public sealed partial class DiskCopy42
             {
                 int[] sectorsPerTrack =
                 [
-                    22, 22, 22, 22, 21, 21, 21, 21, 21, 21, 21, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 19,
-                    18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 15, 15, 15, 15
+                    22, 22, 22, 22, 21, 21, 21, 21, 21, 21, 21, 20, 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 19, 18,
+                    18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 16, 16, 16, 16, 16, 16, 16, 15, 15, 15, 15
                 ];
+
                 int[] trackOffsets = new int[sectorsPerTrack.Length];
 
                 for(int i = 1; i < trackOffsets.Length; i++)
@@ -241,13 +249,13 @@ public sealed partial class DiskCopy42
                     Array.Copy(data,
                                header.DataSize / 2 + trackOffsets[i] * 512,
                                twiggyCache,
-                               destinationSector * 512,
+                               destinationSector  * 512,
                                sectorsPerTrack[i] * 512);
 
                     Array.Copy(tags,
                                header.TagSize / 2 + trackOffsets[i] * bptag,
                                twiggyCacheTags,
-                               destinationSector * bptag,
+                               destinationSector  * bptag,
                                sectorsPerTrack[i] * bptag);
 
                     destinationSector += sectorsPerTrack[i];
@@ -258,13 +266,13 @@ public sealed partial class DiskCopy42
                     Array.Copy(data,
                                header.DataSize / 2 + trackOffsets[i] * 512,
                                twiggyCache,
-                               destinationSector * 512,
+                               destinationSector  * 512,
                                sectorsPerTrack[i] * 512);
 
                     Array.Copy(tags,
                                header.TagSize / 2 + trackOffsets[i] * bptag,
                                twiggyCacheTags,
-                               destinationSector * bptag,
+                               destinationSector  * bptag,
                                sectorsPerTrack[i] * bptag);
 
                     destinationSector += sectorsPerTrack[i];
@@ -273,13 +281,13 @@ public sealed partial class DiskCopy42
                 Array.Copy(data,
                            header.DataSize / 2 + trackOffsets[23] * 512,
                            twiggyCache,
-                           destinationSector * 512,
+                           destinationSector   * 512,
                            sectorsPerTrack[23] * 512);
 
                 Array.Copy(tags,
                            header.TagSize / 2 + trackOffsets[23] * bptag,
                            twiggyCacheTags,
-                           destinationSector * bptag,
+                           destinationSector   * bptag,
                            sectorsPerTrack[23] * bptag);
             }
         }
