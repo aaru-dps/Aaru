@@ -117,6 +117,8 @@ public sealed partial class Ndif
             // Block chunks and headers
             _chunks = new Dictionary<ulong, BlockChunk>();
 
+            if(bcem.Length < 128 + (long)_header.chunks * 12) return ErrorNumber.InvalidArgument;
+
             for(var i = 0; i < _header.chunks; i++)
             {
                 // Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
