@@ -89,7 +89,7 @@ public sealed partial class Gdi
                     FileOffset        = (ulong)gdiTrack.Offset,
                     FileType          = "BINARY",
                     RawBytesPerSector = gdiTrack.Bps,
-                    BytesPerSector    = gdiTrack.TrackType == TrackType.Data ? 2048 : 2352,
+                    BytesPerSector    = gdiTrack.TrackType == TrackType.Audio ? 2352 : 2048,
                     SubchannelType    = TrackSubchannelType.None
                 };
 
