@@ -589,7 +589,7 @@ public sealed partial class Gdi
 
         if(aaruTrack.Sequence == 0) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         uint sectorOffset = 0;
         uint sectorSize   = 0;
