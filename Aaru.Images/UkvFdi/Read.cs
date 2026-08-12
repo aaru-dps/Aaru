@@ -66,6 +66,11 @@ public sealed partial class UkvFdi
         AaruLogging.Debug(MODULE_NAME, "hdr.flags = {0}",      hdr.flags);
         AaruLogging.Debug(MODULE_NAME, "hdr.heads = {0}",      hdr.heads);
 
+        if(hdr.dataOff < hdr.descOff || hdr.dataOff > stream.Length) return ErrorNumber.InvalidArgument;
+
+        // Sanity limit, no supported floppy has more
+        if(hdr.cylinders > 256 || hdr.heads > 2) return ErrorNumber.InvalidArgument;
+
         stream.Seek(hdr.descOff, SeekOrigin.Begin);
         var description = new byte[hdr.dataOff - hdr.descOff];
         stream.EnsureRead(description, 0, description.Length);
