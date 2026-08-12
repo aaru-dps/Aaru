@@ -84,8 +84,8 @@ public sealed partial class PowerISO
         var seekPos = (long)(part.offset + (chunk.offset - part.start));
         part.stream.Seek(seekPos, SeekOrigin.Begin);
 
-        // Read compressed data
-        var readLen = (int)chunk.length;
+        // Read compressed data, never more than the I/O buffer can hold (v1 stored chunks can exceed the chunk size)
+        var readLen = (int)Math.Min(chunk.length, (uint)_ioBuffer.Length);
         part.stream.EnsureRead(_ioBuffer, 0, readLen);
 
         switch(chunk.compression)
