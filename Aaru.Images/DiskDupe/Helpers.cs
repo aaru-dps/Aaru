@@ -79,6 +79,9 @@ public sealed partial class DiskDupe
             stream.EnsureRead(buffer, 0, 6);
             trackMap[i]     = Marshal.ByteArrayToStructureLittleEndian<TrackInfo>(buffer);
             trackOffsets[i] = trackLen * trackMap[i].trackNumber;
+
+            // A present track must fit inside the file
+            if(trackMap[i].present == 1 && trackOffsets[i] + trackLen > stream.Length) return false;
         }
 
         fhdr     = fHeader;

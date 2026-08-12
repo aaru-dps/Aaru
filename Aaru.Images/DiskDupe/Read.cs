@@ -97,7 +97,7 @@ public sealed partial class DiskDupe
 
         if(sectorAddress > _imageInfo.Sectors - 1) return ErrorNumber.OutOfRange;
 
-        if(trackNum > 2 * _imageInfo.Cylinders) return ErrorNumber.SectorNotFound;
+        if(trackNum >= _trackMap.Length) return ErrorNumber.SectorNotFound;
 
         buffer = new byte[_imageInfo.SectorSize];
 
