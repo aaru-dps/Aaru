@@ -117,6 +117,10 @@ public sealed partial class Lha
     bool ParseLevel2(long headerStart,   ushort totalHeaderSize, uint      compressedSize, uint uncompressedSize,
                      uint unixTimestamp, byte   attrs,           ref Entry entry)
     {
+        // Fixed part of a level 2 header is 24 bytes, reject sizes that cannot contain it,
+        // a too small size would re-parse the same bytes forever
+        if(totalHeaderSize < 24 || headerStart + totalHeaderSize > _stream.Length) return false;
+
         // After level byte: crc16(2), os(1), then extended headers
         if(_stream.Position + 3 > _stream.Length) return false;
 
@@ -156,6 +160,9 @@ public sealed partial class Lha
         entry.Crc16 = BitConverter.ToUInt16(tailBytes, 0);
         entry.Os    = (OsType)tailBytes[2];
         var totalHeaderSize = BitConverter.ToUInt32(tailBytes, 3);
+
+        // Fixed part of a level 3 header is 32 bytes, reject sizes that cannot contain it or point past end of file
+        if(totalHeaderSize < 32 || headerStart + totalHeaderSize > _stream.Length) return false;
 
         // Level 3 uses Unix timestamps
         entry.LastWriteTime = DateTimeOffset.FromUnixTimeSeconds(unixTimestamp).DateTime;
