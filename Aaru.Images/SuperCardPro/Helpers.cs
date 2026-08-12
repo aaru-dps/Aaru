@@ -181,11 +181,24 @@ public sealed partial class SuperCardPro
     ///     When a bit cell time is 0x0000, it indicates no flux transition for at least 65536*25ns.
     ///     Multiple consecutive 0x0000 entries accumulate (each adds 65536*25ns).
     /// </summary>
+    /// <summary>Reads a big-endian 16-bit flux cell, false at end of stream</summary>
+    static bool TryReadFluxCell(BinaryReader reader, out ushort value)
+    {
+        value = 0;
+        byte[] cell = reader.ReadBytes(2);
+
+        if(cell.Length < 2) return false;
+
+        value = BigEndianBitConverter.ToUInt16(cell, 0);
+
+        return true;
+    }
+
     static void ReadFluxDataWithOverflow(BinaryReader reader, ulong trackLength, List<byte> output)
     {
         for(ulong j = 0; j < trackLength; j++)
         {
-            ushort rawValue = BigEndianBitConverter.ToUInt16(reader.ReadBytes(2), 0);
+            if(!TryReadFluxCell(reader, out ushort rawValue)) return;
 
             // Per SCP spec: 0x0000 indicates overflow (no flux transition for >= 65536*25ns)
             // When this occurs, the next bit cell time will be added to 65536 (or more if multiple 0x0000)
@@ -199,7 +212,8 @@ public sealed partial class SuperCardPro
                 while(j + overflowCount < trackLength)
                 {
                     long savedPosition = reader.BaseStream.Position;
-                    ushort nextValue = BigEndianBitConverter.ToUInt16(reader.ReadBytes(2), 0);
+
+                    if(!TryReadFluxCell(reader, out ushort nextValue)) return;
 
                     if(nextValue == 0)
                     {
@@ -212,7 +226,8 @@ public sealed partial class SuperCardPro
 
                         // Per SCP spec: Next non-zero value is added to accumulated overflow
                         // overflowCount * 65536 + nextValue = total bit cell time
-                        nextValue = BigEndianBitConverter.ToUInt16(reader.ReadBytes(2), 0);
+                        if(!TryReadFluxCell(reader, out nextValue)) return;
+
                         uint overflowTotal = (uint)(overflowCount * 65536) + nextValue;
                         output.AddRange(UInt32ToFluxRepresentation(overflowTotal));
 
@@ -235,7 +250,8 @@ public sealed partial class SuperCardPro
 
                 if(j + 1 >= trackLength) break;
 
-                continueLoop:
+            continueLoop:
+
                 continue;
             }
 
@@ -252,8 +268,7 @@ public sealed partial class SuperCardPro
     {
         // Per SCP spec: Timestamp appears after track data, before footer
         // Check if we're at a valid position to read timestamp
-        if(stream.Position < afterTrackDataPosition)
-            stream.Position = afterTrackDataPosition;
+        if(stream.Position < afterTrackDataPosition) stream.Position = afterTrackDataPosition;
 
         // Per SCP spec: Timestamp is ASCII, valid range 0x30-0x5F
         // Check if first byte is valid ASCII
@@ -278,7 +293,7 @@ public sealed partial class SuperCardPro
 
         // Read until we hit invalid ASCII or null terminator or reasonable length limit
         var timestampBytes = new List<byte>();
-        int maxLength = 256; // Reasonable max timestamp length
+        int maxLength      = 256; // Reasonable max timestamp length
 
         for(int i = 0; i < maxLength; i++)
         {

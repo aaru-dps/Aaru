@@ -90,11 +90,17 @@ public sealed partial class SuperCardPro
         // Bit 5 (FOOTER): cleared = no footer, set = footer present
         // Bit 6 (EXTENDED MODE): cleared = floppy only, set = extended mode (tapes/hard drives)
         // Bit 7 (FLUX CREATOR): cleared = SuperCard Pro, set = other device
-        AaruLogging.Debug(MODULE_NAME, "header.flags.StartsAtIndex = {0}", Header.flags.HasFlag(ScpFlags.StartsAtIndex));
+        AaruLogging.Debug(MODULE_NAME,
+                          "header.flags.StartsAtIndex = {0}",
+                          Header.flags.HasFlag(ScpFlags.StartsAtIndex));
 
-        AaruLogging.Debug(MODULE_NAME, "header.flags.Tpi = {0}", Header.flags.HasFlag(ScpFlags.Tpi) ? "96tpi" : "48tpi");
+        AaruLogging.Debug(MODULE_NAME,
+                          "header.flags.Tpi = {0}",
+                          Header.flags.HasFlag(ScpFlags.Tpi) ? "96tpi" : "48tpi");
 
-        AaruLogging.Debug(MODULE_NAME, "header.flags.Rpm = {0}", Header.flags.HasFlag(ScpFlags.Rpm) ? "360rpm" : "300rpm");
+        AaruLogging.Debug(MODULE_NAME,
+                          "header.flags.Rpm = {0}",
+                          Header.flags.HasFlag(ScpFlags.Rpm) ? "360rpm" : "300rpm");
 
         AaruLogging.Debug(MODULE_NAME, "header.flags.Normalized = {0}", Header.flags.HasFlag(ScpFlags.Normalized));
 
@@ -180,6 +186,10 @@ public sealed partial class SuperCardPro
 
                 // Per SCP spec: dataOffset is relative to TDH start, convert to absolute file offset
                 trk.Entries[r].dataOffset += Header.offsets[t];
+
+                // Flux data is one 16-bit cell per length unit and must fit inside the file
+                if(trk.Entries[r].dataOffset + (ulong)trk.Entries[r].trackLength * 2 > (ulong)_scpStream.Length)
+                    return ErrorNumber.InvalidArgument;
             }
 
             ScpTracks.Add(t, trk);
@@ -343,12 +353,13 @@ public sealed partial class SuperCardPro
 
         // Per SCP spec: Timestamp (if present) appears after track data, before footer
         // Read timestamp if present
-        long lastTrackDataPosition = _scpStream.Position;
-        string timestamp = ReadTimestamp(_scpStream, lastTrackDataPosition);
+        long   lastTrackDataPosition = _scpStream.Position;
+        string timestamp             = ReadTimestamp(_scpStream, lastTrackDataPosition);
 
         if(timestamp != null)
         {
             AaruLogging.Debug(MODULE_NAME, "Found timestamp: \"{0}\"", timestamp);
+
             // Timestamp is informative only - we use footer timestamps if footer is present
         }
 
@@ -462,6 +473,7 @@ public sealed partial class SuperCardPro
                     if(Header.version == 0)
                     {
                         _imageInfo.Version = $"{(footer.imageVersion & 0xF0) >> 4}.{footer.imageVersion & 0xF}";
+
                         AaruLogging.Debug(MODULE_NAME,
                                           "Using footer version (header version was 0): {0}",
                                           _imageInfo.Version);
@@ -549,8 +561,7 @@ public sealed partial class SuperCardPro
 
         byte scpTrackNum = (byte)HeadTrackSubToScpTrack(head, track, subTrack, Header.heads);
 
-        if(!ScpTracks.TryGetValue(scpTrackNum, out TrackHeader scpTrack))
-            return ErrorNumber.OutOfRange;
+        if(!ScpTracks.TryGetValue(scpTrackNum, out TrackHeader scpTrack)) return ErrorNumber.OutOfRange;
 
         // Per SCP spec: indexTime is duration in nanoseconds/25ns for one revolution
         for(var i = 0; i < Header.revolutions; i++)
@@ -577,8 +588,7 @@ public sealed partial class SuperCardPro
         // Per SCP spec: bitCellEncoding (byte 0x09) = 0 means 16 bits, other values are for future expansion
         if(Header.bitCellEncoding != 0 && Header.bitCellEncoding != 16) return ErrorNumber.NotImplemented;
 
-        if(!ScpTracks.TryGetValue(scpTrackNum, out TrackHeader scpTrack))
-            return ErrorNumber.OutOfRange;
+        if(!ScpTracks.TryGetValue(scpTrackNum, out TrackHeader scpTrack)) return ErrorNumber.OutOfRange;
 
         Stream stream = _scpFilter.GetDataForkStream();
         var    br     = new BinaryReader(stream);
@@ -627,42 +637,45 @@ public sealed partial class SuperCardPro
         {
             ulong resolution = (ulong)((Header.resolution + 1) * DEFAULT_RESOLUTION);
 
-            captures = [.. ScpTracks.Select(kvp =>
-            {
-                byte scpTrack = kvp.Key;
+            captures =
+            [
+                .. ScpTracks.Select(kvp =>
+                {
+                    byte scpTrack = kvp.Key;
 
-                // Reverse HeadTrackSubToScpTrack based on heads configuration
-                // Per SCP spec: Single-sided disks use specific entry patterns
-                uint head;
-                ushort track;
-                const byte subTrack = 0; // SuperCardPro always has subTrack = 0
+                    // Reverse HeadTrackSubToScpTrack based on heads configuration
+                    // Per SCP spec: Single-sided disks use specific entry patterns
+                    uint       head;
+                    ushort     track;
+                    const byte subTrack = 0; // SuperCardPro always has subTrack = 0
 
-                if(Header.heads == 1) // Side 0 only - even entries
-                {
-                    track = (ushort)(scpTrack / 2);
-                    head  = 0;
-                }
-                else if(Header.heads == 2) // Side 1 only - odd entries
-                {
-                    track = (ushort)(scpTrack / 2);
-                    head  = 1;
-                }
-                else // Double-sided - standard mapping
-                {
-                    head  = (uint)(scpTrack % 2);
-                    track = (ushort)(scpTrack / 2);
-                }
+                    if(Header.heads == 1) // Side 0 only - even entries
+                    {
+                        track = (ushort)(scpTrack / 2);
+                        head  = 0;
+                    }
+                    else if(Header.heads == 2) // Side 1 only - odd entries
+                    {
+                        track = (ushort)(scpTrack / 2);
+                        head  = 1;
+                    }
+                    else // Double-sided - standard mapping
+                    {
+                        head  = (uint)(scpTrack   % 2);
+                        track = (ushort)(scpTrack / 2);
+                    }
 
-                return new FluxCapture
-                {
-                    Head            = head,
-                    Track           = track,
-                    SubTrack        = subTrack,
-                    CaptureIndex    = 0, // SuperCardPro always has one capture per track
-                    IndexResolution = resolution,
-                    DataResolution  = resolution
-                };
-            })];
+                    return new FluxCapture
+                    {
+                        Head            = head,
+                        Track           = track,
+                        SubTrack        = subTrack,
+                        CaptureIndex    = 0, // SuperCardPro always has one capture per track
+                        IndexResolution = resolution,
+                        DataResolution  = resolution
+                    };
+                })
+            ];
         }
 
         return ErrorNumber.NoError;
