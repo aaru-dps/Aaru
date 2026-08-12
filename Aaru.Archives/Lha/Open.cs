@@ -301,9 +301,12 @@ public sealed partial class Lha
                     var modTime    = BitConverter.ToInt64(data, 9);
                     var accessTime = BitConverter.ToInt64(data, 17);
 
-                    if(createTime > 0) entry.CreationTime   = DateTime.FromFileTime(createTime);
-                    if(modTime    > 0) entry.LastWriteTime  = DateTime.FromFileTime(modTime);
-                    if(accessTime > 0) entry.LastAccessTime = DateTime.FromFileTime(accessTime);
+                    // Reject out of range values instead of throwing
+                    if(createTime is > 0 and <= MAX_FILETIME) entry.CreationTime = DateTime.FromFileTime(createTime);
+
+                    if(modTime is > 0 and <= MAX_FILETIME) entry.LastWriteTime = DateTime.FromFileTime(modTime);
+
+                    if(accessTime is > 0 and <= MAX_FILETIME) entry.LastAccessTime = DateTime.FromFileTime(accessTime);
                 }
 
                 break;

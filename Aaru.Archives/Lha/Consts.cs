@@ -2,9 +2,12 @@ namespace Aaru.Archives;
 
 public sealed partial class Lha
 {
-    const int  MIN_HEADER_SIZE = 7;
-    const byte METHOD_DASH     = (byte)'-';
-    const int  METHOD_LEN      = 5;
+    const int MIN_HEADER_SIZE = 7;
+
+    /// <summary>Maximum Windows FILETIME value convertible to a <see cref="System.DateTime" />.</summary>
+    const long MAX_FILETIME = 2650467743999999999;
+    const byte METHOD_DASH  = (byte)'-';
+    const int  METHOD_LEN   = 5;
 
     // Extended header type IDs
     const byte EXT_HEADER_CRC        = 0x00;
