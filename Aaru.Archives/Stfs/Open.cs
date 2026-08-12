@@ -72,9 +72,13 @@ public sealed partial class Stfs
             // While entries[i].PathIndicator > 0 recursively inversely prepend entries[PathIndicator].Filename to entries[i].Filename
             int pathIndicator = entries[i].PathIndicator;
             var path          = "";
+            int depth         = 0;
 
             while(pathIndicator > 0)
             {
+                // Guard against out of range parents and parent loops
+                if(pathIndicator >= entries.Count || ++depth > entries.Count) return ErrorNumber.InvalidArgument;
+
                 path = Path.Combine(StringHandlers.CToString(entries[pathIndicator].Filename, Encoding.ASCII), path);
 
                 pathIndicator = entries[pathIndicator].PathIndicator;
