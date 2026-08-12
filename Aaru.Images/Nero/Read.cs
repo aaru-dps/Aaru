@@ -1854,7 +1854,9 @@ public sealed partial class Nero
 
                 return ErrorNumber.NoError;
             case SectorTagType.CdTrackIsrc:
-                buffer = aaruTrack.Isrc;
+                if(aaruTrack.Isrc is null) return ErrorNumber.NoData;
+
+                buffer = (byte[])aaruTrack.Isrc.Clone();
 
                 return ErrorNumber.NoError;
             case SectorTagType.CdTrackText:
