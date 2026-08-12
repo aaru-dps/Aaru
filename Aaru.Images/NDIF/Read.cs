@@ -299,8 +299,11 @@ public sealed partial class Ndif
         var   chunkFound       = false;
         ulong chunkStartSector = 0;
 
+        // Pick the chunk with the greatest start sector at or below the address, dictionaries have no order
         foreach(KeyValuePair<ulong, BlockChunk> kvp in _chunks.Where(kvp => sectorAddress >= kvp.Key))
         {
+            if(chunkFound && kvp.Key <= chunkStartSector) continue;
+
             currentChunk     = kvp.Value;
             chunkFound       = true;
             chunkStartSector = kvp.Key;
@@ -386,6 +389,8 @@ public sealed partial class Ndif
                 _chunkCache.Add(chunkStartSector, data);
                 _currentChunkCacheSize += (uint)realSize;
             }
+
+            if(relOff + SECTOR_SIZE > data.Length) return ErrorNumber.InOutError;
 
             buffer = new byte[SECTOR_SIZE];
             Array.Copy(data, relOff, buffer, 0, SECTOR_SIZE);
