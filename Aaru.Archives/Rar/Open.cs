@@ -10,6 +10,7 @@ namespace Aaru.Archives;
 public sealed partial class Rar
 {
     List<Entry> _entries;
+    bool        _solidArchive;
 
     // ======================================================================
     //  RAR 1.x – 4.x parsing
@@ -49,7 +50,9 @@ public sealed partial class Rar
 
         AaruLogging.Debug(MODULE_NAME, "[navy]archive header flags[/] = [teal]0x{0:X4}[/]", flags);
 
-        if((flags & MHD_SOLID) != 0) AaruLogging.Debug(MODULE_NAME, "[yellow]Archive is solid[/]");
+        _solidArchive = (flags & MHD_SOLID) != 0;
+
+        if(_solidArchive) AaruLogging.Debug(MODULE_NAME, "[yellow]Archive is solid[/]");
 
         if((flags & MHD_VOLUME) != 0) AaruLogging.Debug(MODULE_NAME, "[yellow]Archive is multi-volume[/]");
 
@@ -176,7 +179,10 @@ public sealed partial class Rar
         bool isSolid;
 
         if(unpVer < 20)
-            isSolid = _entries.Count > 0 && false; // Solid detection for v1.x uses archive flag, handled separately
+        {
+            // v1.x has no per-file solid flag: in a solid archive every file but the first depends on the previous
+            isSolid = _solidArchive && _entries.Count > 0;
+        }
         else
             isSolid = (flags & LHD_SOLID) != 0;
 
@@ -562,6 +568,7 @@ public sealed partial class Rar
         _entries         = [];
         _archiveComment  = null;
         _isRar5          = false;
+        _solidArchive    = false;
 
         _features = ArchiveSupportedFeature.SupportsFilenames      |
                     ArchiveSupportedFeature.SupportsSubdirectories |
