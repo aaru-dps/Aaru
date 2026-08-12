@@ -97,6 +97,10 @@ public sealed partial class Lha
         // Parse extended headers; their sizes are included in compressedSize
         long extHeadersSize = ParseExtendedHeaders16(ref entry);
 
+        // Extended headers cannot be larger than the compressed size that contains them,
+        // a negative size would rewind the stream and loop forever
+        if(extHeadersSize > compressedSize) return false;
+
         // Compressed data size is compressedSize minus extended header overhead
         entry.CompressedSize = compressedSize - extHeadersSize;
 
