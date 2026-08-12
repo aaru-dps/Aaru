@@ -1794,6 +1794,8 @@ public sealed partial class ZZZRawImage
             }
         }
 
+        if(_hasSubchannel && tag != SectorTagType.CdSectorSubchannel) sectorSkip += 96;
+
         buffer = new byte[sectorSize * length];
 
         Stream stream = _rawImageFilter.GetDataForkStream();
