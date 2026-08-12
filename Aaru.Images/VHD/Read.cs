@@ -728,6 +728,8 @@ public sealed partial class Vhd
 
         if(negative) return ErrorNumber.NotSupported;
 
+        if(sectorAddress >= _imageInfo.Sectors) return ErrorNumber.OutOfRange;
+
         switch(_thisFooter.DiskType)
         {
             case TYPE_DIFFERENCING:
@@ -816,6 +818,7 @@ public sealed partial class Vhd
 
         if(negative) return ErrorNumber.NotSupported;
 
+        if(sectorAddress + length > _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
         switch(_thisFooter.DiskType)
         {
