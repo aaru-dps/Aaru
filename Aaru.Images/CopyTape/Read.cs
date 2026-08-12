@@ -83,13 +83,17 @@ public sealed partial class CopyTape
 
             if(filemarkMt.Success)
             {
-                Files.Add(new TapeFile
+                // A filemark with no preceding block would underflow LastBlock
+                if(inFile)
                 {
-                    File       = currentFile,
-                    FirstBlock = currentFileStart,
-                    LastBlock  = currentBlock - 1,
-                    Partition  = 0
-                });
+                    Files.Add(new TapeFile
+                    {
+                        File       = currentFile,
+                        FirstBlock = currentFileStart,
+                        LastBlock  = currentBlock - 1,
+                        Partition  = 0
+                    });
+                }
 
                 inFile = false;
                 currentFile++;
@@ -139,7 +143,7 @@ public sealed partial class CopyTape
                 return ErrorNumber.InvalidArgument;
             }
 
-            if(blockSize == 0 || blockSize + 17 > imageFilter.DataForkLength)
+            if(blockSize == 0 || (long)blockSize + 17 > imageFilter.DataForkLength)
             {
                 AaruLogging.Error(Localization.Cannot_decode_block_header_cannot_open);
 
@@ -162,6 +166,18 @@ public sealed partial class CopyTape
             _imageInfo.ImageSize += blockSize;
 
             if(_imageInfo.SectorSize < blockSize) _imageInfo.SectorSize = blockSize;
+        }
+
+        // Close the last file when the tape lacks a trailing filemark
+        if(inFile)
+        {
+            Files.Add(new TapeFile
+            {
+                File       = currentFile,
+                FirstBlock = currentFileStart,
+                LastBlock  = currentBlock - 1,
+                Partition  = 0
+            });
         }
 
         _blockPositionCache = blockPositions.ToArray();
@@ -214,7 +230,7 @@ public sealed partial class CopyTape
 
         if(!uint.TryParse(blkSize, out uint blockSize)) return ErrorNumber.InvalidArgument;
 
-        if(blockSize == 0 || blockSize + 17 > _imageStream.Length) return ErrorNumber.InvalidArgument;
+        if(blockSize == 0 || (long)blockSize + 17 > _imageStream.Length) return ErrorNumber.InvalidArgument;
 
         buffer = new byte[blockSize];
 
