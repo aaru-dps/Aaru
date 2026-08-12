@@ -45,6 +45,9 @@ public sealed partial class Rar
         var flags      = BitConverter.ToUInt16(baseHeader, 3);
         var headerSize = BitConverter.ToUInt16(baseHeader, 5);
 
+        // Header cannot be smaller than the base block header
+        if(headerSize < 7) return false;
+
         AaruLogging.Debug(MODULE_NAME, "[navy]archive header flags[/] = [teal]0x{0:X4}[/]", flags);
 
         if((flags & MHD_SOLID) != 0) AaruLogging.Debug(MODULE_NAME, "[yellow]Archive is solid[/]");
@@ -71,6 +74,9 @@ public sealed partial class Rar
         var blockType  = (Rar4BlockType)baseHeader[2];
         var flags      = BitConverter.ToUInt16(baseHeader, 3);
         var headerSize = BitConverter.ToUInt16(baseHeader, 5);
+
+        // Header cannot be smaller than the base block header, would loop without advancing otherwise
+        if(headerSize < 7) return false;
 
         // Read data size if present
         long dataSize = 0;
