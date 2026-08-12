@@ -114,7 +114,7 @@ public partial class GameBoy : IByteAddressableImage
             sb.AppendLine(Localization.Requires_Game_Boy_Color);
         else
         {
-            if((header.Name[^1] & 0xC0) == 0xC0) sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
+            if((header.Name[^1] & 0xC0) == 0x80) sb.AppendLine(Localization.Contains_features_for_Game_Boy_Color);
 
             if(header.Sgb == 0x03) sb.AppendLine(Localization.Contains_features_for_Super_Game_Boy);
         }
@@ -1029,9 +1029,9 @@ public partial class GameBoy : IByteAddressableImage
     partial struct Header
     {
         /// <summary>Usually 0x00 (NOP)</summary>
-        public byte Opcode1;
+        public byte   Opcode1;
         /// <summary>Usually 0xC3 (JP)</summary>
-        public byte Opcode2;
+        public byte   Opcode2;
         /// <summary>Jump destination</summary>
         public ushort Start;
         /// <summary>Boot logo, checked by boot ROM</summary>
@@ -1044,21 +1044,21 @@ public partial class GameBoy : IByteAddressableImage
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public byte[] LicenseeNew;
         /// <summary>Super Game Boy Flag</summary>
-        public byte Sgb;
+        public byte   Sgb;
         /// <summary>ROM type</summary>
-        public byte RomType;
+        public byte   RomType;
         /// <summary>ROM size</summary>
-        public byte RomSize;
+        public byte   RomSize;
         /// <summary>SRAM size</summary>
-        public byte SramSize;
+        public byte   SramSize;
         /// <summary>Country code</summary>
-        public byte Country;
+        public byte   Country;
         /// <summary>Licensee code</summary>
-        public byte Licensee;
+        public byte   Licensee;
         /// <summary>Game revision</summary>
-        public byte Revision;
+        public byte   Revision;
         /// <summary>Header checksum</summary>
-        public byte HeaderChecksum;
+        public byte   HeaderChecksum;
         /// <summary>Cartridge checksum</summary>
         public ushort Checksum;
     }
