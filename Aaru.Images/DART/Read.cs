@@ -237,7 +237,7 @@ public sealed partial class Dart
 
                     if(cksmRsrc?.ContainsId(2) == true)
                     {
-                        byte[] dataChk = cksmRsrc.GetResource(1);
+                        byte[] dataChk = cksmRsrc.GetResource(2);
                         _dataChecksum = BigEndianBitConverter.ToUInt32(dataChk, 0);
                     }
                 }
