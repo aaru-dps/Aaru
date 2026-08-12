@@ -62,6 +62,12 @@ public sealed partial class SaveDskF
 
         if(_header is { dataOffset: 0, magic: SDF_MAGIC_OLD }) _header.dataOffset = 512;
 
+        if(_header.commentOffset > _header.dataOffset || _header.dataOffset > stream.Length)
+            return ErrorNumber.InvalidArgument;
+
+        if(_header.sectorsPerTrack == 0 || _header.heads == 0 || _header.cylinders == 0 || _header.sectorSize == 0)
+            return ErrorNumber.InvalidArgument;
+
         var cmt = new byte[_header.dataOffset - _header.commentOffset];
         stream.Seek(_header.commentOffset, SeekOrigin.Begin);
         stream.EnsureRead(cmt, 0, cmt.Length);
@@ -185,7 +191,8 @@ public sealed partial class SaveDskF
 
         // SaveDskF only omits ending clusters, leaving no gaps behind, so reading all data we have...
         stream.Seek(_header.dataOffset, SeekOrigin.Begin);
-        stream.EnsureRead(_decodedDisk, 0, (int)(stream.Length - _header.dataOffset));
+
+        stream.EnsureRead(_decodedDisk, 0, (int)Math.Min(stream.Length - _header.dataOffset, _decodedDisk.Length));
 
         return ErrorNumber.NoError;
     }
