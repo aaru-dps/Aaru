@@ -173,45 +173,45 @@ public sealed partial class Rar
         var flags = BitConverter.ToUInt16(headerData, offset);
         int pos   = offset + 2;
 
-        // Modification time flags (bits 12-15)
+        // Modification time flags (bits 12-15). The timestamp itself comes from the base header,
+        // only the odd second bit and sub-second precision bytes are stored here.
         int mtimeFlags = flags >> 12 & 0x0F;
 
-        if((mtimeFlags & 0x08) != 0 && pos + 4 <= length)
+        if((mtimeFlags & 0x08) != 0)
         {
-            // Full timestamp replacement
-            var dosTime = BitConverter.ToUInt32(headerData, pos);
-            entry.LastWriteTime =  DosToDateTime(dosTime);
-            pos                 += 4;
+            if((mtimeFlags & 0x04) != 0) entry.LastWriteTime = entry.LastWriteTime.AddSeconds(1);
+
+            // Skip sub-second precision bytes
+            pos += mtimeFlags & 0x03;
         }
-
-        int mtimeExtra = mtimeFlags & 0x03;
-
-        for(var i = 0; i < mtimeExtra && pos < length; i++) pos++;
 
         // Creation time flags (bits 8-11)
         int ctimeFlags = flags >> 8 & 0x0F;
 
-        if((ctimeFlags & 0x08) != 0 && pos + 4 <= length)
+        if((ctimeFlags & 0x08) != 0)
         {
-            var dosTime = BitConverter.ToUInt32(headerData, pos);
-            entry.CreationTime    =  DosToDateTime(dosTime);
-            entry.HasCreationTime =  true;
-            pos                   += 4;
+            if(pos + 4 > length) return;
+
+            entry.CreationTime =  DosToDateTime(BitConverter.ToUInt32(headerData, pos));
+            pos                += 4;
+
+            if((ctimeFlags & 0x04) != 0) entry.CreationTime = entry.CreationTime.AddSeconds(1);
+
+            entry.HasCreationTime = true;
+
+            // Skip sub-second precision bytes
+            pos += ctimeFlags & 0x03;
         }
-
-        int ctimeExtra = ctimeFlags & 0x03;
-
-        for(var i = 0; i < ctimeExtra && pos < length; i++) pos++;
 
         // Last access time flags (bits 4-7)
         int atimeFlags = flags >> 4 & 0x0F;
 
-        if((atimeFlags & 0x08) != 0 && pos + 4 <= length)
-        {
-            var dosTime = BitConverter.ToUInt32(headerData, pos);
-            entry.LastAccessTime    =  DosToDateTime(dosTime);
-            entry.HasLastAccessTime =  true;
-            pos                     += 4;
-        }
+        if((atimeFlags & 0x08) == 0 || pos + 4 > length) return;
+
+        entry.LastAccessTime = DosToDateTime(BitConverter.ToUInt32(headerData, pos));
+
+        if((atimeFlags & 0x04) != 0) entry.LastAccessTime = entry.LastAccessTime.AddSeconds(1);
+
+        entry.HasLastAccessTime = true;
     }
 }
