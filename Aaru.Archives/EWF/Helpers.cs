@@ -58,14 +58,14 @@ public sealed partial class EwfArchive
 
         if(isV2)
         {
-            string numPart = ext.Substring(3);
+            string numPart = ext[3..];
             char   prefix1 = ext[1];
             char   prefix2 = ext[2];
 
-            if(int.TryParse(numPart, out int num) && num < 99)
-                return Path.Combine(dir, name + ext.Substring(0, 3) + (num + 1).ToString("D2"));
+            if(int.TryParse(numPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out int num) && num < 99)
+                return Path.Combine(dir, name + ext[..3] + (num + 1).ToString("D2"));
 
-            if(int.TryParse(numPart, out _))
+            if(int.TryParse(numPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
             {
                 char a = isLower ? 'a' : 'A';
 
@@ -79,18 +79,16 @@ public sealed partial class EwfArchive
 
             if(c2 < maxChar) return Path.Combine(dir, name + $".{prefix1}{prefix2}{c1}{(char)(c2 + 1)}");
 
-            if(c1 < maxChar) return Path.Combine(dir, name + $".{prefix1}{prefix2}{(char)(c1 + 1)}{baseChar}");
-
-            return null;
+            return c1 < maxChar ? Path.Combine(dir, name + $".{prefix1}{prefix2}{(char)(c1 + 1)}{baseChar}") : null;
         }
 
         char   firstChar = ext[1];
-        string suffix    = ext.Substring(2);
+        string suffix    = ext[2..];
 
-        if(int.TryParse(suffix, out int segNum) && segNum < 99)
+        if(int.TryParse(suffix, NumberStyles.Integer, CultureInfo.InvariantCulture, out int segNum) && segNum < 99)
             return Path.Combine(dir, name + $".{firstChar}{segNum + 1:D2}");
 
-        if(int.TryParse(suffix, out _))
+        if(int.TryParse(suffix, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
         {
             char a = isLower ? 'a' : 'A';
 
@@ -107,9 +105,7 @@ public sealed partial class EwfArchive
 
         if(ch2 < lMax) return Path.Combine(dir, name + $".{ch1}{(char)(ch2 + 1)}{lBase}");
 
-        if(ch1 < lMax) return Path.Combine(dir, name + $".{(char)(ch1 + 1)}{lBase}{lBase}");
-
-        return null;
+        return ch1 < lMax ? Path.Combine(dir, name + $".{(char)(ch1 + 1)}{lBase}{lBase}") : null;
     }
 
     /// <summary>Decompresses zlib (RFC 1950) compressed data.</summary>
@@ -242,7 +238,7 @@ public sealed partial class EwfArchive
 
         bool isDir = isParent == "1" ||
                      !string.IsNullOrEmpty(flagsStr)      &&
-                     uint.TryParse(flagsStr, out uint fv) &&
+                     uint.TryParse(flagsStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out uint fv) &&
                      (fv & (uint)EwfLefEntryFlags.Folder) != 0;
 
         // Build full path
@@ -254,9 +250,9 @@ public sealed partial class EwfArchive
             fullPath = string.IsNullOrEmpty(parentPath) ? entryName : parentPath + "/" + entryName;
 
         // Parse numeric fields
-        long.TryParse(entryId,     out long id);
-        long.TryParse(logicalSize, out long size);
-        uint.TryParse(flagsStr, out uint flags);
+        long.TryParse(entryId,     NumberStyles.Integer, CultureInfo.InvariantCulture, out long id);
+        long.TryParse(logicalSize, NumberStyles.Integer, CultureInfo.InvariantCulture, out long size);
+        uint.TryParse(flagsStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out uint flags);
 
         // Parse data location from binary extents
         long dataOffset = 0;
@@ -266,7 +262,7 @@ public sealed partial class EwfArchive
 
         // Parse duplicate offset if no binary extents
         if(dataSize == 0 && !string.IsNullOrEmpty(duplicateOffset) && duplicateOffset != "-1")
-            long.TryParse(duplicateOffset, out dataOffset);
+            long.TryParse(duplicateOffset, NumberStyles.Integer, CultureInfo.InvariantCulture, out dataOffset);
 
         // Parse timestamps
         DateTime creation = ParsePosixTimestamp(creationTime);
@@ -295,7 +291,7 @@ public sealed partial class EwfArchive
         }
 
         // Parse children
-        if(!int.TryParse(headerParts[1], out int numChildren)) return;
+        if(!int.TryParse(headerParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int numChildren)) return;
 
         for(var i = 0; i < numChildren; i++)
         {
@@ -323,17 +319,12 @@ public sealed partial class EwfArchive
     /// <summary>Parses a POSIX timestamp string to DateTime.</summary>
     static DateTime ParsePosixTimestamp(string timestamp)
     {
-        if(string.IsNullOrEmpty(timestamp) || !long.TryParse(timestamp, out long epoch) || epoch <= 0)
+        if(string.IsNullOrEmpty(timestamp) ||
+           !long.TryParse(timestamp, NumberStyles.Integer, CultureInfo.InvariantCulture, out long epoch) ||
+           epoch is <= 0 or > MAX_UNIX_TIME)
             return DateTime.MinValue;
 
-        try
-        {
-            return DateTimeOffset.FromUnixTimeSeconds(epoch).UtcDateTime;
-        }
-        catch
-        {
-            return DateTime.MinValue;
-        }
+        return DateTimeOffset.FromUnixTimeSeconds(epoch).UtcDateTime;
     }
 
     /// <summary>Reads and decompresses a chunk.</summary>

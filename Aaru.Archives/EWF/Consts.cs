@@ -87,4 +87,7 @@ public sealed partial class EwfArchive
 
     /// <summary>Maximum accepted ltree directory nesting depth</summary>
     const int MAX_LTREE_DEPTH = 255;
+
+    /// <summary>Maximum Unix timestamp convertible by <see cref="System.DateTimeOffset.FromUnixTimeSeconds" /></summary>
+    const long MAX_UNIX_TIME = 253402300799;
 }

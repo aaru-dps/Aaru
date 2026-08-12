@@ -85,7 +85,7 @@ public sealed partial class EwfArchive
             Stream segStream = _segmentStreams[segIdx];
 
             if(_isV2)
-                ParseSegmentV2(segStream, segIdx, ref currentChunk, ref volumeFound, ref ltreeDecompressed);
+                ParseSegmentV2(segStream, segIdx, ref currentChunk, ref ltreeDecompressed);
             else
                 ParseSegmentV1(segStream, segIdx, ref currentChunk, ref volumeFound, ref ltreeDecompressed);
         }
@@ -112,7 +112,7 @@ public sealed partial class EwfArchive
 
 #endregion
 
-    List<IFilter> DiscoverSegments(IFilter primaryFilter)
+    static List<IFilter> DiscoverSegments(IFilter primaryFilter)
     {
         List<IFilter> segments    = [primaryFilter];
         string        currentPath = primaryFilter.BasePath;
@@ -276,7 +276,7 @@ public sealed partial class EwfArchive
         currentChunk += (ulong)entryCount;
     }
 
-    byte[] ParseLtreeSection(Stream segStream, long dataSize)
+    static byte[] ParseLtreeSection(Stream segStream, long dataSize)
     {
         // Read ltree header (48 bytes)
         var headerBytes = new byte[LTREE_HEADER_SIZE];
@@ -304,14 +304,13 @@ public sealed partial class EwfArchive
         }
         catch(Exception ex)
         {
-            AaruLogging.Debug(MODULE_NAME, "Failed to decompress ltree data: {0}", ex.Message);
+            AaruLogging.Debug(MODULE_NAME, "Failed to decompress ltree data: {0}", ex);
 
             return null;
         }
     }
 
-    void ParseSegmentV2(Stream     segStream, int segIdx, ref ulong currentChunk, ref bool volumeFound,
-                        ref byte[] ltreeDecompressed)
+    void ParseSegmentV2(Stream segStream, int segIdx, ref ulong currentChunk, ref byte[] ltreeDecompressed)
     {
         segStream.Seek(0, SeekOrigin.Begin);
 
