@@ -84,7 +84,7 @@ public sealed partial class Parallels
         if(_pHdr.data_off > 0)
             _dataOffset = _pHdr.data_off * 512;
         else
-            _dataOffset = (stream.Position / _clusterBytes + stream.Position % _clusterBytes) * _clusterBytes;
+            _dataOffset = (stream.Position + _clusterBytes - 1) / _clusterBytes * _clusterBytes;
 
         _sectorCache = new Dictionary<ulong, byte[]>();
 
