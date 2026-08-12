@@ -44,7 +44,10 @@ public sealed partial class CrunchDisk
     /// <returns>Decompressed data</returns>
     static byte[] PowerPackerDecompress(byte[] source, int packedLength, int unpackedLength, byte[] offsetSizes)
     {
-        var  output   = new byte[unpackedLength];
+        var output = new byte[unpackedLength];
+
+        if(packedLength < 5 || packedLength > source.Length) return output;
+
         int  srcPos   = packedLength - 4;
         int  dstPos   = unpackedLength;
         uint shiftReg = 1u << 8;
@@ -109,6 +112,8 @@ public sealed partial class CrunchDisk
             {
                 if(--dstPos < 0) return output;
 
+                if(dstPos + offset >= output.Length) return output;
+
                 output[dstPos] = output[dstPos + offset];
             }
         }
@@ -123,7 +128,12 @@ public sealed partial class CrunchDisk
 
         for(var i = 0; i < count; i++)
         {
-            if((shiftReg & 1u << 8) != 0) shiftReg = 1u << 16 | source[--srcPos];
+            if((shiftReg & 1u << 8) != 0)
+            {
+                if(srcPos <= 0) return result;
+
+                shiftReg = 1u << 16 | source[--srcPos];
+            }
 
             result   =   result << 1 | shiftReg & 1;
             shiftReg >>= 1;
@@ -137,7 +147,12 @@ public sealed partial class CrunchDisk
     {
         for(var i = 0; i < count; i++)
         {
-            if((shiftReg & 1u << 8) != 0) shiftReg = 1u << 16 | source[--srcPos];
+            if((shiftReg & 1u << 8) != 0)
+            {
+                if(srcPos <= 0) return;
+
+                shiftReg = 1u << 16 | source[--srcPos];
+            }
 
             shiftReg >>= 1;
         }
