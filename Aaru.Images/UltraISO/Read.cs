@@ -193,7 +193,8 @@ public sealed partial class UltraISO
 #region IOpticalMediaImage Members
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
         dpmStartSector     = 0;
         dpmResolution      = 0;
@@ -222,7 +223,7 @@ public sealed partial class UltraISO
         // Check sector cache
         if(_sectorCache.TryGetValue(sectorAddress, out byte[] cachedSector))
         {
-            buffer       = cachedSector;
+            buffer       = (byte[])cachedSector.Clone();
             sectorStatus = SectorStatus.Dumped;
 
             return ErrorNumber.NoError;
@@ -255,7 +256,7 @@ public sealed partial class UltraISO
         // Cache the sector
         if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
-        _sectorCache[sectorAddress] = buffer;
+        _sectorCache[sectorAddress] = (byte[])buffer.Clone();
 
         return ErrorNumber.NoError;
     }
