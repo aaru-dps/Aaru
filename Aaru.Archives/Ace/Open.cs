@@ -243,6 +243,10 @@ public sealed partial class Ace
                 if((flags & FLAG_ADDSIZE) != 0)
                 {
                     long addSize = GetAddSize(headerData, flags, blockType);
+
+                    // Reject sizes that would rewind the stream or point past end of file
+                    if(addSize < 0 || addSize > _stream.Length - _stream.Position) return false;
+
                     _stream.Position += addSize;
                 }
 
@@ -292,7 +296,16 @@ public sealed partial class Ace
 
         if(headerData.Length < 31) return;
 
-        var  packedSize   = BitConverter.ToUInt32(headerData, 3);
+        var packedSize = BitConverter.ToUInt32(headerData, 3);
+
+        // Reject sizes that point past end of file
+        if(packedSize > _stream.Length - _stream.Position)
+        {
+            _stream.Position = _stream.Length;
+
+            return;
+        }
+
         var  originalSize = BitConverter.ToUInt32(headerData, 7);
         var  dosTime      = BitConverter.ToUInt32(headerData, 11);
         var  attr         = BitConverter.ToUInt32(headerData, 15);
@@ -389,7 +402,16 @@ public sealed partial class Ace
 
         if(headerData.Length < 39) return;
 
-        var  packedSize   = (long)BitConverter.ToUInt64(headerData, 3);
+        var packedSize = (long)BitConverter.ToUInt64(headerData, 3);
+
+        // Reject sizes that would rewind the stream or point past end of file
+        if(packedSize < 0 || packedSize > _stream.Length - _stream.Position)
+        {
+            _stream.Position = _stream.Length;
+
+            return;
+        }
+
         var  originalSize = (long)BitConverter.ToUInt64(headerData, 11);
         var  dosTime      = BitConverter.ToUInt32(headerData, 19);
         var  attr         = BitConverter.ToUInt32(headerData, 23);
