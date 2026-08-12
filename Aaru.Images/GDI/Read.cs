@@ -120,11 +120,16 @@ public sealed partial class Gdi
                     Offset      = long.Parse(trackMatch.Groups["offset"].Value),
                     Sequence    = uint.Parse(trackMatch.Groups["track"].Value),
                     StartSector = ulong.Parse(trackMatch.Groups["start"].Value),
-                    TrackFilter = PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder,
-                                                                         trackMatch.Groups["filename"]
-                                                                            .Value.Replace("\\\"", "\"")
-                                                                            .Trim('"')))
+                    TrackFilter = ResolveDataFile(trackMatch.Groups["filename"].Value.Replace("\\\"", "\"").Trim('"'),
+                                                  imageFilter.ParentFolder)
                 };
+
+                if(currentTrack.TrackFilter is null)
+                {
+                    AaruLogging.Error(Localization.Cannot_find_data_file_0, trackMatch.Groups["filename"].Value);
+
+                    return ErrorNumber.NoSuchFile;
+                }
 
                 currentTrack.TrackFile = currentTrack.TrackFilter.Filename;
 
@@ -353,12 +358,13 @@ public sealed partial class Gdi
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -920,6 +926,38 @@ public sealed partial class Gdi
         }
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Resolves the path of a file referenced by a GDI</summary>
+    /// <remarks>
+    ///     GDI files are commonly moved away from the machine that created them, so the path they contain is often
+    ///     meaningless, or written for another operating system. Files sitting next to the GDI therefore take
+    ///     precedence over anything the path itself points to, including the current working directory.
+    /// </remarks>
+    /// <param name="datafile">Path, as written in the GDI</param>
+    /// <param name="parentFolder">Folder containing the GDI</param>
+    /// <returns>Filter for the referenced file, <c>null</c> if it cannot be found</returns>
+    static IFilter ResolveDataFile(string datafile, string parentFolder)
+    {
+        IFilter filter = null;
+
+        // Path as written in the GDI, relative to the GDI itself, with the separators of this operating
+        // system, so paths written in another one still resolve
+        if(!Path.IsPathRooted(datafile))
+        {
+            string relative = datafile.Replace('\\', '/').Replace('/', Path.DirectorySeparatorChar);
+
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, relative));
+        }
+
+        // Filename alone, next to the GDI, which is where it is found when the GDI has been moved
+        string filename = datafile[(datafile.LastIndexOfAny(['/', '\\']) + 1)..];
+
+        if(filter is null && filename.Length > 0)
+            filter = PluginRegister.Singleton.GetFilter(Path.Combine(parentFolder, filename));
+
+        // Path as written in the GDI, verbatim, be it absolute or relative to the working directory
+        return filter ?? PluginRegister.Singleton.GetFilter(datafile);
     }
 
     /// <inheritdoc />
