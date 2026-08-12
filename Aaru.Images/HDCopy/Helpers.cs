@@ -112,6 +112,8 @@ public sealed partial class HdCopy
         var  compressedLength = (short)(BitConverter.ToInt16(blkHeader, 0) - 1);
         byte escapeByte       = blkHeader[2];
 
+        if(compressedLength < 1) return ErrorNumber.InvalidArgument;
+
         var cBuffer = new byte[compressedLength];
         stream.EnsureRead(cBuffer, 0, compressedLength);
 
@@ -119,16 +121,20 @@ public sealed partial class HdCopy
         var sIndex = 0; // source buffer position
         var dIndex = 0; // destination buffer position
 
-        while(sIndex < compressedLength)
+        while(sIndex < compressedLength && dIndex < trackData.Length)
         {
             if(cBuffer[sIndex] == escapeByte)
             {
                 sIndex++; // skip over escape byte
+
+                // truncated escape sequence
+                if(sIndex + 2 > compressedLength) return ErrorNumber.InvalidArgument;
+
                 byte fillByte  = cBuffer[sIndex++];
                 byte fillCount = cBuffer[sIndex++];
 
                 // fill destination buffer
-                for(var i = 0; i < fillCount; i++) trackData[dIndex++] = fillByte;
+                for(var i = 0; i < fillCount && dIndex < trackData.Length; i++) trackData[dIndex++] = fillByte;
             }
             else
                 trackData[dIndex++] = cBuffer[sIndex++];
