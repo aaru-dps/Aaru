@@ -95,9 +95,8 @@ public sealed partial class Arj
             // First byte is the tag, second byte is the continuation flag
             if(extData.Length >= 2)
             {
-                byte tag          = extData[0];
-                byte continuation = extData[1];
-                var  data         = new byte[extData.Length - 2];
+                byte tag  = extData[0];
+                var  data = new byte[extData.Length - 2];
 
                 if(data.Length > 0) Array.Copy(extData, 2, data, 0, data.Length);
 
@@ -180,8 +179,10 @@ public sealed partial class Arj
 
             return decompressed;
         }
-        catch
+        catch(Exception ex)
         {
+            AaruLogging.Debug(MODULE_NAME, "Exception decompressing extended attributes: {0}", ex);
+
             return null;
         }
     }
@@ -246,22 +247,19 @@ public sealed partial class Arj
         // Read file entry headers
         while(_stream.Position < _stream.Length)
         {
-            long entryStart = _stream.Position;
-
             if(!ReadHeader(out byte[] headerData, out List<ExtHeaderBlock> extHeaders)) break;
 
             if(headerData is null || headerData.Length < FIRST_HDR_SIZE) break;
 
             // Parse fixed header fields
             var  pos          = 0;
-            byte firstHdrSize = headerData[pos++];
-            byte arjNbr       = headerData[pos++];
-            byte arjxNbr      = headerData[pos++];
-            byte hostOs       = headerData[pos++];
-            byte arjFlags     = headerData[pos++];
-            byte method       = headerData[pos++];
-            byte fileType     = headerData[pos++];
-            byte pwdModifier  = headerData[pos++];
+            byte firstHdrSize = headerData[pos];
+            byte arjxNbr      = headerData[pos + 2];
+            byte hostOs       = headerData[pos + 3];
+            byte arjFlags     = headerData[pos + 4];
+            byte method       = headerData[pos + 5];
+            byte fileType     = headerData[pos + 6];
+            pos += 8;
             var  timestamp    = BitConverter.ToUInt32(headerData, pos);
             pos += 4;
             var compSize = BitConverter.ToUInt32(headerData, pos);
@@ -270,38 +268,24 @@ public sealed partial class Arj
             pos += 4;
             var fileCrc = BitConverter.ToUInt32(headerData, pos);
             pos += 4;
-            var entryPos = BitConverter.ToUInt16(headerData, pos);
-            pos += 2;
-            var fileMode = BitConverter.ToUInt16(headerData, pos);
-            pos += 2;
+            var fileMode = BitConverter.ToUInt16(headerData, pos + 2);
+            pos += 4;
 
-            byte extFlags      = 0;
-            byte chapterNumber = 0;
-            uint accessTime    = 0;
-            uint creationTime  = 0;
+            uint accessTime   = 0;
+            uint creationTime = 0;
 
             // Do not trust first_hdr_size alone, the header actually read can be shorter
             if(firstHdrSize >= FIRST_HDR_SIZE && headerData.Length >= pos + 2)
-            {
-                extFlags      = headerData[pos++];
-                chapterNumber = headerData[pos++];
-            }
+                pos += 2; // ext_flags, chapter number
 
             if(firstHdrSize >= FIRST_HDR_SIZE_V && headerData.Length >= pos + 4)
-            {
-                pos++;    // prot_blocks
-                pos++;    // arjprot_id
-                pos += 2; // reserved
-            }
+                pos += 4; // prot_blocks, arjprot_id, reserved
 
             if(firstHdrSize >= R9_HDR_SIZE && headerData.Length >= pos + 16)
             {
                 pos          += 4; // resume_position
                 accessTime   =  BitConverter.ToUInt32(headerData, pos);
-                pos          += 4;
-                creationTime =  BitConverter.ToUInt32(headerData, pos);
-                pos          += 4;
-                pos          += 4; // reserved
+                creationTime =  BitConverter.ToUInt32(headerData, pos + 4);
             }
 
             // Extract filename (null-terminated at offset firstHdrSize)
