@@ -151,15 +151,15 @@ public sealed partial class Dim
             case DiskType.N88:
                 if(diskSize % (2 * 26 * 256) == 0)
                 {
-                    if(diskSize % (2 * 26 * 256) == 77) _imageInfo.MediaType = MediaType.NEC_8_DD;
+                    if(diskSize / (2 * 26 * 256) == 77) _imageInfo.MediaType = MediaType.NEC_8_DD;
 
                     _imageInfo.SectorSize = 256;
                 }
                 else if(diskSize % (2 * 26 * 128) == 0)
                 {
-                    if(diskSize % (2 * 26 * 128) == 77) _imageInfo.MediaType = MediaType.NEC_8_SD;
+                    if(diskSize / (2 * 26 * 128) == 77) _imageInfo.MediaType = MediaType.NEC_8_SD;
 
-                    _imageInfo.SectorSize = 256;
+                    _imageInfo.SectorSize = 128;
                 }
                 else
                 {
