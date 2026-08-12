@@ -62,7 +62,7 @@ public sealed partial class DiscJuggler
         _imageStream.EnsureRead(dscLenB, 0, 4);
         var dscLen = BitConverter.ToInt32(dscLenB, 0);
 
-        if(dscLen >= _imageStream.Length) return ErrorNumber.InvalidArgument;
+        if(dscLen <= 0 || dscLen >= _imageStream.Length) return ErrorNumber.InvalidArgument;
 
         var descriptor = new byte[dscLen];
         _imageStream.Seek(-dscLen, SeekOrigin.End);
