@@ -395,7 +395,7 @@ public sealed partial class Cpcdsk
 
         for(uint i = 0; i < length; i++)
         {
-            ErrorNumber errno = ReadSector(sectorAddress + i, false, out byte[] addressMark, out _);
+            ErrorNumber errno = ReadSectorTag(sectorAddress + i, false, tag, out byte[] addressMark);
 
             if(errno != ErrorNumber.NoError) return errno;
 
