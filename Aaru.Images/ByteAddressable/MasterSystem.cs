@@ -100,7 +100,7 @@ public partial class MasterSystem : IByteAddressableImage
         stream.EnsureRead(magicBytes, 0, 8);
         var magic = BitConverter.ToUInt64(magicBytes, 0);
 
-        if(magic != 0x0B000DCC6666EDCE)
+        if(magic == 0x4147455320524D54)
             headerPosition = 0x7ff0;
         else
         {
@@ -109,7 +109,7 @@ public partial class MasterSystem : IByteAddressableImage
             stream.EnsureRead(magicBytes, 0, 8);
             magic = BitConverter.ToUInt64(magicBytes, 0);
 
-            if(magic != 0x0B000DCC6666EDCE)
+            if(magic == 0x4147455320524D54)
                 headerPosition = 0x3ff0;
             else
             {
@@ -118,7 +118,7 @@ public partial class MasterSystem : IByteAddressableImage
                 stream.EnsureRead(magicBytes, 0, 8);
                 magic = BitConverter.ToUInt64(magicBytes, 0);
 
-                if(magic != 0x0B000DCC6666EDCE)
+                if(magic == 0x4147455320524D54)
                     headerPosition = 0x1ff0;
                 else
                     return ErrorNumber.InvalidArgument;
