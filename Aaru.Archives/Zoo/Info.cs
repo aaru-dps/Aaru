@@ -27,6 +27,7 @@
 // ****************************************************************************/
 
 using System.IO;
+using System.Globalization;
 using System.Text;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
@@ -90,20 +91,20 @@ public sealed partial class Zoo
         var sb = new StringBuilder();
         sb.AppendLine("[bold][blue]Zoo archive:[/][/]");
 
-        sb.AppendFormat("[slateblue1]Header text:[/] [green]\"{0}\"[/]",
-                        Markup.Escape(Encoding.UTF8.GetString(header.text).TrimEnd('\0')))
+        sb.Append(CultureInfo.InvariantCulture,
+                  $"[slateblue1]Header text:[/] [green]\"{Markup.Escape(Encoding.UTF8.GetString(header.text).TrimEnd('\0'))}\"[/]")
           .AppendLine();
 
-        sb.AppendFormat("[slateblue1]Start of archive:[/] [teal]{0}[/]", header.zoo_start).AppendLine();
-
-        sb.AppendFormat("[slateblue1]Version required to extract all files:[/] [teal]{0}.{1}[/]",
-                        header.major_ver,
-                        header.minor_ver)
+        sb.Append(CultureInfo.InvariantCulture, $"[slateblue1]Start of archive:[/] [teal]{header.zoo_start}[/]")
           .AppendLine();
 
-        sb.AppendFormat("[slateblue1]Archive type:[/] [teal]{0}[/]", header.type).AppendLine();
+        sb.Append(CultureInfo.InvariantCulture,
+                  $"[slateblue1]Version required to extract all files:[/] [teal]{header.major_ver}.{header.minor_ver}[/]")
+          .AppendLine();
 
-        if(header.acmt_len > 0)
+        sb.Append(CultureInfo.InvariantCulture, $"[slateblue1]Archive type:[/] [teal]{header.type}[/]").AppendLine();
+
+        if(header is { acmt_len: > 0, acmt_pos: >= 0 } && header.acmt_pos + header.acmt_len <= stream.Length)
         {
             var buffer = new byte[header.acmt_len];
             stream.Position =   header.acmt_pos;
@@ -111,7 +112,8 @@ public sealed partial class Zoo
             stream.ReadExactly(buffer, 0, buffer.Length);
             sb.AppendLine("[slateblue1]Archive comment:[/]");
 
-            sb.AppendFormat("[rosybrown]{0}[/]", Markup.Escape(StringHandlers.CToString(buffer, encoding)))
+            sb.Append(CultureInfo.InvariantCulture,
+                      $"[rosybrown]{Markup.Escape(StringHandlers.CToString(buffer, encoding))}[/]")
               .AppendLine();
         }
 

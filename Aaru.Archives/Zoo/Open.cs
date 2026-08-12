@@ -80,12 +80,17 @@ public sealed partial class Zoo
 
         AaruLogging.Debug(MODULE_NAME, "Seeking to [teal]{0} for first file.", header.zoo_start);
 
+        // Reject negative or out of file offsets
+        if(header.zoo_start < 0 || header.zoo_start > _stream.Length) return ErrorNumber.InvalidArgument;
+
         _stream.Position = header.zoo_start;
 
         Direntry entry;
 
         do
         {
+            long entryStart = _stream.Position;
+
             var buf = new byte[Marshal.SizeOf<Direntry>()];
 
             if(_stream.Position + buf.Length >= _stream.Length) break;
@@ -95,6 +100,9 @@ public sealed partial class Zoo
             entry = Marshal.ByteArrayToStructureLittleEndian<Direntry>(buf);
 
             var pos = 56; // dir_crc
+
+            // Variable fields plus the fixed tail cannot extend past the read buffer
+            if(pos + entry.namlen + entry.dirlen + 10 > buf.Length) return ErrorNumber.InvalidArgument;
 
             if(entry.namlen > 0)
             {
@@ -167,7 +175,7 @@ public sealed partial class Zoo
             if(entry.packing_method > 0) _features |= ArchiveSupportedFeature.SupportsCompression;
             if(entry.cmt_size       > 0) _features |= ArchiveSupportedFeature.SupportsXAttrs;
 
-            if(entry.next > 0 && entry.next < filter.DataForkLength)
+            if(entry.next > entryStart && entry.next < filter.DataForkLength)
             {
                 AaruLogging.Debug(MODULE_NAME, "Seeking to [teal]{0}[/] for next file.", entry.next);
                 _stream.Position = entry.next;

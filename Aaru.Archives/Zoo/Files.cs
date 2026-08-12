@@ -170,15 +170,25 @@ public sealed partial class Zoo
 
         if(entry.packing_method > 2) return ErrorNumber.InvalidArgument;
 
-        Stream stream = new OffsetStream(new NonClosableStream(_stream),
-                                         _files[entryNumber].offset,
-                                         _files[entryNumber].offset + _files[entryNumber].size_now);
+        Stream stream;
 
-        if(_files[entryNumber].org_size == 0) stream = new MemoryStream([]);
+        if(entry.org_size == 0)
+            stream = new MemoryStream([]);
+        else
+        {
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.size_now <= 0 || entry.offset < 0 || entry.offset + entry.size_now > _stream.Length)
+                return ErrorNumber.InvalidArgument;
 
-        if(entry.packing_method == 1) stream = new ForcedSeekStream<LzdStream>(entry.org_size, stream);
+            stream = new OffsetStream(new NonClosableStream(_stream), entry.offset, entry.offset + entry.size_now - 1);
+        }
 
-        if(entry.packing_method == 2) stream = new Lh5Stream(stream, entry.org_size);
+        stream = entry.packing_method switch
+                 {
+                     1 => new ForcedSeekStream<LzdStream>(entry.org_size, stream),
+                     2 => new Lh5Stream(stream, entry.org_size),
+                     _ => stream
+                 };
 
         filter = new ZZZNoFilter();
         ErrorNumber errno = filter.Open(stream);
