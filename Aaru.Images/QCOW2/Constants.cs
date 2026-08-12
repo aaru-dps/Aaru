@@ -38,7 +38,7 @@ namespace Aaru.Images;
 public sealed partial class Qcow2
 {
     /// <summary>Magic number: 'Q', 'F', 'I', 0xFB</summary>
-    const uint QCOW_MAGIC = 0x514649FB;
+    const uint QCOW_MAGIC           = 0x514649FB;
     const uint QCOW_VERSION2        = 2;
     const uint QCOW_VERSION3        = 3;
     const uint QCOW_ENCRYPTION_NONE = 0;
@@ -54,6 +54,12 @@ public sealed partial class Qcow2
     const ulong QCOW_FLAGS_MASK = 0x3FFFFFFFFFFFFFFF;
     const ulong QCOW_COPIED     = 0x8000000000000000;
     const ulong QCOW_COMPRESSED = 0x4000000000000000;
+
+    /// <summary>Host offset of a standard cluster, bits 9 to 55 of its descriptor</summary>
+    const ulong QCOW_OFFSET_MASK = 0x00FFFFFFFFFFFE00;
+
+    /// <summary>Bit 0 of a standard cluster descriptor, cluster reads as all zeros (v3)</summary>
+    const ulong QCOW_ALL_ZEROS = 0x01;
 
     const ulong QCOW_HEADER_EXTENSION_BACKING_FILE  = 0xE2792ACA;
     const ulong QCOW_HEADER_EXTENSION_FEATURE_TABLE = 0x6803F857;

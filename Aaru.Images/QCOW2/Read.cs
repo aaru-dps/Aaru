@@ -238,7 +238,7 @@ public sealed partial class Qcow2
 
         if(!_l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
         {
-            _imageStream.Seek((long)(_l1Table[l1Off] & QCOW_FLAGS_MASK), SeekOrigin.Begin);
+            _imageStream.Seek((long)(_l1Table[l1Off] & QCOW_OFFSET_MASK), SeekOrigin.Begin);
             var l2TableB = new byte[_l2Size * 8];
             _imageStream.EnsureRead(l2TableB, 0, _l2Size * 8);
             AaruLogging.Debug(MODULE_NAME, Localization.Reading_L2_table_0, l1Off);
@@ -257,7 +257,9 @@ public sealed partial class Qcow2
 
         buffer = new byte[512];
 
-        if((offset & QCOW_FLAGS_MASK) != 0)
+        bool zeroCluster = (offset & QCOW_COMPRESSED) == 0 && (offset & QCOW_ALL_ZEROS) != 0;
+
+        if(!zeroCluster && (offset & QCOW_FLAGS_MASK) != 0)
         {
             if(!_clusterCache.TryGetValue(offset, out byte[] cluster))
             {
@@ -284,7 +286,7 @@ public sealed partial class Qcow2
                 else
                 {
                     cluster = new byte[_clusterSize];
-                    _imageStream.Seek((long)(offset & QCOW_FLAGS_MASK), SeekOrigin.Begin);
+                    _imageStream.Seek((long)(offset & QCOW_OFFSET_MASK), SeekOrigin.Begin);
                     _imageStream.EnsureRead(cluster, 0, _clusterSize);
                 }
 
