@@ -71,9 +71,12 @@ public sealed partial class Wux
         AaruLogging.Debug(MODULE_NAME, "WUX uncompressed size: {0} bytes", header.UncompressedSize);
         AaruLogging.Debug(MODULE_NAME, "WUX physical sector count: {0}",   _sectorCount);
 
-        // Read sector index table
+        // Read sector index table, which must fit inside the file
+        if(WUX_HEADER_SIZE + (ulong)_sectorCount * 4 > (ulong)stream.Length) return ErrorNumber.InvalidArgument;
+
         var indexBytes = new byte[_sectorCount * 4];
-        stream.EnsureRead(indexBytes, 0, indexBytes.Length);
+
+        if(stream.EnsureRead(indexBytes, 0, indexBytes.Length) != indexBytes.Length) return ErrorNumber.InvalidArgument;
 
         _sectorIndex = new uint[_sectorCount];
 
@@ -117,7 +120,7 @@ public sealed partial class Wux
             }
         }
 
-        _imageInfo.ReadableMediaTags = [.._mediaTags.Keys];
+        _imageInfo.ReadableMediaTags = [.. _mediaTags.Keys];
 
         // Set up single track covering the entire disc
         Tracks =
@@ -178,7 +181,8 @@ public sealed partial class Wux
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
         dpmStartSector     = 0;
         dpmResolution      = 0;
@@ -221,6 +225,8 @@ public sealed partial class Wux
         buffer = new byte[WIIU_LOGICAL_SECTOR];
 
         Stream stream = _imageFilter.GetDataForkStream();
+
+        if(fileOffset + WIIU_LOGICAL_SECTOR > (ulong)stream.Length) return ErrorNumber.InOutError;
         stream.Seek((long)fileOffset, SeekOrigin.Begin);
         stream.EnsureRead(buffer, 0, (int)WIIU_LOGICAL_SECTOR);
 
