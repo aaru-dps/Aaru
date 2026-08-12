@@ -89,23 +89,31 @@ public sealed partial class DiscFerret
             {
                 lastCylinder = blockHeader.cylinder;
                 lastHead     = 0;
-                TrackOffsets.Add(t, offset);
-                TrackLengths.Add(t, thisOffset - offset + 1);
-                offset = thisOffset;
                 t++;
+                TrackOffsets.Add(t, offset);
+                TrackLengths.Add(t, thisOffset - offset);
+                offset = thisOffset;
             }
             else if(blockHeader.head > 0 && blockHeader.head > lastHead)
             {
                 lastHead = blockHeader.head;
-                TrackOffsets.Add(t, offset);
-                TrackLengths.Add(t, thisOffset - offset + 1);
-                offset = thisOffset;
                 t++;
+                TrackOffsets.Add(t, offset);
+                TrackLengths.Add(t, thisOffset - offset);
+                offset = thisOffset;
             }
 
             if(blockHeader.cylinder > _imageInfo.Cylinders) _imageInfo.Cylinders = blockHeader.cylinder;
 
             if(blockHeader.head > _imageInfo.Heads) _imageInfo.Heads = blockHeader.head;
+        }
+
+        // Close the final track
+        if(offset < stream.Length)
+        {
+            t++;
+            TrackOffsets.Add(t, offset);
+            TrackLengths.Add(t, stream.Length - offset);
         }
 
         _imageInfo.Heads++;
