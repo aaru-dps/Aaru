@@ -22,8 +22,8 @@ public sealed partial class Ace
         // Read in chunks for efficiency
         var  bufSize = (int)Math.Min(searchLimit, 65536);
         var  buf     = new byte[bufSize];
-        long filePos = 0;
-        int  overlap = ACE_SIGNATURE_LEN - 1;
+        long      filePos = 0;
+        const int overlap = ACE_SIGNATURE_LEN - 1;
 
         while(filePos < searchLimit)
         {
@@ -34,34 +34,29 @@ public sealed partial class Ace
 
             for(var i = 0; i <= read - ACE_SIGNATURE_LEN; i++)
             {
-                if(buf[i]     == ACE_SIGNATURE[0] &&
-                   buf[i + 1] == ACE_SIGNATURE[1] &&
-                   buf[i + 2] == ACE_SIGNATURE[2] &&
-                   buf[i + 3] == ACE_SIGNATURE[3] &&
-                   buf[i + 4] == ACE_SIGNATURE[4] &&
-                   buf[i + 5] == ACE_SIGNATURE[5] &&
-                   buf[i + 6] == ACE_SIGNATURE[6])
-                {
-                    long candidatePos = filePos + i;
+                if(buf[i]     != ACE_SIGNATURE[0] ||
+                   buf[i + 1] != ACE_SIGNATURE[1] ||
+                   buf[i + 2] != ACE_SIGNATURE[2] ||
+                   buf[i + 3] != ACE_SIGNATURE[3] ||
+                   buf[i + 4] != ACE_SIGNATURE[4] ||
+                   buf[i + 5] != ACE_SIGNATURE[5] ||
+                   buf[i + 6] != ACE_SIGNATURE[6])
+                    continue;
 
-                    // Validate: the main header should start 7 bytes before the signature
-                    long headerStart = candidatePos - SIGNATURE_HEADER_OFFSET;
+                long candidatePos = filePos + i;
 
-                    if(headerStart < 0) continue;
+                // Validate: the main header should start 7 bytes before the signature
+                long headerStart = candidatePos - SIGNATURE_HEADER_OFFSET;
 
-                    // Validate header CRC
-                    if(ValidateMainHeaderCrc(stream, headerStart)) return candidatePos;
-                }
+                if(headerStart < 0) continue;
+
+                // Validate header CRC
+                if(ValidateMainHeaderCrc(stream, headerStart)) return candidatePos;
             }
 
             // Overlap to catch signatures spanning chunk boundaries
-            if(read >= overlap)
-            {
-                filePos         += read - overlap;
-                stream.Position =  filePos;
-            }
-            else
-                break;
+            filePos         += read - overlap;
+            stream.Position =  filePos;
         }
 
         return -1;
@@ -87,7 +82,7 @@ public sealed partial class Ace
         var storedCrc  = BitConverter.ToUInt16(prefix, 0);
         var headerSize = BitConverter.ToUInt16(prefix, 2);
 
-        if(headerSize < 1 || headerSize > 32768)
+        if(headerSize is < 1 or > 32768)
         {
             stream.Position = savedPos;
 
@@ -120,7 +115,7 @@ public sealed partial class Ace
         var storedCrc  = BitConverter.ToUInt16(prefix, 0);
         var headerSize = BitConverter.ToUInt16(prefix, 2);
 
-        if(headerSize < 1 || headerSize > 32768) return false;
+        if(headerSize is < 1 or > 32768) return false;
 
         var headerData = new byte[headerSize];
 
@@ -178,8 +173,6 @@ public sealed partial class Ace
                 _archiveComment = DecompressComment(commentData);
 
                 if(_archiveComment is not null) _features |= ArchiveSupportedFeature.SupportsXAttrs;
-
-                pos += commentCompressedSize;
             }
         }
 
@@ -204,7 +197,7 @@ public sealed partial class Ace
         var storedCrc  = BitConverter.ToUInt16(prefix, 0);
         var headerSize = BitConverter.ToUInt16(prefix, 2);
 
-        if(headerSize < 1 || headerSize > 32768) return false;
+        if(headerSize is < 1 or > 32768) return false;
 
         var headerData = new byte[headerSize];
 
@@ -234,10 +227,6 @@ public sealed partial class Ace
 
                 break;
 
-            case HeaderType.Main:
-            case HeaderType.Recovery32:
-            case HeaderType.Recovery:
-            case HeaderType.Recovery2:
             default:
                 // Skip ADDSIZE if present
                 if((flags & FLAG_ADDSIZE) != 0)
@@ -257,7 +246,7 @@ public sealed partial class Ace
     }
 
     /// <summary>Get the ADDSIZE field value from a header block.</summary>
-    long GetAddSize(byte[] headerData, ushort flags, HeaderType blockType)
+    static long GetAddSize(byte[] headerData, ushort flags, HeaderType blockType)
     {
         if((flags & FLAG_ADDSIZE) == 0) return 0;
 
@@ -522,9 +511,8 @@ public sealed partial class Ace
 
         // Read file entries until end of archive
         while(_stream.Position < _stream.Length)
-        {
-            if(!ReadBlock()) break;
-        }
+            if(!ReadBlock())
+                break;
 
         Opened = true;
 
