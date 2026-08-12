@@ -30,8 +30,6 @@ public sealed partial class Amg
 
         if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _files.Count) return ErrorNumber.OutOfRange;
-
         StringComparison comparison = caseInsensitiveMatch
                                           ? StringComparison.CurrentCultureIgnoreCase
                                           : StringComparison.CurrentCulture;
