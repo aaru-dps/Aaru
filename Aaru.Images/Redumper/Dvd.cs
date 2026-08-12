@@ -46,21 +46,20 @@ namespace Aaru.Images;
 
 public sealed partial class Redumper
 {
-
     ErrorNumber OpenDvd(IFilter imageFilter, string basePath, string sdramPath)
     {
-        _isBluRay = false;
-        _lbaStart = DVD_LBA_START;
+        _isBluRay   = false;
+        _lbaStart   = DVD_LBA_START;
         _bdNintendo = false;
 
         long stateLength = imageFilter.DataForkLength;
         long sdramLength = new FileInfo(sdramPath).Length;
 
-        if (sdramLength % RECORDING_FRAME_SIZE != 0) return ErrorNumber.InvalidArgument;
+        if(sdramLength % RECORDING_FRAME_SIZE != 0) return ErrorNumber.InvalidArgument;
 
         _totalFrames = sdramLength / RECORDING_FRAME_SIZE;
 
-        if (stateLength != _totalFrames) return ErrorNumber.InvalidArgument;
+        if(stateLength != _totalFrames) return ErrorNumber.InvalidArgument;
 
         _imageFilter = imageFilter;
 
@@ -71,7 +70,7 @@ public sealed partial class Redumper
 
         _ramFilter = PluginRegister.Singleton.GetFilter(sdramPath);
 
-        if (_ramFilter is null) return ErrorNumber.NoSuchFile;
+        if(_ramFilter is null) return ErrorNumber.NoSuchFile;
 
         _ramPath = sdramPath;
 
@@ -79,44 +78,48 @@ public sealed partial class Redumper
         long positiveLbaCount = Math.Max(0, _totalFrames + _lbaStart);
 
         _imageInfo.NegativeSectors = (uint)negativeLbaCount;
-        _imageInfo.Sectors = (ulong)positiveLbaCount;
-        _imageInfo.SectorSize = USER_DATA_SIZE;
-        _imageInfo.ImageSize = _imageInfo.Sectors * USER_DATA_SIZE;
+        _imageInfo.Sectors         = (ulong)positiveLbaCount;
+        _imageInfo.SectorSize      = USER_DATA_SIZE;
+        _imageInfo.ImageSize       = _imageInfo.Sectors * USER_DATA_SIZE;
 
-        _imageInfo.CreationTime = imageFilter.CreationTime;
+        _imageInfo.CreationTime         = imageFilter.CreationTime;
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
-        _imageInfo.MediaTitle = Path.GetFileNameWithoutExtension(imageFilter.Filename);
-        _imageInfo.MetadataMediaType = MetadataMediaType.OpticalDisc;
-        _imageInfo.HasPartitions = true;
-        _imageInfo.HasSessions = true;
+        _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
+        _imageInfo.MetadataMediaType    = MetadataMediaType.OpticalDisc;
+        _imageInfo.HasPartitions        = true;
+        _imageInfo.HasSessions          = true;
 
         _mediaTags = new Dictionary<MediaTagType, byte[]>();
         LoadDvdMediaTagSidecars(basePath);
 
         _imageInfo.MediaType = MediaType.DVDROM;
 
-        if (_mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
+        if(_mediaTags.TryGetValue(MediaTagType.DVD_PFI, out byte[] pfi))
         {
             PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(pfi, _imageInfo.MediaType);
 
-            if (decodedPfi.HasValue)
+            if(decodedPfi.HasValue)
             {
                 _imageInfo.MediaType = decodedPfi.Value.DiskCategory switch
-                {
-                    DiskCategory.DVDPR => MediaType.DVDPR,
-                    DiskCategory.DVDPRDL => MediaType.DVDPRDL,
-                    DiskCategory.DVDPRW => MediaType.DVDPRW,
-                    DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
-                    DiskCategory.DVDR => decodedPfi.Value.PartVersion >= 6 ? MediaType.DVDRDL : MediaType.DVDR,
-                    DiskCategory.DVDRAM => MediaType.DVDRAM,
-                    DiskCategory.DVDRW => decodedPfi.Value.PartVersion >= 15 ? MediaType.DVDRWDL : MediaType.DVDRW,
-                    DiskCategory.Nintendo => decodedPfi.Value.DiscSize == DVDSize.Eighty
-                                                 ? MediaType.GOD
-                                                 : MediaType.WOD,
-                    _ => MediaType.DVDROM
-                };
+                                       {
+                                           DiskCategory.DVDPR    => MediaType.DVDPR,
+                                           DiskCategory.DVDPRDL  => MediaType.DVDPRDL,
+                                           DiskCategory.DVDPRW   => MediaType.DVDPRW,
+                                           DiskCategory.DVDPRWDL => MediaType.DVDPRWDL,
+                                           DiskCategory.DVDR => decodedPfi.Value.PartVersion >= 6
+                                                                    ? MediaType.DVDRDL
+                                                                    : MediaType.DVDR,
+                                           DiskCategory.DVDRAM => MediaType.DVDRAM,
+                                           DiskCategory.DVDRW => decodedPfi.Value.PartVersion >= 15
+                                                                     ? MediaType.DVDRWDL
+                                                                     : MediaType.DVDRW,
+                                           DiskCategory.Nintendo => decodedPfi.Value.DiscSize == DVDSize.Eighty
+                                                                        ? MediaType.GOD
+                                                                        : MediaType.WOD,
+                                           _ => MediaType.DVDROM
+                                       };
 
-                if (decodedPfi.Value.DataAreaEndPSN >= decodedPfi.Value.DataAreaStartPSN)
+                if(decodedPfi.Value.DataAreaEndPSN >= decodedPfi.Value.DataAreaStartPSN)
                     _ngcwRegularDataSectors =
                         (ulong)(decodedPfi.Value.DataAreaEndPSN - decodedPfi.Value.DataAreaStartPSN) + 1;
             }
@@ -128,12 +131,8 @@ public sealed partial class Redumper
 
         _imageInfo.ReadableSectorTags =
         [
-            SectorTagType.DvdSectorInformation,
-            SectorTagType.DvdSectorNumber,
-            SectorTagType.DvdSectorIed,
-            SectorTagType.DvdSectorCmi,
-            SectorTagType.DvdSectorTitleKey,
-            SectorTagType.DvdSectorEdc
+            SectorTagType.DvdSectorInformation, SectorTagType.DvdSectorNumber, SectorTagType.DvdSectorIed,
+            SectorTagType.DvdSectorCmi, SectorTagType.DvdSectorTitleKey, SectorTagType.DvdSectorEdc
         ];
 
         Tracks =
@@ -186,15 +185,16 @@ public sealed partial class Redumper
     {
         buffer = new byte[USER_DATA_SIZE];
         ErrorNumber err = ReadSectorLongForDvd(sectorAddress, negative, out byte[] long_buffer, out sectorStatus);
-        if (err != ErrorNumber.NoError) return err;
+
+        if(err != ErrorNumber.NoError) return err;
 
         Array.Copy(long_buffer, Aaru.Decoders.Nintendo.Sector.NintendoMainDataOffset, buffer, 0, USER_DATA_SIZE);
 
         return ErrorNumber.NoError;
     }
 
-    ErrorNumber ReadSectorLongForDvd(ulong sectorAddress, bool negative, out byte[] buffer,
-                                      out SectorStatus sectorStatus)
+    ErrorNumber ReadSectorLongForDvd(ulong            sectorAddress, bool negative, out byte[] buffer,
+                                     out SectorStatus sectorStatus)
     {
         sectorStatus = SectorStatus.Dumped;
 
@@ -202,43 +202,44 @@ public sealed partial class Redumper
         return ReadSectorLongForNgcw(sectorAddress, negative, out buffer, out sectorStatus);
     }
 
-    ErrorNumber ReadSectorsTagForDvd(ulong sectorAddress, bool negative, uint length, SectorTagType tag, out byte[] buffer)
+    ErrorNumber ReadSectorsTagForDvd(ulong      sectorAddress, bool negative, uint length, SectorTagType tag,
+                                     out byte[] buffer)
     {
         buffer = null;
 
         uint sectorOffset;
         uint sectorSize;
 
-        switch (tag)
+        switch(tag)
         {
             case SectorTagType.DvdSectorInformation:
                 sectorOffset = 0;
-                sectorSize = 1;
+                sectorSize   = 1;
 
                 break;
             case SectorTagType.DvdSectorNumber:
                 sectorOffset = 1;
-                sectorSize = 3;
+                sectorSize   = 3;
 
                 break;
             case SectorTagType.DvdSectorIed:
                 sectorOffset = 4;
-                sectorSize = 2;
+                sectorSize   = 2;
 
                 break;
             case SectorTagType.DvdSectorCmi:
                 sectorOffset = 6;
-                sectorSize = 1;
+                sectorSize   = 1;
 
                 break;
             case SectorTagType.DvdSectorTitleKey:
                 sectorOffset = 7;
-                sectorSize = 5;
+                sectorSize   = 5;
 
                 break;
             case SectorTagType.DvdSectorEdc:
                 sectorOffset = 2060;
-                sectorSize = 4;
+                sectorSize   = 4;
 
                 break;
             default:
@@ -247,11 +248,13 @@ public sealed partial class Redumper
 
         buffer = new byte[sectorSize * length];
 
-        for (uint i = 0; i < length; i++)
+        for(uint i = 0; i < length; i++)
         {
-            ErrorNumber errno = ReadSectorLong(sectorAddress + i, negative, out byte[] sector, out _);
+            ulong addr = negative ? sectorAddress - i : sectorAddress + i;
 
-            if (errno != ErrorNumber.NoError) return errno;
+            ErrorNumber errno = ReadSectorLong(addr, negative, out byte[] sector, out _);
+
+            if(errno != ErrorNumber.NoError) return errno;
 
             Array.Copy(sector, sectorOffset, buffer, i * sectorSize, sectorSize);
         }
@@ -266,9 +269,9 @@ public sealed partial class Redumper
     byte[] ReadAndFlattenFrame(long frameIndex)
     {
         Stream stream = _ramFilter.GetDataForkStream();
-        long offset = frameIndex * RECORDING_FRAME_SIZE;
+        long   offset = frameIndex * RECORDING_FRAME_SIZE;
 
-        if (offset + RECORDING_FRAME_SIZE > stream.Length) return null;
+        if(offset + RECORDING_FRAME_SIZE > stream.Length) return null;
 
         var frame = new byte[RECORDING_FRAME_SIZE];
         stream.Seek(offset, SeekOrigin.Begin);
@@ -277,7 +280,7 @@ public sealed partial class Redumper
         var dvdSector = new byte[DVD_SECTOR_SIZE];
         int rowStride = ROW_MAIN_DATA_SIZE + ROW_PARITY_INNER_SIZE;
 
-        for (int row = 0; row < RECORDING_FRAME_ROWS; row++)
+        for(int row = 0; row < RECORDING_FRAME_ROWS; row++)
             Array.Copy(frame, row * rowStride, dvdSector, row * ROW_MAIN_DATA_SIZE, ROW_MAIN_DATA_SIZE);
 
         return dvdSector;
@@ -294,16 +297,15 @@ public sealed partial class Redumper
 
         string bcaPath = basePath + ".bca";
 
-        if (File.Exists(bcaPath))
+        if(File.Exists(bcaPath))
         {
             byte[] bcaData = File.ReadAllBytes(bcaPath);
 
-            if (bcaData.Length > 0)
+            if(bcaData.Length > 0)
             {
                 _mediaTags[MediaTagType.DVD_BCA] = bcaData;
                 AaruLogging.Debug(MODULE_NAME, Localization.Found_media_tag_0, MediaTagType.DVD_BCA);
             }
         }
     }
-
 }
