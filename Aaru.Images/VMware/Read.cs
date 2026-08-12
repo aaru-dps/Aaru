@@ -440,7 +440,7 @@ public sealed partial class VMware
 
                 _grainSize = _vmEHdr.grainSize;
                 grains     = (uint)(_imageInfo.Sectors / _vmEHdr.grainSize) + 1;
-                gdEntries  = grains / _vmEHdr.GTEsPerGT;
+                gdEntries  = (grains + _vmEHdr.GTEsPerGT - 1) / _vmEHdr.GTEsPerGT;
                 gtEsPerGt  = _vmEHdr.GTEsPerGT;
 
                 if((_vmEHdr.flags & FLAGS_USE_REDUNDANT_TABLE) == FLAGS_USE_REDUNDANT_TABLE)
@@ -511,7 +511,7 @@ public sealed partial class VMware
 
             AaruLogging.Debug(MODULE_NAME, Localization.Reading_grain_tables);
             uint currentGrain = 0;
-            _gTable = new uint[grains];
+            _gTable = new uint[gdEntries * gtEsPerGt];
 
             foreach(uint gtOff in gd)
             {
