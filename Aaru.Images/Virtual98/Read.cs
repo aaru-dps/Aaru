@@ -60,6 +60,8 @@ public sealed partial class Virtual98
 
         _v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
+        if(!_v98Hdr.signature.SequenceEqual(_signature)) return ErrorNumber.InvalidArgument;
+
         _imageInfo.MediaType = MediaType.GENERIC_HDD;
 
         _imageInfo.ImageSize            = (ulong)(stream.Length - 0xDC);
