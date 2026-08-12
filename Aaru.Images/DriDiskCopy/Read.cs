@@ -93,8 +93,9 @@ public sealed partial class DriDiskCopy
         if(_imageInfo is { Cylinders: 77, Heads: 2 } and { SectorsPerTrack: 16, SectorSize: 512 } &&
            _footer.bpb._driveCode is DriveCode.md2hd or DriveCode.mf2hd)
         {
-            _imageInfo.SectorsPerTrack = 8;
-            _imageInfo.SectorSize      = 1024;
+            _imageInfo.SectorsPerTrack =  8;
+            _imageInfo.SectorSize      =  1024;
+            _imageInfo.Sectors         /= 2;
         }
 
         _imageInfo.MediaType = Geometry.GetMediaType(((ushort)_imageInfo.Cylinders, (byte)_imageInfo.Heads,
