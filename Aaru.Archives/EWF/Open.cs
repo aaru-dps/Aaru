@@ -229,6 +229,12 @@ public sealed partial class EwfArchive
 
         EwfTableHeaderV1 tableHeader = Marshal.ByteArrayToStructureLittleEndian<EwfTableHeaderV1>(tableHeaderBytes);
 
+        // Bound the entry count by the section size and the remaining file
+        long maxEntries = Math.Min((dataSize         - tableHeaderBytes.Length) / 4,
+                                   (segStream.Length - segStream.Position)      / 4);
+
+        if(tableHeader.number_of_entries == 0 || tableHeader.number_of_entries > maxEntries) return;
+
         var entryCount = (int)tableHeader.number_of_entries;
         var entryData  = new byte[entryCount * 4];
         segStream.ReadExactly(entryData, 0, entryData.Length);
@@ -248,6 +254,10 @@ public sealed partial class EwfArchive
             {
                 var nextRawEntry = BitConverter.ToUInt32(entryData, (i + 1) * 4);
                 var nextOffset   = (long)(tableHeader.base_offset + (nextRawEntry & TABLE_ENTRY_V1_OFFSET_MASK));
+
+                // Non-monotonic offsets would underflow into a bogus huge size
+                if(nextOffset <= offset) continue;
+
                 size = (uint)(nextOffset - offset);
             }
             else
@@ -364,8 +374,15 @@ public sealed partial class EwfArchive
         EwfTableHeaderV2 tableHeader = Marshal.ByteArrayToStructureLittleEndian<EwfTableHeaderV2>(tableHeaderBytes);
 
         ulong firstChunk = tableHeader.first_chunk_number;
-        var   entryCount = (int)tableHeader.number_of_entries;
         int   entrySize  = System.Runtime.InteropServices.Marshal.SizeOf<EwfTableEntryV2>();
+
+        // Bound the entry count by the section size and the remaining file
+        long maxEntries = Math.Min((dataSize         - tableHeaderBytes.Length) / entrySize,
+                                   (segStream.Length - segStream.Position)      / entrySize);
+
+        if(tableHeader.number_of_entries == 0 || tableHeader.number_of_entries > maxEntries) return;
+
+        var entryCount = (int)tableHeader.number_of_entries;
 
         for(var i = 0; i < entryCount; i++)
         {
