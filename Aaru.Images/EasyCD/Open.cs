@@ -338,6 +338,14 @@ public sealed partial class EasyCD
                     trackLength = adjusted;
                 }
 
+                // A zero-length track would underflow EndSector below and swallow every LBA lookup
+                if(trackLength == 0)
+                {
+                    AaruLogging.Error(MODULE_NAME + ": track {0} has no data", trackCounter);
+
+                    return ErrorNumber.InvalidArgument;
+                }
+
                 trackSequence++;
 
                 // Determine if we need a pregap
