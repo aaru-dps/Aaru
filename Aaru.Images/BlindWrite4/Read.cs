@@ -720,7 +720,7 @@ public sealed partial class BlindWrite4
             {
                 if(track.Sequence < session.StartTrack) session.StartTrack = track.Sequence;
 
-                if(track.Sequence > session.EndTrack) session.StartTrack = track.Sequence;
+                if(track.Sequence > session.EndTrack) session.EndTrack = track.Sequence;
 
                 if(track.StartSector < session.StartSector) session.StartSector = track.StartSector;
 
