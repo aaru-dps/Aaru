@@ -751,7 +751,8 @@ public sealed partial class PowerISO
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
         dpmStartSector     = 0;
         dpmResolution      = 0;
@@ -777,8 +778,9 @@ public sealed partial class PowerISO
 
         if(sectorAddress >= _imageInfo.Sectors) return ErrorNumber.OutOfRange;
 
-        if(_sectorCache.TryGetValue(sectorAddress, out buffer))
+        if(_sectorCache.TryGetValue(sectorAddress, out byte[] cachedSector))
         {
+            buffer       = (byte[])cachedSector.Clone();
             sectorStatus = SectorStatus.Dumped;
 
             return ErrorNumber.NoError;
@@ -796,7 +798,7 @@ public sealed partial class PowerISO
 
         if(_sectorCache.Count >= MAX_CACHED_SECTORS) _sectorCache.Clear();
 
-        _sectorCache[sectorAddress] = buffer;
+        _sectorCache[sectorAddress] = (byte[])buffer.Clone();
         sectorStatus                = SectorStatus.Dumped;
 
         return ErrorNumber.NoError;
