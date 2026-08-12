@@ -146,9 +146,15 @@ public sealed partial class Arj
             stream = new MemoryStream([]);
         else
         {
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.CompressedSize                    <= 0 ||
+               entry.DataOffset                        < 0  ||
+               entry.DataOffset + entry.CompressedSize > _stream.Length)
+                return ErrorNumber.InvalidArgument;
+
             stream = new OffsetStream(new NonClosableStream(_stream),
                                       entry.DataOffset,
-                                      entry.DataOffset + entry.CompressedSize);
+                                      entry.DataOffset + entry.CompressedSize - 1);
 
             switch(entry.ArjxNbr)
             {
