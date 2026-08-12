@@ -362,7 +362,7 @@ public sealed partial class UltraISO
             end    = 0 // Will be computed after chunk index is read
         };
 
-        string basePath = imageFilter.Filename;
+        string basePath = Path.Combine(imageFilter.ParentFolder, imageFilter.Filename);
 
         for(var s = 1; s < _segmentTable.Length; s++)
         {
