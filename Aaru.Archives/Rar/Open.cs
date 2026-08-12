@@ -285,6 +285,13 @@ public sealed partial class Rar
         // Header ends at block.start + headerSize
         long headerEnd = blockContentStart + (long)headerSize;
 
+        // Reject sizes that overflow to negative or point outside the file, would seek backwards otherwise
+        if((long)headerSize           <= 0             ||
+           (long)dataSize             < 0              ||
+           headerEnd                  > _stream.Length ||
+           headerEnd + (long)dataSize > _stream.Length)
+            return false;
+
         switch((Rar5BlockType)blockType)
         {
             case Rar5BlockType.Main:
@@ -404,6 +411,10 @@ public sealed partial class Rar
         {
             ulong extraBlockSize = ReadVint(_stream);
             long  extraDataStart = _stream.Position;
+
+            // Reject sizes that overflow to negative, would seek backwards otherwise
+            if((long)extraBlockSize <= 0) break;
+
             ulong extraBlockType = ReadVint(_stream);
 
             switch(extraBlockType)
