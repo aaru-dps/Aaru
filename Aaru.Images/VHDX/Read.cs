@@ -299,7 +299,11 @@ public sealed partial class Vhdx
                     stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
                     var tmpVal = new byte[parentEntry.valueLength];
                     stream.EnsureRead(tmpVal, 0, tmpVal.Length);
-                    string entryValue = Encoding.Unicode.GetString(tmpVal);
+
+                    // Locators are Windows paths, possibly NUL terminated
+                    string entryValue = Encoding.Unicode.GetString(tmpVal)
+                                                .TrimEnd('\0')
+                                                .Replace('\\', Path.DirectorySeparatorChar);
 
                     try
                     {
@@ -344,12 +348,18 @@ public sealed partial class Vhdx
                     stream.Seek(parentEntry.valueOffset + _metadataOffset, SeekOrigin.Begin);
                     var tmpVal = new byte[parentEntry.valueLength];
                     stream.EnsureRead(tmpVal, 0, tmpVal.Length);
-                    string entryValue = Encoding.Unicode.GetString(tmpVal);
+
+                    // Absolute Windows path, useless as-is on another machine: try the file next to the child image
+                    string entryValue = Encoding.Unicode.GetString(tmpVal).TrimEnd('\0');
+
+                    string filename = entryValue[(entryValue.LastIndexOfAny(['/', '\\']) + 1)..];
+
+                    if(filename.Length == 0) continue;
 
                     try
                     {
                         parentFilter =
-                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, entryValue));
+                            PluginRegister.Singleton.GetFilter(Path.Combine(imageFilter.ParentFolder, filename));
 
                         if(parentFilter == null || _parentImage.Open(parentFilter) != ErrorNumber.NoError) continue;
 
