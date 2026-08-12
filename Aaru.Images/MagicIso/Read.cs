@@ -990,7 +990,8 @@ public sealed partial class MagicIso
     }
 
     /// <inheritdoc />
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
         dpmStartSector     = 0;
         dpmResolution      = 0;
@@ -1237,6 +1238,15 @@ public sealed partial class MagicIso
             return ErrorNumber.NoError;
         }
 
+        MagicIsoTrack? tagTrack = FindTrackBySequence(track);
+
+        if(tagTrack is null) return ErrorNumber.SectorNotFound;
+
+        uint nrgMode = tagTrack.Value.nrgMode;
+
+        // Audio sectors carry none of these structures
+        if(nrgMode == NRG_MODE_AUDIO) return ErrorNumber.NoData;
+
         ErrorNumber errno = ReadSectorsLong(sectorAddress, length, track, out byte[] raw, out _);
 
         if(errno != ErrorNumber.NoError) return errno;
@@ -1248,15 +1258,28 @@ public sealed partial class MagicIso
             case SectorTagType.CdSectorHeader:
                 return CopyTagSlice(raw, length, 12, 4, out buffer);
             case SectorTagType.CdSectorSubHeader:
-                return CopyTagSlice(raw, length, 16, 8, out buffer);
+                return nrgMode == NRG_MODE_MODE2_FORM1
+                           ? CopyTagSlice(raw, length, 16, 8, out buffer)
+                           : ErrorNumber.NoData;
             case SectorTagType.CdSectorEdc:
-                return CopyTagSlice(raw, length, 2064, 4, out buffer);
+                return nrgMode switch
+                       {
+                           NRG_MODE_MODE1       => CopyTagSlice(raw, length, 2064, 4, out buffer),
+                           NRG_MODE_MODE2_FORM1 => CopyTagSlice(raw, length, 2072, 4, out buffer),
+                           _                    => ErrorNumber.NoData
+                       };
             case SectorTagType.CdSectorEccP:
-                return CopyTagSlice(raw, length, 2076, 172, out buffer);
+                return nrgMode is NRG_MODE_MODE1 or NRG_MODE_MODE2_FORM1
+                           ? CopyTagSlice(raw, length, 2076, 172, out buffer)
+                           : ErrorNumber.NoData;
             case SectorTagType.CdSectorEccQ:
-                return CopyTagSlice(raw, length, 2248, 104, out buffer);
+                return nrgMode is NRG_MODE_MODE1 or NRG_MODE_MODE2_FORM1
+                           ? CopyTagSlice(raw, length, 2248, 104, out buffer)
+                           : ErrorNumber.NoData;
             case SectorTagType.CdSectorEcc:
-                return CopyTagSlice(raw, length, 2076, 276, out buffer);
+                return nrgMode is NRG_MODE_MODE1 or NRG_MODE_MODE2_FORM1
+                           ? CopyTagSlice(raw, length, 2076, 276, out buffer)
+                           : ErrorNumber.NoData;
             default:
                 return ErrorNumber.NotSupported;
         }
