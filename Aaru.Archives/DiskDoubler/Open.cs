@@ -74,7 +74,7 @@ public sealed partial class DiskDoubler
 
             _entries.Add(entry);
         }
-        else if(rsrcSize > 0)
+        else
         {
             // Resource-fork only file
             var entry = new Entry
@@ -179,10 +179,7 @@ public sealed partial class DiskDoubler
 
             if(endDir != 0)
             {
-                if(dirStack.Count > 0)
-                    currentDir = dirStack.Pop();
-                else
-                    currentDir = "";
+                currentDir = dirStack.Count > 0 ? dirStack.Pop() : "";
             }
             else if(isDir != 0)
             {
@@ -234,7 +231,7 @@ public sealed partial class DiskDoubler
 
                     _entries.Add(entry);
                 }
-                else if(rsrcSize > 0)
+                else
                 {
                     var entry = new Entry
                     {
@@ -287,9 +284,7 @@ public sealed partial class DiskDoubler
         // Skip the 58-byte preamble (magic already consumed)
         _stream.Position = 4 + DDA2_PREAMBLE_SIZE;
 
-        var currentDir   = "";
-        var lastDirLevel = 0;
-        var dirParts     = new List<string>();
+        var dirParts = new List<string>();
 
         while(_stream.Position < _stream.Length)
         {
@@ -327,6 +322,9 @@ public sealed partial class DiskDoubler
             var dirLevel  = (int)(BigEndianBitConverter.ToUInt32(levelBuf, 0) - 2);
             var totalSize = BigEndianBitConverter.ToUInt32(levelBuf, 4);
 
+            // An entry cannot be smaller than its fixed header, and advancing by less would loop forever
+            if(totalSize < 46) break;
+
             if(dirLevel < 0)
             {
                 _stream.Position = entryStart + totalSize;
@@ -337,13 +335,11 @@ public sealed partial class DiskDoubler
             // Pop directories to match current level
             while(dirParts.Count > dirLevel) dirParts.RemoveAt(dirParts.Count - 1);
 
-            currentDir   = string.Join("/", dirParts);
-            lastDirLevel = dirLevel;
+            string currentDir = string.Join("/", dirParts);
 
             if((entryType & 0x8000) != 0)
             {
                 // Directory entry
-                if(dirLevel >= 0)
                 {
                     // Skip 8 bytes
                     _stream.Position += 8;
