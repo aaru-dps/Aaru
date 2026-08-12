@@ -35,12 +35,13 @@ public sealed partial class Ha
         var fhBuf   = new byte[fhLen];
         var pathBuf = new byte[16384];
         var nameBuf = new byte[256];
-        int i; // Guard
 
         while(_stream.Position + fhLen < _stream.Length)
         {
             _stream.ReadExactly(fhBuf, 0, fhLen);
             FHeader fh = Marshal.ByteArrayToStructureLittleEndian<FHeader>(fhBuf);
+
+            int i;
 
             for(i = 0; i < pathBuf.Length; i++)
             {
@@ -48,21 +49,25 @@ public sealed partial class Ha
 
                 if(b < 0) return ErrorNumber.InvalidArgument; // Makes no sense here
 
-                if(b == 0xFF)
+                switch(b)
                 {
-                    pathBuf[i] = 0x2F;
+                    case 0xFF:
+                        pathBuf[i] = 0x2F;
 
-                    continue;
+                        continue;
+
+                    case 0:
+                        pathBuf[i] = 0;
+
+                        break;
+
+                    default:
+                        pathBuf[i] = (byte)b;
+
+                        continue;
                 }
 
-                if(b == 0)
-                {
-                    pathBuf[i] = 0;
-
-                    break;
-                }
-
-                pathBuf[i] = (byte)b;
+                break;
             }
 
             if(i == pathBuf.Length) return ErrorNumber.InvalidArgument; // Got beyond the buffer length
@@ -86,6 +91,9 @@ public sealed partial class Ha
             if(i == nameBuf.Length) return ErrorNumber.InvalidArgument; // Got beyond the buffer length
 
             int mdiLen = _stream.ReadByte();
+
+            // End of stream or machine dependent information running past it
+            if(mdiLen < 0 || mdiLen > _stream.Length - _stream.Position) return ErrorNumber.InvalidArgument;
 
             var mdi = new byte[mdiLen];
             _stream.ReadExactly(mdi, 0, mdiLen);
@@ -112,13 +120,13 @@ public sealed partial class Ha
                 Filename     = Path.Combine(path, name)
             };
 
-            switch((MdiSource)mdi[0])
+            switch(mdi.Length > 0 ? (MdiSource)mdi[0] : (MdiSource)0xFF)
             {
-                case MdiSource.MSDOS:
+                case MdiSource.MSDOS when mdi.Length >= 2:
                     entry.Attributes = (FileAttributes)mdi[1];
 
                     break;
-                case MdiSource.UNIX:
+                case MdiSource.UNIX when mdi.Length >= Marshal.SizeOf<UnixMdi>():
                 {
                     UnixMdi unixMdi = Marshal.ByteArrayToStructureLittleEndian<UnixMdi>(mdi);
                     entry.Mode = unixMdi.attr;
