@@ -11,7 +11,7 @@ namespace Aaru.Archives;
 
 public sealed partial class StuffItX
 {
-    Stream DecompressStream(Stream compressedStream, CompressionAlgorithm algorithm, long uncompressedSize)
+    static Stream DecompressStream(Stream compressedStream, CompressionAlgorithm algorithm, long uncompressedSize)
     {
         switch(algorithm)
         {
@@ -121,19 +121,15 @@ public sealed partial class StuffItX
         }
     }
 
-    Stream ApplyPreprocessing(Stream decompressedStream, PreprocessAlgorithm algorithm, long actualSize)
+    static Stream ApplyPreprocessing(Stream decompressedStream, PreprocessAlgorithm algorithm, long actualSize)
     {
-        switch(algorithm)
-        {
-            case PreprocessAlgorithm.None:
-                return decompressedStream;
-            case PreprocessAlgorithm.English:
-                return new EnglishStream(decompressedStream, actualSize);
-            case PreprocessAlgorithm.X86:
-                return new X86Stream(decompressedStream, actualSize);
-            default:
-                return null;
-        }
+        return algorithm switch
+               {
+                   PreprocessAlgorithm.None    => decompressedStream,
+                   PreprocessAlgorithm.English => new EnglishStream(decompressedStream, actualSize),
+                   PreprocessAlgorithm.X86     => new X86Stream(decompressedStream, actualSize),
+                   _                           => null
+               };
     }
 
 #region IArchive Members

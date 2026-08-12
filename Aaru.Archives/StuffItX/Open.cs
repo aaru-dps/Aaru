@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
+using Aaru.Logging;
 
 namespace Aaru.Archives;
 
@@ -87,16 +88,20 @@ public sealed partial class StuffItX
         ulong crcLen = reader.ReadSitxP2();
 
 
-        if(crcLen == 0) return;
-
-        if(crcLen == 4)
+        switch(crcLen)
         {
-            // CRC is read as raw bytes, not through the bit buffer
-            reader.FlushBits();
-            var crcBuf = new byte[4];
-            _stream.ReadExactly(crcBuf, 0, 4);
-            element.DataCrc = (uint)crcBuf[0] << 24 | (uint)crcBuf[1] << 16 | (uint)crcBuf[2] << 8 | crcBuf[3];
-            crcLen          = reader.ReadSitxP2();
+            case 0:
+                return;
+
+            case 4:
+                // CRC is read as raw bytes, not through the bit buffer
+                reader.FlushBits();
+                var crcBuf = new byte[4];
+                _stream.ReadExactly(crcBuf, 0, 4);
+                element.DataCrc = (uint)crcBuf[0] << 24 | (uint)crcBuf[1] << 16 | (uint)crcBuf[2] << 8 | crcBuf[3];
+                crcLen          = reader.ReadSitxP2();
+
+                break;
         }
 
         // Skip remaining data blocks
@@ -129,8 +134,10 @@ public sealed partial class StuffItX
                 {
                     key = (int)catReader.ReadSitxP2();
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
+                    AaruLogging.Debug(MODULE_NAME, "Exception reading catalog key: {0}", ex);
+
                     break;
                 }
 
@@ -245,10 +252,7 @@ public sealed partial class StuffItX
                             var num = (int)catReader.ReadSitxP2();
 
 
-                            for(var i = 0; i < num; i++)
-                            {
-                                byte[] s = catReader.ReadSitxString();
-                            }
+                            for(var i = 0; i < num; i++) catReader.ReadSitxString();
                         }
 
                             break;
@@ -260,8 +264,10 @@ public sealed partial class StuffItX
                             break;
                     }
                 }
-                catch(Exception)
+                catch(Exception ex)
                 {
+                    AaruLogging.Debug(MODULE_NAME, "Exception reading catalog value: {0}", ex);
+
                     break;
                 }
             }
@@ -309,8 +315,10 @@ public sealed partial class StuffItX
         {
             decompressed = DecompressStream(blockData, compAlg, decompressedSize);
         }
-        catch
+        catch(Exception ex)
         {
+            AaruLogging.Debug(MODULE_NAME, "Exception decompressing element: {0}", ex);
+
             return ErrorNumber.InOutError;
         }
 
@@ -408,7 +416,7 @@ public sealed partial class StuffItX
                     var forkType = (ForkType)reader.ReadSitxP2();
 
                     // Reject nonsensical fork indexes, a huge one would allocate that many padding slots
-                    if(forkIndex < 0 || forkIndex > MAX_FORK_INDEX) return ErrorNumber.InvalidArgument;
+                    if(forkIndex is < 0 or > MAX_FORK_INDEX) return ErrorNumber.InvalidArgument;
 
                     forkedIds.Add(entryId);
 
