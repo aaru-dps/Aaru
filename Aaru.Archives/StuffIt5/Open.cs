@@ -113,6 +113,9 @@ public sealed partial class StuffIt5
 
             long headerEnd = entryOffset + headerSize;
 
+            // The header, including name and comment, must fit in the file
+            if(headerEnd > _stream.Length) return ErrorNumber.InvalidArgument;
+
             _stream.Position++; // skip system ID byte
 
             int entryFlags = _stream.ReadByte();
@@ -189,6 +192,8 @@ public sealed partial class StuffIt5
             }
 
             // Read filename
+            if(nameLength > _stream.Length - _stream.Position) return ErrorNumber.InvalidArgument;
+
             var nameData = new byte[nameLength];
             _stream.ReadExactly(nameData, 0, nameLength);
             string name = _encoding.GetString(nameData);
@@ -206,6 +211,8 @@ public sealed partial class StuffIt5
 
                 if(entryCommentSize > 0)
                 {
+                    if(entryCommentSize > _stream.Length - _stream.Position) return ErrorNumber.InvalidArgument;
+
                     var commentData = new byte[entryCommentSize];
                     _stream.ReadExactly(commentData, 0, entryCommentSize);
                     entryComment = _encoding.GetString(commentData);
@@ -213,6 +220,8 @@ public sealed partial class StuffIt5
             }
 
             // Read second block: finder info and Mac metadata
+            if(_stream.Position + 36 > _stream.Length) break;
+
             var finderBuf = new byte[4];
             _stream.ReadExactly(finderBuf, 0, 4);
             var something = BigEndianBitConverter.ToUInt16(finderBuf, 0);
@@ -240,6 +249,8 @@ public sealed partial class StuffIt5
 
             if(hasResource)
             {
+                if(_stream.Position + 14 > _stream.Length) break;
+
                 var rsrcBuf = new byte[12];
                 _stream.ReadExactly(rsrcBuf, 0, 12);
                 resourceLength  = BigEndianBitConverter.ToUInt32(rsrcBuf, 0);
