@@ -186,6 +186,9 @@ public sealed partial class EwfArchive
 
             if(descriptor.next_offset == 0 || sectionType is SECTION_TYPE_DONE or SECTION_TYPE_NEXT) break;
 
+            // Chains that do not move forward or point outside the file would loop forever
+            if((long)descriptor.next_offset <= sectionStart || (long)descriptor.next_offset > segStream.Length) break;
+
             segStream.Seek((long)descriptor.next_offset, SeekOrigin.Begin);
         }
     }
@@ -321,6 +324,9 @@ public sealed partial class EwfArchive
             var  sectionType = (EwfSectionTypeV2)descriptor.type;
             long dataStart   = position - (long)descriptor.data_size;
 
+            // Reject data sizes pointing before the file header
+            if(dataStart < FILE_HEADER_V2_SIZE) break;
+
             switch(sectionType)
             {
                 case EwfSectionTypeV2.SectorTable:
@@ -340,6 +346,9 @@ public sealed partial class EwfArchive
             }
 
             if(descriptor.previous_offset == 0) break;
+
+            // Chains that do not move backwards would loop forever
+            if((long)descriptor.previous_offset >= position) break;
 
             position = (long)descriptor.previous_offset;
         }
