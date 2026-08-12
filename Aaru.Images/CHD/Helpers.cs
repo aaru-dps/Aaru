@@ -171,6 +171,9 @@ public sealed partial class Chd
 
                         break;
                     case EntryFlagsV3.SelfHunk:
+                        // A self-referential entry would recurse forever
+                        if(entry.offset == hunkNo || entry.offset >= _totalHunks) return ErrorNumber.InvalidArgument;
+
                         return GetHunk(entry.offset, out buffer);
                     case EntryFlagsV3.ParentHunk:
                         AaruLogging.Error(Localization.Parent_images_are_not_supported);
@@ -320,6 +323,9 @@ public sealed partial class Chd
                 break;
 
             case EntryFlagsV5.SelfHunk:
+                // A self-referential entry would recurse forever
+                if(fileOffset == hunkNo || fileOffset >= _totalHunks) return ErrorNumber.InvalidArgument;
+
                 return GetHunk(fileOffset, out buffer);
 
             case EntryFlagsV5.ParentHunk:
@@ -801,7 +807,9 @@ public sealed partial class Chd
         int selfBits   = mapHeader[13];
         int parentBits = mapHeader[14];
 
-        // Read compressed map data
+        // Read compressed map data, never more than the file holds
+        if(mapBytes > stream.Length - stream.Position) return ErrorNumber.InvalidArgument;
+
         var mapData = new byte[mapBytes];
         stream.EnsureRead(mapData, 0, (int)mapBytes);
 

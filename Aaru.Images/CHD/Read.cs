@@ -382,6 +382,8 @@ public sealed partial class Chd
 
                 AaruLogging.Debug(MODULE_NAME, "hdrV5.rawsha1 = {0}", ArrayHelpers.ByteArrayToHex(hdrV5.rawsha1));
 
+                if(hdrV5.hunkbytes == 0 || hdrV5.unitbytes == 0) return ErrorNumber.InvalidArgument;
+
                 _totalHunks      = (uint)((hdrV5.logicalbytes + hdrV5.hunkbytes - 1) / hdrV5.hunkbytes);
                 _bytesPerHunk    = hdrV5.hunkbytes;
                 _unitBytes       = hdrV5.unitbytes;
@@ -1966,12 +1968,13 @@ public sealed partial class Chd
     public List<Track> GetSessionTracks(ushort session) =>
         _isHdd ? null : _tracks.Values.Where(track => track.Session == session).ToList();
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
