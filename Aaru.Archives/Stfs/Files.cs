@@ -117,8 +117,8 @@ public sealed partial class Stfs
         if(entryNumber < 0 || entryNumber >= _entries.Length) return ErrorNumber.OutOfRange;
 
         var stream = new StfsStream(_stream,
-                                    _entries[entryNumber].StartingBlock,
                                     _entries[entryNumber].FileSize,
+                                    _entries[entryNumber].StartingBlock,
                                     _headerSize,
                                     _blockSeparation,
                                     _isConsole);
