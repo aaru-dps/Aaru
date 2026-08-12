@@ -210,6 +210,14 @@ public sealed partial class Partimage
             return ErrorNumber.NotImplemented;
         }
 
+        // Data blocks are read raw below, compressed images would return garbage
+        if(_cMainHeader.dwCompression != PCompression.None)
+        {
+            AaruLogging.Error(MODULE_NAME + ": compressed images are not yet supported");
+
+            return ErrorNumber.NotImplemented;
+        }
+
         string magic;
 
         // Skip MBRs
@@ -355,6 +363,9 @@ public sealed partial class Partimage
             current = next;
         }
 
+        // Close a trailing allocated run, or its sectors resolve to offset zero
+        if(current) _extents.Add(extentStart, localHeader.qwBlocksCount);
+
         extentsFillStopwatch.Stop();
 
         AaruLogging.Debug(MODULE_NAME,
@@ -445,7 +456,7 @@ public sealed partial class Partimage
 
         for(uint i = 0; i < length; i++)
         {
-            if((_bitmap[sectorAddress / 8] & 1 << (int)(sectorAddress % 8)) == 0) continue;
+            if((_bitmap[(sectorAddress + i) / 8] & 1 << (int)((sectorAddress + i) % 8)) == 0) continue;
 
             allEmpty = false;
 
