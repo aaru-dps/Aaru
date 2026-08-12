@@ -271,7 +271,7 @@ public sealed partial class Cpcdsk
                 foreach(KeyValuePair<int, byte[]> s in thisTrackSectors.OrderBy(static k => k.Key))
                 {
                     _sectors.Add(currentSector, s.Value);
-                    _addressMarks.Add(currentSector, s.Value);
+                    _addressMarks.Add(currentSector, thisTrackAddressMarks[s.Key]);
                     currentSector++;
 
                     if(s.Value.Length > _imageInfo.SectorSize) _imageInfo.SectorSize = (uint)s.Value.Length;
