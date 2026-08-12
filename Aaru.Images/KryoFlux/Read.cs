@@ -77,7 +77,7 @@ public sealed partial class KryoFlux
             return ErrorNumber.InvalidArgument;
 
         // TODO: This is supposing NoFilter, shouldn't
-        tracks = new SortedDictionary<byte, IFilter>();
+        tracks         = new SortedDictionary<byte, IFilter>();
         _trackCaptures = [];
         byte step    = 1;
         byte heads   = 2;
@@ -143,6 +143,7 @@ public sealed partial class KryoFlux
 
         _imageInfo.Heads     = heads;
         _imageInfo.Cylinders = (uint)(tracks.Count / heads);
+
         // TODO: Find a way to determine the media type from the track data.
         _imageInfo.MediaType = MediaType.DOS_35_HD;
 
@@ -163,7 +164,7 @@ public sealed partial class KryoFlux
 
         int fileSize = fileData.Length;
 
-        uint[] cellValues         = new uint[fileSize];
+        uint[] cellValues          = new uint[fileSize];
         uint[] cellStreamPositions = new uint[fileSize];
 
         uint cellAccumulator = 0;
@@ -185,20 +186,17 @@ public sealed partial class KryoFlux
 
             if(curOp == (byte)BlockIds.Oob)
             {
-                if(fileSize - streamOfs < oobHeaderSize)
-                    return ErrorNumber.InvalidArgument;
+                if(fileSize - streamOfs < oobHeaderSize) return ErrorNumber.InvalidArgument;
 
                 byte[] oobBytes = new byte[oobHeaderSize];
                 Array.Copy(fileData, streamOfs, oobBytes, 0, oobHeaderSize);
                 OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oobBytes);
 
-                if(oobBlk.blockType == OobTypes.EOF)
-                    break;
+                if(oobBlk.blockType == OobTypes.EOF) break;
 
                 curOpLen = oobHeaderSize + oobBlk.length;
 
-                if(fileSize - streamOfs < curOpLen)
-                    return ErrorNumber.InvalidArgument;
+                if(fileSize - streamOfs < curOpLen) return ErrorNumber.InvalidArgument;
 
                 int oobDataStart = streamOfs + oobHeaderSize;
 
@@ -251,16 +249,20 @@ public sealed partial class KryoFlux
 
                                     break;
                                 case KF_SCK:
-                                    if(double.TryParse(kvp[1], NumberStyles.Float, CultureInfo.InvariantCulture,
+                                    if(double.TryParse(kvp[1],
+                                                       NumberStyles.Float,
+                                                       CultureInfo.InvariantCulture,
                                                        out double parsedSck))
                                         sck = parsedSck;
 
                                     break;
                                 case KF_ICK:
-                                     // Parse KF_ICK for validation purposes; parsed value is not currently used.
-                                     // We use sample frequency space instead.
-                                     _ = double.TryParse(kvp[1], NumberStyles.Float, CultureInfo.InvariantCulture,
-                                                         out _);
+                                    // Parse KF_ICK for validation purposes; parsed value is not currently used.
+                                    // We use sample frequency space instead.
+                                    _ = double.TryParse(kvp[1],
+                                                        NumberStyles.Float,
+                                                        CultureInfo.InvariantCulture,
+                                                        out _);
 
                                     break;
                             }
@@ -269,11 +271,11 @@ public sealed partial class KryoFlux
                         if(foundDate)
                         {
                             DateTime blockTimestamp = new DateTime(blockDate.Year,
-                                                                  blockDate.Month,
-                                                                  blockDate.Day,
-                                                                  blockTime.Hour,
-                                                                  blockTime.Minute,
-                                                                  blockTime.Second);
+                                                                   blockDate.Month,
+                                                                   blockDate.Day,
+                                                                   blockTime.Hour,
+                                                                   blockTime.Minute,
+                                                                   blockTime.Second);
 
                             AaruLogging.Debug(MODULE_NAME, Localization.Found_timestamp_0, blockTimestamp);
 
@@ -291,8 +293,7 @@ public sealed partial class KryoFlux
                         {
                             byte[] streamReadBytes = new byte[Marshal.SizeOf<OobStreamRead>()];
 
-                            Array.Copy(fileData, oobDataStart, streamReadBytes, 0,
-                                       Marshal.SizeOf<OobStreamRead>());
+                            Array.Copy(fileData, oobDataStart, streamReadBytes, 0, Marshal.SizeOf<OobStreamRead>());
 
                             OobStreamRead oobStreamRead =
                                 Marshal.ByteArrayToStructureLittleEndian<OobStreamRead>(streamReadBytes);
@@ -331,8 +332,7 @@ public sealed partial class KryoFlux
                         {
                             byte[] streamEndBytes = new byte[Marshal.SizeOf<OobStreamEnd>()];
 
-                            Array.Copy(fileData, oobDataStart, streamEndBytes, 0,
-                                       Marshal.SizeOf<OobStreamEnd>());
+                            Array.Copy(fileData, oobDataStart, streamEndBytes, 0, Marshal.SizeOf<OobStreamEnd>());
 
                             OobStreamEnd oobStreamEnd =
                                 Marshal.ByteArrayToStructureLittleEndian<OobStreamEnd>(streamEndBytes);
@@ -370,12 +370,14 @@ public sealed partial class KryoFlux
 
                     break;
                 case (byte)BlockIds.Ovl16:
-                    curOpLen          =  1;
-                    cellAccumulator   += 0x10000;
+                    curOpLen        =  1;
+                    cellAccumulator += 0x10000;
 
                     break;
                 case (byte)BlockIds.Flux3:
-                    curOpLen        = 3;
+                    if(streamOfs + 2 >= fileSize) return ErrorNumber.InvalidArgument;
+
+                    curOpLen        =  3;
                     cellAccumulator += (uint)((fileData[streamOfs + 1] << 8) | fileData[streamOfs + 2]);
                     newCell         =  true;
 
@@ -383,13 +385,15 @@ public sealed partial class KryoFlux
                 default:
                     if(curOp >= 0x0E)
                     {
-                        curOpLen        = 1;
+                        curOpLen        =  1;
                         cellAccumulator += curOp;
                         newCell         =  true;
                     }
                     else if((curOp & 0xF8) == 0)
                     {
-                        curOpLen        = 2;
+                        if(streamOfs + 1 >= fileSize) return ErrorNumber.InvalidArgument;
+
+                        curOpLen        =  2;
                         cellAccumulator += ((uint)curOp << 8) | fileData[streamOfs + 1];
                         newCell         =  true;
                     }
@@ -399,8 +403,7 @@ public sealed partial class KryoFlux
                     break;
             }
 
-            if(fileSize - streamOfs < curOpLen)
-                return ErrorNumber.InvalidArgument;
+            if(fileSize - streamOfs < curOpLen) return ErrorNumber.InvalidArgument;
 
             if(newCell)
             {
@@ -415,8 +418,11 @@ public sealed partial class KryoFlux
         }
 
         // Store final partial cell for index resolution boundary
-        cellValues[cellPos]          = cellAccumulator;
-        cellStreamPositions[cellPos] = streamPos;
+        if(cellPos < cellValues.Length)
+        {
+            cellValues[cellPos]          = cellAccumulator;
+            cellStreamPositions[cellPos] = streamPos;
+        }
 
         int totalCells = cellPos;
 
@@ -430,26 +436,21 @@ public sealed partial class KryoFlux
 
             for(int i = 0; i < totalCells; i++)
             {
-                if(nextIndex >= indexEvents.Count)
-                    break;
+                if(nextIndex >= indexEvents.Count) break;
 
                 int nextCellPos = i + 1;
 
                 if(nextIndexStreamPos <= cellStreamPositions[nextCellPos])
                 {
-                    if(i == 0 && cellStreamPositions[0] >= nextIndexStreamPos)
-                        nextCellPos = 0;
+                    if(i == 0 && cellStreamPositions[0] >= nextIndexStreamPos) nextCellPos = 0;
 
                     indexPositions.Add((uint)nextCellPos);
 
-                    AaruLogging.Debug(MODULE_NAME,
-                                      "Index {0} resolved to cell position {1}",
-                                      nextIndex, nextCellPos);
+                    AaruLogging.Debug(MODULE_NAME, "Index {0} resolved to cell position {1}", nextIndex, nextCellPos);
 
                     nextIndex++;
 
-                    if(nextIndex < indexEvents.Count)
-                        nextIndexStreamPos = indexEvents[nextIndex].streamPosition;
+                    if(nextIndex < indexEvents.Count) nextIndexStreamPos = indexEvents[nextIndex].streamPosition;
                 }
             }
         }
@@ -628,7 +629,7 @@ public sealed partial class KryoFlux
                                        out ulong  indexResolution, out ulong dataResolution, out byte[] indexBuffer,
                                        out byte[] dataBuffer)
     {
-        indexBuffer = dataBuffer = null;
+        indexBuffer     = dataBuffer     = null;
         indexResolution = dataResolution = 0;
 
         // KryoFlux doesn't support subtracks - only subTrack 0 is valid
@@ -637,8 +638,8 @@ public sealed partial class KryoFlux
         // KryoFlux has one file per track/head, which results in exactly one capture (captureIndex 0)
         if(captureIndex != 0) return ErrorNumber.OutOfRange;
 
-        ErrorNumber error = ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution,
-                                               out dataResolution);
+        ErrorNumber error =
+            ReadFluxResolution(head, track, subTrack, captureIndex, out indexResolution, out dataResolution);
 
         if(error != ErrorNumber.NoError) return error;
 
@@ -667,13 +668,14 @@ public sealed partial class KryoFlux
 
         if(capture == null) return ErrorNumber.OutOfRange;
 
-        var tmpBuffer = new List<byte>();
+        var  tmpBuffer        = new List<byte>();
         uint previousPosition = 0;
 
         foreach(uint indexPos in capture.indexPositions)
         {
             // Calculate ticks from start to this index position
             uint ticks = 0;
+
             for(uint i = previousPosition; i < indexPos && i < capture.fluxPulses.Length; i++)
                 ticks += capture.fluxPulses[i];
 
@@ -688,8 +690,7 @@ public sealed partial class KryoFlux
     }
 
     /// <inheritdoc />
-    public ErrorNumber
-        ReadFluxDataCapture(uint head, ushort track, byte subTrack, uint captureIndex, out byte[] buffer)
+    public ErrorNumber ReadFluxDataCapture(uint head, ushort track, byte subTrack, uint captureIndex, out byte[] buffer)
     {
         buffer = null;
 
@@ -740,8 +741,12 @@ public sealed partial class KryoFlux
         {
             // Group captures by head/track to assign capture indices
             // Note: KryoFlux doesn't support subtracks, so subTrack is always 0
-            var grouped = _trackCaptures.GroupBy(c => new { c.head, c.track })
-                                      .ToList();
+            var grouped = _trackCaptures.GroupBy(c => new
+                                         {
+                                             c.head,
+                                             c.track
+                                         })
+                                        .ToList();
 
             foreach(var group in grouped)
             {
