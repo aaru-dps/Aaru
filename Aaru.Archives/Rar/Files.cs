@@ -135,7 +135,7 @@ public sealed partial class Rar
         if(entry.IsDirectory) return ErrorNumber.InvalidArgument;
 
         // Solid files that depend on prior decompression state cannot be extracted independently.
-        if(entry.IsSolid && entryNumber > 0 && _entries[entryNumber - 1].IsSolid) return ErrorNumber.NotSupported;
+        if(entry.IsSolid && entryNumber > 0) return ErrorNumber.NotSupported;
 
         // Encrypted files not supported
         if(entry.IsEncrypted) return ErrorNumber.NotSupported;
