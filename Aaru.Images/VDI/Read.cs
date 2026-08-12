@@ -193,9 +193,12 @@ public sealed partial class Vdi
         ulong index  = sectorAddress * _vHdr.sectorSize / _vHdr.blockSize;
         ulong secOff = sectorAddress * _vHdr.sectorSize % _vHdr.blockSize;
 
+        if(index >= (ulong)_ibm.LongLength) return ErrorNumber.OutOfRange;
+
         uint ibmOff = _ibm[(int)index];
 
-        if(ibmOff == VDI_EMPTY)
+        // VDI_EMPTY (unallocated) or VDI_IMAGE_BLOCK_ZERO (allocated, reads as zeros)
+        if(ibmOff >= 0xFFFFFFFE)
         {
             buffer = new byte[_vHdr.sectorSize];
 
