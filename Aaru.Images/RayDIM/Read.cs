@@ -75,10 +75,9 @@ public sealed partial class RayDim
         var sectors = new byte[_imageInfo.SectorsPerTrack * _imageInfo.SectorSize];
         _disk = new MemoryStream();
 
-        for(var i = 0; i < _imageInfo.SectorsPerTrack * _imageInfo.SectorSize; i++)
+        for(var i = 0; i < _imageInfo.Cylinders * _imageInfo.Heads; i++)
         {
             stream.EnsureRead(sectors, 0, sectors.Length);
-            stream.Seek(_imageInfo.SectorsPerTrack, SeekOrigin.Current);
             _disk.Write(sectors, 0, sectors.Length);
         }
 
