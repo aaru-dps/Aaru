@@ -5,6 +5,9 @@ public sealed partial class Rar
     /// <summary>Minimum file size to contain a valid RAR header.</summary>
     const int MIN_HEADER_SIZE = 7;
 
+    /// <summary>Maximum Windows FILETIME value convertible to a <see cref="System.DateTime" />.</summary>
+    const long MAX_FILETIME = 2650467743999999999;
+
     // ======================================================================
     // RAR 1.x-4.x block header constants
     // ======================================================================

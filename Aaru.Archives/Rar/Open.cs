@@ -496,76 +496,48 @@ public sealed partial class Rar
 
         bool isUnix = (timeFlags & RAR5_TIME_IS_UNIX) != 0;
 
-        if((timeFlags & RAR5_TIME_HAS_MTIME) != 0)
+        if((timeFlags & RAR5_TIME_HAS_MTIME) != 0 && TryReadRar5Time(isUnix, out DateTime time)) mtime = time;
+
+        if((timeFlags & RAR5_TIME_HAS_CTIME) != 0 && TryReadRar5Time(isUnix, out time))
         {
-            if(isUnix)
-            {
-                var buf = new byte[4];
-
-                if(_stream.Read(buf, 0, 4) >= 4)
-                    mtime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(buf, 0)).DateTime;
-            }
-            else
-            {
-                var buf = new byte[8];
-
-                if(_stream.Read(buf, 0, 8) >= 8)
-                {
-                    var filetime = BitConverter.ToInt64(buf, 0);
-                    mtime = DateTime.FromFileTimeUtc(filetime);
-                }
-            }
+            ctime    = time;
+            hasCtime = true;
         }
 
-        if((timeFlags & RAR5_TIME_HAS_CTIME) != 0)
+        if((timeFlags & RAR5_TIME_HAS_ATIME) != 0 && TryReadRar5Time(isUnix, out time))
         {
-            if(isUnix)
-            {
-                var buf = new byte[4];
+            atime    = time;
+            hasAtime = true;
+        }
+    }
 
-                if(_stream.Read(buf, 0, 4) >= 4)
-                {
-                    ctime    = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(buf, 0)).DateTime;
-                    hasCtime = true;
-                }
-            }
-            else
-            {
-                var buf = new byte[8];
+    bool TryReadRar5Time(bool isUnix, out DateTime time)
+    {
+        time = DateTime.MinValue;
 
-                if(_stream.Read(buf, 0, 8) >= 8)
-                {
-                    var filetime = BitConverter.ToInt64(buf, 0);
-                    ctime    = DateTime.FromFileTimeUtc(filetime);
-                    hasCtime = true;
-                }
-            }
+        if(isUnix)
+        {
+            var buf = new byte[4];
+
+            if(_stream.Read(buf, 0, 4) < 4) return false;
+
+            time = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(buf, 0)).DateTime;
+
+            return true;
         }
 
-        if((timeFlags & RAR5_TIME_HAS_ATIME) != 0)
-        {
-            if(isUnix)
-            {
-                var buf = new byte[4];
+        var buf8 = new byte[8];
 
-                if(_stream.Read(buf, 0, 4) >= 4)
-                {
-                    atime    = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(buf, 0)).DateTime;
-                    hasAtime = true;
-                }
-            }
-            else
-            {
-                var buf = new byte[8];
+        if(_stream.Read(buf8, 0, 8) < 8) return false;
 
-                if(_stream.Read(buf, 0, 8) >= 8)
-                {
-                    var filetime = BitConverter.ToInt64(buf, 0);
-                    atime    = DateTime.FromFileTimeUtc(filetime);
-                    hasAtime = true;
-                }
-            }
-        }
+        var filetime = BitConverter.ToInt64(buf8, 0);
+
+        // Reject out of range values instead of throwing
+        if(filetime < 0 || filetime > MAX_FILETIME) return false;
+
+        time = DateTime.FromFileTimeUtc(filetime);
+
+        return true;
     }
 
 #region IArchive Members
