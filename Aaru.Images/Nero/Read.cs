@@ -1611,12 +1611,13 @@ public sealed partial class Nero
     public ErrorNumber ReadSectorTag(ulong sectorAddress, bool negative, SectorTagType tag, out byte[] buffer) =>
         ReadSectorsTag(sectorAddress, negative, 1, tag, out buffer);
 
-    public ErrorNumber ReadDPM(out uint dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries, out ulong[] dpm)
+    public ErrorNumber ReadDPM(out uint    dpmStartSector, out uint dpmResolution, out uint numberOfDpmEntries,
+                               out ulong[] dpm)
     {
-        dpmStartSector = 0;
-        dpmResolution = 0;
+        dpmStartSector     = 0;
+        dpmResolution      = 0;
         numberOfDpmEntries = 0;
-        dpm = null;
+        dpm                = null;
 
         return ErrorNumber.NotSupported;
     }
@@ -1688,7 +1689,7 @@ public sealed partial class Nero
 
         if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = Enumerable.Repeat(SectorStatus.Dumped, (int)length).ToArray();
 
@@ -1830,7 +1831,7 @@ public sealed partial class Nero
 
         if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         uint sectorOffset = 0;
         uint sectorSize   = 0;
@@ -2184,7 +2185,7 @@ public sealed partial class Nero
 
         if(!_neroTracks.TryGetValue(track, out NeroTrack aaruTrack)) return ErrorNumber.SectorNotFound;
 
-        if(length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
+        if(sectorAddress + length > aaruTrack.Sectors) return ErrorNumber.OutOfRange;
 
         sectorStatus = Enumerable.Repeat(SectorStatus.Dumped, (int)length).ToArray();
 
