@@ -92,6 +92,13 @@ public sealed partial class Cpcdsk
         AaruLogging.Debug(MODULE_NAME, "header.tracks = {0}", header.tracks);
         AaruLogging.Debug(MODULE_NAME, "header.sides = {0}",  header.sides);
 
+        if(header.tracks == 0 || header.sides == 0 || header.tracks * header.sides > header.tracksizeTable.Length)
+        {
+            AaruLogging.Error(Localization.Not_the_expected_track_info);
+
+            return ErrorNumber.InvalidArgument;
+        }
+
         if(!_extended)
             AaruLogging.Debug(MODULE_NAME, "header.tracksize = {0}", header.tracksize);
         else
@@ -164,6 +171,13 @@ public sealed partial class Cpcdsk
                 AaruLogging.Debug(MODULE_NAME, "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
 
                 AaruLogging.Debug(MODULE_NAME, "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
+
+                if(trackInfo.sectors > trackInfo.sectorsInfo.Length)
+                {
+                    AaruLogging.Error(Localization.Not_the_expected_track_info);
+
+                    return ErrorNumber.InvalidArgument;
+                }
 
                 if(trackInfo.sectors != sectorsPerTrack)
                 {
