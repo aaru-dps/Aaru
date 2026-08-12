@@ -400,7 +400,7 @@ public sealed partial class Vhdx
 
             _sectorBitmapPointers = new ulong[sectorBitmapBlocks];
 
-            batEntries = sectorBitmapBlocks * (_chunkRatio - 1);
+            batEntries = (long)_dataBlocks + sectorBitmapBlocks;
         }
         else
             batEntries = (long)(_dataBlocks + (_dataBlocks - 1) / (ulong)_chunkRatio);
@@ -413,21 +413,22 @@ public sealed partial class Vhdx
         stream.Seek(_batOffset, SeekOrigin.Begin);
         stream.EnsureRead(batB, 0, batB.Length);
 
-        ulong skipSize = 0;
+        // Every chunkRatio payload entries the BAT interleaves one sector bitmap entry
+        ulong block       = 0;
+        long  bitmapIndex = 0;
 
-        for(ulong i = 0; i < _dataBlocks; i++)
+        for(long fileEntry = 0; block < _dataBlocks && fileEntry < batEntries; fileEntry++)
         {
             if(readChunks == _chunkRatio)
             {
-                if(_hasParent)
-                    _sectorBitmapPointers[skipSize / 8] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
+                if(_hasParent) _sectorBitmapPointers[bitmapIndex] = BitConverter.ToUInt64(batB, (int)(fileEntry * 8));
 
-                readChunks =  0;
-                skipSize   += 8;
+                bitmapIndex++;
+                readChunks = 0;
             }
             else
             {
-                _blockAllocationTable[i] = BitConverter.ToUInt64(batB, (int)(i * 8 + skipSize));
+                _blockAllocationTable[block++] = BitConverter.ToUInt64(batB, (int)(fileEntry * 8));
                 readChunks++;
             }
         }
