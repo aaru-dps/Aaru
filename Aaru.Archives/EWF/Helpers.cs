@@ -50,7 +50,8 @@ public sealed partial class EwfArchive
         string name = Path.GetFileNameWithoutExtension(currentPath);
         string ext  = Path.GetExtension(currentPath);
 
-        if(string.IsNullOrEmpty(ext) || ext.Length < 2) return null;
+        // Segment extensions are ".XYZ" (4 chars) or ".XxYZ" (5 chars, v2)
+        if(string.IsNullOrEmpty(ext) || ext.Length < 4) return null;
 
         bool isV2    = ext.Length == 5;
         bool isLower = char.IsLower(ext[1]);
@@ -193,10 +194,11 @@ public sealed partial class EwfArchive
     }
 
     /// <summary>Recursively parses ltree entries.</summary>
-    void ParseLtreeEntries(string[]           lines, ref int lineIndex, string[] fieldNames, string parentPath,
-                           List<EwfFileEntry> entries)
+    void ParseLtreeEntries(string[]           lines,   ref int lineIndex, string[] fieldNames, string parentPath,
+                           List<EwfFileEntry> entries, int     depth = 0)
     {
-        if(lineIndex >= lines.Length) return;
+        // Cap recursion depth so a crafted ltree cannot overflow the stack
+        if(lineIndex >= lines.Length || depth > MAX_LTREE_DEPTH) return;
 
         // First line of an entry: "<is_parent> <num_children>"
         string headerLine = lines[lineIndex].Trim('\r', ' ');
@@ -299,7 +301,7 @@ public sealed partial class EwfArchive
         {
             if(lineIndex >= lines.Length) break;
 
-            ParseLtreeEntries(lines, ref lineIndex, fieldNames, fullPath, entries);
+            ParseLtreeEntries(lines, ref lineIndex, fieldNames, fullPath, entries, depth + 1);
         }
     }
 

@@ -84,4 +84,7 @@ public sealed partial class EwfArchive
 
     /// <summary>Maximum accepted decompressed ltree size, 256 MiB</summary>
     const uint MAX_LTREE_SIZE = 268435456;
+
+    /// <summary>Maximum accepted ltree directory nesting depth</summary>
+    const int MAX_LTREE_DEPTH = 255;
 }
