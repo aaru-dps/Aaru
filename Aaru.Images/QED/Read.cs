@@ -136,7 +136,7 @@ public sealed partial class Qed
         _l1Mask = 0;
         var c = 0;
         _clusterBits = Ctz32(_qHdr.cluster_size);
-        _l2Mask      = _tableSize - 1 << _clusterBits;
+        _l2Mask      = ((ulong)_tableSize - 1) << _clusterBits;
         _l1Shift     = _clusterBits + Ctz32(_tableSize);
 
         for(var i = 0; i < 64; i++)
