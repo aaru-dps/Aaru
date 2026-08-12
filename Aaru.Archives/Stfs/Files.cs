@@ -31,8 +31,6 @@ public sealed partial class Stfs
 
         if(!Opened) return ErrorNumber.NotOpened;
 
-        if(entryNumber < 0 || entryNumber >= _entries.Length) return ErrorNumber.OutOfRange;
-
         StringComparison comparison = caseInsensitiveMatch
                                           ? StringComparison.CurrentCultureIgnoreCase
                                           : StringComparison.CurrentCulture;
