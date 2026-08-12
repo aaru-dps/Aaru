@@ -80,7 +80,7 @@ public sealed partial class HdCopy
                                                       false));
 
         // build table of track offsets
-        for(var i = 0; i < _imageInfo.Cylinders * 2; i++)
+        for(var i = 0; i < _imageInfo.Cylinders * 2 && i < fheader.trackMap.Length; i++)
         {
             if(fheader.trackMap[i] == 0)
                 _trackOffset[i] = -1;
@@ -93,8 +93,8 @@ public sealed partial class HdCopy
                 stream.EnsureRead(blkHeader, 0, 2);
                 var blkLength = BitConverter.ToInt16(blkHeader, 0);
 
-                // assume block sizes are positive
-                if(blkLength < 0) return ErrorNumber.InvalidArgument;
+                // a block must at least hold the escape byte
+                if(blkLength < 1) return ErrorNumber.InvalidArgument;
 
                 AaruLogging.Debug(MODULE_NAME,
                                   Localization.Track_0_offset_1_size_equals_2,
