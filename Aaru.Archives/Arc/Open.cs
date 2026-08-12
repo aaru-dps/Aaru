@@ -60,12 +60,14 @@ public sealed partial class Arc
         string comment    = null;
         string attributes = null;
         var    br         = new BinaryReader(_stream);
-        byte   peekedByte;
 
         // Process headers
         while(true)
         {
-            peekedByte = br.ReadByte();
+            // Truncated archive without an end of archive marker
+            if(_stream.Position + 2 > _stream.Length) break;
+
+            byte peekedByte = br.ReadByte();
             AaruLogging.Debug(MODULE_NAME, "[navy]peekedByte[/] = [teal]0x{0:X2}[/]", peekedByte);
             peekedByte = br.ReadByte();
             AaruLogging.Debug(MODULE_NAME, "[navy]peekedByte[/] = [teal]0x{0:X2}[/]", peekedByte);
@@ -101,16 +103,27 @@ public sealed partial class Arc
             AaruLogging.Debug(MODULE_NAME, "[navy]header.crc[/] = [teal]0x{0:X4}[/]",     header.crc);
             AaruLogging.Debug(MODULE_NAME, "[navy]header.uncompressed[/] = [teal]{0}[/]", header.uncompressed);
 
+            // Sizes that would rewind the stream or point past end of file make no sense
+            if(header.compressed < 0 || header.compressed > _stream.Length - _stream.Position)
+                return ErrorNumber.InvalidArgument;
+
             if(header.method == Method.FileInformation)
             {
-                int recordsSize = header.compressed;
-                var recordsRead = 0;
+                long infoStart   = _stream.Position;
+                int  recordsSize = header.compressed;
+                var  recordsRead = 0;
 
                 while(recordsRead < recordsSize)
                 {
+                    if(_stream.Position + 3 > _stream.Length) break;
+
                     ushort len       = br.ReadUInt16();
                     var    finfoType = (FileInformationType)br.ReadByte();
-                    byte[] info      = br.ReadBytes(len - 3);
+
+                    // A record cannot be smaller than its own length field and type byte
+                    if(len < 3) break;
+
+                    byte[] info = br.ReadBytes(len - 3);
 
                     recordsRead += len;
 
@@ -130,6 +143,11 @@ public sealed partial class Arc
                             break;
                     }
                 }
+
+                // File information describes the next entry, it is not an entry itself
+                _stream.Position = infoStart + header.compressed;
+
+                continue;
             }
 
             string filename;
