@@ -242,10 +242,13 @@ public sealed partial class Apridisk
 
         if(cylinder >= _sectorsData.Length           ||
            head     >= _sectorsData[cylinder].Length ||
-           sector   > _sectorsData[cylinder][head].Length)
+           sector   >= _sectorsData[cylinder][head].Length)
             return ErrorNumber.SectorNotFound;
 
-        buffer       = _sectorsData[cylinder][head][sector];
+        buffer = _sectorsData[cylinder][head][sector];
+
+        if(buffer is null) return ErrorNumber.SectorNotFound;
+
         sectorStatus = SectorStatus.Dumped;
 
         return ErrorNumber.NoError;
