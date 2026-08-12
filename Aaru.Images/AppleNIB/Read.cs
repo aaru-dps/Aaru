@@ -63,6 +63,8 @@ public sealed partial class AppleNib
 
         Dictionary<ulong, Apple2.RawSector> rawSectors = new();
 
+        if(tracks.Count == 0) return ErrorNumber.InvalidArgument;
+
         var spt            = 0;
         var allTracksEqual = true;
 
@@ -75,7 +77,7 @@ public sealed partial class AppleNib
         ulong[] skewing = _proDosSkewing;
 
         // Detect ProDOS skewed disks
-        if(skewed)
+        if(skewed && tracks.Count > 17)
         {
             foreach(bool isDos in from sector in tracks[17].sectors
                                   where sector.addressField.sector.SequenceEqual(new byte[]
@@ -112,14 +114,15 @@ public sealed partial class AppleNib
                                             sector.addressField.sector[1] & 0x55) &
                                            0xFF);
 
+                    if(sectorNo >= (ulong)skewing.Length) return ErrorNumber.InvalidArgument;
+
                     AaruLogging.Debug(MODULE_NAME,
                                       Localization.Hardware_sector_0_of_track_1_goes_to_logical_sector_2,
                                       sectorNo,
                                       i,
                                       skewing[sectorNo] + (ulong)(i * spt));
 
-                    rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
-                    _imageInfo.Sectors++;
+                    if(rawSectors.TryAdd(skewing[sectorNo] + (ulong)(i * spt), sector)) _imageInfo.Sectors++;
                 }
                 else
                 {
