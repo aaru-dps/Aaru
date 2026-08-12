@@ -162,6 +162,9 @@ public sealed partial class SnatchIt
 
         if(_trackMap[trkIdx] is not null) return ErrorNumber.InvalidArgument;
 
+        // The track header only describes up to CP2_MAX_SPT sectors
+        if(numSect > CP2_MAX_SPT) return ErrorNumber.InvalidArgument;
+
         var sectors = new SectorDesc[numSect];
 
         for(var ps = 0; ps < numSect; ps++)
@@ -257,8 +260,7 @@ public sealed partial class SnatchIt
 
         byte firstId = 255;
 
-        foreach (SectorDesc sd in firstTrack.Sectors.Where(sd => sd.SectorId < firstId))
-            firstId = sd.SectorId;
+        foreach(SectorDesc sd in firstTrack.Sectors.Where(sd => sd.SectorId < firstId)) firstId = sd.SectorId;
 
         var spt = (byte)firstTrack.Sectors.Length;
 
