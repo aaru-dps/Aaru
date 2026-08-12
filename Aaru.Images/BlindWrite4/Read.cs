@@ -549,7 +549,11 @@ public sealed partial class BlindWrite4
                                                                                  .ToUpper(CultureInfo
                                                                                      .CurrentCulture)));
 
+                        if(track.Filter != null) break;
+
                         track.Filter = _dataFilter;
+
+                        break;
                     } while(true);
                 }
                 else
