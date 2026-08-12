@@ -76,8 +76,8 @@ public sealed partial class StuffItX
         {
             ulong len = reader.ReadSitxP2();
 
-
-            if(len == 0) break;
+            // Also stop on lengths that wrap negative or point past end of file
+            if(len == 0 || (long)len < 0 || (long)len > _stream.Length - _stream.Position) break;
 
             reader.FlushBits();
             _stream.Position += (long)len;
@@ -102,6 +102,9 @@ public sealed partial class StuffItX
         // Skip remaining data blocks
         while(crcLen != 0)
         {
+            // Stop on lengths that wrap negative or point past end of file
+            if((long)crcLen < 0 || (long)crcLen > _stream.Length - _stream.Position) break;
+
             reader.FlushBits();
             _stream.Position += (long)crcLen;
             crcLen           =  reader.ReadSitxP2();
@@ -403,6 +406,9 @@ public sealed partial class StuffItX
                     long forkLength = element.Attribs[4];
 
                     var forkType = (ForkType)reader.ReadSitxP2();
+
+                    // Reject nonsensical fork indexes, a huge one would allocate that many padding slots
+                    if(forkIndex < 0 || forkIndex > MAX_FORK_INDEX) return ErrorNumber.InvalidArgument;
 
                     forkedIds.Add(entryId);
 

@@ -4,6 +4,9 @@ public sealed partial class StuffItX
 {
     const int MIN_HEADER_SIZE = 10;
 
+    /// <summary>Maximum accepted fork index in a stream, real archives only use a handful of forks</summary>
+    const int MAX_FORK_INDEX = 32;
+
     const string XATTR_COMMENT             = "comment";
     const string XATTR_APPLE_RESOURCE_FORK = "com.apple.ResourceFork";
     const string XATTR_APPLE_FINDER_INFO   = "com.apple.FinderInfo";
