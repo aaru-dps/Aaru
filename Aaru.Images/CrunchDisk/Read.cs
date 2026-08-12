@@ -74,10 +74,19 @@ public sealed partial class CrunchDisk
             return ErrorNumber.NotSupported;
         }
 
-        uint cylinders     = _header.HighCyl - _header.LowCyl + 1;
-        uint sectorsPerCyl = _header.BlocksPerTrack * _header.Heads;
-        uint cylinderSize  = sectorsPerCyl          * _header.BlockSize;
-        uint totalSectors  = cylinders              * sectorsPerCyl;
+        if(_header.HighCyl        < _header.LowCyl ||
+           _header.Heads          == 0             ||
+           _header.BlocksPerTrack == 0             ||
+           _header.BlockSize      == 0)
+            return ErrorNumber.InvalidArgument;
+
+        uint  cylinders     = _header.HighCyl - _header.LowCyl + 1;
+        uint  sectorsPerCyl = _header.BlocksPerTrack * _header.Heads;
+        uint  cylinderSize  = sectorsPerCyl          * _header.BlockSize;
+        ulong totalSectors  = (ulong)cylinders       * sectorsPerCyl;
+
+        // Reject geometries the file cannot plausibly hold; also prevents huge hostile allocations
+        if(totalSectors * _header.BlockSize > int.MaxValue) return ErrorNumber.InvalidArgument;
 
         AaruLogging.Debug(MODULE_NAME,
                           Localization.CrunchDisk_0_cylinders_1_heads_2_sectors_per_track_3_bytes_per_sector,
