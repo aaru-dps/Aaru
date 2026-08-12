@@ -336,6 +336,8 @@ public sealed partial class Udif
 
         foreach(byte[] blkxBytes in blkxList)
         {
+            if(blkxBytes.Length < Marshal.SizeOf<BlockHeader>()) return ErrorNumber.InvalidArgument;
+
             var bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
             Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
             BlockHeader bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
@@ -362,7 +364,11 @@ public sealed partial class Udif
                               "bHdr.reservedChk is empty? = {0}",
                               ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
-            if(bHdr.buffers > _buffersize) _buffersize = bHdr.buffers * SECTOR_SIZE;
+            // buffers is a sector count, buffersize is in bytes
+            if(bHdr.buffers * SECTOR_SIZE > _buffersize) _buffersize = bHdr.buffers * SECTOR_SIZE;
+
+            if(blkxBytes.Length < Marshal.SizeOf<BlockHeader>() + (long)bHdr.chunks * Marshal.SizeOf<BlockChunk>())
+                return ErrorNumber.InvalidArgument;
 
             for(var i = 0; i < bHdr.chunks; i++)
             {
@@ -414,7 +420,8 @@ public sealed partial class Udif
             }
         }
 
-        _chunkStartSectors     = _chunks.Keys.ToHashSet();
+        _chunkStartSectors = _chunks.Keys.ToArray();
+        Array.Sort(_chunkStartSectors);
         _sectorCache           = new Dictionary<ulong, byte[]>();
         _chunkCache            = new Dictionary<ulong, byte[]>();
         _currentChunkCacheSize = 0;
@@ -454,13 +461,16 @@ public sealed partial class Udif
         var   chunkFound       = false;
         ulong chunkStartSector = 0;
 
-        ulong chunkAddress = _chunkStartSectors.Last(chunkAd => sectorAddress >= chunkAd);
+        // Binary search for the greatest chunk start at or below the address
+        int idx = Array.BinarySearch(_chunkStartSectors, sectorAddress);
 
-        if(_chunks.TryGetValue(chunkAddress, out BlockChunk value))
+        if(idx < 0) idx = ~idx - 1;
+
+        if(idx >= 0 && _chunks.TryGetValue(_chunkStartSectors[idx], out BlockChunk value))
         {
             readChunk        = value;
             chunkFound       = true;
-            chunkStartSector = chunkAddress;
+            chunkStartSector = _chunkStartSectors[idx];
         }
 
         long relOff = ((long)sectorAddress - (long)chunkStartSector) * SECTOR_SIZE;
@@ -513,7 +523,7 @@ public sealed partial class Udif
                         case CHUNK_TYPE_ZLIB:
                         case CHUNK_TYPE_LZMA:
                             tmpBuffer = new byte[_buffersize];
-                            realSize  = decStream?.Read(tmpBuffer, 0, (int)_buffersize) ?? 0;
+                            realSize  = decStream?.EnsureRead(tmpBuffer, 0, (int)_buffersize) ?? 0;
                             data      = new byte[realSize];
                             Array.Copy(tmpBuffer, 0, data, 0, realSize);
 

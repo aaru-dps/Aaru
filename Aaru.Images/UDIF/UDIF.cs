@@ -48,7 +48,7 @@ public sealed partial class Udif : IWritableImage
     uint                          _buffersize;
     Dictionary<ulong, byte[]>     _chunkCache;
     Dictionary<ulong, BlockChunk> _chunks;
-    HashSet<ulong>                _chunkStartSectors;
+    ulong[]                       _chunkStartSectors;
     BlockChunk                    _currentChunk;
     uint                          _currentChunkCacheSize;
     ulong                         _currentSector;
