@@ -65,6 +65,8 @@ public sealed partial class Apridisk
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
 
+            if(record.headerSize < recordSize) return ErrorNumber.InvalidArgument;
+
             switch(record.type)
             {
                 // Deleted record, just skip it
@@ -164,6 +166,8 @@ public sealed partial class Apridisk
             stream.EnsureRead(recB, 0, recordSize);
 
             Record record = Marshal.SpanToStructureLittleEndian<Record>(recB);
+
+            if(record.headerSize < recordSize) return ErrorNumber.InvalidArgument;
 
             switch(record.type)
             {
