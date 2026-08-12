@@ -150,7 +150,7 @@ public sealed partial class Vdi
             _imageInfo.SectorsPerTrack = _vHdr.spt;
         }
 
-        if(_imageInfo.Cylinders != 0) return ErrorNumber.InvalidArgument;
+        if(_imageInfo.Cylinders != 0) return ErrorNumber.NoError;
 
         // Same calculation as done by VirtualBox
         _imageInfo.Cylinders       = (uint)(_imageInfo.Sectors / 16 / 63);
@@ -164,12 +164,13 @@ public sealed partial class Vdi
             if(_imageInfo.Heads == 0)
             {
                 _imageInfo.SectorsPerTrack--;
+
+                if(_imageInfo.SectorsPerTrack == 0) break;
+
                 _imageInfo.Heads = 16;
             }
 
-            _vHdr.logicalCylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
-
-            if(_imageInfo.Cylinders == 0 && _imageInfo is { Heads: 0, SectorsPerTrack: 0 }) break;
+            _imageInfo.Cylinders = (uint)(_imageInfo.Sectors / _imageInfo.Heads / _imageInfo.SectorsPerTrack);
         }
 
         return ErrorNumber.NoError;
