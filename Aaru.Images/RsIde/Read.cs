@@ -68,7 +68,7 @@ public sealed partial class RsIde
         _imageInfo.LastModificationTime = imageFilter.LastWriteTime;
         _imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.Filename);
         _imageInfo.MetadataMediaType    = MetadataMediaType.BlockMedia;
-        _imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0x0F}";
+        _imageInfo.Version              = $"{hdr.revision >> 8}.{hdr.revision & 0xFF}";
 
         if(!ArrayHelpers.ArrayIsNullOrEmpty(hdr.identify))
         {
