@@ -115,6 +115,8 @@ public sealed partial class TeleDisk
         switch(encodingType)
         {
             case DATA_BLOCK_COPY:
+                if(encodedData.Length < decodedData.Length) return ErrorNumber.InvalidArgument;
+
                 Array.Copy(encodedData, decodedData, decodedData.Length);
 
                 break;
@@ -125,11 +127,16 @@ public sealed partial class TeleDisk
 
                 while(ins < encodedData.Length)
                 {
+                    if(ins + 4 > encodedData.Length) return ErrorNumber.InvalidArgument;
+
                     var repeatValue = new byte[2];
 
                     var repeatNumber = BitConverter.ToUInt16(encodedData, ins);
                     Array.Copy(encodedData, ins + 2, repeatValue, 0, 2);
                     var decodedPiece = new byte[repeatNumber * 2];
+
+                    if(outs + decodedPiece.Length > decodedData.Length) return ErrorNumber.InvalidArgument;
+
                     ArrayHelpers.ArrayFill(decodedPiece, repeatValue);
                     Array.Copy(decodedPiece, 0, decodedData, outs, decodedPiece.Length);
                     ins  += 4;
@@ -159,11 +166,17 @@ public sealed partial class TeleDisk
                 {
                     byte length;
 
+                    if(ins + 2 > encodedData.Length) return ErrorNumber.InvalidArgument;
+
                     byte encoding = encodedData[ins];
 
                     if(encoding == 0x00)
                     {
                         length = encodedData[ins + 1];
+
+                        if(ins + 2 + length > encodedData.Length || outs + length > decodedData.Length)
+                            return ErrorNumber.InvalidArgument;
+
                         Array.Copy(encodedData, ins + 2, decodedData, outs, length);
                         ins  += 2 + length;
                         outs += length;
@@ -173,6 +186,10 @@ public sealed partial class TeleDisk
                         length = (byte)(encoding * 2);
                         byte run  = encodedData[ins + 1];
                         var  part = new byte[length];
+
+                        if(ins + 2 + length > encodedData.Length || outs + length * run > decodedData.Length)
+                            return ErrorNumber.InvalidArgument;
+
                         Array.Copy(encodedData, ins + 2, part, 0, length);
                         var piece = new byte[length * run];
                         ArrayHelpers.ArrayFill(piece, part);
