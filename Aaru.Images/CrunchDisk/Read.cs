@@ -117,6 +117,8 @@ public sealed partial class CrunchDisk
             {
                 case CYL_UNCOMPRESSED:
                 {
+                    if(cylDataLen > cylinderSize) return ErrorNumber.InvalidArgument;
+
                     // Raw cylinder data, read directly into output
                     stream.EnsureRead(_decompressedData, outputOffset, (int)cylDataLen);
 
