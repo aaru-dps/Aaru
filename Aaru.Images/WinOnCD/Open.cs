@@ -323,6 +323,9 @@ public sealed partial class WinOnCD
             }
             else if(entry.index > 1)
             {
+                // Index block before any track
+                if(Tracks.Count == 0) return ErrorNumber.InvalidArgument;
+
                 // Additional index for an existing track
                 Track lastTrack = Tracks[^1];
                 lastTrack.Indexes[entry.index] = (int)entry.first_sector;
