@@ -74,7 +74,7 @@ public sealed partial class Imd
 
         TransferRate mode = TransferRate.TwoHundred;
 
-        while(stream.Position + 5 < stream.Length)
+        while(stream.Position + 5 <= stream.Length)
         {
             mode = (TransferRate)stream.ReadByte();
             var cylinder = (byte)stream.ReadByte();
@@ -94,17 +94,22 @@ public sealed partial class Imd
 
             if((head & 1) == 1) _imageInfo.Heads = 2;
 
-            stream.EnsureRead(idmap, 0, idmap.Length);
+            if(stream.EnsureRead(idmap, 0, idmap.Length) != idmap.Length) return ErrorNumber.InvalidArgument;
 
-            if((head & SECTOR_CYLINDER_MAP_MASK) == SECTOR_CYLINDER_MAP_MASK)
-                stream.EnsureRead(cylmap, 0, cylmap.Length);
+            if((head & SECTOR_CYLINDER_MAP_MASK)           == SECTOR_CYLINDER_MAP_MASK &&
+               stream.EnsureRead(cylmap, 0, cylmap.Length) != cylmap.Length)
+                return ErrorNumber.InvalidArgument;
 
-            if((head & SECTOR_HEAD_MAP_MASK) == SECTOR_HEAD_MAP_MASK) stream.EnsureRead(headmap, 0, headmap.Length);
+            if((head & SECTOR_HEAD_MAP_MASK)                 == SECTOR_HEAD_MAP_MASK &&
+               stream.EnsureRead(headmap, 0, headmap.Length) != headmap.Length)
+                return ErrorNumber.InvalidArgument;
 
             if(n == 0xFF)
             {
                 var bpsbytes = new byte[spt * 2];
-                stream.EnsureRead(bpsbytes, 0, bpsbytes.Length);
+
+                if(stream.EnsureRead(bpsbytes, 0, bpsbytes.Length) != bpsbytes.Length)
+                    return ErrorNumber.InvalidArgument;
 
                 for(var i = 0; i < spt; i++) bps[i] = BitConverter.ToUInt16(bpsbytes, i * 2);
             }
@@ -135,7 +140,7 @@ public sealed partial class Imd
                     case SectorType.Deleted:
                     case SectorType.Error:
                     case SectorType.DeletedError:
-                        stream.EnsureRead(data, 0, data.Length);
+                        if(stream.EnsureRead(data, 0, data.Length) != data.Length) return ErrorNumber.InvalidArgument;
 
                         if(!track.ContainsKey(idmap[i])) track.Add(idmap[i], data);
 
