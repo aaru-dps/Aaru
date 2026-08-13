@@ -156,6 +156,8 @@ public sealed partial class Cpio
                 if(more[0] == (byte)'0' && more[1] == (byte)'7' && more[2] == (byte)'0' && more[3] == (byte)'7')
                 {
                     // Old character (odc) format
+                    if(_stream.Length - _stream.Position < 70) break;
+
                     if(!formatDetected)
                     {
                         format         = CpioFormat.OldCharacter;
@@ -182,6 +184,8 @@ public sealed partial class Cpio
                         (more[3] == (byte)'1' || more[3] == (byte)'2'))
                 {
                     // New ASCII (newc) or New CRC (newcrc) format
+                    if(_stream.Length - _stream.Position < 104) break;
+
                     hasCrc = more[3] == (byte)'2';
 
                     if(!formatDetected)
@@ -211,6 +215,8 @@ public sealed partial class Cpio
             else if(magic[0] == 0x71 && magic[1] == 0xC7)
             {
                 // Old binary big-endian format
+                if(_stream.Length - _stream.Position < 24) break;
+
                 if(!formatDetected)
                 {
                     format         = CpioFormat.OldBinaryBE;
@@ -237,6 +243,8 @@ public sealed partial class Cpio
             else if(magic[0] == 0xC7 && magic[1] == 0x71)
             {
                 // Old binary little-endian format
+                if(_stream.Length - _stream.Position < 24) break;
+
                 if(!formatDetected)
                 {
                     format         = CpioFormat.OldBinaryLE;
@@ -269,7 +277,7 @@ public sealed partial class Cpio
                 return ErrorNumber.InvalidArgument;
 
             // Read filename (nameSize includes the null terminator)
-            if(nameSize < 1) return ErrorNumber.InvalidArgument;
+            if(nameSize < 1 || nameSize - 1 > _stream.Length - _stream.Position) return ErrorNumber.InvalidArgument;
 
             var nameBytes = new byte[nameSize - 1];
 
