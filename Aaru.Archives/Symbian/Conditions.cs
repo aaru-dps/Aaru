@@ -40,9 +40,10 @@ namespace Aaru.Archives;
 public sealed partial class Symbian
 {
     ConditionalExpression ParseConditionalExpression(BinaryReader   br, uint maxOffset, StringBuilder sb,
-                                                     ref Attribute? attribute)
+                                                     ref Attribute? attribute, int depth = 0)
     {
-        if(br.BaseStream.Position >= maxOffset) return null;
+        // Cap recursion depth so a crafted expression cannot overflow the stack
+        if(br.BaseStream.Position >= maxOffset || depth > MAX_CONDITION_DEPTH) return null;
 
         var type           = (ConditionalType)br.ReadUInt32();
         var operatorString = "";
@@ -61,11 +62,11 @@ public sealed partial class Symbian
                 };
 
                 sb.Append("(");
-                twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+                twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1);
                 sb.Append(operatorString);
 
                 twoSubsConditionalExpression.rightOperand =
-                    ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+                    ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1);
 
                 sb.Append(")");
 
@@ -99,7 +100,7 @@ public sealed partial class Symbian
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
-                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute)
+                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1)
                 };
 
                 sb.Append(")");
@@ -113,7 +114,7 @@ public sealed partial class Symbian
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
-                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute)
+                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1)
                 };
 
                 sb.Append(')');
@@ -128,11 +129,11 @@ public sealed partial class Symbian
                 };
 
                 sb.Append("appcap(");
-                twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+                twoSubsConditionalExpression.leftOperand = ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1);
                 sb.Append(", ");
 
                 twoSubsConditionalExpression.rightOperand =
-                    ParseConditionalExpression(br, maxOffset, sb, ref attribute);
+                    ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1);
 
                 sb.Append(')');
 
@@ -145,7 +146,7 @@ public sealed partial class Symbian
                 subExpression = new SubConditionalExpression
                 {
                     type          = type,
-                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute)
+                    subExpression = ParseConditionalExpression(br, maxOffset, sb, ref attribute, depth + 1)
                 };
 
                 attribute = null;
@@ -184,7 +185,7 @@ public sealed partial class Symbian
                 {
                     int optionIndex = (int)attributeExpression.attribute - 0x2000;
 
-                    if(optionIndex <= _options.Count)
+                    if(optionIndex >= 1 && optionIndex <= _options.Count)
                     {
                         OptionRecord option = _options[optionIndex - 1];
                         option.names.TryGetValue("EN", out string optionName);
@@ -304,7 +305,7 @@ public sealed partial class Symbian
                 {
                     int optionIndex = (int)attribute - 0x2000;
 
-                    if(optionIndex <= _options.Count)
+                    if(optionIndex >= 1 && optionIndex <= _options.Count)
                     {
                         OptionRecord option = _options[optionIndex - 1];
                         option.names.TryGetValue("EN", out string optionName);
@@ -319,7 +320,7 @@ public sealed partial class Symbian
 
                 return numberExpression;
             default:
-                throw new ArgumentOutOfRangeException();
+                return null;
         }
 
         return null;

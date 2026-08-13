@@ -206,7 +206,7 @@ public sealed partial class Symbian
         {
             uint cap_Key   = br.ReadUInt32();
             uint cap_Value = br.ReadUInt32();
-            capabilities.Add(cap_Key, cap_Value);
+            capabilities[cap_Key] = cap_Value;
         }
 
         description.AppendFormat(Localization.UIDs_checksum_0,   sh.uid4).AppendLine();

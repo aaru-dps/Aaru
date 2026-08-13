@@ -39,6 +39,12 @@ namespace Aaru.Archives;
 public sealed partial class Symbian
 {
     // Magics
+    /// <summary>Maximum accepted conditional expression nesting depth</summary>
+    const int MAX_CONDITION_DEPTH = 512;
+
+    /// <summary>Maximum accepted number of options in an options record</summary>
+    const uint MAX_OPTIONS = 65536;
+
     const uint SYMBIAN_MAGIC  = 0x10000419;
     const uint EPOC_MAGIC     = 0x1000006D;
     const uint EPOC6_MAGIC    = 0x10003A12;

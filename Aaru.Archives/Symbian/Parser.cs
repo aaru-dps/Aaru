@@ -51,9 +51,7 @@ public sealed partial class Symbian
 
         if(currentFile > maxFiles) return;
 
-        var tabulationChars                                        = new char[conditionLevel];
-        for(var i = 0; i < conditionLevel; i++) tabulationChars[i] = '\t';
-        string tabulation                                          = new(tabulationChars);
+        string tabulation = new('\t', Math.Max(conditionLevel, 0));
 
         AaruLogging.Debug(MODULE_NAME, "Seeking to {0} for parsing of file {1} of {2}", offset, currentFile, maxFiles);
 
@@ -92,14 +90,14 @@ public sealed partial class Symbian
                 };
 
                 br.BaseStream.Seek(simpleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
-                buffer                       = br.ReadBytes((int)simpleFileRecord.record.sourceNameLen);
+                buffer                       = ReadBytesChecked(br, simpleFileRecord.record.sourceNameLen);
                 decodedFileRecord.sourceName = _encoding.GetString(buffer);
 
                 // Files that are not written to disk but shown or installed components do not have a destination name.
                 if(simpleFileRecord.record.destinationNameLen > 0)
                 {
                     br.BaseStream.Seek(simpleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
-                    buffer                            = br.ReadBytes((int)simpleFileRecord.record.destinationNameLen);
+                    buffer                            = ReadBytesChecked(br, simpleFileRecord.record.destinationNameLen);
                     decodedFileRecord.destinationName = _encoding.GetString(buffer);
                 }
                 else
@@ -110,7 +108,7 @@ public sealed partial class Symbian
                     decodedFileRecord.originalLength = simpleFileRecord.originalLength;
 
                     br.BaseStream.Seek(simpleFileRecord.mimePtr, SeekOrigin.Begin);
-                    buffer                 = br.ReadBytes((int)simpleFileRecord.mimeLen);
+                    buffer                 = ReadBytesChecked(br, simpleFileRecord.mimeLen);
                     decodedFileRecord.mime = _encoding.GetString(buffer);
                 }
 
@@ -294,7 +292,7 @@ public sealed partial class Symbian
                 if(optionsOnly) break;
 
                 br.BaseStream.Seek(multipleFileRecord.record.sourceNamePtr, SeekOrigin.Begin);
-                buffer = br.ReadBytes((int)multipleFileRecord.record.sourceNameLen);
+                buffer = ReadBytesChecked(br, multipleFileRecord.record.sourceNameLen);
                 string sourceName = _encoding.GetString(buffer);
                 string destinationName;
 
@@ -302,7 +300,7 @@ public sealed partial class Symbian
                 if(multipleFileRecord.record.destinationNameLen > 0)
                 {
                     br.BaseStream.Seek(multipleFileRecord.record.destinationNamePtr, SeekOrigin.Begin);
-                    buffer          = br.ReadBytes((int)multipleFileRecord.record.destinationNameLen);
+                    buffer          = ReadBytesChecked(br, multipleFileRecord.record.destinationNameLen);
                     destinationName = _encoding.GetString(buffer);
                 }
                 else
@@ -313,7 +311,7 @@ public sealed partial class Symbian
                 if(_release6)
                 {
                     br.BaseStream.Seek(multipleFileRecord.mimePtr, SeekOrigin.Begin);
-                    buffer   = br.ReadBytes((int)multipleFileRecord.mimeLen);
+                    buffer   = ReadBytesChecked(br, multipleFileRecord.mimeLen);
                     mimeType = _encoding.GetString(buffer);
                 }
 
@@ -482,6 +480,9 @@ public sealed partial class Symbian
                     numberOfOptions = br.ReadUInt32()
                 };
 
+                // Reject absurd option counts that would allocate unbounded memory
+                if(optionsLineRecord.numberOfOptions > MAX_OPTIONS) return;
+
                 optionsLineRecord.options = new OptionRecord[(int)optionsLineRecord.numberOfOptions];
 
                 for(var i = 0; i < optionsLineRecord.numberOfOptions; i++)
@@ -507,8 +508,8 @@ public sealed partial class Symbian
                     for(var j = 0; j < languages.Count; j++)
                     {
                         br.BaseStream.Seek(optionsLineRecord.options[i].pointers[j], SeekOrigin.Begin);
-                        buffer = br.ReadBytes((int)optionsLineRecord.options[i].lengths[j]);
-                        optionsLineRecord.options[i].names.Add(languages[j], _encoding.GetString(buffer));
+                        buffer = ReadBytesChecked(br, optionsLineRecord.options[i].lengths[j]);
+                        optionsLineRecord.options[i].names[languages[j]] = _encoding.GetString(buffer);
                     }
 
                     br.BaseStream.Seek(offset, SeekOrigin.Begin);
@@ -522,9 +523,7 @@ public sealed partial class Symbian
             case FileRecordType.If:
                 conditionLevel--;
 
-                tabulationChars = new char[conditionLevel];
-                for(var i = 0; i < conditionLevel; i++) tabulationChars[i] = '\t';
-                tabulation = new string(tabulationChars);
+                tabulation = new string('\t', Math.Max(conditionLevel, 0));
 
                 conditionalRecord = new ConditionalRecord
                 {
@@ -547,9 +546,7 @@ public sealed partial class Symbian
 
                 break;
             case FileRecordType.ElseIf:
-                tabulationChars = new char[conditionLevel - 1];
-                for(var i = 0; i < conditionLevel - 1; i++) tabulationChars[i] = '\t';
-                tabulation = new string(tabulationChars);
+                tabulation = new string('\t', Math.Max(conditionLevel - 1, 0));
 
                 conditionalRecord = new ConditionalRecord
                 {
@@ -572,9 +569,7 @@ public sealed partial class Symbian
 
                 break;
             case FileRecordType.Else:
-                tabulationChars = new char[conditionLevel - 1];
-                for(var i = 0; i < conditionLevel - 1; i++) tabulationChars[i] = '\t';
-                tabulation = new string(tabulationChars);
+                tabulation = new string('\t', Math.Max(conditionLevel - 1, 0));
 
                 offset = (uint)(br.BaseStream.Position + Marshal.SizeOf<ConditionalEndRecord>());
 
@@ -598,7 +593,17 @@ public sealed partial class Symbian
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                AaruLogging.Debug(MODULE_NAME, "Unknown record type {0}", recordType);
+
+                break;
         }
+    }
+
+    /// <summary>Reads a length-prefixed field, returning an empty buffer when the length does not fit the stream.</summary>
+    static byte[] ReadBytesChecked(BinaryReader br, uint len)
+    {
+        if(len == 0 || len > br.BaseStream.Length - br.BaseStream.Position) return [];
+
+        return br.ReadBytes((int)len);
     }
 }
