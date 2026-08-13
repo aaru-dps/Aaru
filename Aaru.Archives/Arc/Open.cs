@@ -86,6 +86,9 @@ public sealed partial class Arc
 
             _stream.Position -= 2;
 
+            // Truncated header at end of file
+            if(_stream.Position + hdr.Length > _stream.Length) break;
+
             // Decode header
             _stream.ReadExactly(hdr, 0, hdr.Length);
             header = Marshal.ByteArrayToStructureLittleEndian<Header>(hdr);
