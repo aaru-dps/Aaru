@@ -372,6 +372,11 @@ public sealed partial class Cpio
     /// <inheritdoc />
     public void Close()
     {
+        if(!Opened) return;
+
+        _stream?.Close();
+
+        _stream  = null;
         _entries = null;
         Opened   = false;
     }

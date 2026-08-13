@@ -385,6 +385,9 @@ public sealed partial class StuffIt5
     {
         if(!Opened) return;
 
+        _stream?.Close();
+
+        _stream         = null;
         _entries        = null;
         _archiveComment = null;
         Opened          = false;

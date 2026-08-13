@@ -453,6 +453,9 @@ public sealed partial class DiskDoubler
     {
         if(!Opened) return;
 
+        _stream?.Close();
+
+        _stream  = null;
         _entries = null;
         Opened   = false;
     }

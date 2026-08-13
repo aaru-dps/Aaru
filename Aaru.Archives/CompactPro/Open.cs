@@ -192,6 +192,9 @@ public sealed partial class CompactPro
     {
         if(!Opened) return;
 
+        _stream?.Close();
+
+        _stream  = null;
         _entries = null;
         _comment = null;
         Opened   = false;
