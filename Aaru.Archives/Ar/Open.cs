@@ -127,6 +127,9 @@ public sealed partial class Ar
             {
                 var nameLen = (int)ParseDecimal(header, 3, 13);
 
+                // The name must fit in the remaining file and inside the declared entry size
+                if(nameLen < 0 || nameLen > _stream.Length - _stream.Position || nameLen > size) break;
+
                 var nameBuf = new byte[nameLen];
                 _stream.ReadExactly(nameBuf, 0, nameLen);
 
@@ -152,6 +155,9 @@ public sealed partial class Ar
             // GNU long filename table: name field is "// " (double slash + spaces)
             else if(header[0] == (byte)'/' && header[1] == (byte)'/' && header[2] == (byte)' ')
             {
+                // The table must fit in the remaining file
+                if(size < 0 || size > _stream.Length - _stream.Position) break;
+
                 gnuFilenameTable = new byte[size];
                 _stream.ReadExactly(gnuFilenameTable, 0, (int)size);
 
@@ -205,7 +211,9 @@ public sealed partial class Ar
                 Mode             = mode,
                 Uid              = uid,
                 Gid              = gid,
-                LastWriteTimeUtc = DateTimeOffset.FromUnixTimeSeconds(timestamp).UtcDateTime
+                LastWriteTimeUtc = DateTimeOffset
+                                  .FromUnixTimeSeconds(timestamp is < 0 or > MAX_UNIX_TIME ? 0 : timestamp)
+                                  .UtcDateTime
             });
 
             // Seek to next entry, aligned to 2-byte boundary

@@ -36,6 +36,9 @@ public sealed partial class Ar
     /// <summary>Size of each file entry header.</summary>
     const int HEADER_SIZE = 60;
 
+    /// <summary>Maximum Unix timestamp convertible by <see cref="System.DateTimeOffset.FromUnixTimeSeconds" /></summary>
+    const long MAX_UNIX_TIME = 253402300799;
+
     // Header field offsets and sizes
     const int NAME_OFFSET      = 0;
     const int NAME_LENGTH      = 16;
