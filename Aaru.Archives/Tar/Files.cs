@@ -186,9 +186,13 @@ public sealed partial class Tar
             stream = new MemoryStream([]);
         else if(entry.IsSparse && entry.SparseRegions is { Count: > 0 })
         {
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.Size < 0 || entry.DataOffset < 0 || entry.DataOffset + entry.Size > _stream.Length)
+                return ErrorNumber.InvalidArgument;
+
             Stream sourceStream = new OffsetStream(new NonClosableStream(_stream),
                                                    entry.DataOffset,
-                                                   entry.DataOffset + entry.Size);
+                                                   entry.DataOffset + entry.Size - 1);
 
             stream = new ForcedSeekStream<TarSparseStream>(entry.RealSize,
                                                            sourceStream,
@@ -197,7 +201,13 @@ public sealed partial class Tar
         }
         else
         {
-            stream = new OffsetStream(new NonClosableStream(_stream), entry.DataOffset, entry.DataOffset + entry.Size);
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.Size < 0 || entry.DataOffset < 0 || entry.DataOffset + entry.Size > _stream.Length)
+                return ErrorNumber.InvalidArgument;
+
+            stream = new OffsetStream(new NonClosableStream(_stream),
+                                      entry.DataOffset,
+                                      entry.DataOffset + entry.Size - 1);
         }
 
         filter = new ZZZNoFilter();

@@ -147,7 +147,15 @@ public sealed partial class Ar
         if(entry.Size == 0)
             stream = new MemoryStream([]);
         else
-            stream = new OffsetStream(new NonClosableStream(_stream), entry.DataOffset, entry.DataOffset + entry.Size);
+        {
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.Size < 0 || entry.DataOffset < 0 || entry.DataOffset + entry.Size > _stream.Length)
+                return ErrorNumber.InvalidArgument;
+
+            stream = new OffsetStream(new NonClosableStream(_stream),
+                                      entry.DataOffset,
+                                      entry.DataOffset + entry.Size - 1);
+        }
 
         filter = new ZZZNoFilter();
         ErrorNumber errno = filter.Open(stream);
