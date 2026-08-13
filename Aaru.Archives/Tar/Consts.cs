@@ -32,6 +32,9 @@ public sealed partial class Tar
 {
     const int BLOCK_SIZE = 512;
 
+    /// <summary>Maximum Unix timestamp convertible by <see cref="System.DateTimeOffset.FromUnixTimeSeconds" /></summary>
+    const long MAX_UNIX_TIME = 253402300799;
+
     // Header field offsets and sizes
     const int NAME_OFFSET     = 0;
     const int NAME_LENGTH     = 100;

@@ -88,7 +88,10 @@ public sealed partial class Tar
             // Big-endian 64-bit integer stored in the last 8 bytes of the field
             int start = offset + length - 8;
 
-            return (long)BinaryPrimitives.ReadUInt64BigEndian(buffer.AsSpan(start, 8));
+            ulong binValue = BinaryPrimitives.ReadUInt64BigEndian(buffer.AsSpan(start, 8));
+
+            // Reject values that would wrap negative
+            return binValue > long.MaxValue ? 0 : (long)binValue;
         }
 
         // Parse as octal ASCII string
@@ -152,8 +155,12 @@ public sealed partial class Tar
         entry.Size           = ReadOctalNumber(header, SIZE_OFFSET, SIZE_LENGTH);
         entry.CompressedSize = entry.Size + (entry.Size % BLOCK_SIZE == 0 ? 0 : BLOCK_SIZE - entry.Size % BLOCK_SIZE);
 
-        entry.LastWriteTimeUtc = DateTimeOffset.FromUnixTimeSeconds(ReadOctalNumber(header, MTIME_OFFSET, MTIME_LENGTH))
-                                               .UtcDateTime;
+        long mtimeSeconds = ReadOctalNumber(header, MTIME_OFFSET, MTIME_LENGTH);
+
+        // Clamp out of range timestamps instead of throwing
+        if(mtimeSeconds is < 0 or > MAX_UNIX_TIME) mtimeSeconds = 0;
+
+        entry.LastWriteTimeUtc = DateTimeOffset.FromUnixTimeSeconds(mtimeSeconds).UtcDateTime;
 
         var typeFlag = (TypeFlag)header[TYPEFLAG_OFFSET];
 
@@ -312,18 +319,21 @@ public sealed partial class Tar
             switch(key)
             {
                 case "atime":
-                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double atime))
+                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double atime) &&
+                       atime is > 0 and < MAX_UNIX_TIME)
                         entry.AccessTimeUtc = DateTimeOffset.FromUnixTimeMilliseconds((long)(atime * 1000)).UtcDateTime;
 
                     break;
                 case "ctime":
-                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double ctime))
+                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double ctime) &&
+                       ctime is > 0 and < MAX_UNIX_TIME)
                         entry.CreationTimeUtc =
                             DateTimeOffset.FromUnixTimeMilliseconds((long)(ctime * 1000)).UtcDateTime;
 
                     break;
                 case "mtime":
-                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double mtime))
+                    if(double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double mtime) &&
+                       mtime is > 0 and < MAX_UNIX_TIME)
                         entry.LastWriteTimeUtc =
                             DateTimeOffset.FromUnixTimeMilliseconds((long)(mtime * 1000)).UtcDateTime;
 
@@ -454,6 +464,9 @@ public sealed partial class Tar
 
     string ReadDataAsString(long size)
     {
+        // Bound the allocation by the remaining stream
+        size = Math.Clamp(size, 0, Math.Min(_stream.Length - _stream.Position, int.MaxValue));
+
         var buffer = new byte[size];
         _stream.ReadExactly(buffer, 0, (int)size);
 
@@ -467,6 +480,9 @@ public sealed partial class Tar
 
     byte[] ReadDataAsBytes(long size)
     {
+        // Bound the allocation by the remaining stream
+        size = Math.Clamp(size, 0, Math.Min(_stream.Length - _stream.Position, int.MaxValue));
+
         var buffer = new byte[size];
         _stream.ReadExactly(buffer, 0, (int)size);
 
@@ -489,7 +505,7 @@ public sealed partial class Tar
 
         if(nextOffset % BLOCK_SIZE != 0) nextOffset += BLOCK_SIZE - nextOffset % BLOCK_SIZE;
 
-        if(nextOffset <= _stream.Length) _stream.Position = nextOffset;
+        _stream.Position = nextOffset <= _stream.Length ? nextOffset : _stream.Length;
     }
 
     static bool IsZeroBlock(byte[] block)
@@ -723,7 +739,9 @@ public sealed partial class Tar
                     entry.Type = TypeFlag.GnuSparse;
                     FinalizeEntry(ref entry);
                     _entries.Add(entry);
-                    SkipToNextBlock(dataStart, dataSize);
+
+                    // Data starts after the extended sparse headers, not after the main header
+                    SkipToNextBlock(entry.DataOffset, dataSize);
 
                     break;
                 }
