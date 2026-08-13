@@ -8,6 +8,7 @@ using Aaru.Compression;
 using Aaru.Compression.Zip;
 using Aaru.Filters;
 using Aaru.Helpers.IO;
+using Aaru.Logging;
 using BZip2 = Aaru.Compression.BZip2;
 using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
@@ -159,6 +160,13 @@ public sealed partial class Zip
             stream = new MemoryStream([]);
         else
         {
+            // Validate against the file size, OffsetStream throws on invalid bounds
+            if(entry.CompressedSize   <= 0 ||
+               entry.DataOffset       <  0 ||
+               entry.UncompressedSize <  0 ||
+               entry.DataOffset + entry.CompressedSize > _stream.Length)
+                return ErrorNumber.InvalidArgument;
+
             Stream compressedStream = new OffsetStream(new NonClosableStream(_stream),
                                                        entry.DataOffset,
                                                        entry.DataOffset + entry.CompressedSize - 1);
@@ -193,6 +201,8 @@ public sealed partial class Zip
 
                 case CompressionMethod.Deflate:
                 {
+                    if(entry.UncompressedSize > int.MaxValue) return ErrorNumber.NotSupported;
+
                     // DeflateStream decompresses and we wrap in a MemoryStream for seekability
                     var decompressed = new byte[entry.UncompressedSize];
 
@@ -227,11 +237,22 @@ public sealed partial class Zip
 
                 case CompressionMethod.BZip2:
                 {
+                    if(entry.UncompressedSize > int.MaxValue) return ErrorNumber.NotSupported;
+
                     var compressedData  = new byte[entry.CompressedSize];
-                    int compRead        = compressedStream.Read(compressedData, 0, compressedData.Length);
+                    _ = compressedStream.Read(compressedData, 0, compressedData.Length);
                     var decompressedBuf = new byte[entry.UncompressedSize];
 
-                    BZip2.DecodeBuffer(compressedData, decompressedBuf);
+                    try
+                    {
+                        BZip2.DecodeBuffer(compressedData, decompressedBuf);
+                    }
+                    catch(Exception ex)
+                    {
+                        AaruLogging.Debug(MODULE_NAME, "Exception decompressing BZip2 data: {0}", ex);
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     stream = new MemoryStream(decompressedBuf);
 
@@ -249,12 +270,26 @@ public sealed partial class Zip
                     compressedStream.Read(properties, 0, propsSize);
 
                     long remainingCompressed = entry.CompressedSize - 4 - propsSize;
-                    var  compressedData      = new byte[remainingCompressed];
+
+                    // The properties cannot be larger than the compressed data
+                    if(remainingCompressed < 0 || entry.UncompressedSize > int.MaxValue)
+                        return ErrorNumber.InvalidArgument;
+
+                    var compressedData = new byte[remainingCompressed];
                     compressedStream.Read(compressedData, 0, compressedData.Length);
 
                     var decompressedBuf = new byte[entry.UncompressedSize];
 
-                    LZMA.DecodeBuffer(compressedData, decompressedBuf, properties);
+                    try
+                    {
+                        LZMA.DecodeBuffer(compressedData, decompressedBuf, properties);
+                    }
+                    catch(Exception ex)
+                    {
+                        AaruLogging.Debug(MODULE_NAME, "Exception decompressing LZMA data: {0}", ex);
+
+                        return ErrorNumber.InOutError;
+                    }
 
                     stream = new MemoryStream(decompressedBuf);
 
