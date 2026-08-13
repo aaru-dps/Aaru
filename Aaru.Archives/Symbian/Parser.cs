@@ -265,21 +265,12 @@ public sealed partial class Symbian
                 buffer                    = br.ReadBytes(Marshal.SizeOf<BaseFileRecord>());
                 multipleFileRecord.record = Marshal.ByteArrayToStructureLittleEndian<BaseFileRecord>(buffer);
 
-                buffer = br.ReadBytes(sizeof(uint) * languages.Count);
-                ReadOnlySpan<byte> span = buffer;
-                multipleFileRecord.lengths = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
-
-                buffer                      = br.ReadBytes(sizeof(uint) * languages.Count);
-                span                        = buffer;
-                multipleFileRecord.pointers = MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+                multipleFileRecord.lengths  = ReadUIntArray(br, languages.Count);
+                multipleFileRecord.pointers = ReadUIntArray(br, languages.Count);
 
                 if(_release6)
                 {
-                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
-                    span   = buffer;
-
-                    multipleFileRecord.originalLengths =
-                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+                    multipleFileRecord.originalLengths = ReadUIntArray(br, languages.Count);
 
                     multipleFileRecord.mimeLen = br.ReadUInt32();
                     multipleFileRecord.mimePtr = br.ReadUInt32();
@@ -489,17 +480,8 @@ public sealed partial class Symbian
                 {
                     optionsLineRecord.options[i] = new OptionRecord();
 
-                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
-                    span   = buffer;
-
-                    optionsLineRecord.options[i].lengths =
-                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
-
-                    buffer = br.ReadBytes(sizeof(uint) * languages.Count);
-                    span   = buffer;
-
-                    optionsLineRecord.options[i].pointers =
-                        MemoryMarshal.Cast<byte, uint>(span)[..languages.Count].ToArray();
+                    optionsLineRecord.options[i].lengths  = ReadUIntArray(br, languages.Count);
+                    optionsLineRecord.options[i].pointers = ReadUIntArray(br, languages.Count);
 
                     optionsLineRecord.options[i].names = new Dictionary<string, string>();
 
@@ -597,6 +579,16 @@ public sealed partial class Symbian
 
                 break;
         }
+    }
+
+    /// <summary>Reads an array of little-endian uints, padding with zeroes when the stream is too short.</summary>
+    static uint[] ReadUIntArray(BinaryReader br, int count)
+    {
+        byte[] raw = br.ReadBytes(sizeof(uint) * count);
+
+        if(raw.Length < sizeof(uint) * count) return new uint[count];
+
+        return MemoryMarshal.Cast<byte, uint>((ReadOnlySpan<byte>)raw)[..count].ToArray();
     }
 
     /// <summary>Reads a length-prefixed field, returning an empty buffer when the length does not fit the stream.</summary>
