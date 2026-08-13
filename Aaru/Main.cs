@@ -518,6 +518,7 @@ class MainClass
                                _assemblyVersion?.InformationalVersion);
 
         AnsiConsole.MarkupLine("[bold][blue]{0}[/][/]", _assemblyCopyright);
+        AnsiConsole.MarkupLine("[bold][orange3]If you like this software, please contribute at [/][blue]https://patreon.com/claunia[/][/]");
         AnsiConsole.WriteLine();
     }
 }
