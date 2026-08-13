@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Aaru.CommonTypes.Enums;
+using Aaru.Logging;
 using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Archives;
@@ -83,8 +85,10 @@ public sealed partial class StuffItX
 
                 return ErrorNumber.NoError;
             }
-            catch
+            catch(Exception ex)
             {
+                AaruLogging.Debug(MODULE_NAME, "Exception reading resource fork: {0}", ex);
+
                 return ErrorNumber.InOutError;
             }
         }
