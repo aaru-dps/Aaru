@@ -92,6 +92,9 @@ public sealed partial class Zip
             uint zip64EocdDisk   = reader.ReadUInt32();
             long zip64EocdOffset = reader.ReadInt64();
 
+            // Reject offsets outside the file
+            if(zip64EocdOffset < 0 || zip64EocdOffset + 56 > _stream.Length) return;
+
             _stream.Position = zip64EocdOffset;
             uint zip64Sig = reader.ReadUInt32();
 
@@ -109,7 +112,9 @@ public sealed partial class Zip
             }
         }
 
-        // Seek to the start of the central directory
+        // Seek to the start of the central directory, rejecting offsets outside the file
+        if(centralDirOffset < 0 || centralDirOffset > _stream.Length) return;
+
         _stream.Position = centralDirOffset;
 
         for(long i = 0; i < totalEntries; i++)
@@ -121,6 +126,9 @@ public sealed partial class Zip
             if(entry.Filename is null) break;
 
             long savedPos = _stream.Position;
+
+            // Reject local header offsets outside the file
+            if(entry.DataOffset < 0 || entry.DataOffset + 30 > _stream.Length) break;
 
             // Read local header to get exact data offset
             _stream.Position = entry.DataOffset; // locheaderoffset stored temporarily in DataOffset
