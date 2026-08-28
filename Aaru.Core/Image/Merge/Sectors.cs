@@ -177,9 +177,11 @@ public sealed partial class Merger
                                  ? outputImage.WriteSectorTag(sector, doneSectors, false, tag)
                                  : outputImage.WriteSectorsTag(sector, doneSectors, false, sectorsToDo, tag);
                 }
-                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                else if(IsSkippableNotFound(errno) && (ignoreSectorNotFound || IsOptionalTag(tag)))
                 {
-                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, doneSectors));
+                    if(!IsOptionalTag(tag))
+                        ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, doneSectors));
+
                     doneSectors += sectorsToDo;
 
                     continue;
@@ -331,9 +333,15 @@ public sealed partial class Merger
 
                 if(errno == ErrorNumber.NoError)
                     result = outputImage.WriteSectorTag(sector, sectorAddress, false, tag);
-                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                else if(IsSkippableNotFound(errno) && (ignoreSectorNotFound || IsOptionalTag(tag)))
                 {
-                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, sectorAddress));
+                    if(!IsOptionalTag(tag))
+                    {
+                        ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                           tag,
+                                                           sectorAddress));
+                    }
+
                     doneSectors++;
 
                     continue;

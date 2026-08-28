@@ -612,11 +612,14 @@ public sealed partial class Merger
                                                                       tag);
                             }
                         }
-                        else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                        else if(IsSkippableNotFound(errno) && (ignoreSectorNotFound || IsOptionalTag(tag)))
                         {
-                            ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
-                                                               tag,
-                                                               doneSectors + track.StartSector));
+                            if(!IsOptionalTag(tag))
+                            {
+                                ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                                   tag,
+                                                                   doneSectors + track.StartSector));
+                            }
 
                             doneSectors += sectorsToDo;
 
@@ -677,11 +680,14 @@ public sealed partial class Merger
                                                                        tag);
                             }
                         }
-                        else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                        else if(IsSkippableNotFound(errno) && (ignoreSectorNotFound || IsOptionalTag(tag)))
                         {
-                            ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
-                                                               tag,
-                                                               doneSectors + track.StartSector));
+                            if(!IsOptionalTag(tag))
+                            {
+                                ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                                   tag,
+                                                                   doneSectors + track.StartSector));
+                            }
 
                             doneSectors += sectorsToDo;
 
@@ -805,9 +811,15 @@ public sealed partial class Merger
                     else
                         result = outputOptical.WriteSectorTag(sector, sectorAddress, false, tag);
                 }
-                else if(ignoreSectorNotFound && IsSkippableNotFound(errno))
+                else if(IsSkippableNotFound(errno) && (ignoreSectorNotFound || IsOptionalTag(tag)))
                 {
-                    ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found, tag, sectorAddress));
+                    if(!IsOptionalTag(tag))
+                    {
+                        ErrorMessage?.Invoke(string.Format(UI.Skipping_tag_0_for_sector_1_not_found,
+                                                           tag,
+                                                           sectorAddress));
+                    }
+
                     currentSectorIndex++;
 
                     continue;

@@ -64,6 +64,13 @@ public sealed partial class Merger
 
     static bool IsSkippableNotFound(ErrorNumber errno) => errno is ErrorNumber.SectorNotFound or ErrorNumber.NoData;
 
+    /// <summary>
+    ///     Whether a sector tag is optional, meaning an image that does not carry it is perfectly normal rather than
+    ///     broken. Track flags are absent from most image formats, so a missing one is never an error worth stopping
+    ///     the merge for, and never worth a message either: it would emit one line per merged sector.
+    /// </summary>
+    static bool IsOptionalTag(SectorTagType tag) => tag == SectorTagType.CdTrackFlags;
+
     public ErrorNumber Start()
     {
         // Validate sector count parameter
