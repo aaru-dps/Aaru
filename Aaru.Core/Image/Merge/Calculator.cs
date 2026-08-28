@@ -27,16 +27,19 @@ public sealed partial class Merger
         };
     }
 
+    /// <summary>Whether a dump hardware list actually carries any extent to work with.</summary>
+    static bool HasExtents(List<DumpHardware> tries) => tries?.Any(static h => h?.Extents?.Count > 0) == true;
+
     /// <summary>
-    ///     Resolves the dump tries for an image: the resume file if given, else the image's own dump hardware.
-    ///     When neither provides any usable extent, every sector of the image is considered good, so a single
-    ///     synthetic extent covering the whole image is returned.
+    ///     Resolves the dump tries for an image, in order of preference: the resume file, then the dump hardware list
+    ///     embedded in the image itself. When neither provides any usable extent, every sector of the image is
+    ///     considered good, so a single synthetic extent covering the whole image is returned.
     /// </summary>
     static List<DumpHardware> GetDumpTries(Resume resume, IMediaImage image)
     {
-        List<DumpHardware> tries = resume != null ? resume.Tries : image.DumpHardware;
+        if(HasExtents(resume?.Tries)) return resume.Tries;
 
-        if(tries?.Any(static h => h?.Extents?.Count > 0) == true) return tries;
+        if(HasExtents(image.DumpHardware)) return image.DumpHardware;
 
         return
         [
