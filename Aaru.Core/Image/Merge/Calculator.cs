@@ -51,11 +51,27 @@ public sealed partial class Merger
     }
 
     List<ulong> CalculateSectorsToCopy(IMediaImage primaryImage,    IMediaImage secondaryImage, Resume primaryResume,
-                                       Resume      secondaryResume, List<ulong> overrideSectorsList)
-    {
-        List<DumpHardware> primaryTries   = GetDumpTries(primaryResume,   primaryImage);
-        List<DumpHardware> secondaryTries = GetDumpTries(secondaryResume, secondaryImage);
+                                       Resume      secondaryResume, List<ulong> overrideSectorsList) =>
+        CalculateSectorsToCopy(primaryImage.Info.Sectors,
+                               secondaryImage.Info.Sectors,
+                               GetDumpTries(primaryResume,   primaryImage),
+                               GetDumpTries(secondaryResume, secondaryImage),
+                               primaryResume?.BadBlocks,
+                               secondaryResume?.BadBlocks,
+                               overrideSectorsList);
 
+    /// <summary>
+    ///     Works out which sectors have to be taken from the secondary image, without needing the images themselves.
+    ///     Split out from the overload above so it can be exercised directly by the tests.
+    /// </summary>
+    internal static List<ulong> CalculateSectorsToCopy(ulong              primarySectors,
+                                                       ulong              secondarySectors,
+                                                       List<DumpHardware> primaryTries,
+                                                       List<DumpHardware> secondaryTries,
+                                                       List<ulong>        primaryBadBlocks,
+                                                       List<ulong>        secondaryBadBlocks,
+                                                       List<ulong>        overrideSectorsList)
+    {
         // Get all sectors that appear in secondaryTries but not in primaryTries
         var sectorsToCopy = new List<ulong>();
 
@@ -70,7 +86,7 @@ public sealed partial class Merger
                 for(ulong sector = secondaryExtent.Start; sector <= secondaryExtent.End; sector++)
                 {
                     // Sectors beyond the primary image cannot exist in the output, skip them
-                    if(sector >= primaryImage.Info.Sectors) continue;
+                    if(sector >= primarySectors) continue;
 
                     // Check if this sector appears in any primary extent
                     var foundInPrimary = false;
@@ -97,14 +113,14 @@ public sealed partial class Merger
         // as long as the secondary does not also mark them as bad.
         // A bad block is bad regardless of whether it falls inside a successful dump try extent, so extent
         // coverage is deliberately not consulted here: the extents pass above can never surface those sectors.
-        if(primaryResume?.BadBlocks != null)
+        if(primaryBadBlocks != null)
         {
             var alreadyListed = new HashSet<ulong>(sectorsToCopy);
-            var secondaryBad  = secondaryResume?.BadBlocks != null ? new HashSet<ulong>(secondaryResume.BadBlocks) : [];
+            var secondaryBad  = secondaryBadBlocks != null ? new HashSet<ulong>(secondaryBadBlocks) : [];
 
-            foreach(ulong sector in primaryResume.BadBlocks)
+            foreach(ulong sector in primaryBadBlocks)
             {
-                if(sector >= primaryImage.Info.Sectors || sector >= secondaryImage.Info.Sectors) continue;
+                if(sector >= primarySectors || sector >= secondarySectors) continue;
 
                 if(secondaryBad.Contains(sector) || alreadyListed.Contains(sector)) continue;
 
