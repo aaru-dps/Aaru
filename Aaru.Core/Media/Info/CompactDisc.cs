@@ -362,35 +362,18 @@ public static class CompactDisc
         {
             var videoNowColorFrame = new byte[9 * sectorSize];
 
-            sense = dev.ReadCd(out cmdBuf,
-                               out _,
-                               0,
-                               sectorSize,
-                               9,
-                               MmcSectorTypes.AllTypes,
-                               false,
-                               false,
-                               true,
-                               MmcHeaderCodes.AllHeaders,
-                               true,
-                               true,
-                               MmcErrorField.None,
-                               MmcSubchannel.None,
-                               dev.Timeout,
-                               out _);
-
-            if(sense || dev.Error)
+            for(var i = 0; i < 9; i++)
             {
                 sense = dev.ReadCd(out cmdBuf,
                                    out _,
-                                   0,
+                                   (uint)i,
                                    sectorSize,
-                                   9,
-                                   MmcSectorTypes.Cdda,
+                                   1,
+                                   MmcSectorTypes.AllTypes,
                                    false,
                                    false,
                                    true,
-                                   MmcHeaderCodes.None,
+                                   MmcHeaderCodes.AllHeaders,
                                    true,
                                    true,
                                    MmcErrorField.None,
@@ -398,7 +381,34 @@ public static class CompactDisc
                                    dev.Timeout,
                                    out _);
 
-                if(sense || dev.Error) videoNowColorFrame = null;
+                if(sense || dev.Error)
+                {
+                    sense = dev.ReadCd(out cmdBuf,
+                                       out _,
+                                       (uint)i,
+                                       sectorSize,
+                                       1,
+                                       MmcSectorTypes.Cdda,
+                                       false,
+                                       false,
+                                       true,
+                                       MmcHeaderCodes.None,
+                                       true,
+                                       true,
+                                       MmcErrorField.None,
+                                       MmcSubchannel.None,
+                                       dev.Timeout,
+                                       out _);
+
+                    if(sense || dev.Error)
+                    {
+                        videoNowColorFrame = null;
+
+                        break;
+                    }
+                }
+
+                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * sectorSize, sectorSize);
             }
 
             if(videoNowColorFrame is null)
