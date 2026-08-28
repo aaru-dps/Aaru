@@ -14,7 +14,14 @@ namespace Aaru.Core.Image;
 
 public sealed partial class Merger
 {
-    private (bool success, Resume resume) LoadMetadata(string resumeFilePath)
+    /// <summary>Reads a resume file.</summary>
+    /// <param name="resumeFilePath">Path to read, or null when there is nothing to read.</param>
+    /// <param name="explicitlyRequested">
+    ///     Whether the user named this file on the command line. A file the user asked for has to be usable, so a
+    ///     missing or unparseable one stops the merge. One we merely found next to the image is only a preference over
+    ///     the dump hardware embedded in the image, so we warn and fall back to that instead.
+    /// </param>
+    private (bool success, Resume resume) LoadMetadata(string resumeFilePath, bool explicitlyRequested)
     {
         Resume resume;
 
@@ -53,14 +60,24 @@ public sealed partial class Merger
             }
             catch(Exception ex)
             {
-                StoppingErrorMessage?.Invoke(UI.Incorrect_resume_file_not_continuing);
-                AaruLogging.Exception(ex, UI.Incorrect_resume_file_not_continuing);
+                if(explicitlyRequested)
+                {
+                    StoppingErrorMessage?.Invoke(UI.Incorrect_resume_file_not_continuing);
+                    AaruLogging.Exception(ex, UI.Incorrect_resume_file_not_continuing);
 
-                return (false, null);
+                    return (false, null);
+                }
+
+                ErrorMessage?.Invoke(UI.Incorrect_resume_file_cannot_use_it);
+                AaruLogging.Exception(ex, UI.Incorrect_resume_file_cannot_use_it);
+
+                return (true, null);
             }
         }
         else
         {
+            if(!explicitlyRequested) return (true, null);
+
             StoppingErrorMessage?.Invoke(UI.Could_not_find_resume_file);
 
             return (false, null);

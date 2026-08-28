@@ -169,7 +169,7 @@ sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
             Statistics.AddMedia(imageFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
 
-            string resumePath         = FindResumePath(settings.ImagePath, settings.ResumeFile);
+            string resumePath         = ResumeSidecar.FindResumePath(settings.ImagePath, settings.ResumeFile);
             bool   explicitResumePath = !string.IsNullOrWhiteSpace(settings.ResumeFile);
 
             if(!LoadResume(resumePath, explicitResumePath, out Resume resume)) return (int)ErrorNumber.InvalidArgument;
@@ -604,24 +604,6 @@ sealed class AnalyzeCommand : Command<AnalyzeCommand.Settings>
         return NormalizeExtents(partitionExtents);
     }
 
-    static string FindResumePath(string imagePath, string explicitResumePath)
-    {
-        if(!string.IsNullOrWhiteSpace(explicitResumePath)) return explicitResumePath;
-        if(string.IsNullOrWhiteSpace(imagePath)) return null;
-
-        List<string> candidates = [imagePath + ".resume.json", imagePath + ".resume.xml"];
-
-        string directoryName            = Path.GetDirectoryName(imagePath);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(imagePath);
-
-        if(string.IsNullOrWhiteSpace(fileNameWithoutExtension))
-            return candidates.Distinct().FirstOrDefault(File.Exists);
-
-        candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.json"));
-        candidates.Add(Path.Combine(directoryName, fileNameWithoutExtension + ".resume.xml"));
-
-        return candidates.Distinct().FirstOrDefault(File.Exists);
-    }
 
     static bool LoadResume(string resumePath, bool explicitResumePath, out Resume resume)
     {

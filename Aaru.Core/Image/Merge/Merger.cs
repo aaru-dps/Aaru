@@ -87,13 +87,25 @@ public sealed partial class Merger
 
         // Load resume information from sidecar files
 
-        (bool success, Resume primaryResume) = LoadMetadata(primaryResumeFile);
+        // With no resume file the bad block list is unknown, and the dump hardware embedded in the image only records
+        // which sectors each try covered, not which of them failed. Merging would then silently skip every bad sector
+        // that falls inside a try extent, so fall back to the sidecar the dump command writes next to the image.
+        string primaryResumePath   = ResumeSidecar.FindResumePath(primaryImagePath,   primaryResumeFile);
+        string secondaryResumePath = ResumeSidecar.FindResumePath(secondaryImagePath, secondaryResumeFile);
+
+        (bool success, Resume primaryResume) =
+            LoadMetadata(primaryResumePath, !string.IsNullOrWhiteSpace(primaryResumeFile));
 
         if(!success) return ErrorNumber.InvalidArgument;
 
-        (success, Resume secondaryResume) = LoadMetadata(secondaryResumeFile);
+        if(primaryResume != null) UpdateStatus?.Invoke(string.Format(UI.Using_resume_file_0, primaryResumePath));
+
+        (success, Resume secondaryResume) =
+            LoadMetadata(secondaryResumePath, !string.IsNullOrWhiteSpace(secondaryResumeFile));
 
         if(!success) return ErrorNumber.InvalidArgument;
+
+        if(secondaryResume != null) UpdateStatus?.Invoke(string.Format(UI.Using_resume_file_0, secondaryResumePath));
 
         // Verify output file doesn't already exist
         if(File.Exists(outputImagePath))
