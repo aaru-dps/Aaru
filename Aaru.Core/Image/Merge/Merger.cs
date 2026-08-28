@@ -273,6 +273,12 @@ public sealed partial class Merger
         List<ulong> sectorsToCopyFromSecondImage =
             CalculateSectorsToCopy(primaryImage, secondaryImage, primaryResume, secondaryResume, overrideSectorsList);
 
+        // Clamp once, here, so the reported count and every copy loop agree on what will actually be written.
+        // A sector past the end of either image can neither be read from the secondary nor stored in the output.
+        ulong mergeableSectors = Math.Min(primaryImage.Info.Sectors, secondaryImage.Info.Sectors);
+
+        sectorsToCopyFromSecondImage.RemoveAll(s => s >= mergeableSectors);
+
         EndProgress?.Invoke();
 
         // Flux images might contain no decoded data, which results in a sector count of 0. We allow this if the image contains flux.
@@ -341,10 +347,8 @@ public sealed partial class Merger
 
         if(errno != ErrorNumber.NoError) return errno;
 
-        int secondarySectorsInRange = sectorsToCopyFromSecondImage.Count(s => s < primaryImage.Info.Sectors);
-
         UpdateStatus?.Invoke(string.Format(UI.Will_copy_0_sectors_from_primary_image_and_1_sectors_from_secondary,
-                                           primaryImage.Info.Sectors - (ulong)secondarySectorsInRange,
+                                           primaryImage.Info.Sectors - (ulong)sectorsToCopyFromSecondImage.Count,
                                            sectorsToCopyFromSecondImage.Count));
 
         UpdateStatus?.Invoke(string.Format(UI.Copying_0_sectors_from_primary_image, primaryImage.Info.Sectors));
