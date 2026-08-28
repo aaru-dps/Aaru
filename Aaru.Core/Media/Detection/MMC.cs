@@ -665,7 +665,7 @@ public static class MMC
                                    dev.Timeout,
                                    out _);
 
-                if(sense || !dev.Error)
+                if(sense || dev.Error)
                 {
                     videoNowColorFrame = null;
 
