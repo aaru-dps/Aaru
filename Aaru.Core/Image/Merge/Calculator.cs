@@ -94,7 +94,9 @@ public sealed partial class Merger
         }
 
         // Primary sectors marked as bad in the resume file are valid candidates to take from the secondary,
-        // as long as the secondary covers them and does not also mark them as bad
+        // as long as the secondary does not also mark them as bad.
+        // A bad block is bad regardless of whether it falls inside a successful dump try extent, so extent
+        // coverage is deliberately not consulted here: the extents pass above can never surface those sectors.
         if(primaryResume?.BadBlocks != null)
         {
             var alreadyListed = new HashSet<ulong>(sectorsToCopy);
@@ -105,9 +107,6 @@ public sealed partial class Merger
                 if(sector >= primaryImage.Info.Sectors || sector >= secondaryImage.Info.Sectors) continue;
 
                 if(secondaryBad.Contains(sector) || alreadyListed.Contains(sector)) continue;
-
-                if(!secondaryTries.Any(h => h?.Extents?.Any(e => sector >= e.Start && sector <= e.End) == true))
-                    continue;
 
                 sectorsToCopy.Add(sector);
                 alreadyListed.Add(sector);
