@@ -90,7 +90,7 @@ public sealed partial class ODS
     /// <param name="extent">Output extent size.</param>
     /// <param name="endSum">Output ending VBN sum after processing this map.</param>
     /// <returns>Error number indicating success or failure.</returns>
-    static ErrorNumber MapVbnToLbnWithSum(byte[] mapData, byte mapInUse, uint vbn, uint startSum, out uint lbn,
+    internal static ErrorNumber MapVbnToLbnWithSum(byte[] mapData, byte mapInUse, uint vbn, uint startSum, out uint lbn,
                                           out uint extent, out uint endSum)
     {
         lbn    = 0;
@@ -171,8 +171,9 @@ public sealed partial class ODS
                     return ErrorNumber.InvalidArgument;
             }
 
-            // Check if this extent contains our VBN
-            if(vbn <= sum + count)
+            // Check if this extent contains our VBN. The lower bound matters when startSum is non-zero
+            // (an extension header map): a VBN below this map's base must not match its first extent.
+            if(vbn > sum && vbn <= sum + count)
             {
                 lbn    = diskLbn + (vbn - sum) - 1;
                 extent = count   - (lbn - diskLbn);
