@@ -376,15 +376,19 @@ public sealed partial class ODS
         // Follow the chain of extension headers
         while(currentExtFid.num != 0 || currentExtFid.nmx != 0)
         {
-            // Read the extension file header
-            // Extension file number includes nmx in high bits
-            var extFileNum = (ushort)(currentExtFid.num + (currentExtFid.nmx << 16));
-
-            ErrorNumber errno = ReadFileHeader(extFileNum, out FileHeader extHeader);
+            // Read the extension file header.
+            // Use the FileId overload so the file number extension (nmx) is honored and the
+            // header is cross-checked against the requested file ID and sequence number.
+            ErrorNumber errno = ReadFileHeader(currentExtFid, out FileHeader extHeader);
 
             if(errno != ErrorNumber.NoError)
             {
-                AaruLogging.Debug(MODULE_NAME, "Error reading extension file header {0}: {1}", extFileNum, errno);
+                AaruLogging.Debug(MODULE_NAME,
+                                  "Error reading extension file header ({0},{1},{2}): {3}",
+                                  currentExtFid.num + (currentExtFid.nmx << 16),
+                                  currentExtFid.seq,
+                                  currentExtFid.rvn,
+                                  errno);
 
                 return errno;
             }
@@ -394,7 +398,9 @@ public sealed partial class ODS
 
             if(extMapData == null || extMapData.Length == 0)
             {
-                AaruLogging.Debug(MODULE_NAME, "Extension header {0} has no mapping data", extFileNum);
+                AaruLogging.Debug(MODULE_NAME,
+                                  "Extension header {0} has no mapping data",
+                                  currentExtFid.num + (currentExtFid.nmx << 16));
 
                 break;
             }
@@ -737,6 +743,18 @@ public sealed partial class ODS
         return mode;
     }
 
+    /// <summary>Calculates the LBN of a file header inside the index file.</summary>
+    /// <remarks>
+    ///     This assumes the index file bitmap and the header area are one contiguous run, which holds for a volume
+    ///     whose index file has not been extended.
+    /// </remarks>
+    /// <param name="ibmaplbn">LBN of the index file bitmap, from the home block.</param>
+    /// <param name="ibmapsize">Size in blocks of the index file bitmap, from the home block.</param>
+    /// <param name="fileNum">File number, including the file number extension (nmx) in its high bits.</param>
+    /// <returns>LBN of the file header.</returns>
+    internal static uint FileHeaderLbn(uint ibmaplbn, ushort ibmapsize, uint fileNum) =>
+        ibmaplbn + ibmapsize + fileNum - 1;
+
     /// <summary>Reads a file header by file number (without sequence validation).</summary>
     /// <param name="fileNum">File number (1-based).</param>
     /// <param name="header">Output file header.</param>
@@ -745,8 +763,10 @@ public sealed partial class ODS
     {
         header = default(FileHeader);
 
-        // File header LBN = ibmaplbn + ibmapsize + (fileNum - 1)
-        uint headerLbn = _homeBlock.ibmaplbn + _homeBlock.ibmapsize + fileNum - 1;
+        // File number 0 is not a valid file, and would resolve to the last index bitmap block
+        if(fileNum == 0) return ErrorNumber.InvalidArgument;
+
+        uint headerLbn = FileHeaderLbn(_homeBlock.ibmaplbn, _homeBlock.ibmapsize, fileNum);
 
         ErrorNumber errno = ReadOdsBlock(_image, _partition, headerLbn, out byte[] headerSector);
 
@@ -802,8 +822,10 @@ public sealed partial class ODS
         // File number includes nmx in high bits for large volumes
         var fileNum = (uint)(fid.num + (fid.nmx << 16));
 
-        // File header LBN = ibmaplbn + ibmapsize + (fileNum - 1)
-        uint headerLbn = _homeBlock.ibmaplbn + _homeBlock.ibmapsize + fileNum - 1;
+        // File number 0 is not a valid file, and would resolve to the last index bitmap block
+        if(fileNum == 0) return ErrorNumber.InvalidArgument;
+
+        uint headerLbn = FileHeaderLbn(_homeBlock.ibmaplbn, _homeBlock.ibmapsize, fileNum);
 
         ErrorNumber errno = ReadOdsBlock(_image, _partition, headerLbn, out byte[] headerSector);
 
