@@ -37,6 +37,7 @@ using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
 using Aaru.Helpers;
+using Aaru.Logging;
 
 namespace Aaru.Filesystems;
 
@@ -93,14 +94,14 @@ public sealed partial class ODS
             if(!currentDirectory.TryGetValue(component, out CachedFile cachedFile)) return ErrorNumber.NoSuchFile;
 
             // Read file header to check if it's a directory
-            ErrorNumber errno = ReadFileHeader(cachedFile.Fid.num, out FileHeader fileHeader);
+            ErrorNumber errno = ReadFileHeader(cachedFile.Fid, out FileHeader fileHeader);
 
             if(errno != ErrorNumber.NoError) return errno;
 
             if(!fileHeader.filechar.HasFlag(FileCharacteristicFlags.Directory)) return ErrorNumber.NotDirectory;
 
             // Read directory entries, skipping self-referential entry
-            errno = ReadDirectoryEntries(fileHeader, out Dictionary<string, CachedFile> dirEntries, cachedFile.Fid.num);
+            errno = ReadDirectoryEntries(fileHeader, out Dictionary<string, CachedFile> dirEntries, cachedFile.Fid);
 
             if(errno != ErrorNumber.NoError) return errno;
 
@@ -179,13 +180,28 @@ public sealed partial class ODS
     /// <summary>Reads directory entries from a directory file header.</summary>
     /// <param name="dirHeader">File header of the directory.</param>
     /// <param name="entries">Output dictionary of cached entries.</param>
-    /// <param name="skipFid">Optional FID to skip (for filtering self-referential entries).</param>
+    /// <param name="skipFid">Optional file ID to skip (for filtering self-referential entries).</param>
     /// <returns>Error number indicating success or failure.</returns>
     ErrorNumber ReadDirectoryEntries(in FileHeader dirHeader, out Dictionary<string, CachedFile> entries,
-                                     ushort        skipFid = 0)
+                                     FileId        skipFid = default)
     {
         entries = new Dictionary<string, CachedFile>();
 
+        return ReadDirectoryEntriesInto(dirHeader, entries, skipFid);
+    }
+
+    /// <summary>Reads directory entries from a directory file header into an existing cache.</summary>
+    /// <remarks>
+    ///     Directories can span more than one file header, so the extension header chain is followed and the whole
+    ///     multi-extent map is used. A directory that cannot be fully mapped is an error, not a short listing.
+    /// </remarks>
+    /// <param name="dirHeader">File header of the directory.</param>
+    /// <param name="entries">Cache dictionary to populate.</param>
+    /// <param name="skipFid">Optional file ID to skip (for filtering self-referential entries).</param>
+    /// <returns>Error number indicating success or failure.</returns>
+    ErrorNumber ReadDirectoryEntriesInto(in FileHeader dirHeader, Dictionary<string, CachedFile> entries,
+                                         FileId        skipFid)
+    {
         // Get mapping information
         byte[] mapData = GetMapData(dirHeader);
 
@@ -196,21 +212,48 @@ public sealed partial class ODS
 
         if(fileSize <= 0) return ErrorNumber.NoError; // Empty directory
 
+        // Directories big enough to need extension headers must follow the whole chain
+        var dirNode = new OdsFileNode
+        {
+            Fid        = dirHeader.fid,
+            FileHeader = dirHeader,
+            MapData    = mapData
+        };
+
+        ErrorNumber errno = LoadExtensionHeaders(dirNode);
+
+        if(errno != ErrorNumber.NoError)
+        {
+            AaruLogging.Debug(MODULE_NAME, "Error loading directory extension headers: {0}", errno);
+
+            return errno;
+        }
+
         // Read directory contents VBN by VBN
         var vbn = 1;
 
         while((vbn - 1) * ODS_BLOCK_SIZE < fileSize)
         {
-            ErrorNumber errno = MapVbnToLbn(mapData, dirHeader.map_inuse, (uint)vbn, out uint lbn, out _);
+            errno = MapVbnToLbnMultiExtent(dirNode, (uint)vbn, out uint lbn, out _);
 
-            if(errno != ErrorNumber.NoError) break;
+            if(errno != ErrorNumber.NoError)
+            {
+                AaruLogging.Debug(MODULE_NAME, "Error mapping directory VBN {0}: {1}", vbn, errno);
+
+                return errno;
+            }
 
             errno = ReadOdsBlock(_image, _partition, lbn, out byte[] dirBlock);
 
-            if(errno != ErrorNumber.NoError) break;
+            if(errno != ErrorNumber.NoError)
+            {
+                AaruLogging.Debug(MODULE_NAME, "Error reading directory block at LBN {0}: {1}", lbn, errno);
+
+                return errno;
+            }
 
             // Parse directory entries in this block
-            ParseDirectoryBlockToCache(dirBlock, entries, skipFid);
+            ParseDirectoryBlockToCache(dirBlock, entries, _encoding, skipFid);
 
             vbn++;
         }
@@ -218,13 +261,28 @@ public sealed partial class ODS
         return ErrorNumber.NoError;
     }
 
+    /// <summary>Compares two file IDs, including the file number extension and the sequence number.</summary>
+    /// <param name="left">First file ID.</param>
+    /// <param name="right">Second file ID.</param>
+    /// <returns><c>true</c> if both file IDs designate the same file.</returns>
+    static bool SameFileId(FileId left, FileId right) =>
+        left.num == right.num && left.nmx == right.nmx && left.seq == right.seq;
+
     /// <summary>Parses directory entries from a directory block into a cache dictionary.</summary>
+    /// <remarks>
+    ///     Each directory record holds an array of (version, file ID) pairs, one per version of the file. All of them
+    ///     are cached as <c>NAME;VERSION</c>, and the bare <c>NAME</c> key resolves to the highest version.
+    /// </remarks>
     /// <param name="block">Directory block data.</param>
     /// <param name="cache">Cache dictionary to populate.</param>
-    /// <param name="skipFid">Optional FID to skip (for filtering self-referential entries).</param>
-    void ParseDirectoryBlockToCache(byte[] block, Dictionary<string, CachedFile> cache, ushort skipFid = 0)
+    /// <param name="encoding">Encoding used for non-UCS-2 filenames.</param>
+    /// <param name="skipFid">Optional file ID to skip (for filtering self-referential entries).</param>
+    internal static void ParseDirectoryBlockToCache(byte[]                         block,
+                                                   Dictionary<string, CachedFile> cache, Encoding encoding,
+                                                   FileId                         skipFid = default)
     {
-        var offset = 0;
+        bool skipping = skipFid.num != 0 || skipFid.nmx != 0;
+        var  offset   = 0;
 
         while(offset < block.Length - 2)
         {
@@ -249,30 +307,35 @@ public sealed partial class ODS
 
             string filename = nameType == DirectoryNameType.Ucs2
                                   ? Encoding.Unicode.GetString(block, nameOffset, namecount)
-                                  : _encoding.GetString(block, nameOffset, namecount);
+                                  : encoding.GetString(block, nameOffset, namecount);
 
             // Value field (directory entries) starts after name, word-aligned
             int valueOffset = nameOffset + (namecount + 1 & ~1);
 
-            // Read directory entry (first version)
-            if(valueOffset + 8 <= block.Length)
+            // The record must be big enough to hold its own name plus at least one version, otherwise the
+            // record size is corrupt and advancing by it would rescan the same region
+            int recordEnd = offset + size + 2;
+
+            if(recordEnd <= offset || recordEnd < valueOffset + 8) break;
+
+            if(recordEnd > block.Length) recordEnd = block.Length;
+
+            string bareName = filename.ToUpperInvariant();
+
+            // A record holds one (version, file ID) pair per version of the file
+            for(int value = valueOffset; value + 8 <= recordEnd; value += 8)
             {
-                var entryVersion = BitConverter.ToUInt16(block, valueOffset);
+                var entryVersion = BitConverter.ToUInt16(block, value);
 
-                FileId fid = Marshal.ByteArrayToStructureLittleEndian<FileId>(block, valueOffset + 2, 6);
+                FileId fid = Marshal.ByteArrayToStructureLittleEndian<FileId>(block, value + 2, 6);
 
-                // Skip self-referential entries (like 000000.DIR pointing to MFD)
-                if(skipFid != 0 && fid.num == skipFid)
+                // Skip self-referential entries (like 000000.DIR pointing to the MFD)
+                if(skipping && SameFileId(fid, skipFid)) continue;
+
+                // Store without version for directory listing, keeping the highest version
+                if(!cache.TryGetValue(bareName, out CachedFile latest) || entryVersion > latest.Version)
                 {
-                    offset += size + 2;
-
-                    continue;
-                }
-
-                // Store without version for directory listing
-                if(!cache.ContainsKey(filename.ToUpperInvariant()))
-                {
-                    cache[filename.ToUpperInvariant()] = new CachedFile
+                    cache[bareName] = new CachedFile
                     {
                         Fid     = fid,
                         Version = entryVersion
@@ -280,84 +343,7 @@ public sealed partial class ODS
                 }
 
                 // Store with version too
-                var fullName = $"{filename};{entryVersion}";
-
-                cache[fullName.ToUpperInvariant()] = new CachedFile
-                {
-                    Fid     = fid,
-                    Version = entryVersion
-                };
-            }
-
-            // Move to next record
-            offset += size + 2; // size doesn't include the size field itself
-        }
-    }
-
-    /// <summary>Parses directory entries from a directory block.</summary>
-    /// <param name="block">Directory block data.</param>
-    void ParseDirectoryBlock(byte[] block)
-    {
-        var offset = 0;
-
-        while(offset < block.Length - 2)
-        {
-            // Check for end of records marker
-            var size = BitConverter.ToUInt16(block, offset);
-
-            if(size is NO_MORE_RECORDS or 0) break;
-
-            // Ensure we have enough data for the record header
-            if(offset + 6 > block.Length) break;
-
-            byte flags     = block[offset + 4];
-            byte namecount = block[offset + 5];
-
-            // Extract name type from flags
-            var nameType = (DirectoryNameType)(flags >> 3 & 0x07);
-
-            // Read filename
-            int nameOffset = offset + 6;
-
-            if(nameOffset + namecount > block.Length) break;
-
-            string filename = nameType == DirectoryNameType.Ucs2
-                                  ? Encoding.Unicode.GetString(block, nameOffset, namecount)
-                                  : _encoding.GetString(block, nameOffset, namecount);
-
-            // Value field (directory entries) starts after name, word-aligned
-            int valueOffset = nameOffset + (namecount + 1 & ~1);
-
-            // Read directory entry (first version)
-            if(valueOffset + 8 <= block.Length)
-            {
-                var entryVersion = BitConverter.ToUInt16(block, valueOffset);
-
-                FileId fid = Marshal.ByteArrayToStructureLittleEndian<FileId>(block, valueOffset + 2, 6);
-
-                // Skip self-referential MFD entry (000000.DIR pointing to itself)
-                if(fid.num == MFD_FID)
-                {
-                    offset += size + 2;
-
-                    continue;
-                }
-
-                // Create filename with version (ODS style: FILENAME.EXT;VERSION)
-                var fullName = $"{filename};{entryVersion}";
-
-                // Also store without version for easier lookup
-                if(!_rootDirectoryCache.ContainsKey(filename.ToUpperInvariant()))
-                {
-                    _rootDirectoryCache[filename.ToUpperInvariant()] = new CachedFile
-                    {
-                        Fid     = fid,
-                        Version = entryVersion
-                    };
-                }
-
-                // Store with version too
-                _rootDirectoryCache[fullName.ToUpperInvariant()] = new CachedFile
+                cache[$"{bareName};{entryVersion}"] = new CachedFile
                 {
                     Fid     = fid,
                     Version = entryVersion

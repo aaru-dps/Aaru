@@ -149,7 +149,7 @@ public sealed partial class ODS
 
     /// <summary>File Identifier (FID), 6 bytes</summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    readonly struct FileId
+    internal readonly struct FileId
     {
         /// <summary>File number</summary>
         public readonly ushort num;

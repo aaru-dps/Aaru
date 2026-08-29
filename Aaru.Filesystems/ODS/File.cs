@@ -514,14 +514,14 @@ public sealed partial class ODS
 
             if(!currentDirectory.TryGetValue(dirComponent, out found)) return ErrorNumber.NoSuchFile;
 
-            ErrorNumber errno = ReadFileHeader(found.Fid.num, out FileHeader fileHeader);
+            ErrorNumber errno = ReadFileHeader(found.Fid, out FileHeader fileHeader);
 
             if(errno != ErrorNumber.NoError) return errno;
 
             if(!fileHeader.filechar.HasFlag(FileCharacteristicFlags.Directory)) return ErrorNumber.NotDirectory;
 
             // Read directory entries, skipping self-referential entry
-            errno = ReadDirectoryEntries(fileHeader, out Dictionary<string, CachedFile> dirEntries, found.Fid.num);
+            errno = ReadDirectoryEntries(fileHeader, out Dictionary<string, CachedFile> dirEntries, found.Fid);
 
             if(errno != ErrorNumber.NoError) return errno;
 

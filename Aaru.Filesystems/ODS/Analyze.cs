@@ -104,7 +104,7 @@ public sealed partial class ODS
             {
                 errno = ReadDirectoryEntries(fileHeader,
                                              out Dictionary<string, CachedFile> subDirectory,
-                                             cachedFile.Fid.num);
+                                             cachedFile.Fid);
 
                 if(errno != ErrorNumber.NoError) return errno;
 

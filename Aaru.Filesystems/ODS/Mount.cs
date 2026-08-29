@@ -326,33 +326,14 @@ public sealed partial class ODS
             return ErrorNumber.InvalidArgument;
         }
 
-        // Read directory contents VBN by VBN
-        var vbn = 1;
+        // Skip the MFD's self-referential entry (000000.DIR), matching on the whole file ID
+        ErrorNumber errno = ReadDirectoryEntriesInto(mfdHeader, _rootDirectoryCache, mfdHeader.fid);
 
-        while((vbn - 1) * ODS_BLOCK_SIZE < fileSize)
+        if(errno != ErrorNumber.NoError)
         {
-            ErrorNumber errno = MapVbnToLbn(mapData, mfdHeader.map_inuse, (uint)vbn, out uint lbn, out _);
+            AaruLogging.Debug(MODULE_NAME, "Error reading root directory entries: {0}", errno);
 
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Error mapping VBN {0}: {1}", vbn, errno);
-
-                break;
-            }
-
-            errno = ReadOdsBlock(_image, _partition, lbn, out byte[] dirBlock);
-
-            if(errno != ErrorNumber.NoError)
-            {
-                AaruLogging.Debug(MODULE_NAME, "Error reading directory block at LBN {0}: {1}", lbn, errno);
-
-                break;
-            }
-
-            // Parse directory entries in this block
-            ParseDirectoryBlock(dirBlock);
-
-            vbn++;
+            return errno;
         }
 
         AaruLogging.Debug(MODULE_NAME, "Cached {0} root directory entries", _rootDirectoryCache.Count);

@@ -40,7 +40,7 @@ public sealed partial class ODS
 #region Nested type: CachedFile
 
     /// <summary>Cached file information from a directory.</summary>
-    sealed class CachedFile
+    internal sealed class CachedFile
     {
         /// <summary>File ID (number, sequence, rvn, nmx).</summary>
         internal FileId Fid;
