@@ -287,7 +287,7 @@ sealed class FilesystemInfoCommand : Command<FilesystemInfoCommand.Settings>
                                                       out information,
                                                       out FileSystem fsMetadata);
 
-                                    AaruLogging.Write(information);
+                                    AaruLogging.Write("{0}", information);
                                     Statistics.AddFilesystem(fsMetadata.Type);
                                 }
 
@@ -307,7 +307,7 @@ sealed class FilesystemInfoCommand : Command<FilesystemInfoCommand.Settings>
                                                   out information,
                                                   out FileSystem fsMetadata);
 
-                                AaruLogging.Write(information);
+                                AaruLogging.Write("{0}", information);
                                 Statistics.AddFilesystem(fsMetadata.Type);
 
                                 break;
@@ -358,7 +358,7 @@ sealed class FilesystemInfoCommand : Command<FilesystemInfoCommand.Settings>
                                               out information,
                                               out FileSystem fsMetadata);
 
-                            AaruLogging.Write(information);
+                            AaruLogging.Write("{0}", information);
                             Statistics.AddFilesystem(fsMetadata.Type);
                         }
 
@@ -378,7 +378,7 @@ sealed class FilesystemInfoCommand : Command<FilesystemInfoCommand.Settings>
                                           out information,
                                           out FileSystem fsMetadata);
 
-                        AaruLogging.Write(information);
+                        AaruLogging.Write("{0}", information);
                         Statistics.AddFilesystem(fsMetadata.Type);
 
                         break;
