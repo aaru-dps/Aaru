@@ -139,10 +139,36 @@ public sealed partial class ISO9660
     /// <returns>Decoded identifier</returns>
     internal static string DecodeIdentifier(byte[] field, Encoding encoding, ref bool shiftJis)
     {
-        if(!IsShiftJis(field) || ShiftJis is null) return StringHandlers.CToString(field, encoding).TrimEnd();
+        if(!IsShiftJis(field) || ShiftJis is null)
+            return Sanitize(StringHandlers.CToString(field, encoding).TrimEnd());
 
         shiftJis = true;
 
-        return StringHandlers.CToString(field, ShiftJis).TrimEnd();
+        return Sanitize(StringHandlers.CToString(field, ShiftJis).TrimEnd());
+    }
+
+    /// <summary>
+    ///     Removes the control characters and escapes the console markup in an identifier. Some discs store binary data,
+    ///     like copy protection signatures, in the identifier fields, and that must not corrupt the output.
+    /// </summary>
+    /// <param name="identifier">Decoded identifier</param>
+    /// <returns>Identifier safe to print</returns>
+    static string Sanitize(string identifier)
+    {
+        if(string.IsNullOrEmpty(identifier)) return identifier;
+
+        var sb = new StringBuilder(identifier.Length);
+
+        foreach(char c in identifier)
+        {
+            if(char.IsControl(c)) continue;
+
+            // Aaru prints the volume descriptor information as console markup
+            if(c == '[') sb.Append('[');
+
+            sb.Append(c);
+        }
+
+        return sb.ToString().TrimEnd();
     }
 }

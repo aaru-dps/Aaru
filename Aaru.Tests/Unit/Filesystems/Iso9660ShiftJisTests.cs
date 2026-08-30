@@ -99,6 +99,39 @@ public class Iso9660ShiftJisTests
     }
 
     [Test]
+    public void SanitizesBinaryIdentifier()
+    {
+        // Publisher identifier of "Little Busters!", a copy protection signature, not text
+        byte[] binary =
+        [
+            0xD6, 0xF3, 0x27, 0x14, 0x66, 0x1D, 0x8D, 0xDC, 0x7B, 0x74, 0xF0, 0x4C, 0xE9, 0x55, 0xA7, 0x9D, 0x0A,
+            0xA0, 0x11, 0xD6, 0x3C, 0xD1, 0xA3, 0x98, 0x35, 0xC8, 0x02, 0x8C, 0x64, 0x68, 0x55, 0xFE, 0x77, 0x32,
+            0x6E, 0x29, 0x19, 0x71, 0x1C, 0xC1, 0x95, 0x56, 0x77, 0x80, 0x58, 0x7F, 0xD7, 0x19, 0x37, 0x5E, 0xC4,
+            0x20, 0x20
+        ];
+
+        var shiftJis = false;
+
+        ISO9660.IsShiftJis(binary).Should().BeFalse();
+
+        string decoded = ISO9660.DecodeIdentifier(binary, Encoding.GetEncoding(1252), ref shiftJis);
+
+        shiftJis.Should().BeFalse();
+        decoded.Should().NotContainAny("\n", "\u0002", "\u007f");
+        decoded.Should().NotMatchRegex("[\\u0000-\\u001F\\u007F]");
+    }
+
+    [Test]
+    public void EscapesMarkupInIdentifier()
+    {
+        var shiftJis = false;
+
+        ISO9660.DecodeIdentifier(Encoding.ASCII.GetBytes("[red]NOT MARKUP"), Encoding.ASCII, ref shiftJis)
+               .Should()
+               .Be("[[red]NOT MARKUP");
+    }
+
+    [Test]
     public void DecodesAsciiIdentifierWithFallback()
     {
         var shiftJis = false;
