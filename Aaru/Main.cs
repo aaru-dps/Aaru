@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -86,39 +86,32 @@ class MainClass
         {
             AaruLogging.WriteLineEvent += static (format, objects) =>
             {
-                if(objects is null)
-                    AnsiConsole.MarkupLine(format);
-                else
-                    AnsiConsole.MarkupLine(format, objects);
+                string formatted = SafeFormat(format, objects);
 
-                // Format the string so we can remove the markup
-                if(format is null) return;
+                SafeMarkup(formatted);
+                AnsiConsole.WriteLine();
 
-                string formatted = objects is null ? format : string.Format(format, objects);
-                formatted = Markup.Remove(formatted);
-                Log.Information(formatted);
+                if(formatted is null) return;
+
+                Log.Information(SafeRemoveMarkup(formatted));
             };
 
             AaruLogging.WriteEvent += static (format, objects) =>
             {
-                if(objects is null)
-                    AnsiConsole.Markup(format);
-                else
-                    AnsiConsole.Markup(format, objects);
+                string formatted = SafeFormat(format, objects);
 
-                // Format the string so we can remove the markup
-                if(format is null) return;
+                if(formatted is null) return;
 
-                string formatted = objects is null ? format : string.Format(format, objects);
-                formatted = Markup.Remove(formatted);
-                Log.Information(formatted);
+                SafeMarkup(formatted);
+
+                Log.Information(SafeRemoveMarkup(formatted));
             };
 
             AaruLogging.ErrorEvent   += Log.Error;
             AaruLogging.VerboseEvent += Log.Verbose;
 
             AaruLogging.DebugEvent += static (module, format, objects) =>
-                Log.Debug(string.Format($"[blue]({module})[/] {format}", objects));
+                Log.Debug($"[blue]({module})[/] {SafeFormat(format, objects)}");
 
             AaruLogging.WriteExceptionEvent += static (ex, message, objects) =>
             {
@@ -128,10 +121,8 @@ class MainClass
                 // Also display the message if provided
                 if(!string.IsNullOrEmpty(message))
                 {
-                    if(objects == null || objects.Length == 0)
-                        AnsiConsole.MarkupLine(message);
-                    else
-                        AnsiConsole.MarkupLine(string.Format(message, objects));
+                    SafeMarkup(SafeFormat(message, objects));
+                    AnsiConsole.WriteLine();
                 }
 
                 // Log to file with full exception details
@@ -520,5 +511,62 @@ class MainClass
         AnsiConsole.MarkupLine("[bold][blue]{0}[/][/]", _assemblyCopyright);
         AnsiConsole.MarkupLine("[bold][orange3]If you like this software, please contribute at [/][blue]https://patreon.com/claunia[/][/]");
         AnsiConsole.WriteLine();
+    }
+
+    /// <summary>
+    ///     Applies the format arguments to a composite format string, returning it unchanged if it is not a valid
+    ///     composite format string. Filesystem and image plugins print data read from the media, and that data can contain
+    ///     anything, including braces.
+    /// </summary>
+    /// <param name="format">A composite format string</param>
+    /// <param name="arg">An array of objects to write using <paramref name="format" /></param>
+    /// <returns>Formatted string</returns>
+    static string SafeFormat(string format, object[] arg)
+    {
+        if(format is null || arg is null || arg.Length == 0) return format;
+
+        try
+        {
+            return string.Format(format, arg);
+        }
+        catch(FormatException)
+        {
+            return format;
+        }
+    }
+
+    /// <summary>
+    ///     Writes a string to the console interpreting the markup in it, falling back to printing it verbatim if the
+    ///     markup is not valid. Filesystem and image plugins print data read from the media, and that data can contain
+    ///     anything, including square brackets.
+    /// </summary>
+    /// <param name="text">String to write</param>
+    static void SafeMarkup(string text)
+    {
+        if(string.IsNullOrEmpty(text)) return;
+
+        try
+        {
+            AnsiConsole.Markup(text);
+        }
+        catch(InvalidOperationException)
+        {
+            AnsiConsole.Write(text);
+        }
+    }
+
+    /// <summary>Removes the markup from a string, returning it unchanged if the markup is not valid</summary>
+    /// <param name="text">String to remove the markup from</param>
+    /// <returns>String without markup</returns>
+    static string SafeRemoveMarkup(string text)
+    {
+        try
+        {
+            return Markup.Remove(text);
+        }
+        catch(InvalidOperationException)
+        {
+            return text;
+        }
     }
 }
