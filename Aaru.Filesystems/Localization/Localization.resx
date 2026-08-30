@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 
 <root>
     <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -3977,4 +3977,7 @@
     <data name="Journal_is_at_block_0_sub_partition_1_size_2_blocks" xml:space="preserve">
         <value>Journal is at block {0}, sub-partition {1}, size {2} blocks</value>
     </data>
+  <data name="Shift_JIS_detected_in_primary_volume_descriptor" xml:space="preserve">
+    <value>Shift-JIS characters detected in primary volume descriptor identifiers</value>
+  </data>
 </root>

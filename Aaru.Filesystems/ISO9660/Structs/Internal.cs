@@ -100,6 +100,7 @@ public sealed partial class ISO9660
         public DateTime EffectiveTime;
         public ushort   BlockSize;
         public uint     Blocks;
+        public bool     ShiftJis;
     }
 
 #endregion

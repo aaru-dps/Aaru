@@ -247,7 +247,7 @@ public sealed partial class ISO9660
         else if(cdiInfo)
             decodedVd = DecodeVolumeDescriptor(fsvd.Value);
         else
-            decodedVd = DecodeVolumeDescriptor(pvd.Value);
+            decodedVd = DecodeVolumeDescriptor(pvd.Value, encoding);
 
         if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
@@ -624,6 +624,9 @@ public sealed partial class ISO9660
             isoMetadata.AppendLine(Localization.VOLUME_DESCRIPTOR_INFORMATION);
             isoMetadata.AppendLine(Localization.VOLUME_DESCRIPTOR_INFORMATION_border);
         }
+
+        if(decodedVd.ShiftJis)
+            isoMetadata.AppendLine(Localization.Shift_JIS_detected_in_primary_volume_descriptor);
 
         isoMetadata.AppendFormat(Localization.System_identifier_0,     decodedVd.SystemIdentifier).AppendLine();
         isoMetadata.AppendFormat(Localization.Volume_identifier_0,     decodedVd.VolumeIdentifier).AppendLine();

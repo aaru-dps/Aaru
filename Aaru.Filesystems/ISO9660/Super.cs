@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
@@ -261,6 +261,9 @@ public sealed partial class ISO9660
             decodedVd = DecodeVolumeDescriptor(fsvd.Value);
         else
             decodedVd = DecodeVolumeDescriptor(pvd.Value, _namespace == Namespace.Romeo ? _encoding : Encoding.ASCII);
+
+        if(decodedVd.ShiftJis)
+            AaruLogging.Debug(MODULE_NAME, Localization.Shift_JIS_detected_in_primary_volume_descriptor);
 
         if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 

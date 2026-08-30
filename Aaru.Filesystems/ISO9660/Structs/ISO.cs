@@ -43,14 +43,19 @@ public sealed partial class ISO9660
     {
         encoding ??= Encoding.ASCII;
 
+        // ISO 9660 gives no way to declare the character set used in the primary volume descriptor, but Japanese discs
+        // commonly store Shift-JIS in these fields, and can mix it with plain ASCII fields, so check each one on its own.
+        var shiftJis = false;
+
         var decodedVd = new DecodedVolumeDescriptor
         {
-            SystemIdentifier       = StringHandlers.CToString(pvd.system_id,      encoding).TrimEnd(),
-            VolumeIdentifier       = StringHandlers.CToString(pvd.volume_id,      encoding).TrimEnd(),
-            VolumeSetIdentifier    = StringHandlers.CToString(pvd.volume_set_id,  encoding).TrimEnd(),
-            PublisherIdentifier    = StringHandlers.CToString(pvd.publisher_id,   encoding).TrimEnd(),
-            DataPreparerIdentifier = StringHandlers.CToString(pvd.preparer_id,    encoding).TrimEnd(),
-            ApplicationIdentifier  = StringHandlers.CToString(pvd.application_id, encoding).TrimEnd()
+            SystemIdentifier       = DecodeIdentifier(pvd.system_id,      encoding, ref shiftJis),
+            VolumeIdentifier       = DecodeIdentifier(pvd.volume_id,      encoding, ref shiftJis),
+            VolumeSetIdentifier    = DecodeIdentifier(pvd.volume_set_id,  encoding, ref shiftJis),
+            PublisherIdentifier    = DecodeIdentifier(pvd.publisher_id,   encoding, ref shiftJis),
+            DataPreparerIdentifier = DecodeIdentifier(pvd.preparer_id,    encoding, ref shiftJis),
+            ApplicationIdentifier  = DecodeIdentifier(pvd.application_id, encoding, ref shiftJis),
+            ShiftJis               = shiftJis
         };
 
         if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00)

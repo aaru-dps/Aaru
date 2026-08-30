@@ -1407,6 +1407,12 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string Shift_JIS_detected_in_primary_volume_descriptor {
+            get {
+                return ResourceManager.GetString("Shift_JIS_detected_in_primary_volume_descriptor", resourceCulture);
+            }
+        }
+
         internal static string Found_unknown_supplementary_volume_descriptor {
             get {
                 return ResourceManager.GetString("Found_unknown_supplementary_volume_descriptor", resourceCulture);
