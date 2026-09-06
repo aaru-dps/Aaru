@@ -23,7 +23,7 @@
     <PackageVersion Include="Macross.Json.Extensions" Version="3.0.0" />
     <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
