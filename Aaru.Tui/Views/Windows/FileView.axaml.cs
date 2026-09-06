@@ -28,23 +28,59 @@
 using Aaru.Tui.ViewModels.Windows;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Threading;
 
 namespace Aaru.Tui.Views.Windows;
 
 public partial class FileView : UserControl
 {
+    bool _focusPending;
+
     public FileView()
     {
         InitializeComponent();
+
+        // Tunnel so we see Enter before the ListBox's own key handling marks it as handled
+        FileList.AddHandler(KeyDownEvent, ListBox_OnKeyDown, RoutingStrategies.Tunnel);
+
+        // Every directory change rebuilds the item list, so put the keyboard focus back on the first entry
+        FileList.Items.CollectionChanged += (_, _) => FocusFileList();
     }
 
-    private void ListBox_OnKeyDown(object sender, KeyEventArgs e)
+    void ListBox_OnKeyDown(object? sender, KeyEventArgs e)
     {
         if(e.Key != Key.Enter) return;
         if(DataContext is not FileViewViewModel vm || !vm.OpenSelectedFileCommand.CanExecute(null)) return;
 
         vm.OpenSelectedFileCommand.Execute(null);
         e.Handled = true;
+    }
+
+    /// <inheritdoc />
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        FocusFileList();
+    }
+
+    /// <summary>Selects the first file if nothing is selected and moves keyboard focus into the file list.</summary>
+    void FocusFileList()
+    {
+        if(_focusPending) return;
+
+        _focusPending = true;
+
+        Dispatcher.UIThread.Post(() =>
+        {
+            _focusPending = false;
+
+            if(FileList.ItemCount == 0) return;
+
+            if(FileList.SelectedIndex < 0) FileList.SelectedIndex = 0;
+
+            FileList.ContainerFromIndex(FileList.SelectedIndex)?.Focus();
+        }, DispatcherPriority.Loaded);
     }
 
     /// <inheritdoc />

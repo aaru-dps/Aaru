@@ -48,16 +48,15 @@
                             <console:LineBrush LineStyle="DoubleLine"
                                                Brush="Cyan" />
                         </Border.BorderBrush>
-                        <ListBox ItemsSource="{Binding Files, Mode=OneWay}"
+                        <ListBox x:Name="FileList"
+                                 ItemsSource="{Binding Files, Mode=OneWay}"
                                  Background="{DynamicResource CyberBackgroundPrimaryBrush}"
                                  SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
-                                 KeyDown="ListBox_OnKeyDown"
                                  BorderThickness="0">
                             <ListBox.ItemTemplate>
                                 <DataTemplate DataType="models:FileModel">
-                                    <TextBox Text="{Binding Filename, Mode=OneWay}"
-                                             Foreground="{Binding ForegroundBrush, Mode=OneWay}"
-                                             Background="{DynamicResource CyberBackgroundPrimaryBrush}" />
+                                    <TextBlock Text="{Binding Filename, Mode=OneWay}"
+                                               Foreground="{Binding ForegroundBrush, Mode=OneWay}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
