@@ -1,16 +1,16 @@
-<windowManager:ManagedWindow xmlns="https://github.com/avaloniaui"
-                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                             xmlns:vm="using:Aaru.Tui.ViewModels.Dialogs"
-                             xmlns:brushes="https://github.com/jinek/consolonia"
-                             xmlns:windowManager="clr-namespace:Iciclecreek.Avalonia.WindowManager;assembly=Iciclecreek.Avalonia.WindowManager"
-                             xmlns:localization="clr-namespace:Aaru.Tui.Localization"
-                             Width="40"
-                             Height="8"
-                             x:Class="Aaru.Tui.Views.Dialogs.GoToSectorDialog"
-                             x:DataType="vm:GoToSectorDialogViewModel"
-                             Title="{x:Static localization:Resources.GoToSector_Title}"
-                             WindowStartupLocation="CenterScreen"
-                             CanResize="False">
+<views:DialogWindowBase xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:views="using:Aaru.Tui.Views.Dialogs"
+                        xmlns:vm="using:Aaru.Tui.ViewModels.Dialogs"
+                        xmlns:brushes="https://github.com/jinek/consolonia"
+                        xmlns:localization="clr-namespace:Aaru.Tui.Localization"
+                        Width="40"
+                        Height="8"
+                        x:Class="Aaru.Tui.Views.Dialogs.GoToSectorDialog"
+                        x:DataType="vm:GoToSectorDialogViewModel"
+                        Title="{x:Static localization:Resources.GoToSector_Title}"
+                        WindowStartupLocation="CenterScreen"
+                        CanResize="False">
     <Design.DataContext>
         <vm:GoToSectorDialogViewModel />
     </Design.DataContext>
@@ -24,7 +24,8 @@
             <TextBlock Text="{x:Static localization:Resources.SectorNumber_Text}"
                        Foreground="{DynamicResource CyberNeonMagentaBrush}"
                        FontWeight="Bold" />
-            <TextBox Text="{Binding SectorNumber, Mode=TwoWay}"
+            <TextBox x:Name="SectorBox"
+                     Text="{Binding SectorNumber, Mode=TwoWay}"
                      Background="{DynamicResource CyberBackgroundTertiaryBrush}"
                      Foreground="{DynamicResource CyberNeonCyanBrush}"
                      BorderBrush="{DynamicResource CyberNeonCyanBrush}"
@@ -37,10 +38,12 @@
                         HorizontalAlignment="Right"
                         Spacing="1">
                 <Button Content="{x:Static localization:Resources.OkButton_Content}"
+                        IsDefault="True"
                         Command="{Binding OkCommand, Mode=OneWay}" />
                 <Button Content="{x:Static localization:Resources.CancelButton_Content}"
+                        IsCancel="True"
                         Command="{Binding CancelCommand, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Border>
-</windowManager:ManagedWindow>
+</views:DialogWindowBase>

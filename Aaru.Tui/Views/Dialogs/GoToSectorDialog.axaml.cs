@@ -25,14 +25,18 @@
 // Copyright © 2011-2026 Natalia Portillo
 // ****************************************************************************/
 
-using Iciclecreek.Avalonia.WindowManager;
+
+using Avalonia.Input;
 
 namespace Aaru.Tui.Views.Dialogs;
 
-public partial class GoToSectorDialog : ManagedWindow
+public partial class GoToSectorDialog : DialogWindowBase
 {
     public GoToSectorDialog()
     {
         InitializeComponent();
     }
+
+    /// <inheritdoc />
+    protected override IInputElement InitialFocusTarget => SectorBox;
 }

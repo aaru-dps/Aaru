@@ -1,8 +1,6 @@
-using Iciclecreek.Avalonia.WindowManager;
-
 namespace Aaru.Tui.Views.Dialogs;
 
-public partial class HexViewHelpDialog : ManagedWindow
+public partial class HexViewHelpDialog : DialogWindowBase
 {
     public HexViewHelpDialog()
     {

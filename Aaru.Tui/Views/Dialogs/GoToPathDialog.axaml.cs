@@ -1,11 +1,14 @@
-using Iciclecreek.Avalonia.WindowManager;
+using Avalonia.Input;
 
 namespace Aaru.Tui.Views.Dialogs;
 
-public partial class GoToPathDialog : ManagedWindow
+public partial class GoToPathDialog : DialogWindowBase
 {
     public GoToPathDialog()
     {
         InitializeComponent();
     }
+
+    /// <inheritdoc />
+    protected override IInputElement InitialFocusTarget => PathBox;
 }

@@ -1,8 +1,6 @@
-using Iciclecreek.Avalonia.WindowManager;
-
 namespace Aaru.Tui.Views.Dialogs;
 
-public partial class ImageHelpDialog : ManagedWindow
+public partial class ImageHelpDialog : DialogWindowBase
 {
     public ImageHelpDialog()
     {

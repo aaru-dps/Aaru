@@ -1,19 +1,19 @@
-<windowManager:ManagedWindow xmlns="https://github.com/avaloniaui"
-                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                             xmlns:windowManager="clr-namespace:Iciclecreek.Avalonia.WindowManager;assembly=Iciclecreek.Avalonia.WindowManager"
-                             xmlns:brushes="https://github.com/jinek/consolonia"
-                             xmlns:dialogs="clr-namespace:Aaru.Tui.ViewModels.Dialogs"
-                             xmlns:localization="clr-namespace:Aaru.Tui.Localization"
-                             mc:Ignorable="d"
-                             d:DesignWidth="800"
-                             d:DesignHeight="450"
-                             Width="40"
-                             WindowStartupLocation="CenterScreen"
-                             x:Class="Aaru.Tui.Views.Dialogs.GoToPathDialog"
-                             x:DataType="dialogs:GoToPathDialogViewModel"
-                             Title="{x:Static localization:Resources.GoToPath_Title}">
+<views:DialogWindowBase xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:views="using:Aaru.Tui.Views.Dialogs"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:brushes="https://github.com/jinek/consolonia"
+                        xmlns:dialogs="clr-namespace:Aaru.Tui.ViewModels.Dialogs"
+                        xmlns:localization="clr-namespace:Aaru.Tui.Localization"
+                        mc:Ignorable="d"
+                        d:DesignWidth="800"
+                        d:DesignHeight="450"
+                        Width="40"
+                        WindowStartupLocation="CenterScreen"
+                        x:Class="Aaru.Tui.Views.Dialogs.GoToPathDialog"
+                        x:DataType="dialogs:GoToPathDialogViewModel"
+                        Title="{x:Static localization:Resources.GoToPath_Title}">
     <Design.DataContext>
         <dialogs:GoToPathDialogViewModel />
     </Design.DataContext>
@@ -27,7 +27,8 @@
             <TextBlock Text="{x:Static localization:Resources.DestinationPath_Text}"
                        Foreground="{DynamicResource CyberNeonMagentaBrush}"
                        FontWeight="Bold" />
-            <TextBox Text="{Binding Path, Mode=TwoWay}"
+            <TextBox x:Name="PathBox"
+                     Text="{Binding Path, Mode=TwoWay}"
                      Background="{DynamicResource CyberBackgroundTertiaryBrush}"
                      Foreground="{DynamicResource CyberNeonCyanBrush}"
                      BorderBrush="{DynamicResource CyberNeonCyanBrush}"
@@ -40,10 +41,12 @@
                         HorizontalAlignment="Right"
                         Spacing="1">
                 <Button Content="{x:Static localization:Resources.OkButton_Content}"
+                        IsDefault="True"
                         Command="{Binding OkCommand, Mode=OneWay}" />
                 <Button Content="{x:Static localization:Resources.CancelButton_Content}"
+                        IsCancel="True"
                         Command="{Binding CancelCommand, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Border>
-</windowManager:ManagedWindow>
+</views:DialogWindowBase>

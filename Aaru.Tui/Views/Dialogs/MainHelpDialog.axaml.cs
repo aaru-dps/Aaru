@@ -1,8 +1,6 @@
-using Iciclecreek.Avalonia.WindowManager;
-
 namespace Aaru.Tui.Views.Dialogs;
 
-public partial class MainHelpDialog : ManagedWindow
+public partial class MainHelpDialog : DialogWindowBase
 {
     public MainHelpDialog()
     {

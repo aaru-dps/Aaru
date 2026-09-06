@@ -1,21 +1,21 @@
-<windowManager:ManagedWindow xmlns="https://github.com/avaloniaui"
-                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                             xmlns:windowManager="clr-namespace:Iciclecreek.Avalonia.WindowManager;assembly=Iciclecreek.Avalonia.WindowManager"
-                             xmlns:dialogs="clr-namespace:Aaru.Tui.ViewModels.Dialogs"
-                             xmlns:brushes="https://github.com/jinek/consolonia"
-                             xmlns:localization="clr-namespace:Aaru.Tui.Localization"
-                             mc:Ignorable="d"
-                             d:DesignWidth="800"
-                             d:DesignHeight="450"
-                             x:Class="Aaru.Tui.Views.Dialogs.MainHelpDialog"
-                             Width="40"
-                             Height="8"
-                             WindowStartupLocation="CenterScreen"
-                             CanResize="False"
-                             x:DataType="dialogs:MainHelpDialogViewModel"
-                             Title="{x:Static localization:Resources.Help_Title}">
+<views:DialogWindowBase xmlns="https://github.com/avaloniaui"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:views="using:Aaru.Tui.Views.Dialogs"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:dialogs="clr-namespace:Aaru.Tui.ViewModels.Dialogs"
+                        xmlns:brushes="https://github.com/jinek/consolonia"
+                        xmlns:localization="clr-namespace:Aaru.Tui.Localization"
+                        mc:Ignorable="d"
+                        d:DesignWidth="800"
+                        d:DesignHeight="450"
+                        x:Class="Aaru.Tui.Views.Dialogs.MainHelpDialog"
+                        Width="40"
+                        Height="8"
+                        WindowStartupLocation="CenterScreen"
+                        CanResize="False"
+                        x:DataType="dialogs:MainHelpDialogViewModel"
+                        Title="{x:Static localization:Resources.Help_Title}">
     <Design.DataContext>
         <dialogs:MainHelpDialogViewModel />
     </Design.DataContext>
@@ -66,8 +66,10 @@
                         HorizontalAlignment="Right"
                         Spacing="1">
                 <Button Content="{x:Static localization:Resources.OkButton_Content}"
+                        IsDefault="True"
+                        IsCancel="True"
                         Command="{Binding OkCommand, Mode=OneWay}" />
             </StackPanel>
         </StackPanel>
     </Border>
-</windowManager:ManagedWindow>
+</views:DialogWindowBase>
