@@ -1,82 +1,82 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="Aaru.Checksums.Native" Version="6.0.0-beta.1"/>
-    <PackageVersion Include="Aaru.Compression.Native" Version="6.0.0-beta.1"/>
-    <PackageVersion Include="AsyncFixer" Version="2.1.0"/>
-    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.0"/>
-    <PackageVersion Include="Avalonia.Desktop" Version="12.0.1"/>
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.1"/>
-    <PackageVersion Include="Avalonia" Version="12.0.1"/>
-    <PackageVersion Include="Claunia.Encoding" Version="1.9.2"/>
-    <PackageVersion Include="Claunia.RsrcFork" Version="1.2.0"/>
-    <PackageVersion Include="Consolonia" Version="11.3.7-beta.1773"/>
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2"/>
-    <PackageVersion Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2"/>
-    <PackageVersion Include="ErrorProne.NET.Structs" Version="0.1.2"/>
-    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1"/>
-    <PackageVersion Include="FluentAssertions" Version="8.9.0"/>
-    <PackageVersion Include="FluentIcons.Avalonia" Version="2.1.324"/>
-    <PackageVersion Include="Humanizer.Core" Version="3.0.10"/>
-    <PackageVersion Include="Humanizer" Version="3.0.10"/>
-    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
-    <PackageVersion Include="libaaruformat" Version="1.0.0-beta.1.2"/>
-    <PackageVersion Include="Macross.Json.Extensions" Version="3.0.0"/>
-    <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0"/>
-    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4"/>
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0"/>
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5"/>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0"/>
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15"/>
-    <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5"/>
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4"/>
-    <PackageVersion Include="NUnit.Analyzers" Version="4.12.0"/>
-    <PackageVersion Include="nunit" Version="4.5.1"/>
-    <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0"/>
-    <PackageVersion Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.12.0"/>
-    <PackageVersion Include="plist-cil" Version="2.3.1"/>
-    <PackageVersion Include="Prism.Avalonia" Version="9.0.537.11130"/>
-    <PackageVersion Include="Prism.DryIoc.Avalonia" Version="9.0.537.11130"/>
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0"/>
-    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.15.0"/>
-    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0"/>
-    <PackageVersion Include="Sentry" Version="6.4.1"/>
-    <PackageVersion Include="Sentry.Serilog" Version="6.4.1"/>
-    <PackageVersion Include="Serilog" Version="4.3.1"/>
-    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0"/>
-    <PackageVersion Include="Serilog.Sinks.Spectre" Version="0.6.0"/>
-    <PackageVersion Include="SharpCompress" Version="0.47.4"/>
-    <PackageVersion Include="SkiaSharp" Version="3.119.3-preview.1.1"/>
-    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.3-preview.1.1" Condition="$([MSBuild]::IsOSPlatform('Linux'))"/>
-    <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31"/>
-    <PackageVersion Include="Spectre.Console.Analyzer" Version="1.0.0"/>
-    <PackageVersion Include="Spectre.Console" Version="0.55.2"/>
-    <PackageVersion Include="Spectre.Console.Cli" Version="0.55.0"/>
-    <PackageVersion Include="Spectre.Console.Json" Version="0.55.2"/>
-    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.4"/>
-    <PackageVersion Include="System.Collections" Version="4.3.0"/>
-    <PackageVersion Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7"/>
-    <PackageVersion Include="System.Diagnostics.Debug" Version="4.3.0"/>
-    <PackageVersion Include="System.Drawing.Common" Version="10.0.5"/>
-    <PackageVersion Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
-    <PackageVersion Include="System.IO.FileSystem" Version="4.3.0"/>
-    <PackageVersion Include="System.IO.Hashing" Version="10.0.6"/>
-    <PackageVersion Include="System.Management" Version="10.0.5"/>
-    <PackageVersion Include="System.Memory" Version="4.6.3"/>
-    <PackageVersion Include="System.Net.Primitives" Version="4.3.1"/>
-    <PackageVersion Include="System.Resources.Extensions" Version="10.0.5"/>
-    <PackageVersion Include="System.Runtime.Extensions" Version="4.3.1"/>
-    <PackageVersion Include="System.Runtime.Handles" Version="4.3.0"/>
-    <PackageVersion Include="System.Runtime.InteropServices" Version="4.3.0"/>
-    <PackageVersion Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5"/>
-    <PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.0"/>
-    <PackageVersion Include="System.Text.Json" Version="10.0.0"/>
-    <PackageVersion Include="System.ValueTuple" Version="4.6.2"/>
-    <PackageVersion Include="Text.Analyzers" Version="4.14.0"/>
-    <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.4.4"/>
-    <PackageVersion Include="Packaging.Targets" Version="0.1.232"/>
+    <PackageVersion Include="Aaru.Checksums.Native" Version="6.0.0-beta.1" />
+    <PackageVersion Include="Aaru.Compression.Native" Version="6.0.0-beta.1" />
+    <PackageVersion Include="AsyncFixer" Version="2.1.0" />
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.0.1" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.1" />
+    <PackageVersion Include="Avalonia" Version="12.0.1" />
+    <PackageVersion Include="Claunia.Encoding" Version="1.9.2" />
+    <PackageVersion Include="Claunia.RsrcFork" Version="1.2.0" />
+    <PackageVersion Include="Consolonia" Version="11.3.7-beta.1773" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2" />
+    <PackageVersion Include="ErrorProne.NET.Structs" Version="0.1.2" />
+    <PackageVersion Include="FluentAssertions.Analyzers" Version="0.34.1" />
+    <PackageVersion Include="FluentAssertions" Version="8.9.0" />
+    <PackageVersion Include="FluentIcons.Avalonia" Version="2.1.324" />
+    <PackageVersion Include="Humanizer.Core" Version="3.0.10" />
+    <PackageVersion Include="Humanizer" Version="3.0.10" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="libaaruformat" Version="1.0.0-beta.1.2" />
+    <PackageVersion Include="Macross.Json.Extensions" Version="3.0.0" />
+    <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.12.0" />
+    <PackageVersion Include="nunit" Version="4.5.1" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0" />
+    <PackageVersion Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.12.0" />
+    <PackageVersion Include="plist-cil" Version="2.3.1" />
+    <PackageVersion Include="Prism.Avalonia" Version="9.0.537.11130" />
+    <PackageVersion Include="Prism.DryIoc.Avalonia" Version="9.0.537.11130" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Sentry" Version="6.4.1" />
+    <PackageVersion Include="Sentry.Serilog" Version="6.4.1" />
+    <PackageVersion Include="Serilog" Version="4.3.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Spectre" Version="0.6.0" />
+    <PackageVersion Include="SharpCompress" Version="0.47.4" />
+    <PackageVersion Include="SkiaSharp" Version="3.119.3-preview.1.1" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux" Version="3.119.3-preview.1.1" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageVersion Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" />
+    <PackageVersion Include="Spectre.Console.Analyzer" Version="1.0.0" />
+    <PackageVersion Include="Spectre.Console" Version="0.57.2" />
+    <PackageVersion Include="Spectre.Console.Cli" Version="0.55.0" />
+    <PackageVersion Include="Spectre.Console.Json" Version="0.57.2" />
+    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.4" />
+    <PackageVersion Include="System.Collections" Version="4.3.0" />
+    <PackageVersion Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
+    <PackageVersion Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageVersion Include="System.Drawing.Common" Version="10.0.5" />
+    <PackageVersion Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageVersion Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.6" />
+    <PackageVersion Include="System.Management" Version="10.0.5" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
+    <PackageVersion Include="System.Net.Primitives" Version="4.3.1" />
+    <PackageVersion Include="System.Resources.Extensions" Version="10.0.5" />
+    <PackageVersion Include="System.Runtime.Extensions" Version="4.3.1" />
+    <PackageVersion Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageVersion Include="System.Runtime.InteropServices" Version="4.3.0" />
+    <PackageVersion Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5" />
+    <PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.0" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.0" />
+    <PackageVersion Include="System.ValueTuple" Version="4.6.2" />
+    <PackageVersion Include="Text.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.4.4" />
+    <PackageVersion Include="Packaging.Targets" Version="0.1.232" />
   </ItemGroup>
 </Project>
