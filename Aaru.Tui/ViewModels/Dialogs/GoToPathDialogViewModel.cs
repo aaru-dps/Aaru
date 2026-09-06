@@ -34,7 +34,7 @@ namespace Aaru.Tui.ViewModels.Dialogs;
 
 public sealed partial class GoToPathDialogViewModel : ViewModelBase
 {
-    internal ManagedWindow _dialog = null!;
+    readonly ManagedWindow _dialog;
     [ObservableProperty]
     string _errorMessage = string.Empty;
     [ObservableProperty]

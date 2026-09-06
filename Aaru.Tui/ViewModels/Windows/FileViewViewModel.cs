@@ -99,13 +99,8 @@ public sealed partial class FileViewViewModel : ViewModelBase
 
         if(view is null) return Task.CompletedTask;
 
-        var dialog = new MainHelpDialog
-        {
-            DataContext = new MainHelpDialogViewModel(null!)
-        };
-
-        // Set the dialog reference after creation
-        ((MainHelpDialogViewModel)dialog.DataContext!)._dialog = dialog;
+        var dialog = new MainHelpDialog();
+        dialog.DataContext = new MainHelpDialogViewModel(dialog);
 
         return dialog.ShowDialog(view as Window);
     }
@@ -116,26 +111,16 @@ public sealed partial class FileViewViewModel : ViewModelBase
 
         if(view is null) return;
 
-        var dialog = new GoToPathDialog
-        {
-            DataContext = new GoToPathDialogViewModel(null!)
-        };
-
-        // Set the dialog reference after creation
-        ((GoToPathDialogViewModel)dialog.DataContext!)._dialog = dialog;
+        var dialog    = new GoToPathDialog();
+        var viewModel = new GoToPathDialogViewModel(dialog);
+        dialog.DataContext = viewModel;
 
         bool? result = await dialog.ShowDialog<bool?>(view as Window);
 
-        if(result == true)
-        {
-            var viewModel = (GoToPathDialogViewModel)dialog.DataContext;
+        if(result != true || viewModel.Path is null || !Directory.Exists(viewModel.Path)) return;
 
-            if(viewModel.Path is not null && Directory.Exists(viewModel.Path))
-            {
-                Environment.CurrentDirectory = viewModel.Path;
-                LoadFiles();
-            }
-        }
+        Environment.CurrentDirectory = viewModel.Path;
+        LoadFiles();
     }
 
     void SectorView()

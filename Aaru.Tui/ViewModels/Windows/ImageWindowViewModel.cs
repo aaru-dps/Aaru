@@ -182,13 +182,8 @@ public sealed partial class ImageWindowViewModel : ViewModelBase
 
         if(view is null) return Task.CompletedTask;
 
-        var dialog = new ImageHelpDialog
-        {
-            DataContext = new ImageHelpDialogViewModel(null!)
-        };
-
-        // Set the dialog reference after creation
-        ((ImageHelpDialogViewModel)dialog.DataContext!)._dialog = dialog;
+        var dialog = new ImageHelpDialog();
+        dialog.DataContext = new ImageHelpDialogViewModel(dialog);
 
         return dialog.ShowDialog(view as Window);
     }

@@ -35,7 +35,7 @@ namespace Aaru.Tui.ViewModels.Dialogs;
 public sealed partial class GoToSectorDialogViewModel : ViewModelBase
 {
     readonly ulong         _maxSector;
-    internal ManagedWindow _dialog = null!;
+    readonly ManagedWindow _dialog;
     [ObservableProperty]
     string _errorMessage = string.Empty;
     [ObservableProperty]

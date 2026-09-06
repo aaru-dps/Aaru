@@ -6,7 +6,7 @@ namespace Aaru.Tui.ViewModels.Dialogs;
 
 public sealed class HexViewHelpDialogViewModel : ViewModelBase
 {
-    internal ManagedWindow _dialog = null!;
+    readonly ManagedWindow _dialog;
 
 
     public HexViewHelpDialogViewModel(ManagedWindow dialog)

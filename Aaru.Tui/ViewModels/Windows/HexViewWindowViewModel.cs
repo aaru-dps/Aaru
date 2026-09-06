@@ -106,13 +106,8 @@ public sealed partial class HexViewWindowViewModel : ViewModelBase
 
         if(view is null) return Task.CompletedTask;
 
-        var dialog = new HexViewHelpDialog
-        {
-            DataContext = new HexViewHelpDialogViewModel(null!)
-        };
-
-        // Set the dialog reference after creation
-        ((HexViewHelpDialogViewModel)dialog.DataContext!)._dialog = dialog;
+        var dialog = new HexViewHelpDialog();
+        dialog.DataContext = new HexViewHelpDialogViewModel(dialog);
 
         return dialog.ShowDialog(view as Window);
     }
@@ -123,26 +118,16 @@ public sealed partial class HexViewWindowViewModel : ViewModelBase
 
         if(view is null) return;
 
-        var dialog = new GoToSectorDialog
-        {
-            DataContext = new GoToSectorDialogViewModel(null!, _imageFormat.Info.Sectors - 1)
-        };
-
-        // Set the dialog reference after creation
-        ((GoToSectorDialogViewModel)dialog.DataContext!)._dialog = dialog;
+        var dialog    = new GoToSectorDialog();
+        var viewModel = new GoToSectorDialogViewModel(dialog, _imageFormat.Info.Sectors - 1);
+        dialog.DataContext = viewModel;
 
         bool? result = await dialog.ShowDialog<bool?>(view as Window);
 
-        if(result == true)
-        {
-            var viewModel = (GoToSectorDialogViewModel)dialog.DataContext;
+        if(result != true || !viewModel.Result.HasValue) return;
 
-            if(viewModel.Result.HasValue)
-            {
-                CurrentSector = viewModel.Result.Value;
-                LoadSector();
-            }
-        }
+        CurrentSector = viewModel.Result.Value;
+        LoadSector();
     }
 
     void PreviousSector()

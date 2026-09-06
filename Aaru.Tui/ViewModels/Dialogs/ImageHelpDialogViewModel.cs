@@ -6,7 +6,7 @@ namespace Aaru.Tui.ViewModels.Dialogs;
 
 public sealed class ImageHelpDialogViewModel : ViewModelBase
 {
-    internal ManagedWindow _dialog = null!;
+    readonly ManagedWindow _dialog;
 
 
     public ImageHelpDialogViewModel(ManagedWindow dialog)
