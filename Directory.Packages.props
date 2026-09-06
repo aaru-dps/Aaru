@@ -34,7 +34,7 @@
     <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.14.0" />
-    <PackageVersion Include="nunit" Version="4.5.1" />
+    <PackageVersion Include="nunit" Version="4.6.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.3.0" />
     <PackageVersion Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="2.0.0" />
     <PackageVersion Include="plist-cil" Version="2.3.1" />
