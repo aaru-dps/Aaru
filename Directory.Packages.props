@@ -60,14 +60,14 @@
     <PackageVersion Include="System.Collections" Version="4.3.0" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
     <PackageVersion Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageVersion Include="System.Drawing.Common" Version="10.0.5" />
+    <PackageVersion Include="System.Drawing.Common" Version="10.0.11" />
     <PackageVersion Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageVersion Include="System.IO.FileSystem" Version="4.3.0" />
-    <PackageVersion Include="System.IO.Hashing" Version="10.0.6" />
-    <PackageVersion Include="System.Management" Version="10.0.5" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.11" />
+    <PackageVersion Include="System.Management" Version="10.0.11" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
     <PackageVersion Include="System.Net.Primitives" Version="4.3.1" />
-    <PackageVersion Include="System.Resources.Extensions" Version="10.0.5" />
+    <PackageVersion Include="System.Resources.Extensions" Version="10.0.11" />
     <PackageVersion Include="System.Runtime.Extensions" Version="4.3.1" />
     <PackageVersion Include="System.Runtime.Handles" Version="4.3.0" />
     <PackageVersion Include="System.Runtime.InteropServices" Version="4.3.0" />
