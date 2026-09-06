@@ -23,26 +23,26 @@
     <PackageVersion Include="Macross.Json.Extensions" Version="3.0.0" />
     <PackageVersion Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.11" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.12.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.14.0" />
     <PackageVersion Include="nunit" Version="4.5.1" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0" />
-    <PackageVersion Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="1.12.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="6.3.0" />
+    <PackageVersion Include="Philips.CodeAnalysis.MaintainabilityAnalyzers" Version="2.0.0" />
     <PackageVersion Include="plist-cil" Version="2.3.1" />
     <PackageVersion Include="Prism.Avalonia" Version="9.0.537.11130" />
     <PackageVersion Include="Prism.DryIoc.Avalonia" Version="9.0.537.11130" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
-    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.15.0" />
-    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.15.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="5.0.0" />
+    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="5.0.0" />
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="5.0.0" />
     <PackageVersion Include="Sentry" Version="6.10.0" />
     <PackageVersion Include="Sentry.Serilog" Version="6.10.0" />
     <PackageVersion Include="Serilog" Version="4.4.0" />
@@ -75,7 +75,7 @@
     <PackageVersion Include="System.Text.Encoding.CodePages" Version="10.0.0" />
     <PackageVersion Include="System.Text.Json" Version="10.0.0" />
     <PackageVersion Include="System.ValueTuple" Version="4.6.2" />
-    <PackageVersion Include="Text.Analyzers" Version="4.14.0" />
+    <PackageVersion Include="Text.Analyzers" Version="5.6.0" />
     <PackageVersion Include="Unclassified.NetRevisionTask" Version="0.4.4" />
     <PackageVersion Include="Packaging.Targets" Version="0.1.232" />
   </ItemGroup>
