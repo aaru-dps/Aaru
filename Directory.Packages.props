@@ -56,7 +56,7 @@
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Spectre.Console.Cli" Version="0.55.0" />
     <PackageVersion Include="Spectre.Console.Json" Version="0.57.2" />
-    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.4" />
+    <PackageVersion Include="Svg.Controls.Avalonia" Version="12.0.0.17" />
     <PackageVersion Include="System.Collections" Version="4.3.0" />
     <PackageVersion Include="System.ComponentModel.Annotations" Version="6.0.0-preview.4.21253.7" />
     <PackageVersion Include="System.Diagnostics.Debug" Version="4.3.0" />
