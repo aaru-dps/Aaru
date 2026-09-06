@@ -602,7 +602,9 @@ sealed partial class Dump
 
                 if(trk == null) continue;
 
-                trk.Pregap      = imgTrack.Pregap;
+                // The image plugin synthesizes a 150 sector lead-in pregap for the disc's first track, do not import it
+                if(trk.Sequence is not (0 or 1)) trk.Pregap = imgTrack.Pregap;
+
                 trk.StartSector = imgTrack.StartSector;
                 trk.EndSector   = imgTrack.EndSector;
 
@@ -1348,7 +1350,8 @@ sealed partial class Dump
             // Fix track starts in each session's first track
             if(tracks.Where(t => t.Session == trk.Session).MinBy(static t => t.Sequence).Sequence == trk.Sequence)
             {
-                if(trk.Sequence == 1) continue;
+                // First session's first track (sequence 1, or 0 when there is a hidden track) has its pregap in the lead-in
+                if(trk.Sequence is 0 or 1) continue;
 
                 trk.StartSector -= trk.Pregap;
                 trk.Indexes[0]  =  (int)trk.StartSector;
