@@ -194,13 +194,6 @@
                 Value="{DynamicResource CyberNeonCyanBrush}" />
     </Style>
 
-    <Style Selector="DataGrid">
-        <Setter Property="Background"
-                Value="{DynamicResource CyberBackgroundPrimaryBrush}" />
-        <Setter Property="Foreground"
-                Value="{DynamicResource CyberTextPrimaryBrush}" />
-    </Style>
-
     <Style Selector="UserControl">
         <Setter Property="Background"
                 Value="{DynamicResource CyberBackgroundPrimaryBrush}" />

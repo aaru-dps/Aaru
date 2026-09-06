@@ -9,7 +9,8 @@
     <PackageVersion Include="Avalonia" Version="12.1.2" />
     <PackageVersion Include="Claunia.Encoding" Version="1.9.2" />
     <PackageVersion Include="Claunia.RsrcFork" Version="1.2.0" />
-    <PackageVersion Include="Consolonia" Version="11.3.7-beta.1773" />
+    <PackageVersion Include="Consolonia" Version="12.0.3.13" />
+    <PackageVersion Include="Consolonia.ManagedWindows" Version="12.0.3.13" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2" />
     <PackageVersion Include="ErrorProne.NET.Structs" Version="0.1.2" />
