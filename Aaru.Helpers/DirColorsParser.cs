@@ -116,7 +116,7 @@ public sealed class DirColorsParser
             }
 
             // Normal file color pattern
-            if(pattern.Equals("NORM", StringComparison.OrdinalIgnoreCase))
+            if(pattern.Equals("NORM", StringComparison.OrdinalIgnoreCase) || pattern.Equals("NORMAL", StringComparison.OrdinalIgnoreCase))
             {
                 normalHex = hex;
 
