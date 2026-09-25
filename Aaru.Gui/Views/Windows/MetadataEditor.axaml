@@ -567,6 +567,29 @@
                                                     </DockPanel>
                                                     <TextBox Text="{Binding Name, Mode=TwoWay}"
                                                              Watermark="{x:Static gui:GUI.Watermark_Enter_OS_name}" />
+                                                    <DockPanel Margin="0,8,0,0">
+                                                        <Button DockPanel.Dock="Right"
+                                                                Content="{x:Static gui:GUI.Button_Add_Version}"
+                                                                Command="{Binding AddVersionCommand, Mode=OneWay}" />
+                                                        <TextBlock Classes="label"
+                                                                   Text="{x:Static gui:GUI.Label_OS_Versions}" />
+                                                    </DockPanel>
+                                                    <ItemsControl ItemsSource="{Binding Versions, Mode=OneWay}">
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <DockPanel HorizontalSpacing="8"
+                                                                           Margin="0,4,0,0">
+                                                                    <Button DockPanel.Dock="Right"
+                                                                            Classes="danger"
+                                                                            Content="{x:Static gui:GUI.Button_Remove}"
+                                                                            Command="{Binding $parent[ItemsControl].DataContext.RemoveVersionCommand, Mode=OneWay}"
+                                                                            CommandParameter="{Binding Mode=OneWay}" />
+                                                                    <TextBox Text="{Binding Value, Mode=TwoWay}"
+                                                                             Watermark="{x:Static gui:GUI.Watermark_Enter_OS_version}" />
+                                                                </DockPanel>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
                                                 </StackPanel>
                                             </Border>
                                         </DataTemplate>

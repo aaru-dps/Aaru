@@ -690,7 +690,7 @@ public sealed partial class RequiredOperatingSystemViewModel : ObservableObject
     string _name;
 
     [ObservableProperty]
-    ObservableCollection<string> _versions = [];
+    ObservableCollection<StringWrapper> _versions = [];
 
     public RequiredOperatingSystemViewModel() {}
 
@@ -700,15 +700,28 @@ public sealed partial class RequiredOperatingSystemViewModel : ObservableObject
 
         if(os.Versions == null) return;
 
-        foreach(string version in os.Versions) Versions.Add(version);
+        foreach(string version in os.Versions) Versions.Add(new StringWrapper(version));
     }
 
+    [RelayCommand]
+    void AddVersion() => Versions.Add(new StringWrapper());
+
+    [RelayCommand]
+    void RemoveVersion(StringWrapper item) => Versions.Remove(item);
+
     [NotNull]
-    public RequiredOperatingSystem ToModel() => new()
+    public RequiredOperatingSystem ToModel()
     {
-        Name     = Name,
-        Versions = Versions.Any() ? [..Versions] : null
-    };
+        List<string> versions = Versions.Select(static v => v.Value?.Trim())
+                                        .Where(static v => !string.IsNullOrEmpty(v))
+                                        .ToList();
+
+        return new RequiredOperatingSystem
+        {
+            Name     = Name,
+            Versions = versions.Count > 0 ? versions : null
+        };
+    }
 }
 
 public sealed partial class UserManualViewModel : ObservableObject

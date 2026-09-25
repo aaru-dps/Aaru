@@ -357,6 +357,24 @@ namespace Aaru.Gui.Localization {
             }
         }
         
+        public static string Label_OS_Versions {
+            get {
+                return ResourceManager.GetString("Label.OS_Versions", resourceCulture);
+            }
+        }
+        
+        public static string Button_Add_Version {
+            get {
+                return ResourceManager.GetString("Button.Add_Version", resourceCulture);
+            }
+        }
+        
+        public static string Watermark_Enter_OS_version {
+            get {
+                return ResourceManager.GetString("Watermark.Enter_OS_version", resourceCulture);
+            }
+        }
+        
         public static string Header_Barcodes {
             get {
                 return ResourceManager.GetString("Header.Barcodes", resourceCulture);

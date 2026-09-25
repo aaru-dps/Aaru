@@ -181,6 +181,15 @@
     <data name="Watermark.Enter_OS_name" xml:space="preserve">
         <value>Introducir nombre del SO...</value>
     </data>
+    <data name="Label.OS_Versions" xml:space="preserve">
+        <value>Versiones:</value>
+    </data>
+    <data name="Button.Add_Version" xml:space="preserve">
+        <value>+ Agregar Versión</value>
+    </data>
+    <data name="Watermark.Enter_OS_version" xml:space="preserve">
+        <value>Introducir versión del SO...</value>
+    </data>
     <data name="Header.Barcodes" xml:space="preserve">
         <value>Códigos de Barras</value>
     </data>
