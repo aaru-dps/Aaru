@@ -69,7 +69,7 @@ public static class LocalizedEnumHelper
 
 /// <summary>Wrapper class for an enum value with its localized description</summary>
 /// <typeparam name="T">The enum type</typeparam>
-public class LocalizedEnumValue<T> where T : struct, Enum
+public class LocalizedEnumValue<T> : IEquatable<LocalizedEnumValue<T>> where T : struct, Enum
 {
     /// <summary>Initializes a new instance of the LocalizedEnumValue class</summary>
     /// <param name="value">The enum value</param>
@@ -87,4 +87,13 @@ public class LocalizedEnumValue<T> where T : struct, Enum
 
     /// <summary>Returns the localized description as the string representation</summary>
     public override string ToString() => Description;
+
+    /// <inheritdoc />
+    public bool Equals(LocalizedEnumValue<T> other) => other is not null && Value.Equals(other.Value);
+
+    /// <inheritdoc />
+    public override bool Equals(object obj) => Equals(obj as LocalizedEnumValue<T>);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => Value.GetHashCode();
 }
