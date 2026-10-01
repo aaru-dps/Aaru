@@ -106,7 +106,7 @@ sealed class StatisticsCommand : AsyncCommand<StatisticsCommand.Settings>
 
                 if(count > 0)
                 {
-                    ctx.Commands.Add(new Command
+                    await ctx.Commands.AddAsync(new Command
                     {
                         Count        = count,
                         Name         = "fs-info",

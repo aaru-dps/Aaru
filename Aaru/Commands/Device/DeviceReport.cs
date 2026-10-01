@@ -154,7 +154,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
         var reporter = new Core.Devices.Report.DeviceReport(dev);
 
-        if(dev.IsUsb && AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_USB}[/]"))
+        if(dev.IsUsb && await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_device_natively_USB}[/]"))
         {
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -162,12 +162,12 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                 report.USB = reporter.UsbReport();
             });
 
-            report.USB.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
+            report.USB.RemovableMedia = await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_media_removable}[/]");
 
             removable = report.USB.RemovableMedia;
         }
 
-        if(dev.IsFireWire && AnsiConsole.Confirm($"[italic]{UI.Is_the_device_natively_FireWire}[/]"))
+        if(dev.IsFireWire && await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_device_natively_FireWire}[/]"))
         {
             Core.Spectre.ProgressSingleSpinner(ctx =>
             {
@@ -175,7 +175,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                 report.FireWire = reporter.FireWireReport();
             });
 
-            report.FireWire.RemovableMedia = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
+            report.FireWire.RemovableMedia = await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_media_removable}[/]");
 
             removable = report.FireWire.RemovableMedia;
         }
@@ -221,7 +221,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                         report.ATA.IdentifyDevice?.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit
                                                                                    .Removable) ==
                         true)
-                    removable = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable}[/]");
+                    removable = await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_media_removable}[/]");
 
                 if(removable)
                 {
@@ -238,15 +238,16 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                     report.ATA.Identify = Core.Devices.Report.DeviceReport.ClearIdentify(buffer);
                     List<TestedMedia> mediaTests = [];
 
-                    while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
+                    while(await AnsiConsole.ConfirmAsync($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                     {
                         AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
                         Console.ReadKey(true);
 
                         mediumTypeName =
-                            AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
+                            await AnsiConsole.AskAsync<string>(Localization.Core
+                                                                           .Please_write_description_of_media_type);
 
-                        mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
+                        mediumModel = await AnsiConsole.AskAsync<string>(Localization.Core.Please_write_media_model);
 
                         TestedMedia mediaTest = reporter.ReportAtaMedia();
                         mediaTest.MediumTypeName = mediumTypeName;
@@ -311,7 +312,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                 }
 
                 if(!dev.IsUsb && !dev.IsFireWire && dev.IsRemovable)
-                    removable = AnsiConsole.Confirm($"[italic]{UI.Is_the_media_removable_flash_is_not}[/]");
+                    removable = await AnsiConsole.ConfirmAsync($"[italic]{UI.Is_the_media_removable_flash_is_not}[/]");
 
                 if(removable)
                 {
@@ -631,44 +632,44 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                             if(!tryPlextor)
                             {
                                 tryPlextor |=
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_Plextor_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
+                                    await AnsiConsole
+                                       .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_Plextor_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                     false);
                             }
 
                             if(!tryNec)
                             {
                                 tryNec |=
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_NEC_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
+                                    await AnsiConsole
+                                       .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_NEC_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                     false);
                             }
 
                             if(!tryPioneer)
                             {
                                 tryPioneer |=
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_Pioneer_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
+                                    await AnsiConsole
+                                       .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_Pioneer_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                     false);
                             }
 
                             if(!tryHldtst)
                             {
                                 tryHldtst |=
-                                    AnsiConsole
-                                       .Confirm($"[italic]{UI.Do_you_want_to_try_HLDTST_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                                false);
+                                    await AnsiConsole
+                                       .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_HLDTST_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                     false);
                             }
 
                             tryReadBuffer3C =
-                                AnsiConsole
-                                   .Confirm($"[italic]{UI.Do_you_want_to_try_ReadBuffer3C_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                            false);
+                                await AnsiConsole
+                                   .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_ReadBuffer3C_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                 false);
 
                             tryMediaTekF106 =
-                                AnsiConsole
-                                   .Confirm($"[italic]{UI.Do_you_want_to_try_MediaTek_commands} [red]{UI.This_is_dangerous}[/][/]",
-                                            false);
+                                await AnsiConsole
+                                   .ConfirmAsync($"[italic]{UI.Do_you_want_to_try_MediaTek_commands} [red]{UI.This_is_dangerous}[/][/]",
+                                                 false);
                         }
 
                         if(dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
@@ -677,8 +678,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                         foreach(string mediaType in mediaTypes)
                         {
-                            if(!AnsiConsole.Confirm($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)
-                            }[/]"))
+                            if(!await AnsiConsole
+                                   .ConfirmAsync($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)
+                                   }[/]"))
                                 continue;
 
                             AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
@@ -770,8 +772,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                                 if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
                                    mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
-                                   AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                                   }[/]"))
+                                   await AnsiConsole
+                                      .ConfirmAsync($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                                      }[/]"))
                                 {
                                     AnsiConsole.Progress()
                                                .AutoClear(true)
@@ -881,19 +884,21 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                         List<TestedSequentialMedia> seqTests = [];
 
-                        while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
+                        while(await AnsiConsole.ConfirmAsync($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                         {
                             AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
 
                             Console.ReadKey(true);
 
                             mediumTypeName =
-                                AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
+                                await AnsiConsole.AskAsync<string>(Localization.Core
+                                                                      .Please_write_description_of_media_type);
 
                             mediumManufacturer =
-                                AnsiConsole.Ask<string>(Localization.Core.Please_write_media_manufacturer);
+                                await AnsiConsole.AskAsync<string>(Localization.Core.Please_write_media_manufacturer);
 
-                            mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
+                            mediumModel =
+                                await AnsiConsole.AskAsync<string>(Localization.Core.Please_write_media_model);
 
                             var mediaIsRecognized = true;
 
@@ -1007,7 +1012,8 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                         foreach(string mediaType in mediaTypes)
                         {
-                            if(!AnsiConsole.Confirm($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)}[/]"))
+                            if(!await AnsiConsole
+                                   .ConfirmAsync($"[italic]{string.Format(UI.Do_you_have_a_0_disc, mediaType)}[/]"))
                                 continue;
 
                             AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
@@ -1091,8 +1097,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                                 if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
                                    mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
-                                   AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                                   }[/]"))
+                                   await AnsiConsole
+                                      .ConfirmAsync($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                                      }[/]"))
                                 {
                                     AnsiConsole.Progress()
                                                .AutoClear(true)
@@ -1216,19 +1223,22 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                         {
                             List<TestedMedia> mediaTests = [];
 
-                            while(AnsiConsole.Confirm($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
+                            while(await AnsiConsole.ConfirmAsync($"[italic]{UI.Do_you_have_media_you_can_insert}[/]"))
                             {
                                 AaruLogging.WriteLine(UI.Please_insert_it_in_the_drive);
 
                                 Console.ReadKey(true);
 
                                 mediumTypeName =
-                                    AnsiConsole.Ask<string>(Localization.Core.Please_write_description_of_media_type);
+                                    await AnsiConsole.AskAsync<string>(Localization.Core
+                                                                          .Please_write_description_of_media_type);
 
                                 mediumManufacturer =
-                                    AnsiConsole.Ask<string>(Localization.Core.Please_write_media_manufacturer);
+                                    await AnsiConsole.AskAsync<string>(Localization.Core
+                                                                          .Please_write_media_manufacturer);
 
-                                mediumModel = AnsiConsole.Ask<string>(Localization.Core.Please_write_media_model);
+                                mediumModel =
+                                    await AnsiConsole.AskAsync<string>(Localization.Core.Please_write_media_model);
 
                                 var mediaIsRecognized = true;
 
@@ -1293,8 +1303,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
                                     if((mediaTest.SupportsReadLong == true || mediaTest.SupportsReadLong16 == true) &&
                                        mediaTest.LongBlockSize == mediaTest.BlockSize                               &&
-                                       AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                                       }[/]"))
+                                       await AnsiConsole
+                                          .ConfirmAsync($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                                          }[/]"))
                                     {
                                         AnsiConsole.Progress()
                                                    .AutoClear(true)
@@ -1411,8 +1422,9 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
                             if((report.SCSI.ReadCapabilities.SupportsReadLong   == true ||
                                 report.SCSI.ReadCapabilities.SupportsReadLong16 == true)                            &&
                                report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize &&
-                               AnsiConsole.Confirm($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
-                               }[/]"))
+                               await AnsiConsole
+                                  .ConfirmAsync($"[italic]{Localization.Core.Try_to_find_SCSI_READ_LONG_size
+                                  }[/]"))
                             {
                                 AnsiConsole.Progress()
                                            .AutoClear(true)
@@ -1524,7 +1536,7 @@ sealed class DeviceReportCommand : AsyncCommand<DeviceReportCommand.Settings>
 
         await using(var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath))
         {
-            ctx.Reports.Add(new Report(report));
+            await ctx.Reports.AddAsync(new Report(report));
             await ctx.SaveChangesAsync();
         }
 

@@ -66,10 +66,9 @@ public static class Remote
                                       {
                                           try
                                           {
-                                              string json =
-                                                  JsonSerializer.Serialize(report,
-                                                                           typeof(DeviceReport),
-                                                                           DeviceReportContext.Default);
+                                              string json = JsonSerializer.Serialize(report,
+                                                  typeof(DeviceReport),
+                                                  DeviceReportContext.Default);
 
                                               var httpClient = new HttpClient();
 
@@ -204,7 +203,7 @@ public static class Remote
                                  .AutoClear(true)
                                  .HideCompleted(true)
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
-                                 .Start(ctx =>
+                                 .Start(async ctx =>
                                   {
                                       ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_vendors);
                                       task.MaxValue = sync.UsbVendors.Count;
@@ -212,10 +211,8 @@ public static class Remote
                                       foreach(UsbVendorDto vendor in sync.UsbVendors)
                                       {
                                           task.Increment(1);
-                                          mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+                                          await mctx.UsbVendors.AddAsync(new UsbVendor(vendor.VendorId, vendor.Vendor));
                                       }
-
-                                      return Task.CompletedTask;
                                   });
 
                 AaruLogging.WriteLine(Localization.Core.Added_0_usb_vendors, sync.UsbVendors.Count);
@@ -224,7 +221,7 @@ public static class Remote
                                  .AutoClear(true)
                                  .HideCompleted(true)
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
-                                 .Start(ctx =>
+                                 .Start(async ctx =>
                                   {
                                       ProgressTask task = ctx.AddTask(Localization.Core.Adding_USB_products);
                                       task.MaxValue = sync.UsbProducts.Count;
@@ -233,12 +230,10 @@ public static class Remote
                                       {
                                           task.Increment(1);
 
-                                          mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
+                                          await mctx.UsbProducts.AddAsync(new UsbProduct(product.VendorId,
                                                                               product.ProductId,
                                                                               product.Product));
                                       }
-
-                                      return Task.CompletedTask;
                                   });
 
                 AaruLogging.WriteLine(Localization.Core.Added_0_usb_products, sync.UsbProducts.Count);
@@ -247,7 +242,7 @@ public static class Remote
                                  .AutoClear(true)
                                  .HideCompleted(true)
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
-                                 .Start(ctx =>
+                                 .Start(async ctx =>
                                   {
                                       ProgressTask task =
                                           ctx.AddTask(Localization.Core.Adding_CompactDisc_read_offsets);
@@ -258,13 +253,11 @@ public static class Remote
                                       {
                                           task.Increment(1);
 
-                                          mctx.CdOffsets.Add(new CdOffset(offset)
+                                          await mctx.CdOffsets.AddAsync(new CdOffset(offset)
                                           {
                                               Id = offset.Id
                                           });
                                       }
-
-                                      return Task.CompletedTask;
                                   });
 
                 AaruLogging.WriteLine(Localization.Core.Added_0_CompactDisc_read_offsets, sync.Offsets.Count);
@@ -273,7 +266,7 @@ public static class Remote
                                  .AutoClear(true)
                                  .HideCompleted(true)
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
-                                 .Start(ctx =>
+                                 .Start(async ctx =>
                                   {
                                       ProgressTask task = ctx.AddTask(Localization.Core.Adding_known_devices);
                                       task.MaxValue = sync.Devices.Count;
@@ -283,13 +276,11 @@ public static class Remote
                                       {
                                           task.Increment(1);
 
-                                          mctx.Devices.Add(new Device(device)
+                                          await mctx.Devices.AddAsync(new Device(device)
                                           {
                                               Id = device.Id
                                           });
                                       }
-
-                                      return Task.CompletedTask;
                                   });
 
                 AaruLogging.WriteLine(Localization.Core.Added_0_known_devices, sync.Devices.Count);
@@ -298,7 +289,7 @@ public static class Remote
                                  .AutoClear(true)
                                  .HideCompleted(true)
                                  .Columns(new TaskDescriptionColumn(), new ProgressBarColumn(), new PercentageColumn())
-                                 .Start(ctx =>
+                                 .Start(async ctx =>
                                   {
                                       ProgressTask task =
                                           ctx.AddTask(Localization.Core.Adding_known_iNES_NES_2_0_headers);
@@ -309,7 +300,7 @@ public static class Remote
                                       {
                                           task.Increment(1);
 
-                                          mctx.NesHeaders.Add(new NesHeaderInfo
+                                          await mctx.NesHeaders.AddAsync(new NesHeaderInfo
                                           {
                                               Id                     = header.Id,
                                               AddedWhen              = DateTime.UtcNow,
@@ -328,8 +319,6 @@ public static class Remote
                                               VsPpuType              = header.VsPpuType
                                           });
                                       }
-
-                                      return Task.CompletedTask;
                                   });
 
                 AaruLogging.WriteLine(Localization.Core.Added_0_known_iNES_NES_2_0_headers,
@@ -374,7 +363,9 @@ public static class Remote
                                           else
                                           {
                                               addedVendors++;
-                                              mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
+
+                                              await mctx.UsbVendors.AddAsync(new UsbVendor(vendor.VendorId,
+                                                                                 vendor.Vendor));
                                           }
                                       }
                                   });
@@ -411,9 +402,9 @@ public static class Remote
                                           {
                                               addedProducts++;
 
-                                              mctx.UsbProducts.Add(new UsbProduct(product.VendorId,
-                                                                       product.ProductId,
-                                                                       product.Product));
+                                              await mctx.UsbProducts.AddAsync(new UsbProduct(product.VendorId,
+                                                                                  product.ProductId,
+                                                                                  product.Product));
                                           }
                                       }
                                   });
@@ -454,7 +445,7 @@ public static class Remote
                                           {
                                               addedOffsets++;
 
-                                              mctx.CdOffsets.Add(new CdOffset(offset)
+                                              await mctx.CdOffsets.AddAsync(new CdOffset(offset)
                                               {
                                                   Id = offset.Id
                                               });
@@ -494,13 +485,13 @@ public static class Remote
                                                   CanReadGdRomUsingSwapDisc  = device.CanReadGdRomUsingSwapDisc
                                               };
 
-                                              mctx.Devices.Add(existing);
+                                              await mctx.Devices.AddAsync(existing);
                                           }
                                           else
                                           {
                                               addedDevices++;
 
-                                              mctx.Devices.Add(new Device(device)
+                                              await mctx.Devices.AddAsync(new Device(device)
                                               {
                                                   Id                         = device.Id,
                                                   OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead,
@@ -559,13 +550,13 @@ public static class Remote
                                                   VsPpuType              = header.VsPpuType
                                               };
 
-                                              mctx.NesHeaders.Add(existing);
+                                              await mctx.NesHeaders.AddAsync(existing);
                                           }
                                           else
                                           {
                                               addedNesHeaders++;
 
-                                              mctx.NesHeaders.Add(new NesHeaderInfo
+                                              await mctx.NesHeaders.AddAsync(new NesHeaderInfo
                                               {
                                                   Id                     = header.Id,
                                                   AddedWhen              = DateTime.UtcNow,
