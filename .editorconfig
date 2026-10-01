@@ -1453,7 +1453,7 @@ tab_width    = 4
 # Many identifiers use names that cannot have real meanings
 dotnet_diagnostic.ca1704.severity = none
 # Only flags copies of BCL/third-party structs (ReadOnlySpan, ByteSize, IncrementalValuesProvider) that are cheap and by design
-dotnet_diagnostic.eps06.severity = none
+dotnet_diagnostic.eps06.severity  = none
 dotnet_diagnostic.ph2006.severity = none
 dotnet_diagnostic.ph2021.severity = none
 dotnet_diagnostic.ph2026.severity = none
@@ -1484,6 +1484,7 @@ dotnet_diagnostic.mt1001.severity = warning
 dotnet_diagnostic.RS1035.severity = none
 dotnet_diagnostic.RS1042.severity = none
 dotnet_diagnostic.ph2070.severity = none
+dotnet_diagnostic.ph2031.severity = none
 
 [*.{razor}]
 resharper_normalize_tag_names = false
