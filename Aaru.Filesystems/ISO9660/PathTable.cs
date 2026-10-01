@@ -51,11 +51,13 @@ public sealed partial class ISO9660
            data[Marshal.SizeOf<PathTableEntry>()] != 0x00)
             return null;
 
-        while(off < data.Length)
+        // Some discs declare a path table size bigger than the entries it contains, so stop as soon as a full entry
+        // no longer fits in the remaining data
+        while(off + Marshal.SizeOf<PathTableEntry>() <= data.Length)
         {
             entry = Marshal.ByteArrayToStructureBigEndian<PathTableEntry>(data, off, Marshal.SizeOf<PathTableEntry>());
 
-            if(entry.name_len == 0) break;
+            if(entry.name_len == 0 || off + Marshal.SizeOf<PathTableEntry>() + entry.name_len > data.Length) break;
 
             off += Marshal.SizeOf<PathTableEntry>();
 
@@ -85,7 +87,7 @@ public sealed partial class ISO9660
 
         var off = 0;
 
-        while(off < data.Length)
+        while(off + Marshal.SizeOf<HighSierraPathTableEntry>() <= data.Length)
         {
             HighSierraPathTableEntry entry =
                 Marshal.ByteArrayToStructureBigEndian<HighSierraPathTableEntry>(data,
@@ -94,7 +96,8 @@ public sealed partial class ISO9660
                                                                                        .SizeOf<
                                                                                             HighSierraPathTableEntry>());
 
-            if(entry.name_len == 0) break;
+            if(entry.name_len == 0 || off + Marshal.SizeOf<HighSierraPathTableEntry>() + entry.name_len > data.Length)
+                break;
 
             off += Marshal.SizeOf<HighSierraPathTableEntry>();
 
