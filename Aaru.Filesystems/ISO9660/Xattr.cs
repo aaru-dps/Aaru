@@ -60,13 +60,18 @@ public sealed partial class ISO9660
 
         if(entry.AssociatedFile != null) xattrs.Add(Xattrs.XATTR_ISO9660_ASSOCIATED_FILE);
 
-        if(entry.AppleDosType is not null) xattrs.Add(Xattrs.XATTR_APPLE_DOS_TYPE);
+        if(entry.ProDosFileType is not null) xattrs.Add(Xattrs.XATTR_APPLE_PRODOS_TYPE);
 
-        if(entry.AppleProDosType is not null) xattrs.Add(Xattrs.XATTR_APPLE_PRODOS_TYPE);
+        if(entry.ProDosAuxType is not null) xattrs.Add(Xattrs.XATTR_APPLE_PRODOS_AUX_TYPE);
 
         if(entry.ResourceFork != null) xattrs.Add(Xattrs.XATTR_APPLE_RESOURCE_FORK);
 
-        if(entry.FinderInfo != null) xattrs.Add(Xattrs.XATTR_APPLE_FINDER_INFO);
+        if(entry.FinderInfo != null)
+        {
+            xattrs.Add(Xattrs.XATTR_APPLE_FINDER_INFO);
+            xattrs.Add(Xattrs.XATTR_APPLE_HFS_CREATOR);
+            xattrs.Add(Xattrs.XATTR_APPLE_HFS_OSTYPE);
+        }
 
         if(entry.AppleIcon != null) xattrs.Add(Xattrs.XATTR_APPLE_ICON);
 
@@ -141,17 +146,30 @@ public sealed partial class ISO9660
 
                 return ErrorNumber.NoError;
 
-            case Xattrs.XATTR_APPLE_DOS_TYPE:
-                if(entry.AppleDosType is null) return ErrorNumber.NoSuchExtendedAttribute;
+            case Xattrs.XATTR_APPLE_PRODOS_TYPE:
+                if(entry.ProDosFileType is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf    = new byte[1];
-                buf[0] = entry.AppleDosType.Value;
+                buf[0] = entry.ProDosFileType.Value;
 
                 return ErrorNumber.NoError;
-            case Xattrs.XATTR_APPLE_PRODOS_TYPE:
-                if(entry.AppleProDosType is null) return ErrorNumber.NoSuchExtendedAttribute;
+            case Xattrs.XATTR_APPLE_PRODOS_AUX_TYPE:
+                if(entry.ProDosAuxType is null) return ErrorNumber.NoSuchExtendedAttribute;
 
-                buf = BitConverter.GetBytes(entry.AppleProDosType.Value);
+                buf = BitConverter.GetBytes(entry.ProDosAuxType.Value);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_APPLE_HFS_CREATOR:
+                if(entry.FinderInfo is null) return ErrorNumber.NoSuchExtendedAttribute;
+
+                // As recorded, most significant byte first, so it reads as the four characters
+                buf = BigEndianBitConverter.GetBytes(entry.FinderInfo.Value.fdCreator);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_APPLE_HFS_OSTYPE:
+                if(entry.FinderInfo is null) return ErrorNumber.NoSuchExtendedAttribute;
+
+                buf = BigEndianBitConverter.GetBytes(entry.FinderInfo.Value.fdType);
 
                 return ErrorNumber.NoError;
             case Xattrs.XATTR_APPLE_RESOURCE_FORK:

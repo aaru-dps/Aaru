@@ -665,8 +665,8 @@ public sealed partial class ISO9660
                                     systemAreaOff,
                                     Marshal.SizeOf<AppleProDOSSystemUse>());
 
-                            entry.AppleProDosType = appleProDosSystemUse.aux_type;
-                            entry.AppleDosType    = appleProDosSystemUse.type;
+                            entry.ProDosAuxType = appleProDosSystemUse.aux_type;
+                            entry.ProDosFileType    = appleProDosSystemUse.type;
 
                             // GS/OS extended files keep their resource fork in the associated file too
                             hasResourceFork = true;
@@ -716,8 +716,8 @@ public sealed partial class ISO9660
                                     systemAreaOff,
                                     Marshal.SizeOf<AppleProDOSOldSystemUse>());
 
-                            entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
-                            entry.AppleDosType    = appleProDosOldSystemUse.type;
+                            entry.ProDosAuxType = appleProDosOldSystemUse.aux_type;
+                            entry.ProDosFileType    = appleProDosOldSystemUse.type;
 
                             // GS/OS extended files keep their resource fork in the associated file too
                             hasResourceFork = true;

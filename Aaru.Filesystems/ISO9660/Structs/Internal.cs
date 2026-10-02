@@ -46,9 +46,9 @@ public sealed partial class ISO9660
         public AcornSystemArea?               AcornSystemArea;
         public byte[]                         AmigaComment;
         public AmigaProtection?               AmigaProtection;
-        public byte?                          AppleDosType;
+        public byte?                          ProDosFileType;
         public byte[]                         AppleIcon;
-        public ushort?                        AppleProDosType;
+        public ushort?                        ProDosAuxType;
         public DecodedDirectoryEntry          AssociatedFile;
         public CdiSystemArea?                 CdiSystemArea;
         public List<(uint extent, uint size)> Extents;
