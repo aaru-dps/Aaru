@@ -311,7 +311,8 @@ public sealed partial class ISO9660
                     entries[entry.Filename] = owner;
                 }
 
-                if(hasResourceFork)
+                // Apple extensions make associated files resource forks (GS/OS Reference, appendix C)
+                if(hasResourceFork || _appleProtocol)
                     owner.ResourceFork = AppendExtent(owner.ResourceFork, entry);
                 else
                     owner.AssociatedFile = AppendExtent(owner.AssociatedFile, entry);
@@ -326,6 +327,13 @@ public sealed partial class ISO9660
                         entry.ResourceFork      = existing.ResourceFork;
                         entry.AssociatedFile    = existing.AssociatedFile;
                         entries[entry.Filename] = entry;
+
+                        // The Apple extensions can be only in the record of the data fork
+                        if(hasResourceFork && entry is { ResourceFork: null, AssociatedFile: not null })
+                        {
+                            entry.ResourceFork   = entry.AssociatedFile;
+                            entry.AssociatedFile = null;
+                        }
                     }
                     else
                         AppendExtent(existing, entry);
@@ -660,6 +668,9 @@ public sealed partial class ISO9660
                             entry.AppleProDosType = appleProDosSystemUse.aux_type;
                             entry.AppleDosType    = appleProDosSystemUse.type;
 
+                            // GS/OS extended files keep their resource fork in the associated file too
+                            hasResourceFork = true;
+
                             break;
                         case AppleId.HFS:
                             AppleHFSSystemUse appleHfsSystemUse =
@@ -707,6 +718,9 @@ public sealed partial class ISO9660
 
                             entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
                             entry.AppleDosType    = appleProDosOldSystemUse.type;
+
+                            // GS/OS extended files keep their resource fork in the associated file too
+                            hasResourceFork = true;
 
                             systemAreaOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
 
