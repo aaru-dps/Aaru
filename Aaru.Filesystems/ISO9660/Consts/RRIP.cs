@@ -82,7 +82,8 @@ public sealed partial class ISO9660
         Block        = 0x6000,
         Character    = 0x2000,
         Directory    = 0x4000,
-        Pipe         = 0x1000
+        Pipe         = 0x1000,
+        TypeMask     = 0xF000
     }
 
 #endregion
