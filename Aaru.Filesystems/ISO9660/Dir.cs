@@ -499,6 +499,7 @@ public sealed partial class ISO9660
                    SUSP_SELECTOR                     => 5,
                    SUSP_PADDING or SUSP_TERMINATOR   => 4,
                    ZISO_MAGIC                        => 16,
+                   AMIGA_MAGIC or AAIP_MAGIC         => 5,
                    _                                 => 0
                };
     }
@@ -736,22 +737,36 @@ public sealed partial class ISO9660
                                                                           systemAreaOff,
                                                                           Marshal.SizeOf<AmigaEntry>());
 
-                    var protectionLength = 0;
+                    int protectionLength = amiga.flags.HasFlag(AmigaFlags.Protection)
+                                               ? Marshal.SizeOf<AmigaProtection>()
+                                               : 0;
 
-                    if(amiga.flags.HasFlag(AmigaFlags.Protection))
+                    int asEnd      = systemAreaOff + amiga.length;
+                    int commentOff = systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength;
+
+                    // The protection bits, and the comment length if any, must fit in the entry, and the comment
+                    // length counts itself so it cannot be zero
+                    if(commentOff > asEnd ||
+                       amiga.flags.HasFlag(AmigaFlags.Comment) &&
+                       (commentOff >= asEnd || data[commentOff] == 0 || commentOff + data[commentOff] > asEnd))
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
+                    // Only the first "AS" entry of a record may record protection bits
+                    if(protectionLength > 0 && entry.AmigaProtection is null)
                     {
                         entry.AmigaProtection =
                             Marshal.ByteArrayToStructureBigEndian<AmigaProtection>(data,
                                 systemAreaOff + Marshal.SizeOf<AmigaEntry>(),
                                 Marshal.SizeOf<AmigaProtection>());
-
-                        protectionLength = Marshal.SizeOf<AmigaProtection>();
                     }
 
                     if(amiga.flags.HasFlag(AmigaFlags.Comment))
                     {
                         // The comment length counts itself, the comment follows it
-                        int commentOff    = systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength;
                         int commentLength = data[commentOff] - 1;
 
                         entry.AmigaComment ??= [];
