@@ -997,8 +997,34 @@ public sealed partial class ISO9660
 
                     break;
                 case RRIP_SPARSE:
-                    // TODO
                     byte sfLength = data[systemAreaOff + 2];
+
+                    if(sfLength == 0)
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
+                    // RRIP 1.12 records a 64-bit size and the depth of the first index block
+                    if(sfLength >= Marshal.SizeOf<SparseFile>() && systemAreaOff + sfLength <= data.Length)
+                    {
+                        SparseFile sf =
+                            Marshal.ByteArrayToStructureLittleEndian<SparseFile>(data,
+                                systemAreaOff,
+                                Marshal.SizeOf<SparseFile>());
+
+                        entry.RripSparseSize  = (ulong)sf.virtual_size_high << 32 | sf.virtual_size_low;
+                        entry.RripSparseDepth = sf.table_depth;
+                    }
+
+                    // RRIP 1.10 records a 32-bit size, so the first index block is always for the high order byte
+                    else if(sfLength >= 12 && systemAreaOff + sfLength <= data.Length)
+                    {
+                        entry.RripSparseSize  = BitConverter.ToUInt32(data, systemAreaOff + 4);
+                        entry.RripSparseDepth = SPARSE_RRIP110_DEPTH;
+                    }
+
                     systemAreaOff += sfLength;
 
                     break;

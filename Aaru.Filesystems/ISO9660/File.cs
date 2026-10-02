@@ -239,7 +239,7 @@ public sealed partial class ISO9660
         node = new Iso9660FileNode
         {
             Path   = path,
-            Length = entry.Zisofs is not null ? entry.Zisofs.Value.uncomp_len : (long)entry.Size,
+            Length = VirtualFileLength(entry),
             Offset = 0,
             Dentry = entry
         };
@@ -279,6 +279,26 @@ public sealed partial class ISO9660
         if(mynode.Dentry.Zisofs is not null)
         {
             ErrorNumber err = ReadZisofsFile(mynode.Offset, read, mynode.Dentry, out byte[] buf);
+
+            if(err != ErrorNumber.NoError)
+            {
+                read = 0;
+
+                return err;
+            }
+
+            Array.Copy(buf, 0, buffer, 0, Math.Min(buf.Length, (int)read));
+            read = Math.Min(buf.Length, read);
+
+            node.Offset += read;
+
+            return ErrorNumber.NoError;
+        }
+
+        // Handle Rock Ridge sparse files
+        if(mynode.Dentry.RripSparseSize is not null)
+        {
+            ErrorNumber err = ReadSparseFile(mynode.Offset, read, mynode.Dentry, out byte[] buf);
 
             if(err != ErrorNumber.NoError)
             {
@@ -372,8 +392,8 @@ public sealed partial class ISO9660
 
         if(err != ErrorNumber.NoError) return err;
 
-        // For zisofs compressed files, use the uncompressed size
-        long fileLength = entry.Zisofs is not null ? entry.Zisofs.Value.uncomp_len : (long)entry.Size;
+        // For zisofs compressed and Rock Ridge sparse files, use the decoded size
+        long fileLength = VirtualFileLength(entry);
 
         stat = new FileEntryInfo
         {
@@ -390,6 +410,13 @@ public sealed partial class ISO9660
         if(fileLength % 2048 > 0) stat.Blocks++;
 
         if(entry.Zisofs is not null) stat.Attributes |= FileAttributes.Compressed;
+
+        // Only the encoded file section takes space on disc
+        if(entry.RripSparseSize is not null)
+        {
+            stat.Attributes |= FileAttributes.Sparse;
+            stat.Blocks     =  (long)((entry.Size + 2047) / 2048);
+        }
 
         if(entry.Flags.HasFlag(FileFlags.Directory)) stat.Attributes |= FileAttributes.Directory;
 
@@ -579,6 +606,14 @@ public sealed partial class ISO9660
         dest = entry.SymbolicLink;
 
         return ErrorNumber.NoError;
+    }
+
+    /// <summary>Gets the length of the file contents, once decompressed or decoded</summary>
+    static long VirtualFileLength(DecodedDirectoryEntry entry)
+    {
+        if(entry.Zisofs is not null) return entry.Zisofs.Value.uncomp_len;
+
+        return entry.RripSparseSize is not null ? (long)entry.RripSparseSize.Value : (long)entry.Size;
     }
 
     /// <summary>Gets the file type attribute from the S_IFMT bits of a Rock Ridge POSIX file mode</summary>
