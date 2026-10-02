@@ -293,22 +293,10 @@ public sealed partial class ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Associated))
             {
-                if(entries.ContainsKey(entry.Filename))
+                // The associated file comes before the file it belongs to, which is not known yet
+                if(!entries.TryGetValue(entry.Filename, out DecodedDirectoryEntry owner))
                 {
-                    if(hasResourceFork)
-                    {
-                        entries[entry.Filename].ResourceFork.Size += entry.Size;
-                        entries[entry.Filename].ResourceFork.Extents.Add(entry.Extents[0]);
-                    }
-                    else
-                    {
-                        entries[entry.Filename].AssociatedFile.Size += entry.Size;
-                        entries[entry.Filename].AssociatedFile.Extents.Add(entry.Extents[0]);
-                    }
-                }
-                else
-                {
-                    entries[entry.Filename] = new DecodedDirectoryEntry
+                    owner = new DecodedDirectoryEntry
                     {
                         Size                 = 0,
                         Flags                = record.flags ^ FileFlags.Associated,
@@ -320,32 +308,27 @@ public sealed partial class ISO9660
                         XattrLength          = 0
                     };
 
-                    if(hasResourceFork)
-                        entries[entry.Filename].ResourceFork = entry;
-                    else
-                        entries[entry.Filename].AssociatedFile = entry;
+                    entries[entry.Filename] = owner;
                 }
+
+                if(hasResourceFork)
+                    owner.ResourceFork = AppendExtent(owner.ResourceFork, entry);
+                else
+                    owner.AssociatedFile = AppendExtent(owner.AssociatedFile, entry);
             }
             else
             {
-                if(entries.ContainsKey(entry.Filename))
+                if(entries.TryGetValue(entry.Filename, out DecodedDirectoryEntry existing))
                 {
-                    entries[entry.Filename].Size += entry.Size;
-
-                    // Can appear after an associated file
-                    if(entries[entry.Filename].Extents is null)
+                    // Only an associated file came before, the attributes of the file are in this record
+                    if(existing.Extents is null)
                     {
-                        entries[entry.Filename].Extents              = [];
-                        entries[entry.Filename].Flags                = entry.Flags;
-                        entries[entry.Filename].FileUnitSize         = entry.FileUnitSize;
-                        entries[entry.Filename].Interleave           = entry.Interleave;
-                        entries[entry.Filename].VolumeSequenceNumber = entry.VolumeSequenceNumber;
-                        entries[entry.Filename].Filename             = entry.Filename;
-                        entries[entry.Filename].Timestamp            = entry.Timestamp;
-                        entries[entry.Filename].XattrLength          = entry.XattrLength;
+                        entry.ResourceFork      = existing.ResourceFork;
+                        entry.AssociatedFile    = existing.AssociatedFile;
+                        entries[entry.Filename] = entry;
                     }
-
-                    if(entry.Extents?.Count > 0) entries[entry.Filename].Extents.Add(entry.Extents[0]);
+                    else
+                        AppendExtent(existing, entry);
                 }
                 else
                     entries[entry.Filename] = entry;
@@ -361,6 +344,19 @@ public sealed partial class ISO9660
                    ? entries.Where(static e => !e.Value.RockRidgeRelocated)
                             .ToDictionary(static x => x.Key, static x => x.Value)
                    : entries;
+    }
+
+    /// <summary>Adds the extent of a directory record to the file it continues, or starts the file with it</summary>
+    /// <returns>The file the extent was added to</returns>
+    static DecodedDirectoryEntry AppendExtent(DecodedDirectoryEntry file, DecodedDirectoryEntry extent)
+    {
+        if(file is null) return extent;
+
+        file.Size += extent.Size;
+
+        if(extent.Extents?.Count > 0) file.Extents.Add(extent.Extents[0]);
+
+        return file;
     }
 
     void DecodeTransTable(Dictionary<string, DecodedDirectoryEntry> entries)
