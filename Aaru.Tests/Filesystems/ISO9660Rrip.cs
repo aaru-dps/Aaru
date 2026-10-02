@@ -63,6 +63,18 @@ namespace Aaru.Tests.Filesystems;
 ///         the same 300000 bytes file: 64KiB of data, 64KiB alternating 256 bytes of data and zeros, 128KiB of zeros
 ///         and 37856 bytes of data.
 ///     </para>
+///     <para>
+///         xorriso_rrip_aaip.iso was created with xorriso -acl on -xattr on from files with user extended attributes,
+///         an access ACL on /acl.txt, and access and default ACLs on /dir. The expected ACLs are the ones getfattr
+///         returned for the original files.
+///     </para>
+///     <para>
+///         xorriso_rrip_amiga.iso was created with xorriso, then Amiga "AS" entries were written by hand, as no
+///         mastering tool on Linux writes them: /prot.txt has protection bits instead of its "TF", /nopx.txt has
+///         protection bits and a comment instead of its "PX", and /comment.txt has a comment split in two entries
+///         instead of its "TF". The protection bits deny writing to the owner, allow reading and executing to the
+///         group and reading to others, and mark the file as archived and pure.
+///     </para>
 /// </remarks>
 [TestFixture]
 [Parallelizable(ParallelScope.Self)]
@@ -71,6 +83,16 @@ public class Iso9660Rrip
     const string RRIP_112 = "xorriso_rrip.iso";
     const string RRIP_110 = "xorriso_rrip_1.10.iso";
     const string SPARSE   = "xorriso_rrip_sparse.iso";
+    const string AAIP     = "xorriso_rrip_aaip.iso";
+    const string AMIGA    = "xorriso_rrip_amiga.iso";
+
+    const string ACL_TXT_ACCESS =
+        "0200000001000600FFFFFFFF02000600D204000004000400FFFFFFFF080004002E16000010000600FFFFFFFF20000000FFFFFFFF";
+    const string DIR_ACCESS =
+        "0200000001000700FFFFFFFF02000500D204000004000500FFFFFFFF10000500FFFFFFFF20000000FFFFFFFF";
+    const string DIR_DEFAULT =
+        "0200000001000700FFFFFFFF02000700D204000004000500FFFFFFFF10000700FFFFFFFF20000000FFFFFFFF";
+    const string AMIGA_PROTECTION = "12008A34";
 
     const string LONG_NAME =
         "Long_Mixed_Case_Name_abcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghijabcdefghij.txt";
@@ -122,6 +144,21 @@ public class Iso9660Rrip
     {
         fs.Unmount();
         FilesystemTest.DisposeImage(image);
+    }
+
+    static List<string> ListXAttr(ISO9660 fs, string path)
+    {
+        fs.ListXAttr(path, out List<string> xattrs).Should().Be(ErrorNumber.NoError, path);
+
+        return xattrs;
+    }
+
+    static byte[] GetXattr(ISO9660 fs, string path, string name)
+    {
+        byte[] buf = null;
+        fs.GetXattr(path, name, ref buf).Should().Be(ErrorNumber.NoError, $"{path} {name}");
+
+        return buf;
     }
 
     static FileEntryInfo Stat(ISO9660 fs, string path)
@@ -380,6 +417,113 @@ public class Iso9660Rrip
             List<string> root = ReadDir(fs, "/");
             root.Should().Contain("RR_MOVED");
             root.Should().NotContain(LONG_NAME);
+        }
+        finally
+        {
+            Unmount(fs, image);
+        }
+    }
+
+    [Test]
+    public void AaipAttributes()
+    {
+        (ISO9660 fs, IMediaImage image) = Mount(AAIP);
+
+        try
+        {
+            ListXAttr(fs, "/attrs.txt").Should().BeEquivalentTo("user.comment", "user.binary", "user.long", "user.empty");
+
+            Encoding.ASCII.GetString(GetXattr(fs, "/attrs.txt", "user.comment")).Should().Be("hello world");
+            GetXattr(fs, "/attrs.txt", "user.binary").Should().Equal(0x00, 0x01, 0xFF, 0x7F);
+
+            // Long enough to have a component record continued in the next "AL" entry
+            Encoding.ASCII.GetString(GetXattr(fs, "/attrs.txt", "user.long")).Should().Be(new string('L', 600));
+            GetXattr(fs, "/attrs.txt", "user.empty").Should().BeEmpty();
+
+            ListXAttr(fs, "/plain.txt").Should().BeEmpty();
+        }
+        finally
+        {
+            Unmount(fs, image);
+        }
+    }
+
+    [Test]
+    public void AaipAcls()
+    {
+        (ISO9660 fs, IMediaImage image) = Mount(AAIP);
+
+        try
+        {
+            ListXAttr(fs, "/acl.txt").Should().BeEquivalentTo("system.posix_acl_access");
+            Convert.ToHexString(GetXattr(fs, "/acl.txt", "system.posix_acl_access")).Should().Be(ACL_TXT_ACCESS);
+
+            ListXAttr(fs, "/dir").Should().BeEquivalentTo("system.posix_acl_access", "system.posix_acl_default");
+            Convert.ToHexString(GetXattr(fs, "/dir", "system.posix_acl_access")).Should().Be(DIR_ACCESS);
+            Convert.ToHexString(GetXattr(fs, "/dir", "system.posix_acl_default")).Should().Be(DIR_DEFAULT);
+
+            // The ACL must not be taken as Amiga protection bits, nor change the permissions
+            Stat(fs, "/acl.txt").Mode.Should().Be(Convert.ToUInt32("660", 8));
+        }
+        finally
+        {
+            Unmount(fs, image);
+        }
+    }
+
+    [Test]
+    public void AmigaProtectionWithPosixAttributes()
+    {
+        (ISO9660 fs, IMediaImage image) = Mount(AMIGA);
+
+        try
+        {
+            // The "PX" entry decides the POSIX mode
+            FileEntryInfo stat = Stat(fs, "/prot.txt");
+            stat.Mode.Should().Be(Convert.ToUInt32("644", 8));
+            stat.Attributes.Should().Be(FileAttributes.Archive | FileAttributes.System);
+
+            ListXAttr(fs, "/prot.txt").Should().BeEquivalentTo("amiga.protection");
+            Convert.ToHexString(GetXattr(fs, "/prot.txt", "amiga.protection")).Should().Be(AMIGA_PROTECTION);
+        }
+        finally
+        {
+            Unmount(fs, image);
+        }
+    }
+
+    [Test]
+    public void AmigaProtectionWithoutPosixAttributes()
+    {
+        (ISO9660 fs, IMediaImage image) = Mount(AMIGA);
+
+        try
+        {
+            // Owner bits are inverted: write denied, read and execute allowed
+            FileEntryInfo stat = Stat(fs, "/nopx.txt");
+            stat.Mode.Should().Be(Convert.ToUInt32("554", 8));
+            stat.Attributes.Should().Be(FileAttributes.Archive | FileAttributes.System);
+
+            Encoding.ASCII.GetString(GetXattr(fs, "/nopx.txt", "amiga.comments")).Should().Be("No PX here");
+            Convert.ToHexString(GetXattr(fs, "/nopx.txt", "amiga.protection")).Should().Be(AMIGA_PROTECTION);
+        }
+        finally
+        {
+            Unmount(fs, image);
+        }
+    }
+
+    [Test]
+    public void AmigaCommentContinued()
+    {
+        (ISO9660 fs, IMediaImage image) = Mount(AMIGA);
+
+        try
+        {
+            ListXAttr(fs, "/comment.txt").Should().BeEquivalentTo("amiga.comments");
+            Encoding.ASCII.GetString(GetXattr(fs, "/comment.txt", "amiga.comments")).Should().Be("Hi, Amiga");
+
+            ListXAttr(fs, "/plain.txt").Should().BeEmpty();
         }
         finally
         {
