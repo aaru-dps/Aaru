@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Aaru.CommonTypes.Enums;
 using Aaru.Helpers;
 
@@ -74,6 +75,8 @@ public sealed partial class ISO9660
         if(entry.AmigaProtection != null) xattrs.Add(Xattrs.XATTR_AMIGA_PROTECTION);
 
         if(entry.AcornSystemArea?.Filetype != null) xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_FILETYPE);
+
+        xattrs.AddRange(GetAaipAttributes(entry).Select(static a => a.name));
 
         if(entry.Flags.HasFlag(FileFlags.Directory) || entry.Extents == null || entry.Extents.Count == 0)
             return ErrorNumber.NoError;
@@ -217,6 +220,17 @@ public sealed partial class ISO9660
 
                 return ErrorNumber.NoError;
             default:
+                // Attributes recorded with the Arbitrary Attribute Interchange Protocol
+                foreach((string name, byte[] value) in GetAaipAttributes(entry))
+                {
+                    if(name != xattr) continue;
+
+                    buf = new byte[value.Length];
+                    Array.Copy(value, 0, buf, 0, value.Length);
+
+                    return ErrorNumber.NoError;
+                }
+
                 return ErrorNumber.NoSuchExtendedAttribute;
         }
     }

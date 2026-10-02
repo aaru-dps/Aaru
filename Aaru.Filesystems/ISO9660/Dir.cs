@@ -753,12 +753,15 @@ public sealed partial class ISO9660
                 case AAIP_MAGIC:
                     byte alLength = data[systemAreaOff + 2];
 
-                    if(alLength == 0)
+                    // Old "AA" entries come here without the length checks of the "AL" ones
+                    if(alLength < 5 || systemAreaOff + alLength > Math.Min(end, data.Length))
                     {
                         systemAreaOff = end;
 
                         break;
                     }
+
+                    DecodeAaipEntry(data, systemAreaOff, alLength, entry);
 
                     systemAreaOff += alLength;
 

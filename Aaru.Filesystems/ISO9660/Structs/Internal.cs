@@ -39,6 +39,10 @@ public sealed partial class ISO9660
 
     sealed class DecodedDirectoryEntry
     {
+        public bool                           AaipComponentContinues;
+        public List<byte[]>                   AaipComponents;
+        public bool                           AaipContinues;
+        public int                            AaipPendingBytes;
         public AcornSystemArea?               AcornSystemArea;
         public byte[]                         AmigaComment;
         public AmigaProtection?               AmigaProtection;

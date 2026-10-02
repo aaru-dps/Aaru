@@ -40,6 +40,28 @@ public sealed partial class ISO9660
     const ushort AAIP_MAGIC     = 0x414C; // "AL"
     const ushort AAIP_MAGIC_OLD = 0x4141; // "AA"
 
+    // ACL entry types of AAIP 2.0
+    const int AAIP_ACL_USER_OBJ    = 1;
+    const int AAIP_ACL_GROUP_OBJ   = 3;
+    const int AAIP_ACL_MASK        = 5;
+    const int AAIP_ACL_OTHER       = 6;
+    const int AAIP_ACL_SWITCH_MARK = 8;
+    const int AAIP_ACL_USER_N      = 10;
+    const int AAIP_ACL_GROUP_N     = 12;
+
+    // Tags of the system.posix_acl_* extended attributes of Linux
+    const ushort ACL_USER_OBJ  = 0x01;
+    const ushort ACL_USER      = 0x02;
+    const ushort ACL_GROUP_OBJ = 0x04;
+    const ushort ACL_GROUP     = 0x08;
+    const ushort ACL_MASK      = 0x10;
+    const ushort ACL_OTHER     = 0x20;
+
+    /// <summary>Identifier of the entries that are not for a named user or group</summary>
+    const uint ACL_UNDEFINED_ID = 0xFFFFFFFF;
+    /// <summary>Version of the system.posix_acl_* extended attributes of Linux</summary>
+    const uint LINUX_ACL_VERSION = 2;
+
 #region Nested type: AAIPFlags
 
     [Flags]

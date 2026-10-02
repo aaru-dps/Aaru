@@ -25,6 +25,12 @@ static class Xattrs
     /// </summary>
     public const string XATTR_AMIGA_PROTECTION = "amiga.protection";
 
+    /// <summary>Extended attribute name for the POSIX access ACL, in the binary format of Linux</summary>
+    public const string XATTR_POSIX_ACL_ACCESS = "system.posix_acl_access";
+
+    /// <summary>Extended attribute name for the POSIX default ACL of a directory, in the binary format of Linux</summary>
+    public const string XATTR_POSIX_ACL_DEFAULT = "system.posix_acl_default";
+
     /// <summary>Extended attribute name for Apple DOS track/sector list</summary>
     public const string XATTR_APPLE_DOS_TRACK_SECTOR_LIST = "com.apple.dos.tracksectorlist";
 
