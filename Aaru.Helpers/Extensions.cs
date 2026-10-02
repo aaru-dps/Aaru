@@ -59,13 +59,17 @@ public static class Extensions
     public static int EnsureRead(this Stream s, byte[] buffer, int offset, int count)
     {
         var pos = 0;
-        int read;
 
-        do
+        // Never ask for zero bytes once the buffer is full, some streams take it as the end of the data, like the
+        // LZipStream of SharpCompress, which then fails its CRC check
+        while(pos < count)
         {
-            read =  s.Read(buffer, pos + offset, count - pos);
-            pos  += read;
-        } while(read > 0);
+            int read = s.Read(buffer, pos + offset, count - pos);
+
+            if(read == 0) break;
+
+            pos += read;
+        }
 
         return pos;
     }
