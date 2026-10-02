@@ -293,6 +293,10 @@ public sealed partial class ISO9660
 
             if(entry.RripChildLink.HasValue) ResolveRripChildLink(entry);
 
+            // ISO 9660 does not allow '!', which starts RISC OS application names, so it was recorded as '_'
+            if(entry.AcornSystemArea?.IsApplication == true && entry.Filename.StartsWith('_'))
+                entry.Filename = "!" + entry.Filename[1..];
+
             if(entry.Flags.HasFlag(FileFlags.Associated))
             {
                 // The associated file comes before the file it belongs to, which is not known yet
