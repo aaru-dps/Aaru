@@ -1089,7 +1089,11 @@ public sealed partial class ISO9660
                                                         out byte[] caData);
 
                     if(errno == ErrorNumber.NoError && caData.Length > 0)
-                        DecodeSystemArea(caData, 0, caData.Length, ref entry, out hasResourceFork);
+                    {
+                        // Keep a resource fork already found before the continuation area
+                        DecodeSystemArea(caData, 0, caData.Length, ref entry, out bool continuedResourceFork);
+                        hasResourceFork |= continuedResourceFork;
+                    }
 
                     systemAreaOff += ceLength;
 
