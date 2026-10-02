@@ -112,7 +112,7 @@ public class Iso9660Rrip
 
     static string DataFolder => Path.Combine(Consts.TestFilesRoot, "Filesystems", "ISO9660");
 
-    static (ISO9660 fs, IMediaImage image) Mount(string testFile, string @namespace = "rrip")
+    internal static (ISO9660 fs, IMediaImage image) Mount(string testFile, string @namespace = "rrip")
     {
         string path = Path.Combine(DataFolder, testFile);
 
@@ -140,20 +140,20 @@ public class Iso9660Rrip
         return (fs, image);
     }
 
-    static void Unmount(ISO9660 fs, IMediaImage image)
+    internal static void Unmount(ISO9660 fs, IMediaImage image)
     {
         fs.Unmount();
         FilesystemTest.DisposeImage(image);
     }
 
-    static List<string> ListXAttr(ISO9660 fs, string path)
+    internal static List<string> ListXAttr(ISO9660 fs, string path)
     {
         fs.ListXAttr(path, out List<string> xattrs).Should().Be(ErrorNumber.NoError, path);
 
         return xattrs;
     }
 
-    static byte[] GetXattr(ISO9660 fs, string path, string name)
+    internal static byte[] GetXattr(ISO9660 fs, string path, string name)
     {
         byte[] buf = null;
         fs.GetXattr(path, name, ref buf).Should().Be(ErrorNumber.NoError, $"{path} {name}");
@@ -161,14 +161,14 @@ public class Iso9660Rrip
         return buf;
     }
 
-    static FileEntryInfo Stat(ISO9660 fs, string path)
+    internal static FileEntryInfo Stat(ISO9660 fs, string path)
     {
         fs.Stat(path, out FileEntryInfo stat).Should().Be(ErrorNumber.NoError, path);
 
         return stat;
     }
 
-    static List<string> ReadDir(ISO9660 fs, string path)
+    internal static List<string> ReadDir(ISO9660 fs, string path)
     {
         List<string> entries = [];
 
@@ -181,7 +181,7 @@ public class Iso9660Rrip
         return entries;
     }
 
-    static byte[] ReadFile(ISO9660 fs, string path, long offset, long length, int chunk)
+    internal static byte[] ReadFile(ISO9660 fs, string path, long offset, long length, int chunk)
     {
         fs.OpenFile(path, out IFileNode node).Should().Be(ErrorNumber.NoError, path);
 
