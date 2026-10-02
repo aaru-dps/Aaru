@@ -506,11 +506,12 @@ public sealed partial class ISO9660
 
             if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode |= 2;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode |= 64;
+            // Owner bits are set when the action is NOT allowed, as in AmigaOS
+            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode |= 64;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode |= 256;
+            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode |= 256;
 
-            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;
+            if(!entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;
 
             if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Archive))
                 stat.Attributes |= FileAttributes.Archive;
