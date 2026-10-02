@@ -496,6 +496,8 @@ public sealed partial class ISO9660
 
         if(_namespace != Namespace.Joliet)
         {
+            _suspSkip = _cdi || _highSierra ? (byte)0 : ReadSuspSkip(rootLocation + rootXattrLength);
+
             _rootDirectoryCache = _cdi
                                       ? DecodeCdiDirectory(rootLocation + rootXattrLength, rootSize)
                                       : _highSierra
@@ -525,6 +527,8 @@ public sealed partial class ISO9660
             rootSize = jolietvd.Value.root_directory_record.size;
 
             _joliet = true;
+
+            _suspSkip = ReadSuspSkip(rootLocation + rootXattrLength);
 
             _rootDirectoryCache = DecodeIsoDirectory(rootLocation + rootXattrLength, rootSize);
 

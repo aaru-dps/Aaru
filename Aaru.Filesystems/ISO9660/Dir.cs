@@ -283,7 +283,8 @@ public sealed partial class ISO9660
                              systemAreaStart,
                              systemAreaStart + systemAreaLength,
                              ref entry,
-                             out bool hasResourceFork);
+                             out bool hasResourceFork,
+                             _suspSkip);
 
             if(entry.RripChildLink.HasValue) ResolveRripChildLink(entry);
 
@@ -457,7 +458,7 @@ public sealed partial class ISO9660
             systemAreaLength--;
         }
 
-        DecodeSystemArea(childSector, systemAreaStart, systemAreaStart + systemAreaLength, ref dot, out _);
+        DecodeSystemArea(childSector, systemAreaStart, systemAreaStart + systemAreaLength, ref dot, out _, _suspSkip);
 
         entry.Extents              = [(childLba, childRecord.size)];
         entry.Size                 = childRecord.size;
@@ -531,9 +532,34 @@ public sealed partial class ISO9660
         return link;
     }
 
-    void DecodeSystemArea(byte[] data, int start, int end, ref DecodedDirectoryEntry entry, out bool hasResourceFork)
+    /// <summary>
+    ///     Reads the number of bytes to skip at the start of every System Use Area, from the "SP" entry of the first
+    ///     directory record of the root directory (SUSP 5.3), or 0 if there is none.
+    /// </summary>
+    byte ReadSuspSkip(ulong rootLocation)
+    {
+        if(ReadSector(rootLocation, out byte[] sector) != ErrorNumber.NoError ||
+           sector.Length < _directoryRecordSize + 8)
+            return 0;
+
+        int spOff = _directoryRecordSize + sector[32];
+        spOff += spOff % 2;
+
+        if(spOff + 7 > sector.Length || sector[0] < spOff + 7) return 0;
+
+        // Signature, length, version, check bytes 0xBE 0xEF and the skip length
+        return BigEndianBitConverter.ToUInt16(sector, spOff)     == SUSP_INDICATOR &&
+               sector[spOff + 2]                                  >= 7              &&
+               BigEndianBitConverter.ToUInt16(sector, spOff + 4) == SUSP_MAGIC
+                   ? sector[spOff + 6]
+                   : (byte)0;
+    }
+
+    void DecodeSystemArea(byte[] data, int start, int end, ref DecodedDirectoryEntry entry, out bool hasResourceFork,
+                          int suspSkip = 0)
     {
         int systemAreaOff = start;
+        int skipEnd       = start + suspSkip;
         hasResourceFork = false;
 
         // Check for Acorn RISC OS system area (exactly 32 bytes starting with "ARCHIMEDES")
@@ -564,6 +590,14 @@ public sealed partial class ISO9660
             if(systemAreaOff + 6 + 2 > data.Length) break;
 
             if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC) systemAreaSignature = XA_MAGIC;
+
+            // SUSP entries start after the bytes skipped as told by "SP", but CD-ROM XA data is recorded before them
+            if(systemAreaOff < skipEnd && systemAreaSignature != XA_MAGIC)
+            {
+                systemAreaOff = skipEnd;
+
+                continue;
+            }
 
             // A SUSP entry shorter than its fixed part, or past the System Use Area, means the rest is garbage, and a
             // zero length one would never advance
@@ -1314,7 +1348,12 @@ public sealed partial class ISO9660
                 systemAreaLength--;
             }
 
-            DecodeSystemArea(sector, systemAreaStart, systemAreaStart + systemAreaLength, ref entry, out _);
+            DecodeSystemArea(sector,
+                             systemAreaStart,
+                             systemAreaStart + systemAreaLength,
+                             ref entry,
+                             out _,
+                             _suspSkip);
 
             entries.Add(entry);
         }
