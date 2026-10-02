@@ -44,6 +44,9 @@ public sealed partial class ISO9660
 {
     Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> _directoryCache;
 
+    /// <summary>Case insensitive index of each cached directory, built the first time a name is looked up in it</summary>
+    Dictionary<Dictionary<string, DecodedDirectoryEntry>, Dictionary<string, DecodedDirectoryEntry>> _directoryIndex;
+
     Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(ulong start, uint size)
     {
         Dictionary<string, DecodedDirectoryEntry> entries  = new();

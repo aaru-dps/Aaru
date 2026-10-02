@@ -758,6 +758,8 @@ public sealed partial class ISO9660
         };
 
         _directoryCache = [];
+        _directoryIndex = new Dictionary<Dictionary<string, DecodedDirectoryEntry>,
+            Dictionary<string, DecodedDirectoryEntry>>(ReferenceEqualityComparer.Instance);
 
         if(_usePathTable)
         {
@@ -783,6 +785,7 @@ public sealed partial class ISO9660
 
         _rootDirectoryCache = null;
         _directoryCache     = null;
+        _directoryIndex     = null;
         _pathTableLookup    = null;
         _mounted            = false;
 

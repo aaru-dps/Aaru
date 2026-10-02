@@ -73,25 +73,24 @@ public sealed partial class ISO9660
             parent = _rootDirectoryCache;
         else if(!_directoryCache.TryGetValue(parentPath, out parent)) return ErrorNumber.InvalidArgument;
 
-        KeyValuePair<string, DecodedDirectoryEntry> dirent =
-            parent.FirstOrDefault(t => t.Key.Equals(pieces[^1], StringComparison.CurrentCultureIgnoreCase));
-
-        if(string.IsNullOrEmpty(dirent.Key))
+        // Scanning the directory for every lookup made big directories take hours, so index it once. The first entry
+        // of names only differing in case wins, as when scanning.
+        if(!_directoryIndex.TryGetValue(parent, out Dictionary<string, DecodedDirectoryEntry> index))
         {
-            if(!_joliet && !pieces[^1].EndsWith(";1", StringComparison.Ordinal))
-            {
-                dirent = parent.FirstOrDefault(t => t.Key.Equals(pieces[^1] + ";1",
-                                                                 StringComparison.CurrentCultureIgnoreCase));
+            index = new Dictionary<string, DecodedDirectoryEntry>(StringComparer.CurrentCultureIgnoreCase);
 
-                if(string.IsNullOrEmpty(dirent.Key)) return ErrorNumber.NoSuchFile;
-            }
-            else
-                return ErrorNumber.NoSuchFile;
+            foreach(KeyValuePair<string, DecodedDirectoryEntry> child in parent) index.TryAdd(child.Key, child.Value);
+
+            _directoryIndex[parent] = index;
         }
 
-        entry = dirent.Value;
+        if(index.TryGetValue(pieces[^1], out entry)) return ErrorNumber.NoError;
 
-        return ErrorNumber.NoError;
+        if(!_joliet && !pieces[^1].EndsWith(";1", StringComparison.Ordinal) &&
+           index.TryGetValue(pieces[^1] + ";1", out entry))
+            return ErrorNumber.NoError;
+
+        return ErrorNumber.NoSuchFile;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
