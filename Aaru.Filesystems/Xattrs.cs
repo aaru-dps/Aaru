@@ -20,6 +20,11 @@ static class Xattrs
     /// <summary>Extended attribute name for the Amiga file comment</summary>
     public const string XATTR_AMIGA_COMMENTS = "amiga.comments";
 
+    /// <summary>
+    ///     Extended attribute name for the 32 Amiga protection bits, as the big endian 32-bit value AmigaOS uses
+    /// </summary>
+    public const string XATTR_AMIGA_PROTECTION = "amiga.protection";
+
     /// <summary>Extended attribute name for Apple DOS track/sector list</summary>
     public const string XATTR_APPLE_DOS_TRACK_SECTOR_LIST = "com.apple.dos.tracksectorlist";
 

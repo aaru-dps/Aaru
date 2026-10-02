@@ -500,6 +500,10 @@ public sealed partial class ISO9660
 
             if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Archive))
                 stat.Attributes |= FileAttributes.Archive;
+
+            // Pure (reentrant) executables can be made resident, mapped as in the AmigaDOS filesystem
+            if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Reentrant))
+                stat.Attributes |= FileAttributes.System;
         }
 
         if(entry.PosixDeviceNumber != null)

@@ -71,6 +71,8 @@ public sealed partial class ISO9660
 
         if(entry.AmigaComment != null) xattrs.Add(Xattrs.XATTR_AMIGA_COMMENTS);
 
+        if(entry.AmigaProtection != null) xattrs.Add(Xattrs.XATTR_AMIGA_PROTECTION);
+
         if(entry.AcornSystemArea?.Filetype != null) xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_FILETYPE);
 
         if(entry.Flags.HasFlag(FileFlags.Directory) || entry.Extents == null || entry.Extents.Count == 0)
@@ -186,6 +188,17 @@ public sealed partial class ISO9660
 
                 buf = new byte[entry.AmigaComment.Length];
                 Array.Copy(entry.AmigaComment, 0, buf, 0, entry.AmigaComment.Length);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_AMIGA_PROTECTION:
+                if(entry.AmigaProtection is null) return ErrorNumber.NoSuchExtendedAttribute;
+
+                // Recorded in the same order as the big endian value AmigaOS uses, all bits preserved
+                buf =
+                [
+                    entry.AmigaProtection.Value.User, entry.AmigaProtection.Value.Reserved,
+                    (byte)entry.AmigaProtection.Value.Multiuser, (byte)entry.AmigaProtection.Value.Protection
+                ];
 
                 return ErrorNumber.NoError;
             case Xattrs.XATTR_ACORN_RISCOS_FILETYPE:
