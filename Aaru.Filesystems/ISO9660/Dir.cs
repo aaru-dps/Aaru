@@ -720,10 +720,14 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
+                            // Identifier 3 records a file with the bundle bit set
                             fInfo = new AppleCommon.FInfo
                             {
                                 fdCreator = appleHfsTypeCreatorSystemUse.creator,
-                                fdType    = appleHfsTypeCreatorSystemUse.type
+                                fdType    = appleHfsTypeCreatorSystemUse.type,
+                                fdFlags = appleOldId == AppleOldId.TypeCreatorBundle
+                                              ? AppleCommon.FinderFlags.kHasBundle
+                                              : 0
                             };
 
                             entry.FinderInfo = fInfo;
@@ -740,10 +744,14 @@ public sealed partial class ISO9660
 
                             hasResourceFork = true;
 
+                            // Identifier 5 records a file with the bundle bit set
                             fInfo = new AppleCommon.FInfo
                             {
                                 fdCreator = appleHfsIconSystemUse.creator,
-                                fdType    = appleHfsIconSystemUse.type
+                                fdType    = appleHfsIconSystemUse.type,
+                                fdFlags = appleOldId == AppleOldId.TypeCreatorIconBundle
+                                              ? AppleCommon.FinderFlags.kHasBundle
+                                              : 0
                             };
 
                             entry.FinderInfo = fInfo;
