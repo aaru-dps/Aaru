@@ -485,6 +485,21 @@ public sealed partial class ISO9660
         entry.SymbolicLink         = null;
     }
 
+    /// <summary>Gets the size of an old Apple "BA" extension, which has no length field, or 0 if it is unknown</summary>
+    static int AppleOldExtensionLength(AppleOldId id)
+    {
+        return id switch
+               {
+                   AppleOldId.ProDOS => Marshal.SizeOf<AppleProDOSOldSystemUse>(),
+                   AppleOldId.TypeCreator or AppleOldId.TypeCreatorBundle => Marshal
+                      .SizeOf<AppleHFSTypeCreatorSystemUse>(),
+                   AppleOldId.TypeCreatorIcon or AppleOldId.TypeCreatorIconBundle => Marshal
+                      .SizeOf<AppleHFSIconSystemUse>(),
+                   AppleOldId.HFS => Marshal.SizeOf<AppleHFSOldSystemUse>(),
+                   _              => 0
+               };
+    }
+
     /// <summary>Gets the minimum length of a SUSP or RRIP System Use entry, or 0 if the signature is not one</summary>
     static int SuspMinimumLength(ushort signature)
     {
@@ -622,6 +637,22 @@ public sealed partial class ISO9660
                     // Old AAIP
                     if(appleId == AppleId.ProDOS && appleLength != 7) goto case AAIP_MAGIC;
 
+                    int appleMinimum = appleId switch
+                                       {
+                                           AppleId.ProDOS => Marshal.SizeOf<AppleProDOSSystemUse>(),
+                                           AppleId.HFS    => Marshal.SizeOf<AppleHFSSystemUse>(),
+                                           _              => 4
+                                       };
+
+                    // Shorter than what its identifier records, or past the System Use Area, the rest is garbage, and a
+                    // zero length extension would never advance
+                    if(appleLength < appleMinimum || systemAreaOff + appleLength > Math.Min(end, data.Length))
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
                     switch(appleId)
                     {
                         case AppleId.ProDOS:
@@ -659,6 +690,16 @@ public sealed partial class ISO9660
                     break;
                 case APPLE_MAGIC_OLD:
                     var appleOldId = (AppleOldId)data[systemAreaOff + 2];
+
+                    // These have no length field, each identifier has a fixed size that must fit in the System Use Area
+                    int appleOldLength = AppleOldExtensionLength(appleOldId);
+
+                    if(appleOldLength == 0 || systemAreaOff + appleOldLength > Math.Min(end, data.Length))
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
 
                     switch(appleOldId)
                     {

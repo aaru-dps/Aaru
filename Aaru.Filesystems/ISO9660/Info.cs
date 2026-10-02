@@ -361,39 +361,30 @@ public sealed partial class ISO9660
                     {
                         // Easy, contains size field
                         case APPLE_MAGIC:
-                            apple     =  true;
-                            saOff     += sa[saOff + 2];
-                            noneFound =  false;
+                            apple     = true;
+                            noneFound = false;
+
+                            // A zero length extension would never advance
+                            if(sa[saOff + 2] == 0)
+                            {
+                                saOff = saLen;
+
+                                break;
+                            }
+
+                            saOff += sa[saOff + 2];
 
                             break;
 
-                        // Not easy, contains size field
+                        // Not easy, has no size field
                         case APPLE_MAGIC_OLD:
-                            apple = true;
-                            var appleId = (AppleOldId)sa[saOff + 2];
+                            apple     = true;
                             noneFound = false;
 
-                            switch(appleId)
-                            {
-                                case AppleOldId.ProDOS:
-                                    saOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
+                            // An unknown identifier has no known size, so nothing after it can be found
+                            int appleOldLength = AppleOldExtensionLength((AppleOldId)sa[saOff + 2]);
 
-                                    break;
-                                case AppleOldId.TypeCreator:
-                                case AppleOldId.TypeCreatorBundle:
-                                    saOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
-
-                                    break;
-                                case AppleOldId.TypeCreatorIcon:
-                                case AppleOldId.TypeCreatorIconBundle:
-                                    saOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
-
-                                    break;
-                                case AppleOldId.HFS:
-                                    saOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
-
-                                    break;
-                            }
+                            saOff = appleOldLength == 0 ? saLen : saOff + appleOldLength;
 
                             break;
 
