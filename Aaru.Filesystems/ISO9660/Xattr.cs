@@ -83,7 +83,8 @@ public sealed partial class ISO9660
                                                  SectorTagType.CdSectorSubHeader,
                                                  out _);
 
-        if(errno != ErrorNumber.NoError) return errno;
+        // Only Mode 2 sectors have a subheader, the other attributes are still there without it
+        if(errno != ErrorNumber.NoError) return ErrorNumber.NoError;
 
         xattrs.Add(Xattrs.XATTR_ISO9660_MODE2_SUBHEADER);
         xattrs.Add(Xattrs.XATTR_ISO9660_MODE2_SUBHEADER_COPY);
