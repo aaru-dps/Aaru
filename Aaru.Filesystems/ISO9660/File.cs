@@ -617,15 +617,18 @@ public sealed partial class ISO9660
     }
 
     /// <summary>Gets the file type attribute from the S_IFMT bits of a Rock Ridge POSIX file mode</summary>
-    static FileAttributes PosixFileType(PosixMode mode) => (mode & PosixMode.TypeMask) switch
-                                                           {
-                                                               PosixMode.Block     => FileAttributes.BlockDevice,
-                                                               PosixMode.Character => FileAttributes.CharDevice,
-                                                               PosixMode.Pipe      => FileAttributes.Pipe,
-                                                               PosixMode.Socket    => FileAttributes.Socket,
-                                                               PosixMode.Symlink   => FileAttributes.Symlink,
-                                                               _                   => FileAttributes.None
-                                                           };
+    static FileAttributes PosixFileType(PosixMode mode)
+    {
+        return (mode & PosixMode.TypeMask) switch
+               {
+                   PosixMode.Block     => FileAttributes.BlockDevice,
+                   PosixMode.Character => FileAttributes.CharDevice,
+                   PosixMode.Pipe      => FileAttributes.Pipe,
+                   PosixMode.Socket    => FileAttributes.Socket,
+                   PosixMode.Symlink   => FileAttributes.Symlink,
+                   _                   => FileAttributes.None
+               };
+    }
 
 #endregion
 }
