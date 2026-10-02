@@ -61,41 +61,7 @@ public class SuperNintendo : IByteAddressableImage
            stream.Length != 8388608)
             return false;
 
-        Header header;
-        var    headerBytes = new byte[48];
-
-        // Probe every possible header location, a larger ROM can still be LoROM
-        if(stream.Length > 0x40FFFF)
-        {
-            stream.Position = 0x40FFB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((header.Mode & 0xF) == 0x5 || (header.Mode & 0xF) == 0xA) return true;
-        }
-
-        if(stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((header.Mode & 0xF) == 0x1 || (header.Mode & 0xF) == 0xA) return true;
-        }
-
-        if(stream.Length > 0x7FFF)
-        {
-            stream.Position = 0x7FB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            return (header.Mode & 0xF) == 0x0 || (header.Mode & 0xF) == 0x2 || (header.Mode & 0xF) == 0x3;
-        }
-
-        return false;
+        return TryReadHeader(stream, out _);
     }
 
     /// <inheritdoc />
@@ -108,41 +74,7 @@ public class SuperNintendo : IByteAddressableImage
         // Not sure but seems to be a multiple of at least this
         if(stream.Length % 32768 != 0) return ErrorNumber.InvalidArgument;
 
-        var found       = false;
-        var headerBytes = new byte[48];
-
-        // Probe every possible header location, a larger ROM can still be LoROM
-        if(stream.Length > 0x40FFFF)
-        {
-            stream.Position = 0x40FFB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((_header.Mode & 0xF) == 0x5 || (_header.Mode & 0xF) == 0xA) found = true;
-        }
-
-        if(!found && stream.Length > 0xFFFF)
-        {
-            stream.Position = 0xFFB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((_header.Mode & 0xF) == 0x1 || (_header.Mode & 0xF) == 0xA) found = true;
-        }
-
-        if(!found && stream.Length > 0x7FFF)
-        {
-            stream.Position = 0x7FB0;
-
-            stream.EnsureRead(headerBytes, 0, 48);
-            _header = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
-
-            if((_header.Mode & 0xF) == 0x0 || (_header.Mode & 0xF) == 0x2 || (_header.Mode & 0xF) == 0x3) found = true;
-        }
-
-        if(!found) return ErrorNumber.InvalidArgument;
+        if(!TryReadHeader(stream, out _header)) return ErrorNumber.InvalidArgument;
 
         _data           = new byte[imageFilter.DataForkLength];
         stream.Position = 0;
@@ -655,6 +587,75 @@ public class SuperNintendo : IByteAddressableImage
     }
 
 #endregion
+
+    /// <summary>Finds a valid internal header, probing the ExHiROM, HiROM and LoROM locations in that order</summary>
+    /// <param name="stream">ROM dump</param>
+    /// <param name="header">The header found</param>
+    /// <returns><c>true</c> if a valid header was found</returns>
+    static bool TryReadHeader(Stream stream, out Header header)
+    {
+        header = default(Header);
+
+        // A larger ROM can still be LoROM, so every location is probed, each with the memory maps it can hold
+        (long offset, byte[] memoryMaps)[] locations =
+        [
+            (0x40FFB0, [0x5, 0xA]), (0xFFB0, [0x1, 0xA]), (0x7FB0, [0x0, 0x2, 0x3])
+        ];
+
+        var headerBytes = new byte[48];
+
+        foreach((long offset, byte[] memoryMaps) in locations)
+        {
+            // The header must be in a complete bank
+            if(stream.Length < offset + 0x50) continue;
+
+            stream.Position = offset;
+            stream.EnsureRead(headerBytes, 0, 48);
+
+            Header candidate = Marshal.ByteArrayToStructureLittleEndian<Header>(headerBytes);
+
+            if(!IsValidHeader(candidate, memoryMaps)) continue;
+
+            header = candidate;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Checks that an internal header is plausible, as its location alone matches any data</summary>
+    /// <param name="header">Internal header</param>
+    /// <param name="memoryMaps">Memory maps that can have the header at the location it was read from</param>
+    /// <returns><c>true</c> if the header is plausible</returns>
+    static bool IsValidHeader(Header header, byte[] memoryMaps)
+    {
+        // The map mode is 001SMMMM, S being the ROM speed and MMMM the memory map
+        if((header.Mode & 0xE0) != 0x20 || Array.IndexOf(memoryMaps, (byte)(header.Mode & 0xF)) < 0) return false;
+
+        // ROM size is 2^n KiB, cartridges go from 128KiB to 8MiB
+        if(header.RomSize is < 7 or > 13) return false;
+
+        // Homebrew and unlicensed ROMs may not fill the checksum, but they still have a title
+        return (ushort)(header.Checksum ^ header.ChecksumComplement) == 0xFFFF || IsPrintableTitle(header.Title);
+    }
+
+    /// <summary>Checks that a title only contains ASCII or JIS X 0201 katakana and is not empty</summary>
+    static bool IsPrintableTitle(byte[] title)
+    {
+        var hasText = false;
+
+        foreach(byte c in title)
+        {
+            if(c is 0x00 or 0x20) continue;
+
+            if(c is < 0x21 or > 0x7E and < 0xA1 or > 0xDF) return false;
+
+            hasText = true;
+        }
+
+        return hasText;
+    }
 
     static string DecodeCoprocessor(byte chipset, byte subtype)
     {
