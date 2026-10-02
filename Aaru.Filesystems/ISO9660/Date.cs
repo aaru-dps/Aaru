@@ -56,7 +56,8 @@ public sealed partial class ISO9660
                                     timestamp.Second,
                                     DateTimeKind.Unspecified);
 
-            date = date.AddMinutes(timestamp.GmtOffset * 15);
+            // The offset is from GMT in 15 minute intervals, so it must be subtracted from the local time
+            date = date.AddMinutes(-timestamp.GmtOffset * 15);
 
             return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
         }
