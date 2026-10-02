@@ -33,6 +33,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Aaru.CommonTypes.AaruMetadata;
 using Aaru.CommonTypes.Enums;
@@ -506,7 +507,17 @@ public sealed partial class ISO9660
 
         Metadata.Type = fsFormat;
 
-        if(jolietvd != null && _namespace is Namespace.Joliet or Namespace.Rrip)
+        // Rock Ridge is normally recorded only in the primary tree, so only fall back to the Joliet tree when the
+        // primary tree carries no "PX" fields, which RRIP 4.1.1 makes mandatory in every directory record
+        bool useJoliet = _namespace switch
+                         {
+                             Namespace.Joliet => true,
+                             Namespace.Rrip => !_rootDirectoryCache.Values.Any(static e => e.PosixAttributes != null ||
+                                                                                   e.PosixAttributesOld      != null),
+                             _ => false
+                         };
+
+        if(jolietvd != null && useJoliet)
         {
             rootLocation    = jolietvd.Value.root_directory_record.extent;
             rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;
