@@ -50,8 +50,9 @@ namespace Aaru.Tests.Filesystems;
 /// <remarks>
 ///     <para>
 ///         xorriso_rrip.iso (RRIP 1.12) and xorriso_rrip_1.10.iso (RRIP 1.10, long form "TF") were created with
-///         xorriso 1.5.8 running with TZ=Asia/Kolkata and -compliance deep_paths_off:always_gmt_off, plus new_rr or
-///         old_rr:rrip_tf_long. Both have a Joliet tree and relocate /a/b/c/d/e/f/g/h to rr_moved. Every file belongs
+///         xorriso 1.5.8 running with TZ=Asia/Kolkata, -padding 0 and -compliance deep_paths_off:always_gmt_off, plus
+///         new_rr or old_rr:rrip_tf_long. Without padding they are not mistaken for Super Nintendo ROMs, which can be
+///         512KiB. Both have a Joliet tree and relocate /a/b/c/d/e/f/g/h to rr_moved. Every file belongs
 ///         to 1234:5678, has an access time of 2002-03-04 05:06:07 UTC, an attribute change time of 2003-04-05
 ///         06:07:08 UTC and a modification time of 2001-02-03 04:05:06 UTC, except /a/b/c/d/e/f/g/h, modified on
 ///         1999-12-31 23:59:58 UTC.
