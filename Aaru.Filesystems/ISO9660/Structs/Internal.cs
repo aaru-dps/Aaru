@@ -62,6 +62,7 @@ public sealed partial class ISO9660
         public byte[]                         RripAccess;
         public byte[]                         RripAttributeChange;
         public byte[]                         RripBackup;
+        public uint?                          RripChildLink;
         public byte[]                         RripCreation;
         public byte[]                         RripEffective;
         public byte[]                         RripExpiration;

@@ -284,6 +284,8 @@ public sealed partial class ISO9660
                              ref entry,
                              out bool hasResourceFork);
 
+            if(entry.RripChildLink.HasValue) ResolveRripChildLink(entry);
+
             if(entry.Flags.HasFlag(FileFlags.Associated))
             {
                 if(entries.ContainsKey(entry.Filename))
@@ -419,6 +421,63 @@ public sealed partial class ISO9660
         }
 
         entries.Remove(transTblEntry.Key);
+    }
+
+    /// <summary>
+    ///     Replaces the placeholder of a Rock Ridge relocated directory with the directory itself. As per RRIP 4.1.5.1
+    ///     only the name is kept from the placeholder, all other attributes come from the "dot" entry of the moved
+    ///     directory.
+    /// </summary>
+    void ResolveRripChildLink(DecodedDirectoryEntry entry)
+    {
+        uint childLba = entry.RripChildLink.Value;
+        entry.RripChildLink = null;
+
+        ErrorNumber errno = ReadSector(childLba, out byte[] childSector);
+
+        if(errno != ErrorNumber.NoError || childSector.Length < _directoryRecordSize) return;
+
+        DirectoryRecord childRecord =
+            Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector, 0, _directoryRecordSize);
+
+        if(childRecord.length < _directoryRecordSize || childRecord.length > childSector.Length) return;
+
+        var dot = new DecodedDirectoryEntry
+        {
+            Filename = entry.Filename
+        };
+
+        int systemAreaStart  = childRecord.name_len + _directoryRecordSize;
+        int systemAreaLength = childRecord.length   - childRecord.name_len - _directoryRecordSize;
+
+        if(systemAreaStart % 2 != 0)
+        {
+            systemAreaStart++;
+            systemAreaLength--;
+        }
+
+        DecodeSystemArea(childSector, systemAreaStart, systemAreaStart + systemAreaLength, ref dot, out _);
+
+        entry.Extents              = [(childLba, childRecord.size)];
+        entry.Size                 = childRecord.size;
+        entry.Flags                = childRecord.flags;
+        entry.FileUnitSize         = childRecord.file_unit_size;
+        entry.Interleave           = childRecord.interleave;
+        entry.VolumeSequenceNumber = childRecord.volume_sequence_number;
+        entry.Timestamp            = DecodeIsoDateTime(childRecord.date);
+        entry.XattrLength          = childRecord.xattr_len;
+        entry.XA                   = dot.XA;
+        entry.PosixAttributes      = dot.PosixAttributes;
+        entry.PosixAttributesOld   = dot.PosixAttributesOld;
+        entry.PosixDeviceNumber    = dot.PosixDeviceNumber;
+        entry.RripAccess           = dot.RripAccess;
+        entry.RripAttributeChange  = dot.RripAttributeChange;
+        entry.RripBackup           = dot.RripBackup;
+        entry.RripCreation         = dot.RripCreation;
+        entry.RripEffective        = dot.RripEffective;
+        entry.RripExpiration       = dot.RripExpiration;
+        entry.RripModify           = dot.RripModify;
+        entry.SymbolicLink         = null;
     }
 
     byte[] EncodeRripString(string text)
@@ -856,29 +915,8 @@ public sealed partial class ISO9660
                                                                             systemAreaOff,
                                                                             Marshal.SizeOf<ChildLink>());
 
-                    ErrorNumber errno = ReadSector(cl.child_dir_lba, out byte[] childSector);
-
-                    if(errno != ErrorNumber.NoError)
-                    {
-                        systemAreaOff = end;
-
-                        break;
-                    }
-
-                    DirectoryRecord childRecord =
-                        Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
-
-                    // As per RRIP 4.1.5.1, we leave name as in previous entry, substitute location with the one in
-                    // the CL, and replace all other fields with the ones found in the first entry of the child
-                    entry.Extents = [(cl.child_dir_lba, childRecord.size)];
-
-                    entry.Size                 = childRecord.size;
-                    entry.Flags                = childRecord.flags;
-                    entry.FileUnitSize         = childRecord.file_unit_size;
-                    entry.Interleave           = childRecord.interleave;
-                    entry.VolumeSequenceNumber = childRecord.volume_sequence_number;
-                    entry.Timestamp            = DecodeIsoDateTime(childRecord.date);
-                    entry.XattrLength          = childRecord.xattr_len;
+                    // Resolved once the whole system use area has been decoded, see ResolveRripChildLink
+                    entry.RripChildLink = cl.child_dir_lba;
 
                     systemAreaOff += clLength;
 
@@ -972,7 +1010,7 @@ public sealed partial class ISO9660
                             systemAreaOff,
                             Marshal.SizeOf<ContinuationArea>());
 
-                    errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
+                    ErrorNumber errno = ReadSingleExtent(ca.offset, ca.ca_length, ca.block, out byte[] caData);
 
                     // TODO: Check continuation area definition, this is not a proper fix
                     if(errno == ErrorNumber.NoError && caData.Length > 0)
