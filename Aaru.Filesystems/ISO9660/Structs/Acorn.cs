@@ -46,7 +46,8 @@ public sealed partial class ISO9660
     /// <summary>Acorn RISC OS system area structure, exactly 32 bytes.</summary>
     /// <remarks>
     ///     This structure is found in the system use area of ISO9660 directory records on discs created with Acorn RISC
-    ///     OS tools. It stores RISC OS-specific file attributes including the filetype.
+    ///     OS tools, and by mkisofs with the ARCHIMEDES patch. It stores the RISC OS load and execution addresses, which
+    ///     contain the filetype and date stamp, and the RISC OS attributes.
     /// </remarks>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     readonly struct AcornSystemArea
@@ -55,46 +56,29 @@ public sealed partial class ISO9660
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public readonly byte[] Signature;
 
-        /// <summary>Reserved byte at offset 10.</summary>
-        public readonly byte Reserved10;
-
-        /// <summary>Filetype low byte at offset 11.</summary>
-        public readonly byte FiletypeLow;
-
-        /// <summary>
-        ///     Filetype high nibble and flags at offset 12. If high nibble is 0xF0, filetype is present. Filetype =
-        ///     ((FiletypeHighAndFlags &amp; 0x0F) &lt;&lt; 8) | FiletypeLow
-        /// </summary>
-        public readonly byte FiletypeHighAndFlags;
-
-        /// <summary>Filetype present marker at offset 13. If 0xFF, the filetype field is valid.</summary>
-        public readonly byte FiletypePresent;
-
-        /// <summary>Reserved bytes at offset 14-18 (5 bytes).</summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-        public readonly byte[] Reserved14;
-
-        /// <summary>
-        ///     Application and attributes flags at offset 19. Bit 0 = application flag (filename should start with '!'
-        ///     instead of '_').
-        /// </summary>
-        public readonly byte Flags;
-
-        /// <summary>Load address (RISC OS specific) at offset 20-23.</summary>
+        /// <summary>Load address at offset 10, &amp;FFFtttdd for files with a filetype (ttt) and date stamp (dd).</summary>
         public readonly uint LoadAddress;
 
-        /// <summary>Execution address (RISC OS specific) at offset 24-27.</summary>
+        /// <summary>Execution address at offset 14, the low 32 bits of the date stamp for files with a filetype.</summary>
         public readonly uint ExecAddress;
 
-        /// <summary>File attributes (RISC OS specific) at offset 28-31.</summary>
+        /// <summary>
+        ///     Attributes at offset 18, the RISC OS access permissions in the low byte, and bit 8 set if the initial
+        ///     underscore of the filename stands for an exclamation mark.
+        /// </summary>
         public readonly uint Attributes;
 
+        /// <summary>Reserved bytes at offset 22-31 (10 bytes).</summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+        public readonly byte[] Reserved;
+
         /// <summary>Gets a value indicating whether this entry represents an application (starts with '!').</summary>
-        public bool IsApplication => (Flags & 0x01) == 0x01;
+        public bool IsApplication => (Attributes & 0x100) == 0x100;
+
+        /// <summary>Gets a value indicating whether the load address holds a filetype and date stamp.</summary>
+        public bool HasFiletype => (LoadAddress & 0xFFF00000) == 0xFFF00000;
 
         /// <summary>Gets the RISC OS filetype if present, otherwise null.</summary>
-        public ushort? Filetype => HasFiletype ? (ushort)((FiletypeHighAndFlags & 0x0F) << 8 | FiletypeLow) : null;
-
-        bool HasFiletype => FiletypePresent == 0xFF && (FiletypeHighAndFlags & 0xF0) == 0xF0;
+        public ushort? Filetype => HasFiletype ? (ushort)(LoadAddress >> 8 & 0xFFF) : null;
     }
 }
