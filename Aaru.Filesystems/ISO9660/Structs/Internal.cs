@@ -66,6 +66,9 @@ public sealed partial class ISO9660
         public byte[]                         RripEffective;
         public byte[]                         RripExpiration;
         public byte[]                         RripModify;
+        public bool                           RripSymlinkComponentContinues;
+        public List<byte[]>                   RripSymlinkComponents;
+        public bool                           RripSymlinkContinues;
         public ulong                          Size;
         public string                         SymbolicLink;
         public DateTime?                      Timestamp;

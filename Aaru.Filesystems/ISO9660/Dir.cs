@@ -421,12 +421,37 @@ public sealed partial class ISO9660
         entries.Remove(transTblEntry.Key);
     }
 
+    byte[] EncodeRripString(string text)
+    {
+        return _joliet ? Encoding.BigEndianUnicode.GetBytes(text) : _encoding.GetBytes(text);
+    }
+
+    /// <summary>Joins the components of a Rock Ridge symbolic link, a null component being the root directory</summary>
+    string BuildRripSymlink(List<byte[]> components)
+    {
+        var link = "";
+
+        foreach(byte[] component in components)
+        {
+            if(component is null)
+            {
+                link = "/";
+
+                continue;
+            }
+
+            string text = _joliet ? Encoding.BigEndianUnicode.GetString(component) : _encoding.GetString(component);
+
+            link = link.Length == 0 || link.EndsWith('/') ? link + text : link + "/" + text;
+        }
+
+        return link;
+    }
+
     void DecodeSystemArea(byte[] data, int start, int end, ref DecodedDirectoryEntry entry, out bool hasResourceFork)
     {
         int systemAreaOff = start;
         hasResourceFork = false;
-        var continueSymlink          = false;
-        var continueSymlinkComponent = false;
 
         // Check for Acorn RISC OS system area (exactly 32 bytes starting with "ARCHIMEDES")
         if(end - start == ACORN_SYSTEM_AREA_SIZE && end <= data.Length && start + 10 <= data.Length)
@@ -687,43 +712,80 @@ public sealed partial class ISO9660
                 case RRIP_SYMLINK:
                     byte slLength = data[systemAreaOff + 2];
 
+                    if(slLength < Marshal.SizeOf<SymbolicLink>())
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
                     SymbolicLink sl =
                         Marshal.ByteArrayToStructureLittleEndian<SymbolicLink>(data,
                                                                                systemAreaOff,
                                                                                Marshal.SizeOf<SymbolicLink>());
 
-                    SymbolicLinkComponent slc =
-                        Marshal.ByteArrayToStructureLittleEndian<SymbolicLinkComponent>(data,
-                            systemAreaOff + Marshal.SizeOf<SymbolicLink>(),
-                            Marshal.SizeOf<SymbolicLinkComponent>());
+                    // A previous "SL" ended the link, so this one starts a new one
+                    if(!entry.RripSymlinkContinues)
+                    {
+                        entry.RripSymlinkComponents         = [];
+                        entry.RripSymlinkComponentContinues = false;
+                    }
 
-                    if(!continueSymlink || entry.SymbolicLink is null) entry.SymbolicLink = "";
+                    int slcOff = systemAreaOff + Marshal.SizeOf<SymbolicLink>();
+                    int slEnd  = Math.Min(systemAreaOff + slLength, data.Length);
 
-                    if(slc.flags.HasFlag(SymlinkComponentFlags.Root)) entry.SymbolicLink = "/";
+                    // An "SL" can contain several component records (RRIP 4.1.3.1)
+                    while(slcOff + Marshal.SizeOf<SymbolicLinkComponent>() <= slEnd)
+                    {
+                        SymbolicLinkComponent slc =
+                            Marshal.ByteArrayToStructureLittleEndian<SymbolicLinkComponent>(data,
+                                slcOff,
+                                Marshal.SizeOf<SymbolicLinkComponent>());
 
-                    if(slc.flags.HasFlag(SymlinkComponentFlags.Current)) entry.SymbolicLink += ".";
+                        int slcDataOff = slcOff + Marshal.SizeOf<SymbolicLinkComponent>();
+                        int slcDataLen = Math.Min(slc.length, slEnd - slcDataOff);
 
-                    if(slc.flags.HasFlag(SymlinkComponentFlags.Parent)) entry.SymbolicLink += "..";
+                        // Null marks the root, the other special components are stored as their POSIX names
+                        byte[] component;
 
-                    if(!continueSymlinkComponent && !slc.flags.HasFlag(SymlinkComponentFlags.Root))
-                        entry.SymbolicLink += "/";
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Root) ||
+                           slc.flags.HasFlag(SymlinkComponentFlags.Mountpoint))
+                            component = null;
+                        else if(slc.flags.HasFlag(SymlinkComponentFlags.Current))
+                            component = EncodeRripString(".");
+                        else if(slc.flags.HasFlag(SymlinkComponentFlags.Parent))
+                            component = EncodeRripString("..");
+                        else if(slc.flags.HasFlag(SymlinkComponentFlags.Networkname))
+                            component = EncodeRripString(Environment.MachineName);
+                        else
+                        {
+                            component = new byte[slcDataLen];
+                            Array.Copy(data, slcDataOff, component, 0, slcDataLen);
+                        }
 
-                    entry.SymbolicLink += slc.flags.HasFlag(SymlinkComponentFlags.Networkname)
-                                              ? Environment.MachineName
-                                              : _joliet
-                                                  ? Encoding.BigEndianUnicode.GetString(data,
-                                                      systemAreaOff                  +
-                                                      Marshal.SizeOf<SymbolicLink>() +
-                                                      Marshal.SizeOf<SymbolicLinkComponent>(),
-                                                      slc.length)
-                                                  : _encoding.GetString(data,
-                                                                        systemAreaOff                  +
-                                                                        Marshal.SizeOf<SymbolicLink>() +
-                                                                        Marshal.SizeOf<SymbolicLinkComponent>(),
-                                                                        slc.length);
+                        if(entry.RripSymlinkComponentContinues       &&
+                           component                         != null &&
+                           entry.RripSymlinkComponents.Count > 0     &&
+                           entry.RripSymlinkComponents[^1]   != null)
+                        {
+                            byte[] previous = entry.RripSymlinkComponents[^1];
+                            var    joined   = new byte[previous.Length + component.Length];
+                            Array.Copy(previous,  0, joined, 0,               previous.Length);
+                            Array.Copy(component, 0, joined, previous.Length, component.Length);
+                            entry.RripSymlinkComponents[^1] = joined;
+                        }
+                        else
+                            entry.RripSymlinkComponents.Add(component);
 
-                    continueSymlink          = sl.flags.HasFlag(SymlinkFlags.Continue);
-                    continueSymlinkComponent = slc.flags.HasFlag(SymlinkComponentFlags.Continue);
+                        entry.RripSymlinkComponentContinues = slc.flags.HasFlag(SymlinkComponentFlags.Continue);
+
+                        slcOff = slcDataOff + slc.length;
+                    }
+
+                    entry.RripSymlinkContinues = sl.flags.HasFlag(SymlinkFlags.Continue);
+
+                    // Build it every time so a link whose last "SL" is missing still has the recovered part
+                    entry.SymbolicLink = BuildRripSymlink(entry.RripSymlinkComponents);
 
                     systemAreaOff += slLength;
 
