@@ -750,21 +750,15 @@ public sealed partial class ISO9660
 
                     if(amiga.flags.HasFlag(AmigaFlags.Comment))
                     {
+                        // The comment length counts itself, the comment follows it
+                        int commentOff    = systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength;
+                        int commentLength = data[commentOff] - 1;
+
                         entry.AmigaComment ??= [];
 
-                        var newComment = new byte[entry.AmigaComment.Length +
-                                                  data[systemAreaOff                +
-                                                       Marshal.SizeOf<AmigaEntry>() +
-                                                       protectionLength] -
-                                                  1];
-
+                        var newComment = new byte[entry.AmigaComment.Length + commentLength];
                         Array.Copy(entry.AmigaComment, 0, newComment, 0, entry.AmigaComment.Length);
-
-                        Array.Copy(data,
-                                   systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength,
-                                   newComment,
-                                   entry.AmigaComment.Length,
-                                   data[systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] - 1);
+                        Array.Copy(data, commentOff + 1, newComment, entry.AmigaComment.Length, commentLength);
 
                         entry.AmigaComment = newComment;
                     }
