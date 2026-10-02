@@ -125,7 +125,8 @@ public sealed class LZip : IFilter
         LastWriteTime  = CreationTime;
         DataForkLength = BitConverter.ToInt64(buffer, buffer.Length - 16);
 
-        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress, false);
+        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength,
+                                                       LZipStream.Create(_dataStream, CompressionMode.Decompress));
 
         return ErrorNumber.NoError;
     }
@@ -142,7 +143,8 @@ public sealed class LZip : IFilter
         _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
         _dataStream.Seek(0, SeekOrigin.Begin);
-        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress, false);
+        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength,
+                                                       LZipStream.Create(_dataStream, CompressionMode.Decompress));
 
         return ErrorNumber.NoError;
     }
@@ -161,7 +163,8 @@ public sealed class LZip : IFilter
         _dataStream.EnsureRead(tmp, 0, 8);
         DataForkLength = BitConverter.ToInt64(tmp, 0);
         _dataStream.Seek(0, SeekOrigin.Begin);
-        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength, _dataStream, CompressionMode.Decompress, false);
+        _innerStream = new ForcedSeekStream<LZipStream>(DataForkLength,
+                                                       LZipStream.Create(_dataStream, CompressionMode.Decompress));
 
         return ErrorNumber.NoError;
     }
