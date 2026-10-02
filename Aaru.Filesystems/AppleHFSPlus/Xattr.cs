@@ -124,18 +124,18 @@ public sealed partial class AppleHFSPlus
             return ErrorNumber.NoError;
         }
 
-        // Handle HFS+ creator xattr (4 bytes, as stored)
+        // Handle HFS+ creator xattr (4 bytes, as stored, most significant byte first)
         if(string.Equals(xattr, Xattrs.XATTR_APPLE_HFS_CREATOR, StringComparison.OrdinalIgnoreCase))
         {
-            buf = BitConverter.GetBytes(fileEntry.FinderInfo.fdCreator);
+            buf = BigEndianBitConverter.GetBytes(fileEntry.FinderInfo.fdCreator);
 
             return ErrorNumber.NoError;
         }
 
-        // Handle HFS+ type xattr (4 bytes, as stored)
+        // Handle HFS+ type xattr (4 bytes, as stored, most significant byte first)
         if(string.Equals(xattr, Xattrs.XATTR_APPLE_HFS_OSTYPE, StringComparison.OrdinalIgnoreCase))
         {
-            buf = BitConverter.GetBytes(fileEntry.FinderInfo.fdType);
+            buf = BigEndianBitConverter.GetBytes(fileEntry.FinderInfo.fdType);
 
             return ErrorNumber.NoError;
         }
