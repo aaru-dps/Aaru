@@ -406,6 +406,9 @@ public sealed partial class ISO9660
                             {
                                 nextSignature = BigEndianBitConverter.ToUInt16(sa, saOff);
 
+                                // A zero length entry would never advance
+                                if(sa[saOff + 2] == 0) break;
+
                                 switch(nextSignature)
                                 {
                                     case APPLE_MAGIC:
@@ -485,9 +488,12 @@ public sealed partial class ISO9660
             Array.Copy(caSectors, ca.offset_be, caData, 0, ca.ca_length_be);
             var caOff = 0;
 
-            while(caOff < ca.ca_length_be)
+            while(caOff + 2 < ca.ca_length_be)
             {
                 var nextSignature = BigEndianBitConverter.ToUInt16(caData, caOff);
+
+                // A zero length entry would never advance
+                if(caData[caOff + 2] == 0) break;
 
                 switch(nextSignature)
                 {

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Aaru.CommonTypes.Enums;
 using Aaru.CommonTypes.Interfaces;
@@ -480,6 +481,28 @@ public sealed partial class ISO9660
         entry.SymbolicLink         = null;
     }
 
+    /// <summary>Gets the minimum length of a SUSP or RRIP System Use entry, or 0 if the signature is not one</summary>
+    static int SuspMinimumLength(ushort signature)
+    {
+        return signature switch
+               {
+                   RRIP_POSIX_ATTRIBUTES             => 36,
+                   RRIP_POSIX_DEV_NO                 => 20,
+                   RRIP_CHILDLINK or RRIP_PARENTLINK => 12,
+                   RRIP_SPARSE                       => 12,
+                   RRIP_SYMLINK or RRIP_NAME         => 5,
+                   RRIP_TIMESTAMPS                   => 5,
+                   RRIP_MAGIC or RRIP_RELOCATED_DIR  => 4,
+                   SUSP_CONTINUATION                 => 28,
+                   SUSP_REFERENCE                    => 8,
+                   SUSP_INDICATOR                    => 7,
+                   SUSP_SELECTOR                     => 5,
+                   SUSP_PADDING or SUSP_TERMINATOR   => 4,
+                   ZISO_MAGIC                        => 16,
+                   _                                 => 0
+               };
+    }
+
     byte[] EncodeRripString(string text)
     {
         return _joliet ? Encoding.BigEndianUnicode.GetBytes(text) : _encoding.GetBytes(text);
@@ -540,6 +563,15 @@ public sealed partial class ISO9660
             if(systemAreaOff + 6 + 2 > data.Length) break;
 
             if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC) systemAreaSignature = XA_MAGIC;
+
+            // A SUSP entry shorter than its fixed part, or past the System Use Area, means the rest is garbage, and a
+            // zero length one would never advance
+            int minimumLength = SuspMinimumLength(systemAreaSignature);
+
+            if(minimumLength > 0 &&
+               (data[systemAreaOff + 2] < minimumLength ||
+                systemAreaOff + data[systemAreaOff + 2] > Math.Min(end, data.Length)))
+                break;
 
             AppleCommon.FInfo fInfo;
 
@@ -738,7 +770,7 @@ public sealed partial class ISO9660
 
                     switch(pxLength)
                     {
-                        case 36:
+                        case >= 36 and < 44:
                             entry.PosixAttributesOld =
                                 Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data,
                                     systemAreaOff,
@@ -770,13 +802,6 @@ public sealed partial class ISO9660
                     break;
                 case RRIP_SYMLINK:
                     byte slLength = data[systemAreaOff + 2];
-
-                    if(slLength < Marshal.SizeOf<SymbolicLink>())
-                    {
-                        systemAreaOff = end;
-
-                        break;
-                    }
 
                     SymbolicLink sl =
                         Marshal.ByteArrayToStructureLittleEndian<SymbolicLink>(data,
@@ -960,6 +985,17 @@ public sealed partial class ISO9660
                     int tfOff = systemAreaOff + Marshal.SizeOf<Timestamps>();
                     int tfLen = timestamps.flags.HasFlag(TimestampFlags.LongFormat) ? 17 : 7;
 
+                    int tfCount =
+                        BitOperations.PopCount((uint)(timestamps.flags & ~TimestampFlags.LongFormat));
+
+                    // The flags announce more timestamps than the field holds
+                    if(Marshal.SizeOf<Timestamps>() + tfCount * tfLen > tfLength)
+                    {
+                        systemAreaOff = end;
+
+                        break;
+                    }
+
                     if(timestamps.flags.HasFlag(TimestampFlags.Creation))
                     {
                         entry.RripCreation = new byte[tfLen];
@@ -1014,15 +1050,8 @@ public sealed partial class ISO9660
                 case RRIP_SPARSE:
                     byte sfLength = data[systemAreaOff + 2];
 
-                    if(sfLength == 0)
-                    {
-                        systemAreaOff = end;
-
-                        break;
-                    }
-
                     // RRIP 1.12 records a 64-bit size and the depth of the first index block
-                    if(sfLength >= Marshal.SizeOf<SparseFile>() && systemAreaOff + sfLength <= data.Length)
+                    if(sfLength >= Marshal.SizeOf<SparseFile>())
                     {
                         SparseFile sf =
                             Marshal.ByteArrayToStructureLittleEndian<SparseFile>(data,
@@ -1034,7 +1063,7 @@ public sealed partial class ISO9660
                     }
 
                     // RRIP 1.10 records a 32-bit size, so the first index block is always for the high order byte
-                    else if(sfLength >= 12 && systemAreaOff + sfLength <= data.Length)
+                    else
                     {
                         entry.RripSparseSize  = BitConverter.ToUInt32(data, systemAreaOff + 4);
                         entry.RripSparseDepth = SPARSE_RRIP110_DEPTH;
@@ -1078,9 +1107,8 @@ public sealed partial class ISO9660
 
                     break;
                 case SUSP_TERMINATOR:
-                    // Not seen on the wild
-                    byte stLength = data[systemAreaOff + 2];
-                    systemAreaOff += stLength;
+                    // Not seen on the wild, ends the System Use entries of this record
+                    systemAreaOff = end;
 
                     break;
                 case SUSP_REFERENCE:
