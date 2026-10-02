@@ -864,6 +864,17 @@ public sealed partial class ISO9660
                                                                                     systemAreaOff,
                                                                                     Marshal.SizeOf<AlternateName>());
 
+                    // RRIP 4.1.4, these designate the current and parent directories, whose records already have
+                    // their own names, so keep the ISO 9660 one instead of an empty name
+                    if(alternateName.flags.HasFlag(AlternateNameFlags.Current) ||
+                       alternateName.flags.HasFlag(AlternateNameFlags.Parent))
+                    {
+                        entry.RockRidgeAlternateName = null;
+                        systemAreaOff                += nmLength;
+
+                        break;
+                    }
+
                     byte[] nm;
 
                     if(alternateName.flags.HasFlag(AlternateNameFlags.Networkname))
@@ -889,9 +900,13 @@ public sealed partial class ISO9660
 
                     if(!alternateName.flags.HasFlag(AlternateNameFlags.Continue))
                     {
-                        entry.Filename = _joliet
-                                             ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
-                                             : _encoding.GetString(entry.RockRidgeAlternateName);
+                        // An empty alternate name cannot be used, so the ISO 9660 one stays
+                        if(entry.RockRidgeAlternateName.Length > 0)
+                        {
+                            entry.Filename = _joliet
+                                                 ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
+                                                 : _encoding.GetString(entry.RockRidgeAlternateName);
+                        }
 
                         entry.RockRidgeAlternateName = null;
                     }
