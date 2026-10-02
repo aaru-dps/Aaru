@@ -312,6 +312,8 @@ public sealed partial class ISO9660
         {
             _blockSize = pvd.Value.logical_block_size;
 
+            _appleProtocol = DecodeAppleProtocol(pvd.Value.system_id, out _, out _appleProDosNames);
+
             errno = ReadSingleExtent(pvd.Value.path_table_size,
                                      Swapping.Swap(pvd.Value.type_m_path_table),
                                      out pathTableData);

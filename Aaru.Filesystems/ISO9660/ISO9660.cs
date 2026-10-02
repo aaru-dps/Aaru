@@ -45,6 +45,8 @@ public sealed partial class ISO9660 : IReadOnlyFilesystem
 {
     const string                              MODULE_NAME = "ISO9660 plugin";
     ushort                                    _blockSize;
+    bool                                      _appleProDosNames;
+    bool                                      _appleProtocol;
     bool                                      _cdi;
     bool                                      _debug;
     Encoding                                  _encoding;

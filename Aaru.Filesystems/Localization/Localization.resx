@@ -749,6 +749,12 @@
     <data name="Apple_extensions_present" xml:space="preserve">
     <value>[fuchsia]Apple extensions present.[/]</value>
   </data>
+    <data name="Apple_extensions_protocol_version_0" xml:space="preserve">
+    <value>[fuchsia]Volume declares version [teal]{0}[/] of the Apple extensions to ISO 9660.[/]</value>
+  </data>
+    <data name="ProDOS_filenames_transformed_to_ISO9660" xml:space="preserve">
+    <value>[fuchsia]ProDOS filenames were transformed to ISO 9660 filenames.[/]</value>
+  </data>
     <data name="Joliet_extensions_present" xml:space="preserve">
     <value>[fuchsia]Joliet extensions present.[/]</value>
   </data>

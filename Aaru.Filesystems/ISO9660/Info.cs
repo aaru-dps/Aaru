@@ -593,6 +593,13 @@ public sealed partial class ISO9660
 
         if(apple) isoMetadata.AppendLine(Localization.Apple_extensions_present);
 
+        if(pvd != null && DecodeAppleProtocol(pvd.Value.system_id, out byte appleVersion, out bool appleProDosNames))
+        {
+            isoMetadata.AppendFormat(Localization.Apple_extensions_protocol_version_0, appleVersion).AppendLine();
+
+            if(appleProDosNames) isoMetadata.AppendLine(Localization.ProDOS_filenames_transformed_to_ISO9660);
+        }
+
         if(jolietvd != null) isoMetadata.AppendLine(Localization.Joliet_extensions_present);
 
         if(susp) isoMetadata.AppendLine(Localization.System_Use_Sharing_Protocol_present);

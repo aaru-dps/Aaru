@@ -116,6 +116,12 @@
     <data name="Apple_extensions_present" xml:space="preserve">
     <value>[fuchsia]Extensiones de Apple presentes.[/]</value>
   </data>
+    <data name="Apple_extensions_protocol_version_0" xml:space="preserve">
+    <value>[fuchsia]El volumen declara la versión [teal]{0}[/] de las extensiones de Apple a ISO 9660.[/]</value>
+  </data>
+    <data name="ProDOS_filenames_transformed_to_ISO9660" xml:space="preserve">
+    <value>[fuchsia]Los nombres de archivo de ProDOS se transformaron en nombres de archivo ISO 9660.[/]</value>
+  </data>
     <data name="Apple_File_System" xml:space="preserve">
     <value>Sistema de ficheros Apple (APFS)</value>
   </data>

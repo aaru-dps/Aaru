@@ -1497,6 +1497,18 @@ namespace Aaru.Filesystems {
             }
         }
 
+        internal static string Apple_extensions_protocol_version_0 {
+            get {
+                return ResourceManager.GetString("Apple_extensions_protocol_version_0", resourceCulture);
+            }
+        }
+
+        internal static string ProDOS_filenames_transformed_to_ISO9660 {
+            get {
+                return ResourceManager.GetString("ProDOS_filenames_transformed_to_ISO9660", resourceCulture);
+            }
+        }
+
         internal static string Apple_extensions_present {
             get {
                 return ResourceManager.GetString("Apple_extensions_present", resourceCulture);
