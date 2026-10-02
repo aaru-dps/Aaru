@@ -495,6 +495,15 @@ public sealed partial class ISO9660
                             entry.PosixDeviceNumber.Value.dev_t_low;
         }
 
+        // RRIP 4.1.6, without a "TF" field the POSIX times are all the recording date of the directory record
+        if(entry.PosixAttributes != null || entry.PosixAttributesOld != null)
+        {
+            stat.AccessTimeUtc       = entry.Timestamp;
+            stat.StatusChangeTimeUtc = entry.Timestamp;
+        }
+
+        if(entry.RripCreation != null) stat.CreationTimeUtc = DecodeIsoDateTime(entry.RripCreation);
+
         if(entry.RripModify != null) stat.LastWriteTimeUtc = DecodeIsoDateTime(entry.RripModify);
 
         if(entry.RripAccess != null) stat.AccessTimeUtc = DecodeIsoDateTime(entry.RripAccess);
