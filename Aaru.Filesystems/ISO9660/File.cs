@@ -448,6 +448,10 @@ public sealed partial class ISO9660
         if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle) == true)
             stat.Attributes |= FileAttributes.Bundle;
 
+        // Named "system file" by the Apple extensions to ISO 9660, before System 7 reused it as name locked
+        if(entry.FinderInfo?.fdFlags.HasFlag(AppleCommon.FinderFlags.kNameLocked) == true)
+            stat.Attributes |= FileAttributes.System;
+
         if(entry.AppleIcon != null) stat.Attributes |= FileAttributes.HasCustomIcon;
 
         if(entry.XA != null)
