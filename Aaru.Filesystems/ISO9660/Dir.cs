@@ -273,6 +273,8 @@ public sealed partial class ISO9660
             if(_joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
                 entry.Filename = entry.Filename[..^2];
 
+            entry.Filename = RestoreProDosName(entry.Filename);
+
             int systemAreaStart  = entryOff      + record.name_len + _directoryRecordSize;
             int systemAreaLength = record.length - record.name_len - _directoryRecordSize;
 
@@ -1344,7 +1346,7 @@ public sealed partial class ISO9660
             var entry = new DecodedDirectoryEntry
             {
                 Size                 = record.size,
-                Filename             = tEntry.Name,
+                Filename             = RestoreProDosName(tEntry.Name),
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),
                 XattrLength          = tEntry.XattrLength,
@@ -1393,7 +1395,7 @@ public sealed partial class ISO9660
             {
                 Size                 = record.size,
                 Flags                = record.flags,
-                Filename             = tEntry.Name,
+                Filename             = RestoreProDosName(tEntry.Name),
                 FileUnitSize         = record.file_unit_size,
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
@@ -1446,7 +1448,7 @@ public sealed partial class ISO9660
             {
                 Size                 = record.size,
                 Flags                = record.flags,
-                Filename             = tEntry.Name,
+                Filename             = RestoreProDosName(tEntry.Name),
                 Interleave           = record.interleave,
                 VolumeSequenceNumber = record.volume_sequence_number,
                 Timestamp            = DecodeHighSierraDateTime(record.date),

@@ -601,7 +601,7 @@ public sealed partial class ISO9660
         else
         {
             Metadata.SystemIdentifier       = decodedVd.SystemIdentifier;
-            Metadata.VolumeName             = decodedVd.VolumeIdentifier;
+            Metadata.VolumeName             = RestoreProDosName(decodedVd.VolumeIdentifier);
             Metadata.VolumeSetIdentifier    = decodedVd.VolumeSetIdentifier;
             Metadata.PublisherIdentifier    = decodedVd.PublisherIdentifier;
             Metadata.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;

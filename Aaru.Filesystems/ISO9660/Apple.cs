@@ -43,6 +43,16 @@ public sealed partial class ISO9660
     /// </summary>
     const string APPLE_PROTOCOL_IDENTIFIER = "APPLE COMPUTER, INC., TYPE: ";
 
+    /// <summary>
+    ///     Reverses the transformation of ProDOS filenames to ISO 9660 ones, which replaced periods with underscores, when
+    ///     the volume declares it and the plain ISO 9660 namespace is used (GS/OS Reference, appendix C). ProDOS names
+    ///     cannot have underscores, so this restores them exactly.
+    /// </summary>
+    string RestoreProDosName(string name)
+    {
+        return _appleProDosNames && _namespace == Namespace.Normal ? name?.Replace('_', '.') : name;
+    }
+
     /// <summary>Decodes the protocol identifier of the Apple extensions to ISO 9660</summary>
     /// <param name="systemId">System identifier of the primary volume descriptor</param>
     /// <param name="version">Version of the Apple extensions</param>
