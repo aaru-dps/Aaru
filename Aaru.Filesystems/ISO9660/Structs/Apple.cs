@@ -47,6 +47,8 @@ public sealed partial class ISO9660
         public uint       creator;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] icon;
+        /// <summary>Makes the extension an even length (GS/OS Reference, table C-4)</summary>
+        public byte padding;
     }
 
 #endregion
@@ -95,6 +97,8 @@ public sealed partial class ISO9660
         public AppleOldId id;
         public uint       type;
         public uint       creator;
+        /// <summary>Makes the extension an even length (GS/OS Reference, table C-4)</summary>
+        public byte padding;
     }
 
 #endregion
