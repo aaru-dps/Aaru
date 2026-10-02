@@ -454,6 +454,8 @@ public sealed partial class ISO9660
 
         if(entry.AppleIcon != null) stat.Attributes |= FileAttributes.HasCustomIcon;
 
+        if(entry.AcornSystemArea?.IsLocked == true) stat.Attributes |= FileAttributes.ReadOnly;
+
         if(entry.XA != null)
         {
             if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupExecute)) stat.Mode |= 8;

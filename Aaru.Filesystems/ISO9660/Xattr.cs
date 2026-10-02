@@ -79,7 +79,19 @@ public sealed partial class ISO9660
 
         if(entry.AmigaProtection != null) xattrs.Add(Xattrs.XATTR_AMIGA_PROTECTION);
 
-        if(entry.AcornSystemArea?.Filetype != null) xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_FILETYPE);
+        if(entry.AcornSystemArea != null)
+        {
+            if(entry.AcornSystemArea.Value.HasFiletype)
+                xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_FILETYPE);
+            else
+            {
+                // Without a filetype these are real load and execution addresses, as in the ADFS filesystem
+                xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_LOAD_ADDR);
+                xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_EXEC_ADDR);
+            }
+
+            xattrs.Add(Xattrs.XATTR_ACORN_RISCOS_ATTRIBUTES);
+        }
 
         xattrs.AddRange(GetAaipAttributes(entry).Select(static a => a.name));
 
@@ -231,6 +243,24 @@ public sealed partial class ISO9660
                 if(entry.AcornSystemArea?.Filetype is null) return ErrorNumber.NoSuchExtendedAttribute;
 
                 buf = BitConverter.GetBytes(entry.AcornSystemArea.Value.Filetype.Value);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_ACORN_RISCOS_ATTRIBUTES:
+                if(entry.AcornSystemArea is null) return ErrorNumber.NoSuchExtendedAttribute;
+
+                buf = BitConverter.GetBytes(entry.AcornSystemArea.Value.Attributes);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_ACORN_RISCOS_LOAD_ADDR:
+                if(entry.AcornSystemArea is not { HasFiletype: false }) return ErrorNumber.NoSuchExtendedAttribute;
+
+                buf = BitConverter.GetBytes(entry.AcornSystemArea.Value.LoadAddress);
+
+                return ErrorNumber.NoError;
+            case Xattrs.XATTR_ACORN_RISCOS_EXEC_ADDR:
+                if(entry.AcornSystemArea is not { HasFiletype: false }) return ErrorNumber.NoSuchExtendedAttribute;
+
+                buf = BitConverter.GetBytes(entry.AcornSystemArea.Value.ExecAddress);
 
                 return ErrorNumber.NoError;
             case Xattrs.XATTR_ISO9660_MODE2_SUBHEADER:

@@ -72,6 +72,9 @@ public sealed partial class ISO9660
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
         public readonly byte[] Reserved;
 
+        /// <summary>Gets a value indicating whether the file is locked against deletion (RISC OS attribute L).</summary>
+        public bool IsLocked => (Attributes & 0x08) == 0x08;
+
         /// <summary>Gets a value indicating whether this entry represents an application (starts with '!').</summary>
         public bool IsApplication => (Attributes & 0x100) == 0x100;
 
